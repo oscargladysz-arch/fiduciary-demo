@@ -1,0 +1,331 @@
+{
+  "product_key": "hl_paf",
+  "fund_name": "Hamilton Lane Private Assets Fund",
+  "cik": "1803491",
+  "wrapper": "tender-offer fund ('40 Act); NOT an interval fund",
+  "identity_note": "Earlier project docs said 'HLPIF' - no such registrant exists; PAF is the registered HL evergreen. Verified vs EDGAR 2026-07-09.",
+  "fund_net_assets_derived": "approx $5.80B (290,123,923 / 0.05 per SC TO-I 2026-05-06); Class I net assets $3.49B per FY26 highlights",
+  "fiscal_year_end": "March 31",
+  "cells": {
+    "1.1": {
+      "element": "Net total return series",
+      "value": "PARTIAL: Class I NAV/share FY2022-FY2026: 12.35 / 14.14 / 15.81 / 17.55 / 19.77 (fiscal yr end Mar 31). Monthly series still to assemble from fact sheets.",
+      "source": "N-CSR 2026-06-09 (acc 0001213900-26-054176*)",
+      "section": "Financial Highlights",
+      "quote": "Net Asset Value per share, end of period $19.77",
+      "status": "partial",
+      "extracted_by": "Claude (spike 2026-07-09)",
+      "verified_by": ""
+    },
+    "1.2": {
+      "element": "Trailing & calendar-year returns",
+      "value": "Class I avg annual total returns as of 3/31/2026: 1yr 14.60% / 3yr 13.28% / 5yr 15.31% / since inception 15.36%. FY total returns FY26-FY22: 14.60 / 12.59 / 12.68 / 16.10 / 20.77 (%).",
+      "source": "N-CSR 2026-06-09 (acc 0001213900-26-054176*)",
+      "section": "Fund Performance + Financial Highlights",
+      "quote": "Average Annual Total Returns as of March 31, 2026",
+      "status": "extracted-unverified",
+      "extracted_by": "Claude (spike 2026-07-09)",
+      "verified_by": ""
+    },
+    "1.3": {
+      "element": "Gross vs net spread",
+      "value": null,
+      "status": "pending"
+    },
+    "1.4": {
+      "element": "Distribution history & composition",
+      "value": null,
+      "status": "pending"
+    },
+    "1.5": {
+      "element": "Underlying sleeve/GP performance",
+      "value": null,
+      "status": "pending"
+    },
+    "1.6": {
+      "element": "Volatility & max drawdown",
+      "value": null,
+      "status": "pending"
+    },
+    "1.7": {
+      "element": "De-smoothed volatility",
+      "value": null,
+      "status": "pending"
+    },
+    "1.8": {
+      "element": "Risk-adjusted metrics (PME etc)",
+      "value": null,
+      "status": "pending"
+    },
+    "1.9": {
+      "element": "Stress-window performance",
+      "value": null,
+      "status": "pending"
+    },
+    "1.10": {
+      "element": "Market price & premium/discount",
+      "value": null,
+      "status": "n/a - listed-CEF only"
+    },
+    "1.11": {
+      "element": "Track record & manager tenure",
+      "value": null,
+      "status": "pending"
+    },
+    "2.1": {
+      "element": "Management fee (rate AND base)",
+      "value": "1.40% annualized on MANAGED ASSETS (not net assets - includes leverage), calculated monthly, paid quarterly. NOTE: fee-base trap from dictionary 2.1 confirmed in the wild.",
+      "source": "N-CSR 2026-06-09 (acc 0001213900-26-054176*)",
+      "section": "Notes - Investment Management Fee",
+      "quote": "Investment Management Fee equal to 1.40% on an annualized basis of the Fund's Managed Assets",
+      "status": "extracted-unverified",
+      "extracted_by": "Claude (spike 2026-07-09)",
+      "verified_by": ""
+    },
+    "2.2": {
+      "element": "Incentive fee terms",
+      "value": "PARTIAL: rate/hurdle not yet pulled; measured drag on NII ratio: 1.45% FY26 / 0.84% FY25 / 1.95% FY24 / 2.52% FY23. Rate lives in fee note / prospectus Incentive Fee section.",
+      "source": "N-CSR 2026-06-09 (acc 0001213900-26-054176*)",
+      "section": "Financial Highlights footnote 5",
+      "quote": "If Incentive Fees... were included the ratio would have been lowered by 1.45%",
+      "status": "partial",
+      "extracted_by": "Claude (spike 2026-07-09)",
+      "verified_by": ""
+    },
+    "2.3": {
+      "element": "Total expense ratio & waivers",
+      "value": "Class I gross/net expenses FY26 3.40%/3.40%, FY25 2.93/2.93, FY24 4.26/4.26. Expense Limit: 1.45% R / 0.75% I / 1.00% D of avg daily net assets, EXCLUDING mgmt fee, incentive fee, AFFE, interest, taxes.",
+      "source": "N-CSR 2026-06-09 (acc 0001213900-26-054176*)",
+      "section": "Financial Highlights + expense limit note",
+      "quote": "do not exceed 1.45%, 0.75% and 1.00% ... Class R, Class I and Class D",
+      "status": "extracted-unverified",
+      "extracted_by": "Claude (spike 2026-07-09)",
+      "verified_by": ""
+    },
+    "2.4": {
+      "element": "AFFE",
+      "value": null,
+      "status": "pending"
+    },
+    "2.5": {
+      "element": "Underlying GP economics",
+      "value": null,
+      "status": "pending"
+    },
+    "2.6": {
+      "element": "Loads & servicing fees",
+      "value": null,
+      "status": "pending"
+    },
+    "2.7": {
+      "element": "Early repurchase fee",
+      "value": "2.00% early repurchase fee if held under 1 year (FIFO).",
+      "source": "N-CSR 2026-06-09 (acc 0001213900-26-054176*)",
+      "section": "Repurchase notes",
+      "quote": "less than one year ... subject to a 2.00% early repurchase fee",
+      "status": "extracted-unverified",
+      "extracted_by": "Claude (spike 2026-07-09)",
+      "verified_by": ""
+    },
+    "2.8": {
+      "element": "CIT fee schedule",
+      "value": null,
+      "status": "n/a - CIT only"
+    },
+    "2.9": {
+      "element": "Fee peer percentile",
+      "value": null,
+      "status": "pending"
+    },
+    "2.10": {
+      "element": "Value justification",
+      "value": null,
+      "status": "pending"
+    },
+    "3.1": {
+      "element": "Wrapper liquidity terms",
+      "value": "Quarterly tender offers (board-approved, NOT Rule 23c-3 interval). Most recent: up to 5.00% of net assets = approx $290,123,923 (approx 15,084,500 shares), optional +2.00% upsize without amendment. Implies fund net assets approx $5.80B (= 290,123,923 / 0.05).",
+      "source": "SC TO-I 2026-05-06",
+      "section": "Offer to Purchase, Item 1",
+      "quote": "up to approximately 5.00% of the net assets of the Fund as of March 31, 2026",
+      "status": "extracted-unverified",
+      "extracted_by": "Claude (spike 2026-07-09)",
+      "verified_by": ""
+    },
+    "3.2": {
+      "element": "Repurchase mechanics",
+      "value": null,
+      "status": "pending"
+    },
+    "3.3": {
+      "element": "Repurchase history",
+      "value": null,
+      "status": "pending"
+    },
+    "3.4": {
+      "element": "Portfolio liquidity profile",
+      "value": null,
+      "status": "pending"
+    },
+    "3.5": {
+      "element": "TDF/CIT liquidity sleeve",
+      "value": null,
+      "status": "n/a - CIT only"
+    },
+    "3.6": {
+      "element": "Fund leverage & facilities",
+      "value": "Line of credit payable $76,482,442 at FY26; total borrowings trend (000s) FY26 76,482 vs FY25 36,192.",
+      "source": "N-CSR 2026-06-09 (acc 0001213900-26-054176*)",
+      "section": "Statement of Assets & Liabilities + Financial Highlights Senior Securities",
+      "quote": "Line of credit payable 76,482,442",
+      "status": "extracted-unverified",
+      "extracted_by": "Claude (spike 2026-07-09)",
+      "verified_by": ""
+    },
+    "3.7": {
+      "element": "Plan participant liquidity demand",
+      "value": null,
+      "status": "n/a - plan-side (Form 5500)"
+    },
+    "3.8": {
+      "element": "Redemption stress test",
+      "value": null,
+      "status": "pending"
+    },
+    "3.9": {
+      "element": "Product-to-plan liquidity match",
+      "value": null,
+      "status": "n/a - workflow output"
+    },
+    "4.1": {
+      "element": "Valuation policy & NAV frequency",
+      "value": null,
+      "status": "pending"
+    },
+    "4.2": {
+      "element": "Fair-value hierarchy (L1/2/3)",
+      "value": "PARTIAL: transfers INTO Level 3 during period disclosed; full ASC 820 dollar table needs human read of fair-value note.",
+      "source": "N-CSR 2026-06-09 (acc 0001213900-26-054176*)",
+      "section": "Fair Value Measurements note",
+      "quote": "certain investments ... were transferred into Level 3 during the period",
+      "status": "partial",
+      "extracted_by": "Claude (spike 2026-07-09)",
+      "verified_by": ""
+    },
+    "4.3": {
+      "element": "Independent valuation agent",
+      "value": null,
+      "status": "pending"
+    },
+    "4.4": {
+      "element": "Methodology by asset type",
+      "value": null,
+      "status": "pending"
+    },
+    "4.5": {
+      "element": "Auditor & opinion",
+      "value": "Cohen & Company, Ltd., Cleveland OH. Auditor of HL funds since 2020. Opinion dated May 29, 2026. NOTE: not Big-4 - a live evaluative datum for this cell.",
+      "source": "N-CSR 2026-06-09 (acc 0001213900-26-054176*)",
+      "section": "Report of Independent Registered Public Accounting Firm",
+      "quote": "We have served as the auditor ... since 2020. COHEN & COMPANY, LTD.",
+      "status": "extracted-unverified",
+      "extracted_by": "Claude (spike 2026-07-09)",
+      "verified_by": ""
+    },
+    "4.6": {
+      "element": "NAV restatement history",
+      "value": null,
+      "status": "pending"
+    },
+    "4.7": {
+      "element": "Premium/discount check",
+      "value": null,
+      "status": "pending"
+    },
+    "4.8": {
+      "element": "Smoothing diagnostics",
+      "value": null,
+      "status": "pending"
+    },
+    "4.9": {
+      "element": "CIT unit valuation",
+      "value": null,
+      "status": "n/a - CIT only"
+    },
+    "5.1": {
+      "element": "Self-declared benchmark",
+      "value": null,
+      "status": "pending"
+    },
+    "5.2": {
+      "element": "Public index series",
+      "value": null,
+      "status": "pending"
+    },
+    "5.3": {
+      "element": "Alt asset-class indices",
+      "value": null,
+      "status": "pending"
+    },
+    "5.4": {
+      "element": "Peer universe & returns",
+      "value": null,
+      "status": "pending"
+    },
+    "5.5": {
+      "element": "PME / Direct Alpha inputs",
+      "value": null,
+      "status": "pending"
+    },
+    "5.6": {
+      "element": "Benchmark suitability memo",
+      "value": null,
+      "status": "n/a - constructed (L3)"
+    },
+    "5.7": {
+      "element": "Case-law tracker",
+      "value": null,
+      "status": "n/a - cross-product tracker"
+    },
+    "6.1": {
+      "element": "Structure map",
+      "value": null,
+      "status": "pending"
+    },
+    "6.2": {
+      "element": "Strategy & instrument complexity",
+      "value": null,
+      "status": "pending"
+    },
+    "6.3": {
+      "element": "Conflicts & affiliated transactions",
+      "value": null,
+      "status": "pending"
+    },
+    "6.4": {
+      "element": "Tax reporting (1099 vs K-1)",
+      "value": null,
+      "status": "pending"
+    },
+    "6.5": {
+      "element": "Service-provider web",
+      "value": null,
+      "status": "pending"
+    },
+    "6.6": {
+      "element": "Plan operational fit",
+      "value": null,
+      "status": "pending"
+    },
+    "6.7": {
+      "element": "Participant communicability",
+      "value": null,
+      "status": "pending"
+    },
+    "6.8": {
+      "element": "Fiduciary capacity self-assessment",
+      "value": null,
+      "status": "n/a - workflow, not data"
+    }
+  }
+}

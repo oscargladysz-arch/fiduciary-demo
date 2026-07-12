@@ -1,0 +1,55 @@
+cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,extracted_by,verified_by,status
+1.1,Net total return series,PARTIAL: Class I NAV/share FY2022-FY2026: 12.35 / 14.14 / 15.81 / 17.55 / 19.77 (fiscal yr end Mar 31). Monthly series still to assemble from fact sheets.,N-CSR 2026-06-09 (acc 0001213900-26-054176*),Financial Highlights,"Net Asset Value per share, end of period $19.77",data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm,2026-07-09,Claude (spike),,partial
+1.2,Trailing & calendar-year returns,Class I avg annual total returns as of 3/31/2026: 1yr 14.60% / 3yr 13.28% / 5yr 15.31% / since inception 15.36%. FY total returns FY26-FY22: 14.60 / 12.59 / 12.68 / 16.10 / 20.77 (%).,N-CSR 2026-06-09 (acc 0001213900-26-054176*),Fund Performance + Financial Highlights,"Average Annual Total Returns as of March 31, 2026",data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm,2026-07-09,Claude (spike),,extracted-unverified
+1.3,Gross vs net spread,,,,,,,,,pending
+1.4,Distribution history & composition,,,,,,,,,pending
+1.5,Underlying sleeve/GP performance,,,,,,,,,pending
+1.6,Volatility & max drawdown,,,,,,,,,pending
+1.7,De-smoothed volatility,,,,,,,,,pending
+1.8,Risk-adjusted metrics (PME etc),,,,,,,,,pending
+1.9,Stress-window performance,,,,,,,,,pending
+1.10,Market price & premium/discount,,,,,,,,,n/a - listed-CEF only
+1.11,Track record & manager tenure,,,,,,,,,pending
+2.1,Management fee (rate AND base),"1.40% annualized on MANAGED ASSETS (not net assets - includes leverage), calculated monthly, paid quarterly. NOTE: fee-base trap from dictionary 2.1 confirmed in the wild.",N-CSR 2026-06-09 (acc 0001213900-26-054176*),Notes - Investment Management Fee,Investment Management Fee equal to 1.40% on an annualized basis of the Fund's Managed Assets,data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm,2026-07-09,Claude (spike),,extracted-unverified
+2.2,Incentive fee terms,PARTIAL: rate/hurdle not yet pulled; measured drag on NII ratio: 1.45% FY26 / 0.84% FY25 / 1.95% FY24 / 2.52% FY23. Rate lives in fee note / prospectus Incentive Fee section.,N-CSR 2026-06-09 (acc 0001213900-26-054176*),Financial Highlights footnote 5,If Incentive Fees... were included the ratio would have been lowered by 1.45%,data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm,2026-07-09,Claude (spike),,partial
+2.3,Total expense ratio & waivers,"Class I gross/net expenses FY26 3.40%/3.40%, FY25 2.93/2.93, FY24 4.26/4.26. Expense Limit: 1.45% R / 0.75% I / 1.00% D of avg daily net assets, EXCLUDING mgmt fee, incentive fee, AFFE, interest, taxes.",N-CSR 2026-06-09 (acc 0001213900-26-054176*),Financial Highlights + expense limit note,"do not exceed 1.45%, 0.75% and 1.00% ... Class R, Class I and Class D",data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm,2026-07-09,Claude (spike),,extracted-unverified
+2.4,AFFE,,,,,,,,,pending
+2.5,Underlying GP economics,,,,,,,,,pending
+2.6,Loads & servicing fees,,,,,,,,,pending
+2.7,Early repurchase fee,2.00% early repurchase fee if held under 1 year (FIFO).,N-CSR 2026-06-09 (acc 0001213900-26-054176*),Repurchase notes,less than one year ... subject to a 2.00% early repurchase fee,data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm,2026-07-09,Claude (spike),,extracted-unverified
+2.8,CIT fee schedule,,,,,,,,,n/a - CIT only
+2.9,Fee peer percentile,,,,,,,,,pending
+2.10,Value justification,,,,,,,,,pending
+3.1,Wrapper liquidity terms,"Quarterly tender offers (board-approved, NOT Rule 23c-3 interval). Most recent: up to 5.00% of net assets = approx $290,123,923 (approx 15,084,500 shares), optional +2.00% upsize without amendment. Implies fund net assets approx $5.80B (= 290,123,923 / 0.05).",SC TO-I 2026-05-06,"Offer to Purchase, Item 1","up to approximately 5.00% of the net assets of the Fund as of March 31, 2026",data/raw/hl_paf/SC TO-I_2026-05-06_ea0288793-01_sctoi.htm,2026-07-09,Claude (spike),,extracted-unverified
+3.2,Repurchase mechanics,,,,,,,,,pending
+3.3,Repurchase history,,,,,,,,,pending
+3.4,Portfolio liquidity profile,,,,,,,,,pending
+3.5,TDF/CIT liquidity sleeve,,,,,,,,,n/a - CIT only
+3.6,Fund leverage & facilities,"Line of credit payable $76,482,442 at FY26; total borrowings trend (000s) FY26 76,482 vs FY25 36,192.",N-CSR 2026-06-09 (acc 0001213900-26-054176*),Statement of Assets & Liabilities + Financial Highlights Senior Securities,"Line of credit payable 76,482,442",data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm,2026-07-09,Claude (spike),,extracted-unverified
+3.7,Plan participant liquidity demand,,,,,,,,,n/a - plan-side (Form 5500)
+3.8,Redemption stress test,,,,,,,,,pending
+3.9,Product-to-plan liquidity match,,,,,,,,,n/a - workflow output
+4.1,Valuation policy & NAV frequency,,,,,,,,,pending
+4.2,Fair-value hierarchy (L1/2/3),PARTIAL: transfers INTO Level 3 during period disclosed; full ASC 820 dollar table needs human read of fair-value note.,N-CSR 2026-06-09 (acc 0001213900-26-054176*),Fair Value Measurements note,certain investments ... were transferred into Level 3 during the period,data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm,2026-07-09,Claude (spike),,partial
+4.3,Independent valuation agent,,,,,,,,,pending
+4.4,Methodology by asset type,,,,,,,,,pending
+4.5,Auditor & opinion,"Cohen & Company, Ltd., Cleveland OH. Auditor of HL funds since 2020. Opinion dated May 29, 2026. NOTE: not Big-4 - a live evaluative datum for this cell.",N-CSR 2026-06-09 (acc 0001213900-26-054176*),Report of Independent Registered Public Accounting Firm,"We have served as the auditor ... since 2020. COHEN & COMPANY, LTD.",data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm,2026-07-09,Claude (spike),,extracted-unverified
+4.6,NAV restatement history,,,,,,,,,pending
+4.7,Premium/discount check,,,,,,,,,pending
+4.8,Smoothing diagnostics,,,,,,,,,pending
+4.9,CIT unit valuation,,,,,,,,,n/a - CIT only
+5.1,Self-declared benchmark,,,,,,,,,pending
+5.2,Public index series,,,,,,,,,pending
+5.3,Alt asset-class indices,,,,,,,,,pending
+5.4,Peer universe & returns,,,,,,,,,pending
+5.5,PME / Direct Alpha inputs,,,,,,,,,pending
+5.6,Benchmark suitability memo,,,,,,,,,n/a - constructed (L3)
+5.7,Case-law tracker,,,,,,,,,n/a - cross-product tracker
+6.1,Structure map,,,,,,,,,pending
+6.2,Strategy & instrument complexity,,,,,,,,,pending
+6.3,Conflicts & affiliated transactions,,,,,,,,,pending
+6.4,Tax reporting (1099 vs K-1),,,,,,,,,pending
+6.5,Service-provider web,,,,,,,,,pending
+6.6,Plan operational fit,,,,,,,,,pending
+6.7,Participant communicability,,,,,,,,,pending
+6.8,Fiduciary capacity self-assessment,,,,,,,,,"n/a - workflow, not data"
