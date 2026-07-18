@@ -66,7 +66,7 @@ st.sidebar.caption("Benchmark selection & six-factor evaluation — demo build")
 view = st.sidebar.radio(
     "View",
     ["Anchor Plan", "Candidate Roster", "Six-Factor Evaluation",
-     "Benchmark Selection"],
+     "Benchmark Selection", "Liquidity Match"],
     key="nav",
 )
 product_key = st.sidebar.selectbox(
@@ -211,11 +211,43 @@ def render_benchmark():
          for r in sel["rejected"]],
         width="stretch", hide_index=True)
 
+    memo = DATA / "memos" / f"{product_key}_decision_memo.docx"
+    if memo.exists():
+        st.download_button("Download decision memo (.docx)", memo.read_bytes(),
+                           file_name=memo.name, key="memo_dl")
+
+
+def render_liquidity():
+    p = PRODUCTS[product_key]
+    st.title("Product-to-Plan Liquidity Match")
+    st.subheader(p["fund_name"])
+    mp = DATA / "liquidity" / f"{product_key}_match.json"
+    if not mp.exists():
+        st.warning("Match pending for this product.")
+        return
+    m = json.loads(mp.read_text())
+    st.caption(f"Plan: {ANCHOR['display_label']} - liquidity tail "
+               f"{m['plan_inputs']['tail_share_pct']}% of accounts "
+               f"({int(m['plan_inputs']['separated_with_balances']):,} separated "
+               f"participants with balances).")
+    v = m["verdict"]
+    (st.success if v.startswith("aligned") else st.warning)(f"Verdict: {v.upper()}")
+    for r in m["reasons"]:
+        st.markdown(f"- {r}")
+    st.markdown("#### Scenario (ILLUSTRATIVE - adjustable parameters, not facts)")
+    sc = m["scenario"]
+    st.dataframe([{"parameter": k, "value": str(val)} for k, val in sc.items()],
+                 width="stretch", hide_index=True)
+    st.caption("Wrapper facts cited to cell(s) "
+               + str(m["wrapper_facts"]["source_cell"])
+               + " · citations: " + ", ".join(m["citations"]))
+
 
 VIEWS = {
     "Anchor Plan": render_anchor,
     "Candidate Roster": render_roster,
     "Six-Factor Evaluation": render_evaluation,
     "Benchmark Selection": render_benchmark,
+    "Liquidity Match": render_liquidity,
 }
 VIEWS[view]()

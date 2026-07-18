@@ -172,8 +172,13 @@
     },
     "3.7": {
       "element": "Plan participant liquidity demand",
-      "value": null,
-      "status": "n/a - plan-side (Form 5500)"
+      "value": "Plan-side demand profile (Form 5500 PY2024): 1,847 separated-with-balances = 36.1% of 5,120 accounts - the near-term liquidity tail; 3,281 active; zero retirees in pay status; 404(c) fully participant-directed.",
+      "status": "computed",
+      "source": "data/plans/anchor_plan.json",
+      "section": "participants",
+      "quote": "",
+      "extracted_by": "Claude (M6 pipeline)",
+      "verified_by": ""
     },
     "3.8": {
       "element": "Redemption stress test",
@@ -182,8 +187,13 @@
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": null,
-      "status": "n/a - workflow output"
+      "value": "Verdict: CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of aggregate NAV (Investor Shares) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
+      "status": "computed",
+      "source": "data/liquidity/kkr_kpec_match.json",
+      "section": "verdict + reasons",
+      "quote": "",
+      "extracted_by": "Claude (M6 pipeline)",
+      "verified_by": ""
     },
     "4.1": {
       "element": "Valuation policy & NAV frequency",

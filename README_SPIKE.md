@@ -1,29 +1,40 @@
-# Tark Drop v7.1 — Extraction Pass 2 (data-only mini-drop)
-### Tested live 2026-07-18. Coverage 15% → 22%; every product up; DXYZ resurrected; the roster's tax story found.
+# Tark Drop v8 — Increment 6: M5 + M6 + Ship Kit
+### Tested live 2026-07-18. The decision memo, the liquidity match, the demo script, and the deploy runbook. This is 8/10, pending your deploy click.
 
-## What's new
-1. **17 new/upgraded cells across all six products**, all cited. Highlights:
-   - **The K-1 finding (demo gold):** K-PEC issues **Schedule K-1s** (~75 days after year-end, may be delayed) — per dictionary 6.4, near-disqualifying operationally in DC plans. Meanwhile SPRIM's own prospectus *markets* "Form 1099 DIV or Form 1099-B tax reporting **instead of K-1s**" as a Favorable Structure bullet. The complexity factor's cleanest cross-product contrast, in the funds' own words.
-   - K-PEC repurchase caps confirmed: 5.0% of aggregate NAV quarterly. BREIT's 2022–24 gating confirmed in its own risk language ("periods of prorated fulfillment"). BREIT cap-rate rows extracted (Rental Housing 7.2%/5.4%, Industrial 7.5%/5.5%).
-   - CCLFX repurchase verbatim: "up to five percent (5%) of its outstanding shares" (N-23C3A) — **one item off Oscar's list.** PAF's stated comparators found (S&P 500 + MSCI World) and wired into the engine profile.
-   - **DXYZ 0% → 16%:** 2.00% management fee, 4.53% expense ratio, $438M net assets after the ~$324M 2025 ATM raise, NYSE listing language, Level-3 footnote, and market-value total returns of **+613.45% (2024) then −47.96% (2025)** — the fail case quantified from its own highlights.
-   - Two disciplined refusals: DXYZ's "KPMG" hit was the shareholder letter citing KPMG *research*, not the auditor; CCLFX's auditor signature still eluded the regex. Both stay honestly pending rather than wrongly seeded.
-2. **New status kind: `computed`** — L3 cells the pipeline has genuinely completed (CCLFX vol/de-smoothing/PME, DXYZ drawdown/price-series, PAF & SPRIM PME) now show :violet[● computed (pipeline)] with provenance pointing at `metrics.json` / the selection JSONs, and count toward coverage. Same validator requirements as extracted: value + source + provenance, no exceptions. This is the honest fix to "why is coverage so low" — some cells were done by code, and the meter now says so.
+## What's new in v8
+1. **`src/tark_memo.py` (M5)** — generates a per-product Word decision memo: rule citation (91 FR 16088), meaningful-benchmark language, six-factor findings table synthesized from the evidence cells, benchmark selection with scoring rationale and the **full rejection log**, the window-sensitivity disclosure, a provenance appendix, signature block. DXYZ gets the **escalation variant**: "no meaningful benchmark constructible — do not proceed," as a filed record. Six memos pre-generated in `data/memos/`; the Benchmark view now has a **Download decision memo** button. Visually verified per the docx skill (rendered to images and inspected).
+2. **`src/tark_liquidity.py` (M6)** — the product-to-plan match, three honestly separated layers: wrapper FACTS from cell 3.1 · the STRUCTURAL DIA test (daily 404(c) menus vs quarterly wrappers — names the bridging structures) · an ILLUSTRATIVE scenario (labeled, parameterized, never asserted as fact). Verdicts: BREIT **conditional-weak** (its own gating precedent), DXYZ **aligned-mechanical** (with the premium caveat), the rest **conditional** with capacity headroom shown. New app view **Liquidity Match**; cells 3.7/3.9 now computed with provenance. Coverage: **26%**.
+3. **`src/test_memo.py`** — fifth suite: memos exist, carry the rule cite, the PME, the CDLI rejection, the K-1 finding, the escalation — and never the sponsor's name.
+4. **Ship kit:** `requirements.txt` · `docs/demo_script.md` (the 7-minute walkthrough with talking beats) · deploy runbook below.
 
 ## Install & run
 ```
 cd ~/Projects/fiduciary-demo
-unzip -o ~/Downloads/tark_drop_v7_1.zip -d .
+unzip -o ~/Downloads/tark_drop_v8.zip -d .
 python src/validate_data.py
-python src/coverage.py
-git add -A && git commit -m "extraction pass 2: +17 cells, computed status, coverage 22%" && git push
+python src/test_memo.py
+python src/test_app.py
+streamlit run app.py
 ```
-Expected coverage: breit 20 · cclfx 29 · dxyz 16 · hl_paf 27 · kkr_kpec 18 · stepstone 22 · **TOTAL 22%**. The commit runs the full four-suite hook (~2 min). Then reload the app — the roster and the chips tell the new story.
+Walk the new **Liquidity Match** view (cclfx, then breit), then Benchmark → **Download decision memo** and open the docx. Then the hook and the close:
+```
+cat > .git/hooks/pre-commit << 'HOOK'
+#!/bin/sh
+source .venv/bin/activate 2>/dev/null
+python src/validate_data.py && python src/test_analytics.py && python src/test_benchmark.py && python src/test_memo.py && python src/test_app.py
+HOOK
+chmod +x .git/hooks/pre-commit
+git add -A && git commit -m "increment 6: M5 memo + M6 liquidity match + ship kit" && git push
+```
 
-## The shrunken human list
-- **Oscar (three short reads, updated):** PAF incentive-fee **rate** (the structure is now in; the % remains — 486BPOS "Incentive Fee" section) · PAF ASC 820 table (4.2) · CCLFX auditor line (one Cmd+F for "auditor since" in its N-CSR). DXYZ's auditor too if you're in the mood — same Cmd+F.
-- **CF2 (now load-bearing):** 42 seeded cells await verification — flip `extracted-unverified` → `verified`; plus the CCLFX TR-gap cross-check.
-- **Deliberately still pending, with pointers in the CSVs:** BREIT deduction rate + monthly proration tables · K-PEC early-fee rate + return-table values · SPRIM expense ratios · tax confirmations for paf/cclfx/breit/dxyz.
+## Deploy (your click, ~5 minutes)
+1. share.streamlit.io → sign in with GitHub → **New app**.
+2. Repo `oscargladysz-arch/fiduciary-demo`, branch `main`, file `app.py`. (Private repo is fine — grant Streamlit access when prompted.)
+3. Advanced settings → Python 3.12 → **Deploy**. The app is self-contained: all data committed, no secrets, no raw filings needed.
+4. Smoke-test the live URL against the demo script, all five views, memo download included.
 
-## Standing
-**Gate A: July 31 — thirteen days.** Increment 6 (memo generator + liquidity match + deploy) fires on "go."
+## The scoreboard, honestly
+**8/10 on the build plan** once the deploy link is live: all seven acceptance criteria pass — anchor plan · picker · six-factor scorecard with citations · index-agnostic benchmark engine with rejection log · liquidity match · memo export · DXYZ failing loudly — deployed, every number cited or labeled. The remaining two points are not code: practitioner validation of the methodology (Gate C), your §4 hand-worked PME (August), design polish, and six-product extraction depth.
+
+## Standing ledger
+Oscar's reads (PAF 2.2 rate + 4.2 · CCLFX/DXYZ auditor lines) · CF2's verification pass (54 seeded cells) + TR-gap check · CF1's FR read + kill-shot watch · **Gate A: July 31 — thirteen days** — and per the roadmap, the August methodology window opens right behind it.

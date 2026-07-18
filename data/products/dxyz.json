@@ -172,8 +172,13 @@
     },
     "3.7": {
       "element": "Plan participant liquidity demand",
-      "value": null,
-      "status": "n/a - plan-side (Form 5500)"
+      "value": "Plan-side demand profile (Form 5500 PY2024): 1,847 separated-with-balances = 36.1% of 5,120 accounts - the near-term liquidity tail; 3,281 active; zero retirees in pay status; 404(c) fully participant-directed.",
+      "status": "computed",
+      "source": "data/plans/anchor_plan.json",
+      "section": "participants",
+      "quote": "",
+      "extracted_by": "Claude (M6 pipeline)",
+      "verified_by": ""
     },
     "3.8": {
       "element": "Redemption stress test",
@@ -182,8 +187,13 @@
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": null,
-      "status": "n/a - workflow output"
+      "value": "Verdict: ALIGNED-MECHANICAL. Daily exchange liquidity mechanically satisfies daily participant dealing (3.1). BUT price-vs-NAV decoupling means participants transact at the premium/discount, not at portfolio value \u2014 the liquidity is real, the price basis is not (1.10, 4.7).",
+      "status": "computed",
+      "source": "data/liquidity/dxyz_match.json",
+      "section": "verdict + reasons",
+      "quote": "",
+      "extracted_by": "Claude (M6 pipeline)",
+      "verified_by": ""
     },
     "4.1": {
       "element": "Valuation policy & NAV frequency",

@@ -10,7 +10,7 @@ from streamlit.testing.v1 import AppTest
 
 APP = str(Path(__file__).resolve().parents[1] / "app.py")
 VIEWS = ["Anchor Plan", "Candidate Roster", "Six-Factor Evaluation",
-         "Benchmark Selection"]
+         "Benchmark Selection", "Liquidity Match"]
 PRODUCTS = ["breit", "cliffwater_cclfx", "dxyz", "hl_paf", "kkr_kpec",
             "stepstone_spm"]
 FORBIDDEN = "spotify"   # the anonymization rule, lowercased
@@ -94,6 +94,18 @@ check_true("evaluation hl_paf: Managed Assets fee-base trap on screen",
 _, ev2 = run_view("Six-Factor Evaluation", "breit")
 check_true("evaluation breit: 2%/5% repurchase caps on screen",
            "2% of aggregate NAV" in ev2)
+
+# 6. liquidity match view: verdicts, structural gap, illustrative labeling
+_, lc = run_view("Liquidity Match", "cliffwater_cclfx")
+check_true("liquidity cclfx: CONDITIONAL verdict", "CONDITIONAL" in lc)
+check_true("liquidity cclfx: structural gap named", "STRUCTURAL GAP" in lc)
+check_true("liquidity cclfx: scenario labeled ILLUSTRATIVE", "ILLUSTRATIVE" in lc)
+_, lb = run_view("Liquidity Match", "breit")
+check_true("liquidity breit: CONDITIONAL-WEAK on gating precedent",
+           "CONDITIONAL-WEAK" in lb and "prorated" in lb)
+_, ld = run_view("Liquidity Match", "dxyz")
+check_true("liquidity dxyz: aligned-mechanical with premium caveat",
+           "ALIGNED-MECHANICAL" in ld and "premium" in ld)
 
 print(f"\n{len(FAILS)} failure(s)." if FAILS else "\nAll app tests pass.")
 sys.exit(1 if FAILS else 0)

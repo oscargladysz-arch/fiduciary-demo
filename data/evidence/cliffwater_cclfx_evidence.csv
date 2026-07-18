@@ -26,9 +26,9 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 3.4,Portfolio liquidity profile,,,,,,,,,pending
 3.5,TDF/CIT liquidity sleeve,,,,,,,,,n/a - CIT only
 3.6,Fund leverage & facilities,Senior secured notes + revolving credit facility; $39.96B of holdings pledged as collateral at 3/31/2026 (vs $31.26B net assets -> roughly $8-9B leverage implied). Detail in Senior Notes note.,N-CSR 2026-06-08 (FY ended 3/31/2026),Schedule of Investments footnote + Senior Notes note,pledged as collateral for senior secured notes and revolving credit facility,,2026-07-18,Claude (Inc-1),,partial
-3.7,Plan participant liquidity demand,,,,,,,,,n/a - plan-side (Form 5500)
+3.7,Plan participant liquidity demand,"Plan-side demand profile (Form 5500 PY2024): 1,847 separated-with-balances = 36.1% of 5,120 accounts - the near-term liquidity tail; 3,281 active; zero retirees in pay status; 404(c) fully participant-directed.",data/plans/anchor_plan.json,participants,,,2026-07-18,Claude (M6 pipeline),,computed
 3.8,Redemption stress test,,,,,,,,,pending
-3.9,Product-to-plan liquidity match,,,,,,,,,n/a - workflow output
+3.9,Product-to-plan liquidity match,"Verdict: CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure — CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of outstanding shares — a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",data/liquidity/cliffwater_cclfx_match.json,verdict + reasons,,,2026-07-18,Claude (M6 pipeline),,computed
 4.1,Valuation policy & NAV frequency,,,,,,,,,pending
 4.2,Fair-value hierarchy (L1/2/3),,,,,,,,,pending
 4.3,Independent valuation agent,,,,,,,,,pending
