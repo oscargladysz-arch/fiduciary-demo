@@ -182,6 +182,9 @@ def validate_product(key: str) -> list[str]:
             errs.append(f"{key}:{cid}: status '{st}' but no value")
         if status_kind(st) in ("extracted", "verified") and not cell.get("source"):
             errs.append(f"{key}:{cid}: status '{st}' but no source")
+        if status_kind(st) in ("extracted", "verified") and not str(cell.get("extracted_by", "")).strip():
+            errs.append(f"{key}:{cid}: status '{st}' but empty extracted_by "
+                        f"(provenance is part of the record)")
 
     # evidence CSV cross-check
     try:
