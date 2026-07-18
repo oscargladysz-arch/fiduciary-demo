@@ -1,9 +1,9 @@
 {
-  "product_key": "stepstone_spm",
-  "fund_name": "StepStone Private Markets",
-  "cik": "1789470",
-  "wrapper": "tender-offer fund ('40 Act)",
-  "note": "Current base prospectus is FRESH (486BPOS 2025-10-20) + fat 424B3 2025-12-31 \u2014 better than PAF's 2021 base.",
+  "product_key": "breit",
+  "fund_name": "Blackstone Real Estate Income Trust Inc",
+  "cik": "1662972",
+  "wrapper": "non-traded REIT ('34 Act reporting)",
+  "note": "The gating case study (2022-24). Early Repurchase Deduction exists - 2.7 is ACTIVE here.",
   "cells": {
     "1.1": {
       "element": "Net total return series",
@@ -12,13 +12,8 @@
     },
     "1.2": {
       "element": "Trailing & calendar-year returns",
-      "value": "Class I FY2026 total return 10.47%. AATR as of 3/31/2026: Class I 1yr 10.47% / 5yr 12.92% / SI 19.19%; Class D 10.19 / 12.72 / 18.96. Class I/D/S inception 10/1/2020; Class R 1/2/2026.",
-      "status": "extracted-unverified",
-      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
-      "section": "Shareholder letter + Fund Performance",
-      "quote": "SPRIM (Class I) generated a total return of 10.47% for the fiscal year",
-      "extracted_by": "Claude (Inc-1 2026-07-18)",
-      "verified_by": ""
+      "value": null,
+      "status": "pending"
     },
     "1.3": {
       "element": "Gross vs net spread",
@@ -27,8 +22,13 @@
     },
     "1.4": {
       "element": "Distribution history & composition",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: $2.4B monthly net distributions declared FY2025; avg annualized distribution rate by class (I 4.8%, S 3.9%, D 4.6%, T 4.0%). ROC split pending.",
+      "status": "partial",
+      "source": "10-K 2026-02-27 (FY2025)",
+      "section": "Distributions table",
+      "quote": "",
+      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "verified_by": ""
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
@@ -58,7 +58,7 @@
     "1.10": {
       "element": "Market price & premium/discount",
       "value": null,
-      "status": "n/a - listed-CEF only"
+      "status": "n/a - not exchange-listed"
     },
     "1.11": {
       "element": "Track record & manager tenure",
@@ -67,21 +67,21 @@
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
-      "value": "1.40% annualized on daily NET ASSETS (contrast: PAF charges same 1.40% on MANAGED ASSETS incl. leverage \u2014 fee-base comparison lands).",
+      "value": "1.25% of NAV per annum, payable monthly (can be paid in cash or shares). Side fee: 1.0% of gross rents on DST program assets.",
       "status": "extracted-unverified",
-      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
-      "section": "Note 5 - Investment Adviser",
-      "quote": "management fee ... equal to 1.40% on an annualized basis of the Fund's daily net assets",
+      "source": "10-K 2026-02-27 (FY2025)",
+      "section": "Accrued Management Fee note",
+      "quote": "annual management fee equal to 1.25% of the Company's NAV, payable monthly",
       "extracted_by": "Claude (Inc-1 2026-07-18)",
       "verified_by": ""
     },
     "2.2": {
       "element": "Incentive fee terms",
-      "value": "No fund-level incentive fee identified in N-CSR or prospectus. Underlying Investment Funds charge 1.00%-2.00% mgmt + performance fees (the AFFE layer).",
+      "value": "Performance participation w/ hurdle + high-water mechanics - AND a live miss: FY2024 total return did not exceed the hurdle, producing a $105.0M Quarterly Shortfall; from 1/1/2025 the 2024 Shortfall Obligation accrues 5% annual interest compounded quarterly. Real-world fee mechanics for the demo.",
       "status": "partial",
-      "source": "486BPOS 2025-10-20",
-      "section": "Fund fees / underlying funds",
-      "quote": "Investment Funds ... generally charge a management fee of 1.00% to 2.00%",
+      "source": "10-K 2026-02-27 (FY2025)",
+      "section": "Performance participation / Shortfall disclosure",
+      "quote": "the Company's total return did not exceed the year-to-date hurdle amount",
       "extracted_by": "Claude (Inc-1 2026-07-18)",
       "verified_by": ""
     },
@@ -127,11 +127,11 @@
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
-      "value": "Quarterly tender offers: up to 5% of OUTSTANDING SHARES (vs PAF's 5% of net assets - different cap base), purchased at NAV.",
+      "value": "Repurchase caps: 2% of aggregate NAV per MONTH, 5% per QUARTER (measured on prior-period NAV; Early Repurchase Deduction excluded). Board may modify/suspend if requests burden liquidity.",
       "status": "extracted-unverified",
-      "source": "SC TO-I 2026-05-12",
-      "section": "Offer to Purchase",
-      "quote": "offering to purchase Shares in an amount up to 5% of the outstanding shares",
+      "source": "10-K 2026-02-27 (FY2025)",
+      "section": "Share repurchase plan",
+      "quote": "no more than 2% of our aggregate NAV ... and, in any calendar quarter ... no more than 5%",
       "extracted_by": "Claude (Inc-1 2026-07-18)",
       "verified_by": ""
     },
@@ -142,8 +142,13 @@
     },
     "3.3": {
       "element": "Repurchase history",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: suspension/modification authority language captured; the 2022-2024 proration history (requests vs fulfilled) pending targeted read of the repurchase activity tables.",
+      "status": "partial",
+      "source": "10-K 2026-02-27 (FY2025)",
+      "section": "",
+      "quote": "",
+      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "verified_by": ""
     },
     "3.4": {
       "element": "Portfolio liquidity profile",
@@ -157,11 +162,11 @@
     },
     "3.6": {
       "element": "Fund leverage & facilities",
-      "value": "Cash $247.3M + $300.0M undrawn credit facility as of 3/31/2026. Fund net assets $5,828.9M; 533 positions.",
+      "value": "Charter leverage limit: borrowing capped at 300% of cost of net assets (approx 75% of cost of investments) absent independent-director override with disclosure.",
       "status": "extracted-unverified",
-      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
-      "section": "Shareholder letter",
-      "quote": "held $247.3 million of cash and had $300.0 million available ... under its credit facility",
+      "source": "10-K 2026-02-27 (FY2025)",
+      "section": "Charter borrowing limitation",
+      "quote": "precludes us from borrowing in excess of 300% of the cost of our net assets",
       "extracted_by": "Claude (Inc-1 2026-07-18)",
       "verified_by": ""
     },
@@ -197,16 +202,21 @@
     },
     "4.4": {
       "element": "Methodology by asset type",
-      "value": null,
-      "status": "pending"
+      "value": "Appraisal assumptions DISCLOSED: weighted avg discount rate + exit cap rate by property type as of 12/31/2025 (e.g., Rental Housing 7.2% discount / 5.4% exit cap). Full table pending read - cell 4.4's richest source on the roster.",
+      "status": "partial",
+      "source": "10-K 2026-02-27 (FY2025)",
+      "section": "Valuation key assumptions table",
+      "quote": "weighted average discount rate and exit capitalization rate by property type",
+      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "verified_by": ""
     },
     "4.5": {
       "element": "Auditor & opinion",
-      "value": "Ernst & Young LLP, New York (Big-4).",
+      "value": "Deloitte & Touche LLP, New York; auditor since 2016 (Big-4).",
       "status": "extracted-unverified",
-      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
+      "source": "10-K 2026-02-27 (FY2025)",
       "section": "Report of Independent Registered Public Accounting Firm",
-      "quote": "Ernst & Young LLP ... New York, NY",
+      "quote": "/s/ Deloitte & Touche LLP ... auditor since 2016",
       "extracted_by": "Claude (Inc-1 2026-07-18)",
       "verified_by": ""
     },
@@ -218,7 +228,7 @@
     "4.7": {
       "element": "Premium/discount check",
       "value": null,
-      "status": "pending"
+      "status": "n/a - not exchange-listed"
     },
     "4.8": {
       "element": "Smoothing diagnostics",
@@ -232,13 +242,8 @@
     },
     "5.1": {
       "element": "Self-declared benchmark",
-      "value": "Stated primary benchmark: MSCI World Index.",
-      "status": "extracted-unverified",
-      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
-      "section": "Shareholder letter",
-      "quote": "the MSCI World Index, SPRIM's primary benchmark",
-      "extracted_by": "Claude (Inc-1 2026-07-18)",
-      "verified_by": ""
+      "value": null,
+      "status": "pending"
     },
     "5.2": {
       "element": "Public index series",

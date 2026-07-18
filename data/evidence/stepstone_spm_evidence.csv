@@ -1,6 +1,6 @@
 cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,extracted_by,verified_by,status
 1.1,Net total return series,,,,,,,,,pending
-1.2,Trailing & calendar-year returns,,,,,,,,,pending
+1.2,Trailing & calendar-year returns,Class I FY2026 total return 10.47%. AATR as of 3/31/2026: Class I 1yr 10.47% / 5yr 12.92% / SI 19.19%; Class D 10.19 / 12.72 / 18.96. Class I/D/S inception 10/1/2020; Class R 1/2/2026.,N-CSR 2026-06-09 (FY ended 3/31/2026),Shareholder letter + Fund Performance,SPRIM (Class I) generated a total return of 10.47% for the fiscal year,data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm,2026-07-18,Claude (Inc-1),,extracted-unverified
 1.3,Gross vs net spread,,,,,,,,,pending
 1.4,Distribution history & composition,,,,,,,,,pending
 1.5,Underlying sleeve/GP performance,,,,,,,,,pending
@@ -10,8 +10,8 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 1.9,Stress-window performance,,,,,,,,,pending
 1.10,Market price & premium/discount,,,,,,,,,n/a - listed-CEF only
 1.11,Track record & manager tenure,,,,,,,,,pending
-2.1,Management fee (rate AND base),,,,,,,,,pending
-2.2,Incentive fee terms,,,,,,,,,pending
+2.1,Management fee (rate AND base),1.40% annualized on daily NET ASSETS (contrast: PAF charges same 1.40% on MANAGED ASSETS incl. leverage — fee-base comparison lands).,N-CSR 2026-06-09 (FY ended 3/31/2026),Note 5 - Investment Adviser,management fee ... equal to 1.40% on an annualized basis of the Fund's daily net assets,data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm,2026-07-18,Claude (Inc-1),,extracted-unverified
+2.2,Incentive fee terms,No fund-level incentive fee identified in N-CSR or prospectus. Underlying Investment Funds charge 1.00%-2.00% mgmt + performance fees (the AFFE layer).,486BPOS 2025-10-20,Fund fees / underlying funds,Investment Funds ... generally charge a management fee of 1.00% to 2.00%,data/raw/stepstone_spm/486BPOS_2025-10-20_d60278d486bpos.htm,2026-07-18,Claude (Inc-1),,partial
 2.3,Total expense ratio & waivers,,,,,,,,,pending
 2.4,AFFE,,,,,,,,,pending
 2.5,Underlying GP economics,,,,,,,,,pending
@@ -20,12 +20,12 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 2.8,CIT fee schedule,,,,,,,,,n/a - CIT only
 2.9,Fee peer percentile,,,,,,,,,pending
 2.10,Value justification,,,,,,,,,pending
-3.1,Wrapper liquidity terms,,,,,,,,,pending
+3.1,Wrapper liquidity terms,"Quarterly tender offers: up to 5% of OUTSTANDING SHARES (vs PAF's 5% of net assets - different cap base), purchased at NAV.",SC TO-I 2026-05-12,Offer to Purchase,offering to purchase Shares in an amount up to 5% of the outstanding shares,data/raw/stepstone_spm/SC TO-I_2026-05-12_na-20260512.htm,2026-07-18,Claude (Inc-1),,extracted-unverified
 3.2,Repurchase mechanics,,,,,,,,,pending
 3.3,Repurchase history,,,,,,,,,pending
 3.4,Portfolio liquidity profile,,,,,,,,,pending
 3.5,TDF/CIT liquidity sleeve,,,,,,,,,n/a - CIT only
-3.6,Fund leverage & facilities,,,,,,,,,pending
+3.6,Fund leverage & facilities,"Cash $247.3M + $300.0M undrawn credit facility as of 3/31/2026. Fund net assets $5,828.9M; 533 positions.",N-CSR 2026-06-09 (FY ended 3/31/2026),Shareholder letter,held $247.3 million of cash and had $300.0 million available ... under its credit facility,,2026-07-18,Claude (Inc-1),,extracted-unverified
 3.7,Plan participant liquidity demand,,,,,,,,,n/a - plan-side (Form 5500)
 3.8,Redemption stress test,,,,,,,,,pending
 3.9,Product-to-plan liquidity match,,,,,,,,,n/a - workflow output
@@ -33,12 +33,12 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 4.2,Fair-value hierarchy (L1/2/3),,,,,,,,,pending
 4.3,Independent valuation agent,,,,,,,,,pending
 4.4,Methodology by asset type,,,,,,,,,pending
-4.5,Auditor & opinion,,,,,,,,,pending
+4.5,Auditor & opinion,"Ernst & Young LLP, New York (Big-4).",N-CSR 2026-06-09 (FY ended 3/31/2026),Report of Independent Registered Public Accounting Firm,"Ernst & Young LLP ... New York, NY",,2026-07-18,Claude (Inc-1),,extracted-unverified
 4.6,NAV restatement history,,,,,,,,,pending
 4.7,Premium/discount check,,,,,,,,,pending
 4.8,Smoothing diagnostics,,,,,,,,,pending
 4.9,CIT unit valuation,,,,,,,,,n/a - CIT only
-5.1,Self-declared benchmark,,,,,,,,,pending
+5.1,Self-declared benchmark,Stated primary benchmark: MSCI World Index.,N-CSR 2026-06-09 (FY ended 3/31/2026),Shareholder letter,"the MSCI World Index, SPRIM's primary benchmark",,2026-07-18,Claude (Inc-1),,extracted-unverified
 5.2,Public index series,,,,,,,,,pending
 5.3,Alt asset-class indices,,,,,,,,,pending
 5.4,Peer universe & returns,,,,,,,,,pending

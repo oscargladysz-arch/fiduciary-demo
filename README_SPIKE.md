@@ -1,38 +1,30 @@
-# Tark Spike v2 — Pipeline + 4 Products + Anchor Plan
-### Tested against live EDGAR + DOL EBSA data 2026-07-12. Drop into `~/Projects/fiduciary-demo`, run once, commit.
+# Tark Drop v4 — Increment 2: M0, the Data Contract
+### Tested live 2026-07-18. The folder of JSONs is now a validated, single-source-of-truth data layer.
 
-## What's new in v2 (over v1)
-1. **Anchor plan locked and extracted** — `data/plans/anchor_plan.json`: real Form 5500 / Schedule H economics for the chosen plan (plan-year 2024): net assets $565.8M (up 24.8% YoY), 5,120 accounts, avg balance $110,515, admin expense ratio 0.098%, 404(c) fully participant-directed (DIA framework squarely applies). Sponsor identity kept in a private field; **display label is "US media/technology company 401(k) plan (~$570M, NY)" — the sponsor name never appears on demo surfaces.**
-2. **Roster CLOSED at six** — `cliffwater_cclfx` added to the registry: TRUE Rule 23c-3 interval fund, private credit, ~$28B, adviser publishes the CDLI index (cell 5.3 tie-in).
-3. **Fetcher upgrade: `history_sets`** — pulls the N most recent filings of a form as a time series. First use: CCLFX's 8 quarterly N-23C3A repurchase notifications (2024-07 → 2026-05) = cell 3.3 as STRUCTURED DATA, unique among the roster.
-4. **Scaffolds for products 2–4** — wrapper-aware evidence CSVs + JSONs for `stepstone_spm`, `dxyz`, `cliffwater_cclfx` (DXYZ's premium/discount cells marked ACTIVE; its tender cells n/a; etc.).
-5. **Methodology skeleton** — `docs/benchmark_methodology_skeleton.md`: the section-by-section structure (with formula slots and MUST-ANSWER prompts) for the August design doc. §4's worked PAF example is the Gate C review artifact.
+## What's new in v4 (over v3)
+1. **`src/tark_data.py` — the M0 library.** One canonical cell registry (54 cells, 6 factors), one status vocabulary, and every loader the rest of the build consumes: `load_products()`, `cells_by_factor()`, `load_anchor_plan()`, `load_series()`, `load_evidence()`, `load_manifest()`. From here on, M2 (analytics), M3 (benchmark engine), M4 (UI), and M5 (memo) import from this module and re-declare nothing. Decision confirmed from the plan: **no SQLite** — six products don't need a database; "SQLite at most" is satisfied by less.
+2. **`src/validate_data.py` — the integrity gate.** Checks every product against the registry (cell completeness, element-label drift, status vocabulary, extracted-implies-value-and-source), cross-checks evidence CSVs against product JSONs (catches silent drift between the two), recomputes the anchor plan's derived figures from primitives, and sanity-checks both daily series (ascending dates, positive closes, manifest match). Exit 0/1 — **run it before every commit.**
+3. **Proof it bites.** First run: all clean. Then a negative test — two violations deliberately injected — and the validator caught both **plus a third it found on its own** (the JSON/CSV status drift from the injected status change). Restored, clean again. A validator you've only seen pass is a validator you can't trust; this one has turned red on demand.
+4. **`src/coverage.py` refactored** onto the shared layer — same numbers (15% total), one source of truth for status semantics.
 
-## Install & run (venv active)
+## Install & run
 ```
 cd ~/Projects/fiduciary-demo
-unzip -o ~/Downloads/tark_spike_v2.zip
-python src/fetch_edgar.py hl_paf stepstone_spm dxyz cliffwater_cclfx
-git add -A && git commit -m "spike v2: 4 products + cliffwater + anchor plan + methodology skeleton" && git push
+unzip -o ~/Downloads/tark_drop_v4.zip -d .
+python src/validate_data.py
+python src/coverage.py
+git add -A && git commit -m "increment 2: M0 data layer + validator" && git push
 ```
-Heads-up: CCLFX's annual report is 66MB and its holdings file 133MB — that product's fetch takes a minute or two. All raw filings stay gitignored; the manifest (28 rows) makes every pull reproducible.
+Expected: `All clean — data contract holds.` then the coverage table (TOTAL 15%).
 
-## Roster — FINAL (6/6)
-| Key | Fund | Wrapper | Role |
-|---|---|---|---|
-| hl_paf | Hamilton Lane Private Assets Fund | tender-offer | seeded first column (9 cells extracted) |
-| stepstone_spm | StepStone Private Markets | tender-offer | fresh 2025 base prospectus |
-| kkr_kpec | KKR Private Equity Conglomerate | '34 Act non-traded | 10-K data lane |
-| breit | Blackstone REIT | '34 Act non-traded REIT | RE + the gating case study |
-| cliffwater_cclfx | Cliffwater Corporate Lending Fund | TRUE interval (23c-3) | private credit + structured repurchase series |
-| dxyz | Destiny Tech100 | listed CEF | THE FAIL CASE |
-Excluded (documented in fetcher): bxpe (Reg D), capital_group_kkr (unresolved), BlackRock/Great Gray TDF (CIT — partnership slide).
+## The new habit
+`python src/validate_data.py` before every commit, forever. When your extraction hour or CF2's verification pass edits an evidence CSV, the validator is what catches a typo'd status or a value-less "verified" before it reaches a demo screen.
 
-## Next tasks by owner
-- **Oscar:** run the 4 commands; extraction hour on hl_paf per `docs/extraction_worksheet.md` (5.1, 2.2, 4.2 first); then the same pass on cclfx's latest N-23C3A (repurchase % = ten-minute win).
-- **CF2:** PAF N-CSR Schedule of Investments = the underlying-GP target list; verify all seeded hl_paf rows.
-- **CF1:** Federal Register Examples read (v0.9 → v1.0) — start date still owed; kill-shot watch per README v1 stands.
-- **Claude (queued):** seed-extraction pass on stepstone + cclfx; anchor-plan Streamlit screen comes AFTER Gate A/B per roadmap.
+## Open human items (unchanged from v3)
+Oscar's three short reads (PAF 2.2 + 4.2; CCLFX repurchase % + auditor line) · CF2's verification pass · targeted-read pointers in the CSVs for K-PEC and BREIT tables.
 
-## Standing guardrails
-Script fetches, humans extract, CF2 verifies · every number cited or labeled illustrative · anonymize the sponsor on ALL demo surfaces · discovery outranks code until Gate B (Sep 7) · **Gate A (equity / Citi OBA / kill criteria) = July 31.**
+## Next from Claude — Increment 3 (M2 analytics core)
+Returns/vol/drawdown, AR(1) de-smoothing, Kaplan-Schoar PME, Direct Alpha — pure functions, unit-tested on hand-checkable toy cases, then run against CCLFX's 1,759-point series and the annual filing data. Your §4 hand-worked PAF example (August window) remains the acceptance test of that code. Nothing needed to start.
+
+## Standing
+Gate A: **July 31.** Discovery ledger unchanged.

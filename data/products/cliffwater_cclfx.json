@@ -7,13 +7,23 @@
   "cells": {
     "1.1": {
       "element": "Net total return series",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: NAV/share FY21-FY26: 10.60 / 10.79 / 10.67 / 10.55 / 10.83 / 10.52. Net assets $4.73B - $6.74B - $11.08B - $17.87B - $28.09B - $31.26B (explosive growth). Daily NAV series via ticker CCLFX (see data/series/).",
+      "status": "partial",
+      "source": "N-CSR 2026-06-08 (FY ended 3/31/2026)",
+      "section": "Financial Highlights",
+      "quote": "",
+      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "verified_by": ""
     },
     "1.2": {
       "element": "Trailing & calendar-year returns",
-      "value": null,
-      "status": "pending"
+      "value": "AATR as of 3/31/2026: 1yr 7.63% / 3yr 10.89% / 5yr 9.79% / SI 9.34% (inception 6/5/2019) vs Morningstar LSTA US Leveraged Loan Index 4.81 / 8.00 / 5.93 / 5.51. FY total returns FY26-FY21: 7.61 / 11.58 / 13.34 / 7.06 / 1.79 / 10.38.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-08 (FY ended 3/31/2026)",
+      "section": "Fund Performance + Financial Highlights",
+      "quote": "net annualized return of 9.34% from its June 5, 2019, inception",
+      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "verified_by": ""
     },
     "1.3": {
       "element": "Gross vs net spread",
@@ -62,18 +72,33 @@
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
-      "value": null,
-      "status": "pending"
+      "value": "1.00% annualized on daily NET assets, paid monthly.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-08 (FY ended 3/31/2026)",
+      "section": "Investment Management Agreement note",
+      "quote": "Investment Management Fee equal to 1.00% on an annualized basis of the Fund's daily net assets",
+      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "verified_by": ""
     },
     "2.2": {
       "element": "Incentive fee terms",
-      "value": null,
-      "status": "pending"
+      "value": "No incentive fee identified in fee note (management fee only). Confirm in prospectus.",
+      "status": "partial",
+      "source": "N-CSR 2026-06-08 (FY ended 3/31/2026)",
+      "section": "",
+      "quote": "",
+      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "verified_by": ""
     },
     "2.3": {
       "element": "Total expense ratio & waivers",
-      "value": null,
-      "status": "pending"
+      "value": "Expense ratios (before waivers, FY26): 1.36% excluding interest expense; 3.31% including interest expense. History (excl-interest): FY25 1.32 / FY24 1.20 / FY23 1.23 / FY22 1.28 / FY21 1.32. The interest-expense gap IS the leverage cost story.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-08 (FY ended 3/31/2026)",
+      "section": "Financial Highlights ratios",
+      "quote": "Ratio of expenses to average net assets (excluding interest expense) ... 1.36%",
+      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "verified_by": ""
     },
     "2.4": {
       "element": "AFFE",
@@ -137,8 +162,13 @@
     },
     "3.6": {
       "element": "Fund leverage & facilities",
-      "value": null,
-      "status": "pending"
+      "value": "Senior secured notes + revolving credit facility; $39.96B of holdings pledged as collateral at 3/31/2026 (vs $31.26B net assets -> roughly $8-9B leverage implied). Detail in Senior Notes note.",
+      "status": "partial",
+      "source": "N-CSR 2026-06-08 (FY ended 3/31/2026)",
+      "section": "Schedule of Investments footnote + Senior Notes note",
+      "quote": "pledged as collateral for senior secured notes and revolving credit facility",
+      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "verified_by": ""
     },
     "3.7": {
       "element": "Plan participant liquidity demand",
@@ -192,8 +222,13 @@
     },
     "4.8": {
       "element": "Smoothing diagnostics",
-      "value": null,
-      "status": "pending"
+      "value": "SMOOTHING FLAG (fund's own disclosure): annualized std dev 1.71% since inception vs 6.15% for the loan index - textbook appraisal-NAV smoothing signature. Prime de-smoothing demo case.",
+      "status": "partial",
+      "source": "N-CSR 2026-06-08 (FY ended 3/31/2026)",
+      "section": "Fund Performance",
+      "quote": "1.71% annualized standard deviation ... compared to 6.15%",
+      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "verified_by": ""
     },
     "4.9": {
       "element": "CIT unit valuation",
@@ -202,8 +237,13 @@
     },
     "5.1": {
       "element": "Self-declared benchmark",
-      "value": null,
-      "status": "pending"
+      "value": "Stated comparators: Morningstar LSTA US Leveraged Loan Index (primary) + a Bloomberg intermediate investment-grade bond index (secondary). Adviser publishes the Cliffwater Direct Lending Index (CDLI) - provider-independence question for the rubric.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-08 (FY ended 3/31/2026)",
+      "section": "Fund Performance",
+      "quote": "compared to ... the Morningstar LSTA US Leveraged Loan Index",
+      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "verified_by": ""
     },
     "5.2": {
       "element": "Public index series",

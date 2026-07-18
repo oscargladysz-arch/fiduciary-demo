@@ -1,0 +1,55 @@
+cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,extracted_by,verified_by,status
+1.1,Net total return series,,,,,,,,,pending
+1.2,Trailing & calendar-year returns,"PARTIAL: per-class Transactional NAV Total Return table exists (Classes D/I/S/U/R-D/R-I...); values pending table read. 27 portfolio companies; $3,848.7M invested in FY2025.",10-K 2026-03-26 (FY2025),Total Returns table,,,2026-07-18,Claude (Inc-1),,partial
+1.3,Gross vs net spread,,,,,,,,,pending
+1.4,Distribution history & composition,,,,,,,,,pending
+1.5,Underlying sleeve/GP performance,,,,,,,,,pending
+1.6,Volatility & max drawdown,,,,,,,,,pending
+1.7,De-smoothed volatility,,,,,,,,,pending
+1.8,Risk-adjusted metrics (PME etc),,,,,,,,,pending
+1.9,Stress-window performance,,,,,,,,,pending
+1.10,Market price & premium/discount,,,,,,,,,n/a - not exchange-listed
+1.11,Track record & manager tenure,,,,,,,,,pending
+2.1,Management fee (rate AND base),"1.25% per annum of month-end NAV (Investor Shares: S/D/I/U et al.), paid monthly.",10-K 2026-03-26 (FY2025),Management Agreement note,management fee ... equal to (i) 1.25% per annum of the month-end Net Asset Value,data/raw/kkr_kpec/10-K_2026-03-26_kkr-20251231.htm,2026-07-18,Claude (Inc-1),,extracted-unverified
+2.2,Incentive fee terms,"Performance Participation Allocation: 15.0% of Total Return on Investor Shares, subject to 5.0% annual Hurdle + High Water Mark + 100% Catch-Up. (Richer than BREIT's structure - cross-product comparison.)",10-K 2026-03-26 (FY2025),LLC Agreement / Performance Participation,"15.0% of the Total Return ... subject to a 5.0% Hurdle Amount and a High Water Mark, with a 100% Catch-Up",,2026-07-18,Claude (Inc-1),,extracted-unverified
+2.3,Total expense ratio & waivers,"PARTIAL: Expense Limitation Agreement capped Specified Expenses at 0.60% 'through and including June 30, 2025' - expiry is itself an evaluative datum. Current status pending read.",10-K 2026-03-26 (FY2025),Expense Limitation Agreement,do not exceed 0.60%,,2026-07-18,Claude (Inc-1),,partial
+2.4,AFFE,,,,,,,,,pending
+2.5,Underlying GP economics,,,,,,,,,pending
+2.6,Loads & servicing fees,,,,,,,,,pending
+2.7,Early repurchase fee,,,,,,,,,pending
+2.8,CIT fee schedule,,,,,,,,,n/a - CIT only
+2.9,Fee peer percentile,,,,,,,,,pending
+2.10,Value justification,,,,,,,,,pending
+3.1,Wrapper liquidity terms,PARTIAL: share repurchase plan exists (DRIP interaction language captured); percentage caps and cadence pending targeted read of Share Repurchases section.,10-K 2026-03-26 (FY2025),,,,2026-07-18,Claude (Inc-1),,partial
+3.2,Repurchase mechanics,,,,,,,,,pending
+3.3,Repurchase history,,,,,,,,,pending
+3.4,Portfolio liquidity profile,,,,,,,,,pending
+3.5,TDF/CIT liquidity sleeve,,,,,,,,,n/a - CIT only
+3.6,Fund leverage & facilities,,,,,,,,,pending
+3.7,Plan participant liquidity demand,,,,,,,,,n/a - plan-side (Form 5500)
+3.8,Redemption stress test,,,,,,,,,pending
+3.9,Product-to-plan liquidity match,,,,,,,,,n/a - workflow output
+4.1,Valuation policy & NAV frequency,,,,,,,,,pending
+4.2,Fair-value hierarchy (L1/2/3),,,,,,,,,pending
+4.3,Independent valuation agent,,,,,,,,,pending
+4.4,Methodology by asset type,,,,,,,,,pending
+4.5,Auditor & opinion,"Deloitte & Touche LLP, San Francisco; auditor since 2022 (Big-4).",10-K 2026-03-26 (FY2025),Report of Independent Registered Public Accounting Firm,/s/ Deloitte & Touche LLP ... auditor since 2022,,2026-07-18,Claude (Inc-1),,extracted-unverified
+4.6,NAV restatement history,,,,,,,,,pending
+4.7,Premium/discount check,,,,,,,,,n/a - not exchange-listed
+4.8,Smoothing diagnostics,,,,,,,,,pending
+4.9,CIT unit valuation,,,,,,,,,n/a - CIT only
+5.1,Self-declared benchmark,,,,,,,,,pending
+5.2,Public index series,,,,,,,,,pending
+5.3,Alt asset-class indices,,,,,,,,,pending
+5.4,Peer universe & returns,,,,,,,,,pending
+5.5,PME / Direct Alpha inputs,,,,,,,,,pending
+5.6,Benchmark suitability memo,,,,,,,,,n/a - constructed (L3)
+5.7,Case-law tracker,,,,,,,,,n/a - cross-product tracker
+6.1,Structure map,,,,,,,,,pending
+6.2,Strategy & instrument complexity,,,,,,,,,pending
+6.3,Conflicts & affiliated transactions,,,,,,,,,pending
+6.4,Tax reporting (1099 vs K-1),,,,,,,,,pending
+6.5,Service-provider web,,,,,,,,,pending
+6.6,Plan operational fit,,,,,,,,,pending
+6.7,Participant communicability,,,,,,,,,pending
+6.8,Fiduciary capacity self-assessment,,,,,,,,,"n/a - workflow, not data"

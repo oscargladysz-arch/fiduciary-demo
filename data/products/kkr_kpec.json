@@ -1,9 +1,9 @@
 {
-  "product_key": "stepstone_spm",
-  "fund_name": "StepStone Private Markets",
-  "cik": "1789470",
-  "wrapper": "tender-offer fund ('40 Act)",
-  "note": "Current base prospectus is FRESH (486BPOS 2025-10-20) + fat 424B3 2025-12-31 \u2014 better than PAF's 2021 base.",
+  "product_key": "kkr_kpec",
+  "fund_name": "KKR Private Equity Conglomerate LLC",
+  "cik": "1957845",
+  "wrapper": "non-traded '34 Act reporting company",
+  "note": "Fee/terms live in 10-K, not N-2. Tax reporting: check K-1 vs 1099 carefully (LLC).",
   "cells": {
     "1.1": {
       "element": "Net total return series",
@@ -12,11 +12,11 @@
     },
     "1.2": {
       "element": "Trailing & calendar-year returns",
-      "value": "Class I FY2026 total return 10.47%. AATR as of 3/31/2026: Class I 1yr 10.47% / 5yr 12.92% / SI 19.19%; Class D 10.19 / 12.72 / 18.96. Class I/D/S inception 10/1/2020; Class R 1/2/2026.",
-      "status": "extracted-unverified",
-      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
-      "section": "Shareholder letter + Fund Performance",
-      "quote": "SPRIM (Class I) generated a total return of 10.47% for the fiscal year",
+      "value": "PARTIAL: per-class Transactional NAV Total Return table exists (Classes D/I/S/U/R-D/R-I...); values pending table read. 27 portfolio companies; $3,848.7M invested in FY2025.",
+      "status": "partial",
+      "source": "10-K 2026-03-26 (FY2025)",
+      "section": "Total Returns table",
+      "quote": "",
       "extracted_by": "Claude (Inc-1 2026-07-18)",
       "verified_by": ""
     },
@@ -58,7 +58,7 @@
     "1.10": {
       "element": "Market price & premium/discount",
       "value": null,
-      "status": "n/a - listed-CEF only"
+      "status": "n/a - not exchange-listed"
     },
     "1.11": {
       "element": "Track record & manager tenure",
@@ -67,28 +67,33 @@
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
-      "value": "1.40% annualized on daily NET ASSETS (contrast: PAF charges same 1.40% on MANAGED ASSETS incl. leverage \u2014 fee-base comparison lands).",
+      "value": "1.25% per annum of month-end NAV (Investor Shares: S/D/I/U et al.), paid monthly.",
       "status": "extracted-unverified",
-      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
-      "section": "Note 5 - Investment Adviser",
-      "quote": "management fee ... equal to 1.40% on an annualized basis of the Fund's daily net assets",
+      "source": "10-K 2026-03-26 (FY2025)",
+      "section": "Management Agreement note",
+      "quote": "management fee ... equal to (i) 1.25% per annum of the month-end Net Asset Value",
       "extracted_by": "Claude (Inc-1 2026-07-18)",
       "verified_by": ""
     },
     "2.2": {
       "element": "Incentive fee terms",
-      "value": "No fund-level incentive fee identified in N-CSR or prospectus. Underlying Investment Funds charge 1.00%-2.00% mgmt + performance fees (the AFFE layer).",
-      "status": "partial",
-      "source": "486BPOS 2025-10-20",
-      "section": "Fund fees / underlying funds",
-      "quote": "Investment Funds ... generally charge a management fee of 1.00% to 2.00%",
+      "value": "Performance Participation Allocation: 15.0% of Total Return on Investor Shares, subject to 5.0% annual Hurdle + High Water Mark + 100% Catch-Up. (Richer than BREIT's structure - cross-product comparison.)",
+      "status": "extracted-unverified",
+      "source": "10-K 2026-03-26 (FY2025)",
+      "section": "LLC Agreement / Performance Participation",
+      "quote": "15.0% of the Total Return ... subject to a 5.0% Hurdle Amount and a High Water Mark, with a 100% Catch-Up",
       "extracted_by": "Claude (Inc-1 2026-07-18)",
       "verified_by": ""
     },
     "2.3": {
       "element": "Total expense ratio & waivers",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: Expense Limitation Agreement capped Specified Expenses at 0.60% 'through and including June 30, 2025' - expiry is itself an evaluative datum. Current status pending read.",
+      "status": "partial",
+      "source": "10-K 2026-03-26 (FY2025)",
+      "section": "Expense Limitation Agreement",
+      "quote": "do not exceed 0.60%",
+      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "verified_by": ""
     },
     "2.4": {
       "element": "AFFE",
@@ -127,11 +132,11 @@
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
-      "value": "Quarterly tender offers: up to 5% of OUTSTANDING SHARES (vs PAF's 5% of net assets - different cap base), purchased at NAV.",
-      "status": "extracted-unverified",
-      "source": "SC TO-I 2026-05-12",
-      "section": "Offer to Purchase",
-      "quote": "offering to purchase Shares in an amount up to 5% of the outstanding shares",
+      "value": "PARTIAL: share repurchase plan exists (DRIP interaction language captured); percentage caps and cadence pending targeted read of Share Repurchases section.",
+      "status": "partial",
+      "source": "10-K 2026-03-26 (FY2025)",
+      "section": "",
+      "quote": "",
       "extracted_by": "Claude (Inc-1 2026-07-18)",
       "verified_by": ""
     },
@@ -157,13 +162,8 @@
     },
     "3.6": {
       "element": "Fund leverage & facilities",
-      "value": "Cash $247.3M + $300.0M undrawn credit facility as of 3/31/2026. Fund net assets $5,828.9M; 533 positions.",
-      "status": "extracted-unverified",
-      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
-      "section": "Shareholder letter",
-      "quote": "held $247.3 million of cash and had $300.0 million available ... under its credit facility",
-      "extracted_by": "Claude (Inc-1 2026-07-18)",
-      "verified_by": ""
+      "value": null,
+      "status": "pending"
     },
     "3.7": {
       "element": "Plan participant liquidity demand",
@@ -202,11 +202,11 @@
     },
     "4.5": {
       "element": "Auditor & opinion",
-      "value": "Ernst & Young LLP, New York (Big-4).",
+      "value": "Deloitte & Touche LLP, San Francisco; auditor since 2022 (Big-4).",
       "status": "extracted-unverified",
-      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
+      "source": "10-K 2026-03-26 (FY2025)",
       "section": "Report of Independent Registered Public Accounting Firm",
-      "quote": "Ernst & Young LLP ... New York, NY",
+      "quote": "/s/ Deloitte & Touche LLP ... auditor since 2022",
       "extracted_by": "Claude (Inc-1 2026-07-18)",
       "verified_by": ""
     },
@@ -218,7 +218,7 @@
     "4.7": {
       "element": "Premium/discount check",
       "value": null,
-      "status": "pending"
+      "status": "n/a - not exchange-listed"
     },
     "4.8": {
       "element": "Smoothing diagnostics",
@@ -232,13 +232,8 @@
     },
     "5.1": {
       "element": "Self-declared benchmark",
-      "value": "Stated primary benchmark: MSCI World Index.",
-      "status": "extracted-unverified",
-      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
-      "section": "Shareholder letter",
-      "quote": "the MSCI World Index, SPRIM's primary benchmark",
-      "extracted_by": "Claude (Inc-1 2026-07-18)",
-      "verified_by": ""
+      "value": null,
+      "status": "pending"
     },
     "5.2": {
       "element": "Public index series",

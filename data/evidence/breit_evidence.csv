@@ -1,0 +1,55 @@
+cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,extracted_by,verified_by,status
+1.1,Net total return series,,,,,,,,,pending
+1.2,Trailing & calendar-year returns,,,,,,,,,pending
+1.3,Gross vs net spread,,,,,,,,,pending
+1.4,Distribution history & composition,"PARTIAL: $2.4B monthly net distributions declared FY2025; avg annualized distribution rate by class (I 4.8%, S 3.9%, D 4.6%, T 4.0%). ROC split pending.",10-K 2026-02-27 (FY2025),Distributions table,,,2026-07-18,Claude (Inc-1),,partial
+1.5,Underlying sleeve/GP performance,,,,,,,,,pending
+1.6,Volatility & max drawdown,,,,,,,,,pending
+1.7,De-smoothed volatility,,,,,,,,,pending
+1.8,Risk-adjusted metrics (PME etc),,,,,,,,,pending
+1.9,Stress-window performance,,,,,,,,,pending
+1.10,Market price & premium/discount,,,,,,,,,n/a - not exchange-listed
+1.11,Track record & manager tenure,,,,,,,,,pending
+2.1,Management fee (rate AND base),"1.25% of NAV per annum, payable monthly (can be paid in cash or shares). Side fee: 1.0% of gross rents on DST program assets.",10-K 2026-02-27 (FY2025),Accrued Management Fee note,"annual management fee equal to 1.25% of the Company's NAV, payable monthly",data/raw/breit/10-K_2026-02-27_breit-20251231.htm,2026-07-18,Claude (Inc-1),,extracted-unverified
+2.2,Incentive fee terms,"Performance participation w/ hurdle + high-water mechanics - AND a live miss: FY2024 total return did not exceed the hurdle, producing a $105.0M Quarterly Shortfall; from 1/1/2025 the 2024 Shortfall Obligation accrues 5% annual interest compounded quarterly. Real-world fee mechanics for the demo.",10-K 2026-02-27 (FY2025),Performance participation / Shortfall disclosure,the Company's total return did not exceed the year-to-date hurdle amount,,2026-07-18,Claude (Inc-1),,partial
+2.3,Total expense ratio & waivers,,,,,,,,,pending
+2.4,AFFE,,,,,,,,,pending
+2.5,Underlying GP economics,,,,,,,,,pending
+2.6,Loads & servicing fees,,,,,,,,,pending
+2.7,Early repurchase fee,,,,,,,,,pending
+2.8,CIT fee schedule,,,,,,,,,n/a - CIT only
+2.9,Fee peer percentile,,,,,,,,,pending
+2.10,Value justification,,,,,,,,,pending
+3.1,Wrapper liquidity terms,"Repurchase caps: 2% of aggregate NAV per MONTH, 5% per QUARTER (measured on prior-period NAV; Early Repurchase Deduction excluded). Board may modify/suspend if requests burden liquidity.",10-K 2026-02-27 (FY2025),Share repurchase plan,"no more than 2% of our aggregate NAV ... and, in any calendar quarter ... no more than 5%",,2026-07-18,Claude (Inc-1),,extracted-unverified
+3.2,Repurchase mechanics,,,,,,,,,pending
+3.3,Repurchase history,PARTIAL: suspension/modification authority language captured; the 2022-2024 proration history (requests vs fulfilled) pending targeted read of the repurchase activity tables.,10-K 2026-02-27 (FY2025),,,,2026-07-18,Claude (Inc-1),,partial
+3.4,Portfolio liquidity profile,,,,,,,,,pending
+3.5,TDF/CIT liquidity sleeve,,,,,,,,,n/a - CIT only
+3.6,Fund leverage & facilities,Charter leverage limit: borrowing capped at 300% of cost of net assets (approx 75% of cost of investments) absent independent-director override with disclosure.,10-K 2026-02-27 (FY2025),Charter borrowing limitation,precludes us from borrowing in excess of 300% of the cost of our net assets,,2026-07-18,Claude (Inc-1),,extracted-unverified
+3.7,Plan participant liquidity demand,,,,,,,,,n/a - plan-side (Form 5500)
+3.8,Redemption stress test,,,,,,,,,pending
+3.9,Product-to-plan liquidity match,,,,,,,,,n/a - workflow output
+4.1,Valuation policy & NAV frequency,,,,,,,,,pending
+4.2,Fair-value hierarchy (L1/2/3),,,,,,,,,pending
+4.3,Independent valuation agent,,,,,,,,,pending
+4.4,Methodology by asset type,"Appraisal assumptions DISCLOSED: weighted avg discount rate + exit cap rate by property type as of 12/31/2025 (e.g., Rental Housing 7.2% discount / 5.4% exit cap). Full table pending read - cell 4.4's richest source on the roster.",10-K 2026-02-27 (FY2025),Valuation key assumptions table,weighted average discount rate and exit capitalization rate by property type,,2026-07-18,Claude (Inc-1),,partial
+4.5,Auditor & opinion,"Deloitte & Touche LLP, New York; auditor since 2016 (Big-4).",10-K 2026-02-27 (FY2025),Report of Independent Registered Public Accounting Firm,/s/ Deloitte & Touche LLP ... auditor since 2016,,2026-07-18,Claude (Inc-1),,extracted-unverified
+4.6,NAV restatement history,,,,,,,,,pending
+4.7,Premium/discount check,,,,,,,,,n/a - not exchange-listed
+4.8,Smoothing diagnostics,,,,,,,,,pending
+4.9,CIT unit valuation,,,,,,,,,n/a - CIT only
+5.1,Self-declared benchmark,,,,,,,,,pending
+5.2,Public index series,,,,,,,,,pending
+5.3,Alt asset-class indices,,,,,,,,,pending
+5.4,Peer universe & returns,,,,,,,,,pending
+5.5,PME / Direct Alpha inputs,,,,,,,,,pending
+5.6,Benchmark suitability memo,,,,,,,,,n/a - constructed (L3)
+5.7,Case-law tracker,,,,,,,,,n/a - cross-product tracker
+6.1,Structure map,,,,,,,,,pending
+6.2,Strategy & instrument complexity,,,,,,,,,pending
+6.3,Conflicts & affiliated transactions,,,,,,,,,pending
+6.4,Tax reporting (1099 vs K-1),,,,,,,,,pending
+6.5,Service-provider web,,,,,,,,,pending
+6.6,Plan operational fit,,,,,,,,,pending
+6.7,Participant communicability,,,,,,,,,pending
+6.8,Fiduciary capacity self-assessment,,,,,,,,,"n/a - workflow, not data"

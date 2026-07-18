@@ -1,0 +1,28 @@
+{
+  "series": [
+    {
+      "ticker": "DXYZ",
+      "source": "Yahoo Finance v8 chart API",
+      "rows": 579,
+      "first": "2024-03-26",
+      "last": "2026-07-17",
+      "pulled": "2026-07-18",
+      "note": "market price - cell 1.10 (premium/discount vs NAV pending NAV overlay)"
+    },
+    {
+      "ticker": "CCLFX",
+      "source": "Yahoo Finance v8 chart API",
+      "rows": 1759,
+      "first": "2019-07-18",
+      "last": "2026-07-17",
+      "pulled": "2026-07-18",
+      "note": "daily NAV - cells 1.1/1.7/4.8 (de-smoothing input)"
+    }
+  ],
+  "excluded": {
+    "hl_paf": "class tickers unverified - annual series from filings suffices for v0 (guessing tickers risks mis-attributed data)",
+    "stepstone_spm": "same",
+    "kkr_kpec": "non-traded, no ticker",
+    "breit": "non-traded, no ticker"
+  }
+}
