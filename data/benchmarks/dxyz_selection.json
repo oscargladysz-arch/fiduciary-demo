@@ -1,0 +1,43 @@
+{
+  "product": "dxyz",
+  "strategy": "preipo_venture",
+  "source_cells": [
+    "1.10",
+    "4.7"
+  ],
+  "primary": null,
+  "secondary": null,
+  "rejected": [
+    {
+      "candidate": "Listed private equity proxy (PSP)",
+      "id": "psp_v",
+      "lane": "B",
+      "score": 7,
+      "max": 12,
+      "reasons": [
+        "strategy_match 1/3: nearest liquid cousin to pre-IPO exposure",
+        "risk_liquidity_match 0/3: fund price is premium-driven, no candidate matches that risk process",
+        "investability 2/2: investable, priced daily",
+        "data_quality 2/2: daily series",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "fund price is premium/discount-driven and decoupled from NAV; benchmarking the price benchmarks the premium, not the portfolio"
+    },
+    {
+      "candidate": "S&P 500 investable proxy (SPY)",
+      "id": "spy",
+      "lane": "B",
+      "score": 6,
+      "max": 12,
+      "reasons": [
+        "strategy_match 0/3: large-cap public equity - wrong asset class",
+        "risk_liquidity_match 0/3: fund price is premium-driven, no candidate matches that risk process",
+        "investability 2/2: investable, priced daily",
+        "data_quality 2/2: daily series",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "fund price is premium/discount-driven and decoupled from NAV; benchmarking the price benchmarks the premium, not the portfolio"
+    }
+  ],
+  "escalation": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from available data. Required next: public NAV series (quarterly filings) plus a premium/NAV decomposition before any comparator is defensible."
+}

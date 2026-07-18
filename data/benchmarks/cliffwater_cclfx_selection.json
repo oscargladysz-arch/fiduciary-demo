@@ -1,0 +1,88 @@
+{
+  "product": "cliffwater_cclfx",
+  "strategy": "private_credit",
+  "source_cells": [
+    "5.1",
+    "1.1",
+    "1.2"
+  ],
+  "primary": {
+    "candidate": "Senior loan investable proxy (BKLN, for Morningstar LSTA class)",
+    "id": "bkln",
+    "lane": "A/B",
+    "score": 9,
+    "max": 12,
+    "reasons": [
+      "strategy_match 2/3: broadly syndicated loans vs direct lending - close cousin, not twin",
+      "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+      "investability 2/2: investable, priced daily",
+      "data_quality 2/2: daily series",
+      "provider_independence 2/2: provider unaffiliated with the fund"
+    ],
+    "comparison": {
+      "window": "2019-06-05 to 2026-07-17",
+      "fund_growth_x": 1.7148,
+      "index_growth_x": 1.365,
+      "ks_pme": 1.2519,
+      "direct_alpha_pct": 3.21,
+      "fund_ann_pct": 8.01,
+      "index_ann_pct": 4.55
+    }
+  },
+  "secondary": {
+    "candidate": "PME / Direct Alpha vs BKLN",
+    "id": "pme_bkln",
+    "lane": "D",
+    "score": 9,
+    "max": 12,
+    "reasons": [
+      "strategy_match 2/3: wealth-ratio PME vs investable loan proxy",
+      "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+      "investability 2/2: investable, priced daily",
+      "data_quality 2/2: daily series",
+      "provider_independence 2/2: provider unaffiliated with the fund"
+    ],
+    "comparison": {
+      "window": "2019-06-05 to 2026-07-17",
+      "fund_growth_x": 1.7148,
+      "index_growth_x": 1.365,
+      "ks_pme": 1.2519,
+      "direct_alpha_pct": 3.21,
+      "fund_ann_pct": 8.01,
+      "index_ann_pct": 4.55
+    }
+  },
+  "rejected": [
+    {
+      "candidate": "Cliffwater Direct Lending Index (CDLI)",
+      "id": "cdli",
+      "lane": "B",
+      "score": 6,
+      "max": 12,
+      "reasons": [
+        "strategy_match 3/3: direct lending - exact strategy match",
+        "risk_liquidity_match 2/3: appraisal-cadence series, closer to the fund's NAV process",
+        "investability 0/2: not investable / not held",
+        "data_quality 1/2: quarterly-manual series",
+        "provider_independence 0/2: index published by the fund's own adviser - a manufacturer-owned yardstick sits poorly with the rule's conflict-free ethos; usable as secondary color only"
+      ],
+      "rejection": "score 6/12 below primary threshold 7"
+    },
+    {
+      "candidate": "Peer cohort: same-strategy interval credit funds",
+      "id": "peer_credit",
+      "lane": "C",
+      "score": 5,
+      "max": 12,
+      "reasons": [
+        "strategy_match 3/3: no same-strategy peer in current 6-product universe",
+        "risk_liquidity_match 0/3: no computable series",
+        "investability 0/2: not investable / not held",
+        "data_quality 0/2: none series",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "score 5/12 below primary threshold 7"
+    }
+  ],
+  "escalation": null
+}
