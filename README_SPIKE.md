@@ -1,47 +1,38 @@
-# Tark Spike v1 — EDGAR Pipeline + First Evidence Column
-### Tested against live EDGAR 2026-07-09. Drop into `~/Projects/fiduciary-demo`, run once, commit.
+# Tark Spike v2 — Pipeline + 4 Products + Anchor Plan
+### Tested against live EDGAR + DOL EBSA data 2026-07-12. Drop into `~/Projects/fiduciary-demo`, run once, commit.
 
-## What this is
-The Phase 0 spike from the roadmap, complete: a working EDGAR fetcher, the verified product registry, and the first real column of the evidence matrix — Hamilton Lane Private Assets Fund, with 9 cells already extracted from its June 2026 annual report and current tender offer.
+## What's new in v2 (over v1)
+1. **Anchor plan locked and extracted** — `data/plans/anchor_plan.json`: real Form 5500 / Schedule H economics for the chosen plan (plan-year 2024): net assets $565.8M (up 24.8% YoY), 5,120 accounts, avg balance $110,515, admin expense ratio 0.098%, 404(c) fully participant-directed (DIA framework squarely applies). Sponsor identity kept in a private field; **display label is "US media/technology company 401(k) plan (~$570M, NY)" — the sponsor name never appears on demo surfaces.**
+2. **Roster CLOSED at six** — `cliffwater_cclfx` added to the registry: TRUE Rule 23c-3 interval fund, private credit, ~$28B, adviser publishes the CDLI index (cell 5.3 tie-in).
+3. **Fetcher upgrade: `history_sets`** — pulls the N most recent filings of a form as a time series. First use: CCLFX's 8 quarterly N-23C3A repurchase notifications (2024-07 → 2026-05) = cell 3.3 as STRUCTURED DATA, unique among the roster.
+4. **Scaffolds for products 2–4** — wrapper-aware evidence CSVs + JSONs for `stepstone_spm`, `dxyz`, `cliffwater_cclfx` (DXYZ's premium/discount cells marked ACTIVE; its tender cells n/a; etc.).
+5. **Methodology skeleton** — `docs/benchmark_methodology_skeleton.md`: the section-by-section structure (with formula slots and MUST-ANSWER prompts) for the August design doc. §4's worked PAF example is the Gate C review artifact.
 
-## Install & run (venv active; `requests` already installed)
+## Install & run (venv active)
 ```
 cd ~/Projects/fiduciary-demo
-unzip ~/Downloads/tark_spike_v1.zip
-echo "data/raw/" >> .gitignore
-python src/fetch_edgar.py --list
-python src/fetch_edgar.py hl_paf
-git add -A && git commit -m "spike: EDGAR fetcher + HL PAF evidence scaffold" && git push
+unzip -o ~/Downloads/tark_spike_v2.zip
+python src/fetch_edgar.py hl_paf stepstone_spm dxyz cliffwater_cclfx
+git add -A && git commit -m "spike v2: 4 products + cliffwater + anchor plan + methodology skeleton" && git push
 ```
-The fetch re-downloads PAF's six documents to your machine (~16MB, a minute or two). Everything else in the zip is committed; raw filings are gitignored and reproducible via `data/manifest.csv`.
+Heads-up: CCLFX's annual report is 66MB and its holdings file 133MB — that product's fetch takes a minute or two. All raw filings stay gitignored; the manifest (28 rows) makes every pull reproducible.
 
-## Roster verdicts (verified vs. live EDGAR, 2026-07-09)
-| Handoff said | Reality | Verdict |
-|---|---|---|
-| "Hamilton Lane HLPIF" | No such registrant. The registered HL evergreen is the **Private Assets Fund** (CIK 1803491, tender-offer fund, ~$5.80B) | **hl_paf — IN. Fix the memo's name.** |
-| Blackstone BXPE | Files 10-Q + Form D/A only: Reg D private placement, no public prospectus | **OUT** of demo roster |
-| (swap) | **StepStone Private Markets** (CIK 1789470): 486BPOS, 424B3, tender offers — data-rich registered peer | **IN (stepstone_spm)** |
-| "KKR K-PRIME" | Resolves offshore. SEC-reporting KKR vehicle = **K-PEC** (CIK 1957845, 10-K filer) | **IN (kkr_kpec)** |
-| Blackstone BREIT | CIK 1662972, 10-K filer | **IN (breit)** |
-| Destiny Tech100 DXYZ | CIK 1843974, listed CEF | **IN (dxyz) — the fail case** |
-| Capital Group KKR US Equity+ | Registrant did not resolve cleanly on EDGAR | Slot **OPEN**. Next candidate to verify: **Cliffwater Corporate Lending Fund (CCLFX)** — true Rule 23c-3 interval fund, private credit, adviser publishes the CDLI benchmark |
-| BlackRock/Great Gray PE TDF | CIT — no EDGAR by design | Stays the "partnership required" slide |
-
-## What's already extracted (real, cited, awaiting CF2 verification)
-Management fee **1.40% on Managed Assets** (the fee-base-includes-leverage trap from dictionary cell 2.1, confirmed in the wild) · incentive-fee drag on NII: 1.45% FY26 / 0.84% FY25 / 1.95% FY24 / 2.52% FY23 · Class I returns 1yr 14.60%, SI 15.36% · NAV/share FY22→FY26: 12.35 → 19.77 · expense limits 1.45%/0.75%/1.00% by class · quarterly tender 5.00% (+2.00% upsize), implying ~$5.80B net assets · 2.00% early repurchase fee · $76.5M credit line · auditor Cohen & Company (not Big-4 — an evaluative datum).
-Full provenance in `data/evidence/hl_paf_evidence.csv`; pending cells mapped in `docs/extraction_worksheet.md` (~1 focused hour).
+## Roster — FINAL (6/6)
+| Key | Fund | Wrapper | Role |
+|---|---|---|---|
+| hl_paf | Hamilton Lane Private Assets Fund | tender-offer | seeded first column (9 cells extracted) |
+| stepstone_spm | StepStone Private Markets | tender-offer | fresh 2025 base prospectus |
+| kkr_kpec | KKR Private Equity Conglomerate | '34 Act non-traded | 10-K data lane |
+| breit | Blackstone REIT | '34 Act non-traded REIT | RE + the gating case study |
+| cliffwater_cclfx | Cliffwater Corporate Lending Fund | TRUE interval (23c-3) | private credit + structured repurchase series |
+| dxyz | Destiny Tech100 | listed CEF | THE FAIL CASE |
+Excluded (documented in fetcher): bxpe (Reg D), capital_group_kkr (unresolved), BlackRock/Great Gray TDF (CIT — partnership slide).
 
 ## Next tasks by owner
-- **Oscar:** run the commands above; do the extraction hour per the worksheet (5.1, 2.2, 4.2 are the quick wins); send Nick follow-ups per plan.
-- **CF2:** the N-CSR Consolidated Schedule of Investments is the named list of PAF's underlying GP funds — that IS your pension-disclosure target list. Then verify every seeded row (flip `extracted-unverified` → `verified`).
-- **CF1:** Federal Register Examples read (dictionary v0.9 → v1.0) — start date still owed. New standing watch item below.
-- **Claude (next increment):** 2nd + 3rd product pulls (stepstone_spm, dxyz), CCLFX verification for the open slot, Form 5500 anchor-plan pull (blocked on one decision — see chat), benchmark-methodology doc skeleton for the August window.
+- **Oscar:** run the 4 commands; extraction hour on hl_paf per `docs/extraction_worksheet.md` (5.1, 2.2, 4.2 first); then the same pass on cclfx's latest N-23C3A (repurchase % = ten-minute win).
+- **CF2:** PAF N-CSR Schedule of Investments = the underlying-GP target list; verify all seeded hl_paf rows.
+- **CF1:** Federal Register Examples read (v0.9 → v1.0) — start date still owed; kill-shot watch per README v1 stands.
+- **Claude (queued):** seed-extraction pass on stepstone + cclfx; anchor-plan Streamlit screen comes AFTER Gate A/B per roadmap.
 
-## Dictionary deltas v0.91 (post BlackRock/Preqin, July 8 2026 announcement)
-1. **Cell 5.6 reframed:** from "benchmark suitability memo" to "benchmark SELECTION-AND-JUSTIFICATION engine output." The moat is the defensible choice + documentation, not index construction. M3 design requirement: **index-agnostic** — must ingest third-party indices (Preqin, MSCI-Burgiss, Cliffwater, NCREIF) AND construct custom PME/peer cohorts, then argue and document the selection.
-2. **Cell 5.3 upgraded:** Preqin is now a NAMED L2 counterparty with a productized path — their July 8 expansion explicitly offers API and redistribution arrangements for third-party platforms. Future licensing lane, not competitor.
-3. **Cells 5.4/5.3 caveat:** Preqin's 140k peer benchmarks are LP-cash-flow DRAWDOWN-fund data; comparability to '40 Act semi-liquid wrappers (NAV-based, our roster) is itself a suitability question the engine must argue — commoditization pressure is real for drawdown cohorts, not yet for our wrapper class, but their spring 2026 private-credit expansion already reached "semi-liquid vehicles." Direction of travel: toward us.
-4. **CF1 standing watch (kill-shot shapes):** (a) any Preqin/Aladdin ERISA/DC six-factor module priced for advisors; (b) final rule or *Intel* litigation anointing a specific index family as the "meaningful benchmark" answer; (c) incumbent workflow vendors (RPAG, fi360, Morningstar) shipping a six-factor alt module.
-
-## Standing guardrails (unchanged)
-Script fetches, humans extract, CF2 verifies · every number cited or labeled illustrative · no NLP auto-parsing in the spike · discovery outranks code until Gate B · Gate A (equity/OBA/kill criteria) blocks Phase 1 feature code — **July 31**.
+## Standing guardrails
+Script fetches, humans extract, CF2 verifies · every number cited or labeled illustrative · anonymize the sponsor on ALL demo surfaces · discovery outranks code until Gate B (Sep 7) · **Gate A (equity / Citi OBA / kill criteria) = July 31.**

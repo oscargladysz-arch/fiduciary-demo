@@ -98,6 +98,19 @@ PRODUCTS = {
             "holdings": ["NPORT-P"],
         },
     },
+    "cliffwater_cclfx": {
+        "name": "Cliffwater Corporate Lending Fund",
+        "cik": "1735964",
+        "wrapper": "TRUE interval fund (Rule 23c-3), private credit (CCLFX)",
+        "doc_sets": {
+            "prospectus": ["486BPOS", "424B3"],
+            "annual_report": ["N-CSR"],
+            "holdings": ["NPORT-P"],
+        },
+        "history_sets": {
+            "repurchase_history": {"form": "N-23C3A", "count": 8},
+        },
+    },
     "ares_pmf": {
         "name": "Ares Private Markets Fund",
         "cik": "1876006",
@@ -144,6 +157,23 @@ def latest_filing_per_form(subs, forms_wanted):
         if len(found) == len(forms_wanted):
             break
     return found
+
+
+def filings_for_form(subs, form, count):
+    """Most recent `count` filings of a single form (newest first)."""
+    recent = subs["filings"]["recent"]
+    out = []
+    for i, f in enumerate(recent["form"]):
+        if f == form:
+            out.append({
+                "form": f,
+                "filing_date": recent["filingDate"][i],
+                "accession": recent["accessionNumber"][i],
+                "primary_document": recent["primaryDocument"][i],
+            })
+            if len(out) >= count:
+                break
+    return out
 
 
 def download_filing(cik, filing, dest_dir):
@@ -210,6 +240,23 @@ def fetch_product(key):
                     "pulled_at_utc": pulled_at,
                 })
                 seen.add(key_pair)
+    for set_name, spec in p.get("history_sets", {}).items():
+        for filing in filings_for_form(subs, spec["form"], spec["count"]):
+            url, local = download_filing(p["cik"], filing, dest)
+            if url is None:
+                continue
+            print(f"  [ok]   {set_name:<16} {filing['form']:<8} {filing['filing_date']}  ->  {local.name} ({local.stat().st_size // 1024} KB)")
+            key_pair = (filing["accession"], filing["primary_document"])
+            if key_pair not in seen:
+                manifest.append({
+                    "product": key, "fund_name": p["name"], "cik": p["cik"],
+                    "doc_set": set_name, "form": filing["form"],
+                    "filing_date": filing["filing_date"], "accession": filing["accession"],
+                    "primary_document": filing["primary_document"], "url": url,
+                    "local_path": str(local.relative_to(REPO_ROOT)), "pulled_at_utc": pulled_at,
+                })
+                seen.add(key_pair)
+
     write_manifest(manifest)
     print(f"  manifest: {MANIFEST.relative_to(REPO_ROOT)} ({len(manifest)} rows)")
 

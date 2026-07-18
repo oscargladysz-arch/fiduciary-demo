@@ -1,0 +1,279 @@
+{
+  "product_key": "dxyz",
+  "fund_name": "Destiny Tech100 Inc",
+  "cik": "1843974",
+  "wrapper": "listed closed-end fund (NYSE: DXYZ)",
+  "note": "THE FAIL CASE. Premium/discount and benchmark-impossibility cells are the story.",
+  "cells": {
+    "1.1": {
+      "element": "Net total return series",
+      "value": null,
+      "status": "pending"
+    },
+    "1.2": {
+      "element": "Trailing & calendar-year returns",
+      "value": null,
+      "status": "pending"
+    },
+    "1.3": {
+      "element": "Gross vs net spread",
+      "value": null,
+      "status": "pending"
+    },
+    "1.4": {
+      "element": "Distribution history & composition",
+      "value": null,
+      "status": "pending"
+    },
+    "1.5": {
+      "element": "Underlying sleeve/GP performance",
+      "value": null,
+      "status": "pending"
+    },
+    "1.6": {
+      "element": "Volatility & max drawdown",
+      "value": null,
+      "status": "pending"
+    },
+    "1.7": {
+      "element": "De-smoothed volatility",
+      "value": null,
+      "status": "pending"
+    },
+    "1.8": {
+      "element": "Risk-adjusted metrics (PME etc)",
+      "value": null,
+      "status": "pending"
+    },
+    "1.9": {
+      "element": "Stress-window performance",
+      "value": null,
+      "status": "pending"
+    },
+    "1.10": {
+      "element": "Market price & premium/discount",
+      "value": "ACTIVE CELL: market price vs NAV premium/discount is the valuation story here",
+      "status": "pending"
+    },
+    "1.11": {
+      "element": "Track record & manager tenure",
+      "value": null,
+      "status": "pending"
+    },
+    "2.1": {
+      "element": "Management fee (rate AND base)",
+      "value": null,
+      "status": "pending"
+    },
+    "2.2": {
+      "element": "Incentive fee terms",
+      "value": null,
+      "status": "pending"
+    },
+    "2.3": {
+      "element": "Total expense ratio & waivers",
+      "value": null,
+      "status": "pending"
+    },
+    "2.4": {
+      "element": "AFFE",
+      "value": null,
+      "status": "pending"
+    },
+    "2.5": {
+      "element": "Underlying GP economics",
+      "value": null,
+      "status": "pending"
+    },
+    "2.6": {
+      "element": "Loads & servicing fees",
+      "value": null,
+      "status": "pending"
+    },
+    "2.7": {
+      "element": "Early repurchase fee",
+      "value": null,
+      "status": "n/a - no early-repurchase fee (exchange-traded)"
+    },
+    "2.8": {
+      "element": "CIT fee schedule",
+      "value": null,
+      "status": "n/a - CIT only"
+    },
+    "2.9": {
+      "element": "Fee peer percentile",
+      "value": null,
+      "status": "pending"
+    },
+    "2.10": {
+      "element": "Value justification",
+      "value": null,
+      "status": "pending"
+    },
+    "3.1": {
+      "element": "Wrapper liquidity terms",
+      "value": "Listed CEF: daily on-exchange liquidity (NYSE), no fund-level repurchase program",
+      "status": "pending-verify"
+    },
+    "3.2": {
+      "element": "Repurchase mechanics",
+      "value": null,
+      "status": "n/a - exchange-traded"
+    },
+    "3.3": {
+      "element": "Repurchase history",
+      "value": null,
+      "status": "n/a - exchange-traded"
+    },
+    "3.4": {
+      "element": "Portfolio liquidity profile",
+      "value": null,
+      "status": "pending"
+    },
+    "3.5": {
+      "element": "TDF/CIT liquidity sleeve",
+      "value": null,
+      "status": "n/a - CIT only"
+    },
+    "3.6": {
+      "element": "Fund leverage & facilities",
+      "value": null,
+      "status": "pending"
+    },
+    "3.7": {
+      "element": "Plan participant liquidity demand",
+      "value": null,
+      "status": "n/a - plan-side (Form 5500)"
+    },
+    "3.8": {
+      "element": "Redemption stress test",
+      "value": null,
+      "status": "pending"
+    },
+    "3.9": {
+      "element": "Product-to-plan liquidity match",
+      "value": null,
+      "status": "n/a - workflow output"
+    },
+    "4.1": {
+      "element": "Valuation policy & NAV frequency",
+      "value": null,
+      "status": "pending"
+    },
+    "4.2": {
+      "element": "Fair-value hierarchy (L1/2/3)",
+      "value": null,
+      "status": "pending"
+    },
+    "4.3": {
+      "element": "Independent valuation agent",
+      "value": null,
+      "status": "pending"
+    },
+    "4.4": {
+      "element": "Methodology by asset type",
+      "value": null,
+      "status": "pending"
+    },
+    "4.5": {
+      "element": "Auditor & opinion",
+      "value": null,
+      "status": "pending"
+    },
+    "4.6": {
+      "element": "NAV restatement history",
+      "value": null,
+      "status": "pending"
+    },
+    "4.7": {
+      "element": "Premium/discount check",
+      "value": "ACTIVE CELL: premium/discount as market check",
+      "status": "pending"
+    },
+    "4.8": {
+      "element": "Smoothing diagnostics",
+      "value": null,
+      "status": "pending"
+    },
+    "4.9": {
+      "element": "CIT unit valuation",
+      "value": null,
+      "status": "n/a - CIT only"
+    },
+    "5.1": {
+      "element": "Self-declared benchmark",
+      "value": null,
+      "status": "pending"
+    },
+    "5.2": {
+      "element": "Public index series",
+      "value": null,
+      "status": "pending"
+    },
+    "5.3": {
+      "element": "Alt asset-class indices",
+      "value": null,
+      "status": "pending"
+    },
+    "5.4": {
+      "element": "Peer universe & returns",
+      "value": null,
+      "status": "pending"
+    },
+    "5.5": {
+      "element": "PME / Direct Alpha inputs",
+      "value": null,
+      "status": "pending"
+    },
+    "5.6": {
+      "element": "Benchmark suitability memo",
+      "value": null,
+      "status": "n/a - constructed (L3)"
+    },
+    "5.7": {
+      "element": "Case-law tracker",
+      "value": null,
+      "status": "n/a - cross-product tracker"
+    },
+    "6.1": {
+      "element": "Structure map",
+      "value": null,
+      "status": "pending"
+    },
+    "6.2": {
+      "element": "Strategy & instrument complexity",
+      "value": null,
+      "status": "pending"
+    },
+    "6.3": {
+      "element": "Conflicts & affiliated transactions",
+      "value": null,
+      "status": "pending"
+    },
+    "6.4": {
+      "element": "Tax reporting (1099 vs K-1)",
+      "value": null,
+      "status": "pending"
+    },
+    "6.5": {
+      "element": "Service-provider web",
+      "value": null,
+      "status": "pending"
+    },
+    "6.6": {
+      "element": "Plan operational fit",
+      "value": null,
+      "status": "pending"
+    },
+    "6.7": {
+      "element": "Participant communicability",
+      "value": null,
+      "status": "pending"
+    },
+    "6.8": {
+      "element": "Fiduciary capacity self-assessment",
+      "value": null,
+      "status": "n/a - workflow, not data"
+    }
+  }
+}

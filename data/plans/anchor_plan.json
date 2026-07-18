@@ -1,0 +1,49 @@
+{
+  "display_label": "US media/technology company 401(k) plan (~$570M, New York)",
+  "anonymization_rule": "Sponsor name NEVER appears on demo surfaces. Data is public (DOL Form 5500 FOIA files); anonymization is a project display rule, not a legal requirement.",
+  "identity_private": {
+    "sponsor": "SPOTIFY USA INC.",
+    "plan_name": "SPOTIFY USA INC. 401(K) PROFIT SHARING PLAN AND TRUST",
+    "ein": "800555431",
+    "state": "NY",
+    "ack_id": "20251014135500NAL0001459731001"
+  },
+  "plan_year": "2024-01-01 to 2024-12-31",
+  "source": {
+    "files": [
+      "f_5500_2024_latest.csv",
+      "F_SCH_H_2024_latest.csv"
+    ],
+    "publisher": "DOL EBSA Form 5500 FOIA bulk files (2024 Latest)",
+    "url": "https://askebsa.dol.gov/FOIA%20Files/2024/Latest/",
+    "pulled": "2026-07-12"
+  },
+  "plan_characteristics": {
+    "pension_benefit_codes": "2E2F2G2J2K3D",
+    "codes_decoded": "2E profit sharing; 2F ERISA 404(c) plan; 2G total participant-directed; 2J 401(k) arrangement; 2K employer match; 3D pre-approved plan document",
+    "note": "404(c) + fully participant-directed = designated-investment-alternative framework squarely applies (demo-relevant)"
+  },
+  "participants": {
+    "total_boy": 5460.0,
+    "active_eoy": 3281.0,
+    "separated_deferred_vested": 1847.0,
+    "retired_receiving": 0.0,
+    "with_account_balances": 5120.0
+  },
+  "financials": {
+    "net_assets_boy": 453298334.0,
+    "net_assets_eoy": 565838485.0,
+    "tot_admin_expenses": 553200.0,
+    "tot_expenses": 53548189.0,
+    "participant_loans_eoy": 1887564.0
+  },
+  "derived": {
+    "avg_balance_per_account": 110515,
+    "admin_expense_ratio_pct": 0.098,
+    "yoy_net_asset_growth_pct": 24.8
+  },
+  "dictionary_cells": {
+    "3.7 participant liquidity demand": "young active base (3,281) + high avg balance; separated-deferred cohort (1,847) is the near-term liquidity tail",
+    "plan_profile (cross-cutting)": "filled by this file"
+  }
+}
