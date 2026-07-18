@@ -71,6 +71,8 @@ CELLS = {
 # refinements like "pending-verify" and "fetched-series, extraction pending"
 STATUS_PREFIXES = ("pending", "partial", "extracted", "verified", "fetched", "n/a")
 
+SERIES_COLUMNS = ["date", "close", "adj_close"]
+
 EVIDENCE_COLUMNS = [
     "cell_id", "element", "value", "source_doc", "source_section", "quote",
     "local_file", "date_pulled", "extracted_by", "verified_by", "status",
@@ -128,11 +130,12 @@ def series_tickers() -> list[str]:
     return sorted(p.stem for p in (DATA / "series").glob("*.csv"))
 
 
-def load_series(ticker: str) -> list[tuple[str, float]]:
-    """[(iso_date, close), ...] ascending."""
+def load_series(ticker: str, column: str = "adj_close") -> list[tuple[str, float]]:
+    """[(iso_date, value), ...] ascending. column: 'adj_close' (total-return
+    proxy, default) or 'close' (raw price/NAV)."""
     with open(DATA / "series" / f"{ticker}.csv", newline="") as fh:
         rows = list(csv.DictReader(fh))
-    return [(r["date"], float(r["close"])) for r in rows]
+    return [(r["date"], float(r[column])) for r in rows]
 
 
 def load_series_manifest() -> dict:
@@ -241,17 +244,23 @@ def validate_series() -> list[str]:
         errs.append(f"series: manifest/disk mismatch ({declared} vs {on_disk})")
     for t in on_disk:
         try:
-            s = load_series(t)
+            with open(DATA / "series" / f"{t}.csv", newline="") as fh:
+                hdr = next(csv.reader(fh))
+            if hdr != SERIES_COLUMNS:
+                errs.append(f"series {t}: columns {hdr} != contract {SERIES_COLUMNS}")
+                continue
+            s_close = load_series(t, "close")
+            s_adj = load_series(t, "adj_close")
         except Exception as e:  # noqa: BLE001
             errs.append(f"series {t}: cannot parse ({e})")
             continue
-        if len(s) < 50:
-            errs.append(f"series {t}: suspiciously short ({len(s)} rows)")
-        dates = [d for d, _ in s]
+        if len(s_close) < 50:
+            errs.append(f"series {t}: suspiciously short ({len(s_close)} rows)")
+        dates = [d for d, _ in s_close]
         if dates != sorted(dates):
             errs.append(f"series {t}: dates not ascending")
-        if any(c <= 0 for _, c in s):
-            errs.append(f"series {t}: non-positive closes present")
+        if any(c <= 0 for _, c in s_close) or any(a <= 0 for _, a in s_adj):
+            errs.append(f"series {t}: non-positive values present")
     return errs
 
 

@@ -1,30 +1,33 @@
-# Tark Drop v4 — Increment 2: M0, the Data Contract
-### Tested live 2026-07-18. The folder of JSONs is now a validated, single-source-of-truth data layer.
+# Tark Drop v5 — Increment 3: M2 Analytics Core
+### Tested live 2026-07-18. The math exists, it's unit-tested, and it has already been run against the real data.
 
-## What's new in v4 (over v3)
-1. **`src/tark_data.py` — the M0 library.** One canonical cell registry (54 cells, 6 factors), one status vocabulary, and every loader the rest of the build consumes: `load_products()`, `cells_by_factor()`, `load_anchor_plan()`, `load_series()`, `load_evidence()`, `load_manifest()`. From here on, M2 (analytics), M3 (benchmark engine), M4 (UI), and M5 (memo) import from this module and re-declare nothing. Decision confirmed from the plan: **no SQLite** — six products don't need a database; "SQLite at most" is satisfied by less.
-2. **`src/validate_data.py` — the integrity gate.** Checks every product against the registry (cell completeness, element-label drift, status vocabulary, extracted-implies-value-and-source), cross-checks evidence CSVs against product JSONs (catches silent drift between the two), recomputes the anchor plan's derived figures from primitives, and sanity-checks both daily series (ascending dates, positive closes, manifest match). Exit 0/1 — **run it before every commit.**
-3. **Proof it bites.** First run: all clean. Then a negative test — two violations deliberately injected — and the validator caught both **plus a third it found on its own** (the JSON/CSV status drift from the injected status change). Restored, clean again. A validator you've only seen pass is a validator you can't trust; this one has turned red on demand.
-4. **`src/coverage.py` refactored** onto the shared layer — same numbers (15% total), one source of truth for status semantics.
+## What's new in v5
+1. **`src/tark_analytics.py`** — pure stdlib math, no I/O: period/annualized returns, vol, max drawdown, lag-1 autocorrelation, **Geltner AR(1) de-smoothing**, XIRR (bisection), **Kaplan-Schoar PME**, **Direct Alpha**. Every function documented with the formula.
+2. **`src/test_analytics.py`** — 19 hand-checkable tests, all passing: exact AR(1) round-trip (smooth a known series, unsmooth, recover to 12 decimals), PME = 1.0 when a fund exactly tracks its index, Direct Alpha = 0 on the same toy, drawdown/XIRR/resample checks, and a 120-point estimator test (the original 8-point estimator assertion was statistically naive — my test bug, replaced, lesson noted).
+3. **`src/run_analytics.py`** — applies the core to the real series and filing data; writes `data/analytics/metrics.json`.
+4. **Series schema v2:** `date,close,adj_close`. Raw NAV understates distributing funds (CCLFX pays most of its return as monthly distributions); adj_close is the total-return proxy. Data layer + validator updated; both series re-pulled — CCLFX now spans its full life from inception day (2019-06-05).
+
+## The results (data/analytics/metrics.json)
+- **PAF cross-validation, exact:** geometric mean of the five FY returns extracted from its N-CSR = **15.31%** — matching the fund's own disclosed 5-yr average annual return **to the basis point**. Independent reproduction of a disclosed figure from raw inputs. Distribution wedge: TR 15.31% vs NAV-only 12.48% = 2.83pp/yr paid out.
+- **CCLFX:** sliced to the fund's 3/31/26 FYE for apples-to-apples — computed ann TR **7.98% vs disclosed 9.34%** (gap flagged, not hidden: Yahoo's adjustment approximates official reinvestment math; **CF2 cross-check vs fund fact-sheet monthly TRs is now a named task**). Observed ann vol 2.11%; lag-1 rho **0.139** (mild); de-smoothed vol 2.45%.
+- **DXYZ (the fail case, quantified):** listed 2024-03-26 at $9.00 → peak **$99.79 twelve days later** → trough $9.63 by Aug 2024 = **max drawdown −90.3%**, annualized vol 162.6%, yet cumulative +188.6% since listing (last $25.97). The premium/discount pathology in one row.
+
+## A methodology finding (feeds the August doc, §3)
+CCLFX's monthly lag-1 autocorrelation is only 0.139 — de-smoothing widens vol modestly (2.11% → 2.45%), nowhere near the index's 6.15%. Read honestly: **simple AR(1) de-smoothing is not a magic wand here**; the stronger smoothing evidence for private credit is the *level* comparison the fund itself discloses (1.71% vs 6.15%). The design doc's §3 must answer "what de-smoothing can and cannot detect" — this is the first empirical input to that section.
 
 ## Install & run
 ```
 cd ~/Projects/fiduciary-demo
-unzip -o ~/Downloads/tark_drop_v4.zip -d .
+unzip -o ~/Downloads/tark_drop_v5.zip -d .
 python src/validate_data.py
-python src/coverage.py
-git add -A && git commit -m "increment 2: M0 data layer + validator" && git push
+python src/test_analytics.py
+python src/run_analytics.py
+git add -A && git commit -m "increment 3: M2 analytics core + tests + real-data run" && git push
 ```
-Expected: `All clean — data contract holds.` then the coverage table (TOTAL 15%).
+Expected: contract holds · 19 tests pass · the three result blocks above reproduce on your machine.
 
-## The new habit
-`python src/validate_data.py` before every commit, forever. When your extraction hour or CF2's verification pass edits an evidence CSV, the validator is what catches a typo'd status or a value-less "verified" before it reaches a demo screen.
+## Open human items
+NEW for CF2: cross-check CCLFX computed TR vs the fund's published monthly returns (fact sheet) — explain or bound the 1.36pp gap. Standing: Oscar's three short reads; CF2's verification pass; Gate A **July 31**.
 
-## Open human items (unchanged from v3)
-Oscar's three short reads (PAF 2.2 + 4.2; CCLFX repurchase % + auditor line) · CF2's verification pass · targeted-read pointers in the CSVs for K-PEC and BREIT tables.
-
-## Next from Claude — Increment 3 (M2 analytics core)
-Returns/vol/drawdown, AR(1) de-smoothing, Kaplan-Schoar PME, Direct Alpha — pure functions, unit-tested on hand-checkable toy cases, then run against CCLFX's 1,759-point series and the annual filing data. Your §4 hand-worked PAF example (August window) remains the acceptance test of that code. Nothing needed to start.
-
-## Standing
-Gate A: **July 31.** Discovery ledger unchanged.
+## Next from Claude — Increment 4 (M3, the benchmark engine)
+Candidate generation (self-declared + index shortlist + peer cohort + PME), the scoring rubric with the provider-independence field, primary/secondary selection, and the rejection log. First step: pull free public index proxies for the candidate menu. Nothing needed to start. Reminder: your hand-worked PAF PME (August, §4) remains the acceptance test of this code.

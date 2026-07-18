@@ -1,0 +1,56 @@
+{
+  "method_notes": {
+    "monthly_resample": "last observation per calendar month",
+    "returns": "simple period returns on adj_close (total-return proxy incl. distributions)",
+    "desmoothing": "Geltner AR(1): r_true_t = (r_obs_t - rho * r_obs_t-1) / (1 - rho), rho = lag-1 autocorrelation",
+    "caveat": "Yahoo adj_close approximates distribution reinvestment; official fund TR calcs may differ modestly - flagged for CF2 cross-check vs fund fact sheets"
+  },
+  "cclfx": {
+    "full_history": {
+      "window": "2019-06-05 to 2026-07-17",
+      "monthly_obs": 85,
+      "ann_return_pct": 7.91,
+      "ann_vol_observed_pct": 2.07,
+      "lag1_autocorr_rho": 0.139,
+      "ann_vol_desmoothed_pct": 2.39
+    },
+    "to_2026_03_31_for_disclosure_comparison": {
+      "window": "2019-06-05 to 2026-03-31",
+      "monthly_obs": 81,
+      "ann_return_pct": 7.98,
+      "ann_vol_observed_pct": 2.11,
+      "lag1_autocorr_rho": 0.14,
+      "ann_vol_desmoothed_pct": 2.45
+    },
+    "fund_disclosed_at_2026_03_31": {
+      "si_ann_return_pct": 9.34,
+      "si_ann_stdev_pct": 1.71,
+      "source": "N-CSR 2026-06-08 Fund Performance"
+    }
+  },
+  "dxyz": {
+    "window": "2024-03-26 to 2026-07-17",
+    "first_close": 9.0,
+    "peak_close": 99.79,
+    "peak_date": "2024-04-08",
+    "trough_after_peak": 9.63,
+    "trough_date": "2024-08-07",
+    "last_close": 25.97,
+    "max_drawdown_pct": -90.3,
+    "ann_vol_daily_pct": 162.6,
+    "cumulative_since_listing_pct": 188.6
+  },
+  "hl_paf_annual": {
+    "fy_total_returns_pct_fy22_to_fy26": [
+      20.77,
+      16.1,
+      12.68,
+      12.59,
+      14.6
+    ],
+    "geometric_ann_total_return_pct": 15.31,
+    "nav_only_ann_return_pct": 12.48,
+    "distribution_wedge_pct": 2.83,
+    "caveat": "5 annual observations - volatility estimates not meaningful at this granularity"
+  }
+}

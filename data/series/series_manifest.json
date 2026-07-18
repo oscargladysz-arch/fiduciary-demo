@@ -2,25 +2,26 @@
   "series": [
     {
       "ticker": "DXYZ",
-      "source": "Yahoo Finance v8 chart API",
+      "source": "Yahoo Finance v8 chart API (close + adjclose)",
       "rows": 579,
       "first": "2024-03-26",
       "last": "2026-07-17",
       "pulled": "2026-07-18",
-      "note": "market price - cell 1.10 (premium/discount vs NAV pending NAV overlay)"
+      "note": "market price + adj close - cell 1.10 (fail-case exhibit)"
     },
     {
       "ticker": "CCLFX",
-      "source": "Yahoo Finance v8 chart API",
-      "rows": 1759,
-      "first": "2019-07-18",
+      "source": "Yahoo Finance v8 chart API (close + adjclose)",
+      "rows": 1789,
+      "first": "2019-06-05",
       "last": "2026-07-17",
       "pulled": "2026-07-18",
-      "note": "daily NAV - cells 1.1/1.7/4.8 (de-smoothing input)"
+      "note": "daily NAV + adj close (total-return proxy incl. distributions) - cells 1.1/1.7/4.8"
     }
   ],
+  "schema": "date,close,adj_close - adj_close folds distributions back in (total-return proxy); REQUIRED for distributing funds like CCLFX where raw NAV materially understates return",
   "excluded": {
-    "hl_paf": "class tickers unverified - annual series from filings suffices for v0 (guessing tickers risks mis-attributed data)",
+    "hl_paf": "class tickers unverified - annual series from filings suffices for v0",
     "stepstone_spm": "same",
     "kkr_kpec": "non-traded, no ticker",
     "breit": "non-traded, no ticker"
