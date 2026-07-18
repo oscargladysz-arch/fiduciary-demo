@@ -12,8 +12,13 @@
     },
     "1.2": {
       "element": "Trailing & calendar-year returns",
-      "value": null,
-      "status": "pending"
+      "value": "Total Return on MARKET VALUE: +613.45% (2024, listing year) then (47.96)% (2025) - the premium/discount pathology quantified in the fund's own highlights. NAV-based returns pending table read.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-03-10 (FY ended 12/31/2025)",
+      "section": "Financial Highlights",
+      "quote": "Total Return on Market Value (47.96)% 613.45%",
+      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "verified_by": ""
     },
     "1.3": {
       "element": "Gross vs net spread",
@@ -32,8 +37,13 @@
     },
     "1.6": {
       "element": "Volatility & max drawdown",
-      "value": null,
-      "status": "pending"
+      "value": "Ann vol 162.6% (daily); max drawdown -90.3% (peak $99.79 on 2024-04-08 to trough $9.63 on 2024-08-07).",
+      "status": "computed",
+      "source": "data/analytics/metrics.json",
+      "section": "dxyz block",
+      "quote": "",
+      "extracted_by": "Claude (M2/M3 pipeline)",
+      "verified_by": ""
     },
     "1.7": {
       "element": "De-smoothed volatility",
@@ -52,8 +62,13 @@
     },
     "1.10": {
       "element": "Market price & premium/discount",
-      "value": "ACTIVE CELL: market price vs NAV premium/discount is the valuation story here",
-      "status": "pending"
+      "value": "Full trading-life price series on disk (579 sessions since 2024-03-26 listing): first $9.00, peak $99.79, last $25.97, cumulative +188.6%. Premium/NAV decomposition pending NAV series - the engine escalation.",
+      "status": "computed",
+      "source": "data/series/dxyz.csv + data/analytics/metrics.json",
+      "section": "dxyz block",
+      "quote": "",
+      "extracted_by": "Claude (M2/M3 pipeline)",
+      "verified_by": ""
     },
     "1.11": {
       "element": "Track record & manager tenure",
@@ -62,8 +77,13 @@
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
-      "value": null,
-      "status": "pending"
+      "value": "Base management fee 2.00% per annum (Advisory Agreement dated Apr 29, 2022). High for a listed CEF - evaluative datum.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-03-10 (FY ended 12/31/2025)",
+      "section": "Note 5 - Agreements and Related Party Transactions",
+      "quote": "a base management fee in the amount of 2.00% per annum",
+      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "verified_by": ""
     },
     "2.2": {
       "element": "Incentive fee terms",
@@ -72,8 +92,13 @@
     },
     "2.3": {
       "element": "Total expense ratio & waivers",
-      "value": null,
-      "status": "pending"
+      "value": "Expense ratio 4.53% of avg net assets (FY2025); prior years 6.28 / 5.92 / 5.13. Net assets $438.0M at 12/31/2025 (vs $70.0M a year prior - the 2025 ATM raise, ~$324M net proceeds).",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-03-10 (FY ended 12/31/2025)",
+      "section": "Financial Highlights",
+      "quote": "Ratio of expenses to average net assets ... 4.53%",
+      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "verified_by": ""
     },
     "2.4": {
       "element": "AFFE",
@@ -112,8 +137,13 @@
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
-      "value": "Listed CEF: daily on-exchange liquidity (NYSE), no fund-level repurchase program",
-      "status": "pending-verify"
+      "value": "Listed CEF: NYSE since March 26, 2024, ticker DXYZ; daily on-exchange liquidity; no fund-level repurchase program.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-03-10 (FY ended 12/31/2025)",
+      "section": "Note 1 - Organization",
+      "quote": "shares began trading on the New York Stock Exchange ... on March 26, 2024 under the ticker symbol DXYZ",
+      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "verified_by": ""
     },
     "3.2": {
       "element": "Repurchase mechanics",
@@ -162,8 +192,13 @@
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: portfolio predominantly Level 3 - 'Level 3 securities fair valued using significant unobservable inputs' (SOI footnote b); dollar hierarchy table pending read.",
+      "status": "partial",
+      "source": "N-CSR 2026-03-10 (FY ended 12/31/2025)",
+      "section": "Schedule of Investments footnotes",
+      "quote": "Level 3 securities fair valued using significant unobservable inputs",
+      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "verified_by": ""
     },
     "4.3": {
       "element": "Independent valuation agent",

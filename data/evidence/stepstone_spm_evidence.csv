@@ -6,7 +6,7 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 1.5,Underlying sleeve/GP performance,,,,,,,,,pending
 1.6,Volatility & max drawdown,,,,,,,,,pending
 1.7,De-smoothed volatility,,,,,,,,,pending
-1.8,Risk-adjusted metrics (PME etc),,,,,,,,,pending
+1.8,Risk-adjusted metrics (PME etc),"KS-PME 1.762, Direct Alpha +12.0%/yr vs PSP (same fiscal window, same window-sensitivity disclosure); vs URTH: PME 1.1155, +2.21%/yr.",data/benchmarks/stepstone_spm_selection.json,primary/secondary comparison,,,2026-07-18,Claude (M2/M3 pipeline),,computed
 1.9,Stress-window performance,,,,,,,,,pending
 1.10,Market price & premium/discount,,,,,,,,,n/a - listed-CEF only
 1.11,Track record & manager tenure,,,,,,,,,pending
@@ -16,7 +16,7 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 2.4,AFFE,,,,,,,,,pending
 2.5,Underlying GP economics,,,,,,,,,pending
 2.6,Loads & servicing fees,,,,,,,,,pending
-2.7,Early repurchase fee,,,,,,,,,pending
+2.7,Early repurchase fee,No early-repurchase-fee language matched in prospectus or N-CSR - likely none at fund level; confirm in tender-offer terms.,486BPOS 2025-10-20 + N-CSR 2026-06-09,,,,2026-07-18,Claude (Inc-EP),,partial
 2.8,CIT fee schedule,,,,,,,,,n/a - CIT only
 2.9,Fee peer percentile,,,,,,,,,pending
 2.10,Value justification,,,,,,,,,pending
@@ -48,7 +48,7 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 6.1,Structure map,,,,,,,,,pending
 6.2,Strategy & instrument complexity,,,,,,,,,pending
 6.3,Conflicts & affiliated transactions,,,,,,,,,pending
-6.4,Tax reporting (1099 vs K-1),,,,,,,,,pending
+6.4,Tax reporting (1099 vs K-1),"1099 reporting, marketed as a feature: prospectus lists 'Form 1099 DIV or Form 1099-B tax reporting instead of K-1s' under Favorable Structure - the direct contrast to K-PEC's K-1s. The complexity factor's cleanest cross-product pair.",486BPOS 2025-10-20,Favorable Structure,Form 1099 DIV or Form 1099-B tax reporting instead of K-1s,data/raw/stepstone_spm/486BPOS_2025-10-20_d60278d486bpos.htm,2026-07-18,Claude (Inc-EP),,extracted-unverified
 6.5,Service-provider web,,,,,,,,,pending
 6.6,Plan operational fit,,,,,,,,,pending
 6.7,Participant communicability,,,,,,,,,pending

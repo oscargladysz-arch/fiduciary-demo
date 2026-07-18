@@ -3,7 +3,7 @@
   "strategy": "private_equity_evergreen",
   "source_cells": [
     "1.2",
-    "5.1 (pending)"
+    "5.1"
   ],
   "primary": {
     "candidate": "Listed private equity investable proxy (PSP)",

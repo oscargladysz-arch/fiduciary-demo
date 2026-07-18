@@ -6,12 +6,12 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 1.5,Underlying sleeve/GP performance,,,,,,,,,pending
 1.6,Volatility & max drawdown,,,,,,,,,pending
 1.7,De-smoothed volatility,,,,,,,,,pending
-1.8,Risk-adjusted metrics (PME etc),,,,,,,,,pending
+1.8,Risk-adjusted metrics (PME etc),"KS-PME 1.9565, Direct Alpha +14.37%/yr vs PSP over fiscal window 2021-03-31 to 2026-03-31 - DISCLOSED as window-sensitive and smoothing-flattered (window opens at listed-PE peak; appraisal-lagged NAV sailed through 2022). Secondary vs URTH: PME 1.2386, +4.37%/yr.",data/benchmarks/hl_paf_selection.json,primary/secondary comparison + methodology caveat,,,2026-07-18,Claude (M2/M3 pipeline),,computed
 1.9,Stress-window performance,,,,,,,,,pending
 1.10,Market price & premium/discount,,,,,,,,,n/a - listed-CEF only
 1.11,Track record & manager tenure,,,,,,,,,pending
 2.1,Management fee (rate AND base),"1.40% annualized on MANAGED ASSETS (not net assets - includes leverage), calculated monthly, paid quarterly. NOTE: fee-base trap from dictionary 2.1 confirmed in the wild.",N-CSR 2026-06-09 (acc 0001213900-26-054176*),Notes - Investment Management Fee,Investment Management Fee equal to 1.40% on an annualized basis of the Fund's Managed Assets,data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm,2026-07-09,Claude (spike),,extracted-unverified
-2.2,Incentive fee terms,PARTIAL: rate/hurdle not yet pulled; measured drag on NII ratio: 1.45% FY26 / 0.84% FY25 / 1.95% FY24 / 2.52% FY23. Rate lives in fee note / prospectus Incentive Fee section.,N-CSR 2026-06-09 (acc 0001213900-26-054176*),Financial Highlights footnote 5,If Incentive Fees... were included the ratio would have been lowered by 1.45%,data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm,2026-07-09,Claude (spike),,partial
+2.2,Incentive fee terms,"PARTIAL upgraded: Incentive Fee accrued monthly, calculated PER INVESTMENT (each Direct, Secondary, Listed PE, Opportunistic investment separately) - unusual per-deal structure. Rate still pending ('INVESTMENT MANAGEMENT FEE' / 'Incentive Fee' section of prospectus). Measured drag on NII ratio: 1.45% FY26 / 0.84% / 1.95% / 2.52%.",486BPOS 2021-07-29 + N-CSR fn.5,Incentive Fee,"The Incentive Fee shall be calculated in respect of each Direct Investment, Secondary Investment, Listed PE Investment",data/raw/hl_paf/486BPOS_2021-07-29_fp0067291_486bpos.htm,2026-07-18,Claude (Inc-EP),,partial
 2.3,Total expense ratio & waivers,"Class I gross/net expenses FY26 3.40%/3.40%, FY25 2.93/2.93, FY24 4.26/4.26. Expense Limit: 1.45% R / 0.75% I / 1.00% D of avg daily net assets, EXCLUDING mgmt fee, incentive fee, AFFE, interest, taxes.",N-CSR 2026-06-09 (acc 0001213900-26-054176*),Financial Highlights + expense limit note,"do not exceed 1.45%, 0.75% and 1.00% ... Class R, Class I and Class D",data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm,2026-07-09,Claude (spike),,extracted-unverified
 2.4,AFFE,,,,,,,,,pending
 2.5,Underlying GP economics,,,,,,,,,pending
@@ -38,7 +38,7 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 4.7,Premium/discount check,,,,,,,,,pending
 4.8,Smoothing diagnostics,,,,,,,,,pending
 4.9,CIT unit valuation,,,,,,,,,n/a - CIT only
-5.1,Self-declared benchmark,,,,,,,,,pending
+5.1,Self-declared benchmark,Stated comparators in shareholder report: S&P 500 Index and MSCI World Index (defined in Fund Performance footnotes).,N-CSR 2026-06-09 (FY ended 3/31/2026),Management's Discussion of Fund Performance,S&P 500 Index ... MSCI World Index - The MSCI World Index tracks large and mid-cap equity performance,,2026-07-18,Claude (Inc-EP),,extracted-unverified
 5.2,Public index series,,,,,,,,,pending
 5.3,Alt asset-class indices,,,,,,,,,pending
 5.4,Peer universe & returns,,,,,,,,,pending

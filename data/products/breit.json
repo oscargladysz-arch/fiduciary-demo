@@ -107,8 +107,13 @@
     },
     "2.7": {
       "element": "Early repurchase fee",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: Early Repurchase Deduction EXISTS (excluded from the 2%/5% cap math); rate pending targeted read.",
+      "status": "partial",
+      "source": "10-K 2026-02-27 (FY2025)",
+      "section": "Share repurchase plan",
+      "quote": "excluding any Early Repurchase Deduction applicable to the repurchased shares",
+      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "verified_by": ""
     },
     "2.8": {
       "element": "CIT fee schedule",
@@ -142,12 +147,12 @@
     },
     "3.3": {
       "element": "Repurchase history",
-      "value": "PARTIAL: suspension/modification authority language captured; the 2022-2024 proration history (requests vs fulfilled) pending targeted read of the repurchase activity tables.",
-      "status": "partial",
+      "value": "CONFIRMED in issuer's own words: repurchase requests have exceeded plan limits in the past; shares repurchased pro rata; 'periods of prorated fulfillment' acknowledged (the 2022-24 gating). Monthly request-vs-fulfilled tables pending targeted read.",
+      "status": "extracted-unverified",
       "source": "10-K 2026-02-27 (FY2025)",
-      "section": "",
-      "quote": "",
-      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "section": "Risk factors / share repurchase plan",
+      "quote": "we have in the past received ... repurchase requests that exceed the limits ... resulting in the repurchase of shares on a pro rata basis",
+      "extracted_by": "Claude (Inc-EP 2026-07-18)",
       "verified_by": ""
     },
     "3.4": {
@@ -202,12 +207,12 @@
     },
     "4.4": {
       "element": "Methodology by asset type",
-      "value": "Appraisal assumptions DISCLOSED: weighted avg discount rate + exit cap rate by property type as of 12/31/2025 (e.g., Rental Housing 7.2% discount / 5.4% exit cap). Full table pending read - cell 4.4's richest source on the roster.",
-      "status": "partial",
+      "value": "Appraisal assumptions by property type (12/31/2025): Rental Housing 7.2% discount / 5.4% exit cap; Industrial 7.5% / 5.5%; Net Lease 6.6% / (further rows in table). Cell 4.4's richest disclosure on the roster.",
+      "status": "extracted-unverified",
       "source": "10-K 2026-02-27 (FY2025)",
-      "section": "Valuation key assumptions table",
-      "quote": "weighted average discount rate and exit capitalization rate by property type",
-      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "section": "DCF valuation key assumptions table",
+      "quote": "Rental Housing 7.2% 5.4% Industrial 7.5% 5.5%",
+      "extracted_by": "Claude (Inc-EP 2026-07-18)",
       "verified_by": ""
     },
     "4.5": {

@@ -42,18 +42,33 @@
     },
     "1.6": {
       "element": "Volatility & max drawdown",
-      "value": null,
-      "status": "pending"
+      "value": "Ann vol (observed, monthly adj-close) 2.07% full-history / 2.11% to FYE; ann return 7.91% / 7.98%. TR-gap vs disclosed 9.34% flagged for CF2.",
+      "status": "computed",
+      "source": "data/analytics/metrics.json",
+      "section": "cclfx block",
+      "quote": "",
+      "extracted_by": "Claude (M2/M3 pipeline)",
+      "verified_by": ""
     },
     "1.7": {
       "element": "De-smoothed volatility",
-      "value": null,
-      "status": "pending"
+      "value": "Geltner de-smoothed ann vol 2.39% (rho 0.139) / 2.45% to FYE. Finding: mild lag-1 smoothing; the level comparison vs index (1.71% vs 6.15%, fund-disclosed) is the stronger smoothing evidence.",
+      "status": "computed",
+      "source": "data/analytics/metrics.json",
+      "section": "cclfx block",
+      "quote": "",
+      "extracted_by": "Claude (M2/M3 pipeline)",
+      "verified_by": ""
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": null,
-      "status": "pending"
+      "value": "KS-PME 1.2519, Direct Alpha +3.21%/yr vs BKLN proxy over full life (2019-06-05 to 2026-07-17).",
+      "status": "computed",
+      "source": "data/benchmarks/cliffwater_cclfx_selection.json",
+      "section": "primary.comparison",
+      "quote": "",
+      "extracted_by": "Claude (M2/M3 pipeline)",
+      "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
@@ -137,8 +152,13 @@
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
-      "value": "Rule 23c-3 interval fund: quarterly repurchase offers (confirm % in latest N-23C3A)",
-      "status": "pending-verify"
+      "value": "Rule 23c-3 periodic repurchase offer: up to five percent (5%) of outstanding shares, quarterly, at NAV (NYSE close on Repurchase Pricing Date). 8-quarter N-23C3A series on disk = cell 3.3 structured history.",
+      "status": "extracted-unverified",
+      "source": "N-23C3A 2026-05-08",
+      "section": "Notification of Repurchase Offer",
+      "quote": "offering to repurchase, for cash, up to five percent (5%) of its outstanding shares at a price equal to the net asset value",
+      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "verified_by": ""
     },
     "3.2": {
       "element": "Repurchase mechanics",

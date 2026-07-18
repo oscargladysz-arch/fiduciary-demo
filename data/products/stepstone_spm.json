@@ -47,8 +47,13 @@
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": null,
-      "status": "pending"
+      "value": "KS-PME 1.762, Direct Alpha +12.0%/yr vs PSP (same fiscal window, same window-sensitivity disclosure); vs URTH: PME 1.1155, +2.21%/yr.",
+      "status": "computed",
+      "source": "data/benchmarks/stepstone_spm_selection.json",
+      "section": "primary/secondary comparison",
+      "quote": "",
+      "extracted_by": "Claude (M2/M3 pipeline)",
+      "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
@@ -107,8 +112,13 @@
     },
     "2.7": {
       "element": "Early repurchase fee",
-      "value": null,
-      "status": "pending"
+      "value": "No early-repurchase-fee language matched in prospectus or N-CSR - likely none at fund level; confirm in tender-offer terms.",
+      "status": "partial",
+      "source": "486BPOS 2025-10-20 + N-CSR 2026-06-09",
+      "section": "",
+      "quote": "",
+      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "verified_by": ""
     },
     "2.8": {
       "element": "CIT fee schedule",
@@ -287,8 +297,13 @@
     },
     "6.4": {
       "element": "Tax reporting (1099 vs K-1)",
-      "value": null,
-      "status": "pending"
+      "value": "1099 reporting, marketed as a feature: prospectus lists 'Form 1099 DIV or Form 1099-B tax reporting instead of K-1s' under Favorable Structure - the direct contrast to K-PEC's K-1s. The complexity factor's cleanest cross-product pair.",
+      "status": "extracted-unverified",
+      "source": "486BPOS 2025-10-20",
+      "section": "Favorable Structure",
+      "quote": "Form 1099 DIV or Form 1099-B tax reporting instead of K-1s",
+      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "verified_by": ""
     },
     "6.5": {
       "element": "Service-provider web",

@@ -54,8 +54,13 @@
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": null,
-      "status": "pending"
+      "value": "KS-PME 1.9565, Direct Alpha +14.37%/yr vs PSP over fiscal window 2021-03-31 to 2026-03-31 - DISCLOSED as window-sensitive and smoothing-flattered (window opens at listed-PE peak; appraisal-lagged NAV sailed through 2022). Secondary vs URTH: PME 1.2386, +4.37%/yr.",
+      "status": "computed",
+      "source": "data/benchmarks/hl_paf_selection.json",
+      "section": "primary/secondary comparison + methodology caveat",
+      "quote": "",
+      "extracted_by": "Claude (M2/M3 pipeline)",
+      "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
@@ -84,12 +89,12 @@
     },
     "2.2": {
       "element": "Incentive fee terms",
-      "value": "PARTIAL: rate/hurdle not yet pulled; measured drag on NII ratio: 1.45% FY26 / 0.84% FY25 / 1.95% FY24 / 2.52% FY23. Rate lives in fee note / prospectus Incentive Fee section.",
-      "source": "N-CSR 2026-06-09 (acc 0001213900-26-054176*)",
-      "section": "Financial Highlights footnote 5",
-      "quote": "If Incentive Fees... were included the ratio would have been lowered by 1.45%",
+      "value": "PARTIAL upgraded: Incentive Fee accrued monthly, calculated PER INVESTMENT (each Direct, Secondary, Listed PE, Opportunistic investment separately) - unusual per-deal structure. Rate still pending ('INVESTMENT MANAGEMENT FEE' / 'Incentive Fee' section of prospectus). Measured drag on NII ratio: 1.45% FY26 / 0.84% / 1.95% / 2.52%.",
+      "source": "486BPOS 2021-07-29 + N-CSR fn.5",
+      "section": "Incentive Fee",
+      "quote": "The Incentive Fee shall be calculated in respect of each Direct Investment, Secondary Investment, Listed PE Investment",
       "status": "partial",
-      "extracted_by": "Claude (spike 2026-07-09)",
+      "extracted_by": "Claude (Inc-EP 2026-07-18)",
       "verified_by": ""
     },
     "2.3": {
@@ -254,8 +259,13 @@
     },
     "5.1": {
       "element": "Self-declared benchmark",
-      "value": null,
-      "status": "pending"
+      "value": "Stated comparators in shareholder report: S&P 500 Index and MSCI World Index (defined in Fund Performance footnotes).",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
+      "section": "Management's Discussion of Fund Performance",
+      "quote": "S&P 500 Index ... MSCI World Index - The MSCI World Index tracks large and mid-cap equity performance",
+      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "verified_by": ""
     },
     "5.2": {
       "element": "Public index series",

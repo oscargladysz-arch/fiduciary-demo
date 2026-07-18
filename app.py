@@ -34,6 +34,7 @@ CHIP = {
     "extracted": ":green[● extracted — unverified]",
     "partial": ":orange[● partial]",
     "fetched": ":blue[● series fetched]",
+    "computed": ":violet[● computed (pipeline)]",
     "pending": ":gray[○ pending]",
     "n/a": ":gray[– n/a]",
 }

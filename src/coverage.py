@@ -7,7 +7,7 @@ for prod in product_keys():
     s = p = pend = na = 0
     for row in load_evidence(prod):
         k = status_kind(row["status"])
-        if k in ("extracted", "verified"): s += 1
+        if k in ("extracted", "verified", "computed"): s += 1
         elif k in ("partial", "fetched"): p += 1
         elif k == "n/a": na += 1
         else: pend += 1

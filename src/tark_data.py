@@ -69,7 +69,7 @@ CELLS = {
 
 # status vocabulary is prefix-based: the wild data legitimately contains
 # refinements like "pending-verify" and "fetched-series, extraction pending"
-STATUS_PREFIXES = ("pending", "partial", "extracted", "verified", "fetched", "n/a")
+STATUS_PREFIXES = ("pending", "partial", "extracted", "verified", "computed", "fetched", "n/a")
 
 SERIES_COLUMNS = ["date", "close", "adj_close"]
 
@@ -178,11 +178,11 @@ def validate_product(key: str) -> list[str]:
         st = cell.get("status", "")
         if status_kind(st) == "unknown":
             errs.append(f"{key}:{cid}: unknown status '{st}'")
-        if status_kind(st) in ("extracted", "verified") and not cell.get("value"):
+        if status_kind(st) in ("extracted", "verified", "computed") and not cell.get("value"):
             errs.append(f"{key}:{cid}: status '{st}' but no value")
-        if status_kind(st) in ("extracted", "verified") and not cell.get("source"):
+        if status_kind(st) in ("extracted", "verified", "computed") and not cell.get("source"):
             errs.append(f"{key}:{cid}: status '{st}' but no source")
-        if status_kind(st) in ("extracted", "verified") and not str(cell.get("extracted_by", "")).strip():
+        if status_kind(st) in ("extracted", "verified", "computed") and not str(cell.get("extracted_by", "")).strip():
             errs.append(f"{key}:{cid}: status '{st}' but empty extracted_by "
                         f"(provenance is part of the record)")
 

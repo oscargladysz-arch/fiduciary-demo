@@ -47,8 +47,8 @@ PRODUCT_PROFILES = {
         # FY total returns FY22..FY26 (cell 1.2), fiscal year ends 3/31
         "fy_returns": [0.2077, 0.1610, 0.1268, 0.1259, 0.1460],
         "fy_window": ("2021-03-31", "2026-03-31"),
-        "self_declared": None,                  # cell 5.1 pending extraction
-        "source_cells": ["1.2", "5.1 (pending)"],
+        "self_declared": "S&P 500 / MSCI World (N-CSR Fund Performance)",  # cell 5.1
+        "source_cells": ["1.2", "5.1"],
     },
     "stepstone_spm": {
         "strategy": "private_equity_evergreen",

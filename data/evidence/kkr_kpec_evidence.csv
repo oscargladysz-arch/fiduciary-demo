@@ -1,6 +1,6 @@
 cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,extracted_by,verified_by,status
 1.1,Net total return series,,,,,,,,,pending
-1.2,Trailing & calendar-year returns,"PARTIAL: per-class Transactional NAV Total Return table exists (Classes D/I/S/U/R-D/R-I...); values pending table read. 27 portfolio companies; $3,848.7M invested in FY2025.",10-K 2026-03-26 (FY2025),Total Returns table,,,2026-07-18,Claude (Inc-1),,partial
+1.2,Trailing & calendar-year returns,"PARTIAL: per-class Transactional NAV Total Returns table located (Classes D/I/S/U/R-D/R-I/R-U; newest class inceptions Feb 2025); values pending table read. 27 portfolio cos; $3,848.7M invested FY2025.",10-K 2026-03-26 (FY2025),Total Returns table,,,2026-07-18,Claude (Inc-EP),,partial
 1.3,Gross vs net spread,,,,,,,,,pending
 1.4,Distribution history & composition,,,,,,,,,pending
 1.5,Underlying sleeve/GP performance,,,,,,,,,pending
@@ -16,11 +16,11 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 2.4,AFFE,,,,,,,,,pending
 2.5,Underlying GP economics,,,,,,,,,pending
 2.6,Loads & servicing fees,,,,,,,,,pending
-2.7,Early repurchase fee,,,,,,,,,pending
+2.7,Early repurchase fee,"PARTIAL: an early repurchase fee EXISTS, calculated on Transactional NAV; rate pending targeted read of Repurchase Limitations section.",10-K 2026-03-26 (FY2025),Repurchase Limitations,repurchase price and early repurchase fee described below are calculated based on the Company's Transactional Net Asset Value,,2026-07-18,Claude (Inc-EP),,partial
 2.8,CIT fee schedule,,,,,,,,,n/a - CIT only
 2.9,Fee peer percentile,,,,,,,,,pending
 2.10,Value justification,,,,,,,,,pending
-3.1,Wrapper liquidity terms,PARTIAL: share repurchase plan exists (DRIP interaction language captured); percentage caps and cadence pending targeted read of Share Repurchases section.,10-K 2026-03-26 (FY2025),,,,2026-07-18,Claude (Inc-1),,partial
+3.1,Wrapper liquidity terms,Quarterly share repurchase plan: limited to 5.0% of aggregate NAV attributable to Investor Share classes per calendar quarter (measured on avg aggregate NAV of the immediately preceding quarter). Board discretion applies.,10-K 2026-03-26 (FY2025),Share Repurchases,limited to no more than 5.0% of our aggregate NAV attributable to such classes of Shares per calendar quarter,,2026-07-18,Claude (Inc-EP),,extracted-unverified
 3.2,Repurchase mechanics,,,,,,,,,pending
 3.3,Repurchase history,,,,,,,,,pending
 3.4,Portfolio liquidity profile,,,,,,,,,pending
@@ -48,7 +48,7 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 6.1,Structure map,,,,,,,,,pending
 6.2,Strategy & instrument complexity,,,,,,,,,pending
 6.3,Conflicts & affiliated transactions,,,,,,,,,pending
-6.4,Tax reporting (1099 vs K-1),,,,,,,,,pending
+6.4,Tax reporting (1099 vs K-1),"ISSUES SCHEDULE K-1s (partnership taxation): K-1 information provided ~75 days after calendar year-end, and may be delayed. Per dictionary 6.4, K-1s are near-disqualifying operationally in DC plans - participant-level recordkeeping cannot process them. MAJOR complexity red flag; contrast SPRIM which markets 1099-not-K-1 as a selling point.",10-K 2026-03-26 (FY2025),U.S. tax information / risk factors,IRS Schedule K-1 information needed to determine a Shareholder's allocable share ... 75 days after the close of each calendar year,,2026-07-18,Claude (Inc-EP),,extracted-unverified
 6.5,Service-provider web,,,,,,,,,pending
 6.6,Plan operational fit,,,,,,,,,pending
 6.7,Participant communicability,,,,,,,,,pending

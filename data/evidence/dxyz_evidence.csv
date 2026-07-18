@@ -1,18 +1,18 @@
 cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,extracted_by,verified_by,status
 1.1,Net total return series,,,,,,,,,pending
-1.2,Trailing & calendar-year returns,,,,,,,,,pending
+1.2,Trailing & calendar-year returns,"Total Return on MARKET VALUE: +613.45% (2024, listing year) then (47.96)% (2025) - the premium/discount pathology quantified in the fund's own highlights. NAV-based returns pending table read.",N-CSR 2026-03-10 (FY ended 12/31/2025),Financial Highlights,Total Return on Market Value (47.96)% 613.45%,,2026-07-18,Claude (Inc-EP),,extracted-unverified
 1.3,Gross vs net spread,,,,,,,,,pending
 1.4,Distribution history & composition,,,,,,,,,pending
 1.5,Underlying sleeve/GP performance,,,,,,,,,pending
-1.6,Volatility & max drawdown,,,,,,,,,pending
+1.6,Volatility & max drawdown,Ann vol 162.6% (daily); max drawdown -90.3% (peak $99.79 on 2024-04-08 to trough $9.63 on 2024-08-07).,data/analytics/metrics.json,dxyz block,,,2026-07-18,Claude (M2/M3 pipeline),,computed
 1.7,De-smoothed volatility,,,,,,,,,pending
 1.8,Risk-adjusted metrics (PME etc),,,,,,,,,pending
 1.9,Stress-window performance,,,,,,,,,pending
-1.10,Market price & premium/discount,ACTIVE CELL: market price vs NAV premium/discount is the valuation story here,,,,,,,,pending
+1.10,Market price & premium/discount,"Full trading-life price series on disk (579 sessions since 2024-03-26 listing): first $9.00, peak $99.79, last $25.97, cumulative +188.6%. Premium/NAV decomposition pending NAV series - the engine escalation.",data/series/dxyz.csv + data/analytics/metrics.json,dxyz block,,,2026-07-18,Claude (M2/M3 pipeline),,computed
 1.11,Track record & manager tenure,,,,,,,,,pending
-2.1,Management fee (rate AND base),,,,,,,,,pending
+2.1,Management fee (rate AND base),"Base management fee 2.00% per annum (Advisory Agreement dated Apr 29, 2022). High for a listed CEF - evaluative datum.",N-CSR 2026-03-10 (FY ended 12/31/2025),Note 5 - Agreements and Related Party Transactions,a base management fee in the amount of 2.00% per annum,data/raw/dxyz/N-CSR_2026-03-10_ea0276106-01_ncsr.htm,2026-07-18,Claude (Inc-EP),,extracted-unverified
 2.2,Incentive fee terms,,,,,,,,,pending
-2.3,Total expense ratio & waivers,,,,,,,,,pending
+2.3,Total expense ratio & waivers,"Expense ratio 4.53% of avg net assets (FY2025); prior years 6.28 / 5.92 / 5.13. Net assets $438.0M at 12/31/2025 (vs $70.0M a year prior - the 2025 ATM raise, ~$324M net proceeds).",N-CSR 2026-03-10 (FY ended 12/31/2025),Financial Highlights,Ratio of expenses to average net assets ... 4.53%,,2026-07-18,Claude (Inc-EP),,extracted-unverified
 2.4,AFFE,,,,,,,,,pending
 2.5,Underlying GP economics,,,,,,,,,pending
 2.6,Loads & servicing fees,,,,,,,,,pending
@@ -20,7 +20,7 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 2.8,CIT fee schedule,,,,,,,,,n/a - CIT only
 2.9,Fee peer percentile,,,,,,,,,pending
 2.10,Value justification,,,,,,,,,pending
-3.1,Wrapper liquidity terms,"Listed CEF: daily on-exchange liquidity (NYSE), no fund-level repurchase program",,,,,,,,pending-verify
+3.1,Wrapper liquidity terms,"Listed CEF: NYSE since March 26, 2024, ticker DXYZ; daily on-exchange liquidity; no fund-level repurchase program.",N-CSR 2026-03-10 (FY ended 12/31/2025),Note 1 - Organization,"shares began trading on the New York Stock Exchange ... on March 26, 2024 under the ticker symbol DXYZ",,2026-07-18,Claude (Inc-EP),,extracted-unverified
 3.2,Repurchase mechanics,,,,,,,,,n/a - exchange-traded
 3.3,Repurchase history,,,,,,,,,n/a - exchange-traded
 3.4,Portfolio liquidity profile,,,,,,,,,pending
@@ -30,7 +30,7 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 3.8,Redemption stress test,,,,,,,,,pending
 3.9,Product-to-plan liquidity match,,,,,,,,,n/a - workflow output
 4.1,Valuation policy & NAV frequency,,,,,,,,,pending
-4.2,Fair-value hierarchy (L1/2/3),,,,,,,,,pending
+4.2,Fair-value hierarchy (L1/2/3),PARTIAL: portfolio predominantly Level 3 - 'Level 3 securities fair valued using significant unobservable inputs' (SOI footnote b); dollar hierarchy table pending read.,N-CSR 2026-03-10 (FY ended 12/31/2025),Schedule of Investments footnotes,Level 3 securities fair valued using significant unobservable inputs,,2026-07-18,Claude (Inc-EP),,partial
 4.3,Independent valuation agent,,,,,,,,,pending
 4.4,Methodology by asset type,,,,,,,,,pending
 4.5,Auditor & opinion,,,,,,,,,pending
