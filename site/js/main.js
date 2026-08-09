@@ -14,7 +14,7 @@ const VIEWS = [
   ["liquidity", "Liquidity Match", viewLiquidity, "record"],
   ["pme", "PME Window Explorer", viewPme, "analytics"],
   ["dxyz", "DXYZ Price vs NAV", viewDxyz, "analytics"],
-  ["desmooth", "De-smoothing (CCLFX)", viewDesmooth, "analytics"],
+  ["desmooth", "De-smoothing Lab", viewDesmooth, "analytics"],
   ["coverage", "Coverage & Provenance", viewCoverage, "integrity"],
 ];
 const GROUPS = { context: "Context", record: "The Record",
@@ -79,7 +79,8 @@ function buildTopbar() {
         `<option value="${k}" ${k === state.product ? "selected" : ""}>${esc(T.products[k].fund_name)}</option>`).join("")}
       </select></span>
     <span class="spacer"></span>
-    <span class="cap" style="max-width:460px">${esc(T.rule_caption)}</span>`;
+    <details class="authority"><summary>Authority</summary>
+      ${esc(T.rule_caption)}</details>`;
   bar.querySelector("#planpick").addEventListener("change",
     (e) => setState({ plan: e.target.value }));
   bar.querySelector("#prodpick").addEventListener("change",

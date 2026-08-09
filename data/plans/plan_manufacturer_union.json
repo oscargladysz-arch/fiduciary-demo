@@ -1,6 +1,6 @@
 {
   "plan_key": "plan_manufacturer_union",
-  "display_label": "US tire & rubber manufacturer bargaining-unit 401(k) plan (~$790M, OH)",
+  "display_label": "US industrial manufacturer 401(k) plan (~$0.8B, OH)",
   "archetype": "mid-size industrial plan; union workforce with retirees in pay status",
   "anonymization_rule": "Sponsor name NEVER appears on demo surfaces. Data is public (DOL Form 5500 FOIA files); anonymization is a project display rule, not a legal requirement.",
   "identity_private": {

@@ -84,6 +84,8 @@ with sync_playwright() as pw:
                 text = page.evaluate(
                     """([v, pl, pr]) => {
                          window.tarkSetState({view: v, plan: pl, product: pr});
+                         document.querySelectorAll('#view details').forEach(
+                           (d) => { d.open = true; });
                          return document.getElementById('view').innerText;
                        }""", [view, plan, product])
                 if len(errors) > n_err or len(text.strip()) < 40:
@@ -97,9 +99,13 @@ with sync_playwright() as pw:
           "; ".join(leak_bad[:5]))
 
     def view_text(view, plan="plan_tech_media", product="hl_paf"):
+        # open every disclosure so hidden prose is included in the sweep —
+        # anonymization and content checks must cover collapsed details too
         return page.evaluate(
             """([v, pl, pr]) => {
                  window.tarkSetState({view: v, plan: pl, product: pr});
+                 document.querySelectorAll('#view details').forEach(
+                   (d) => { d.open = true; });
                  return document.getElementById('view').innerText;
                }""", [view, plan, product])
 
@@ -176,11 +182,15 @@ with sync_playwright() as pw:
           abs(float(page.locator("#pme_ks").inner_text()) - 1.9565) < 1e-4)
 
     view_text("liquidity", product="cliffwater_cclfx")
-    d0 = page.locator("#o_dpct").inner_text()
+    d0 = page.locator("#o_reason").inner_text()
     page.evaluate("""() => { const s = document.getElementById('s_tail');
         s.value = '45'; s.dispatchEvent(new Event('input')); }""")
-    d1 = page.locator("#o_dpct").inner_text()
+    d1 = page.locator("#o_reason").inner_text()
     check("liquidity slider changes demand", d0 != d1, f"{d0} -> {d1}")
+    check("liquidity capacity-vs-demand visual renders",
+          page.locator("#capchart svg rect").count() >= 2)
+    check("liquidity stress block present",
+          "Stressed demand" in page.locator("#view").inner_text())
 
     # ---------- 7. JS<->Python parity: same toy cases as test_analytics ----------
     toys = page.evaluate("""() => {
@@ -246,6 +256,36 @@ with sync_playwright() as pw:
     }""")
     check("parity: JS scenario matches all 24 bundled liquidity scenarios",
           not mism, "; ".join(mism[:4]))
+
+    # ---------- 7b. design-pass additions ----------
+    t = view_text("benchmarks", product="kkr_kpec")
+    check("kkr_kpec selection exists with PSP primary",
+          "Listed private equity investable proxy" in t and "0.8964" in t)
+    t = view_text("benchmarks", product="breit")
+    check("breit selection exists with VNQ primary",
+          "Listed REIT investable proxy" in t and "0.9073" in t)
+    check("breit ODCE secondary with honest data caveat",
+          "ODCE" in t)
+    t = view_text("desmooth", product="breit")
+    check("breit de-smoothing from printed monthly NAV (rho 0.483)",
+          "0.483" in t)
+    check("de-smoothing availability honesty renders for annual-tier",
+          "cannot run" in t.lower() or "Where this diagnostic" in t)
+    t = view_text("evaluation", product="hl_paf")
+    check("factor rollup strip renders", page.locator(".rollup a").count() == 6)
+    check("glossary chips present",
+          page.locator("#view .term").count() >= 1)
+    check("evaluation product chart renders (tier-driven)",
+          page.locator("#prodchart svg").count() == 1)
+    t = view_text("coverage")
+    check("taxonomy line on screen", "0 unresolved" in t)
+    check("coverage rings render", page.locator("#prodrings .ring").count() == 6)
+    check("taxonomy donut renders", page.locator("#taxdonut svg").count() == 1)
+    t = view_text("fees")
+    check("fee bar chart renders", page.locator("#feechart svg").count() == 1)
+    t = view_text("benchmarks", product="dxyz")
+    check("escalation renders as formal notice",
+          page.locator(".notice .notice-head").count() == 1)
 
     # ---------- 8. citation drawer + memo artifacts ----------
     view_text("evaluation", product="hl_paf")

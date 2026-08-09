@@ -1,12 +1,15 @@
 /* Tark views — every renderer reads ONLY window.TARK (generated from the
- * canonical data layer by src/build_site.py). No fact is hard-coded here:
- * numbers on screen are bundle values or live recomputations of them, and
- * every citation panel is the cell's own provenance record. */
+ * canonical data layer by src/build_site.py). No fact is hard-coded here.
+ * Numbers first: each cell leads with its focal figure (cell_display,
+ * derived at build time); the full sourced text sits behind a disclosure.
+ * Charts are TIER-DRIVEN from the bundle: daily series, printed monthly
+ * series, filing-annual series — and where a chart is impossible, the
+ * documented reason renders in its place. */
 
-import { cumulativeGrowth, desmoothGeltner, directAlpha, ksPme, annVol,
-         levelOn, monthEndPoints, periodReturns, stdev } from "./analytics.js";
+import { desmoothGeltner, directAlpha, ksPme, annVol, lag1Autocorr, levelOn,
+         maxDrawdown, monthEndPoints, periodReturns } from "./analytics.js";
 import { computeScenario, scenarioReason } from "./liquidity.js";
-import { lineChart } from "./charts.js";
+import { lineChart, barChart, donut, ring } from "./charts.js";
 
 const T = window.TARK;
 
@@ -25,7 +28,7 @@ export function statusKind(status) {
 
 const CHIP_LABEL = {
   verified: "verified", extracted: "extracted · unverified",
-  computed: "computed (pipeline)", partial: "partial", fetched: "series fetched",
+  computed: "computed", partial: "partial", fetched: "series fetched",
   pending: "pending", "n/a": "n/a",
 };
 export function chip(status) {
@@ -43,6 +46,21 @@ export function money(x, digits = 1) {
 export function stat(k, v, small = "") {
   return `<div class="stat"><div class="k">${esc(k)}</div>
     <div class="v">${v}${small ? ` <small>${esc(small)}</small>` : ""}</div></div>`;
+}
+
+/* glossary chips: wrap known terms (longest first) in short display strings —
+ * plain-language definition on hover; never applied to long prose */
+const TERMS = Object.keys(T.glossary).sort((a, b) => b.length - a.length);
+export function gloss(s) {
+  let out = esc(s);
+  for (const t of TERMS) {
+    const re = new RegExp(`(?<![\\w>])(${t.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&")})(?![\\w<])`, "");
+    if (re.test(out)) {
+      out = out.replace(re,
+        `<span class="term" tabindex="0" data-def="${esc(T.glossary[t])}">$1</span>`);
+    }
+  }
+  return out;
 }
 
 /* citation drawer */
@@ -63,7 +81,7 @@ export function openCite(rec, title) {
       <div class="v">${esc(rec.extracted_by || "—")}</div></div>
     <div class="f"><div class="k">Human verification</div>
       <div class="v">${rec.verified_by ? esc(rec.verified_by)
-        : "pending — a human (CF2) verifies rows in data/evidence/*.csv and flips status to verified"}</div></div>`;
+        : "pending — a human verifies rows in data/evidence/*.csv and flips status to verified"}</div></div>`;
   d.classList.add("open");
 }
 window.addEventListener("click", (e) => {
@@ -78,13 +96,53 @@ window.addEventListener("click", (e) => {
 export function citeBtn(key, cid) {
   const cell = T.products[key]?.cells?.[cid];
   if (!cell || !cell.source) return "";
-  return `<button class="citebtn" data-cite data-key="${esc(key)}" data-cid="${esc(cid)}">cite</button>`;
+  return `<button class="citebtn" data-cite data-key="${esc(key)}" data-cid="${esc(cid)}">source</button>`;
 }
 
 const short = (s, n = 170) => {
   s = String(s ?? "");
   return s.length > n ? esc(s.slice(0, n).trimEnd()) + "…" : esc(s);
 };
+
+/* --------------------------------------------------- tier-driven charts */
+const DAILY = { cliffwater_cclfx: { series: "cclfx", col: "adj", label: "Daily NAV (adj, distributions reinvested)" },
+                dxyz: { series: "dxyz_daily", label: "Daily market price (close)" } };
+
+export function productChart(container, key) {
+  // pick the finest tier the data supports; label the cadence honestly
+  if (DAILY[key]) {
+    const pts = T.series[DAILY[key].series];
+    lineChart(container, {
+      series: [{ points: pts, label: DAILY[key].label, color: "#593380", width: 1.5 }],
+      height: 260, yFormat: (v) => "$" + v.toFixed(0),
+      logY: key === "dxyz",
+    });
+    return `daily series, ${pts.length.toLocaleString()} observations (${esc(pts[0][0])} → ${esc(pts[pts.length - 1][0])})`;
+  }
+  if (key === "breit" && T.series_monthly.breit_nav) {
+    const pts = T.series_monthly.breit_nav;
+    lineChart(container, {
+      series: [{ points: pts, label: "Monthly NAV per share, Class I — as PRINTED in the 10-K/10-Q",
+        color: "#593380", width: 1.8, markers: true }],
+      height: 260, yFormat: (v) => "$" + v.toFixed(1),
+    });
+    return "monthly disclosure cadence — the fund's own printed NAV table (NAV path; distributions excluded)";
+  }
+  const ann = T.series_annual[key];
+  if (ann && ann.length) {
+    const nav = ann.filter((r) => r.nav_per_share)
+      .map((r) => [r.fy_end, +r.nav_per_share]);
+    lineChart(container, {
+      series: [{ points: nav, label: "NAV per share at fiscal year-end (primary class, as filed)",
+        color: "#593380", width: 1.8, markers: true }],
+      height: 240, yFormat: (v) => "$" + v.toFixed(0),
+    });
+    return "annual disclosure cadence — non-traded wrapper, no public daily series; fiscal-year figures as filed";
+  }
+  container.innerHTML = `<div class="nochart"><div class="k">No chartable public series</div>
+    This wrapper publishes no public return series at any charted cadence.</div>`;
+  return null;
+}
 
 /* ============================================================== PLANS */
 export function viewPlans(root, state, setState) {
@@ -97,22 +155,22 @@ export function viewPlans(root, state, setState) {
       <h3>${esc(p.display_label)}</h3>
       <div class="cap">${esc(p.archetype || "")}</div>
       <div class="statrow">
-        ${stat("Net assets (EOY)", money(f.net_assets_eoy))}
+        ${stat("Net assets", money(f.net_assets_eoy))}
         ${stat("Accounts", Math.round(pt.with_account_balances).toLocaleString())}
         ${stat("Avg balance", "$" + d.avg_balance_per_account.toLocaleString())}
         ${stat("Liquidity tail", tail.toFixed(1) + "%",
                `${Math.round(pt.separated_deferred_vested).toLocaleString()} separated w/ balances`)}
       </div>
-      <div class="cap">${esc(p.plan_characteristics.codes_decoded)}</div>
-      <div class="cap" style="margin-top:6px">Plan year ${esc(p.plan_year)} ·
-        ${esc(p.source.publisher)} · pulled ${esc(p.source.pulled)}</div>
+      <details><summary class="cap" style="cursor:pointer">Plan characteristics & source</summary>
+        <div class="cap" style="margin-top:6px">${esc(p.plan_characteristics.codes_decoded)}</div>
+        <div class="cap" style="margin-top:4px">Plan year ${esc(p.plan_year)} ·
+          ${esc(p.source.publisher)} · pulled ${esc(p.source.pulled)}</div></details>
     </div>`;
   }).join("");
   root.innerHTML = `
     <div class="viewhead"><h1>Reference Plans</h1>
-      <div class="sub">Four real 401(k) plans from public DOL Form 5500 filings —
-        anonymized display labels by project rule; the selected plan drives the
-        Liquidity Match view.</div></div>
+      <div class="sub">Four real 401(k) plans from public Form 5500 filings — the
+        selected plan drives every liquidity verdict.</div></div>
     <div class="cardgrid g2">${cards}</div>
     <p class="cap footer-rule">${esc(T.plans[state.plan].anonymization_rule)}</p>`;
   root.querySelectorAll("[data-plan]").forEach((c) =>
@@ -121,38 +179,36 @@ export function viewPlans(root, state, setState) {
 
 /* ============================================================== ROSTER */
 export function viewRoster(root, state, setState) {
-  const cards = Object.entries(T.products).map(([k, p]) => {
+  root.innerHTML = `
+    <div class="viewhead"><h1>Candidate Roster</h1>
+      <div class="sub">Six real products, six wrappers — every figure traceable to
+        a public filing.</div></div>
+    <div class="cardgrid g2" id="rostercards"></div>`;
+  const grid = root.querySelector("#rostercards");
+  for (const [k, p] of Object.entries(T.products)) {
     const c = T.evidence_counts[k];
-    const seeded = c.extracted + c.verified + c.computed;
-    const applicable = seeded + c.partial + c.fetched + c.pending;
-    const segs = [
-      ["extracted", (c.extracted + c.verified) / applicable * 100],
-      ["computed", c.computed / applicable * 100],
-      ["partial", (c.partial + c.fetched) / applicable * 100],
-    ].map(([cls, w]) => `<div class="seg ${cls}" style="width:${w}%"></div>`).join("");
-    return `<div class="card">
-      <h3>${esc(p.fund_name)}</h3>
-      <div style="margin:6px 0 8px"><span class="chip wrapper">${esc(p.wrapper)}</span>
-        <span class="cap"> CIK ${esc(p.cik)}</span></div>
-      <div class="covbar">${segs}</div>
-      <div class="cap" style="margin-top:5px">evidence coverage
-        <b class="num">${c.coverage_pct}%</b> ·
-        ${seeded} seeded · ${c.partial + c.fetched} partial ·
-        ${c.pending} pending · ${c.na} n/a</div>
-      ${p.identity_note || p.note ? `<div class="cap" style="margin-top:8px">${short(p.identity_note || p.note, 150)}</div>` : ""}
-      <div style="margin-top:12px; display:flex; gap:8px">
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div style="display:flex; gap:16px; align-items:flex-start">
+        <div data-ring></div>
+        <div style="flex:1; min-width:0">
+          <h3>${esc(p.fund_name)}</h3>
+          <div style="margin:5px 0"><span class="chip wrapper">${gloss(p.wrapper)}</span>
+            <span class="cap"> CIK ${esc(p.cik)}</span></div>
+          <div class="cap">${c.extracted + c.verified} extracted · ${c.computed}
+            computed · ${c.partial + c.fetched} partial · ${c.na} documented-n/a
+            · ${c.pending} pending</div>
+        </div>
+      </div>
+      <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap">
         <button class="btn ghost" data-goto="evaluation" data-key="${k}">Six-factor record</button>
         <button class="btn ghost" data-goto="benchmarks" data-key="${k}">Benchmark</button>
         ${T.memos.includes(k) ? `<a class="btn ghost" href="memos/${k}_decision_memo.docx" download>Memo ↓</a>` : ""}
-      </div>
-    </div>`;
-  }).join("");
-  root.innerHTML = `
-    <div class="viewhead"><h1>Candidate Roster</h1>
-      <div class="sub">Six real products, six wrappers — every cell traceable to a
-        public filing via data/evidence/. Coverage counts seeded + partial cells
-        over all applicable cells.</div></div>
-    <div class="cardgrid g2">${cards}</div>`;
+      </div>`;
+    card.querySelector("[data-ring]").append(ring(c.coverage_pct));
+    grid.append(card);
+  }
   root.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click",
     () => setState({ view: b.dataset.goto, product: b.dataset.key })));
 }
@@ -162,35 +218,61 @@ export function viewEvaluation(root, state) {
   const key = state.product;
   const p = T.products[key];
   const c = T.evidence_counts[key];
+  const roll = T.factor_rollups[key];
+
+  const rollupHtml = Object.entries(T.factors).map(([n, label]) => {
+    const r = roll[n];
+    return `<a href="#f${n}" data-anchor="f${n}">
+      <div class="fnum">${r.evidenced + r.computed}<span style="font-size:11px;color:var(--ink-3)">/${r.total - r.na}</span></div>
+      <div class="fname">${n} · ${esc(label)}</div>
+      <div class="fmeta">${r.evidenced} evidenced · ${r.computed} computed${r.na ? ` · ${r.na} n/a` : ""}</div>
+    </a>`;
+  }).join("");
+
   const blocks = Object.entries(T.factors).map(([n, label]) => {
     const rows = Object.keys(T.cell_registry)
       .filter((cid) => cid.split(".")[0] === n)
       .map((cid) => {
         const cell = p.cells[cid];
+        const disp = T.cell_display[key][cid];
         const k = statusKind(cell.status || "pending");
-        let body = "";
-        if (cell.value) {
-          body = `<div class="val">${esc(cell.value)}</div>`;
-        } else if (k === "n/a") {
-          body = `<div class="muted">Not applicable — ${esc(String(cell.status).slice(6))}</div>`;
+        let body;
+        if (k === "n/a") {
+          body = `<div class="muted">not applicable / not public-sourceable —
+            ${esc(disp.plain)}</div>`;
+        } else if (!cell.value) {
+          body = `<div class="muted">pending — pointer in data/evidence/${esc(key)}_evidence.csv</div>`;
         } else {
-          body = `<div class="muted">Pending extraction — pointer in
-            data/evidence/${esc(key)}_evidence.csv</div>`;
+          body = `<div class="headline">${gloss(disp.headline)}</div>
+            <div class="plain">${esc(disp.plain)}</div>
+            <details class="src"><summary>Full text & provenance</summary>
+              <div class="fulltext">${esc(cell.value)}</div></details>`;
         }
         return `<div class="cellrow">
           <div class="head"><span class="cid num">${cid}</span>
-            <span class="el">${esc(cell.element)}</span>
+            <span class="el">${gloss(cell.element)}</span>
             ${chip(cell.status || "pending")} ${citeBtn(key, cid)}</div>
           ${body}</div>`;
       }).join("");
-    return `<div class="factorblock"><h2>${n} · ${esc(label)}</h2>${rows}</div>`;
+    return `<div class="factorblock" id="f${n}"><h2>${n} · ${esc(label)}</h2>${rows}</div>`;
   }).join("");
+
   root.innerHTML = `
     <div class="viewhead"><h1>Six-Factor Evaluation</h1>
-      <div class="sub">${esc(p.fund_name)} — ${esc(p.wrapper)} · CIK ${esc(p.cik)}
-        · evidence coverage <b class="num">${c.coverage_pct}%</b></div>
-      <div class="cap" style="margin-top:4px">${esc(T.rule_caption)}</div></div>
+      <div class="sub">${esc(p.fund_name)} — ${gloss(p.wrapper)} · coverage
+        <b class="num">${c.coverage_pct}%</b></div></div>
+    <div class="chartbox" style="margin-bottom:4px"><div id="prodchart"></div>
+      <div class="chartnote" id="prodchartnote"></div></div>
+    <div class="rollup">${rollupHtml}</div>
     ${blocks}`;
+  const note = productChart(root.querySelector("#prodchart"), key);
+  if (note) root.querySelector("#prodchartnote").textContent = note;
+  root.querySelectorAll("[data-anchor]").forEach((a) =>
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      document.getElementById(a.dataset.anchor)?.scrollIntoView(
+        { behavior: "smooth", block: "start" });
+    }));
 }
 
 /* ========================================================== BENCHMARKS */
@@ -201,9 +283,8 @@ export function viewBenchmarks(root, state, setState) {
   if (!sel) {
     root.innerHTML = `<div class="viewhead"><h1>Benchmark Selection</h1>
       <div class="sub">${esc(p.fund_name)}</div></div>
-      <div class="banner amber"><h3>Engine profile pending</h3>
-      No selection has been generated for this product yet (10-K wrappers
-      ${esc(key)} — extraction depth first; see the evidence CSV pointers).</div>`;
+      <div class="nochart"><div class="k">No selection artifact</div>
+      No engine profile exists for this product yet.</div>`;
     return;
   }
   const slotCard = (slot, badge) => {
@@ -211,26 +292,28 @@ export function viewBenchmarks(root, state, setState) {
     if (!s) return "";
     const comp = s.comparison;
     return `<div class="card">
-      <div class="cap" style="letter-spacing:.1em;font-weight:700">${badge}</div>
+      <div class="cap" style="letter-spacing:.14em;font-weight:600;color:var(--plum-700)">${badge}</div>
       <h3>${esc(s.candidate)}</h3>
       <div class="num" style="font-size:15px;margin-top:2px">${s.score}/${s.max}</div>
       <div class="scorebar"><div class="fill" style="width:${s.score / s.max * 100}%"></div></div>
       ${comp ? `<div class="statrow">
-        ${stat("Fund (ann.)", `${comp.fund_ann_pct}%<small>/yr</small>`)}
-        ${stat("Benchmark (ann.)", `${comp.index_ann_pct}%<small>/yr</small>`)}
         ${stat("KS-PME", comp.ks_pme)}
         ${stat("Direct Alpha", `${comp.direct_alpha_pct}%<small>/yr</small>`)}
+        ${stat("Fund", `${comp.fund_ann_pct}%<small>/yr</small>`)}
+        ${stat("Benchmark", `${comp.index_ann_pct}%<small>/yr</small>`)}
       </div>
-      <div class="cap">Window ${esc(comp.window)}. PME and alpha on appraisal-lagged
-        NAVs are window-sensitive and can be smoothing-flattered — disclosed per
-        methodology §3. <a href="#" data-goto="pme">Explore window sensitivity →</a></div>` : ""}
+      <div class="cap">${gloss("KS-PME")} and ${gloss("Direct Alpha")} on
+        appraisal-lagged NAVs are window-sensitive — disclosed, and explorable:
+        <a href="#" data-goto="pme">move the window yourself →</a>
+        <span class="num">(${esc(comp.window)})</span></div>` : ""}
       <details style="margin-top:10px"><summary class="cap" style="cursor:pointer">Scoring rationale</summary>
         <ul style="margin:8px 0 0 18px; font-size:12.5px">
           ${s.reasons.map((r) => `<li>${esc(r)}</li>`).join("")}</ul></details>
     </div>`;
   };
 
-  const rejRows = sel.rejected.map((r) => `<tr>
+  const rejRows = sel.rejected.map((r, i) => `<tr>
+      <td class="entryno">${String(i + 1).padStart(2, "0")}</td>
       <td>${esc(r.candidate)}</td><td class="num">${esc(r.lane)}</td>
       <td class="num">${r.score}/${r.max}</td>
       <td>${esc(r.rejection)}
@@ -239,31 +322,31 @@ export function viewBenchmarks(root, state, setState) {
 
   root.innerHTML = `
     <div class="viewhead"><h1>Benchmark Selection</h1>
-      <div class="sub">${esc(p.fund_name)} · strategy: ${esc(sel.strategy)} ·
-        engine inputs from cells ${sel.source_cells.map(esc).join(", ")}</div>
-      <div class="cap" style="margin-top:4px">Rubric: strategy match 3 ·
-        risk/liquidity 3 · investability 2 · data quality 2 · provider
-        independence 2 — primary threshold ${T.min_primary_score}/12.</div></div>
-    ${sel.escalation ? `<div class="banner red"><h3>ESCALATION</h3>
-        ${esc(sel.escalation)}
-        ${key === "dxyz" ? `<div style="margin-top:8px">
-          <a class="btn" href="#" data-goto="dxyz">See the premium/discount decomposition →</a></div>` : ""}
-      </div>` : ""}
+      <div class="sub">${esc(p.fund_name)} · ${esc(sel.strategy)} · four lanes,
+        12-point rubric, threshold ${T.min_primary_score}/12 — and every
+        rejection on the record.</div></div>
+    ${sel.escalation ? `<div class="notice">
+        <div class="notice-head">Formal escalation — no benchmark assigned</div>
+        <div class="notice-body"><b>${esc(sel.escalation.split(".")[0])}.</b>
+          ${esc(sel.escalation.split(".").slice(1).join(".").trim())}
+          ${key === "dxyz" ? `<div style="margin-top:10px">
+            <a class="btn" href="#" data-goto="dxyz">See the premium decomposition →</a></div>` : ""}
+        </div></div>` : ""}
     <div class="cardgrid g2">${slotCard("primary", "PRIMARY")}${slotCard("secondary", "SECONDARY")}</div>
-    <h2 style="margin:20px 0 8px">Rejection log</h2>
+    <h2 style="margin:22px 0 6px">Rejection ledger</h2>
     <div class="cap" style="margin-bottom:8px">Every candidate not selected, with
-      its true reason — the other half of a defensible record.</div>
-    <div class="tablewrap"><table class="grid" id="rejtable">
-      <thead><tr><th class="sortable" data-col="0">Candidate</th>
-        <th class="sortable" data-col="1">Lane</th>
-        <th class="sortable" data-col="2">Score</th><th>Reason</th></tr></thead>
+      its true reason and full rubric rationale — the other half of a defensible
+      record.</div>
+    <div class="tablewrap"><table class="grid ledger" id="rejtable">
+      <thead><tr><th>#</th><th class="sortable" data-col="1">Candidate</th>
+        <th class="sortable" data-col="2">Lane</th>
+        <th class="sortable" data-col="3">Score</th><th>Reason as logged</th></tr></thead>
       <tbody>${rejRows}</tbody></table></div>
     ${T.memos.includes(key) ? `<div style="margin-top:16px">
       <a class="btn" href="memos/${key}_decision_memo.docx" download>Download decision memo (.docx)</a></div>` : ""}`;
 
   root.querySelectorAll("[data-goto]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault(); setState({ view: a.dataset.goto }); }));
-  // sortable rejection log
   const table = root.querySelector("#rejtable");
   table.querySelectorAll("th.sortable").forEach((th) => th.addEventListener("click", () => {
     const col = +th.dataset.col;
@@ -281,10 +364,7 @@ export function viewBenchmarks(root, state, setState) {
   }));
 }
 
-/* ============================================================ helpers for PME */
-// Fund growth is DAILY-ANCHORED (window last/first observation) to mirror the
-// Python engine's 2026-08-09 correction; the month-end points are only for
-// drawing the line, never for the KS-PME / Direct Alpha math.
+/* ============================================================== PME LAB */
 function windowGrowthDaily(series, d0, d1) {
   const win = series.filter(([d]) => d >= d0 && d <= d1);
   const me = monthEndPoints(win);
@@ -293,13 +373,9 @@ function windowGrowthDaily(series, d0, d1) {
 
 export function pmeCompute(fundFlows, indexDaily, d0, d1) {
   const idx = indexDaily.filter(([d]) => d >= d0 && d <= d1);
-  return {
-    ks: ksPme(fundFlows, idx),
-    da: directAlpha(fundFlows, idx),
-  };
+  return { ks: ksPme(fundFlows, idx), da: directAlpha(fundFlows, idx) };
 }
 
-/* ============================================================== PME LAB */
 export function viewPme(root, state, setState) {
   const prods = Object.keys(T.pme_profiles);
   const key = prods.includes(state.product) ? state.product : "cliffwater_cclfx";
@@ -307,20 +383,18 @@ export function viewPme(root, state, setState) {
   const p = T.products[key];
 
   root.innerHTML = `
-    <div class="viewhead"><h1>PME Window-Sensitivity Explorer</h1>
+    <div class="viewhead"><h1>PME Window Explorer</h1>
       <div class="sub">${esc(p.fund_name)} vs <span id="idxlabel">${esc(prof.index_label)}</span>
-        — move the comparison-window start and watch KS-PME and Direct Alpha move.</div>
+        — drag the window start; the honesty is the feature.</div>
       <div class="cap" style="margin-top:4px">Products: ${prods.map((k) =>
         `<a href="#" data-pmeprod="${k}" style="margin-right:10px;${k === key ? "font-weight:700" : ""}">${esc(T.products[k].fund_name)}</a>`).join("")}</div>
     </div>
-    <div class="banner amber"><b>Honest caption:</b> appraisal-lagged NAVs are
-      window-sensitive — the SAME fund shows different PME and alpha depending on
-      where the window opens (a window opening at a public-market peak flatters
-      the fund; smoothing lets lagged NAVs sail through drawdowns). This explorer
-      is the methodology's §3 disclosure made interactive; the engine's committed
+    <div class="banner amber"><b>Disclosure, interactive:</b> appraisal-lagged
+      NAVs are window-sensitive — the SAME fund shows different ${gloss("PME")}
+      and alpha depending on where the window opens. The engine's committed
       numbers use the full disclosed window.</div>
     <div class="card">
-      <div class="sliderrow"><label id="winlabel">Window start</label>
+      <div class="sliderrow"><label>Window start</label>
         <input type="range" id="winstart" min="0" max="1" value="0" step="1">
         <span class="out num" id="winout"></span></div>
       ${prof.index_series_alt ? `<div class="cap">Index:
@@ -345,8 +419,6 @@ export function viewPme(root, state, setState) {
   let starts;
   let fundDaily = null;
   if (isAnnual) {
-    // fiscal-year boundaries only — honest granularity for an annual series;
-    // each start leaves at least one full fiscal year in the window
     const [w0] = prof.fy_window;
     const y0 = +w0.slice(0, 4);
     starts = prof.fy_returns.map((_, i) => `${y0 + i}${w0.slice(4)}`);
@@ -372,7 +444,7 @@ export function viewPme(root, state, setState) {
     if (isAnnual) {
       d1 = prof.fy_window[1];
       const rets = prof.fy_returns.slice(i);
-      fGrowth = cumulativeGrowth(rets);
+      fGrowth = rets.reduce((g, r) => g * (1 + r), 1);
       let acc = 1;
       fundPts = [[d0, 1]];
       rets.forEach((r, j) => {
@@ -391,10 +463,9 @@ export function viewPme(root, state, setState) {
     }
     const flows = [[d0, -1.0], [d1, fGrowth]];
     const { ks, da } = pmeCompute(flows, idxDaily, d0, d1);
+    const iGrowth = levelOn(idxDaily, d1) / levelOn(idxDaily, d0);
     const idxWin = idxDaily.filter(([d]) => d >= d0 && d <= d1);
     const idxMe = monthEndPoints(idxWin);
-    // daily-anchored index growth (levelOn: at-or-before), mirroring the engine
-    const iGrowth = levelOn(idxDaily, d1) / levelOn(idxDaily, d0);
     let acc = 1;
     const idxPts = [[idxMe[0][0], 1]];
     periodReturns(idxMe.map(([, v]) => v)).forEach((r, j) => {
@@ -412,17 +483,17 @@ export function viewPme(root, state, setState) {
     lineChart(root.querySelector("#pmechart"), {
       series: [
         { points: fundPts, label: `${T.products[key].fund_name} (growth of 1.0)`,
-          color: "#1f4e5f", width: 2 },
-        { points: idxPts, label: `${label} (growth of 1.0)`, color: "#b06e1c",
+          color: "#593380", width: 2 },
+        { points: idxPts, label: `${label} (growth of 1.0)`, color: "#92600d",
           width: 1.6, dash: "5,4" },
       ],
       height: 300, yFormat: (v) => v.toFixed(2) + "×",
     });
     root.querySelector("#pmenote").textContent =
       (isAnnual
-        ? "Fund line compounds the disclosed fiscal-year total returns (cell 1.2); index from the bundled daily series, month-end sampled. "
-        : "Fund and index lines are month-end sampled from bundled daily series (adj close, distributions reinvested). ")
-      + "Same KS-PME / Direct Alpha code path as the Python engine (parity-tested).";
+        ? "Fund line compounds the disclosed fiscal-year total returns (cell 1.2); KS-PME/Direct Alpha anchored on daily index levels. "
+        : "Fund growth daily-anchored (window last/first observation); lines month-end sampled for drawing only. ")
+      + "Same code path as the Python engine — parity-tested.";
   }
 
   slider.addEventListener("input", recompute);
@@ -438,7 +509,7 @@ export function viewLiquidity(root, state) {
   const m = T.liquidity[`${plan}__${key}`];
   const p = T.products[key];
   if (!m) {
-    root.innerHTML = `<h1>Liquidity Match</h1><div class="banner amber">
+    root.innerHTML = `<h1>Liquidity Match</h1><div class="nochart">
       Match pending for this plan × product.</div>`;
     return;
   }
@@ -446,35 +517,22 @@ export function viewLiquidity(root, state) {
     : m.verdict === "conditional-weak" ? "red" : "amber";
   const sc = m.scenario;
   const profile = m.wrapper_facts;
+  const stress = m.stressed_scenario;
 
   root.innerHTML = `
-    <div class="viewhead"><h1>Product-to-Plan Liquidity Match</h1>
-      <div class="sub">${esc(p.fund_name)} × ${esc(m.plan_display_label)}</div>
-      <div class="cap" style="margin-top:4px">Plan liquidity tail
+    <div class="viewhead"><h1>Liquidity Match</h1>
+      <div class="sub">${esc(p.fund_name)} × ${esc(m.plan_display_label)} — tail
         ${m.plan_inputs.tail_share_pct}% of accounts
         (${Math.round(m.plan_inputs.separated_with_balances).toLocaleString()}
-        separated participants with balances) · plan direction: ${esc(m.plan_direction)}
-        (from the plan's own Form 5500 codes).</div></div>
+        separated), plan direction: ${esc(m.plan_direction)}.</div></div>
     <div class="banner ${bannerCls}"><h3>Verdict: ${esc(m.verdict.toUpperCase())}</h3></div>
     <ul style="margin:0 0 16px 18px; font-size:13.5px" id="reasons">
       ${m.reasons.map((r) => `<li style="margin-bottom:6px">${esc(r)}</li>`).join("")}</ul>
     <div class="cardgrid g2">
-      <div class="card"><h3>Wrapper facts <span class="cap">(cells ${esc(String(profile.source_cell))})</span></h3>
-        <table class="grid" style="border:0;margin-top:8px">
-          <tr><td>Kind</td><td class="num">${esc(profile.kind)}</td></tr>
-          <tr><td>Dealing cadence</td><td class="num">${profile.cadence_per_year}×/year</td></tr>
-          <tr><td>Cap</td><td class="num">${profile.cap_pct === null ? "—" : profile.cap_pct + "%"} of ${esc(profile.cap_base)}</td></tr>
-          <tr><td>Exchange-listed</td><td class="num">${profile.exchange ? "yes" : "no"}</td></tr>
-          <tr><td>Gating history</td><td class="num">${profile.gate_history ? "YES (3.3)" : "none identified"}</td></tr>
-          <tr><td>Early repurchase</td><td>${esc(profile.early_fee)}</td></tr>
-        </table>
-        <div class="cap" style="margin-top:8px">Citations: ${m.citations.map(esc).join(" · ")}</div>
-      </div>
       <div class="card">
-        <h3>Scenario <span class="chip illustrative">ILLUSTRATIVE</span></h3>
-        <div class="cap">Adjustable parameters, not facts. Demand model: plan
-          allocates X% of assets; annual liquidity demand = separated-tail
-          turnover + active turnover on the position.</div>
+        <h3>Capacity vs demand <span class="chip illustrative">ILLUSTRATIVE</span></h3>
+        <div class="cap">Wrapper capacity is a filed fact (cells ${esc(String(profile.source_cell))});
+          the demand model is an adjustable scenario, never presented as fact.</div>
         <div class="sliderrow"><label>Plan allocation to product</label>
           <input type="range" id="s_alloc" min="1" max="10" step="0.5"
             value="${sc.allocation_pct_of_plan}"><span class="out" id="o_alloc"></span></div>
@@ -484,13 +542,25 @@ export function viewLiquidity(root, state) {
         <div class="sliderrow"><label>Active annual turnover</label>
           <input type="range" id="s_act" min="1" max="15" step="0.5"
             value="${sc.active_annual_turnover_pct}"><span class="out" id="o_act"></span></div>
-        <div class="statrow">
-          ${stat("Position", `<span id="o_pos">—</span>`)}
-          ${stat("Annual demand", `<span id="o_dem">—</span>`)}
-          ${stat("Demand % of position", `<span id="o_dpct">—</span>`)}
-          ${stat("Wrapper capacity", `<span id="o_cap">—</span>`)}
+        <div id="capchart" style="margin-top:8px"></div>
+        <div class="cap" id="o_reason" style="margin-top:6px"></div>
+      </div>
+      <div class="card"><h3>Wrapper facts</h3>
+        <table class="grid" style="border:0;margin-top:8px">
+          <tr><td>Kind</td><td class="num">${gloss(profile.kind.replace(/_/g, " "))}</td></tr>
+          <tr><td>Dealing cadence</td><td class="num">${profile.cadence_per_year}×/year</td></tr>
+          <tr><td>Cap</td><td class="num">${profile.cap_pct === null ? "—" : profile.cap_pct + "%"} of ${esc(profile.cap_base)}</td></tr>
+          <tr><td>Exchange-listed</td><td class="num">${profile.exchange ? "yes" : "no"}</td></tr>
+          <tr><td>Gating history</td><td class="num">${profile.gate_history ? "YES (3.3)" : "none identified"}</td></tr>
+          <tr><td>Early repurchase</td><td>${esc(profile.early_fee)}</td></tr>
+        </table>
+        <h3 style="margin-top:14px">Stress test <span class="chip illustrative">ILLUSTRATIVE</span></h3>
+        <div class="cap">${esc(stress.assumptions)}</div>
+        <div class="statrow" style="margin:8px 0">
+          ${stat("Stressed demand", `<span class="num">${stress.demand_pct_of_position}%</span><small>/yr of position</small>`)}
         </div>
-        <div class="cap" id="o_reason" style="margin-top:4px"></div>
+        <div class="cap"><b>${esc(stress.outcome)}</b></div>
+        <div class="cap" style="margin-top:8px">Citations: ${m.citations.map(esc).join(" · ")}</div>
       </div>
     </div>`;
 
@@ -505,15 +575,30 @@ export function viewLiquidity(root, state) {
     root.querySelector("#o_tail").textContent = params.tail_annual_turnover_pct.toFixed(0) + "%";
     root.querySelector("#o_act").textContent = params.active_annual_turnover_pct.toFixed(1) + "%";
     const out = computeScenario(m.plan_inputs, profile, params);
-    root.querySelector("#o_pos").textContent = money(out.plan_allocation_usd);
-    root.querySelector("#o_dem").textContent = money(out.annual_demand_usd);
-    root.querySelector("#o_dpct").textContent = out.demand_pct_of_position.toFixed(1) + "%/yr";
-    root.querySelector("#o_cap").textContent = out.annual_wrapper_capacity_pct === null
-      ? "daily (exchange)" : out.annual_wrapper_capacity_pct.toFixed(0) + "%/yr";
+    const stressOut = computeScenario(m.plan_inputs, profile, {
+      ...params,
+      tail_annual_turnover_pct: params.tail_annual_turnover_pct * 2,
+      active_annual_turnover_pct: params.active_annual_turnover_pct * 1.5,
+    });
+    const cap = out.annual_wrapper_capacity_pct;
+    barChart(root.querySelector("#capchart"), {
+      items: [
+        { label: "Wrapper capacity (filed)", value: cap,
+          color: "#593380", note: "daily — exchange-listed" },
+        { label: "Scenario demand (illustrative)",
+          value: out.demand_pct_of_position, color: "#92600d" },
+        { label: "Stressed demand (illustrative)",
+          value: stressOut.demand_pct_of_position, color: "#9d2f26" },
+      ],
+      format: (v) => v.toFixed(0) + "%",
+      max: Math.max(cap || 0, stressOut.demand_pct_of_position) * 1.15 || 30,
+    });
     const r = scenarioReason(out);
-    root.querySelector("#o_reason").textContent = r
-      ? r + " [ILLUSTRATIVE scenario output]"
-      : "Exchange-listed: capacity is market depth, not a fund cap. [ILLUSTRATIVE]";
+    root.querySelector("#o_reason").innerHTML =
+      `<span class="num">${money(out.plan_allocation_usd)}</span> position ·
+       <span class="num">${money(out.annual_demand_usd)}</span>/yr demand — ` +
+      esc(r ? r : "Exchange-listed: capacity is market depth, not a fund cap.") +
+      ` <b>[ILLUSTRATIVE]</b>`;
   }
   els.forEach((e) => e.addEventListener("input", update));
   update();
@@ -522,12 +607,9 @@ export function viewLiquidity(root, state) {
 /* ================================================================ FEES */
 export function viewFees(root) {
   const rows = [
-    ["2.1", "Management fee (rate AND base)"],
-    ["2.2", "Incentive fee"],
-    ["2.3", "Total expense ratio"],
-    ["2.4", "AFFE"],
-    ["2.6", "Loads & servicing"],
-    ["2.7", "Early repurchase"],
+    ["2.1", "Management fee (rate AND base)"], ["2.2", "Incentive fee"],
+    ["2.3", "Total expense ratio"], ["2.4", "AFFE"],
+    ["2.6", "Loads & servicing"], ["2.7", "Early repurchase"],
     ["6.4", "Tax reporting (K-1 vs 1099)"],
   ];
   const keys = Object.keys(T.products);
@@ -549,30 +631,49 @@ export function viewFees(root) {
   const body = rows.map(([cid, label]) => {
     const tds = keys.map((k) => {
       const cell = T.products[k].cells[cid];
+      const disp = T.cell_display[k][cid];
       const kind = statusKind(cell.status || "pending");
       const badge = cid === "2.1" ? baseBadge(cell.value)
         : cid === "6.4" ? taxBadge(cell.value) : "";
       const content = cell.value
-        ? `${badge ? badge + "<br>" : ""}<span style="font-size:12px">${short(cell.value, 210)}</span>`
-        : `<span class="cap">${kind === "n/a" ? "n/a" : "pending"}</span>`;
+        ? `${badge ? badge + "<br>" : ""}
+           <div class="headline" style="font-size:14px;margin:3px 0 1px">${esc(disp.headline)}</div>
+           <span style="font-size:11.5px;color:var(--ink-2)">${short(disp.plain, 120)}</span>`
+        : `<span class="cap">${kind === "n/a" ? esc(disp.plain).slice(0, 110) : "pending"}</span>`;
       return `<td>${content}<div style="margin-top:5px">${chip(cell.status || "pending")} ${citeBtn(k, cid)}</div></td>`;
     }).join("");
-    return `<tr><td style="font-weight:650; white-space:nowrap">${cid}<br>
-      <span class="cap">${esc(label)}</span></td>${tds}</tr>`;
+    return `<tr><td style="font-weight:600; white-space:nowrap">${cid}<br>
+      <span class="cap">${gloss(label)}</span></td>${tds}</tr>`;
   }).join("");
 
   root.innerHTML = `
-    <div class="viewhead"><h1>Fee Comparison Matrix</h1>
-      <div class="sub">All six products side by side — the headline rate is never
-        the story; the BASE is. Red chips flag leverage-inclusive fee bases and
-        K-1 tax reporting (recordkeeper-hostile).</div></div>
+    <div class="viewhead"><h1>Fee Matrix</h1>
+      <div class="sub">The headline rate is never the story — the BASE is.</div></div>
+    <div class="chartbox" style="margin-bottom:14px">
+      <h3 style="margin-bottom:4px">Own net expense ratio, where one exists</h3>
+      <div id="feechart"></div>
+      <div class="chartnote">From each fund's cell 2.3 as extracted (bases differ
+        by wrapper and are quoted per product). kkr_kpec and breit have NO TER
+        line — '34-Act wrappers; their burden is fee + performance participation
+        (2.1/2.2), flagged in the matrix below. Universe = this roster
+        (data/analytics/supplement.json fee_percentile).</div></div>
     <div class="tablewrap"><table class="grid">
       <thead><tr><th style="min-width:120px">Cell</th>
-        ${keys.map((k) => `<th style="min-width:220px">${esc(T.products[k].fund_name)}</th>`).join("")}
+        ${keys.map((k) => `<th style="min-width:210px">${esc(T.products[k].fund_name)}</th>`).join("")}
       </tr></thead><tbody>${body}</tbody></table></div>
-    <p class="cap" style="margin-top:10px">Every cell text is the evidence record
-      itself (click cite for document · section · verbatim quote). Chips are
+    <p class="cap" style="margin-top:10px">Every figure is the evidence record
+      itself — click source for document · section · verbatim quote. Chips are
       derived from the cell text, not hand-assigned.</p>`;
+
+  const fp = T.supplement.fee_percentile.entries;
+  barChart(root.querySelector("#feechart"), {
+    items: fp.map((e) => ({
+      label: T.products[e.product].fund_name.split(" (")[0],
+      value: e.ter_pct, color: e.ter_pct === null ? "#837b8e" : "#593380",
+      note: e.ter_pct === null ? "no TER line — '34-Act wrapper (see 2.1/2.2)" : "",
+    })),
+    format: (v) => v.toFixed(1) + "%",
+  });
 }
 
 /* ========================================================== DXYZ CHART */
@@ -585,29 +686,29 @@ export function viewDxyz(root) {
   const troughAfterPeak = px.filter(([d]) => d > peakDate)
     .reduce((min, [d, v]) => (v < min[1] ? [d, v] : min), ["", Infinity]);
   const dd = (troughAfterPeak[1] / peak - 1) * 100;
-
   const navPts = nav.rows.filter((r) => r.period_end && r.nav_per_share)
     .map((r) => [r.period_end, r.nav_per_share]);
   const latest = nav.rows[nav.rows.length - 1];
+  const dp = T.supplement.dxyz_premium;
 
   root.innerHTML = `
     <div class="viewhead"><h1>DXYZ — Price vs NAV</h1>
-      <div class="sub">${esc(T.products.dxyz.fund_name)} — the fail case drawn:
-        the market price is a premium series, not a portfolio series. This is WHY
-        the benchmark engine refused a comparator (escalation, cell 5.x) —
-        benchmarking the price benchmarks the premium.</div></div>
+      <div class="sub">The market price is a premium series, not a portfolio
+        series — which is WHY the engine refused a benchmark.</div></div>
     <div class="statrow">
-      ${stat("Peak close", "$" + peak.toFixed(2), peakDate + " (price series)")}
-      ${stat("Drawdown from peak", dd.toFixed(1) + "%", "to " + troughAfterPeak[0] + " (computed)")}
-      ${stat("Latest quarterly NAV/share", "$" + latest.nav_per_share.toFixed(2), latest.period_end + " (filed)")}
-      ${stat("Premium at quarter high / low", `${latest.premium_pct_at_high}% / ${latest.premium_pct_at_low}%`, "as printed")}
+      ${stat("Peak close", "$" + peak.toFixed(2), peakDate)}
+      ${stat("Drawdown from peak", dd.toFixed(1) + "%", "computed from price series")}
+      ${stat("Latest filed NAV/share", "$" + latest.nav_per_share.toFixed(2), latest.period_end)}
+      ${stat("Premium now", dp.premium_pct_vs_latest_filed_nav + "%",
+             `close ${dp.last_close_date} vs latest filed NAV`)}
+      ${stat("Filed premium range", `${dp.filed_premium_range_pct[0]}% – ${dp.filed_premium_range_pct[1]}%`,
+             "fund's own prospectus table")}
     </div>
     <div class="chartbox"><div id="dxyzchart"></div>
-      <div class="chartnote">Price: daily close, Yahoo Finance series (data/series/dxyz.csv,
-        ${px.length} rows, cell 1.10 exhibit). NAV points: the fund's own quarterly
-        NAV-per-share disclosure (${esc(nav.source)} — status ${esc(nav.status)}).
-        Log scale; the vertical gap between the two lines IS the premium.</div></div>
-    <h2 style="margin:18px 0 8px">Quarterly premium/(discount) as filed</h2>
+      <div class="chartnote">Price: daily close (${px.length} obs). Red points:
+        the fund's own quarterly filed NAV per share. Log scale — the vertical
+        gap IS the ${gloss("premium/discount")}.</div></div>
+    <h2 style="margin:18px 0 8px">Quarterly premium/(discount), as filed</h2>
     <div class="tablewrap"><table class="grid"><thead><tr>
       <th>Period</th><th>NAV/share</th><th>Price high</th><th>Price low</th>
       <th>Premium at high</th><th>Premium at low</th></tr></thead><tbody>
@@ -617,66 +718,90 @@ export function viewDxyz(root) {
         <td class="num">$${r.price_low?.toFixed(2) ?? "—"}</td>
         <td class="num">${r.premium_pct_at_high ?? "—"}%</td>
         <td class="num">${r.premium_pct_at_low ?? "—"}%</td></tr>`).join("")}
-    </tbody></table></div>
-    <p class="cap" style="margin-top:8px">${esc(nav.what)} — quote: “${esc(nav.quote)}”.</p>`;
+    </tbody></table></div>`;
 
   lineChart(root.querySelector("#dxyzchart"), {
     series: [
-      { points: px, label: "Market price (daily close)", color: "#1f4e5f", width: 1.4 },
+      { points: px, label: "Market price (daily close)", color: "#593380", width: 1.4 },
       { points: navPts, label: "NAV per share (quarterly, filed)",
-        color: "#a4322b", markersOnly: true, markers: true },
+        color: "#9d2f26", markersOnly: true, markers: true },
     ],
     annotations: [
-      { x: peakDate, y: peak, text: `peak $${peak.toFixed(2)}`, color: "#a4322b" },
+      { x: peakDate, y: peak, text: `peak $${peak.toFixed(2)}`, color: "#9d2f26" },
       { x: troughAfterPeak[0], y: troughAfterPeak[1],
-        text: `${dd.toFixed(1)}% from peak`, color: "#a4322b", dy: 16 },
+        text: `${dd.toFixed(1)}% from peak`, color: "#9d2f26", dy: 16 },
     ],
     height: 340, logY: true, yFormat: (v) => "$" + v.toFixed(0),
   });
 }
 
 /* ======================================================== DE-SMOOTHING */
-export function viewDesmooth(root) {
-  const met = T.metrics.cclfx.full_history;
-  const daily = T.series.cclfx;
-  const me = monthEndPoints(daily);
-  const rets = periodReturns(me.map(([, v]) => v));
-  const [rec, rho] = desmoothGeltner(rets);
-  const volObs = annVol(rets, 12) * 100;
-  const volDes = annVol(rec, 12) * 100;
+export function viewDesmooth(root, state) {
+  // data-driven roster: any product with a monthly-or-finer series qualifies
+  const AVAILABLE = {
+    cliffwater_cclfx: () => {
+      const me = monthEndPoints(T.series.cclfx);
+      return { rets: periodReturns(me.map(([, v]) => v)),
+               dates: me.map(([d]) => d),
+               basis: "monthly returns from daily adj close (distributions reinvested)",
+               committed: `pipeline: rho ${T.metrics.cclfx.full_history.lag1_autocorr_rho}, observed ${T.metrics.cclfx.full_history.ann_vol_observed_pct}% → de-smoothed ${T.metrics.cclfx.full_history.ann_vol_desmoothed_pct}% (data/analytics/metrics.json)` };
+    },
+    breit: () => {
+      const pts = T.series_monthly.breit_nav.filter(([d]) => d <= "2025-12-31");
+      const bd = T.supplement.breit_monthly_diagnostics;
+      return { rets: periodReturns(pts.map(([, v]) => v)),
+               dates: pts.map(([d]) => d),
+               basis: "monthly NAV path as PRINTED in the 10-K (distributions excluded — appraisal-process diagnostic)",
+               committed: `pipeline: rho ${bd.lag1_autocorr_rho}, observed ${bd.nav_path_ann_vol_pct}% → de-smoothed ${bd.desmoothed_ann_vol_pct}% (data/analytics/supplement.json)` };
+    },
+  };
+  const UNAVAILABLE_REASON = (k) =>
+    T.cell_display[k]["4.8"]?.plain || "no monthly-or-finer public series";
 
-  const obsPts = rets.map((r, i) => [me[i + 1][0], r * 100]);
-  const desPts = rec.map((r, i) => [me[i + 2][0], r * 100]);
+  const key = AVAILABLE[state.product] ? state.product : "cliffwater_cclfx";
+  const data = AVAILABLE[key]();
+  const [rec, rho] = desmoothGeltner(data.rets);
+  const volObs = annVol(data.rets, 12) * 100;
+  const volDes = annVol(rec, 12) * 100;
+  const obsPts = data.rets.map((r, i) => [data.dates[i + 1], r * 100]);
+  const desPts = rec.map((r, i) => [data.dates[i + 2], r * 100]);
+
+  const others = Object.keys(T.products)
+    .filter((k) => !AVAILABLE[k])
+    .map((k) => `<div class="nochart" style="margin-top:8px">
+      <div class="k">${esc(T.products[k].fund_name)}</div>
+      ${esc(UNAVAILABLE_REASON(k))}</div>`).join("");
 
   root.innerHTML = `
-    <div class="viewhead"><h1>De-smoothing — CCLFX</h1>
-      <div class="sub">${esc(T.products.cliffwater_cclfx.fund_name)} — appraisal-based
-        NAVs autocorrelate; Geltner AR(1) unsmoothing recovers the volatility the
-        smoothing hides. Cell 1.7 / 4.8 evidence, drawn.</div></div>
+    <div class="viewhead"><h1>De-smoothing Lab</h1>
+      <div class="sub">Appraisal NAVs autocorrelate; ${gloss("de-smoothing")}
+        restores the volatility the pricing process hides. Available wherever a
+        monthly-or-finer public series exists — currently
+        ${Object.keys(AVAILABLE).map((k) =>
+          `<a href="#" data-dsprod="${k}" style="${k === key ? "font-weight:700" : ""}">${esc(T.products[k].fund_name)}</a>`).join(" · ")}.</div></div>
     <div class="statrow">
-      ${stat("Lag-1 autocorrelation ρ", rho.toFixed(3), "estimated from monthly series")}
+      ${stat("ρ (lag-1 autocorr)", rho.toFixed(3), `n=${data.rets.length} monthly`)}
       ${stat("Observed ann. vol", volObs.toFixed(2) + "%")}
       ${stat("De-smoothed ann. vol", volDes.toFixed(2) + "%")}
-      ${stat("Committed pipeline values", `${T.metrics.cclfx.full_history.lag1_autocorr_rho} / ${met.ann_vol_observed_pct}% / ${met.ann_vol_desmoothed_pct}%`,
-             "data/analytics/metrics.json (computed, cited)")}
+      ${stat("Understatement", (volDes / volObs).toFixed(1) + "×", "risk hidden by smoothing")}
     </div>
     <div class="chartbox"><div id="dschart"></div>
-      <div class="chartnote">Monthly returns from daily adj-close month-ends
-        (window ${esc(met.window)}, ${rets.length} obs). De-smoothed series:
-        r*_t = (r_t − ρ·r_{t−1}) / (1 − ρ). Recomputed live in the browser with
-        the SAME ported code that passes the Python suite's toy cases; the
-        committed pipeline numbers above are the cited record.</div></div>
-    <div class="banner navy" style="margin-top:14px">Why it matters: the fund's
-      disclosed stdev (${T.metrics.cclfx.fund_disclosed_at_2026_03_31.si_ann_stdev_pct}%,
-      ${esc(T.metrics.cclfx.fund_disclosed_at_2026_03_31.source)}) understates
-      participant-experienced risk if NAVs are appraisal-lagged. The de-smoothed
-      number is the honest comparator input — and it is still low, which is
-      itself informative about this asset class's pricing process.</div>`;
+      <div class="chartnote">${esc(data.basis)}. r*_t = (r_t − ρ·r_{t−1}) / (1 − ρ),
+        recomputed live with the parity-tested port; committed record —
+        ${esc(data.committed)}.</div></div>
+    <h2 style="margin:18px 0 4px">Where this diagnostic cannot run</h2>
+    <div class="cap">Availability honesty: the reason renders where the chart
+      would be.</div>
+    ${others}`;
+
+  root.querySelectorAll("[data-dsprod]").forEach((a) => a.addEventListener("click",
+    (e) => { e.preventDefault();
+             window.tarkSetState({ view: "desmooth", product: a.dataset.dsprod }); }));
 
   lineChart(root.querySelector("#dschart"), {
     series: [
-      { points: obsPts, label: "Observed monthly return (%)", color: "#1f4e5f", width: 1.5 },
-      { points: desPts, label: "De-smoothed (Geltner AR1) (%)", color: "#b06e1c",
+      { points: obsPts, label: "Observed monthly return (%)", color: "#593380", width: 1.5 },
+      { points: desPts, label: "De-smoothed (Geltner AR1) (%)", color: "#92600d",
         width: 1.2, dash: "4,3" },
     ],
     height: 300, includeZero: true, yFormat: (v) => v.toFixed(1) + "%",
@@ -686,61 +811,63 @@ export function viewDesmooth(root) {
 /* ============================================================ COVERAGE */
 export function viewCoverage(root) {
   const keys = Object.keys(T.products);
-  let agg = { seeded: 0, soft: 0, pending: 0, verified: 0, computed: 0, extracted: 0 };
-  const rows = keys.map((k) => {
-    const c = T.evidence_counts[k];
-    const seeded = c.extracted + c.verified + c.computed;
-    const applicable = seeded + c.partial + c.fetched + c.pending;
-    agg.seeded += seeded; agg.soft += c.partial + c.fetched;
-    agg.pending += c.pending; agg.verified += c.verified;
-    agg.computed += c.computed; agg.extracted += c.extracted;
-    const segs = [
-      ["extracted", (c.extracted + c.verified) / applicable * 100],
-      ["computed", c.computed / applicable * 100],
-      ["partial", (c.partial + c.fetched) / applicable * 100],
-    ].map(([cls, w]) => `<div class="seg ${cls}" style="width:${w}%"></div>`).join("");
-    return `<tr><td>${esc(T.products[k].fund_name)}</td>
-      <td style="min-width:220px"><div class="covbar">${segs}</div></td>
-      <td class="num">${c.coverage_pct}%</td>
-      <td class="num">${c.extracted}</td><td class="num">${c.verified}</td>
-      <td class="num">${c.computed}</td><td class="num">${c.partial + c.fetched}</td>
-      <td class="num">${c.pending}</td><td class="num">${c.na}</td></tr>`;
-  }).join("");
-  const total = agg.seeded + agg.soft + agg.pending;
+  const tax = T.taxonomy;
   const cc = T.crosscheck;
 
   root.innerHTML = `
     <div class="viewhead"><h1>Coverage & Provenance</h1>
-      <div class="sub">The record's honesty, quantified: what is extracted, what is
-        computed, what is still pending — and the independent cross-check stats.</div></div>
-    <div class="statrow">
-      ${stat("Overall coverage", Math.round((agg.seeded + agg.soft) / total * 100) + "%", `${agg.seeded} seeded + ${agg.soft} partial of ${total} applicable cells`)}
-      ${stat("Extracted (cited)", agg.extracted)}
-      ${stat("Computed (pipeline)", agg.computed)}
-      ${stat("Human-verified", agg.verified, "verification interface: data/evidence/*.csv (CF2 pass pending)")}
+      <div class="sub">${esc(tax.line)}</div></div>
+    <div class="cardgrid g3" style="margin-bottom:14px">
+      <div class="card" style="display:flex;gap:16px;align-items:center">
+        <div id="taxdonut"></div>
+        <div><h3>The record, whole</h3>
+          <div class="cap">${tax.total} cells across six products. Every cell is
+            evidenced, computed, or carries a documented reason it cannot be
+            public-sourced. Zero unresolved.</div></div></div>
+      <div class="card"><h3 class="num" style="font-size:28px;color:var(--ok)">${cc.confirmed}/${cc.cells_checked}</h3>
+        <div class="cap">cells CONFIRMED by an independent re-location pass;
+          ${cc.corrected} discrepancies found and corrected in the open;
+          ${cc.unlocatable} unlocatable. ${esc(cc.source)}</div></div>
+      <div class="card"><h3 class="num" style="font-size:28px;color:var(--plum-700)">0</h3>
+        <div class="cap">cells human-verified so far — the verification
+          interface is data/evidence/*.csv, and nothing is marked verified until
+          a human signs the row. Honesty is load-bearing.</div></div>
     </div>
-    <div class="cardgrid g3" style="margin-bottom:16px">
-      <div class="card"><h3 class="num" style="font-size:26px;color:var(--green)">${cc.confirmed}</h3>
-        <div class="cap">cells CONFIRMED by an independent re-location pass
-          (of ${cc.cells_checked} checked)</div></div>
-      <div class="card"><h3 class="num" style="font-size:26px;color:var(--amber)">${cc.corrected}</h3>
-        <div class="cap">discrepancies found by the cross-check — both CORRECTED
-          in the record (that the process catches its own errors is the point)</div></div>
-      <div class="card"><h3 class="num" style="font-size:26px;color:var(--navy)">${cc.unlocatable}</h3>
-        <div class="cap">cells that could not be re-located — zero</div></div>
-    </div>
-    <p class="cap" style="margin-bottom:16px">Source: ${esc(cc.source)}.</p>
-    <div class="tablewrap"><table class="grid"><thead><tr>
-      <th>Product</th><th>Mix</th><th>Coverage</th><th>Extracted</th>
-      <th>Verified</th><th>Computed</th><th>Partial</th><th>Pending</th><th>n/a</th>
-    </tr></thead><tbody>${rows}</tbody></table></div>
-    <div class="legend" style="margin-top:8px">
-      <span><span class="sw" style="background:var(--green)"></span>extracted/verified</span>
-      <span><span class="sw" style="background:var(--violet)"></span>computed</span>
-      <span><span class="sw" style="background:var(--amber)"></span>partial/fetched</span></div>
-    <p class="cap footer-rule">Every number on every surface is real-and-cited or
-      labeled ILLUSTRATIVE. Statuses are never inflated: nothing here is marked
-      verified until a human checks the row in data/evidence/*.csv and signs
-      verified_by. Bundle generated ${esc(T.generated)} from the same data layer
-      the validator gates.</p>`;
+    <div class="cardgrid g3" id="prodrings"></div>
+    <div class="legend" style="margin-top:10px">
+      <span><span class="sw" style="background:var(--ok)"></span>extracted/verified</span>
+      <span><span class="sw" style="background:var(--calc)"></span>computed</span>
+      <span><span class="sw" style="background:var(--warn)"></span>partial/fetched</span>
+      <span><span class="sw" style="background:#d8d3dd"></span>documented n/a</span></div>
+    <p class="cap footer-rule">Bundle generated ${esc(T.generated)} from the same
+      data layer the validator gates. Every number on every surface is
+      real-and-cited or labeled ILLUSTRATIVE.</p>`;
+
+  donut(root.querySelector("#taxdonut"), {
+    size: 150,
+    segments: [
+      { label: "evidenced", value: tax.counts.extracted + (tax.counts.verified || 0)
+          + tax.counts.partial + tax.counts.fetched, color: "#256e46" },
+      { label: "computed", value: tax.counts.computed, color: "#14636d" },
+      { label: "documented n/a", value: tax.counts["n/a"], color: "#d8d3dd" },
+    ],
+    center: `${Math.round((tax.total - tax.counts["n/a"]) / tax.total * 100)}%`,
+    centerSub: "resolvable, resolved",
+  });
+
+  const grid = root.querySelector("#prodrings");
+  for (const k of keys) {
+    const c = T.evidence_counts[k];
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.display = "flex";
+    card.style.gap = "14px";
+    card.style.alignItems = "center";
+    card.innerHTML = `<div data-r></div><div>
+      <h3 style="font-size:13.5px">${esc(T.products[k].fund_name)}</h3>
+      <div class="cap">${c.extracted} extracted · ${c.computed} computed ·
+        ${c.partial + c.fetched} partial · ${c.na} documented-n/a</div></div>`;
+    card.querySelector("[data-r]").append(ring(c.coverage_pct, "#593380", 72));
+    grid.append(card);
+  }
 }
