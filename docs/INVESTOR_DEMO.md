@@ -35,18 +35,15 @@ The build refuses to emit the bundle if any plan-sponsor token would leak.
 4. Open the Pages URL, hard-refresh (Cmd+Shift+R) to bust module cache.
 5. Land on **Reference Plans** with the tech/media plan selected (default).
 
-## Known rough edges
-- Charts are hand-rolled SVG: no tooltips/hover on data points yet (click
-  targets are the cite buttons, not chart geometry).
-- The six-factor view is one long scroll per product (no per-factor anchor
-  links yet); use browser find (Cmd+F) live if you need a specific cell fast.
-- `hl_paf` PME explorer moves in fiscal-year steps (annual disclosure is the
-  honest granularity); only CCLFX has the smooth monthly slider.
+## Known rough edges (design-pass build)
+- `hl_paf` / `kkr_kpec` / `breit` PME windows move in fiscal-year steps
+  (annual disclosure is the honest granularity); only CCLFX has the smooth
+  monthly slider.
 - Browser module caching: after a redeploy, one hard refresh may be needed.
-- kkr_kpec / breit have no benchmark selection JSON yet (10-K wrappers came
-  later); the Benchmark view states this honestly instead of faking one.
-- Coverage is 54% overall — the pending cells render as "pending" by design.
-  Zero cells are human-verified yet (CF2 pass outstanding); the UI says so.
+- Glossary hover-chips need a hover/tap; on touch devices tap the dotted term.
+- Zero cells are human-verified yet (CF2 pass outstanding); the UI says so —
+  that is a feature, not a gap. Record state: 54% evidenced · 18% computed ·
+  27% documented-unavailable · 0 unresolved.
 
 ## Fallback plan (in order)
 1. Pages URL fails → local `http.server` (step above, 10 seconds).
