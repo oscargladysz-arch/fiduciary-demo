@@ -1,40 +1,26 @@
-# Tark Drop v8 — Increment 6: M5 + M6 + Ship Kit
-### Tested live 2026-07-18. The decision memo, the liquidity match, the demo script, and the deploy runbook. This is 8/10, pending your deploy click.
+# Tark Drop v9 — Crosscheck Integration + Corrections
+### Built ON your 2026-08-08 data sync (Claude Code's pass included) — safe to `unzip -o`. All five suites green.
 
-## What's new in v8
-1. **`src/tark_memo.py` (M5)** — generates a per-product Word decision memo: rule citation (91 FR 16088), meaningful-benchmark language, six-factor findings table synthesized from the evidence cells, benchmark selection with scoring rationale and the **full rejection log**, the window-sensitivity disclosure, a provenance appendix, signature block. DXYZ gets the **escalation variant**: "no meaningful benchmark constructible — do not proceed," as a filed record. Six memos pre-generated in `data/memos/`; the Benchmark view now has a **Download decision memo** button. Visually verified per the docx skill (rendered to images and inspected).
-2. **`src/tark_liquidity.py` (M6)** — the product-to-plan match, three honestly separated layers: wrapper FACTS from cell 3.1 · the STRUCTURAL DIA test (daily 404(c) menus vs quarterly wrappers — names the bridging structures) · an ILLUSTRATIVE scenario (labeled, parameterized, never asserted as fact). Verdicts: BREIT **conditional-weak** (its own gating precedent), DXYZ **aligned-mechanical** (with the premium caveat), the rest **conditional** with capacity headroom shown. New app view **Liquidity Match**; cells 3.7/3.9 now computed with provenance. Coverage: **26%**.
-3. **`src/test_memo.py`** — fifth suite: memos exist, carry the rule cite, the PME, the CDLI rejection, the K-1 finding, the escalation — and never the sponsor's name.
-4. **Ship kit:** `requirements.txt` · `docs/demo_script.md` (the 7-minute walkthrough with talking beats) · deploy runbook below.
+## What's in v9
+1. **Both crosscheck discrepancies fixed, statuses honest (`extracted-unverified` — CF2 still adjudicates):**
+   - **DXYZ 2.1 (the material one):** the recorded 2.00% fee was the *pre-listing* fee quoted out of era. Corrected to the fee in force since the 3/26/2024 listing: **0.625%/quarter = 2.50% annualized on average GROSS assets including borrowings** — the leverage-inclusive fee-base trap, on the fail case itself. FY2025 fees $3,525,027.
+   - **CCLFX 5.1:** rewritten to the filing's own words — the fund **expressly declares NO designated performance benchmark**; the shareholder-report indices are illustrative comparators only. This *upgrades* the demo: the engine constructs where the fund declares none. CDLI sentence now attributed as an external fact, not to this filing. Engine profile updated (`self_declared: None`); selections regenerated — primary/secondary and all numbers unchanged, lane labeling corrected.
+2. **Housekeeping from the crosscheck appendix:** seven blank `local_file` fields backfilled · PAF 2.1 carries the 1.50%→1.40% fee-history note · the two absence-inference flags (PAF 3.1, DXYZ 3.1) annotated transparently in the cell text.
+3. **All six memos regenerated** — DXYZ's memo now states the corrected 2.50% gross-assets fee; CCLFX's memo carries the no-declared-benchmark finding; PAF's memo now includes the complete incentive-fee terms from Claude Code's pass (12.50% deal-by-deal, 8% preferred, 100% catch-up).
+4. **State of the record:** coverage **28%** (63 seeded + 15 partial); 44-cell independent crosscheck complete — 42 confirmed, 2 corrected, 0 unlocatable. `docs/crosscheck_report.md` is CF2's adjudication map.
 
 ## Install & run
 ```
 cd ~/Projects/fiduciary-demo
-unzip -o ~/Downloads/tark_drop_v8.zip -d .
+unzip -o ~/Downloads/tark_drop_v9.zip -d .
 python src/validate_data.py
-python src/test_memo.py
-python src/test_app.py
-streamlit run app.py
+python src/coverage.py
+git add -A && git commit -m "v9: crosscheck corrections (dxyz fee, cclfx benchmark disclaimer) + memo regen" && git push
 ```
-Walk the new **Liquidity Match** view (cclfx, then breit), then Benchmark → **Download decision memo** and open the docx. Then the hook and the close:
-```
-cat > .git/hooks/pre-commit << 'HOOK'
-#!/bin/sh
-source .venv/bin/activate 2>/dev/null
-python src/validate_data.py && python src/test_analytics.py && python src/test_benchmark.py && python src/test_memo.py && python src/test_app.py
-HOOK
-chmod +x .git/hooks/pre-commit
-git add -A && git commit -m "increment 6: M5 memo + M6 liquidity match + ship kit" && git push
-```
+Hook runs all five suites (~2 min). Then reload the deployed app — Streamlit Cloud redeploys from the push automatically; check DXYZ's Fees tab and CCLFX's Benchmark view for the corrected content.
 
-## Deploy (your click, ~5 minutes)
-1. share.streamlit.io → sign in with GitHub → **New app**.
-2. Repo `oscargladysz-arch/fiduciary-demo`, branch `main`, file `app.py`. (Private repo is fine — grant Streamlit access when prompted.)
-3. Advanced settings → Python 3.12 → **Deploy**. The app is self-contained: all data committed, no secrets, no raw filings needed.
-4. Smoke-test the live URL against the demo script, all five views, memo download included.
-
-## The scoreboard, honestly
-**8/10 on the build plan** once the deploy link is live: all seven acceptance criteria pass — anchor plan · picker · six-factor scorecard with citations · index-agnostic benchmark engine with rejection log · liquidity match · memo export · DXYZ failing loudly — deployed, every number cited or labeled. The remaining two points are not code: practitioner validation of the methodology (Gate C), your §4 hand-worked PME (August), design polish, and six-product extraction depth.
+## CF2's pass — now the only step between this data and "verified"
+Procedure per cell: open `docs/crosscheck_report.md` → for Confirmed cells, re-check the anchor phrase in the cited document, then set status `verified` + name/date in `verified_by` in BOTH the CSV and the JSON. The two corrected cells (dxyz 2.1, cclfx 5.1) get his independent read of the corrected language. The TR-gap reconciliation (computed 7.98% vs disclosed 9.34%) remains his written paragraph.
 
 ## Standing ledger
-Oscar's reads (PAF 2.2 rate + 4.2 · CCLFX/DXYZ auditor lines) · CF2's verification pass (54 seeded cells) + TR-gap check · CF1's FR read + kill-shot watch · **Gate A: July 31 — thirteen days** — and per the roadmap, the August methodology window opens right behind it.
+Methodology window is OPEN (Aug 8–30): `docs/benchmark_methodology_skeleton.md`, §4 hand-worked PAF PME = the acceptance test. Gate A outcome still unreported. Buyer-demo notes (Nick + two) still the pitch's missing evidence. Second-plan "shortlist" offer stands.

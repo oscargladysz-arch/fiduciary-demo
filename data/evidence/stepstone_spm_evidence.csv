@@ -38,7 +38,7 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 4.7,Premium/discount check,,,,,,,,,pending
 4.8,Smoothing diagnostics,,,,,,,,,pending
 4.9,CIT unit valuation,,,,,,,,,n/a - CIT only
-5.1,Self-declared benchmark,Stated primary benchmark: MSCI World Index.,N-CSR 2026-06-09 (FY ended 3/31/2026),Shareholder letter,"the MSCI World Index, SPRIM's primary benchmark",,2026-07-18,Claude (Inc-1),,extracted-unverified
+5.1,Self-declared benchmark,Stated primary benchmark: MSCI World Index.,N-CSR 2026-06-09 (FY ended 3/31/2026),Shareholder letter,"the MSCI World Index, SPRIM's primary benchmark",data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm,2026-07-18,Claude (Inc-1),,extracted-unverified
 5.2,Public index series,,,,,,,,,pending
 5.3,Alt asset-class indices,,,,,,,,,pending
 5.4,Peer universe & returns,,,,,,,,,pending

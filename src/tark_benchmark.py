@@ -37,7 +37,7 @@ PRODUCT_PROFILES = {
         "strategy": "private_credit",
         "series": "cclfx",                      # daily adj_close on disk
         "granularity": "monthly",
-        "self_declared": "Morningstar LSTA US Leveraged Loan Index",  # cell 5.1
+        "self_declared": None,   # cell 5.1: fund EXPRESSLY declares no benchmark
         "source_cells": ["5.1", "1.1", "1.2"],
     },
     "hl_paf": {
@@ -75,9 +75,10 @@ PRODUCT_PROFILES = {
 STRATEGY_MENU = {
     "private_credit": [
         {"id": "bkln", "name": "Senior loan investable proxy (BKLN, for Morningstar LSTA class)",
-         "lane": "A/B", "series": "bkln", "provider": "Invesco / Morningstar LSTA class",
+         "lane": "B", "series": "bkln", "provider": "Invesco / Morningstar LSTA class",
          "independent": True, "data": "daily", "strategy_match": 2,
-         "match_note": "broadly syndicated loans vs direct lending - close cousin, not twin"},
+         "match_note": "broadly syndicated loans vs direct lending - close cousin, not twin; "
+                       "fund itself declares NO benchmark (5.1) - engine constructs"},
         {"id": "cdli", "name": "Cliffwater Direct Lending Index (CDLI)",
          "lane": "B", "series": None, "provider": "Cliffwater (the Fund's own adviser)",
          "independent": False, "data": "quarterly-manual", "strategy_match": 3,

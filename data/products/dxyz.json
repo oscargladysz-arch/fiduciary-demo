@@ -77,12 +77,12 @@
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
-      "value": "Base management fee 2.00% per annum (Advisory Agreement dated Apr 29, 2022). High for a listed CEF - evaluative datum.",
+      "value": "CORRECTED per crosscheck: Revised Base Management Fee IN FORCE since NYSE listing (3/26/2024): 0.625% per QUARTER = 2.50% annualized of average GROSS assets INCLUDING assets purchased with borrowings - the leverage-inclusive fee-base trap (cell 2.1) on the fail case itself. FY2025 management fees incurred $3,525,027. Superseded pre-listing 'Original' fee: 2.00% on invested capital.",
       "status": "extracted-unverified",
-      "source": "N-CSR 2026-03-10 (FY ended 12/31/2025)",
-      "section": "Note 5 - Agreements and Related Party Transactions",
-      "quote": "a base management fee in the amount of 2.00% per annum",
-      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "source": "N-CSR 2026-03-10 (FY2025)",
+      "section": "Note 5(a) - Management Fee ('Revised Base Management Fee')",
+      "quote": "Revised Base Management Fee ... 0.625% ... of the average value of the Fund's gross assets",
+      "extracted_by": "Claude (build, crosscheck fix 2026-08-08)",
       "verified_by": ""
     },
     "2.2": {
@@ -137,7 +137,7 @@
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
-      "value": "Listed CEF: NYSE since March 26, 2024, ticker DXYZ; daily on-exchange liquidity; no fund-level repurchase program.",
+      "value": "Listed CEF: NYSE since March 26, 2024, ticker DXYZ; daily on-exchange liquidity; no fund-level repurchase program. ('No fund-level repurchase program' is an inference from absence - the word repurchase appears nowhere in the N-CSR; flagged per crosscheck.)",
       "status": "extracted-unverified",
       "source": "N-CSR 2026-03-10 (FY ended 12/31/2025)",
       "section": "Note 1 - Organization",

@@ -272,12 +272,12 @@
     },
     "5.1": {
       "element": "Self-declared benchmark",
-      "value": "Stated comparators: Morningstar LSTA US Leveraged Loan Index (primary) + a Bloomberg intermediate investment-grade bond index (secondary). Adviser publishes the Cliffwater Direct Lending Index (CDLI) - provider-independence question for the rubric.",
+      "value": "CORRECTED per crosscheck: the fund EXPRESSLY DECLARES NO designated performance benchmark. Comparator indices in the shareholder report (Morningstar LSTA US Leveraged Loan; Bloomberg US Aggregate) are labeled illustrative only. Evaluative datum for factor 5: the engine must CONSTRUCT a meaningful benchmark where the fund declares none. External fact, not from this filing: the adviser publishes the CDLI; provider independence is scored in the engine rubric.",
       "status": "extracted-unverified",
       "source": "N-CSR 2026-06-08 (FY ended 3/31/2026)",
-      "section": "Fund Performance",
-      "quote": "compared to ... the Morningstar LSTA US Leveraged Loan Index",
-      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "section": "Fund Performance, March 31, 2026 (Unaudited)",
+      "quote": "These indices do not serve as benchmarks for the Fund ... The Fund does not have a designated performance benchmark.",
+      "extracted_by": "Claude (build, crosscheck fix 2026-08-08)",
       "verified_by": ""
     },
     "5.2": {

@@ -79,7 +79,7 @@
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
-      "value": "1.40% annualized on MANAGED ASSETS (not net assets - includes leverage), calculated monthly, paid quarterly. NOTE: fee-base trap from dictionary 2.1 confirmed in the wild.",
+      "value": "1.40% annualized on MANAGED ASSETS (not net assets - includes leverage), calculated monthly, paid quarterly. NOTE: fee-base trap from dictionary 2.1 confirmed in the wild. Fee history note (crosscheck): 2021 486BPOS fee table showed 1.50% of average daily Managed Assets - rate reduced to 1.40% by FY2026.",
       "source": "N-CSR 2026-06-09 (acc 0001213900-26-054176*)",
       "section": "Notes - Investment Management Fee",
       "quote": "Investment Management Fee equal to 1.40% on an annualized basis of the Fund's Managed Assets",
@@ -149,7 +149,7 @@
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
-      "value": "Quarterly tender offers (board-approved, NOT Rule 23c-3 interval). Most recent: up to 5.00% of net assets = approx $290,123,923 (approx 15,084,500 shares), optional +2.00% upsize without amendment. Implies fund net assets approx $5.80B (= 290,123,923 / 0.05).",
+      "value": "Quarterly tender offers (board-approved, NOT Rule 23c-3 interval). Most recent: up to 5.00% of net assets = approx $290,123,923 (approx 15,084,500 shares), optional +2.00% upsize without amendment. Implies fund net assets approx $5.80B (= 290,123,923 / 0.05). (Discretionary tender structure; 'not Rule 23c-3' is an inference from absence of 23c-3 citation - flagged per crosscheck.)",
       "source": "SC TO-I 2026-05-06",
       "section": "Offer to Purchase, Item 1",
       "quote": "up to approximately 5.00% of the net assets of the Fund as of March 31, 2026",
