@@ -1,12 +1,12 @@
 {
   "product": "dxyz",
-  "plan": "plan_tech_media",
+  "plan": "plan_manufacturer_union",
   "verdict": "aligned-mechanical",
   "reasons": [
     "Daily exchange liquidity mechanically satisfies daily participant dealing (3.1).",
     "BUT price-vs-NAV decoupling means participants transact at the premium/discount, not at portfolio value \u2014 the liquidity is real, the price basis is not (1.10, 4.7)."
   ],
-  "plan_display_label": "US media/technology company 401(k) plan (~$570M, New York)",
+  "plan_display_label": "US tire & rubber manufacturer bargaining-unit 401(k) plan (~$790M, OH)",
   "plan_direction": "total",
   "wrapper_facts": {
     "kind": "listed_cef",
@@ -23,15 +23,15 @@
     "tail_annual_turnover_pct": 20.0,
     "active_annual_turnover_pct": 5.0,
     "illustrative": true,
-    "plan_allocation_usd": 28291924,
-    "annual_demand_usd": 2945510,
-    "demand_pct_of_position": 10.4,
+    "plan_allocation_usd": 39585346,
+    "annual_demand_usd": 2864483,
+    "demand_pct_of_position": 7.2,
     "annual_wrapper_capacity_pct": null
   },
   "plan_inputs": {
-    "net_assets": 565838485.0,
-    "tail_share_pct": 36.1,
-    "separated_with_balances": 1847.0
+    "net_assets": 791706910.0,
+    "tail_share_pct": 14.9,
+    "separated_with_balances": 1136.0
   },
   "citations": [
     "3.1",
@@ -39,6 +39,6 @@
     "3.5",
     "3.7",
     "3.9",
-    "plan: plan_tech_media.json (Form 5500, plan year 2024-01-01 to 2024-12-31)"
+    "plan: plan_manufacturer_union.json (Form 5500, plan year 2024-01-01 to 2024-12-31)"
   ]
 }

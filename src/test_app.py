@@ -9,11 +9,14 @@ from pathlib import Path
 from streamlit.testing.v1 import AppTest
 
 APP = str(Path(__file__).resolve().parents[1] / "app.py")
-VIEWS = ["Anchor Plan", "Candidate Roster", "Six-Factor Evaluation",
+VIEWS = ["Reference Plan", "Candidate Roster", "Six-Factor Evaluation",
          "Benchmark Selection", "Liquidity Match"]
 PRODUCTS = ["breit", "cliffwater_cclfx", "dxyz", "hl_paf", "kkr_kpec",
             "stepstone_spm"]
-FORBIDDEN = "spotify"   # the anonymization rule, lowercased
+PLANS = ["plan_tech_media", "plan_restaurant_hourly", "plan_consulting_alumni",
+         "plan_manufacturer_union"]
+# the anonymization rule, lowercased: NO reference-plan sponsor name, ever
+FORBIDDEN = ["spotify", "darden", "mckinsey", "goodyear"]
 
 FAILS = []
 
@@ -50,10 +53,17 @@ def collect_text(at) -> str:
     return " \n ".join(parts)
 
 
-def run_view(view: str, product: str) -> tuple[AppTest, str]:
+def leaked(text: str) -> str | None:
+    low = text.lower()
+    return next((name for name in FORBIDDEN if name in low), None)
+
+
+def run_view(view: str, product: str, plan: str = "plan_tech_media"
+             ) -> tuple[AppTest, str]:
     at = AppTest.from_file(APP, default_timeout=30)
     at.run()
     widget(at, "radio", "nav").set_value(view)
+    widget(at, "selectbox", "plan").set_value(plan)
     widget(at, "selectbox", "product").set_value(product)
     at.run()
     return at, collect_text(at)
@@ -65,16 +75,36 @@ at0.run()
 check_true("app boots without exception", not at0.exception)
 
 # 2. every view x product combination renders without exception,
-#    and NEVER leaks the sponsor name
+#    and NEVER leaks any sponsor name (anchor plan)
 for view in VIEWS:
     for product in PRODUCTS:
         at, text = run_view(view, product)
         check_true(f"{view} / {product}: renders clean", not at.exception)
         check_true(f"{view} / {product}: anonymization holds",
-                   FORBIDDEN not in text.lower())
+                   leaked(text) is None)
+
+# 2b. every plan renders the plan-sensitive views clean + anonymized,
+#     and the plan switcher visibly changes the liquidity output
+for plan in PLANS:
+    for view in ("Reference Plan", "Liquidity Match"):
+        at, text = run_view(view, "cliffwater_cclfx", plan)
+        check_true(f"{view} / {plan}: renders clean", not at.exception)
+        check_true(f"{view} / {plan}: anonymization holds", leaked(text) is None)
+_, lt_rest = run_view("Liquidity Match", "cliffwater_cclfx",
+                      "plan_restaurant_hourly")
+check_true("liquidity switches with plan: restaurant tail 28.2%",
+           "28.2" in lt_rest)
+_, lt_cons = run_view("Liquidity Match", "cliffwater_cclfx",
+                      "plan_consulting_alumni")
+check_true("liquidity switches with plan: consulting tail 58.2%",
+           "58.2" in lt_cons)
+check_true("consulting plan: partial-direction structural language",
+           "PARTIALLY participant-directed" in lt_cons)
+check_true("consulting plan: thin-headroom flag fires",
+           "THIN HEADROOM" in lt_cons)
 
 # 3. anchor plan shows the real (anonymized) economics
-_, anchor_text = run_view("Anchor Plan", "hl_paf")
+_, anchor_text = run_view("Reference Plan", "hl_paf")
 check_true("anchor: net assets $565.8M rendered", "565.8" in anchor_text)
 check_true("anchor: avg balance $110,515 rendered", "110,515" in anchor_text)
 check_true("anchor: liquidity tail called out", "1,847" in anchor_text)

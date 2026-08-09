@@ -1,4 +1,6 @@
 {
+  "plan_key": "plan_tech_media",
+  "archetype": "growth-phase technology/media plan; young active base, high average balance",
   "display_label": "US media/technology company 401(k) plan (~$570M, New York)",
   "anonymization_rule": "Sponsor name NEVER appears on demo surfaces. Data is public (DOL Form 5500 FOIA files); anonymization is a project display rule, not a legal requirement.",
   "identity_private": {

@@ -18,8 +18,9 @@ import json                                    # noqa: E402
 
 import streamlit as st                         # noqa: E402
 
-from tark_data import (DATA, FACTORS, cells_by_factor, load_anchor_plan,  # noqa: E402
-                       load_evidence, load_products, status_kind)
+from tark_data import (DATA, FACTORS, cells_by_factor,  # noqa: E402
+                       load_evidence, load_plan, load_products, plan_keys,
+                       status_kind)
 
 st.set_page_config(page_title="Tark — Fiduciary Evaluation Demo",
                    layout="wide")
@@ -40,7 +41,7 @@ CHIP = {
 }
 
 PRODUCTS = load_products()
-ANCHOR = load_anchor_plan()
+PLANS = {k: load_plan(k) for k in plan_keys()}
 
 
 def product_label(key: str) -> str:
@@ -65,13 +66,19 @@ st.sidebar.title("Tark")
 st.sidebar.caption("Benchmark selection & six-factor evaluation — demo build")
 view = st.sidebar.radio(
     "View",
-    ["Anchor Plan", "Candidate Roster", "Six-Factor Evaluation",
+    ["Reference Plan", "Candidate Roster", "Six-Factor Evaluation",
      "Benchmark Selection", "Liquidity Match"],
     key="nav",
+)
+_plan_order = ["plan_tech_media"] + [k for k in PLANS if k != "plan_tech_media"]
+plan_key = st.sidebar.selectbox(
+    "Plan", _plan_order, format_func=lambda k: PLANS[k]["display_label"],
+    key="plan",
 )
 product_key = st.sidebar.selectbox(
     "Product", list(PRODUCTS), format_func=product_label, key="product",
 )
+ANCHOR = PLANS[plan_key]
 st.sidebar.caption(RULE_CAPTION)
 st.sidebar.caption("All figures real and cited, or labeled illustrative. "
                    "Plan sponsor anonymized on all surfaces.")
@@ -79,8 +86,11 @@ st.sidebar.caption("All figures real and cited, or labeled illustrative. "
 
 # --------------------------------------------------------------- anchor view
 def render_anchor():
-    st.title("Anchor Plan")
+    st.title("Reference Plan")
     st.subheader(ANCHOR["display_label"])
+    if ANCHOR.get("archetype"):
+        st.caption(f"Archetype: {ANCHOR['archetype']} · plan year "
+                   f"{ANCHOR.get('plan_year', '?')}")
     fin, part, der = ANCHOR["financials"], ANCHOR["participants"], ANCHOR["derived"]
 
     c1, c2, c3, c4 = st.columns(4)
@@ -221,9 +231,9 @@ def render_liquidity():
     p = PRODUCTS[product_key]
     st.title("Product-to-Plan Liquidity Match")
     st.subheader(p["fund_name"])
-    mp = DATA / "liquidity" / f"{product_key}_match.json"
+    mp = DATA / "liquidity" / f"{plan_key}__{product_key}_match.json"
     if not mp.exists():
-        st.warning("Match pending for this product.")
+        st.warning("Match pending for this plan x product.")
         return
     m = json.loads(mp.read_text())
     st.caption(f"Plan: {ANCHOR['display_label']} - liquidity tail "
@@ -244,7 +254,7 @@ def render_liquidity():
 
 
 VIEWS = {
-    "Anchor Plan": render_anchor,
+    "Reference Plan": render_anchor,
     "Candidate Roster": render_roster,
     "Six-Factor Evaluation": render_evaluation,
     "Benchmark Selection": render_benchmark,

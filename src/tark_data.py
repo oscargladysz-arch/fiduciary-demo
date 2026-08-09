@@ -9,7 +9,8 @@ cell IDs, statuses, or file paths.
 Data contract on disk:
     data/products/<key>.json           one file per product, all 54 cells present
     data/evidence/<key>_evidence.csv   same cells, same statuses (citations)
-    data/plans/anchor_plan.json        the demo plan (real 5500 economics)
+    data/plans/<key>.json              reference plans (real 5500 economics,
+                                       anonymized display labels)
     data/series/<ticker>.csv           date,close daily series + series_manifest.json
     data/manifest.csv                  every EDGAR pull, reproducible
 
@@ -117,8 +118,24 @@ def cells_by_factor(product: dict) -> dict[str, list[tuple[str, dict]]]:
     return out
 
 
+ANCHOR_PLAN_KEY = "plan_tech_media"
+
+
+def plan_keys() -> list[str]:
+    return sorted(p.stem for p in (DATA / "plans").glob("*.json"))
+
+
+def load_plan(key: str) -> dict:
+    return json.loads((DATA / "plans" / f"{key}.json").read_text())
+
+
+def load_plans() -> dict[str, dict]:
+    return {k: load_plan(k) for k in plan_keys()}
+
+
 def load_anchor_plan() -> dict:
-    return json.loads((DATA / "plans" / "anchor_plan.json").read_text())
+    """Backward-compatible alias: the original anchor plan."""
+    return load_plan(ANCHOR_PLAN_KEY)
 
 
 def load_evidence(key: str) -> list[dict]:
@@ -206,32 +223,32 @@ def validate_product(key: str) -> list[str]:
     return errs
 
 
-def validate_anchor_plan() -> list[str]:
+def validate_plan(key: str) -> list[str]:
     errs: list[str] = []
     try:
-        a = load_anchor_plan()
+        a = load_plan(key)
     except Exception as e:  # noqa: BLE001
-        return [f"anchor: cannot load ({e})"]
+        return [f"{key}: cannot load ({e})"]
     for req in ("display_label", "identity_private", "participants",
                 "financials", "derived", "source"):
         if req not in a:
-            errs.append(f"anchor: missing '{req}'")
+            errs.append(f"{key}: missing '{req}'")
     fin, part, der = a.get("financials", {}), a.get("participants", {}), a.get("derived", {})
     net = fin.get("net_assets_eoy")
     bal = part.get("with_account_balances")
     if not (isinstance(net, (int, float)) and net > 0):
-        errs.append("anchor: net_assets_eoy not a positive number")
+        errs.append(f"{key}: net_assets_eoy not a positive number")
     # integrity: recompute derived figures from primitives
     if net and bal:
         recomputed = round(net / bal)
         if abs(recomputed - (der.get("avg_balance_per_account") or 0)) > 1:
-            errs.append(f"anchor: avg_balance drift (stored "
+            errs.append(f"{key}: avg_balance drift (stored "
                         f"{der.get('avg_balance_per_account')}, recomputed {recomputed})")
     adm = fin.get("tot_admin_expenses")
     if net and adm:
         recomputed = round(adm / net * 100, 3)
         if abs(recomputed - (der.get("admin_expense_ratio_pct") or 0)) > 0.001:
-            errs.append("anchor: admin_expense_ratio drift")
+            errs.append(f"{key}: admin_expense_ratio drift")
     return errs
 
 
@@ -269,6 +286,7 @@ def validate_series() -> list[str]:
 
 def validate_all() -> dict[str, list[str]]:
     report = {k: validate_product(k) for k in product_keys()}
-    report["anchor_plan"] = validate_anchor_plan()
+    for pk in plan_keys():
+        report[f"plan:{pk}"] = validate_plan(pk)
     report["series"] = validate_series()
     return report

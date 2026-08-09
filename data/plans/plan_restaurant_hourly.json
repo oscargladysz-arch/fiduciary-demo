@@ -1,0 +1,51 @@
+{
+  "plan_key": "plan_restaurant_hourly",
+  "display_label": "US casual-dining restaurant group 401(k) plan (~$1.6B, FL)",
+  "archetype": "high-turnover, low-balance hourly workforce",
+  "anonymization_rule": "Sponsor name NEVER appears on demo surfaces. Data is public (DOL Form 5500 FOIA files); anonymization is a project display rule, not a legal requirement.",
+  "identity_private": {
+    "sponsor": "DARDEN RESTAURANTS, INC.",
+    "plan_name": "DARDEN SAVINGS PLAN",
+    "ein": "593305930",
+    "state": "FL",
+    "ack_id": "20251016123456NAL0003362835001"
+  },
+  "plan_year": "2024-05-01 to 2025-04-30",
+  "source": {
+    "files": [
+      "f_5500_2024_latest.csv",
+      "F_SCH_H_2024_latest.csv"
+    ],
+    "publisher": "DOL EBSA Form 5500 FOIA bulk files (2024 Latest)",
+    "url": "https://askebsa.dol.gov/FOIA%20Files/2024/Latest/",
+    "pulled": "2026-08-09"
+  },
+  "plan_characteristics": {
+    "pension_benefit_codes": "2E2F2G2J2K2T3F",
+    "codes_decoded": "2E profit sharing; 2F ERISA 404(c) plan; 2G total participant-directed; 2J 401(k) arrangement; 2K employer match; 2T default investment account (QDIA); 3F additional characteristic code as filed",
+    "note": "404(c) + fully participant-directed = designated-investment-alternative framework squarely applies"
+  },
+  "participants": {
+    "total_boy": 201534.0,
+    "active_eoy": 197946.0,
+    "separated_deferred_vested": 12176.0,
+    "retired_receiving": 4.0,
+    "with_account_balances": 43129.0
+  },
+  "financials": {
+    "net_assets_boy": 1376802027.0,
+    "net_assets_eoy": 1585175658.0,
+    "tot_admin_expenses": 1621511.0,
+    "tot_expenses": 149669956.0,
+    "participant_loans_eoy": 32412746.0
+  },
+  "derived": {
+    "avg_balance_per_account": 36754,
+    "admin_expense_ratio_pct": 0.102,
+    "yoy_net_asset_growth_pct": 15.1
+  },
+  "dictionary_cells": {
+    "3.7 participant liquidity demand": "high-turnover hourly workforce: 197,946 active participants vs only 43,129 accounts with balances - most actives hold no balance yet; separated tail 12,176 (28.2% of accounts); small average balances and frequent cash-outs dominate flows",
+    "plan_profile (cross-cutting)": "filled by this file"
+  }
+}

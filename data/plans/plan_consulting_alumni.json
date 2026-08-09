@@ -1,0 +1,51 @@
+{
+  "plan_key": "plan_consulting_alumni",
+  "display_label": "Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY)",
+  "archetype": "older, high-average-balance professional plan; alumni-heavy",
+  "anonymization_rule": "Sponsor name NEVER appears on demo surfaces. Data is public (DOL Form 5500 FOIA files); anonymization is a project display rule, not a legal requirement.",
+  "identity_private": {
+    "sponsor": "MCKINSEY & COMPANY, INC.",
+    "plan_name": "MCKINSEY & COMPANY, INC. (PSRP) PROFIT SHARING RETIREMENT PLAN",
+    "ein": "131826332",
+    "state": "NY",
+    "ack_id": "20251010153705NAL0013434224001"
+  },
+  "plan_year": "2024-01-01 to 2024-12-31",
+  "source": {
+    "files": [
+      "f_5500_2024_latest.csv",
+      "F_SCH_H_2024_latest.csv"
+    ],
+    "publisher": "DOL EBSA Form 5500 FOIA bulk files (2024 Latest)",
+    "url": "https://askebsa.dol.gov/FOIA%20Files/2024/Latest/",
+    "pulled": "2026-08-09"
+  },
+  "plan_characteristics": {
+    "pension_benefit_codes": "2E2H2J3H",
+    "codes_decoded": "2E profit sharing; 2H PARTIAL participant-directed account plan; 2J 401(k) arrangement; 3H additional characteristic code as filed",
+    "note": "PARTIALLY participant-directed and no 404(c) code filed - the daily-menu DIA framing applies only to the participant-directed portion; a trustee-directed sleeve is structurally available"
+  },
+  "participants": {
+    "total_boy": 36077.0,
+    "active_eoy": 14729.0,
+    "separated_deferred_vested": 20253.0,
+    "retired_receiving": 154.0,
+    "with_account_balances": 34826.0
+  },
+  "financials": {
+    "net_assets_boy": 9075762188.0,
+    "net_assets_eoy": 9810269680.0,
+    "tot_admin_expenses": 1900982.0,
+    "tot_expenses": 591747728.0,
+    "participant_loans_eoy": 17093363.0
+  },
+  "derived": {
+    "avg_balance_per_account": 281694,
+    "admin_expense_ratio_pct": 0.019,
+    "yoy_net_asset_growth_pct": 8.1
+  },
+  "dictionary_cells": {
+    "3.7 participant liquidity demand": "alumni-heavy: 20,253 separated participants with balances = 58.2% of 34,826 accounts - the liquidity tail IS the plan; average balance $281,694",
+    "plan_profile (cross-cutting)": "filled by this file"
+  }
+}
