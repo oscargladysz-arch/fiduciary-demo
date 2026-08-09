@@ -6,8 +6,10 @@
  * series, filing-annual series — and where a chart is impossible, the
  * documented reason renders in its place. */
 
-import { desmoothGeltner, directAlpha, ksPme, annVol, lag1Autocorr, levelOn,
-         maxDrawdown, monthEndPoints, periodReturns } from "./analytics.js";
+import { annVol, beta, calendarYearReturns, desmoothGeltner, directAlpha,
+         drawdownEpisodes, ksPme, lag1Autocorr, levelOn, maxDrawdown,
+         monthEndPoints, periodReturns, rollingReturns,
+         rollingVol } from "./analytics.js";
 import { computeScenario, scenarioReason } from "./liquidity.js";
 import { lineChart, barChart, donut, ring } from "./charts.js";
 
@@ -251,7 +253,9 @@ export function viewEvaluation(root, state) {
         return `<div class="cellrow">
           <div class="head"><span class="cid num">${cid}</span>
             <span class="el">${gloss(cell.element)}</span>
-            ${chip(cell.status || "pending")} ${citeBtn(key, cid)}</div>
+            ${chip(cell.status || "pending")} ${citeBtn(key, cid)}
+            <button class="pinbtn" data-pin-cell data-key="${key}" data-cid="${cid}"
+              title="pin to packet">⌖</button></div>
           ${body}</div>`;
       }).join("");
     return `<div class="factorblock" id="f${n}"><h2>${n} · ${esc(label)}</h2>${rows}</div>`;
@@ -381,96 +385,143 @@ export function viewPme(root, state, setState) {
   const key = prods.includes(state.product) ? state.product : "cliffwater_cclfx";
   const prof = T.pme_profiles[key];
   const p = T.products[key];
+  const proxyId = T.proxy_library[state.proxy] ? state.proxy : prof.default_proxy;
+  const verdict = T.swap_matrix[key][proxyId];
+
+  const isAnnual = prof.granularity === "annual";
+  const hasFy = !!prof.fy_returns;
+  const fundDaily = prof.fund_series ? T.series[prof.fund_series] : null;
 
   root.innerHTML = `
-    <div class="viewhead"><h1>PME Window Explorer</h1>
-      <div class="sub">${esc(p.fund_name)} vs <span id="idxlabel">${esc(prof.index_label)}</span>
-        — drag the window start; the honesty is the feature.</div>
-      <div class="cap" style="margin-top:4px">Products: ${prods.map((k) =>
-        `<a href="#" data-pmeprod="${k}" style="margin-right:10px;${k === key ? "font-weight:700" : ""}">${esc(T.products[k].fund_name)}</a>`).join("")}</div>
-    </div>
-    <div class="banner amber"><b>Disclosure, interactive:</b> appraisal-lagged
-      NAVs are window-sensitive — the SAME fund shows different ${gloss("PME")}
-      and alpha depending on where the window opens. The engine's committed
-      numbers use the full disclosed window.</div>
-    <div class="card">
-      <div class="sliderrow"><label>Window start</label>
-        <input type="range" id="winstart" min="0" max="1" value="0" step="1">
-        <span class="out num" id="winout"></span></div>
-      ${prof.index_series_alt ? `<div class="cap">Index:
-        <label><input type="radio" name="pmeidx" value="main" checked> ${esc(prof.index_label)}</label>
-        <label style="margin-left:12px"><input type="radio" name="pmeidx" value="alt"> ${esc(prof.index_label_alt)}</label></div>` : ""}
-      <div class="statrow">
-        ${stat("KS-PME", `<span id="pme_ks">—</span>`)}
-        ${stat("Direct Alpha", `<span id="pme_da">—</span><small>/yr</small>`)}
-        ${stat("Fund growth", `<span id="pme_fg">—</span>×`)}
-        ${stat("Index growth", `<span id="pme_ig">—</span>×`)}
-        ${stat("Window", `<span id="pme_win" style="font-size:13px">—</span>`)}
+    <div class="viewhead"><h1>Analysis Lab — benchmark swap</h1>
+      <div class="sub">${esc(p.fund_name)}: recompute PME / Direct Alpha against ANY
+        proxy and window — and the engine grades your choice beside the result.
+        Customization plus judgment, never instead of it.</div></div>
+    ${prof.price_series_warning ? `<div class="banner red"><b>Price-series warning:</b>
+      ${esc(prof.price_series_warning)}.</div>` : ""}
+    <div class="banner amber"><span class="chip illustrative">USER-CONFIGURED ANALYSIS</span>
+      Results below reflect YOUR proxy/window choice, not the engine's selection.
+      Appraisal-lagged NAVs are window-sensitive — the standing methodology
+      disclosure applies to every recomputation on this screen.</div>
+    <div class="cardgrid g2">
+      <div class="card">
+        <div class="cap" style="margin-bottom:6px">Product:
+          ${prods.map((k) => `<a href="#" data-labprod="${k}"
+            style="margin-right:8px;${k === key ? "font-weight:700" : ""}">${esc(T.products[k].fund_name.split(" (")[0])}</a>`).join("")}</div>
+        <div class="cap">Proxy:
+          ${Object.entries(T.proxy_library).map(([id, label]) =>
+            `<label style="margin-right:10px"><input type="radio" name="proxy" value="${id}"
+              ${id === proxyId ? "checked" : ""}> ${esc(label.split(" — ")[0])}</label>`).join("")}
+          <button class="copylink" data-copylink style="float:right">copy link</button></div>
+        <div class="sliderrow"><label id="winlabel">Window start</label>
+          <input type="range" id="winstart" min="0" max="1" value="0" step="1">
+          <span class="out num" id="winout"></span></div>
+        <div class="statrow">
+          ${stat("KS-PME", `<span id="pme_ks">—</span>`)}
+          ${stat("Direct Alpha", `<span id="pme_da">—</span><small>/yr</small>`)}
+          ${stat("Fund growth", `<span id="pme_fg">—</span>×`)}
+          ${stat("Proxy growth", `<span id="pme_ig">—</span>×`)}
+          ${stat("Window", `<span id="pme_win" style="font-size:12px">—</span>`)}
+        </div>
+        <div class="chartbox" style="border:0;padding:6px 0 0"><div id="pmechart"></div></div>
+        <div class="chartnote" id="pmenote"></div>
       </div>
-      <div class="chartbox" style="border:0;padding:6px 0 0"><div id="pmechart"></div></div>
-      <div class="chartnote" id="pmenote"></div>
-    </div>`;
+      <div class="card" id="verdictcard">
+        <h3>The engine's judgment of your choice</h3>
+        <div id="verdictbody"></div>
+      </div>
+    </div>
+    <h2 style="margin:18px 0 6px">Analysis tables <span class="cap">(vs selected proxy; Python-first math, parity-tested)</span></h2>
+    <div class="cardgrid g2" id="tables"></div>`;
 
-  root.querySelectorAll("[data-pmeprod]").forEach((a) => a.addEventListener("click",
-    (e) => { e.preventDefault(); setState({ view: "pme", product: a.dataset.pmeprod }); }));
+  root.querySelectorAll("[data-labprod]").forEach((a) => a.addEventListener("click",
+    (e) => { e.preventDefault(); setState({ view: "pme", product: a.dataset.labprod, proxy: "" }); }));
+  root.querySelectorAll('input[name="proxy"]').forEach((r) =>
+    r.addEventListener("change", () => setState({ proxy: r.value })));
 
+  // --- engine verdict panel (always beside the user's choice) ---
+  const sel = T.benchmarks[key];
+  const vb = root.querySelector("#verdictbody");
+  if (verdict.score !== null && verdict.score !== undefined) {
+    vb.innerHTML = `
+      <div class="num" style="font-size:22px;font-weight:600;color:var(--plum-900)">
+        ${verdict.score}/${verdict.max}</div>
+      <div class="scorebar"><div class="fill" style="width:${verdict.score / verdict.max * 100}%"></div></div>
+      <ul style="margin:10px 0 0 18px;font-size:12px">
+        ${verdict.reasons.map((r) => `<li>${esc(r)}</li>`).join("")}</ul>
+      <div class="cap" style="margin-top:10px">${sel && sel.primary
+        ? `Engine's actual selection for this product: <b>${esc(sel.primary.candidate)}</b>
+           (${sel.primary.score}/12). Rejection ledger: <a href="#" data-goto-bench>view →</a>`
+        : `Engine outcome for this product: FORMAL ESCALATION — no benchmark assigned.
+           <a href="#" data-goto-bench>see the notice →</a>`}</div>`;
+  } else {
+    vb.innerHTML = `<div class="banner amber" style="margin:0">
+      <b>Off the engine's menu.</b> ${esc(verdict.verdict)}</div>
+      <div class="cap" style="margin-top:8px">${sel && sel.primary
+        ? `Engine's actual selection: <b>${esc(sel.primary.candidate)}</b> (${sel.primary.score}/12).`
+        : "Engine outcome: FORMAL ESCALATION — no benchmark assigned."}
+        <a href="#" data-goto-bench>rubric & ledger →</a></div>`;
+  }
+  root.querySelectorAll("[data-goto-bench]").forEach((a) => a.addEventListener("click",
+    (e) => { e.preventDefault(); setState({ view: "benchmarks" }); }));
+
+  // --- window machinery per tier ---
   const slider = root.querySelector("#winstart");
-  const isAnnual = prof.granularity === "annual";
   let starts;
-  let fundDaily = null;
-  if (isAnnual) {
+  if (hasFy) {
     const [w0] = prof.fy_window;
     const y0 = +w0.slice(0, 4);
     starts = prof.fy_returns.map((_, i) => `${y0 + i}${w0.slice(4)}`);
+  } else if (isAnnual) {
+    starts = [prof.fy_window[0]];
+    slider.disabled = true;
+    root.querySelector("#winlabel").textContent =
+      "Window fixed — single disclosed ITD figure";
   } else {
-    fundDaily = T.series[prof.fund_series];
     const me = monthEndPoints(fundDaily).map(([d]) => d);
     starts = [fundDaily[0][0], ...me.slice(0, me.length - 13)];
   }
   slider.max = String(starts.length - 1);
-
-  const idxFor = () => {
-    const alt = root.querySelector('input[name="pmeidx"][value="alt"]');
-    return alt && alt.checked
-      ? { series: T.series[prof.index_series_alt], label: prof.index_label_alt }
-      : { series: T.series[prof.index_series], label: prof.index_label };
-  };
+  const wi = Math.min(parseInt(state.win || "0", 10) || 0, starts.length - 1);
+  slider.value = String(wi);
 
   function recompute() {
     const i = +slider.value;
     const d0 = starts[i];
-    const { series: idxDaily, label } = idxFor();
+    const idxDaily = T.series[proxyId];
     let d1; let fGrowth; let fundPts;
-    if (isAnnual) {
+    if (hasFy) {
       d1 = prof.fy_window[1];
       const rets = prof.fy_returns.slice(i);
       fGrowth = rets.reduce((g, r) => g * (1 + r), 1);
       let acc = 1;
       fundPts = [[d0, 1]];
-      rets.forEach((r, j) => {
-        acc *= 1 + r;
-        fundPts.push([`${+d0.slice(0, 4) + j + 1}${d0.slice(4)}`, acc]);
-      });
+      rets.forEach((r, j) => { acc *= 1 + r;
+        fundPts.push([`${+d0.slice(0, 4) + j + 1}${d0.slice(4)}`, acc]); });
+    } else if (isAnnual) {
+      d1 = prof.fy_window[1];
+      fGrowth = (1 + prof.aatr) ** prof.aatr_years;
+      fundPts = [[d0, 1], [d1, fGrowth]];
     } else {
       d1 = fundDaily[fundDaily.length - 1][0];
-      const { growth, me } = windowGrowthDaily(fundDaily, d0, d1);
-      fGrowth = growth;
+      const win = fundDaily.filter(([d]) => d >= d0 && d <= d1);
+      const me = monthEndPoints(win);
+      fGrowth = win[win.length - 1][1] / win[0][1];
       let acc = 1;
       fundPts = [[me[0][0], 1]];
       periodReturns(me.map(([, v]) => v)).forEach((r, j) => {
-        acc *= 1 + r; fundPts.push([me[j + 1][0], acc]);
-      });
+        acc *= 1 + r; fundPts.push([me[j + 1][0], acc]); });
     }
     const flows = [[d0, -1.0], [d1, fGrowth]];
-    const { ks, da } = pmeCompute(flows, idxDaily, d0, d1);
+    const idx = idxDaily.filter(([d]) => d >= d0 && d <= d1);
+    const ks = ksPme(flows, idx);
+    const da = directAlpha(flows, idx);
     const iGrowth = levelOn(idxDaily, d1) / levelOn(idxDaily, d0);
-    const idxWin = idxDaily.filter(([d]) => d >= d0 && d <= d1);
-    const idxMe = monthEndPoints(idxWin);
+    const idxMe = monthEndPoints(idx);
     let acc = 1;
     const idxPts = [[idxMe[0][0], 1]];
     periodReturns(idxMe.map(([, v]) => v)).forEach((r, j) => {
-      acc *= 1 + r; idxPts.push([idxMe[j + 1][0], acc]);
-    });
+      acc *= 1 + r; idxPts.push([idxMe[j + 1][0], acc]); });
 
     root.querySelector("#pme_ks").textContent = ks.toFixed(4);
     root.querySelector("#pme_da").textContent =
@@ -479,26 +530,110 @@ export function viewPme(root, state, setState) {
     root.querySelector("#pme_ig").textContent = iGrowth.toFixed(4);
     root.querySelector("#pme_win").textContent = `${d0} → ${d1}`;
     root.querySelector("#winout").textContent = d0;
-    root.querySelector("#idxlabel").textContent = label;
     lineChart(root.querySelector("#pmechart"), {
       series: [
-        { points: fundPts, label: `${T.products[key].fund_name} (growth of 1.0)`,
+        { points: fundPts, label: `${T.products[key].fund_name.split(" (")[0]} (growth of 1.0)`,
           color: "#593380", width: 2 },
-        { points: idxPts, label: `${label} (growth of 1.0)`, color: "#92600d",
-          width: 1.6, dash: "5,4" },
+        { points: idxPts, label: `${proxyId.toUpperCase()} (growth of 1.0)`,
+          color: "#92600d", width: 1.6, dash: "5,4" },
       ],
-      height: 300, yFormat: (v) => v.toFixed(2) + "×",
+      height: 280, yFormat: (v) => v.toFixed(2) + "×",
     });
     root.querySelector("#pmenote").textContent =
-      (isAnnual
-        ? "Fund line compounds the disclosed fiscal-year total returns (cell 1.2); KS-PME/Direct Alpha anchored on daily index levels. "
-        : "Fund growth daily-anchored (window last/first observation); lines month-end sampled for drawing only. ")
-      + "Same code path as the Python engine — parity-tested.";
+      (hasFy ? "Fund line compounds disclosed fiscal-year returns (fiscal-step windows — annual is the honest granularity). "
+        : isAnnual ? "Single disclosed ITD figure — window fixed to the disclosure period. "
+        : "Fund growth daily-anchored; lines month-end sampled for drawing. ")
+      + "Same code path as the Python engine (parity-tested).";
+    renderTables();
   }
 
-  slider.addEventListener("input", recompute);
-  root.querySelectorAll('input[name="pmeidx"]').forEach((r) =>
-    r.addEventListener("change", recompute));
+  // --- analysis tables: calendar years, drawdowns, rolling 12m ---
+  function renderTables() {
+    const box = root.querySelector("#tables");
+    const idxDaily = T.series[proxyId];
+    const idxMe = monthEndPoints(idxDaily);
+    const idxCal = calendarYearReturns(idxMe);
+    const pct = (x) => (x * 100).toFixed(1) + "%";
+
+    let fundCal = null; let fundLabel = ""; let ddHtml = ""; let rollHtml = "";
+    if (fundDaily) {
+      const me = monthEndPoints(fundDaily);
+      fundCal = calendarYearReturns(me);
+      fundLabel = key === "dxyz" ? "market price (premium-driven!)" : "NAV (adj)";
+      const eps = drawdownEpisodes(me, 3);
+      ddHtml = `<div class="card"><h3>Drawdowns — top ${eps.length} episodes</h3>
+        <table class="grid" style="margin-top:6px"><thead><tr><th>Peak</th><th>Trough</th>
+          <th>Depth</th><th>Recovered</th></tr></thead><tbody>
+        ${eps.map((e) => `<tr><td class="num">${e.peak_date}</td>
+          <td class="num">${e.trough_date}</td>
+          <td class="num" style="color:var(--alarm)">${pct(e.depth)}</td>
+          <td class="num">${e.recovery_date || "not yet"}</td></tr>`).join("")}
+        </tbody></table>
+        <div class="cap" style="margin-top:6px">${key === "dxyz"
+          ? "Price series — episodes are PREMIUM collapses, not portfolio losses."
+          : "Month-end sampled; appraisal smoothing understates true depth (see De-smoothing Lab)."}</div></div>`;
+      const rets = periodReturns(me.map(([, v]) => v));
+      if (rets.length >= 13) {
+        const rr = rollingReturns(rets, 12);
+        const rv = rollingVol(rets, 12, 12);
+        const dates = me.slice(13).map(([d]) => d);
+        rollHtml = `<div class="card"><h3>Rolling 12-month</h3>
+          <div id="rollchart"></div>
+          <div class="cap">Latest: return ${pct(rr[rr.length - 1])}, vol ${pct(rv[rv.length - 1])};
+            β vs ${proxyId.toUpperCase()} over common months:
+            <b class="num">${beta(rets, periodReturns(idxMe.filter(([d]) => d >= me[0][0]).map(([, v]) => v))).toFixed(2)}</b></div></div>`;
+        setTimeout(() => {
+          const el = root.querySelector("#rollchart");
+          if (el) lineChart(el, { series: [
+            { points: dates.map((d, j) => [d, rr[j] * 100]), label: "rolling 12m return (%)", color: "#593380", width: 1.6 },
+            { points: dates.map((d, j) => [d, rv[j] * 100]), label: "rolling 12m vol (%)", color: "#14636d", width: 1.3, dash: "4,3" },
+          ], height: 220, includeZero: true, yFormat: (v) => v.toFixed(0) + "%" });
+        }, 0);
+      }
+    } else if (key === "breit" && T.series_monthly.breit_nav) {
+      const pts = T.series_monthly.breit_nav.filter(([d]) => d <= "2025-12-31");
+      fundCal = calendarYearReturns(pts);
+      fundLabel = "NAV path (distributions EXCLUDED — understates total return)";
+      const eps = drawdownEpisodes(pts, 3);
+      ddHtml = `<div class="card"><h3>NAV-path drawdowns</h3>
+        <table class="grid" style="margin-top:6px"><thead><tr><th>Peak</th><th>Trough</th>
+          <th>Depth</th><th>Recovered</th></tr></thead><tbody>
+        ${eps.map((e) => `<tr><td class="num">${e.peak_date}</td>
+          <td class="num">${e.trough_date}</td>
+          <td class="num" style="color:var(--alarm)">${pct(e.depth)}</td>
+          <td class="num">${e.recovery_date || "not yet"}</td></tr>`).join("")}
+        </tbody></table>
+        <div class="cap" style="margin-top:6px">Printed monthly NAV path, Class I —
+          distributions excluded; total-return drawdowns are smaller.</div></div>`;
+    } else {
+      const ann = T.series_annual[key] || [];
+      const withTr = ann.filter((r) => r.total_return_pct);
+      fundCal = withTr.map((r) => [r.fy_end.slice(0, 4) + " (FY)", +r.total_return_pct / 100]);
+      fundLabel = "fiscal-year total returns as filed";
+      ddHtml = `<div class="nochart"><div class="k">Drawdown / rolling tables unavailable</div>
+        Annual disclosure cadence — intra-year drawdowns and rolling 12-month
+        stats require a monthly-or-finer public series, which this wrapper does
+        not publish (see cells 1.6/1.7).</div>`;
+    }
+
+    box.innerHTML = `
+      <div class="card"><h3>Calendar-year returns</h3>
+        <table class="grid" style="margin-top:6px"><thead><tr><th>Year</th>
+          <th>${esc(T.products[key].fund_name.split(" (")[0])} <span class="cap">(${esc(fundLabel)})</span></th>
+          <th>${proxyId.toUpperCase()}</th></tr></thead><tbody>
+        ${fundCal.map(([y, r]) => {
+          const iy = idxCal.find(([yy]) => yy === String(y).slice(0, 4));
+          return `<tr><td class="num">${esc(String(y))}</td>
+            <td class="num">${pct(r)}</td>
+            <td class="num">${iy ? pct(iy[1]) : "—"}</td></tr>`;
+        }).join("")}</tbody></table>
+        <div class="cap" style="margin-top:6px">First covered year may be partial
+          (series start mid-year). Proxy years from daily adj close.</div></div>
+      ${ddHtml}${rollHtml}`;
+  }
+
+  slider.addEventListener("input", recompute);          // live while dragging
+  slider.addEventListener("change", () => setState({ win: slider.value }));
   recompute();
 }
 
@@ -564,6 +699,78 @@ export function viewLiquidity(root, state) {
       </div>
     </div>`;
 
+  // ---- named scenarios (localStorage only; nothing leaves the browser) ----
+  const SCN_KEY = "tark_scenarios";
+  const loadScn = () => { try { return JSON.parse(localStorage.getItem(SCN_KEY) || "{}"); } catch { return {}; } };
+  const scnPanel = document.createElement("div");
+  scnPanel.className = "card";
+  scnPanel.style.marginTop = "14px";
+  root.querySelector(".cardgrid").after(scnPanel);
+  function renderScenarios() {
+    const scns = loadScn();
+    const names = Object.keys(scns).slice(0, 12);
+    const cur = {
+      allocation_pct_of_plan: +root.querySelector("#s_alloc").value,
+      tail_annual_turnover_pct: +root.querySelector("#s_tail").value,
+      active_annual_turnover_pct: +root.querySelector("#s_act").value,
+    };
+    scnPanel.innerHTML = `<h3>Saved scenarios
+        <span class="chip illustrative">ILLUSTRATIVE</span></h3>
+      <div class="cap">Named parameter sets live in YOUR browser (localStorage) —
+        compare up to three against the current sliders, per the selected
+        plan × product.</div>
+      <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
+        <input id="scnname" placeholder="scenario name" maxlength="24"
+          style="border:1px solid var(--line);border-radius:3px;padding:5px 9px;font:500 12px var(--text)">
+        <button class="copylink" id="scnsave">save current sliders</button>
+        ${names.map((n) => `<label class="comparepick" style="margin:0">
+          <span class="${(window._scnSel || []).includes(n) ? "on" : ""}"
+            style="border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer"
+            data-scn="${esc(n)}">${esc(n)} ×</span></label>`).join("")}
+      </div>
+      <div id="scncompare"></div>`;
+    scnPanel.querySelector("#scnsave").addEventListener("click", () => {
+      const name = (scnPanel.querySelector("#scnname").value || "").trim().slice(0, 24);
+      if (!name) return;
+      const all = loadScn(); all[name] = cur;
+      localStorage.setItem(SCN_KEY, JSON.stringify(all));
+      window._scnSel = [...(window._scnSel || []), name].slice(-3);
+      renderScenarios();
+    });
+    scnPanel.querySelectorAll("[data-scn]").forEach((el) => el.addEventListener("click", (ev) => {
+      const n = el.dataset.scn;
+      if (ev.altKey) { const all = loadScn(); delete all[n];
+        localStorage.setItem(SCN_KEY, JSON.stringify(all));
+      } else {
+        window._scnSel = (window._scnSel || []).includes(n)
+          ? window._scnSel.filter((x) => x !== n)
+          : [...(window._scnSel || []), n].slice(-3);
+      }
+      renderScenarios();
+    }));
+    const chosen = (window._scnSel || []).filter((n) => scns[n]).slice(0, 3);
+    const out = scnPanel.querySelector("#scncompare");
+    if (!chosen.length) { out.innerHTML = `<p class="cap">Select saved scenarios to compare (alt-click removes).</p>`; return; }
+    const cols = [["current sliders", cur], ...chosen.map((n) => [n, scns[n]])];
+    out.innerHTML = `<div class="tablewrap"><table class="grid"><thead><tr>
+      <th>Parameter</th>${cols.map(([n]) => `<th>${esc(n)}</th>`).join("")}</tr></thead><tbody>
+      ${[["Allocation %", "allocation_pct_of_plan"], ["Tail turnover %", "tail_annual_turnover_pct"],
+         ["Active turnover %", "active_annual_turnover_pct"]].map(([lbl, f]) =>
+        `<tr><td>${lbl}</td>${cols.map(([, prm]) => `<td class="num">${prm[f]}</td>`).join("")}</tr>`).join("")}
+      <tr><td style="font-weight:600">Demand %/yr of position</td>
+        ${cols.map(([, prm]) => {
+          const o = computeScenario(m.plan_inputs, profile, prm);
+          return `<td class="num" style="font-weight:600">${o.demand_pct_of_position.toFixed(1)}%
+            ${o.thin_headroom ? '<span class="chip trap">thin</span>' : ""}</td>`;
+        }).join("")}</tr>
+      <tr><td>Annual demand</td>
+        ${cols.map(([, prm]) => `<td class="num">${money(computeScenario(m.plan_inputs, profile, prm).annual_demand_usd)}</td>`).join("")}</tr>
+    </tbody></table></div>
+    <div class="cap" style="margin-top:4px">All columns ILLUSTRATIVE — parameter
+      choices, not facts; wrapper capacity ${profile.exchange ? "is market depth (listed)" :
+      (profile.cadence_per_year * profile.cap_pct).toFixed(0) + "%/yr (filed)"}.</div>`;
+  }
+
   const els = ["alloc", "tail", "act"].map((s) => root.querySelector("#s_" + s));
   function update() {
     const params = {
@@ -600,8 +807,9 @@ export function viewLiquidity(root, state) {
       esc(r ? r : "Exchange-listed: capacity is market depth, not a fund cap.") +
       ` <b>[ILLUSTRATIVE]</b>`;
   }
-  els.forEach((e) => e.addEventListener("input", update));
+  els.forEach((e) => e.addEventListener("input", () => { update(); renderScenarios(); }));
   update();
+  renderScenarios();
 }
 
 /* ================================================================ FEES */
@@ -760,7 +968,12 @@ export function viewDesmooth(root, state) {
 
   const key = AVAILABLE[state.product] ? state.product : "cliffwater_cclfx";
   const data = AVAILABLE[key]();
-  const [rec, rho] = desmoothGeltner(data.rets);
+  const rhoEst = lag1Autocorr(data.rets);
+  const rhoOverride = state.rho !== "" && state.rho !== undefined
+    && !Number.isNaN(parseFloat(state.rho))
+    ? Math.min(0.9, Math.max(0, parseFloat(state.rho))) : null;
+  const rhoUsed = rhoOverride ?? rhoEst;
+  const [rec, rho] = desmoothGeltner(data.rets, rhoUsed);
   const volObs = annVol(data.rets, 12) * 100;
   const volDes = annVol(rec, 12) * 100;
   const obsPts = data.rets.map((r, i) => [data.dates[i + 1], r * 100]);
@@ -780,10 +993,27 @@ export function viewDesmooth(root, state) {
         ${Object.keys(AVAILABLE).map((k) =>
           `<a href="#" data-dsprod="${k}" style="${k === key ? "font-weight:700" : ""}">${esc(T.products[k].fund_name)}</a>`).join(" · ")}.</div></div>
     <div class="statrow">
-      ${stat("ρ (lag-1 autocorr)", rho.toFixed(3), `n=${data.rets.length} monthly`)}
+      ${stat("ρ in use", rho.toFixed(3), rhoOverride !== null
+        ? `USER OVERRIDE — estimated ρ is ${rhoEst.toFixed(3)}`
+        : `estimated from n=${data.rets.length} monthly returns`)}
       ${stat("Observed ann. vol", volObs.toFixed(2) + "%")}
       ${stat("De-smoothed ann. vol", volDes.toFixed(2) + "%")}
       ${stat("Understatement", (volDes / volObs).toFixed(1) + "×", "risk hidden by smoothing")}
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="sliderrow"><label>ρ override
+        ${rhoOverride !== null ? '<span class="chip illustrative">USER-CONFIGURED</span>' : ""}</label>
+        <input type="range" id="rhoslider" min="0" max="0.9" step="0.01"
+          value="${rhoUsed.toFixed(2)}" list="rhoticks">
+        <span class="out num">${rhoUsed.toFixed(2)}</span></div>
+      <datalist id="rhoticks"><option value="${rhoEst.toFixed(2)}" label="estimated"></option></datalist>
+      <div class="cap">Estimated ρ (${rhoEst.toFixed(3)}) is marked on the track.
+        Dragging recomputes the correction under YOUR assumption — labeled
+        user-configured, never the record.
+        ${rhoOverride !== null ? '<a href="#" id="rhoreset">reset to estimated</a>' : ""}
+        <b>What de-smoothing can and cannot detect:</b> it corrects serial
+        correlation from appraisal lag; it cannot reveal risks the appraisals
+        never mark — stale-pricing bias, gating, or premium collapse.</div>
     </div>
     <div class="chartbox"><div id="dschart"></div>
       <div class="chartnote">${esc(data.basis)}. r*_t = (r_t − ρ·r_{t−1}) / (1 − ρ),
@@ -796,7 +1026,11 @@ export function viewDesmooth(root, state) {
 
   root.querySelectorAll("[data-dsprod]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault();
-             window.tarkSetState({ view: "desmooth", product: a.dataset.dsprod }); }));
+             window.tarkSetState({ view: "desmooth", product: a.dataset.dsprod, rho: "" }); }));
+  root.querySelector("#rhoslider").addEventListener("change", (e) =>
+    window.tarkSetState({ rho: e.target.value }));
+  root.querySelector("#rhoreset")?.addEventListener("click", (e) => {
+    e.preventDefault(); window.tarkSetState({ rho: "" }); });
 
   lineChart(root.querySelector("#dschart"), {
     series: [

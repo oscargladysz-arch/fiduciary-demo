@@ -136,9 +136,79 @@ export function directAlpha(flows, index) {
   return xirr(scaled);
 }
 
+/* ---- workbench table math (ports of the Python originals; parity-tested
+ * on the same toy cases plus committed real-data checkpoints) ---- */
+export function calendarYearReturns(series) {
+  const lastByYear = {};
+  for (const [d, v] of series) lastByYear[d.slice(0, 4)] = v;
+  const years = Object.keys(lastByYear).sort();
+  const out = [];
+  let prev = series[0][1];
+  for (const y of years) {
+    out.push([y, lastByYear[y] / prev - 1]);
+    prev = lastByYear[y];
+  }
+  return out;
+}
+
+export function drawdownEpisodes(series, topN = 3) {
+  const episodes = [];
+  let i = 0;
+  const n = series.length;
+  while (i < n - 1) {
+    const [peakD, peakV] = series[i];
+    let j = i + 1;
+    let troughD = peakD; let troughV = peakV;
+    let recovery = null;
+    while (j < n) {
+      const [d, v] = series[j];
+      if (v >= peakV) { recovery = d; break; }
+      if (v < troughV) { troughD = d; troughV = v; }
+      j++;
+    }
+    if (troughV < peakV) {
+      episodes.push({ peak_date: peakD, trough_date: troughD,
+        depth: troughV / peakV - 1, recovery_date: recovery });
+    }
+    i = j > i ? j : i + 1;
+  }
+  episodes.sort((a, b) => a.depth - b.depth);
+  return episodes.slice(0, topN);
+}
+
+export function rollingReturns(returns, window) {
+  const out = [];
+  for (let i = window; i <= returns.length; i++) {
+    out.push(cumulativeGrowth(returns.slice(i - window, i)) - 1);
+  }
+  return out;
+}
+
+export function rollingVol(returns, window, periodsPerYear) {
+  const out = [];
+  for (let i = window; i <= returns.length; i++) {
+    out.push(annVol(returns.slice(i - window, i), periodsPerYear));
+  }
+  return out;
+}
+
+export function beta(fundReturns, indexReturns) {
+  const n = Math.min(fundReturns.length, indexReturns.length);
+  const f = fundReturns.slice(0, n); const x = indexReturns.slice(0, n);
+  const mf = mean(f); const mx = mean(x);
+  let cov = 0; let vr = 0;
+  for (let i = 0; i < n; i++) {
+    cov += (f[i] - mf) * (x[i] - mx);
+    vr += (x[i] - mx) ** 2;
+  }
+  cov /= n - 1; vr /= n - 1;
+  return vr ? cov / vr : 0;
+}
+
 // expose for Playwright parity tests (page.evaluate)
 window.TarkMath = {
   parseDate, yearFrac, periodReturns, monthEndPoints, mean, stdev,
   cumulativeGrowth, annReturn, annVol, maxDrawdown, lag1Autocorr,
   desmoothGeltner, xnpv, xirr, levelOn, ksPme, directAlpha,
+  calendarYearReturns, drawdownEpisodes, rollingReturns, rollingVol, beta,
 };

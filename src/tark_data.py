@@ -284,9 +284,74 @@ def validate_series() -> list[str]:
     return errs
 
 
+# statuses a non-null structured fact may cite (invariant: the screener layer
+# contains zero new facts — only typed projections of evidenced cells)
+FACT_OK_STATUS = ("extracted", "verified", "computed", "fetched")
+
+
+def _num_forms(v) -> set[str]:
+    if isinstance(v, float):
+        return {f"{v}", f"{v:g}", f"{v:.1f}", f"{v:.2f}"}
+    return {str(v), f"{v:,}"}
+
+
+def validate_facts() -> list[str]:
+    """Enforce the structured-facts contract: every field cites a real cell;
+    non-null values only from extracted/verified/computed/fetched cells;
+    numeric % fields (and large integers) must appear in the cited cell's own
+    text unless flagged approx; nulls must carry a reason."""
+    errs: list[str] = []
+    fdir = DATA / "facts"
+    if not fdir.exists():
+        return ["facts: data/facts/ missing"]
+    for key in product_keys():
+        fp = fdir / f"{key}.json"
+        if not fp.exists():
+            errs.append(f"facts:{key}: file missing")
+            continue
+        doc = json.loads(fp.read_text())
+        cells = load_product(key)["cells"]
+        for field, f in doc.get("facts", {}).items():
+            sc = f.get("source_cell")
+            if sc not in cells:
+                errs.append(f"facts:{key}:{field}: unknown source_cell '{sc}'")
+                continue
+            cell = cells[sc]
+            if f.get("value") is None:
+                if not f.get("reason"):
+                    errs.append(f"facts:{key}:{field}: null without a reason")
+                continue
+            if status_kind(str(f.get("status", ""))) not in FACT_OK_STATUS:
+                errs.append(f"facts:{key}:{field}: non-null value carries "
+                            f"status '{f.get('status')}'")
+            if (status_kind(str(cell.get("status", ""))) not in FACT_OK_STATUS
+                    and f.get("status") != "computed"):
+                errs.append(f"facts:{key}:{field}: cites cell {sc} whose "
+                            f"status is '{cell.get('status')}'")
+            if f.get("approx") or f.get("status") == "computed":
+                continue
+            text = str(cell.get("value") or "")
+            checks = []
+            v = f["value"]
+            if isinstance(v, float):
+                checks.append((field, v))
+            elif isinstance(v, int) and not isinstance(v, bool) and v >= 1000:
+                checks.append((field, v))
+            elif isinstance(v, dict):
+                checks += [(f"{field}.{k}", x) for k, x in v.items()
+                           if isinstance(x, float)]
+            for label, num in checks:
+                if not any(s in text for s in _num_forms(num)):
+                    errs.append(f"facts:{key}:{label}: value {num} not found "
+                                f"in cell {sc} text (add approx flag only if "
+                                f"the cell genuinely prints a rounded form)")
+    return errs
+
+
 def validate_all() -> dict[str, list[str]]:
     report = {k: validate_product(k) for k in product_keys()}
     for pk in plan_keys():
         report[f"plan:{pk}"] = validate_plan(pk)
     report["series"] = validate_series()
+    report["facts"] = validate_facts()
     return report

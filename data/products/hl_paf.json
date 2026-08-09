@@ -124,12 +124,12 @@
     },
     "2.2": {
       "element": "Incentive fee terms",
-      "value": "12.50% incentive fee, calculated PER INVESTMENT (deal-by-deal) on each Direct, Secondary, Listed PE and Opportunistic investment. Waterfall: (i) 100% of proceeds retained by Fund until return of acquisition cost + Preferred Return (8%/yr compounded annually; 6%/yr for Direct Credit); (ii) 100% catch-up to Adviser until Adviser holds 12.50% of preferred return + catch-up; (iii) thereafter 12.50% of further proceeds to Adviser. No incentive fee on Primary Fund Investments, currency hedging, or cash equivalents. Accrued monthly, payable on exit from each investment. Measured drag on NII ratio: 1.45% (N-CSR fn.5). NOTE: terms are from the 2021 base prospectus; the on-disk 424B3 supplement (2026-05-08) contains NO fee changes (officer appointment only), but it references a 2025-08-01 prospectus not on disk, so 'terms unchanged through 2026' is not fully confirmed.",
-      "source": "486BPOS 2021-07-29 (base prospectus); 424B3 2026-05-08 supplement checked - no fee change",
-      "section": "INCENTIVE FEE",
-      "quote": "an additional amount equal to 12.50% multiplied by further Relevant Proceeds ... the 'Preferred Return Rate' equals (x) 8% per annum",
+      "value": "CURRENT TERMS (Investment Management Agreement approved by shareholders March 14, 2025; FY2026 N-CSR): Incentive Fee = 10.00% of the excess of quarterly NET PROFITS over the then-balance of the Loss Recovery Account (memorandum account, initial balance zero, increased by quarterly net losses - a fund-level loss-carryforward/high-water mechanism; no preferred-return hurdle). Paid quarterly. Measured drag on NII ratio: 1.45% FY26 (highlights fn). SUPERSEDED HISTORY: the 2021 base prospectus terms were 12.50% deal-by-deal with 8% preferred (6% credit) and 100% catch-up - those terms governed until the 2025 change and were what this cell previously carried. Caught by the facts-layer adversarial verification 2026-08-09.",
+      "source": "N-CSR 2026-06-09 (FY2026 annual report), incentive-fee discussion; 486BPOS 2021-07-29 for the superseded terms",
+      "section": "N-CSR fee note: Incentive Fee / Loss Recovery Account (agreement approved 2025-03-14)",
+      "quote": "an Incentive Fee, equal to 10.00% of the excess, if any, of (i) the net profits of the Fund for the relevant period over (ii) the then balance, if any, of the Loss Recovery Account",
       "status": "extracted-unverified",
-      "extracted_by": "Claude Code (2026-08-08)",
+      "extracted_by": "Claude Code (2026-08-09)",
       "verified_by": ""
     },
     "2.3": {

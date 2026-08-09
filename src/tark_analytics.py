@@ -167,3 +167,76 @@ def direct_alpha(flows: list[tuple[str, float]],
     i_T = _level_on(index, T)
     scaled = [(d, amt * i_T / _level_on(index, d)) for d, amt in flows]
     return xirr(scaled)
+
+
+# --------------------------------------------------- workbench table math
+def calendar_year_returns(series: list[tuple[str, float]]) -> list[tuple[str, float]]:
+    """[(year, return)] from a value series: last obs of year over last obs of
+    the PRIOR year (first covered year uses the series' first observation as
+    its base and is a partial year for a mid-year start — callers label it)."""
+    last_by_year: dict[str, tuple[str, float]] = {}
+    for d, v in series:
+        last_by_year[d[:4]] = (d, v)
+    years = sorted(last_by_year)
+    out: list[tuple[str, float]] = []
+    prev = series[0][1]
+    for y in years:
+        v = last_by_year[y][1]
+        out.append((y, v / prev - 1))
+        prev = v
+    return out
+
+
+def drawdown_episodes(series: list[tuple[str, float]], top_n: int = 3
+                      ) -> list[dict]:
+    """Top-N peak-to-trough episodes, deepest first. Episode = from a running
+    peak to the minimum before that peak is regained (or series end).
+    Returns [{peak_date, trough_date, depth, recovery_date|None}]."""
+    episodes: list[dict] = []
+    i = 0
+    n = len(series)
+    while i < n - 1:
+        peak_d, peak_v = series[i]
+        j = i + 1
+        trough_d, trough_v = peak_d, peak_v
+        recovery = None
+        while j < n:
+            d, v = series[j]
+            if v >= peak_v:
+                recovery = d
+                break
+            if v < trough_v:
+                trough_d, trough_v = d, v
+            j += 1
+        if trough_v < peak_v:
+            episodes.append({"peak_date": peak_d, "trough_date": trough_d,
+                             "depth": trough_v / peak_v - 1,
+                             "recovery_date": recovery})
+        i = j if j > i else i + 1
+    episodes.sort(key=lambda e: e["depth"])
+    return episodes[:top_n]
+
+
+def rolling_returns(returns: list[float], window: int) -> list[float]:
+    """Compounded return over each trailing window of per-period returns."""
+    out = []
+    for i in range(window, len(returns) + 1):
+        out.append(cumulative_growth(returns[i - window:i]) - 1)
+    return out
+
+
+def rolling_vol(returns: list[float], window: int,
+                periods_per_year: float) -> list[float]:
+    """Annualized sample vol over each trailing window."""
+    return [ann_vol(returns[i - window:i], periods_per_year)
+            for i in range(window, len(returns) + 1)]
+
+
+def beta(fund_returns: list[float], index_returns: list[float]) -> float:
+    """OLS beta of fund on index over paired per-period returns."""
+    n = min(len(fund_returns), len(index_returns))
+    f, x = fund_returns[:n], index_returns[:n]
+    mf, mx = mean(f), mean(x)
+    cov = sum((a - mf) * (b - mx) for a, b in zip(f, x)) / (n - 1)
+    var = sum((b - mx) ** 2 for b in x) / (n - 1)
+    return cov / var if var else 0.0

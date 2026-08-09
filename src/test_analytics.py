@@ -5,9 +5,10 @@ Run: python src/test_analytics.py   (exit 0 = all pass)
 import sys
 
 from tark_analytics import (
-    ann_return, ann_vol, cumulative_growth, desmooth_geltner, direct_alpha,
-    ks_pme, lag1_autocorr, max_drawdown, month_end_points, period_returns,
-    stdev, xirr,
+    ann_return, ann_vol, beta, calendar_year_returns, cumulative_growth,
+    desmooth_geltner, direct_alpha, drawdown_episodes, ks_pme, lag1_autocorr,
+    max_drawdown, month_end_points, period_returns, rolling_returns,
+    rolling_vol, stdev, xirr,
 )
 
 FAILS = []
@@ -88,6 +89,38 @@ check_true("Direct Alpha > 0 on outperformance",
 idx_flat = [("2020-01-01", 100.0), ("2021-01-01", 100.0)]
 mixed = [("2020-01-01", -100.0), ("2020-07-01", 30.0), ("2021-01-01", 90.0)]
 check("PME flat-index = simple multiple", ks_pme(mixed, idx_flat), 1.2, 1e-12)
+
+# --- workbench table math (hand-checkable toys) ---
+# calendar years: 100 -> 110 (2023) -> 99 (2024): +10%, -10%
+cal = calendar_year_returns([("2023-01-31", 100.0), ("2023-12-29", 110.0),
+                             ("2024-06-28", 120.0), ("2024-12-31", 99.0)])
+check_true("calendar years labels", [y for y, _ in cal] == ["2023", "2024"])
+check("calendar 2023 = +10%", cal[0][1], 0.10, 1e-12)
+check("calendar 2024 = -10%", cal[1][1], -0.10, 1e-12)
+
+# drawdowns: 100,120,60,90,130,110 -> deepest 120->60 (-50%), then 130->110
+eps = drawdown_episodes([("d1", 100.0), ("d2", 120.0), ("d3", 60.0),
+                         ("d4", 90.0), ("d5", 130.0), ("d6", 110.0)], 3)
+check("deepest drawdown -50%", eps[0]["depth"], -0.5, 1e-12)
+check_true("deepest episode peak/trough dates",
+           eps[0]["peak_date"] == "d2" and eps[0]["trough_date"] == "d3"
+           and eps[0]["recovery_date"] == "d5")
+check("second drawdown 130->110", eps[1]["depth"], 110 / 130 - 1, 1e-12)
+check_true("second episode unrecovered", eps[1]["recovery_date"] is None)
+
+# rolling: returns [10%, -10%, 10%], window 2 -> [(1.1*0.9)-1, (0.9*1.1)-1]
+rr = rolling_returns([0.10, -0.10, 0.10], 2)
+check("rolling[0] = -1%", rr[0], -0.01, 1e-12)
+check("rolling[1] = -1%", rr[1], -0.01, 1e-12)
+rv = rolling_vol([0.02, 0.02, 0.04, 0.00], 3, 12)
+check("rolling vol window count", float(len(rv)), 2.0, 0)
+check("rolling vol[0] hand value", rv[0], stdev([0.02, 0.02, 0.04]) * (12 ** 0.5), 1e-12)
+
+# beta: fund = 2x index exactly -> beta 2; fund = index -> beta 1
+check("beta of 2x series = 2", beta([0.02, -0.04, 0.06], [0.01, -0.02, 0.03]),
+      2.0, 1e-12)
+check("beta of identical = 1", beta([0.01, -0.02, 0.03], [0.01, -0.02, 0.03]),
+      1.0, 1e-12)
 
 print(f"\n{len(FAILS)} failure(s)." if FAILS else "\nAll analytics tests pass.")
 sys.exit(1 if FAILS else 0)

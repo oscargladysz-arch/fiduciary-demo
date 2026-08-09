@@ -60,8 +60,34 @@ time.sleep(0.3)
 bundle = json.loads((SITE / "data.js").read_text()[len("window.TARK = "):-2])
 PLANS = bundle["plan_order"]
 PRODUCTS = list(bundle["products"].keys())
-VIEWS = ["plans", "roster", "evaluation", "benchmarks", "fees", "liquidity",
-         "pme", "dxyz", "desmooth", "coverage"]
+VIEWS = ["screener", "compare", "search", "packet", "plans", "roster",
+         "evaluation", "benchmarks", "fees", "liquidity", "pme", "dxyz",
+         "desmooth", "coverage", "verification"]
+
+# perf budget: the whole bundle must stay shareable-fast on Pages
+check("perf: data.js bundle <= 1.2MB",
+      (SITE / "data.js").stat().st_size <= 1_200_000,
+      f"{(SITE / 'data.js').stat().st_size:,} bytes")
+
+# structured-facts provenance spot-checks (bundle side)
+for k in PRODUCTS:
+    for field, f in bundle["facts"][k].items():
+        if f.get("source_cell") not in bundle["products"][k]["cells"]:
+            check(f"facts bundle: {k}.{field} cites real cell", False,
+                  str(f.get("source_cell")))
+            break
+    else:
+        continue
+    break
+else:
+    pass
+check("facts bundle: every field cites a real cell", all(
+    f.get("source_cell") in bundle["products"][k]["cells"]
+    for k in PRODUCTS for f in bundle["facts"][k].values()))
+check("facts bundle: pme_primary mirrors selection artifact", all(
+    bundle["facts"][k]["pme_primary"]["value"] ==
+    (bundle["benchmarks"][k].get("primary") or {}).get("comparison", {}).get("ks_pme")
+    for k in PRODUCTS if bundle["benchmarks"].get(k, {}).get("primary")))
 
 with sync_playwright() as pw:
     browser = pw.chromium.launch()
@@ -286,6 +312,131 @@ with sync_playwright() as pw:
     t = view_text("benchmarks", product="dxyz")
     check("escalation renders as formal notice",
           page.locator(".notice .notice-head").count() == 1)
+
+    # ---------- 7c. workbench: screener / compare / lab / palette / URLs ----------
+    page.evaluate("""() => window.tarkSetState({view: 'screener', f_tax: 'K-1'})""")
+    krows = page.evaluate("""() =>
+      [...document.querySelectorAll('table.screener tbody tr')]
+        .map(r => r.innerText.split('\\t')[0])""")
+    check("screener: tax_form=K-1 filter returns exactly kkr_kpec",
+          len(krows) == 1 and "KKR" in krows[0], str(krows))
+    page.evaluate("""() => window.tarkSetState({f_tax: '', f_base: 'managed_assets'})""")
+    mrows = page.evaluate("""() =>
+      document.querySelectorAll('table.screener tbody tr').length""")
+    check("screener: fee-base filter returns exactly hl_paf", mrows == 1)
+    page.evaluate("""() => window.tarkSetState({f_base: '', f_vonly: '1'})""")
+    check("screener: verified-only renders the honest progress line",
+          "verification in progress" in page.locator("#view").inner_text())
+    page.evaluate("""() => window.tarkSetState({f_vonly: ''})""")
+
+    t = view_text("compare")
+    page.evaluate("""() => window.tarkSetState({view: 'compare', compare: 'hl_paf,breit'})""")
+    check("compare: renders side-by-side with material differences",
+          page.evaluate("""() => document.querySelectorAll('td.diff').length""") > 5)
+    check("compare: fee-base trap flagged red",
+          page.evaluate("""() => document.querySelectorAll('td.trap').length""") >= 1)
+    check("compare: URL carries only keys/ids",
+          page.evaluate("""() => decodeURIComponent(location.hash)""")
+          .count("compare=hl_paf,breit") == 1)
+
+    # URL round-trip: encode -> reload -> identical view
+    page.goto(f"http://127.0.0.1:{PORT}/#view=compare&compare=hl_paf,breit"
+              f"&plan=plan_consulting_alumni", wait_until="networkidle")
+    rt = page.locator("#view").inner_text()
+    check("URL round-trip: compare view restored after reload",
+          "Comparison" in rt and "HL PAF" in rt and "BREIT" in rt)
+    page.goto(f"http://127.0.0.1:{PORT}/#view=pme&product=cliffwater_cclfx"
+              f"&proxy=spy", wait_until="networkidle")
+    check("URL round-trip: lab proxy restored; off-menu verdict shown",
+          "Off the engine's menu" in page.locator("#verdictcard").inner_text())
+    # sponsor sweep over generated URLs
+    url_now = page.evaluate("() => location.href").lower()
+    check("URL contains no sponsor token",
+          not any(tok in url_now for tok in FORBIDDEN))
+    page.goto(f"http://127.0.0.1:{PORT}/", wait_until="networkidle")
+
+    # benchmark swap: engine verdict beside user choice; recompute differs
+    view_text("pme", product="cliffwater_cclfx")
+    ks_bkln = page.locator("#pme_ks").inner_text()
+    page.evaluate("""() => window.tarkSetState({proxy: 'spy'})""")
+    ks_spy = page.locator("#pme_ks").inner_text()
+    check("benchmark swap changes the number", ks_bkln != ks_spy,
+          f"{ks_bkln} vs {ks_spy}")
+    check("swap lab: USER-CONFIGURED label visible",
+          "USER-CONFIGURED" in page.locator("#view").inner_text())
+    page.evaluate("""() => window.tarkSetState({proxy: ''})""")
+    view_text("pme", product="breit")
+    check("breit lab: annual-tier PME vs VNQ reproduces engine 0.9073",
+          abs(float(page.locator("#pme_ks").inner_text()) - 0.9073) < 1e-4)
+    check("breit lab: annual granularity honestly labeled",
+          "fiscal" in page.locator("#pmenote").inner_text().lower())
+    view_text("pme", product="dxyz")
+    check("dxyz lab: price-series warning shown",
+          "Price-series warning" in page.locator("#view").inner_text())
+
+    # rho override
+    page.evaluate("""() => window.tarkSetState({view: 'desmooth', product: 'breit', rho: ''})""")
+    v0 = page.locator("#view").inner_text()
+    page.evaluate("""() => window.tarkSetState({rho: '0.20'})""")
+    v1 = page.locator("#view").inner_text()
+    check("rho override recomputes and is labeled USER OVERRIDE",
+          "USER OVERRIDE" in v1 and v0 != v1)
+    page.evaluate("""() => window.tarkSetState({rho: ''})""")
+
+    # palette entries
+    pal = page.evaluate("""() => ({
+      cmp: window.tarkPalette.entries('compare hl_paf breit')[0].label,
+      cell: (window.tarkPalette.entries('2.7 kkr').find(x => x.kind === 'cell') || {}).label || 'MISS',
+      view: (window.tarkPalette.entries('screener').find(x => x.kind === 'view') || {}).label || 'MISS',
+    })""")
+    check("palette: compare command", "Compare" in pal["cmp"])
+    check("palette: cell jump entry", "2.7" in pal["cell"] and "KKR" in pal["cell"])
+    check("palette: view jump entry", pal["view"] == "Screener")
+
+    # verification view mirrors the queue
+    view_text("verification")
+    qrows = page.evaluate("""() =>
+      document.querySelectorAll('table.grid tbody tr').length""")
+    check("verification view renders the full queue",
+          qrows == len(bundle["verification_queue"]["queue"]))
+
+    # ---------- 7d. parity: new math toys + committed real-data checkpoints ----------
+    wb = page.evaluate("""() => {
+      const M = window.TarkMath;
+      const cal = M.calendarYearReturns([["2023-01-31", 100], ["2023-12-29", 110],
+        ["2024-06-28", 120], ["2024-12-31", 99]]);
+      const eps = M.drawdownEpisodes([["d1", 100], ["d2", 120], ["d3", 60],
+        ["d4", 90], ["d5", 130], ["d6", 110]], 3);
+      const rr = M.rollingReturns([0.10, -0.10, 0.10], 2);
+      // committed real-data checkpoints
+      const T = window.TARK;
+      const bre = T.series_monthly.breit_nav.filter(([d]) => d <= "2025-12-31");
+      const dd = M.maxDrawdown(bre.map(([, v]) => v));
+      const cc22 = T.series.cclfx.filter(([d]) => d >= "2022-01-01" && d <= "2022-12-31");
+      const ccRet = cc22[cc22.length - 1][1] / cc22[0][1] - 1;
+      return {
+        cal2023: cal[0][1], cal2024: cal[1][1],
+        dd0: eps[0].depth, dd0peak: eps[0].peak_date, dd1rec: eps[1].recovery_date,
+        rr0: rr[0],
+        beta2: M.beta([0.02, -0.04, 0.06], [0.01, -0.02, 0.03]),
+        breitDD: dd * 100, cclfx22: ccRet * 100,
+      };
+    }""")
+    check("parity: calendar 2023 +10%", abs(wb["cal2023"] - 0.10) < 1e-12)
+    check("parity: calendar 2024 -10%", abs(wb["cal2024"] - -0.10) < 1e-12)
+    check("parity: deepest drawdown -50% at d2", abs(wb["dd0"] - -0.5) < 1e-12
+          and wb["dd0peak"] == "d2")
+    check("parity: unrecovered episode is null", wb["dd1rec"] is None)
+    check("parity: rolling window compound", abs(wb["rr0"] - -0.01) < 1e-12)
+    check("parity: beta of 2x = 2", abs(wb["beta2"] - 2.0) < 1e-12)
+    check("checkpoint: breit NAV-path max drawdown matches committed -7.93",
+          abs(wb["breitDD"] -
+              bundle["supplement"]["breit_monthly_diagnostics"]["nav_path_max_drawdown_pct"]) < 0.01,
+          str(wb["breitDD"]))
+    check("checkpoint: cclfx CY2022 return matches committed supplement value",
+          abs(wb["cclfx22"] -
+              bundle["supplement"]["stress_windows"]["cliffwater_cclfx"]["cy2022_rate_shock"]["return_pct"]) < 0.01,
+          str(wb["cclfx22"]))
 
     # ---------- 8. citation drawer + memo artifacts ----------
     view_text("evaluation", product="hl_paf")

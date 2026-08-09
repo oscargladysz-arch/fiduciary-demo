@@ -77,12 +77,12 @@
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": "KS-PME 1.2519, Direct Alpha +3.21%/yr vs BKLN proxy over full life (2019-06-05 to 2026-07-17).",
+      "value": "KS-PME 1.2532, Direct Alpha +3.22%/yr vs BKLN proxy over full life (2019-06-05 to 2026-07-17). (Refreshed after the 2026-08-09 daily-anchoring correction; prior prose carried 1.2519/3.21.) Window-sensitive per methodology - explorable in the PME lab.",
       "status": "computed",
-      "source": "data/benchmarks/cliffwater_cclfx_selection.json",
+      "source": "data/benchmarks/cliffwater_cclfx_selection.json (primary.comparison)",
       "section": "primary.comparison",
       "quote": "",
-      "extracted_by": "Claude (M2/M3 pipeline)",
+      "extracted_by": "Claude Code (2026-08-09)",
       "verified_by": ""
     },
     "1.9": {
@@ -412,7 +412,7 @@
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": "PME inputs (computed, primary comparison): window 2019-06-05 to 2026-07-17; fund growth 1.7148x vs index 1.365x; flows = [-1 at window start, terminal growth at end]; index = primary candidate series (adj close). KS-PME 1.2519, Direct Alpha 3.21%/yr.",
+      "value": "PME inputs (computed, primary comparison): window 2019-06-05 to 2026-07-17; fund growth 1.7165x vs index 1.3697x (daily-anchored); flows = [-1 at window start, terminal growth at end]; index = BKLN adj close. KS-PME 1.2532, Direct Alpha 3.22%/yr.",
       "status": "computed",
       "source": "data/benchmarks/cliffwater_cclfx_selection.json",
       "section": "primary.comparison",

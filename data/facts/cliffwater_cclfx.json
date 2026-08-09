@@ -1,0 +1,127 @@
+{
+  "product_key": "cliffwater_cclfx",
+  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
+  "facts": {
+    "wrapper_type": {
+      "value": "interval_23c3",
+      "source_cell": "6.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_pct": {
+      "value": 1.0,
+      "source_cell": "2.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_base": {
+      "value": "net_assets",
+      "source_cell": "2.1",
+      "status": "extracted-unverified"
+    },
+    "incentive_fee": {
+      "value": null,
+      "source_cell": "2.2",
+      "reason": "cell 2.2 is partial: no incentive fee identified in the fee note; prospectus confirmation pending (verification queue)",
+      "status": "partial"
+    },
+    "early_repurchase": {
+      "value": {
+        "present": false
+      },
+      "source_cell": "2.7",
+      "note": "'The Fund will not charge a repurchase fee' (N-23C3A)",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cadence_per_year": {
+      "value": 4,
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cap_pct": {
+      "value": 5.0,
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cap_base": {
+      "value": "outstanding_shares",
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "gate_history": {
+      "value": null,
+      "source_cell": "3.3",
+      "reason": "N-23C3A filings are offer NOTIFICATIONS, not results; per-offer proration outcomes not yet evidenced",
+      "status": "fetched-series, extraction pending"
+    },
+    "tax_form": {
+      "value": null,
+      "source_cell": "6.4",
+      "reason": "form number not printed in any on-disk filing; RIC status implies 1099 but the cell is partial",
+      "status": "partial"
+    },
+    "auditor": {
+      "value": "Cohen & Company, Ltd.",
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "big4": {
+      "value": false,
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "expense_ratio_pct": {
+      "value": 1.36,
+      "source_cell": "2.3",
+      "note": "FY2026 before waivers, EXCLUDING interest expense; 3.31% including interest",
+      "status": "extracted-unverified"
+    },
+    "net_assets_usd": {
+      "value": null,
+      "source_cell": "3.4",
+      "reason": "net assets ~$31.26B printed, but the carrying cells (1.1/3.6) are partial - verification unlocks this fact",
+      "status": "extracted-unverified"
+    },
+    "inception": {
+      "value": "2019-06-05",
+      "source_cell": "1.2",
+      "note": "performance inception as disclosed",
+      "status": "extracted-unverified"
+    },
+    "track_record_years": {
+      "value": 6.8,
+      "source_cell": "1.2",
+      "status": "computed",
+      "note": "(as-of 2026-03-31 minus inception) / 365.25"
+    },
+    "primary_benchmark_id": {
+      "value": "bkln",
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "selection_score": {
+      "value": 9,
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "pme_primary": {
+      "value": 1.2532,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "direct_alpha_primary": {
+      "value": 3.22,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "liquidity_verdict_by_plan": {
+      "value": {
+        "plan_consulting_alumni": "conditional",
+        "plan_manufacturer_union": "conditional",
+        "plan_restaurant_hourly": "conditional",
+        "plan_tech_media": "conditional"
+      },
+      "source_cell": "3.9",
+      "status": "computed"
+    }
+  }
+}

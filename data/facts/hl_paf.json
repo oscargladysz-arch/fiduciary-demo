@@ -1,0 +1,131 @@
+{
+  "product_key": "hl_paf",
+  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
+  "facts": {
+    "wrapper_type": {
+      "value": "tender_offer",
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_pct": {
+      "value": 1.4,
+      "source_cell": "2.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_base": {
+      "value": "managed_assets",
+      "source_cell": "2.1",
+      "note": "Managed Assets = leverage-inclusive",
+      "status": "extracted-unverified"
+    },
+    "incentive_fee": {
+      "value": {
+        "present": true,
+        "rate_pct": 10.0,
+        "hurdle_pct": null,
+        "structure": "10% of quarterly net profits over the Loss Recovery Account (loss-carryforward HWM; terms approved 2025-03-14; 2021 12.5% deal-by-deal terms superseded)"
+      },
+      "source_cell": "2.2",
+      "status": "extracted-unverified"
+    },
+    "early_repurchase": {
+      "value": {
+        "present": true,
+        "rate_pct": 2.0,
+        "window": "< 1 year"
+      },
+      "source_cell": "2.7",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cadence_per_year": {
+      "value": 4,
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cap_pct": {
+      "value": 5.0,
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cap_base": {
+      "value": "net_assets",
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "gate_history": {
+      "value": null,
+      "source_cell": "3.3",
+      "reason": "offer continuity since Q2-2021 evidenced; per-offer proration incidence not printed in on-disk filings",
+      "status": "extracted-unverified"
+    },
+    "tax_form": {
+      "value": "1099",
+      "source_cell": "6.4",
+      "status": "extracted-unverified"
+    },
+    "auditor": {
+      "value": "Cohen & Company, Ltd.",
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "big4": {
+      "value": false,
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "expense_ratio_pct": {
+      "value": 3.4,
+      "source_cell": "2.3",
+      "note": "FY2026 net, incl. incentive-fee drag; AFFE excluded",
+      "status": "extracted-unverified"
+    },
+    "net_assets_usd": {
+      "value": 5785749989,
+      "source_cell": "3.4",
+      "status": "extracted-unverified"
+    },
+    "inception": {
+      "value": "2021-01-04",
+      "source_cell": "1.11",
+      "note": "commenced operations",
+      "status": "extracted-unverified"
+    },
+    "track_record_years": {
+      "value": 5.2,
+      "source_cell": "1.11",
+      "status": "computed",
+      "note": "(as-of 2026-03-31 minus inception) / 365.25"
+    },
+    "primary_benchmark_id": {
+      "value": "psp",
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "selection_score": {
+      "value": 9,
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "pme_primary": {
+      "value": 1.9565,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "direct_alpha_primary": {
+      "value": 14.37,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "liquidity_verdict_by_plan": {
+      "value": {
+        "plan_consulting_alumni": "conditional",
+        "plan_manufacturer_union": "conditional",
+        "plan_restaurant_hourly": "conditional",
+        "plan_tech_media": "conditional"
+      },
+      "source_cell": "3.9",
+      "status": "computed"
+    }
+  }
+}

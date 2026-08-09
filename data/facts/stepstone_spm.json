@@ -1,0 +1,126 @@
+{
+  "product_key": "stepstone_spm",
+  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
+  "facts": {
+    "wrapper_type": {
+      "value": "tender_offer",
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_pct": {
+      "value": 1.4,
+      "source_cell": "2.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_base": {
+      "value": "net_assets",
+      "source_cell": "2.1",
+      "note": "daily net assets",
+      "status": "extracted-unverified"
+    },
+    "incentive_fee": {
+      "value": null,
+      "source_cell": "2.2",
+      "reason": "cell 2.2 is partial: no fund-level incentive fee identified; underlying funds charge performance fees (AFFE layer)",
+      "status": "partial"
+    },
+    "early_repurchase": {
+      "value": null,
+      "source_cell": "2.7",
+      "reason": "cell 2.7 is partial: no early-repurchase-fee language matched; confirmation pending",
+      "status": "partial"
+    },
+    "repurchase_cadence_per_year": {
+      "value": 4,
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cap_pct": {
+      "value": 5.0,
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cap_base": {
+      "value": "outstanding_shares",
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "gate_history": {
+      "value": null,
+      "source_cell": "3.3",
+      "reason": "per-offer tendered-vs-purchased counts not printed in on-disk filings; Sept 2025 offer was Board-UPSIZED (demand signal) - proration incidence unevidenced",
+      "status": "extracted-unverified"
+    },
+    "tax_form": {
+      "value": "1099",
+      "source_cell": "6.4",
+      "status": "extracted-unverified"
+    },
+    "auditor": {
+      "value": "Ernst & Young LLP",
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "big4": {
+      "value": true,
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "expense_ratio_pct": {
+      "value": 1.91,
+      "source_cell": "2.3",
+      "note": "FY2026 Class I; AFFE excluded",
+      "status": "extracted-unverified"
+    },
+    "net_assets_usd": {
+      "value": 5828900000,
+      "source_cell": "3.6",
+      "approx": true,
+      "note": "$5,828.9M at 3/31/2026 as printed",
+      "status": "extracted-unverified"
+    },
+    "inception": {
+      "value": "2020-10-01",
+      "source_cell": "1.2",
+      "note": "Class I/D/S inception",
+      "status": "extracted-unverified"
+    },
+    "track_record_years": {
+      "value": 5.5,
+      "source_cell": "1.2",
+      "status": "computed",
+      "note": "(as-of 2026-03-31 minus inception) / 365.25"
+    },
+    "primary_benchmark_id": {
+      "value": "psp",
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "selection_score": {
+      "value": 9,
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "pme_primary": {
+      "value": 1.762,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "direct_alpha_primary": {
+      "value": 12.0,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "liquidity_verdict_by_plan": {
+      "value": {
+        "plan_consulting_alumni": "conditional",
+        "plan_manufacturer_union": "conditional",
+        "plan_restaurant_hourly": "conditional",
+        "plan_tech_media": "conditional"
+      },
+      "source_cell": "3.9",
+      "status": "computed"
+    }
+  }
+}

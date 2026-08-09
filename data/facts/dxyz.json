@@ -1,0 +1,136 @@
+{
+  "product_key": "dxyz",
+  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
+  "facts": {
+    "wrapper_type": {
+      "value": "listed_cef",
+      "source_cell": "6.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_pct": {
+      "value": 2.5,
+      "source_cell": "2.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_base": {
+      "value": "gross_incl_borrowings",
+      "source_cell": "2.1",
+      "note": "average GROSS assets incl. assets bought with borrowings",
+      "status": "extracted-unverified"
+    },
+    "incentive_fee": {
+      "value": {
+        "present": false
+      },
+      "source_cell": "2.2",
+      "note": "absence documented three ways in the record",
+      "status": "extracted-unverified"
+    },
+    "early_repurchase": {
+      "value": null,
+      "source_cell": "2.7",
+      "reason": "exchange-listed; no repurchase program \u2014 fee inapplicable",
+      "status": "n/a - no early-repurchase fee (exchange-traded)"
+    },
+    "repurchase_cadence_per_year": {
+      "value": 252,
+      "source_cell": "3.1",
+      "status": "extracted-unverified",
+      "note": "trading-days convention for daily on-exchange dealing - a derived figure, not a fund program"
+    },
+    "repurchase_cap_pct": {
+      "value": null,
+      "source_cell": "3.1",
+      "reason": "on-exchange liquidity; no fund-level cap",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cap_base": {
+      "value": null,
+      "source_cell": "3.1",
+      "reason": "on-exchange liquidity; no fund-level cap",
+      "status": "extracted-unverified"
+    },
+    "gate_history": {
+      "value": false,
+      "source_cell": "3.1",
+      "note": "exchange wrapper has no gating mechanism; 'no fund-level repurchase program' is itself an absence-inference flagged in the cell",
+      "status": "extracted-unverified"
+    },
+    "tax_form": {
+      "value": null,
+      "source_cell": "6.4",
+      "reason": "form number not printed in any on-disk filing; RIC status implies 1099 but the cell is partial",
+      "status": "partial"
+    },
+    "auditor": {
+      "value": "KPMG LLP",
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "big4": {
+      "value": true,
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "expense_ratio_pct": {
+      "value": 4.53,
+      "source_cell": "2.3",
+      "note": "FY2025, of average net assets",
+      "status": "extracted-unverified"
+    },
+    "net_assets_usd": {
+      "value": 438000000,
+      "source_cell": "2.3",
+      "approx": true,
+      "note": "$438.0M at 12/31/2025 as printed",
+      "status": "extracted-unverified"
+    },
+    "inception": {
+      "value": "2022-05-12",
+      "source_cell": "1.11",
+      "note": "commenced operations as printed; NYSE listing 2024-03-26 (3.1) is the trading-history start",
+      "status": "extracted-unverified"
+    },
+    "track_record_years": {
+      "value": 3.6,
+      "source_cell": "1.11",
+      "status": "computed",
+      "note": "(as-of 2025-12-31 minus inception) / 365.25"
+    },
+    "primary_benchmark_id": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
+    },
+    "selection_score": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
+    },
+    "pme_primary": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
+    },
+    "direct_alpha_primary": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
+    },
+    "liquidity_verdict_by_plan": {
+      "value": {
+        "plan_consulting_alumni": "aligned-mechanical",
+        "plan_manufacturer_union": "aligned-mechanical",
+        "plan_restaurant_hourly": "aligned-mechanical",
+        "plan_tech_media": "aligned-mechanical"
+      },
+      "source_cell": "3.9",
+      "status": "computed"
+    }
+  }
+}

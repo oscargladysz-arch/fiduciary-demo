@@ -23,8 +23,9 @@ from pathlib import Path
 
 from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
 from tark_data import (BASE, DATA, CELLS, FACTORS, load_evidence, load_plan,
-                       load_products, load_series, load_series_manifest,
-                       plan_keys, status_kind)
+                       load_product, load_products, load_series,
+                       load_series_manifest, plan_keys, product_keys,
+                       status_kind)
 from tark_liquidity import LIQUIDITY_PROFILES, SCENARIO
 
 SITE = BASE / "site"
@@ -155,6 +156,106 @@ def _with_period_ends(nav: dict) -> dict:
     return nav
 
 
+# the investable proxy library the swap lab can recompute against — every
+# entry has a committed daily series on disk
+PROXY_LIBRARY = {
+    "bkln": "BKLN — senior loans (Invesco / Morningstar LSTA class)",
+    "psp": "PSP — listed private equity (Invesco / Red Rocks)",
+    "urth": "URTH — MSCI World (iShares)",
+    "spy": "SPY — S&P 500 (SPDR)",
+    "vnq": "VNQ — listed REITs (Vanguard / MSCI US REIT)",
+}
+
+
+def pme_profiles() -> dict:
+    """Window-explorer profiles for ALL six products at honest granularity."""
+    from tark_benchmark import PRODUCT_PROFILES as PP
+    import json as _json
+    pi = _json.loads((DATA / "benchmarks" / "profiles_input.json").read_text())
+    out = {
+        "cliffwater_cclfx": {"fund_series": "cclfx", "granularity": "monthly",
+                             "default_proxy": "bkln"},
+        "dxyz": {"fund_series": "dxyz_daily", "granularity": "monthly",
+                 "default_proxy": "psp", "price_series_warning":
+                     "MARKET-PRICE series — any PME here benchmarks the "
+                     "premium, not the portfolio; the engine formally "
+                     "escalated instead of selecting (5.6)"},
+        "hl_paf": {"fy_returns": PP["hl_paf"]["fy_returns"],
+                   "fy_window": list(PP["hl_paf"]["fy_window"]),
+                   "granularity": "annual", "default_proxy": "psp"},
+        "stepstone_spm": {"aatr": PP["stepstone_spm"]["aatr_5yr"],
+                          "aatr_years": 5,
+                          "fy_window": list(PP["stepstone_spm"]["fy_window"]),
+                          "granularity": "annual", "default_proxy": "psp"},
+        "kkr_kpec": {"aatr": pi["kkr_kpec"]["profile"]["aatr"],
+                     "aatr_years": pi["kkr_kpec"]["profile"]["aatr_years"],
+                     "fy_window": pi["kkr_kpec"]["profile"]["fy_window"],
+                     "granularity": "annual", "default_proxy": "psp"},
+        "breit": {"fy_returns": pi["breit"]["profile"]["fy_returns"],
+                  "fy_window": pi["breit"]["profile"]["fy_window"],
+                  "granularity": "annual", "default_proxy": "vnq"},
+    }
+    return out
+
+
+def swap_matrix() -> dict:
+    """Engine rubric verdict for every (product x proxy-library) pair the
+    user can select in the swap lab. On-menu pairs carry the committed score
+    and reasons; off-menu pairs say truthfully that the engine has no rubric
+    basis for that proxy under this strategy."""
+    from tark_benchmark import PRODUCT_PROFILES, STRATEGY_MENU, score_candidate
+    out: dict = {}
+    for key, prof in PRODUCT_PROFILES.items():
+        menu = STRATEGY_MENU[prof["strategy"]]
+        by_series: dict = {}
+        for proxy in PROXY_LIBRARY:
+            cand = next((c for c in menu if c.get("series") == proxy), None)
+            if cand:
+                s = score_candidate(prof, cand)
+                by_series[proxy] = {"score": s["score"], "max": s["max"],
+                                    "reasons": s["reasons"],
+                                    "candidate": cand["name"]}
+            else:
+                by_series[proxy] = {"score": None,
+                                    "verdict": "off-menu: the engine has not "
+                                               "scored this proxy for the "
+                                               f"'{prof['strategy']}' strategy "
+                                               "— no rubric basis; treat any "
+                                               "recomputation as "
+                                               "user-configured analysis only"}
+        out[key] = by_series
+    return out
+
+
+def parse_verification_queue() -> dict:
+    """Parse docs/verification_queue.md into an ordered queue of (product,
+    cell) refs plus live verified counts from the record itself."""
+    qp = BASE / "docs" / "verification_queue.md"
+    queue = []
+    if qp.exists():
+        for line in qp.read_text().splitlines():
+            m = re.match(r"-\s+([a-z_]+)\s+(\d+\.\d+)\s+—", line.strip())
+            if m and m.group(1) in product_keys():
+                queue.append({"product": m.group(1), "cell": m.group(2)})
+            else:
+                for mm in re.finditer(
+                        r"([a-z_]+)\s+(\d+\.\d+)(?=\s*[/—-])", line.strip()):
+                    if (mm.group(1) in product_keys()
+                            and {"product": mm.group(1),
+                                 "cell": mm.group(2)} not in queue):
+                        queue.append({"product": mm.group(1),
+                                      "cell": mm.group(2)})
+    verified = {k: sum(1 for c in load_product(k)["cells"].values()
+                       if str(c.get("status", "")).startswith("verified"))
+                for k in product_keys()}
+    verifiable = {k: sum(1 for c in load_product(k)["cells"].values()
+                         if status_kind(str(c.get("status", ""))) in
+                         ("extracted", "verified"))
+                  for k in product_keys()}
+    return {"queue": queue, "verified": verified, "verifiable": verifiable,
+            "source": "docs/verification_queue.md"}
+
+
 def main() -> None:
     plans_raw = {k: load_plan(k) for k in plan_keys()}
     # distinctive sponsor tokens = every word of the private identity that is
@@ -222,8 +323,14 @@ def main() -> None:
         monthly["breit_nav_manifest"] = json.loads(
             (DATA / "series_monthly" / "manifest.json").read_text())
 
+    facts = {}
+    fdir = DATA / "facts"
+    for f in sorted(fdir.glob("*.json")):
+        facts[f.stem] = json.loads(f.read_text())["facts"]
+
     bundle = {
         "generated": date.today().isoformat(),
+        "facts": facts,
         "rule_caption": RULE_CAPTION,
         "factors": FACTORS,
         "cell_registry": CELLS,
@@ -254,19 +361,13 @@ def main() -> None:
             "bkln": daily_series("bkln"),
             "psp": daily_series("psp"),
             "urth": daily_series("urth"),
+            "spy": daily_series("spy"),
+            "vnq": daily_series("vnq"),
         },
-        "pme_profiles": {
-            "cliffwater_cclfx": {"fund_series": "cclfx", "index_series": "bkln",
-                                 "index_label": "BKLN (senior-loan proxy)",
-                                 "granularity": "monthly"},
-            "hl_paf": {"fy_returns": PRODUCT_PROFILES["hl_paf"]["fy_returns"],
-                       "fy_window": list(PRODUCT_PROFILES["hl_paf"]["fy_window"]),
-                       "index_series": "psp",
-                       "index_label": "PSP (listed-PE proxy)",
-                       "index_series_alt": "urth",
-                       "index_label_alt": "URTH (MSCI World proxy)",
-                       "granularity": "annual"},
-        },
+        "pme_profiles": pme_profiles(),
+        "proxy_library": PROXY_LIBRARY,
+        "swap_matrix": swap_matrix(),
+        "verification_queue": parse_verification_queue(),
         "crosscheck": CROSSCHECK,
         "memos": sorted(p.stem.replace("_decision_memo", "")
                         for p in (DATA / "memos").glob("*_decision_memo.docx")),
