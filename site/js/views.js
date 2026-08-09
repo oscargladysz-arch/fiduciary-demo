@@ -232,7 +232,10 @@ export function viewBenchmarks(root, state, setState) {
 
   const rejRows = sel.rejected.map((r) => `<tr>
       <td>${esc(r.candidate)}</td><td class="num">${esc(r.lane)}</td>
-      <td class="num">${r.score}/${r.max}</td><td>${esc(r.rejection)}</td></tr>`).join("");
+      <td class="num">${r.score}/${r.max}</td>
+      <td>${esc(r.rejection)}
+        <div class="cap" style="margin-top:5px">${r.reasons.map(esc).join(" · ")}</div>
+      </td></tr>`).join("");
 
   root.innerHTML = `
     <div class="viewhead"><h1>Benchmark Selection</h1>
