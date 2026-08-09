@@ -35,7 +35,12 @@ The build refuses to emit the bundle if any plan-sponsor token would leak.
 4. Open the Pages URL, hard-refresh (Cmd+Shift+R) to bust module cache.
 5. Land on **Reference Plans** with the tech/media plan selected (default).
 
-## Known rough edges (design-pass build)
+## Known rough edges (workbench build)
+- Search queries and pins are local (localStorage) by design — they never
+  enter URLs; a shared link reproduces configuration, not your query text.
+- Palette command grammar is minimal (views, products, plans, cells,
+  compare, density) — fuzzy matching is substring-based.
+- Saved scenarios are per-browser (no sync — nothing leaves the origin).
 - `hl_paf` / `kkr_kpec` / `breit` PME windows move in fiscal-year steps
   (annual disclosure is the honest granularity); only CCLFX has the smooth
   monthly slider.
