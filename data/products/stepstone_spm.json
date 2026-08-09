@@ -7,8 +7,13 @@
   "cells": {
     "1.1": {
       "element": "Net total return series",
-      "value": null,
-      "status": "pending"
+      "value": "Class I NAV per share, end of FY (from Consolidated Financial Highlights, FYE Mar 31): FY2022 $43.07, FY2023 $45.61, FY2024 $51.73, FY2025 $56.54, FY2026 $61.74. FY total returns in 1.2; structured series in data/series_annual/stepstone_spm.csv (adversarially verified). Monthly series: fact sheets sit behind an investor-attestation gate (not free-public).",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-09 (FY2026 annual report), Consolidated Financial Highlights",
+      "section": "Consolidated Financial Highlights - Class I (NAV per share, end of period row)",
+      "quote": "Net Asset Value per share, end of period",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.2": {
       "element": "Trailing & calendar-year returns",
@@ -22,8 +27,13 @@
     },
     "1.3": {
       "element": "Gross vs net spread",
-      "value": null,
-      "status": "pending"
+      "value": "Financial highlights print paired ratio rows 'Expenses before adviser expense recoupment (reimbursement)' vs 'Expenses after adviser expense recoupment (reimbursement)'. FY2026: IDENTICAL for all classes - Class I 1.91%/1.91%, Class D 2.17%/2.17%, Class S 2.77%/2.77% (also identical in FY2025 and FY2024: I 1.88/1.88 and 2.09/2.09; D 2.13/2.13 and 2.37/2.37; S 2.73/2.73 and 2.79/2.79) - no net waiver/recoupment effect in the last three fiscal years. In FY2023/FY2022 the AFTER ratio was HIGHER than before because the Adviser RECOUPED previously reimbursed amounts: Class I 2.32% before / 2.45% after (FY2023) and 3.38% / 3.56% (FY2022); Class D 2.49/2.62 and 3.44/3.52; Class S 3.40/3.41 and 3.45/3.43 (S FY2022 after is slightly LOWER - net reimbursement that year). Footnote: 'Total return would have been higher or lower had certain expenses not been recouped or waived by the Adviser during the periods of recoupment or reimbursement, respectively.' Ratios exclude deferred tax provisions and do not reflect underlying Investment Fund income/expenses (no AFFE). Prospectus fee table (486BPOS) prints no separate waiver line: Total Annual Fund Operating Expenses incl. AFFE Class I 2.34% with no 'net' row (see 2.4).",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
+      "section": "Consolidated Financial Highlights - Ratios to average net assets (Class I / Class D / Class S)",
+      "quote": "Expenses before adviser expense recoupment (reimbursement) 5 | | | 1.91 | %",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.4": {
       "element": "Distribution history & composition",
@@ -37,8 +47,13 @@
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
-      "value": null,
-      "status": "pending"
+      "value": "No underlying fund/deal-level performance is printed anywhere in the on-disk filings. The N-CSR discloses holdings only at fair value (Schedule of Investments; fair-value hierarchy in Note 3 - see cells 3.4 and 4.2) with zero occurrences of 'internal rate of return'. The only IRR mentions in the 486BPOS and 424B3 are valuation-diligence process language ('validate both projected multiple and internal rate of return assumptions'), not printed performance of underlying Investment Funds or co-investments. Underlying GP fund performance is LP-only reporting delivered under the private-placement documents of each Investment Fund.",
+      "status": "n/a - not publicly available: underlying fund/GP-level returns are LP-only reporting; filings disclose holdings at fair value (see 3.4/SOI and 4.2), not underlying fund IRRs",
+      "source": "Searched: N-CSR 2026-06-09, 486BPOS 2025-10-20, 424B3 2025-12-31 (stripped texts)",
+      "section": "N-CSR Consolidated Schedule of Investments / Note 3; 486BPOS valuation-diligence discussion",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.6": {
       "element": "Volatility & max drawdown",
@@ -72,8 +87,13 @@
     },
     "1.9": {
       "element": "Stress-window performance",
-      "value": null,
-      "status": "pending"
+      "value": "Stress observation (computed from extracted FY returns): FY ending 2023-03-31 (spans the 2022 drawdown): printed total return 8.23% (Class I) - also the worst disclosed FY. Same appraisal-lag caveat as hl_paf 1.9: positive through a public-market crash = smoothing signature, disclosed per methodology.",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (stress_windows.stepstone_spm)",
+      "section": "stress_windows",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.10": {
       "element": "Market price & premium/discount",
@@ -132,8 +152,13 @@
     },
     "2.5": {
       "element": "Underlying GP economics",
-      "value": null,
-      "status": "pending"
+      "value": "Printed ranges of underlying Investment Fund economics (fee-table footnote (2)): management fee generally 1.00% to 2.00% based on COMMITTED capital, plus approximately 15%-20% of net profits as Performance Fees (carried interests, incentive fees or allocations). The 0.59% AFFE reflects underlying operating expenses (management fees, administration fees, professional and other direct fixed fees) after refunds and EXCLUDES Performance Fees paid solely on realization/distribution of gains. Conflicts section ('Incentive Allocation Arrangements') adds: Investment Managers may receive a performance fee, carried interest or incentive allocation 'generally equal to 20% of the net profits earned by the Investment Fund that it manages, typically subject to a preferred return'. Beyond these printed ranges, per-fund GP economics (individual fund fee schedules, hurdle rates, catch-ups) are private-placement/LP-only terms and are not disclosed in the registered-fund filings.",
+      "status": "extracted-unverified",
+      "source": "486BPOS 2025-10-20 (prospectus)",
+      "section": "Summary of Fees and Expenses - footnote (2); Conflicts of Interest - Incentive Allocation Arrangements",
+      "quote": "generally charge a management fee of 1.00% to 2.00% based on committed capital, and approximately 15% - 20% of net profits as a Performance Fee",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.6": {
       "element": "Loads & servicing fees",
@@ -172,8 +197,13 @@
     },
     "2.10": {
       "element": "Value justification",
-      "value": null,
-      "status": "pending"
+      "value": "Value justification is the plan committee's own value-for-fees determination weighing the product's fees against services and expected net-of-fee outcomes. It is a workflow output produced per plan engagement, not a fact printed in any public filing. The product-side fee/performance inputs it consumes are already evidenced in cells 2.1-2.9 (management fee 1.40% on net assets, AFFE 0.59%, class expense ratios, loads/servicing fees, underlying GP economics) and 1.2/1.8.",
+      "status": "n/a - requires the plan committee's own value-for-fees determination - workflow output, not public product data (inputs live in cells 2.1-2.9)",
+      "source": "",
+      "section": "",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
@@ -187,13 +217,23 @@
     },
     "3.2": {
       "element": "Repurchase mechanics",
-      "value": null,
-      "status": "pending"
+      "value": "Current tender offer (SC TO-I filed 5/12/2026): Commencement Date May 12, 2026; Notice Date, Tender Withdrawal Date AND Valuation Date all June 16, 2026 (single-date design; all deadlines 4:00 p.m. ET). Pricing: each tendered Share purchased at NAV per Share calculated as of the Valuation Date; offer size up to 5% of outstanding shares calculated as of the Valuation Date. Settlement: payment 'as soon as possible following the determination of the NAV for the Valuation Date'; in no case later than eight (8) days after the last day Shares may be tendered. Withdrawal rights: revocable until 4:00 p.m. ET on the Tender Withdrawal Date; plus Rule 13e-4(f)(2) right to withdraw if tender not yet accepted 40 business days after Commencement Date; withdrawn Shares may be re-tendered before the Notice Date. Oversubscription/proration: if tenders exceed 5%, Fund may (a) accept additional Shares per Rule 13e-4(f)(3), (b) extend the offer and increase the amount, or (c) accept 'on a pro rata basis based on the aggregate net asset value of the tendered Shares'. Fund may cancel, amend or postpone before 4:00 p.m. ET on the Tender Withdrawal Date; extension moves pricing to the extended Notice Date. Funding sources: cash on hand, sales of portfolio securities, withdrawals of capital from investments, or borrowings; Fund segregates assets with custodian equal to the estimated payment. Tendered shares are retired; a tendering shareholder remains a shareholder through the Valuation Date. Compulsory repurchase reserved if an account falls below the Prospectus minimum. Cadence per N-CSR Note 10: quarterly offers typically occurring March 15, June 15, September 15, December 15, up to 5.00% of outstanding Shares per quarter, subject to Board discretion; Fund has no obligation to repurchase at any time.",
+      "status": "extracted-unverified",
+      "source": "SC TO-I 2026-05-12 (Offer to Purchase); N-CSR 2026-06-09 Note 10",
+      "section": "SC TO-I summary date table + Items 1, 2, 4(a)(1)(i)-(ix), 7; N-CSR Note 10 - Capital Share Transactions (share repurchase program discussion)",
+      "quote": "In no case will the Fund make full payment of all consideration offered later than eight (8) days after the last day that Shares may be tendered",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.3": {
       "element": "Repurchase history",
-      "value": null,
-      "status": "pending"
+      "value": "N-CSR Note 10 repurchase history: FY2026 (ended 3/31/2026) 13,195,058 Shares repurchased vs FY2025 3,242,403 - a 4x year-over-year jump. For the September 15, 2025 repurchase, the Adviser recommended and the Board elected to INCREASE the offer to up to 10.00% of outstanding Shares (double the standard 5.00% program cap); the filing does not state the reason for the upsize or whether that offer was oversubscribed or prorated. Dollar amounts (Consolidated Statements of Changes, 'Repurchase of shares'): FY2026 Class I $(736,233,657), Class S $(53,498,367), Class D $(4,907,885), Class R $0; FY2025 Class I $(162,697,044), Class S $(11,454,322), Class D $(1,798,826), Class T $(768,519). Subsequent event: on May 12, 2026 the Fund commenced a repurchase offer up to 5.00% of outstanding shares with valuation date June 16, 2026. LIMIT OF DISCLOSURE: per-offer shares-tendered-vs-shares-purchased counts (i.e., whether any individual offer was actually prorated) are not printed in the N-CSR or the on-disk SC TO-I; the Note states pro-rata purchase applies if tenders exceed the offered amount.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
+      "section": "Note 10 - Capital Share Transactions (share repurchase program discussion); Consolidated Statements of Changes in Net Assets; Note 15 - Subsequent Events",
+      "quote": "13,195,058 and 3,242,403 Shares were repurchased by the Fund, respectively",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.4": {
       "element": "Portfolio liquidity profile",
@@ -262,8 +302,13 @@
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
-      "value": null,
-      "status": "pending"
+      "value": "Full ASC 820 hierarchy table as of 3/31/2026 (N-CSR Note 3): Level 1 - Public Securities $56,631,533 (the only L1 row); Level 2 - $0 across all rows; Level 3 - Co-Investments $291,577,842 (only L3 row; includes CLO and CLO Warehouse positions); Investments Valued at NAV (practical expedient, excluded from the hierarchy) - Co-Investments $924,564,974, Primary Investments $63,668,965, Secondary Investments $4,648,776,188, subtotal $5,637,010,127. Row totals: Co-Investments $1,216,142,816; Primary Investments $63,668,965; Secondary Investments $4,648,776,188; Public Securities $56,631,533; Total Investments $5,985,219,502. Level 3 reconciliation FY2026 (Co-Investments): balance 3/31/2025 $159,033,769; transfers into L3 $0; purchases $109,755,639; distributions from investments $(4,888,711); net realized gain $336,455; net change in unrealized appreciation $27,340,690; transfers out $0; balance 3/31/2026 $291,577,842. Net change in unrealized on L3 held at period end: $27,340,690. NAV-expedient assets are 'valued using NAV or by adjusting the most recently available NAV for cash flows, public benchmark returns and/or other relevant information'.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
+      "section": "Note 3 - Fair Value Measurements: hierarchy summary table + Level 3 reconciliation",
+      "quote": "Total Investments | | $ | 56,631,533 | | | $ | \u2014 | | | $ | 291,577,842 | | | $ | 5,637,010,127 | | | $ | 5,985,219,502",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.3": {
       "element": "Independent valuation agent",
@@ -277,8 +322,13 @@
     },
     "4.4": {
       "element": "Methodology by asset type",
-      "value": null,
-      "status": "pending"
+      "value": "N-CSR Note 3 quantitative Level 3 inputs table as of 3/31/2026 (all rows are Co-Investments; sums to the $291,577,842 L3 total): (1) $8,369,719 - Market comparable companies; EV/EBITDA multiple 9.61x-14.40x, wtd avg 13.23x, increase in input -> Increase in value. (2) $36,485,830 - Exit price; recent transaction price, N/A range -> Increase. (3) $47,900,000 - Discounted cash flow; discount rate 19.50%-26.75%, wtd avg 22.43% -> Decrease. (4) $8,647,243 - Recent transaction; recent transaction price, N/A -> Increase. (5) $72,938,654 - Market comparable companies; EV/revenue multiple 0.50x-8.50x, wtd avg 4.27x -> Increase. (6) $2,518,988 - Yield; market yield discount spread (printed as 'speard') 14.00% -> Decrease; this amount exactly equals the SOI fair value of the Fund's CLO Warehouse position (NXT Capital CLO 2026-2, Ltd. (Warehouse)). (7) $114,717,408 - Discounted cash flow with six inputs characteristic of CLO structures (the filing does not label the row by asset type): annual default rate 1.75%-2.04% (wtd avg 1.94%, Decrease); annual prepayment rate 20.00% (Increase); reinvestment spread 3.30%-4.99% (wtd avg 3.74%, Increase); reinvestment price $99.50 (Decrease); recovery rate 65.00%-70.28% (wtd avg 68.74%, Increase); expected yield 13.50%-16.75% (wtd avg 15.00%, Decrease). Narrative methodology (Note 2): CLO fair value incorporates 'structural subordination, and the expected volatility of cash flows' -> Level 3; CLO Warehouse likewise L3 on significant unobservable inputs. Assets without readily available quotes are valued per Rule 2a-5 by the Adviser as valuation designee (see 4.1); NAV-expedient holdings valued at NAV adjusted for cash flows/public benchmark returns/other relevant information.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
+      "section": "Note 3 - Fair Value Measurements: quantitative information about Level 3 valuation methodologies and inputs; Note 2 - CLO / CLO Warehouse valuation",
+      "quote": "Weighted average is calculated by weighing the significant unobservable input by the relative fair value of each investment in the category",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.5": {
       "element": "Auditor & opinion",
@@ -437,13 +487,23 @@
     },
     "6.6": {
       "element": "Plan operational fit",
-      "value": null,
-      "status": "pending"
+      "value": "Plan operational fit (recordkeeper connectivity, NSCC/trading integration, daily-flow handling against a quarterly-tender product) depends on the specific plan's recordkeeper and platform arrangements. It is a per-engagement workflow determination; no public product filing can evidence it. Product-side structural inputs are already evidenced in 3.1/3.2 (quarterly tenders, monthly purchases at NAV on the first business day) and 4.1 (daily NAV).",
+      "status": "n/a - requires plan-specific recordkeeper/trading integration facts - workflow cell completed per plan engagement, not public product data",
+      "source": "",
+      "section": "",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.7": {
       "element": "Participant communicability",
-      "value": null,
-      "status": "pending"
+      "value": "Participant communicability is the plan committee's assessment of whether the product's structure, strategy and liquidity terms can be explained to participants in required disclosures. It is a workflow output, not public product data. The product-side inputs it consumes are already evidenced: structure map (6.1), strategy/instrument complexity (6.2), 1099 tax reporting (6.4), and liquidity terms (3.1/3.2).",
+      "status": "n/a - requires plan-committee participant-communication assessment - workflow cell; product-side inputs already evidenced in 6.1/6.2/6.4",
+      "source": "",
+      "section": "",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.8": {
       "element": "Fiduciary capacity self-assessment",

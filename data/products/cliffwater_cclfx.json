@@ -27,8 +27,13 @@
     },
     "1.3": {
       "element": "Gross vs net spread",
-      "value": null,
-      "status": "pending"
+      "value": "Gross and net are IDENTICAL in recent years - no active waiver. FY2026 Class I (Consolidated Financial Highlights): ratio of expenses to average net assets EXCLUDING interest expense, before fees waived and deferred tax expense = 1.36%; supplemental table 'With fees waived, after taxes' = 1.36% (deferred tax expense 0.00%) - waiver spread 0.00%. FY2025: 1.32% before vs 1.33% with-fees-waived-after-taxes (the +0.01% is deferred tax expense, not a waiver). FY2024: 1.20% vs 1.21%; FY2023: 1.23% vs 1.24%; stub FY22: 1.28% (annualized) both; CY2021: 1.32% both. INCLUDING interest expense, before fees waived: FY26 3.31% / FY25 3.19% / FY24 3.42% / FY23 2.95% / stub 1.79% (annualized) / CY21 1.94%; the FY2026 N-CSR table prints no after-waiver including-interest row, but the 486BPOS FH table (periods through FY2025) prints 'After fees waived' including-interest ratios identical to before-waiver (3.19% / 3.42% / 2.95% / 1.79% / 1.94% / CY2020 2.43%) - further confirming zero waiver spread. Why zero spread: the Expense Limitation and Reimbursement Agreement (2.25% expense limit on Class I) terminated effective March 6, 2023 (486BPOS: 'The Expense Limitation and Reimbursement Agreement terminated effective March 6, 2023.'); FH footnote 3 notes returns 'would have been lower had expenses not been waived' in earlier periods.",
+      "status": "extracted-unverified",
+      "source": "N-CSR (annual report, fiscal year ended March 31, 2026), filed 2026-06-08; after-waiver including-interest rows and waiver-termination context from 486BPOS prospectus/SAI dated July 29, 2025, filed 2025-07-29",
+      "section": "Consolidated Financial Highlights - Class I (expense ratio rows + Supplemental Expense Ratios table); 486BPOS FINANCIAL HIGHLIGHTS + FUND EXPENSES/INVESTMENT MANAGEMENT FEES",
+      "quote": "Before fees waived and deferred tax expense",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.4": {
       "element": "Distribution history & composition",
@@ -42,8 +47,13 @@
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
-      "value": null,
-      "status": "pending"
+      "value": "No underlying fund/deal-level performance is printed in any on-disk filing. The N-CSR Note 13 tables private investment vehicle holdings (commitments, fair values), and the SOI prints position-level fair values - no underlying fund IRRs or sleeve returns. The prospectus itself documents the information asymmetry: the Fund, as an LP, may not receive the same performance information as the private funds' managers. Portfolio-level color in the shareholder letter (e.g., software loans revenue growth >10%) is not GP-level performance reporting.",
+      "status": "n/a - not publicly available: underlying fund/GP-level returns are LP-only reporting; filings disclose holdings at fair value (see 3.4/SOI and N-CSR Note 13), not underlying fund IRRs",
+      "source": "486BPOS prospectus dated July 29, 2025, filed 2025-07-29 (grounding quote); absence confirmed across N-CSR 2026-06-08 (Note 13, SOI) and 424B3 2025-08-12",
+      "section": "PRINCIPAL RISK FACTORS - PRIVATE INVESTMENT FUNDS RISK",
+      "quote": "The Fund may not have the same amount of information about the identity, value, or performance of the private investment funds\u2019 investments",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.6": {
       "element": "Volatility & max drawdown",
@@ -142,8 +152,13 @@
     },
     "2.5": {
       "element": "Underlying GP economics",
-      "value": null,
-      "status": "pending"
+      "value": "No numeric underlying-fund fee ranges are printed anywhere in the on-disk filings (searched 486BPOS/424B3/N-CSR fee-table footnotes and risk sections for management/incentive ranges - none exist; the AFFE footnote says only that AFFE 'represent estimated amounts that the Fund is currently incurring'). Qualitative disclosure only (PRIVATE INVESTMENT FUNDS RISK): private-fund fees 'often are higher than those paid by registered funds and generally include a percentage of gains', and 'The Fund will bear its proportionate share of the management fees and other expenses that are charged by a private investment fund' on top of the Fund's own fees. Aggregate indirect-cost proxy: Acquired Fund Fees and Expenses 0.25% (fee table, cell 2.4). The specific underlying fund economics (rates, hurdles, carry) are private-placement/LP-only terms not printed in public filings.",
+      "status": "partial",
+      "source": "486BPOS prospectus dated July 29, 2025, filed 2025-07-29",
+      "section": "PRINCIPAL RISK FACTORS - PRIVATE INVESTMENT FUNDS RISK; FUND FEES AND EXPENSES footnote (3)",
+      "quote": "often are higher than those paid by registered funds and generally include a percentage of gains",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.6": {
       "element": "Loads & servicing fees",
@@ -157,8 +172,13 @@
     },
     "2.7": {
       "element": "Early repurchase fee",
-      "value": null,
-      "status": "pending"
+      "value": "NO early/repurchase fee is charged. N-23C3A repurchase offer (dated May 8, 2026), item 5 - Payment for Shares Repurchased: 'The Fund will not charge a repurchase fee.' (it warns that a broker-dealer or retirement-plan nominee may charge its own transaction fee). The identical statement appears in all 8 on-disk N-23C3A filings (2024-07-15 through 2026-05-08; grep-verified on raw HTML). The prospectus fundamental policy contemplates repurchase at NAV 'less any repurchase fee' as Rule 23c-3 permits (up to 2%), but the Fund's actual offers charge none. No sales-charge return either: a repurchased shareholder 'will not be entitled to a return of any sales charge'.",
+      "status": "extracted-unverified",
+      "source": "N-23C3A filed 2026-05-08 (and the 7 earlier N-23C3A filings in data/raw/cliffwater_cclfx/); 486BPOS 2025-07-29 fundamental policies",
+      "section": "REPURCHASE OFFER - 5. Payment for Shares Repurchased",
+      "quote": "The Fund will not charge a repurchase fee.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.8": {
       "element": "CIT fee schedule",
@@ -177,8 +197,13 @@
     },
     "2.10": {
       "element": "Value justification",
-      "value": null,
-      "status": "pending"
+      "value": "Value-for-fees justification is the plan committee's determination synthesizing the fee evidence (2.1-2.9) against performance and services; it is not a fact any public filing can supply.",
+      "status": "n/a - not publicly available: requires the plan committee's own value-for-fees determination - workflow output, not public product data (inputs live in cells 2.1-2.9)",
+      "source": "n/a - workflow cell",
+      "section": "workflow cell - no filing section applies",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
@@ -192,8 +217,13 @@
     },
     "3.2": {
       "element": "Repurchase mechanics",
-      "value": null,
-      "status": "pending"
+      "value": "Current cycle (N-23C3A filed 2026-05-08): offer period 5/8/2026-5/29/2026; Repurchase Request Deadline 4:00 p.m. ET on 5/29/2026; Repurchase Pricing Date the SAME day, 5/29/2026 (NAV as of NYSE close); payment within seven (7) calendar days of the Pricing Date; reference NAV on 5/5/2026 was $10.39/share; offer size up to 5% of outstanding shares; no repurchase fee (cell 2.7). WITHDRAWAL RIGHTS: requests may be withdrawn or modified any time before the 4:00 p.m. ET deadline. PRORATION: if more than 5% is tendered, 'the Fund may, but is not required to, repurchase up to an additional two percent (2%)'; if it does not, or if more than 7% is tendered, repurchase is pro rata; de minimis exception - accounts under $2,500 tendering all shares may be accepted before proration; unfilled requests roll to the next quarterly offer with no priority. SUSPENSION/POSTPONEMENT: only by vote of a majority of the Board including a majority of independent Trustees, in four enumerated circumstances (RIC-status loss, NYSE/principal-market closure or restricted trading, emergency making disposal or valuation impracticable, or SEC order). PROSPECTUS FRAMEWORK (486BPOS): quarterly offers of 5%-25% set by Board (fundamental policy); request deadline must fall 'no less than 21 and no more than 42 days after the Fund sends a notification' of the offer; pricing date no later than the 14th day after the deadline (next business day if not a business day) - so a shareholder may irrevocably tender before knowing the price when pricing follows the deadline; partial tenders must keep a $2,500 minimum balance or the Fund may repurchase the whole account; sub-100-share accounts tendering all shares may be accepted before proration; oversubscribed offers may add an 'Estate Offer' tranche for estates.",
+      "status": "extracted-unverified",
+      "source": "N-23C3A filed 2026-05-08; 486BPOS prospectus/SAI dated July 29, 2025, filed 2025-07-29",
+      "section": "N-23C3A REPURCHASE OFFER items 1-8; 486BPOS fundamental policies + OFFERS TO REPURCHASE + REPURCHASE PROCEDURES",
+      "quote": "The Fund will pay repurchase proceeds within seven (7) calendar days from the Repurchase Pricing Date.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.3": {
       "element": "Repurchase history",
@@ -267,8 +297,13 @@
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
-      "value": null,
-      "status": "pending"
+      "value": "ASC 820 hierarchy at 3/31/2026 (Note 5), investments at fair value by asset type: Senior Secured Loans L1 $0 / L2 $565,960,752 / L3 $26,075,702,710 = $26,641,663,462; Private Investment Vehicles L3 $575,518,297 + NAV practical expedient $11,508,152,570 = $12,083,670,867; Subordinated Debt L2 $10,092,485 / L3 $390,297,048 = $400,389,533; Preferred Stocks L3 $147,365,279; Common Stocks L1 $75,480,022 / L3 $67,988,738 = $143,468,760; Collateralized Loan Obligations L2 $23,311,144 / L3 $48,618,348 = $71,929,492; Warrants L3 $1,342,281; Short-Term Investments L1 $472,301,989. TOTAL investments: L1 $547,782,011 / L2 $599,364,381 / L3 $27,306,832,701 / NAV $11,508,152,570 / total $39,962,131,663. Other financial instruments: assets - Forward Contracts L2 $59,087,266, Swap Contracts L2 $33,809,316 (Total Assets $40,055,028,245); liabilities - Forwards L2 $8,738,648, Swaps L2 $23,753,414 (Total Liabilities at FV $32,492,062). Level 3 rollforward FY26: opening (4/1/2025) $21,932,964,173; purchases $24,972,849,717; sales/paydowns $(19,165,375,602); transfers in $42,510,420 / out $(286,126,781); closing $27,306,832,701.",
+      "status": "extracted-unverified",
+      "source": "N-CSR (annual report, fiscal year ended March 31, 2026), filed 2026-06-08",
+      "section": "Notes to Consolidated Financial Statements - 5. Fair Value of Investments (hierarchy table + Level 3 rollforward)",
+      "quote": "The following table presents information about the Fund\u2019s assets and liabilities measured at fair value as of March 31, 2026",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.3": {
       "element": "Independent valuation agent",
@@ -282,8 +317,13 @@
     },
     "4.4": {
       "element": "Methodology by asset type",
-      "value": null,
-      "status": "pending"
+      "value": "Level 3 valuation techniques and unobservable inputs at 3/31/2026 (Note 5 table; range then weighted average): SENIOR SECURED LOANS - $11,966,382,918 income approach, Discount Rate/Discount Margin 2.28%-26.46% (8.18%), with LTM Revenue $14M-$4,307M ($515M), Debt/EBITDA -10.7x-35.8x (5.5x), Interest Coverage -1.3x-22.9x (1.9x); $13,783,714,398 market approach, Recent Transaction Price $53.90-$101.00 ($99.26); $296,197,001 market approach EBITDA Multiple 4.3x-14.4x (9.8x) with Revenue Multiple 0.9x-1.5x; $29,403,238 Post Performance Multiple 0.5x-1.3x (0.8x). PRIVATE INVESTMENT VEHICLES (L3 slice) - $295,007,203 income approach Discount Rate 2.43%-26.00% (7.62%); $264,775,712 market approach Recent Transaction Price $100.00-$175,000,000.00; $12,485,645 WACC 12.30%-24.00% (14.46%); small AUM-multiple (0.03x) and EBITDA-multiple (23.0x) slices. SUBORDINATED DEBT - $291,092,181 income approach Discount Rate 8.07%-15.44% (11.29%) with LTM Revenue/Debt-EBITDA/coverage corroborants; $93,704,867 Recent Transaction Price $0.00-$99.73; $5,500,000 EBITDA Multiple 15.1x. PREFERRED STOCKS - $122,540,525 market/income approach EBITDA Multiple 5.8x-20.5x (13.7x), Revenue Multiple 0.6x-6.0x (3.6x), Discount Rate 11.94%-15.00% (12.25%); $24,824,754 Recent Transaction Price $0.01-$4,250.00. COMMON STOCKS - $52,893,031 market approach EBITDA Multiple 5.4x-25.8x (14.3x), Revenue Multiple 0.6x-3.9x (2.6x); $7,672,932 Recent Transaction Price; $7,422,775 income approach Discount Rate 14.00%-14.30%. CLOs - $48,618,348 income approach: Interest Rate/Discount Margin 7.50%-26.00% (12.07%), Default Rate 3% CDR, Recovery Rate 65%, Prepayment 20% CPR, Reinvestment $99.00, Term = maturity or reinvestment + 24 months. WARRANTS - $1,342,281 total, incl. income approach Exercise Price $1.35-$18.20 (2.15) and Expected Volatility 37%-68% (60%).",
+      "status": "extracted-unverified",
+      "source": "N-CSR (annual report, fiscal year ended March 31, 2026), filed 2026-06-08",
+      "section": "Notes to Consolidated Financial Statements - 5. Fair Value of Investments (valuation techniques / significant unobservable inputs table)",
+      "quote": "valuation techniques and significant unobservable inputs used for the Fund\u2019s investments that are categorized in Level 3 of the fair value hierarchy as of March 31, 2026",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.5": {
       "element": "Auditor & opinion",
@@ -442,13 +482,23 @@
     },
     "6.6": {
       "element": "Plan operational fit",
-      "value": null,
-      "status": "pending"
+      "value": "Operational fit (NSCC/recordkeeper connectivity, trading windows, omnibus support) depends on the specific plan's recordkeeper stack; product-side facts relevant to it (daily NAV, quarterly 23c-3 repurchases, UMB transfer agency, NSCC trade references in the repurchase form) are already evidenced in 3.1/3.2/4.1/6.5.",
+      "status": "n/a - not publicly available: requires plan-specific recordkeeper/trading integration facts - workflow cell completed per plan engagement, not public product data",
+      "source": "n/a - workflow cell",
+      "section": "workflow cell - no filing section applies",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.7": {
       "element": "Participant communicability",
-      "value": null,
-      "status": "pending"
+      "value": "Whether the product can be explained to participants is a committee judgment built on already-extracted structure (6.1), strategy complexity (6.2), and tax-reporting (6.4) evidence; no public filing supplies the assessment itself.",
+      "status": "n/a - not publicly available: requires plan-committee participant-communication assessment - workflow cell; product-side inputs already evidenced in 6.1/6.2/6.4",
+      "source": "n/a - workflow cell",
+      "section": "workflow cell - no filing section applies",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.8": {
       "element": "Fiduciary capacity self-assessment",

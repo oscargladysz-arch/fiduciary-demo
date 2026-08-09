@@ -27,7 +27,7 @@ for k in keys:
         check(f"{k}: anonymization holds", "spotify" not in texts[k])
         check(f"{k}: rule cited", "91 fr 16088" in texts[k])
 check("cclfx: PME + CDLI rejection in memo",
-      "ks-pme 1.2519" in texts["cliffwater_cclfx"] and "cliffwater direct lending index" in texts["cliffwater_cclfx"])
+      "ks-pme 1.2532" in texts["cliffwater_cclfx"] and "cliffwater direct lending index" in texts["cliffwater_cclfx"])
 check("dxyz: escalation variant", "escalation" in texts["dxyz"] and "no meaningful benchmark" in texts["dxyz"])
 check("kpec: K-1 finding in memo", "schedule k-1" in texts["kkr_kpec"])
 check("paf: window-sensitivity disclosure", "window-sensitive" in texts["hl_paf"])

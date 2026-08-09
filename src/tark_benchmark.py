@@ -25,8 +25,9 @@ increment; prose-parsing evidence strings would be brittle now.
 """
 from __future__ import annotations
 
-from tark_analytics import (ann_return, cumulative_growth, direct_alpha,
-                            ks_pme, month_end_points, period_returns)
+from tark_analytics import (_level_on, ann_return, cumulative_growth,
+                            direct_alpha, ks_pme, month_end_points,
+                            period_returns)
 from tark_data import load_series
 
 MIN_PRIMARY_SCORE = 7
@@ -68,6 +69,25 @@ PRODUCT_PROFILES = {
         "self_declared": None,
         "price_nav_decoupled": True,            # cells 1.10 / 4.7: -90.3% DD,
         "source_cells": ["1.10", "4.7"],        # +188.6% cum, 162.6% vol
+    },
+    # profiles below are filled by fill_profile_from_cells() at selection time
+    # from the extracted 1.2 evidence (annualized since-inception, Class I) —
+    # values injected by run_benchmark.py, never hard-coded here
+    "kkr_kpec": {
+        "strategy": "pe_conglomerate",
+        "series": None,
+        "granularity": "annual",
+        "aatr": None, "aatr_years": None, "fy_window": None,
+        "self_declared": None,                  # cell 5.1
+        "source_cells": ["1.2", "5.1"],
+    },
+    "breit": {
+        "strategy": "nontraded_reit",
+        "series": None,
+        "granularity": "annual",
+        "aatr": None, "aatr_years": None, "fy_window": None,
+        "self_declared": None,                  # cell 5.1
+        "source_cells": ["1.2", "5.1"],
     },
 }
 
@@ -124,6 +144,59 @@ STRATEGY_MENU = {
          "independent": True, "data": "daily", "strategy_match": 1,
          "match_note": "nearest liquid cousin to pre-IPO exposure"},
     ],
+    "pe_conglomerate": [
+        {"id": "psp_k", "name": "Listed private equity investable proxy (PSP)",
+         "lane": "B", "series": "psp", "provider": "Invesco / Red Rocks",
+         "independent": True, "data": "daily", "strategy_match": 2,
+         "match_note": "listed GPs/holdcos - closest liquid proxy for a "
+                       "PE-conglomerate of controlled operating companies"},
+        {"id": "urth_k", "name": "MSCI World investable proxy (URTH)",
+         "lane": "B", "series": "urth", "provider": "iShares / MSCI",
+         "independent": True, "data": "daily", "strategy_match": 1,
+         "match_note": "public equities - liquidity/leverage profile differs "
+                       "materially from private controlled businesses"},
+        {"id": "cambridge_pe_k", "name": "Cambridge Associates US PE benchmark",
+         "lane": "B", "series": None, "provider": "Cambridge Associates",
+         "independent": True, "data": "quarterly-paid", "strategy_match": 3,
+         "match_note": "drawdown-fund universe - wrapper mismatch vs perpetual "
+                       "conglomerate also applies"},
+        {"id": "peer_kpec", "name": "Peer cohort: evergreen PE funds in universe",
+         "lane": "C", "series": None, "provider": "constructed",
+         "independent": True, "data": "annual", "strategy_match": 2,
+         "match_note": "hl_paf / stepstone_spm are fund-of-funds evergreens, "
+                       "not conglomerates of controlled companies - inexact peers"},
+        {"id": "pme_psp_k", "name": "PME / Direct Alpha vs PSP",
+         "lane": "D", "series": "psp", "provider": "constructed (Tark)",
+         "independent": True, "data": "annual-window", "strategy_match": 2,
+         "match_note": "wealth-ratio PME over the fund's since-inception window"},
+    ],
+    "nontraded_reit": [
+        {"id": "vnq", "name": "Listed REIT investable proxy (VNQ)",
+         "lane": "B", "series": "vnq", "provider": "Vanguard / MSCI US REIT",
+         "independent": True, "data": "daily", "strategy_match": 2,
+         "match_note": "listed equity REITs - same asset class, but exchange "
+                       "pricing vs monthly appraisal NAV is a regime difference"},
+        {"id": "odce", "name": "NCREIF Fund Index - ODCE (private core RE)",
+         "lane": "B", "series": None, "provider": "NCREIF",
+         "independent": True, "data": "quarterly-manual", "strategy_match": 3,
+         "match_note": "private open-end core RE funds - the strategy-exact "
+                       "yardstick; index data is member/subscription "
+                       "distribution, series not held"},
+        {"id": "cambridge_re", "name": "Cambridge Associates Real Estate benchmark",
+         "lane": "B", "series": None, "provider": "Cambridge Associates",
+         "independent": True, "data": "quarterly-paid", "strategy_match": 3,
+         "match_note": "private RE drawdown-fund universe - licensed data not held"},
+        {"id": "peer_reit", "name": "Peer cohort: non-traded REITs in universe",
+         "lane": "C", "series": None, "provider": "constructed",
+         "independent": True, "data": "none", "strategy_match": 3,
+         "match_note": "no second non-traded REIT in the current six-product "
+                       "universe"},
+        {"id": "pme_vnq", "name": "PME / Direct Alpha vs VNQ",
+         "lane": "D", "series": "vnq", "provider": "constructed (Tark)",
+         "independent": True, "data": "annual-window", "strategy_match": 2,
+         "match_note": "wealth-ratio PME vs listed-REIT proxy over the "
+                       "since-inception window"},
+    ],
 }
 
 
@@ -172,11 +245,14 @@ def score_candidate(profile: dict, cand: dict) -> dict:
 
 
 # ------------------------------------------------------------ comparison
-def _monthly_growth(ticker: str, d0: str, d1: str) -> tuple[float, list]:
-    s = [(d, v) for d, v in load_series(ticker, "adj_close") if d0 <= d <= d1]
-    me = month_end_points(s)
-    rets = period_returns([v for _, v in me])
-    return cumulative_growth(rets), [(me[0][0], -1.0), (me[-1][0], None)]
+def _window_growth(ticker: str, d0: str, d1: str) -> float:
+    """Daily-anchored growth: level on/just-before d1 over level on/just-before
+    d0 (adj close). Month-end sampling here previously DROPPED the first
+    partial month when d0 fell on a non-trading day, so the displayed index
+    growth disagreed with the index growth inside KS-PME (which always
+    anchored daily). Corrected 2026-08-09; both sides now use these levels."""
+    s = load_series(ticker, "adj_close")
+    return _level_on(s, d1) / _level_on(s, d0)
 
 
 def comparison_stats(profile: dict, cand: dict) -> dict | None:
@@ -186,18 +262,23 @@ def comparison_stats(profile: dict, cand: dict) -> dict | None:
     if profile.get("series"):
         fund = load_series(profile["series"], "adj_close")
         d0, d1 = fund[0][0], fund[-1][0]
-        f_growth = cumulative_growth(period_returns(
-            [v for _, v in month_end_points(fund)]))
+        f_growth = fund[-1][1] / fund[0][1]
     elif profile.get("fy_returns"):
         d0, d1 = profile["fy_window"]
         f_growth = cumulative_growth(profile["fy_returns"])
     elif profile.get("aatr_5yr"):
         d0, d1 = profile["fy_window"]
         f_growth = (1 + profile["aatr_5yr"]) ** 5
+    elif profile.get("aatr"):
+        # generic annualized-since-inception profile (kkr_kpec, breit):
+        # aatr + exact year count, filled from extracted cell 1.2 evidence
+        d0, d1 = profile["fy_window"]
+        f_growth = (1 + profile["aatr"]) ** profile["aatr_years"]
     else:
         return None
-    i_growth, _ = _monthly_growth(cand["series"], d0, d1)
-    years = max((int(d1[:4]) - int(d0[:4])), 1)
+    i_growth = _window_growth(cand["series"], d0, d1)
+    years = (profile.get("aatr_years")
+             or max((int(d1[:4]) - int(d0[:4])), 1))
     flows = [(d0, -1.0), (d1, f_growth)]
     idx = [(d, v) for d, v in load_series(cand["series"], "adj_close")
            if d0 <= d <= d1]

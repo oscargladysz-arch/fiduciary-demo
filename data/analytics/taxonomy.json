@@ -1,0 +1,12 @@
+{
+  "counts": {
+    "extracted": 148,
+    "n/a": 89,
+    "partial": 21,
+    "computed": 59,
+    "fetched": 7
+  },
+  "total": 324,
+  "line": "54% evidenced \u00b7 18% computed \u00b7 27% documented-unavailable \u00b7 0 unresolved",
+  "generated": "2026-08-09"
+}

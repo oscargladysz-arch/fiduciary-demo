@@ -1,0 +1,102 @@
+{
+  "product": "kkr_kpec",
+  "strategy": "pe_conglomerate",
+  "source_cells": [
+    "1.2",
+    "5.1"
+  ],
+  "primary": {
+    "candidate": "Listed private equity investable proxy (PSP)",
+    "id": "psp_k",
+    "lane": "B",
+    "score": 9,
+    "max": 12,
+    "reasons": [
+      "strategy_match 2/3: listed GPs/holdcos - closest liquid proxy for a PE-conglomerate of controlled operating companies",
+      "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+      "investability 2/2: investable, priced daily",
+      "data_quality 2/2: daily series",
+      "provider_independence 2/2: provider unaffiliated with the fund"
+    ],
+    "comparison": {
+      "window": "2023-09-01 to 2025-12-31",
+      "fund_growth_x": 1.3285,
+      "index_growth_x": 1.4819,
+      "ks_pme": 0.8964,
+      "direct_alpha_pct": -4.58,
+      "fund_ann_pct": 12.94,
+      "index_ann_pct": 18.36
+    }
+  },
+  "secondary": {
+    "candidate": "MSCI World investable proxy (URTH)",
+    "id": "urth_k",
+    "lane": "B",
+    "score": 8,
+    "max": 12,
+    "reasons": [
+      "strategy_match 1/3: public equities - liquidity/leverage profile differs materially from private controlled businesses",
+      "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+      "investability 2/2: investable, priced daily",
+      "data_quality 2/2: daily series",
+      "provider_independence 2/2: provider unaffiliated with the fund"
+    ],
+    "comparison": {
+      "window": "2023-09-01 to 2025-12-31",
+      "fund_growth_x": 1.3285,
+      "index_growth_x": 1.5339,
+      "ks_pme": 0.8661,
+      "direct_alpha_pct": -5.98,
+      "fund_ann_pct": 12.94,
+      "index_ann_pct": 20.12
+    }
+  },
+  "rejected": [
+    {
+      "candidate": "PME / Direct Alpha vs PSP",
+      "id": "pme_psp_k",
+      "lane": "D",
+      "score": 8,
+      "max": 12,
+      "reasons": [
+        "strategy_match 2/3: wealth-ratio PME over the fund's since-inception window",
+        "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+        "investability 2/2: investable, priced daily",
+        "data_quality 1/2: annual-window series",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "outranked: score 8/12 vs primary 9/12 and secondary 8/12 - only two slots; retained in log as viable alternate"
+    },
+    {
+      "candidate": "Cambridge Associates US PE benchmark",
+      "id": "cambridge_pe_k",
+      "lane": "B",
+      "score": 7,
+      "max": 12,
+      "reasons": [
+        "strategy_match 3/3: drawdown-fund universe - wrapper mismatch vs perpetual conglomerate also applies",
+        "risk_liquidity_match 2/3: appraisal-cadence series, closer to the fund's NAV process",
+        "investability 0/2: not investable / not held",
+        "data_quality 0/2: licensed data not held (no Preqin/Cambridge subscription) - candidate cannot be computed, only cited",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 8/12 - only two slots; retained in log as viable alternate"
+    },
+    {
+      "candidate": "Peer cohort: evergreen PE funds in universe",
+      "id": "peer_kpec",
+      "lane": "C",
+      "score": 6,
+      "max": 12,
+      "reasons": [
+        "strategy_match 2/3: hl_paf / stepstone_spm are fund-of-funds evergreens, not conglomerates of controlled companies - inexact peers",
+        "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+        "investability 0/2: not investable / not held",
+        "data_quality 1/2: annual series",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "score 6/12 below primary threshold 7"
+    }
+  ],
+  "escalation": null
+}

@@ -7,18 +7,33 @@
   "cells": {
     "1.1": {
       "element": "Net total return series",
-      "value": null,
-      "status": "pending"
+      "value": "FULL printed monthly NAV/share series, Class I, Jan 2023 - Dec 2025 (36 points) + Jun 2026 from the 10-Q - structured at data/series_monthly/breit_nav.csv (adversarially verified vs raw HTML; Jan-May 2026 not printed anywhere, NOT interpolated). Year-ends: 2023 $14.0977, 2024 $13.7133, 2025 $14.1339; Jun 2026 $14.5256. NAV path only - total returns incl. distributions in 1.2. Per-class year-end NAVs for 7 further classes in the same 10-K table.",
+      "status": "extracted-unverified",
+      "source": "10-K FY2025 (filed 2026-02-27) Item 5 'Offering of Common Stock' monthly NAV table; 10-Q Q2-2026 (filed 2026-08-07) NAV-by-class table",
+      "section": "Item 5 - Offering of Common Stock (monthly NAV table)",
+      "quote": "The following table presents our monthly NAV per share for each applicable share class from January 31, 2023 through December 31, 2025",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.2": {
       "element": "Trailing & calendar-year returns",
-      "value": null,
-      "status": "pending"
+      "value": "FY2025 10-K '2025 Highlights' table (classes in order I | S | S-2 | D | D-2 | T | T-2): Year-to-Date (2025) Total Return, without upfront selling commissions: 8.1% | 7.2% | 3.2% | 7.8% | 3.1% | 7.2% | 3.4%; assuming maximum upfront selling commissions: N/A | 3.5% | (0.3)% | 6.2% | 1.6% | 3.5% | (0.1)%. Inception-to-Date Total Return (annualized), without upfront selling commissions: 9.3% | 8.4% | N/A | 9.0% | N/A | 8.5% | N/A; assuming maximum upfront selling commissions: N/A | 8.0% | N/A | 8.9% | N/A | 8.1% | N/A. Average Annualized Distribution Rate: 4.8% | 3.9% | 3.9% | 4.6% | 4.6% | 4.0% | 4.0%. S-2/D-2/T-2 YTD figures are unannualized returns since September 1, 2025 (first sale date). Definition as printed: change in NAV per share plus distributions declared, distributions assumed reinvested; periods >1 year annualized. 10-Q Q2 2026 UPDATE (I | S | S-2 | D | D-2 | T | T-2 | L | C): YTD (6 mo. to 6/30/26) without upfront commissions 5.2% | 4.7% | 5.2% | 5.0% | 5.7% | 4.7% | 4.9% | 5.5% | 5.2%; ITD without upfront commissions 9.4% | 8.4% | N/A | 9.1% | N/A | 8.6% | N/A | N/A | 4.1%. NOTE: no standardized 1/3/5/10-year trailing-return table is printed anywhere in the 10-K - YTD and inception-to-date are the only periods disclosed.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-02-27), Item 7 MD&A - 2025 Highlights; Form 10-Q for quarter ended June 30, 2026 (filed 2026-08-07), MD&A - Q2 2026 Highlights",
+      "section": "Item 7. MD&A - Overview - 2025 Highlights - Operating Results (average annualized distribution rates and total returns table, p.135); 10-Q MD&A - Q2 2026 Highlights",
+      "quote": "| 8.1% | 7.2% | 3.2% | 7.8% | 3.1% | 7.2% | 3.4% |",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.3": {
       "element": "Gross vs net spread",
-      "value": null,
-      "status": "pending"
+      "value": "Documented impossibility: BREIT files under the '34 Act (10-K/10-Q), not the 1940 Act, so there is no financial-highlights table and no gross/net expense ratio anywhere in the filings - mechanical search of the stripped FY2025 10-K and Q2 2026 10-Q for 'expense ratio' and 'financial highlights' returns zero hits in both documents. No fee waiver, expense cap, or expense-support/reimbursement-to-fund arrangement is disclosed that would create a gross-vs-net spread (the management fee has been paid in shares/OP units at the Adviser's election, not waived; organization costs are expensed as incurred and offering costs charged to equity). The disclosed fee burden lives in components instead: 1.25%-of-NAV management fee (cell 2.1), 12.5%-over-5%-hurdle performance participation (2.2), class-level selling commissions/dealer manager fees and 0-0.85%/yr stockholder servicing fees (2.6).",
+      "status": "n/a - not publicly available: no gross/net expense-ratio or financial-highlights disclosure exists for a '34-Act non-traded REIT, and no fee-waiver/expense-support arrangement is disclosed, so no gross-vs-net spread exists to extract",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27 (absence verified in both 10-K and Q2 2026 10-Q stripped texts, searched 2026-08-09)",
+      "section": "Notes to Consolidated Financial Statements - Note 10. Related Party and Other Transactions (fee structure); Note 2 - Organization and Offering Costs; document-wide search for 'expense ratio'/'financial highlights' (0 hits)",
+      "quote": "The Adviser is entitled to an annual management fee equal to 1.25 % of the Company\u2019s NAV, payable monthly",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.4": {
       "element": "Distribution history & composition",
@@ -32,28 +47,53 @@
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
-      "value": null,
-      "status": "pending"
+      "value": "BREIT owns real estate directly (wholly owned and via JVs) - there are no underlying GP funds, so no underlying fund IRR table exists in the filings. Closest printed sleeve-level performance (FY2025 10-K, Same Property NOI section): Same Property NOI attributable to BREIT stockholders $4,722,128K (2025) vs $4,605,003K (2024), change +$117,125K, printed as 3%; split into Consolidated Same Property NOI $3,954,305K vs $3,884,496K (+2%) and Same Property NOI from unconsolidated entities $767,823K vs $720,507K (+7%). Same-property revenues +2% ($7,107,631K vs $6,964,324K); expenses +2%. Same Property portfolio: 749 rental housing, 2,859 industrial, 41 data centers, 2 net lease, 240 hotel, 79 self storage, 60 retail, 11 office properties. Total NOI attributable to BREIT stockholders: $5,433,204K (2025) vs $5,449,920K (2024). What is NOT printed: return/IRR series for individual sleeves, JVs, or unconsolidated entities - unconsolidated entities are carried on the balance sheet at $6,144,367K total (Dec 31, 2025), of which $3,843,300K are fair-value-option investments appearing as Level 3 in the fair-value table (see 4.2/3.4) and the remainder are equity-method; their internal returns are not public reporting.",
+      "status": "partial",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Item 7. MD&A - Same Property NOI (reconciliation and components tables, pp.149-150)",
+      "quote": "Same Property NOI attributable to BREIT stockholders | $ | 4,722,128 | $ | 4,605,003",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.6": {
       "element": "Volatility & max drawdown",
-      "value": null,
-      "status": "pending"
+      "value": "Computed from the fund's own PRINTED monthly NAV path (Class I, 2023-01-31 to 2025-12-31 (contiguous monthly), n=35 monthly returns): annualized NAV-path volatility 2.41%; max NAV-path drawdown -7.93%. BASIS: NAV path only, distributions excluded - understates total-return level, but is the correct series for risk-process diagnostics. Cross-ref 1.7/4.8 for the smoothing correction.",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (breit_monthly_diagnostics)",
+      "section": "breit_monthly_diagnostics",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.7": {
       "element": "De-smoothed volatility",
-      "value": null,
-      "status": "pending"
+      "value": "De-smoothed (Geltner AR1) annualized NAV-path volatility: 4.12% vs 2.41% observed (rho 0.483). The appraisal process compresses reported volatility ~1.7x. Basis: printed monthly NAV path (distributions excluded).",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (breit_monthly_diagnostics)",
+      "section": "breit_monthly_diagnostics",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": null,
-      "status": "pending"
+      "value": "KS-PME 0.9073 / Direct Alpha -3.19%/yr vs listed-REIT proxy VNQ over 2022-12-31 to 2025-12-31 (fund growth 1.0971x from PRINTED Class I annual returns -0.5/2.0/8.1%; index 1.2104x). Fund lagged the listed proxy over this window. CAVEAT: appraisal-lagged NAV vs daily market index - window-sensitive both ways; disclosed per methodology.",
+      "status": "computed",
+      "source": "data/benchmarks/breit_selection.json (primary.comparison)",
+      "section": "primary.comparison",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
-      "value": null,
-      "status": "pending"
+      "value": "Stress observations (computed from extracted disclosures): worst disclosed calendar year 2023: -0.5% total return (Class I, printed) - the 2022-23 redemption-wave aftermath; NAV-path peak-to-trough -7.93% (Jul 2023 - Dec 2024, printed monthly NAVs); issuer prorated repurchases through the same period (3.3). Total-return stress figure includes ~4.5-4.7% annualized distributions (1.2).",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (stress_windows.breit + breit_monthly_diagnostics)",
+      "section": "stress_windows",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.10": {
       "element": "Market price & premium/discount",
@@ -92,8 +132,13 @@
     },
     "2.3": {
       "element": "Total expense ratio & waivers",
-      "value": null,
-      "status": "pending"
+      "value": "No total expense ratio and no waiver disclosure exists: BREIT is a '34-Act reporting non-traded REIT with no 1940-Act-style fee table or financial highlights; mechanical search of both on-disk stripped filings (FY2025 10-K; Q2 2026 10-Q) for 'expense ratio' returns zero hits, and no fee-waiver or expense-support arrangement is disclosed. Fee burden must be assembled from components: management fee 1.25% of NAV per annum payable monthly ($671.0M incurred FY2025 - cell 2.1); performance participation 12.5% over 5% hurdle ($592.9M FY2025 - cell 2.2); stockholder servicing fees 0%-0.85%/yr of NAV by class plus upfront selling commissions/dealer manager fees up to 3.5% (cell 2.6); Early Repurchase Deduction 2% (cell 2.7).",
+      "status": "n/a - not publicly available: no TER disclosure exists for a '34-Act REIT (10-K prints no expense ratio - zero hits in FY2025 10-K and Q2 2026 10-Q); fee burden components extracted in 2.1/2.2/2.6",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27 (absence verified in both on-disk stripped filings, searched 2026-08-09)",
+      "section": "Notes to Consolidated Financial Statements - Note 10. Related Party and Other Transactions; document-wide search for 'expense ratio' (0 hits both filings)",
+      "quote": "The Adviser is entitled to an annual management fee equal to 1.25 % of the Company\u2019s NAV, payable monthly",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.4": {
       "element": "AFFE",
@@ -107,8 +152,13 @@
     },
     "2.5": {
       "element": "Underlying GP economics",
-      "value": null,
-      "status": "pending"
+      "value": "No numeric underlying-vehicle fee/carry ranges are printed anywhere in the FY2025 10-K (no '1% to 2.5%' / '10% to 20%'-style footnote exists, because BREIT is not a fund-of-funds). Qualitative acknowledgments that a second fee layer can exist beneath BREIT, as printed: (a) JV risk factor: 'our joint venture partner may be entitled to property management fees, promote or other incentive fee payments as part of the arrangement of the joint venture' and JV partners 'may receive ongoing fees from our joint ventures, including promote payments and potential buyouts of their equity investments, all of which may reduce amounts otherwise payable to us'; (b) real-estate-related equity securities: issuers 'may be subject to a management fee and/or performance-based compensation (e.g., promote), which we as equity holders will indirectly bear'; (c) Blackstone-affiliated service providers and portfolio-entity service providers earn fees including 'promote or other incentive-based compensation' that do not offset the Adviser's management fee (quantified affiliate amounts are in cell 6.3).",
+      "status": "n/a - not publicly available: BREIT owns real estate directly, not through third-party GP funds; where JV partners or real-estate-issuer managers earn promote/fees beneath BREIT, those economics are private joint-venture and portfolio-entity contract terms - the 10-K acknowledges them only qualitatively, with no rates or ranges printed",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Item 1A. Risk Factors - joint venture investments; Risks Related to Investments in Real Estate Debt/equity interests; conflicts-of-interest disclosures (portfolio entity service providers)",
+      "quote": "may be subject to a management fee and/or performance-based compensation (e.g., promote), which we as equity holders will indirectly bear",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.6": {
       "element": "Loads & servicing fees",
@@ -147,8 +197,13 @@
     },
     "2.10": {
       "element": "Value justification",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell, not an extraction target: the value-for-fees justification is the plan committee's own determination weighing the evidenced fee stack (management fee 1.25% of NAV in 2.1; 12.5%/5%-hurdle performance participation and the 2024 Shortfall in 2.2; absence of a TER in 2.3; no AFFE in 2.4; underlying-economics n/a in 2.5; loads/servicing fees in 2.6; 2% Early Repurchase Deduction in 2.7) against net performance (1.1/1.2/1.4) and peers (2.9). No public document can supply this cell.",
+      "status": "n/a - not publicly available: requires the plan committee's own value-for-fees determination - workflow output, not public product data (inputs live in cells 2.1-2.9)",
+      "source": "n/a - plan-committee workflow output",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
@@ -162,8 +217,13 @@
     },
     "3.2": {
       "element": "Repurchase mechanics",
-      "value": null,
-      "status": "pending"
+      "value": "Mechanics as printed in FY2025 10-K (Item 5 - Share Repurchases; repeated in Note 14): CADENCE/PRICING DATE - repurchases only as of the opening of the last calendar day of each month (the 'Repurchase Date'); price = transaction price in effect on the Repurchase Date, generally the prior month's NAV per share, with a sole-discretion exception to reprice where NAV materially changed. EARLY EXIT - shares outstanding <1 year repurchased at 98% of transaction price (Early Repurchase Deduction), not applicable to DRIP shares. SETTLEMENT - generally within three business days of the Repurchase Date. CAPS - 2% of aggregate NAV/month, 5%/calendar quarter, both assessed each month. PRORATION - if requests exceed limits, repurchases are made pro rata AFTER first satisfying all requests due to death, disability or divorce and other limited exceptions; unsatisfied requests are NOT carried over - they 'must be resubmitted after the start of the next month or quarter, or upon the recommencement' of the plan. PRICE-AVAILABILITY GATE - if the transaction price is not made available by the tenth business day prior to the last business day of the month (or changed after), no requests are accepted that month. BOARD POWERS - may repurchase fewer shares than the caps or none, has made past exceptions, and may modify/suspend the plan. NOT PRINTED IN THE 10-K: the request-submission deadline and the stockholder's request-withdrawal window - those terms are in the Share Repurchase Plan / prospectus 'Share Repurchases' section (pointer: BREIT 424(b)(3) prospectus on EDGAR, CIK 1662972).",
+      "status": "partial",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Part II, Item 5 - Share Repurchases (pp.132-133); Notes to Consolidated Financial Statements - Note 14 - Share and Unit Repurchases",
+      "quote": "we will only repurchase shares as of the opening of the last calendar day of that month",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.3": {
       "element": "Repurchase history",
@@ -242,8 +302,13 @@
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
-      "value": null,
-      "status": "pending"
+      "value": "Recurring fair-value table ($K). December 31, 2025 - ASSETS: Investments in real estate debt L1 $0 / L2 $3,282,457 / L3 $754,693 / total $4,037,150; Real estate loans held by consolidated securitization vehicles L2 $6,975,460; Investments in unconsolidated entities L3 $3,843,300; Interest rate and FX hedging derivatives L2 $960,328; TOTAL assets L1 $0 / L2 $11,218,245 / L3 $4,597,993 / $15,816,238. LIABILITIES: Senior obligations of consolidated securitization vehicles L2 $6,284,112; hedging derivatives L2 $24,274; total $6,308,386 (no L1 or L3 liabilities). Excludes $96.6M measured at NAV practical expedient (not classified in hierarchy). December 31, 2024 comparatives: assets L2 $19,591,916 / L3 $4,908,819 / total $24,500,735; liabilities total $12,244,384; NAV-practical-expedient $259.0M. Level 3 rollforward: $4,914,167 (12/31/23) -> $4,908,819 (12/31/24) -> $4,597,993 (12/31/25). Level 3 inputs at 12/31/25: real estate loans $754,693 yield method, market yield 9.0%; unconsolidated entities $3,843,300 DCF, WACC 9.0% and exit cap rate 5.5%. CONTEXT: consolidated properties are carried at depreciated cost under GAAP and sit outside this table; the FV table covers debt investments, securitizations, FVO unconsolidated entities, and derivatives only.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Notes to Consolidated Financial Statements - Note 2 - Fair Value Measurements ('assets and liabilities measured at fair value on a recurring basis' table, F-18; Level 3 rollforward and quantitative inputs tables)",
+      "quote": "| 11,218,245 | $ | 4,597,993 | $ | 15,816,238 |",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.3": {
       "element": "Independent valuation agent",
@@ -292,8 +357,13 @@
     },
     "4.8": {
       "element": "Smoothing diagnostics",
-      "value": null,
-      "status": "pending"
+      "value": "Smoothing diagnostics on the printed monthly NAV path: lag-1 autocorrelation rho = 0.483 (n=35) - HEAVY smoothing (compare CCLFX rho 0.139). Consistent with monthly appraisal NAV on illiquid real estate; de-smoothed vol 4.12% vs observed 2.41%. This is the quantitative counterpart of the gating history in 3.3: smoothed NAV + real redemption pressure.",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (breit_monthly_diagnostics)",
+      "section": "breit_monthly_diagnostics",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.9": {
       "element": "CIT unit valuation",
@@ -302,8 +372,13 @@
     },
     "5.1": {
       "element": "Self-declared benchmark",
-      "value": null,
-      "status": "pending"
+      "value": "ABSENCE DOCUMENTED: BREIT declares NO benchmark index anywhere in the FY2025 10-K. Zero hits for MSCI, ODCE, or FTSE Nareit; NCREIF appears only as a geography taxonomy ('Region Concentration represents regions as defined by the National Council of Real Estate Investment Fiduciaries'), never as a performance comparison. The issuer's self-declared performance measures are its own: class-level total return ('We believe total return is a useful measure of our overall investment performance'), average annualized distribution rate ('We believe the annualized distribution rate is a useful measure...'), and non-GAAP FFO/AFFO/FAD and Same Property NOI. The performance-participation hurdle is an absolute 5% total return (cell 2.2), not index-linked. Consequence for the fiduciary workflow: any index comparison (5.2/5.3) is committee-constructed, not issuer-endorsed.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27 (searches for benchmark/NCREIF/MSCI/ODCE/FTSE Nareit run on stripped text 2026-08-09)",
+      "section": "Item 7. MD&A - 2025 Highlights (total return / annualized distribution rate footnotes); Item 1 Business - portfolio charts footnotes (NCREIF region definitions); document-wide index search",
+      "quote": "We believe total return is a useful measure of our overall investment performance.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.2": {
       "element": "Public index series",
@@ -317,18 +392,33 @@
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": null,
-      "status": "pending"
+      "value": "Alt-index candidates evaluated: NCREIF ODCE (private core RE - strategy-exact, SECONDARY at 8/12; index data is member/subscription distribution, series not held); Cambridge Associates RE (7/12, outranked; licensed data not held); listed proxy VNQ (PRIMARY 9/12). Full scoring + rejection reasons in the selection artifact.",
+      "status": "computed",
+      "source": "data/benchmarks/breit_selection.json",
+      "section": "candidates + rejection log",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": null,
-      "status": "pending"
+      "value": "Peer cohort (lane C): no second non-traded REIT in the six-product universe - peer candidate scored 5/12 (no computable series) and was rejected below threshold; documented in the rejection log. Market-wide non-traded-REIT peer data (Stanger etc.) is licensed, not held.",
+      "status": "computed",
+      "source": "data/benchmarks/breit_selection.json",
+      "section": "lane C candidate",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": null,
-      "status": "pending"
+      "value": "PME inputs (computed): window 2022-12-31 to 2025-12-31; flows [-1 at start, 1.0971 at end] built from PRINTED Class I calendar-year total returns (-0.5%, 2.0%, 8.1% - cells 1.2, three 10-Ks cited there); index VNQ adj-close daily-anchored. KS-PME 0.9073, Direct Alpha -3.19%/yr.",
+      "status": "computed",
+      "source": "data/benchmarks/breit_selection.json + data/benchmarks/profiles_input.json",
+      "section": "primary.comparison",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
@@ -392,13 +482,23 @@
     },
     "6.6": {
       "element": "Plan operational fit",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell: operational fit (recordkeeper coding, NSCC/manual trading, monthly-cycle order handling for a non-daily-priced, monthly-NAV/monthly-repurchase vehicle, DRIP handling, 1099 flows) depends on the specific plan's recordkeeper and trust/custody stack. Product-side facts already evidenced elsewhere: monthly NAV and monthly repurchase cycle (4.1/3.1/3.2), transfer agent unnamed in 10-K (6.5), non-listed shares with no ticker (1.10).",
+      "status": "n/a - not publicly available: requires plan-specific recordkeeper/trading integration facts - workflow cell completed per plan engagement, not public product data",
+      "source": "n/a - plan-engagement workflow output",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.7": {
       "element": "Participant communicability",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell: whether a perpetual-life non-traded REIT with monthly NAV, 2%/5% repurchase caps, an Early Repurchase Deduction, and 100%-return-of-capital distributions (FY2025 tax character, cell 1.4) can be explained to 404(c) participants is the committee's assessment. Product-side communicability inputs on file: structure map (6.1), strategy/complexity incl. embedded leverage (6.2), tax reporting (6.4), liquidity terms (3.1/3.2).",
+      "status": "n/a - not publicly available: requires plan-committee participant-communication assessment - workflow cell; product-side inputs already evidenced in 6.1/6.2/6.4",
+      "source": "n/a - plan-committee workflow output",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.8": {
       "element": "Fiduciary capacity self-assessment",

@@ -111,7 +111,7 @@ check_true("anchor: liquidity tail called out", "1,847" in anchor_text)
 
 # 4. benchmark view: CCLFX numbers reproduce; DXYZ escalates
 _, cclfx_text = run_view("Benchmark Selection", "cliffwater_cclfx")
-check_true("benchmark cclfx: KS-PME 1.2519 on screen", "1.2519" in cclfx_text)
+check_true("benchmark cclfx: KS-PME 1.2532 on screen", "1.2532" in cclfx_text)
 check_true("benchmark cclfx: CDLI sits in rejection log", "CDLI" in cclfx_text)
 _, dxyz_text = run_view("Benchmark Selection", "dxyz")
 check_true("benchmark dxyz: escalation banner shown",

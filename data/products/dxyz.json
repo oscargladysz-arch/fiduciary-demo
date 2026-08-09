@@ -7,8 +7,13 @@
   "cells": {
     "1.1": {
       "element": "Net total return series",
-      "value": null,
-      "status": "pending"
+      "value": "NAV per share, FY-end (common stock, sole class): FY2022 $5.22, FY2023 $4.84, FY2024 $6.44, FY2025 $19.93; beginning NAV 1/1/2022 was NEGATIVE $(1.60). Total Return on Net Asset Value: FY2022 426.08% (footnote 5: computed using absolute value of the negative initial NAV; excludes SAFE-conversion holders \u2014 non-comparable), FY2023 (7.29)%, FY2024 33.12%, FY2025 209.59%. No distribution line items printed in any year, so NAV returns are pure NAV change. Caveat inside the FY2025 move (6.44 -> 19.93): the NAV bridge prints 'Impact of at-the-market offering' +$9.95/share (accretive ATM issuance at premium prices) alongside net investment loss $(0.50)/share and net realized/unrealized gain +$4.04/share. Market-value returns printed separately in the same table are covered in cell 1.2.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-03-10 (FY ended 12/31/2025)",
+      "section": "Financial Highlights (FY2022-FY2025 columns): rows 'Net Asset Value, End of Period', 'Total Return on Net Asset Value', 'Impact of at-the-market offering'",
+      "quote": "Total Return on Net Asset Value (4) 209.59 % 33.12 % (7.29 )% 426.08 % (5)",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.2": {
       "element": "Trailing & calendar-year returns",
@@ -22,8 +27,13 @@
     },
     "1.3": {
       "element": "Gross vs net spread",
-      "value": null,
-      "status": "pending"
+      "value": "No gross-vs-net spread exists: the Financial Highlights print a SINGLE expense line, 'Ratio of expenses to average net assets' \u2014 4.53% (FY2025), 6.28% (FY2024), 5.92% (FY2023), 5.13% (FY2022) \u2014 with no before/after-waiver companion line. No expense waiver, reimbursement, or cap agreement is disclosed anywhere in the N-CSR (zero hits for 'waiver'/'expense limitation'/'expense cap' relating to fund expenses), and the 424B5 fee table (Total annual expenses 4.56%, estimated for current FY) contains no waiver offset line. Gross ratio = net ratio = 4.53% for FY2025. Footnote (7): ratios exclude expenses of underlying private investments (AFFE excluded here; 424B5 estimates AFFE at 0.03%, see cell 2.4).",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-03-10 (FY ended 12/31/2025); absence of waiver corroborated in 424B5 2026-05-26 'Fees and Expenses'",
+      "section": "Financial Highlights \u2014 Supplemental Data and Ratios, footnote (7)",
+      "quote": "Ratio of expenses to average net assets (7) 4.53 %",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.4": {
       "element": "Distribution history & composition",
@@ -37,8 +47,13 @@
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
-      "value": null,
-      "status": "pending"
+      "value": "No underlying SPV/fund-level performance is printed anywhere in the four on-disk filings (N-CSR, 424B5, 424B3, N-2-A): searched IRR / internal rate of return / underlying fund performance \u2014 only false positives ('irrevocable trust'). What IS printed: SPV holdings at fair value in the Schedule of Investments and fair-value hierarchy (cell 3.4), and Note 5(b) footnotes stating that SPV management fees and future carried interest are embedded in the SPV fair values \u2014 i.e., the filings report position values, never underlying vehicle returns.",
+      "status": "n/a - not publicly available: underlying fund/GP-level returns are LP-only reporting; filings disclose holdings at fair value (see 3.4/SOI), not underlying fund IRRs",
+      "source": "N-CSR 2026-03-10 (FY2025), Note 5(b) footnotes (a)/(b); absence checked across 424B5 2026-05-26, 424B3 2026-05-12, N-2-A 2025-07-10",
+      "section": "Note 5(b) Management fees incurred by SPVs, footnotes; Schedule of Investments",
+      "quote": "The effect of future carried interest has been considered in the market value of the SPVs.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.6": {
       "element": "Volatility & max drawdown",
@@ -112,8 +127,13 @@
     },
     "2.2": {
       "element": "Incentive fee terms",
-      "value": null,
-      "status": "pending"
+      "value": "NO incentive/performance fee at the fund level \u2014 absence documented three ways: (1) the advisory-agreement compensation statement prints ONLY the Management Fee (2.50% annualized of average gross assets, payable quarterly) with no incentive-fee sentence anywhere in the Management/Investment Advisory Agreement sections; (2) the 424B5 Form N-2 fee table rows are Management Fee 2.18% / Interest on borrowed funds 0.00% / AFFE 0.03% / Other Expenses 2.35% / Total annual expenses 4.56% \u2014 no incentive-fee line item (N-2 fee table would require one if charged); (3) N-CSR Note 5(a) describes only the Original (2.00% on invested capital) and Revised (0.625%/quarter of gross assets) base management fees, and FY2025 related-party fees list no incentive amount. The only 'incentive fee' references in all four filings are to fees of underlying Private Funds/SPVs (see 2.5). Compensation note: 'None of the Adviser's investment professionals receive any direct compensation from us' (424B5).",
+      "status": "extracted-unverified",
+      "source": "424B5 2026-05-26 (prospectus summary + 'Management \u2014 Investment Advisory Agreement' + 'Fees and Expenses' table); corroborated by N-CSR 2026-03-10 Note 5(a)",
+      "section": "424B5 prospectus summary ('The Adviser') and Fees and Expenses annual-expenses table; N-CSR Note 5(a) Management Fee",
+      "quote": "Under the Investment Advisory Agreement, we pay the Adviser a Management Fee, payable quarterly, in an amount equal to 2.50% of our average gross assets",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.3": {
       "element": "Total expense ratio & waivers",
@@ -137,8 +157,13 @@
     },
     "2.5": {
       "element": "Underlying GP economics",
-      "value": null,
-      "status": "pending"
+      "value": "N-CSR Note 5(b) prints a complete SPV economics table ('Management fees incurred by SPVs'): 16 SPVs listed; ongoing management fees 0% for ALL 16; carried interest/incentive fees 0% for 14 of 16, the two exceptions being Khosla Ventures IFSPV II, LLC (Impossible Foods Series H Preferred) at 20% and MWAM VC SpaceX-II, LLC (SpaceX Class A/C common exposure) at 10%. Footnotes: management/other fees are considered in SPV fair value, upfront broker/management fees are included in cost of purchase, and future carried interest is considered in SPV market value. No printed fee RANGE for prospective underlying Private Funds \u2014 the 424B5 warns only generically that Private Fund fees 'may be higher' and that incentive fees create risk incentives, without stating rates; GP economics beyond this printed table are private-placement terms (LP-only documents).",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-03-10 (FY ended 12/31/2025)",
+      "section": "Note 5(b) \u2014 Management fees incurred by SPVs (table + footnotes (a)/(b)); generic Private Fund fee risk in 424B5 risk factors",
+      "quote": "Khosla Ventures IFSPV II, LLC (invested in Impossible Foods, Inc., Series H Preferred Stock) 0% 20%",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.6": {
       "element": "Loads & servicing fees",
@@ -172,8 +197,13 @@
     },
     "2.10": {
       "element": "Value justification",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell, not an extraction: the value-for-fees justification is the plan committee's determination built from the evidenced fee inputs (2.1 management fee 2.50% of gross assets, 2.2 no incentive fee, 2.3 expense ratio 4.53%, 2.4 AFFE 0.03%, 2.5 SPV carry 10-20% on two positions, 2.6 ATM commission up to 3.0%). No public filing can supply this determination.",
+      "status": "n/a - not publicly available: requires the plan committee's own value-for-fees determination - workflow output, not public product data (inputs live in cells 2.1-2.9)",
+      "source": "n/a (workflow determination; product-side inputs already extracted in cells 2.1-2.9)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
@@ -212,8 +242,13 @@
     },
     "3.6": {
       "element": "Fund leverage & facilities",
-      "value": null,
-      "status": "pending"
+      "value": "No borrowings, no credit facility, no preferred: (1) N-CSR balance sheet (12/31/2025) Total Liabilities $3,323,215 consist entirely of operating payables (management fees $1,891,641; professional $687,752; investments purchased $487,822; valuation $153,000; fund admin $48,000; printing $42,573; transfer agent $7,496; custody $1,300; other $3,631) \u2014 no debt line; zero N-CSR hits for credit facility / line of credit / borrowings outstanding. (2) 424B5 fee table: Interest payments on borrowed funds 0.00%, footnote (2) = quote; base prospectus: 'The Company does not expect to incur leverage within the 12 months following the filing of the registration statement on Form N-2'. (3) NPORT-P as of 3/31/2026 Item B.2.c: borrowings $0.00 in all four counterparty categories for both maturities ('Banks or other financial institutions for borrowings. 0.000000000000'); preferred liquidation preference $0. Authority PRESERVED: fund may lever up to 1940 Act limits (300% debt / 200% preferred asset coverage); the 2.50% management-fee base explicitly includes assets purchased with borrowings; Rule 18f-4 limited-derivatives-user (derivatives exposure <=10% of net assets) covers the SPV forward contracts.",
+      "status": "extracted-unverified",
+      "source": "424B5 2026-05-26 (Fees and Expenses footnote 2; leverage risk sections); N-CSR 2026-03-10 Statement of Assets and Liabilities; NPORT-P filed 2026-05-29 Item B.2.c",
+      "section": "424B5 'Fees and Expenses' footnote (2) + prospectus summary leverage paragraph; N-CSR Statement of Assets and Liabilities; NPORT-P Part B Item B.2.c",
+      "quote": "Within the first 12 months following the filing of this registration statement, we do not intend to borrow money or issue debt securities or preferred shares.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.7": {
       "element": "Plan participant liquidity demand",
@@ -277,8 +312,13 @@
     },
     "4.4": {
       "element": "Methodology by asset type",
-      "value": null,
-      "status": "pending"
+      "value": "Level 3 quantitative inputs table (N-CSR Note 3, as of 12/31/2025; fair value / technique / unobservable input / range(avg)): COMMON STOCKS $23,999,768 across 7 buckets \u2014 Market Approach: VWAP transaction prices $341,318 ($2.00-$4.25, avg $3.84); recent transaction price $1,968,480 ($6.57-$17.63, N/A); VWAP transaction+index prices $296,156 ($270.00-$286.00, avg $277.04); index price $1,416,993 ($17.13); average of broker quotes $2,522,487 ($3.00-$22.99, avg 13.08); recent transaction+index prices $12,438,334 ($1,442.37-$1,591.38, avg $1,516.87); plus Cost/investment cost $5,016,000. PREFERRED STOCKS $42,555,604 \u2014 recent transaction price $6,756,481 ($2.54-$61.47); Cost $29,999,942; Hybrid Method $3,779,775; Option Pricing Method $1,567,287; VWAP transaction+index $452,119 ($1.70-$286.00, avg $139.61). SPVs $157,719,451 \u2014 VWAP transaction+index $1,514,389 ($1.70-$12.10, avg $6.79); Cost $53,701,603; VWAP+index+recent transaction $72,588,698 ($389.39-$450.00, avg $424.65); average of broker quotes $9,028,126 ($723.00-$884.00, avg $803.50); index+broker quotes $17,871,884 ($82.52-$100.00, avg $92.76); recent transaction+broker quotes $364,210 ($203.50-$262.00, avg $236.50); index price $2,650,541 ($54.01). Total Level 3 $224,274,823. Narrative methodology: Income Approach (present value; Black-Scholes-Merton; binomial lattice) and Market Approach (comparable-company multiples); SPVs valued via third-party valuation agent considering SPV financials, market indications, carry fees, share parity, forward-contract credit risk; certain private funds at NAV practical expedient ($1,165,336, excluded from hierarchy). Per the Note 3 narrative, SPVs that have yet to purchase the underlying securities are held at cost; the common- and preferred-stock at-cost buckets carry no printed explanation.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-03-10 (FY ended 12/31/2025)",
+      "section": "Note 3 \u2014 Fair Value Measurements: quantitative Level 3 inputs table + Income/Market Approach and SPV valuation narrative",
+      "quote": "The following table summarizes the quantitative inputs and assumptions used for investments classified as Level 3 of the fair value hierarchy as of December 31, 2025",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.5": {
       "element": "Auditor & opinion",
@@ -327,8 +367,13 @@
     },
     "5.1": {
       "element": "Self-declared benchmark",
-      "value": null,
-      "status": "pending"
+      "value": "YES \u2014 the Fund itself declares the NASDAQ Composite Index as its benchmark, in two places in the N-CSR: (1) Manager's Commentary: FY2025 NAV +209.59% 'compares to a 20.36% return for the Nasdaq Composite, a benchmark'; (2) 'Performance and Graphical Illustrations' prints a comparison table under the heading 'Fund Benchmark': NASDAQ Composite Index one-year 20.36%, annualized since inception 28.65% (inception basis 5/12/2022), against Fund NAV 209.59% / 42.62% and Fund market price (47.96)% / 153.27%; footnote (c) describes the index composition. The segment-reporting note also references 'the Fund's comparative benchmarks'. No benchmark is declared in the 424B5/424B3/N-2-A (offering documents carry no performance-comparison section). Self-declaration is unambiguous; suitability of a listed mega-cap-weighted index for a quarterly-valued Level 3 VC portfolio is the 5.6/engine question, not this cell.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-03-10 (FY ended 12/31/2025)",
+      "section": "Manager's Commentary (Unaudited); Performance and Graphical Illustrations table ('Fund Benchmark' / 'NASDAQ Composite Index (c)')",
+      "quote": "This compares to a 20.36% return for the Nasdaq Composite, a benchmark, over the same period",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.2": {
       "element": "Public index series",
@@ -432,13 +477,23 @@
     },
     "6.6": {
       "element": "Plan operational fit",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell: operational fit (recordkeeper platform availability, exchange-traded ticket handling in a participant-directed menu, trading/settlement integration) depends on the specific plan's recordkeeper and trading stack, not on the product's public filings. Product-side facts already evidenced: NYSE-listed common stock, ticker DXYZ, daily exchange dealing (3.1), quarterly NAV only (4.1).",
+      "status": "n/a - not publicly available: requires plan-specific recordkeeper/trading integration facts - workflow cell completed per plan engagement, not public product data",
+      "source": "n/a (per-plan engagement workflow)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.7": {
       "element": "Participant communicability",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell: whether participants can be given a fair, comprehensible explanation of this product (premium/discount to a quarterly NAV, Level 3 SPV chains, no distributions) is the committee's communication assessment. Product-side inputs already extracted: structure map 6.1, strategy/instrument complexity 6.2, tax reporting 6.4.",
+      "status": "n/a - not publicly available: requires plan-committee participant-communication assessment - workflow cell; product-side inputs already evidenced in 6.1/6.2/6.4",
+      "source": "n/a (plan-committee workflow)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.8": {
       "element": "Fiduciary capacity self-assessment",

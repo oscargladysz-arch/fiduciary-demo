@@ -1,0 +1,10 @@
+{
+  "series": "breit_nav",
+  "class": "Class I",
+  "rows": 37,
+  "what": "monthly NAV per share as PRINTED in filings - NAV path only, distributions NOT included; suitable for smoothing/vol diagnostics of the appraisal process, NOT for total-return comparison",
+  "source": "10-K FY2025 (filed 2026-02-27) Item 5 'Offering of Common Stock' monthly NAV table (Jan 2023-Dec 2025); 10-Q Q2-2026 (filed 2026-08-07) NAV-by-class table (single Jun 2026 point; Jan-May 2026 not printed anywhere, NOT interpolated)",
+  "quote": "The following table presents our monthly NAV per share for each applicable share class from January 31, 2023 through December 31, 2025",
+  "extracted_by": "Claude Code (2026-08-09), adversarially verified vs raw HTML",
+  "status": "extracted-unverified"
+}

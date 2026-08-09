@@ -107,20 +107,58 @@ def stress_windows() -> dict:
     if ann_dir.exists():
         for f in sorted(ann_dir.glob("*.csv")):
             key = f.stem
+            if key in out:
+                continue  # daily tier already covered
             with open(f, newline="") as fh:
-                rows = list(csv.DictReader(fh))
-            shock = [r for r in rows if r.get("total_return_pct") and
-                     "2022-06" <= r["fy_end"] <= "2023-06"]
+                rows = [r for r in csv.DictReader(fh)
+                        if r.get("total_return_pct")]
+            if not rows:
+                continue
+            w = {"note": "annual disclosure cadence - fiscal-year figures are "
+                         "the finest public stress observations for this wrapper",
+                 "series": f"data/series_annual/{key}.csv"}
+            shock = [r for r in rows if "2022-06" <= r["fy_end"] <= "2023-12-31"]
             if shock:
-                out[key] = {
-                    "fy_spanning_2022_rate_shock": {
-                        "fy_end": shock[0]["fy_end"],
-                        "return_pct": float(shock[0]["total_return_pct"])},
-                    "note": "annual disclosure cadence - the fiscal year "
-                            "spanning the 2022 public-market drawdown is the "
-                            "finest public stress observation for this wrapper",
-                    "series": f"data/series_annual/{key}.csv"}
+                w["fy_spanning_2022_shock"] = {
+                    "fy_end": shock[0]["fy_end"],
+                    "return_pct": float(shock[0]["total_return_pct"])}
+            worst = min(rows, key=lambda r: float(r["total_return_pct"]))
+            w["worst_disclosed_fy"] = {"fy_end": worst["fy_end"],
+                                       "return_pct": float(worst["total_return_pct"])}
+            out[key] = w
     return out
+
+
+def breit_monthly_diagnostics() -> dict | None:
+    """Smoothing/vol diagnostics from BREIT's PRINTED monthly NAV path
+    (Class I, 10-K Item 5 table). NAV path only - distributions excluded -
+    valid for the appraisal-process diagnostics, NOT total-return comparison."""
+    from tark_analytics import (ann_vol, desmooth_geltner, lag1_autocorr,
+                                max_drawdown, period_returns)
+    p = DATA / "series_monthly" / "breit_nav.csv"
+    if not p.exists():
+        return None
+    with open(p, newline="") as fh:
+        rows = [(r["date"], float(r["nav_per_share"]))
+                for r in csv.DictReader(fh)]
+    # contiguous monthly run only (drop the isolated 2026-06 point)
+    monthly = [v for d, v in rows if d <= "2025-12-31"]
+    rets = period_returns(monthly)
+    rec, rho = desmooth_geltner(rets)
+    return {
+        "window": f"{rows[0][0]} to 2025-12-31 (contiguous monthly)",
+        "monthly_obs": len(rets),
+        "nav_path_ann_vol_pct": round(ann_vol(rets, 12) * 100, 2),
+        "lag1_autocorr_rho": round(lag1_autocorr(rets), 3),
+        "desmoothed_ann_vol_pct": round(ann_vol(rec, 12) * 100, 2),
+        "nav_path_max_drawdown_pct": round(max_drawdown(monthly) * 100, 2),
+        "drawdown_note": "peak-to-trough of the PRINTED NAV path (Jul 2023 "
+                         "peak to Dec 2024 trough region) - excludes "
+                         "distributions, so total-return drawdown is smaller",
+        "basis": "NAV path only (distributions excluded) - appraisal-process "
+                 "diagnostic, not a total-return figure",
+        "inputs": ["data/series_monthly/breit_nav.csv"],
+    }
 
 
 def main() -> None:
@@ -129,6 +167,7 @@ def main() -> None:
         "dxyz_premium": dxyz_premium(),
         "fee_percentile": fee_percentile(),
         "stress_windows": stress_windows(),
+        "breit_monthly_diagnostics": breit_monthly_diagnostics(),
     }
     OUT.write_text(json.dumps(doc, indent=2))
     print(f"wrote {OUT}")

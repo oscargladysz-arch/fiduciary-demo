@@ -1,0 +1,29 @@
+{
+  "kkr_kpec": {
+    "profile": {
+      "aatr": 0.1294,
+      "aatr_years": 2.334,
+      "fy_window": [
+        "2023-09-01",
+        "2025-12-31"
+      ],
+      "self_declared": null
+    },
+    "provenance": "Class I Transactional NAV Total Return, inception-to-date annualized 12.94% at 12/31/2025, class inception 2023-09-01 - cell 1.2 (10-K 2026-03-26 MD&A table); 5.1: no self-declared benchmark (documented absence)"
+  },
+  "breit": {
+    "profile": {
+      "fy_returns": [
+        -0.005,
+        0.02,
+        0.081
+      ],
+      "fy_window": [
+        "2022-12-31",
+        "2025-12-31"
+      ],
+      "self_declared": null
+    },
+    "provenance": "Class I Year-to-Date Total Return without upfront selling commissions: 2023 -0.5% (10-K FY2023 filed 2024-03-28, '2023 Highlights'), 2024 2.0% (10-K FY2024 filed 2025-03-07, '2024 Highlights'), 2025 8.1% (10-K FY2025 filed 2026-02-27, '2025 Highlights' - cell 1.2); 5.1: no self-declared benchmark (documented absence)"
+  }
+}

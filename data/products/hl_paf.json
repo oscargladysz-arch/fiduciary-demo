@@ -29,8 +29,13 @@
     },
     "1.3": {
       "element": "Gross vs net spread",
-      "value": null,
-      "status": "pending"
+      "value": "Class I gross vs net expense ratios (Consolidated Financial Highlights, FYE Mar 31): FY2026 gross 3.40% / net 3.40%; FY2025 2.93% / 2.93%; FY2024 4.26% / 4.26% - identical, zero spread ('Expense Recoupment/(Reimbursement)' row prints 0.00% all three years). INVERTED spread in earlier years: FY2023 gross 4.62% vs net 4.64% (recoupment +0.02%) and FY2022 gross 5.44% vs net 5.59% (recoupment +0.15%) - net EXCEEDED gross because the Adviser recouped previously waived/reimbursed amounts. Footnote 6: ratios INCLUDE incentive fees (excluding them, ratios would decrease 1.45% FY26 / 0.84% FY25 / 1.95% FY24) and 'Expenses do not include expenses from underlying funds' (i.e., AFFE excluded from the ratio).",
+      "status": "extracted-unverified",
+      "source": "N-CSR (FY2026 annual report), filed 2026-06-09 (raw: data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm)",
+      "section": "Consolidated Financial Highlights - Class I Shares (Gross expenses / Expense Recoupment/(Reimbursement) / Net expenses rows; footnote 6)",
+      "quote": "If Incentive Fees had been excluded, the expense ratios would have decreased by 1.45% for the year ended March 31, 2026",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.4": {
       "element": "Distribution history & composition",
@@ -44,8 +49,13 @@
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
-      "value": null,
-      "status": "pending"
+      "value": "No underlying fund, sleeve, or deal-level performance (IRRs, MOICs, TVPIs) is printed in any on-disk filing. Checked all four documents for 'IRR' / 'internal rate of return': zero performance-table hits (only unrelated prose). The SOI legend affirmatively disclaims underlying-level validation: fair values are estimated by the Valuation Designee and are not calculated, reviewed, verified or approved by the underlying investments or their GPs/managers/sponsors.",
+      "status": "n/a - not publicly available: underlying fund/GP-level returns are LP-only reporting; filings disclose holdings at fair value (see 3.4/SOI), not underlying fund IRRs",
+      "source": "N-CSR (FY2026 annual report), filed 2026-06-09 - Consolidated Schedule of Investments legend (absence search across hl_486bpos.txt, hl_ncsr.txt, hl_sctoi.txt, hl_424b3.txt)",
+      "section": "Consolidated Schedule of Investments (legend preceding holdings); absence search across all on-disk hl_paf filings",
+      "quote": "the Fair Value has not been calculated, reviewed, verified or in any way approved by such Direct Investment or Secondary Investment or its general partner",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.6": {
       "element": "Volatility & max drawdown",
@@ -79,8 +89,13 @@
     },
     "1.9": {
       "element": "Stress-window performance",
-      "value": null,
-      "status": "pending"
+      "value": "Stress observation (computed from extracted FY returns): FY ending 2023-03-31 - the fiscal year spanning the 2022 public-market drawdown - printed total return 16.1% (Class I); worst disclosed FY: 12.59% (2025-03-31). CAVEAT (methodology 3): a POSITIVE fiscal year through a -20% public-equity year is the appraisal-lag signature - smoothing, not immunity; see 1.8 window-sensitivity disclosure.",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (stress_windows.hl_paf)",
+      "section": "stress_windows",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.10": {
       "element": "Market price & premium/discount",
@@ -139,8 +154,13 @@
     },
     "2.5": {
       "element": "Underlying GP economics",
-      "value": null,
-      "status": "pending"
+      "value": "Printed ranges of underlying Portfolio Fund economics (486BPOS, 2021-dated; appears twice - fee-table footnote 8 and the fees risk discussion): asset-based fees payable to Portfolio Fund Managers generally range from 1% to 2.5% (annualized) of the COMMITMENT AMOUNT of the Fund's investment; performance/incentive fees or allocations typically 10% to 20% of a Portfolio Fund's net profits annually, 'although it is possible that such amounts may be exceeded for certain Portfolio Fund Managers.' Mitigant printed in footnote 8: historically 'a substantial majority of the direct investments made by the Adviser and its affiliates on behalf of their clients have been made without any acquired fees' (free of management and performance fees typically charged by Portfolio Fund Managers). Each Portfolio Fund's performance fee accrues irrespective of other Portfolio Funds or overall Fund performance (netting risk disclosed). Fund-specific fee levels of individual underlying funds remain private-placement/LP-only terms - only these ranges are public. Cross-ref 2.4: AFFE line 0.49% per class (2021 fee table).",
+      "status": "extracted-unverified",
+      "source": "486BPOS base prospectus+SAI, 2021-07-29 (2021-dated) (raw: data/raw/hl_paf/486BPOS_2021-07-29_fp0067291_486bpos.htm)",
+      "section": "SUMMARY OF FUND EXPENSES footnote 8; risk discussion of Portfolio Fund fees (stripped text lines ~1104-1119 and ~2974-2982)",
+      "quote": "asset-based fees payable to Portfolio Fund Managers of the Portfolio Funds will range from 1% to 2.5% (annualized) of the commitment amount",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.6": {
       "element": "Loads & servicing fees",
@@ -179,8 +199,13 @@
     },
     "2.10": {
       "element": "Value justification",
-      "value": null,
-      "status": "pending"
+      "value": "Not a product-data cell. The value-for-fees justification is the plan committee's determination synthesizing the fee facts already evidenced in 2.1-2.9 (1.40% management fee on Managed Assets, 12.50%/10.00% incentive structures, expense caps, AFFE, loads/servicing, early repurchase fee, underlying GP economics ranges).",
+      "status": "n/a - not publicly available: requires the plan committee's own value-for-fees determination - workflow output, not public product data (inputs live in cells 2.1-2.9)",
+      "source": "n/a (workflow cell)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
@@ -194,13 +219,23 @@
     },
     "3.2": {
       "element": "Repurchase mechanics",
-      "value": null,
-      "status": "pending"
+      "value": "Q2-2026 tender mechanics (SC TO-I filed 2026-05-06; Rule 13e-4 issuer tender offer, all three classes): SIZE up to ~5.00% of 3/31/2026 net assets (~$290,123,923, ~15,084,500 shares; NAV/share 3/31/26: Class D $19.27, I $19.53, R $18.78). NOTICE/EXPIRATION: tenders due 11:59 p.m. ET June 4, 2026 ('Initial Notice Due Date' = offer expiration), Letter of Transmittal to UMB Fund Services (mail, fax, or email), Board may extend in absolute discretion. PRICING: NAV calculated as of Valuation Date June 30, 2026 (or later if extended; Fund reserves right to adjust Valuation Date to match extensions); tendering shareholder remains a shareholder through the June 30, 2026 'Repurchase Date' even after acceptance. SETTLEMENT: repurchase price remitted within 5 business days of the NAV determination as of the Valuation Date, entirely in cash, funded from cash on hand, sale of portfolio holdings, or borrowings. PRORATION: if oversubscribed, Fund may accept up to an additional 2.00% of aggregate NAV without amending/extending (sole discretion, no guarantee); otherwise repurchases only a pro rata portion of each shareholder's tender. WITHDRAWAL RIGHTS: any time until the Notice Due Date (withdrawn shares re-tenderable before the deadline); plus a statutory-style right to withdraw after July 2, 2026 (40 business days from commencement) if tender not yet accepted. OTHER: 2.00% early repurchase fee if held <1 year, FIFO, Board-waivable; $10,000 minimum remaining balance on partial tenders (Fund may cut back the repurchase or repurchase all shares); Fund may suspend/postpone/terminate on majority-Board determination (e.g., when disposal of investments or NAV determination is not reasonably practicable). Cadence context (N-CSR Note 13): no shareholder redemption right; Adviser anticipates recommending offers of no more than 5.00% of net assets generally quarterly on or about each Dec 31, Mar 31, Jun 30, Sep 30.",
+      "status": "extracted-unverified",
+      "source": "SC TO-I filed 2026-05-06 (raw: data/raw/hl_paf/SC TO-I_2026-05-06_ea0288793-01_sctoi.htm); cadence per N-CSR filed 2026-06-09, Note 13",
+      "section": "Item 1 Summary Term Sheet; Item 4 Terms of the Tender Offer (a)(1)(i)-(vi); N-CSR Note 13 - Capital Share Transactions",
+      "quote": "remit the repurchase price to Shareholders, less any applicable early repurchase fee, within 5 business days of the date of determination of the Fund\u2019s NAV",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.3": {
       "element": "Repurchase history",
-      "value": null,
-      "status": "pending"
+      "value": "CONTINUITY: SC TO-I Item 5 states the Fund 'has previously offered to repurchase Shares ... on a quarterly basis beginning with the quarter ended June 30, 2021' - an unbroken quarterly tender record since the first full quarter after the January 4, 2021 operations start. EXECUTED REPURCHASES (N-CSR Consolidated Statements of Changes in Net Assets, 'Shares tendered', FY2026 vs FY2025 dollars): Class I $(147,776,713) vs $(111,313,752); Class R $(56,533,636) vs $(20,241,872); Class D $(2,614,437) vs $(3,426,986). Share counts (Shareholder Activity): Class I 7,739,785 vs 6,605,251; Class R 3,071,889 vs 1,219,592; Class D 137,585 vs 202,209. Early-repurchase-fee proceeds netted against tenders: Class I $69,956 (FY26) / $32,669 (FY25); Class R $41,753 / $15,754 (footnotes 1-2). NEXT OFFER (N-CSR Note 20 subsequent events): Board authorized repurchase of up to ~5.00% of net assets ('approximately $290,129,923 as of March 31, 2026, with a June 30, 2026 valuation date'; tender deadline June 4, 2026). Minor cross-document discrepancy: N-CSR prints $290,129,923 vs SC TO-I $290,123,923 for the same offer. NOT PRINTED: shares tendered-but-not-accepted / proration incidence per offer - neither document reports whether any prior quarterly offer was oversubscribed or prorated, so tendered-vs-repurchased cannot be split from these filings (per-offer results appear in final tender amendments not on disk).",
+      "status": "extracted-unverified",
+      "source": "SC TO-I filed 2026-05-06, Item 5 (raw: data/raw/hl_paf/SC TO-I_2026-05-06_ea0288793-01_sctoi.htm); N-CSR filed 2026-06-09 - Consolidated Statements of Changes in Net Assets, Shareholder Activity, Note 20",
+      "section": "SC TO-I Item 5; N-CSR Consolidated Statements of Changes in Net Assets ('Shares tendered' rows + footnotes 1-2) and Note 20 - Subsequent Events",
+      "quote": "has previously offered to repurchase Shares from Shareholders pursuant to written tenders on a quarterly basis beginning with the quarter ended June 30, 2021.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.4": {
       "element": "Portfolio liquidity profile",
@@ -289,8 +324,13 @@
     },
     "4.4": {
       "element": "Methodology by asset type",
-      "value": null,
-      "status": "pending"
+      "value": "Note 4 quantitative unobservable-inputs table as of 3/31/2026 (Level III only, $562,354,022 total; the $5,037,585,848 valued at NAV practical expedient - i.e., the bulk of the portfolio - is EXCLUDED from this table and is carried at the Fund's pro-rata interest in underlying-fund-reported NAV): DIRECT CREDIT $79,199,618 - Income Approach / Yield to Maturity, range 9.2%-29.1%, wtd avg 13.40% (increase in input -> Decrease in value); Recent Transaction (N/A range); Market Approach / EBITDA Multiple 7.5x-9.5x, wtd avg 7.5x (-> Increase); Broker Quote (N/A). DIRECT EQUITY $455,391,311 - Market Approach / EBITDA Multiple 5.0x-25.3x, wtd avg 12.5x (-> Increase); NFY EBITDA Multiple 5.5x-9.3x, wtd avg 7.6x (-> Increase); Revenue Multiple 1.5x-7.0x, wtd avg 4.5x (-> Increase); Recent Transaction (N/A); Income Approach / Yield to Maturity 19.6 (single input, wtd avg N/A, -> Decrease). SECONDARY DIRECT EQUITY $27,763,093 - Market Approach / EBITDA Multiple 15.0x (N/A wtd avg, -> Increase); ARR Multiple 12.5x (N/A wtd avg, -> Increase). Weighted averages are by relative fair value within asset class (fn 2); fn 3 defines the directional-impact column.",
+      "status": "extracted-unverified",
+      "source": "N-CSR (FY2026 annual report), filed 2026-06-09 (raw: data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm)",
+      "section": "Note 4 - Portfolio Valuation: quantitative information about Level III valuation methodologies and inputs (table + footnotes 1-3)",
+      "quote": "additional quantitative information about valuation methodologies and inputs used for investments that are measured at fair value and categorized within Level III as of March 31, 2026",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.5": {
       "element": "Auditor & opinion",
@@ -449,13 +489,23 @@
     },
     "6.6": {
       "element": "Plan operational fit",
-      "value": null,
-      "status": "pending"
+      "value": "Not a product-data cell. Operational-fit inputs that ARE public are already evidenced elsewhere: monthly subscriptions/monthly NAV (4.1), quarterly board-approved tenders with 5-business-day settlement (3.2), UMB Fund Services as TA/administrator and manual Letter of Transmittal tender workflow (6.5/3.2), $1,000,000 Class I minimum (N-CSR Note 13). Whether a given plan's recordkeeper can trade/settle this wrapper is a per-engagement fact.",
+      "status": "n/a - not publicly available: requires plan-specific recordkeeper/trading integration facts - workflow cell completed per plan engagement, not public product data",
+      "source": "n/a (workflow cell)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.7": {
       "element": "Participant communicability",
-      "value": null,
-      "status": "pending"
+      "value": "Not a product-data cell. Product-side communicability inputs already on file: structure map with six subsidiaries/blockers (6.1), sleeve complexity and 80% private-assets policy (6.2), 1099-DIV-only tax reporting with UBTI blocking (6.4). Judging whether participants can understand the product is the committee's assessment.",
+      "status": "n/a - not publicly available: requires plan-committee participant-communication assessment - workflow cell; product-side inputs already evidenced in 6.1/6.2/6.4",
+      "source": "n/a (workflow cell)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.8": {
       "element": "Fiduciary capacity self-assessment",

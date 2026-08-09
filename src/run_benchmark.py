@@ -12,7 +12,22 @@ from tark_benchmark import PRODUCT_PROFILES, run_selection
 outdir = DATA / "benchmarks"
 outdir.mkdir(exist_ok=True)
 
+# inject return-profile inputs extracted from cell 1.2 evidence (structured
+# artifact written by the coverage pipeline — facts live in the data layer,
+# not in engine code)
+pi_path = DATA / "benchmarks" / "profiles_input.json"
+if pi_path.exists():
+    for key, inp in json.loads(pi_path.read_text()).items():
+        if key in PRODUCT_PROFILES:
+            PRODUCT_PROFILES[key].update(inp["profile"])
+
 for key in PRODUCT_PROFILES:
+    if PRODUCT_PROFILES[key].get("granularity") == "annual" and not (
+            PRODUCT_PROFILES[key].get("fy_returns")
+            or PRODUCT_PROFILES[key].get("aatr_5yr")
+            or PRODUCT_PROFILES[key].get("aatr")):
+        print(f"=== {key}: profile inputs not yet extracted - skipped")
+        continue
     sel = run_selection(key)
     (outdir / f"{key}_selection.json").write_text(json.dumps(sel, indent=2))
     print(f"\n=== {key} ({sel['strategy']}) ===")

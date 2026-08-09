@@ -109,7 +109,7 @@ with sync_playwright() as pw:
     check("plans: avg balance $110,515 rendered", "110,515" in t)
     check("plans: liquidity tail 1,847 rendered", "1,847" in t)
     t = view_text("benchmarks", product="cliffwater_cclfx")
-    check("benchmark cclfx: KS-PME 1.2519 on screen", "1.2519" in t)
+    check("benchmark cclfx: KS-PME 1.2532 on screen", "1.2532" in t)
     check("benchmark cclfx: CDLI sits in rejection log",
           "Cliffwater Direct Lending Index" in t)
     check("benchmark cclfx: independence rejection is truthful",

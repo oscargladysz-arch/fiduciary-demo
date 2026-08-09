@@ -4,7 +4,7 @@
  * every citation panel is the cell's own provenance record. */
 
 import { cumulativeGrowth, desmoothGeltner, directAlpha, ksPme, annVol,
-         monthEndPoints, periodReturns, stdev } from "./analytics.js";
+         levelOn, monthEndPoints, periodReturns, stdev } from "./analytics.js";
 import { computeScenario, scenarioReason } from "./liquidity.js";
 import { lineChart } from "./charts.js";
 
@@ -282,10 +282,13 @@ export function viewBenchmarks(root, state, setState) {
 }
 
 /* ============================================================ helpers for PME */
-function windowGrowthMonthly(series, d0, d1) {
+// Fund growth is DAILY-ANCHORED (window last/first observation) to mirror the
+// Python engine's 2026-08-09 correction; the month-end points are only for
+// drawing the line, never for the KS-PME / Direct Alpha math.
+function windowGrowthDaily(series, d0, d1) {
   const win = series.filter(([d]) => d >= d0 && d <= d1);
   const me = monthEndPoints(win);
-  return { growth: cumulativeGrowth(periodReturns(me.map(([, v]) => v))), me };
+  return { growth: win[win.length - 1][1] / win[0][1], me };
 }
 
 export function pmeCompute(fundFlows, indexDaily, d0, d1) {
@@ -378,7 +381,7 @@ export function viewPme(root, state, setState) {
       });
     } else {
       d1 = fundDaily[fundDaily.length - 1][0];
-      const { growth, me } = windowGrowthMonthly(fundDaily, d0, d1);
+      const { growth, me } = windowGrowthDaily(fundDaily, d0, d1);
       fGrowth = growth;
       let acc = 1;
       fundPts = [[me[0][0], 1]];
@@ -390,7 +393,8 @@ export function viewPme(root, state, setState) {
     const { ks, da } = pmeCompute(flows, idxDaily, d0, d1);
     const idxWin = idxDaily.filter(([d]) => d >= d0 && d <= d1);
     const idxMe = monthEndPoints(idxWin);
-    const iGrowth = cumulativeGrowth(periodReturns(idxMe.map(([, v]) => v)));
+    // daily-anchored index growth (levelOn: at-or-before), mirroring the engine
+    const iGrowth = levelOn(idxDaily, d1) / levelOn(idxDaily, d0);
     let acc = 1;
     const idxPts = [[idxMe[0][0], 1]];
     periodReturns(idxMe.map(([, v]) => v)).forEach((r, j) => {

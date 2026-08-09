@@ -1,0 +1,41 @@
+{
+  "generated": "2026-08-09",
+  "series": {
+    "hl_paf": {
+      "rows": 5,
+      "note": "Class I Shares (primary class), per 'Consolidated Financial Highlights - Class I Shares' table in the FY2026 N-CSR (filed 2026-06-09; raw: data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm; stripped text /private/tmp/claude-501/-Users-oscargladysz-Projects-fiduciary-demo/59a632f0-edb6-4876-bce2-9c7d537ea82e/scratchpad/hl_ncsr.txt lines ~11460-11945). NAV per share is 'Net Asset Value per share, end of period'; total return is the 'Total Return' row (footnote 7: NAV-based, assumes distribution reinvestment, excludes sales charges; footnote 8: includes GAAP adjustments so may differ from shareholder-transaction NAV/returns); distributions are 'Total distributions to investors' - every year entirely 'From net realized gains'. All five fiscal years printed in the table are included; nothing interpolated.",
+      "verified_by_adversarial_agent": "OK - all 15 numbers verified against the 'Consolidated Financial Highlights - Class I Shares' table (hl_ncsr.txt ~11460-",
+      "source": "extracted evidence cells 1.1/1.2 (financial highlights / 10-K NAV tables); see product evidence CSV"
+    },
+    "cliffwater_cclfx": {
+      "rows": 6,
+      "note": "Class I (the fund's only issued share class). Table: 'Consolidated Financial Highlights - Class I', N-CSR filed 2026-06-08 (fiscal year ended March 31, 2026), stripped text /private/tmp/claude-501/-Users-oscargladysz-Projects-fiduciary-demo/59a632f0-edb6-4876-bce2-9c7d537ea82e/scratchpad/ccl_ncsr.txt (chars ~916900-923000). nav_per_share = 'Net asset value, end of period'; total_return_pct = 'Total return' row (footnote 3: returns would have been lower absent waivers; 1.79% stub not annualized per footnote 4); distribution_per_share = 'Total Distributions to shareholders' per share (sign dropped). Only the six periods printed in the table are returned; the table's earliest printed period is CY2021 (no FY2019/FY2020 rows are printed in this filing).",
+      "verified_by_adversarial_agent": "OK",
+      "source": "extracted evidence cells 1.1/1.2 (financial highlights / 10-K NAV tables); see product evidence CSV"
+    },
+    "dxyz": {
+      "rows": 4,
+      "note": "Class: common stock \u2014 the Fund's sole share class (500,000,000 shares authorized, $0.00001 par; no other class exists). Exact table cited: 'Financial Highlights' in N-CSR filed 2026-03-10 (FY ended 12/31/2025), columns FY2025/FY2024/FY2023/FY2022; nav_per_share = row 'Net Asset Value, End of Period' ($19.93 / $6.44 / $4.84 / $5.22); total_return_pct = row 'Total Return on Net Asset Value' (209.59% / 33.12% / (7.29)% / 426.08%). distribution_per_share = 0.00 because the table prints NO distribution line items in any year and Note 8 (Tax) prints total distributions paid of $\u2014 for 2025 and 2024 ('There were no distributions for the period ended December 31, 2025'). CAVEATS: FY2022 return per footnote (5) was computed using the absolute value of a NEGATIVE 1/1/2022 NAV of $(1.60) and excludes SAFE-conversion holders \u2014 treat as non-comparable; FY2025 NAV includes +$9.95/share printed 'Impact of at-the-market offering' (accretive premium ATM issuance). Total Return on MARKET Value rows in the same table (613.45% for 3/26/2024-12/31/2024; (47.96)% for 2025) are carried in cell 1.2, not this series. Stripped text: /private/tmp/claude-501/-Users-oscargladysz-Projects-fiduciary-demo/59a632f0-edb6-4876-bce2-9c7d537ea82e/scratchpad/dxyz_ncsr.txt.",
+      "verified_by_adversarial_agent": "OK \u2014 every number verified against the Financial Highlights table in N-CSR 2026-03-10: nav_per_share row 'Net Asset Valu",
+      "source": "extracted evidence cells 1.1/1.2 (financial highlights / 10-K NAV tables); see product evidence CSV"
+    },
+    "kkr_kpec": {
+      "rows": 3,
+      "note": "Class I Shares (primary class: no sales load, no distribution/servicing fee, 8,385 holders at 2/28/2026 - largest institutional-facing class). Source: Form 10-K (FY2025), filed 2026-03-26, Note 10. Financial Highlights - rows 'Net asset value per share at the end of year' and 'Total GAAP return attributed to Shares based on net asset value', Class I column, from the FY2025 schedule plus the FY2024 and 8/1/2023-12/31/2023 comparative schedules in the same note. distribution_per_share is 0.00 for every year because footnote (9) states the Company did not declare or pay any distributions during 2025, 2024 or 2023. The 2023 row covers only 8/1-12/31/2023 and is not annualized. These GAAP NAV returns differ slightly from the MD&A 'Transactional NAV Total Returns' already held in cell 1.2 (FY2025 Class I: 16.14% GAAP vs 16.81% transactional).",
+      "verified_by_adversarial_agent": "OK",
+      "source": "extracted evidence cells 1.1/1.2 (financial highlights / 10-K NAV tables); see product evidence CSV"
+    },
+    "breit": {
+      "rows": 3,
+      "note": "Class I shares (no upfront loads or servicing fee; gross = net distribution). Sources, all FY2025 10-K (filed 2026-02-27): nav_per_share = December 31 rows of the 'monthly NAV per share for each applicable share class from January 31, 2023 through December 31, 2025' table, Item 7 MD&A - Net Asset Value (p.122); distribution_per_share = 'Net distributions declared per share of common stock', Class I column, Note 14 'aggregate distributions declared for each applicable class of common stock' tables (Years Ended December 31, 2025/2024/2023: $0.6593 / $0.6610 / $0.6660); total_return_pct = 2025 only, 'Year-to-Date Total Return, without upfront selling commissions' Class I 8.1% from the Item 7 MD&A '2025 Highlights' table (p.134). Calendar-year 2023 and 2024 total returns are NOT printed in this 10-K (each year's return appears only in that year's 10-K, not on disk) - left null, not computed. Inception-to-date Class I total return 9.3% annualized (same 2025 Highlights table).",
+      "verified_by_adversarial_agent": "OK",
+      "source": "extracted evidence cells 1.1/1.2 (financial highlights / 10-K NAV tables); see product evidence CSV"
+    },
+    "stepstone_spm": {
+      "rows": 5,
+      "note": "Class I (primary class: $4,370,857 thousand net assets at 3/31/2026, largest of the four classes). Exact table cited: 'StepStone Private Markets - Consolidated Financial Highlights - Class I' in N-CSR filed 2026-06-09 (FY ended 3/31/2026), five-year columns FY2022-FY2026. nav_per_share = 'Net Asset Value per share, end of period' row ($61.74/$56.54/$51.73/$45.61/$43.07); total_return_pct = 'Total return' row (10.47/10.76/13.79/8.23/29.43; net of fund expenses, assumes reinvestment at NAV, per-footnote would differ absent recoupment/waiver); distribution_per_share = 'Total distributions' row (0.70/0.72/0.16/0.96/0.48). FY2021 (inception 10/1/2020-3/31/2021) is NOT printed in this table (five-year window) and the 486BPOS 2025-10-20 incorporates financial highlights by reference to the FY2025 N-CSR rather than printing rows, so no FY2021 row is returnable from on-disk documents. All rows verified verbatim (whitespace-normalized) against the stripped N-CSR. Local file: /Users/oscargladysz/Projects/fiduciary-demo/data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm",
+      "verified_by_adversarial_agent": "OK",
+      "source": "extracted evidence cells 1.1/1.2 (financial highlights / 10-K NAV tables); see product evidence CSV"
+    }
+  }
+}

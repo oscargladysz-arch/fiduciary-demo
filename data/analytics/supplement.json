@@ -85,6 +85,67 @@
     "dxyz": {
       "worst_peak_to_trough_full_history_pct": -90.35,
       "series": "data/series/dxyz.csv"
+    },
+    "breit": {
+      "note": "annual disclosure cadence - fiscal-year figures are the finest public stress observations for this wrapper",
+      "series": "data/series_annual/breit.csv",
+      "fy_spanning_2022_shock": {
+        "fy_end": "2023-12-31",
+        "return_pct": -0.5
+      },
+      "worst_disclosed_fy": {
+        "fy_end": "2023-12-31",
+        "return_pct": -0.5
+      }
+    },
+    "hl_paf": {
+      "note": "annual disclosure cadence - fiscal-year figures are the finest public stress observations for this wrapper",
+      "series": "data/series_annual/hl_paf.csv",
+      "fy_spanning_2022_shock": {
+        "fy_end": "2023-03-31",
+        "return_pct": 16.1
+      },
+      "worst_disclosed_fy": {
+        "fy_end": "2025-03-31",
+        "return_pct": 12.59
+      }
+    },
+    "kkr_kpec": {
+      "note": "annual disclosure cadence - fiscal-year figures are the finest public stress observations for this wrapper",
+      "series": "data/series_annual/kkr_kpec.csv",
+      "fy_spanning_2022_shock": {
+        "fy_end": "2023-12-31",
+        "return_pct": 1.63
+      },
+      "worst_disclosed_fy": {
+        "fy_end": "2023-12-31",
+        "return_pct": 1.63
+      }
+    },
+    "stepstone_spm": {
+      "note": "annual disclosure cadence - fiscal-year figures are the finest public stress observations for this wrapper",
+      "series": "data/series_annual/stepstone_spm.csv",
+      "fy_spanning_2022_shock": {
+        "fy_end": "2023-03-31",
+        "return_pct": 8.23
+      },
+      "worst_disclosed_fy": {
+        "fy_end": "2023-03-31",
+        "return_pct": 8.23
+      }
     }
+  },
+  "breit_monthly_diagnostics": {
+    "window": "2023-01-31 to 2025-12-31 (contiguous monthly)",
+    "monthly_obs": 35,
+    "nav_path_ann_vol_pct": 2.41,
+    "lag1_autocorr_rho": 0.483,
+    "desmoothed_ann_vol_pct": 4.12,
+    "nav_path_max_drawdown_pct": -7.93,
+    "drawdown_note": "peak-to-trough of the PRINTED NAV path (Jul 2023 peak to Dec 2024 trough region) - excludes distributions, so total-return drawdown is smaller",
+    "basis": "NAV path only (distributions excluded) - appraisal-process diagnostic, not a total-return figure",
+    "inputs": [
+      "data/series_monthly/breit_nav.csv"
+    ]
   }
 }

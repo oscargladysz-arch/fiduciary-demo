@@ -7,8 +7,13 @@
   "cells": {
     "1.1": {
       "element": "Net total return series",
-      "value": null,
-      "status": "pending"
+      "value": "Annual NAV per share, Class I (Note 10. Financial Highlights): $25.88 at 12/31/2023 (issued at $25.47 from 9/1/2023 inception; period 8/1-12/31/2023), $28.94 at 12/31/2024, $33.61 at 12/31/2025. Net total return series, Class I ('Total GAAP return attributed to Shares based on net asset value'): 1.63% (8/1/2023-12/31/2023, not annualized), 11.82% (FY2024), 16.14% (FY2025). No distributions ever declared (footnote 9), so the NAV path IS the net total-return path. All-class year-end 2025 NAV per share: D $32.72 / I $33.61 / S $30.98 / U $30.97 / R-D $32.53 / R-I $33.28 / R-U $30.75 / F $35.37 / G $35.09 / H $35.09. Note: GAAP NAV returns differ slightly from the MD&A 'Transactional NAV Total Returns' in cell 1.2 (FY2025 Class I 16.14% GAAP vs 16.81% transactional).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Note 10. Financial Highlights - per-share schedules for FY2025, FY2024 and period 8/1/2023-12/31/2023",
+      "quote": "Net asset value per share at the end of year (December 31, 2025) | $ | 32.72 | $ | 33.61",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.2": {
       "element": "Trailing & calendar-year returns",
@@ -22,8 +27,13 @@
     },
     "1.3": {
       "element": "Gross vs net spread",
-      "value": null,
-      "status": "pending"
+      "value": "No 1940-Act-style gross/net fee table exists (non-'40-Act 10-K filer). Financial highlights print expense ratios to NAV before vs after Manager reimbursement/recoupment. FY2025 Class I: 0.32% operating expenses BEFORE expenses recouped by Manager vs 0.44% AFTER recoupment - spread +0.12 pp with the direction REVERSED from a normal waiver: after the Expense Limitation Agreement expired 6/30/2025 the Manager recouped previously absorbed amounts, so the net ratio is HIGHER than gross. Adding Performance Participation Allocation of 2.75% gives FY2025 Class I total operating expenses of 3.19% (Management Fee contributes ~0 because it was fully offset by Other Fees in 2025 and 2024; class-level distribution/servicing fees are per-share capital-activity deductions, not in these ratios). FY2025 total-expense range across investor classes: 2.74% (S) to 3.59% (R-U). FY2024 Class I: 0.48% before vs 0.61% after recoupment; total incl. 1.51% PPA = 2.12%. FY2023 (8/1-12/31, not annualized) Class I: 1.21% before reimbursement vs 0.37% after - the only period where waivers reduced expenses.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Note 10. Financial Highlights - 'Ratios to net asset value' (FY2025, FY2024, 2023-period schedules)",
+      "quote": "Operating expenses before expenses recouped by Manager (5)(6) | 0.30 | % | 0.32 | %",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.4": {
       "element": "Distribution history & composition",
@@ -37,8 +47,13 @@
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
-      "value": null,
-      "status": "pending"
+      "value": "The 10-K's Schedule of Investments columns are Issuer | Asset | Industry | Geography | Valuation Level | Currency | Settlement Date | Notional | Estimated Fair Value | Estimated Fair Value as a Percentage of Net Assets - no cost basis, no IRR, no MOIC, no per-deal return of any kind. K-PEC holds portfolio companies through JV aggregators (e.g., KKR Modena/Precise/Compass Aggregator L.P.), whose performance reporting is KKR LP-only.",
+      "status": "n/a - not publicly available: no underlying JV/deal-level performance is printed - zero hits for IRR, MOIC or 'multiple of invested' in the FY2025 10-K; the Condensed Consolidated Schedule of Investments discloses each portfolio company only at estimated fair value and % of net assets (see 3.4/4.2), and JV/portfolio-company return reporting is KKR private LP-only reporting",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Condensed Consolidated Schedule of Investments as of December 31, 2025",
+      "quote": "Estimated Fair Value | Estimated Fair Value as a Percentage of Net Assets",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.6": {
       "element": "Volatility & max drawdown",
@@ -62,13 +77,23 @@
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": null,
-      "status": "pending"
+      "value": "KS-PME 0.8964 / Direct Alpha -4.58%/yr vs listed-PE proxy PSP over 2023-09-01 to 2025-12-31 (fund growth 1.3285x from the printed Class I inception-to-date annualized 12.94%; index 1.4819x). Fund lagged the listed proxy over its short (2.3yr) life. CAVEATS: very short window; transactional-NAV basis; appraisal-lag window sensitivity applies.",
+      "status": "computed",
+      "source": "data/benchmarks/kkr_kpec_selection.json (primary.comparison)",
+      "section": "primary.comparison",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
-      "value": null,
-      "status": "pending"
+      "value": "Documented impossibility: inception (initial capitalization) December 6, 2022; principal operations from August 1, 2023. First full calendar year is 2024. No stress-window observation is possible until the next systemic drawdown occurs during the fund's life.",
+      "status": "n/a - not publicly available: the Company commenced principal operations August 1, 2023, so its track record spans no major stress window (2008 GFC, March 2020 COVID drawdown, 2022 rate shock) - stress-window performance cannot exist for this vehicle",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Item 7. MD&A - Overview; Note 1. Organization",
+      "quote": "The Company commenced principal operations on August 1, 2023.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.10": {
       "element": "Market price & premium/discount",
@@ -127,8 +152,13 @@
     },
     "2.5": {
       "element": "Underlying GP economics",
-      "value": null,
-      "status": "pending"
+      "value": "No numeric underlying-fee ranges are printed anywhere in the FY2025 10-K (no '1% to 2%'/'10% to 20%'-style table exists; the fund owns portfolio companies via JVs, not underlying GP funds). Printed qualitative economics: (a) where the Company enters Joint Ventures with THIRD-PARTY managers, such managers 'may receive management fees and/or performance-based compensation such as a carried interest and/or incentive allocations' in the JV vehicles - compensation that reduces the Company's returns and is NOT shared with the Company or offset against Offsetable Fees (Item 13); (b) commingled-fund/continuation-vehicle interests bought in secondaries carry the underlying fund's economic terms, which the Company 'will generally not have the ability to modify or amend'; (c) commingled-fund exposure is non-principal and capped indirectly (no more than 5% of assets in blind pools). Actual rate levels sit in JV/fund private-placement documents (LP-only terms) and are not disclosed.",
+      "status": "partial",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Item 13 - Potential Conflicts of Interest (Joint Ventures with third-party managers); Item 1A Risk Factors (secondary/commingled fund acquisitions); Item 1. Business (portfolio construction guidelines)",
+      "quote": "such third party managers or other persons may receive management fees and/or performance-based compensation such as a carried interest and/or incentive allocations",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.6": {
       "element": "Loads & servicing fees",
@@ -167,8 +197,13 @@
     },
     "2.10": {
       "element": "Value justification",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell completed by the plan committee during the engagement; product-side fee evidence is already extracted in cells 2.1-2.7.",
+      "status": "n/a - not publicly available: requires the plan committee's own value-for-fees determination - workflow output, not public product data (inputs live in cells 2.1-2.9)",
+      "source": "workflow (plan committee)",
+      "section": "n/a - workflow cell; no filing section exists",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
@@ -182,13 +217,23 @@
     },
     "3.2": {
       "element": "Repurchase mechanics",
-      "value": null,
-      "status": "pending"
+      "value": "Quarterly repurchase offers under the share repurchase plan; all limits, prices and fees calculated on Transactional NAV. PRICING: repurchase price = NAV per share as of the last day of the immediately preceding quarter (repurchased shares are deemed repurchased on the last calendar day of the month immediately preceding the repurchase date for NAV-allocation, and bear no PPA/Management/Servicing/Distribution fees accrued in the first month of the repurchase quarter). The quarterly transaction price must be posted at www.kkrpec.com by the 10th business day before the repurchase date, else the Company may extend the offer or reject that quarter's requests. CAP: 5.0% per calendar quarter of the aggregate NAV attributable to the plan-covered classes - Class S, D, U, I, R-S, R-D, R-U, R-I and F Shares (i.e., Investor Shares plus Class F) - measured using the average aggregate NAV attributable to those classes as of the end of the immediately preceding quarter. PRORATION: requests due to death, divorce, dissolution, bankruptcy, insolvency or adjudicated incompetence are satisfied first, then remaining requests pro rata (allocated without regard to class); unsatisfied requests do NOT carry over - they must be resubmitted the next quarter. WITHDRAWAL: requests may be withdrawn before the plan's quarterly deadline (specific deadline date not printed in the 10-K). EARLY REPURCHASE FEE: 5.0% of NAV if Investor Shares are repurchased within 24 months of issue (see 2.7). EXCESS SHARES: after settlement, the Board MAY (not must) tender for excess requests at about a 10% DISCOUNT to the most recent NAV. Minimum residual balance $1,000. Mandatory repurchases possible on 10 days' written notice. Board may modify/suspend the plan at will (disclosed via 8-K) but cannot terminate it absent a liquidity event; Class E Shares sit outside the plan. Settlement timing beyond these terms is not printed in the 10-K.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Item 1. Business - Share Repurchases: Share Repurchase Plan; Repurchase Limitations; Tender Offer for Excess Shares; Early Repurchase Fee; Mandatory Repurchases",
+      "quote": "the repurchase price of any Shares accepted for repurchase during a quarter will be the NAV of such Shares as of the last day of the prior quarter",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.3": {
       "element": "Repurchase history",
-      "value": null,
-      "status": "pending"
+      "value": "FY2025 plan repurchases by class (MD&A - Share Repurchases): 247,476 Class R-I @ $31.84 avg; 576,591 Class R-U @ $30.97; 12,620 Class U @ $31.77; 12,369 Class I @ $32.64; 819 Class D @ $32.57; 20,516 Class R-D @ $32.57. FY2024: 3,254 Class R-I @ $26.42 and 82,646 Class R-U @ $27.65 only. Item 5 Q4-2025 issuer-purchases table: October 0; November 355,104 shares @ $32.36 avg (all under the publicly announced plan); December 0. Cash-flow statement: 'Repurchase of shares, net of early repurchase fee' $26,423k (2025), $2,253k (2024), $107,863k (2023 - the 2023 amount is not attributed to the share repurchase plan in MD&A, whose plan history begins 2024, and equals the 2023 non-cash 'Shares issued in exchange for interests in portfolio companies'; the statement of changes in net assets shows it as a Class E Share issuance and repurchase). SHARES REQUESTED vs REPURCHASED: requested amounts are NOT printed; no proration, deferral or unsatisfied-request event is disclosed for 2024-2025, and repurchase volumes ran far below the 5.0%-of-NAV quarterly cap (net assets $9.5bn and total investments at fair value $10.0bn at 12/31/2025).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Item 7. MD&A - Share Repurchases; Item 5 - Issuer Purchases of Equity Securities; Consolidated Statements of Cash Flows",
+      "quote": "we repurchased 247,476 Class R-I Shares and 3,254 Class R-I Shares, respectively, pursuant to our share repurchase plan, at an average price per share of $31.84 and $26.42",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.4": {
       "element": "Portfolio liquidity profile",
@@ -207,8 +252,13 @@
     },
     "3.6": {
       "element": "Fund leverage & facilities",
-      "value": null,
-      "status": "pending"
+      "value": "Revolving Credit Agreement (Note 6, $ thousands): entered 12/23/2024 by indirect-subsidiary Borrowers with Sumitomo Mitsui Banking Corporation as joint lead arranger/administrative agent and affiliate KKR Capital Markets LLC as joint lead arranger. Size path: initial $200,000; +$150,000 to $350,000 (4/4/2025); +$250,000 to $600,000 (10/15/2025); +$150,000 to $750,000 (11/21/2025); post-year-end +$100,000 to $850,000 (2/26/2026) and +$150,000 to $1,000,000 (3/6/2026), i.e., $1,000,000 available per MD&A Liquidity; uncommitted accordion to $1,500,000. Matures 12/23/2027. RATES: USD advances at daily or term SOFR + 3.50% spread (non-USD at local rates + 3.50%), plus customary closing/arrangement/administration/unused/commitment/LC fees. Secured by pledge of certain Borrower/guarantor accounts; NON-RECOURSE to the Company and the rest of KKR. DRAWN: zero outstanding at 12/31/2025 and 12/31/2024; FY2025 interest expense $6,002 (unused fees + deferred-financing amortization; $76 FY2024); $15,744 financing costs incurred, $12,413 unamortized at 12/31/2025. Plus affiliate Line of Credit (Note 5): uncommitted unsecured up to $300,000 from KKR Alternative Assets LLC, per-loan rate up to a third-party rate or SOFR + 3.50%, extended through 6/19/2026, zero outstanding at 12/31/2025. Portfolio-company/JV asset-level debt sits at unconsolidated portfolio companies, outside these facilities.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Note 6. Credit Facility; Note 5. Related Party Transactions - Line of Credit; Item 7. MD&A - Liquidity and Capital Resources; Item 13 - Revolving Credit Agreement (Joinders)",
+      "quote": "the daily or term SOFR plus a spread of 3.50 %",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.7": {
       "element": "Plan participant liquidity demand",
@@ -252,8 +302,13 @@
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
-      "value": null,
-      "status": "pending"
+      "value": "Fair value hierarchy at 12/31/2025 ($ thousands, Note 4): Portfolio companies - Level I $23,278 / Level II $0 / Level III $8,980,760 / NAV practical expedient $5,411 = $9,009,449 total; FX-forward unrealized appreciation - Level II $27,607; FX-forward unrealized depreciation - Level II $(5,177); Money market funds - Level I $963,528. TOTAL: Level I $986,806 / Level II $22,430 / Level III $8,980,760 / NAV $5,411 = $9,995,407. Comparative 12/31/2024: portfolio companies entirely Level III $3,918,519; FX forwards Level II $30,319; MMF Level I $600,933; total $4,549,771. Level III rollforward FY2025: opening $3,918,519 + purchases $3,824,485 - sales/proceeds $(78,386) + realized gain $34,793 + unrealized appreciation $1,121,075 + FX translation $160,274 = $8,980,760; plus $340,710 transferred INTO Level III during 2025 from the NAV-practical-expedient category (aggregator cash converted to portfolio-company interests).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Note 4. Fair Value Measurements - Investments (hierarchy tables; Level III reconciliations)",
+      "quote": "Portfolio companies | $ | 23,278 | $ | \u2014 | $ | 8,980,760 | $ | 5,411 | $ | 9,009,449",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.3": {
       "element": "Independent valuation agent",
@@ -267,8 +322,13 @@
     },
     "4.4": {
       "element": "Methodology by asset type",
-      "value": null,
-      "status": "pending"
+      "value": "Level III portfolio companies ($8,980,760k at 12/31/2025) are valued via a weighted combination of market comparables, discounted cash flow, and transaction price/other. Printed unobservable inputs at 12/31/2025 (weighted average; range; direction for input increase): Illiquidity Discount 7.7%; 5.0%-15.0%; decrease. Weight to Market Comparables 39.1% (0.0%-100.0%); Weight to DCF 41.8% (0.0%-75.0%); Weight to Transaction Price/Other 19.1% (0.0%-100.0%). Market comparables: EV/Forward EBITDA 14.5x (6.9x-23.2x, increase); EV/Forward Revenues 8.6x (2.1x-10.3x, increase). DCF: WACC 11.1% (5.6%-20.7%, decrease); EV/EBITDA Exit Multiple 14.1x (8.0x-23.0x, increase). 12/31/2024 comparatives: Illiquidity Discount 9.0%; weights 35.3%/34.0%/30.7%; EV/Fwd EBITDA 14.5x; EV/Fwd Revenues 8.5x; WACC 11.5%; exit multiple 13.3x - i.e., transaction-price weight fell from 30.7% to 19.1% year over year. Other asset types: one public equity (HealthCare Global Enterprises) at Level I quoted price; FX forwards at Level II; money market funds at Level I; one aggregator interest (KKR Cape Aggregator L.P./Teaching Strategies) at the ASC 820 NAV practical expedient.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Note 4. Fair Value Measurements - quantitative information about Level III fair value measurements (12/31/2025 and 12/31/2024 tables)",
+      "quote": "Inputs to market comparables, discounted cash flow and transaction price/other | Illiquidity Discount | 7.7 %",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.5": {
       "element": "Auditor & opinion",
@@ -312,8 +372,13 @@
     },
     "5.1": {
       "element": "Self-declared benchmark",
-      "value": null,
-      "status": "pending"
+      "value": "DOCUMENTED ABSENCE: the Company self-declares NO performance benchmark anywhere in the FY2025 10-K. Mechanical search of the stripped text: 'benchmark'/'benchmarking' = 10 hits, all either interest-rate benchmarks (2x Revolving Credit Agreement 'applicable benchmark rate', 1x floating-rate risk factor) or fee-benchmarking of service-provider costs (7 hits, Item 13 conflicts / Item 1A); zero hits for MSCI, S&P 500, Russell or Cambridge Associates. Performance is presented solely as NAV-based total return - change in NAV per share, DRIP-assumed (Note 10 footnote 9) and MD&A Transactional NAV total returns. The only return threshold in the economics is the Performance Participation Allocation's absolute 5.0% annual Hurdle Amount (with High Water Mark) - an absolute hurdle, not an index-relative benchmark.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Full-document search; Note 10. Financial Highlights footnote (9) total-return definition; Note 5 (Hurdle Amount)",
+      "quote": "The Total return is calculated for each share class as the change in the net asset value for such share class during the period",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.2": {
       "element": "Public index series",
@@ -327,18 +392,33 @@
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": null,
-      "status": "pending"
+      "value": "Alt-index candidates evaluated: Cambridge Associates US PE (7/12, outranked - licensed data not held, wrapper mismatch also applies); listed proxies PSP (PRIMARY 9/12) / URTH (SECONDARY 8/12); PME construct (8/12, outranked). Full scoring + rejection reasons in the selection artifact.",
+      "status": "computed",
+      "source": "data/benchmarks/kkr_kpec_selection.json",
+      "section": "candidates + rejection log",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": null,
-      "status": "pending"
+      "value": "Peer cohort (lane C): nearest in-universe peers are hl_paf and stepstone_spm - evergreen PE FoFs, NOT conglomerates of controlled operating companies; scored 6/12 (below threshold) and rejected with that mismatch stated. Their return records: cells 1.2 of each.",
+      "status": "computed",
+      "source": "data/benchmarks/kkr_kpec_selection.json",
+      "section": "lane C candidate",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": null,
-      "status": "pending"
+      "value": "PME inputs (computed): window 2023-09-01 to 2025-12-31 (Class I inception 2023-09-01 per 1.2); flows [-1, 1.3285] from printed ITD-annualized 12.94% (transactional NAV); index PSP adj-close daily-anchored. KS-PME 0.8964, Direct Alpha -4.58%/yr. Annual cash-flow detail also printed (see prior 5.5 note in evidence history).",
+      "status": "computed",
+      "source": "data/benchmarks/kkr_kpec_selection.json + data/benchmarks/profiles_input.json",
+      "section": "primary.comparison",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
@@ -402,13 +482,23 @@
     },
     "6.6": {
       "element": "Plan operational fit",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell. Product-side operational facts already evidenced elsewhere: monthly NAV (4.1), quarterly-only dealing with 5% gate (3.1/3.2), private-placement accredited-investor offering, and Schedule K-1 tax reporting (6.4).",
+      "status": "n/a - not publicly available: requires plan-specific recordkeeper/trading integration facts - workflow cell completed per plan engagement, not public product data",
+      "source": "workflow (plan engagement)",
+      "section": "n/a - workflow cell; no filing section exists",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.7": {
       "element": "Participant communicability",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell. Structure map (6.1), strategy/instrument complexity (6.2) and K-1 tax complexity (6.4) supply the product-side communicability inputs.",
+      "status": "n/a - not publicly available: requires plan-committee participant-communication assessment - workflow cell; product-side inputs already evidenced in 6.1/6.2/6.4",
+      "source": "workflow (plan committee)",
+      "section": "n/a - workflow cell; no filing section exists",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.8": {
       "element": "Fiduciary capacity self-assessment",
