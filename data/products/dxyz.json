@@ -222,8 +222,13 @@
     },
     "4.5": {
       "element": "Auditor & opinion",
-      "value": null,
-      "status": "pending"
+      "value": "KPMG LLP, Philadelphia, PA - Fund's auditor since 2025; unqualified opinion on FY2025 financial statements, opinion dated March 5, 2026. Appointed 2025-09-08 by the Audit Committee, replacing prior auditor Marcum LLP (FY2022-2024 figures audited by other auditors, unqualified). Sourced from the audit-report signature block - NOT the shareholder letter's KPMG research citation.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-03-10 (FY2025 annual report)",
+      "section": "Report of Independent Registered Public Accounting Firm (signature block) + Change in Independent Registered Public Accounting Firm",
+      "quote": "KPMG LLP ... We have served as the Fund's auditor since 2025. Philadelphia, Pennsylvania March 5, 2026",
+      "extracted_by": "Claude Code (2026-08-08)",
+      "verified_by": ""
     },
     "4.6": {
       "element": "NAV restatement history",
@@ -297,8 +302,13 @@
     },
     "6.4": {
       "element": "Tax reporting (1099 vs K-1)",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: tax form NOT explicitly named in on-disk filings - searched N-CSR 2026-03-10, 424B5 2026-05-26, 424B3 2026-05-12 and N-2-A 2025-07-10 for '1099' / 'K-1' / 'Schedule K': zero hits. What IS printed: fund elected RIC status commencing with taxable year ended December 31, 2023 (424B5 cover + tax section). RIC (corporate wrapper) implies Form 1099-DIV rather than K-1, but the form number is not printed - confirm via transfer agent or fund tax FAQ.",
+      "status": "partial",
+      "source": "424B5 2026-05-26 (form not named in any on-disk dxyz filing)",
+      "section": "Prospectus cover + Certain U.S. Federal Income Tax Considerations - Taxation as a Regulated Investment Company",
+      "quote": "We have elected to be taxed as a regulated investment company ('RIC') for U.S. federal income tax purposes, commencing with our taxable year ended December 31, 2023",
+      "extracted_by": "Claude Code (2026-08-08)",
+      "verified_by": ""
     },
     "6.5": {
       "element": "Service-provider web",

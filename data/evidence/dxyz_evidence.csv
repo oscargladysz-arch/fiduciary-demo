@@ -33,7 +33,7 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 4.2,Fair-value hierarchy (L1/2/3),PARTIAL: portfolio predominantly Level 3 - 'Level 3 securities fair valued using significant unobservable inputs' (SOI footnote b); dollar hierarchy table pending read.,N-CSR 2026-03-10 (FY ended 12/31/2025),Schedule of Investments footnotes,Level 3 securities fair valued using significant unobservable inputs,,2026-07-18,Claude (Inc-EP),,partial
 4.3,Independent valuation agent,,,,,,,,,pending
 4.4,Methodology by asset type,,,,,,,,,pending
-4.5,Auditor & opinion,,,,,,,,,pending
+4.5,Auditor & opinion,"KPMG LLP, Philadelphia, PA - Fund's auditor since 2025; unqualified opinion on FY2025 financial statements, opinion dated March 5, 2026. Appointed 2025-09-08 by the Audit Committee, replacing prior auditor Marcum LLP (FY2022-2024 figures audited by other auditors, unqualified). Sourced from the audit-report signature block - NOT the shareholder letter's KPMG research citation.",N-CSR 2026-03-10 (FY2025 annual report),Report of Independent Registered Public Accounting Firm (signature block) + Change in Independent Registered Public Accounting Firm,"KPMG LLP ... We have served as the Fund's auditor since 2025. Philadelphia, Pennsylvania March 5, 2026",data/raw/dxyz/N-CSR_2026-03-10_ea0276106-01_ncsr.htm,2026-08-08,Claude Code (2026-08-08),,extracted-unverified
 4.6,NAV restatement history,,,,,,,,,pending
 4.7,Premium/discount check,ACTIVE CELL: premium/discount as market check,,,,,,,,pending
 4.8,Smoothing diagnostics,,,,,,,,,pending
@@ -48,7 +48,7 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 6.1,Structure map,,,,,,,,,pending
 6.2,Strategy & instrument complexity,,,,,,,,,pending
 6.3,Conflicts & affiliated transactions,,,,,,,,,pending
-6.4,Tax reporting (1099 vs K-1),,,,,,,,,pending
+6.4,Tax reporting (1099 vs K-1),"PARTIAL: tax form NOT explicitly named in on-disk filings - searched N-CSR 2026-03-10, 424B5 2026-05-26, 424B3 2026-05-12 and N-2-A 2025-07-10 for '1099' / 'K-1' / 'Schedule K': zero hits. What IS printed: fund elected RIC status commencing with taxable year ended December 31, 2023 (424B5 cover + tax section). RIC (corporate wrapper) implies Form 1099-DIV rather than K-1, but the form number is not printed - confirm via transfer agent or fund tax FAQ.",424B5 2026-05-26 (form not named in any on-disk dxyz filing),Prospectus cover + Certain U.S. Federal Income Tax Considerations - Taxation as a Regulated Investment Company,"We have elected to be taxed as a regulated investment company ('RIC') for U.S. federal income tax purposes, commencing with our taxable year ended December 31, 2023",data/raw/dxyz/424B5_2026-05-26_dxyz102_424b5.htm,2026-08-08,Claude Code (2026-08-08),,partial
 6.5,Service-provider web,,,,,,,,,pending
 6.6,Plan operational fit,,,,,,,,,pending
 6.7,Participant communicability,,,,,,,,,pending

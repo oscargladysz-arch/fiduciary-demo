@@ -92,8 +92,13 @@
     },
     "2.3": {
       "element": "Total expense ratio & waivers",
-      "value": null,
-      "status": "pending"
+      "value": "FY2026 (year ended 3/31/2026) expenses to average net assets: Class I 1.91%, Class D 2.17%, Class S 2.77% - before and after adviser recoupment/reimbursement identical in FY2026 (no net waiver effect). 5-yr trend (before recoupment, FY2022->FY2026): I 3.38 / 2.32 / 2.09 / 1.88 / 1.91; D 3.44 / 2.49 / 2.37 / 2.13 / 2.17; S 3.45 / 3.40 / 2.79 / 2.73 / 2.77. Ratio phrasing is 'Expenses before/after adviser expense recoupment (reimbursement)', not 'Ratio of total expenses'. CAVEATS per footnotes: ratios EXCLUDE deferred tax provisions and do NOT reflect underlying Investment-level income/expenses (no AFFE).",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-09 (FY2026 annual report)",
+      "section": "Consolidated Financial Highlights - Ratios to average net assets (Class I / Class D / Class S)",
+      "quote": "Expenses before adviser expense recoupment (reimbursement) | 1.91% | 1.88% | 2.09% | 2.32% | 3.38%",
+      "extracted_by": "Claude Code (2026-08-08)",
+      "verified_by": ""
     },
     "2.4": {
       "element": "AFFE",

@@ -12,12 +12,12 @@
     },
     "1.2": {
       "element": "Trailing & calendar-year returns",
-      "value": "PARTIAL: per-class Transactional NAV Total Returns table located (Classes D/I/S/U/R-D/R-I/R-U; newest class inceptions Feb 2025); values pending table read. 27 portfolio cos; $3,848.7M invested FY2025.",
-      "status": "partial",
+      "value": "Transactional NAV Total Returns (FY2025 10-K, MD&A table): Year ended 12/31/2025 - Class D 14.80% / I 16.81% / S 9.55% / U 15.78% / R-D 16.49% / R-I 16.79% / R-U 15.79%. Inception-to-date annualized at 12/31/2025 - I 12.94% / U 14.65% / R-D 14.27% / R-I 13.22% / R-U 12.22% (D and S: N/A, under 12 months). Q4-2025 three-month: I 3.13% / S 2.92%. Class inceptions: R-I and R-U 8/1/2023, I 9/1/2023, R-D 2/1/2024, U 6/1/2024, D 2/1/2025, S 4/1/2025. No distributions declared from inception through 12/31/2025; returns = % change in Transactional NAV per share (assumes DRIP).",
+      "status": "extracted-unverified",
       "source": "10-K 2026-03-26 (FY2025)",
-      "section": "Total Returns table",
-      "quote": "",
-      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "section": "MD&A - 'Transactional Net Asset Value Total Returns' table",
+      "quote": "Year ended December 31, 2025 | 14.80% | 16.81% | 9.55% | 15.78% | 16.49% | 16.79% | 15.79%",
+      "extracted_by": "Claude Code (2026-08-08)",
       "verified_by": ""
     },
     "1.3": {
@@ -112,12 +112,12 @@
     },
     "2.7": {
       "element": "Early repurchase fee",
-      "value": "PARTIAL: an early repurchase fee EXISTS, calculated on Transactional NAV; rate pending targeted read of Repurchase Limitations section.",
-      "status": "partial",
+      "value": "Early Repurchase Fee: 5.0% of the NAV of Investor Shares repurchased within 24 months of the original issue date. Fee inures to the Company (not the Manager). May be waived for death, qualifying disability or divorce; does NOT apply to DRIP shares. Applicability determined by the Manager in its sole discretion. (Note: rate is 2.5x BREIT's 2% and the window is 24 months vs BREIT's 12.)",
+      "status": "extracted-unverified",
       "source": "10-K 2026-03-26 (FY2025)",
-      "section": "Repurchase Limitations",
-      "quote": "repurchase price and early repurchase fee described below are calculated based on the Company's Transactional Net Asset Value",
-      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "section": "Item 1 Business - Share Repurchase Plan: 'Early Repurchase Fee'",
+      "quote": "an early repurchase fee (the 'Early Repurchase Fee') of 5.0% of the NAV of the Investor Shares repurchased from a Shareholder if Investor Shares are repurchased within 24 months",
+      "extracted_by": "Claude Code (2026-08-08)",
       "verified_by": ""
     },
     "2.8": {

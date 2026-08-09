@@ -1,6 +1,6 @@
 cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,extracted_by,verified_by,status
 1.1,Net total return series,,,,,,,,,pending
-1.2,Trailing & calendar-year returns,"PARTIAL: per-class Transactional NAV Total Returns table located (Classes D/I/S/U/R-D/R-I/R-U; newest class inceptions Feb 2025); values pending table read. 27 portfolio cos; $3,848.7M invested FY2025.",10-K 2026-03-26 (FY2025),Total Returns table,,,2026-07-18,Claude (Inc-EP),,partial
+1.2,Trailing & calendar-year returns,"Transactional NAV Total Returns (FY2025 10-K, MD&A table): Year ended 12/31/2025 - Class D 14.80% / I 16.81% / S 9.55% / U 15.78% / R-D 16.49% / R-I 16.79% / R-U 15.79%. Inception-to-date annualized at 12/31/2025 - I 12.94% / U 14.65% / R-D 14.27% / R-I 13.22% / R-U 12.22% (D and S: N/A, under 12 months). Q4-2025 three-month: I 3.13% / S 2.92%. Class inceptions: R-I and R-U 8/1/2023, I 9/1/2023, R-D 2/1/2024, U 6/1/2024, D 2/1/2025, S 4/1/2025. No distributions declared from inception through 12/31/2025; returns = % change in Transactional NAV per share (assumes DRIP).",10-K 2026-03-26 (FY2025),MD&A - 'Transactional Net Asset Value Total Returns' table,"Year ended December 31, 2025 | 14.80% | 16.81% | 9.55% | 15.78% | 16.49% | 16.79% | 15.79%",data/raw/kkr_kpec/10-K_2026-03-26_kkr-20251231.htm,2026-08-08,Claude Code (2026-08-08),,extracted-unverified
 1.3,Gross vs net spread,,,,,,,,,pending
 1.4,Distribution history & composition,,,,,,,,,pending
 1.5,Underlying sleeve/GP performance,,,,,,,,,pending
@@ -16,7 +16,7 @@ cell_id,element,value,source_doc,source_section,quote,local_file,date_pulled,ext
 2.4,AFFE,,,,,,,,,pending
 2.5,Underlying GP economics,,,,,,,,,pending
 2.6,Loads & servicing fees,,,,,,,,,pending
-2.7,Early repurchase fee,"PARTIAL: an early repurchase fee EXISTS, calculated on Transactional NAV; rate pending targeted read of Repurchase Limitations section.",10-K 2026-03-26 (FY2025),Repurchase Limitations,repurchase price and early repurchase fee described below are calculated based on the Company's Transactional Net Asset Value,,2026-07-18,Claude (Inc-EP),,partial
+2.7,Early repurchase fee,"Early Repurchase Fee: 5.0% of the NAV of Investor Shares repurchased within 24 months of the original issue date. Fee inures to the Company (not the Manager). May be waived for death, qualifying disability or divorce; does NOT apply to DRIP shares. Applicability determined by the Manager in its sole discretion. (Note: rate is 2.5x BREIT's 2% and the window is 24 months vs BREIT's 12.)",10-K 2026-03-26 (FY2025),Item 1 Business - Share Repurchase Plan: 'Early Repurchase Fee',an early repurchase fee (the 'Early Repurchase Fee') of 5.0% of the NAV of the Investor Shares repurchased from a Shareholder if Investor Shares are repurchased within 24 months,data/raw/kkr_kpec/10-K_2026-03-26_kkr-20251231.htm,2026-08-08,Claude Code (2026-08-08),,extracted-unverified
 2.8,CIT fee schedule,,,,,,,,,n/a - CIT only
 2.9,Fee peer percentile,,,,,,,,,pending
 2.10,Value justification,,,,,,,,,pending

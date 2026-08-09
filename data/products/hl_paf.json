@@ -89,12 +89,12 @@
     },
     "2.2": {
       "element": "Incentive fee terms",
-      "value": "PARTIAL upgraded: Incentive Fee accrued monthly, calculated PER INVESTMENT (each Direct, Secondary, Listed PE, Opportunistic investment separately) - unusual per-deal structure. Rate still pending ('INVESTMENT MANAGEMENT FEE' / 'Incentive Fee' section of prospectus). Measured drag on NII ratio: 1.45% FY26 / 0.84% / 1.95% / 2.52%.",
-      "source": "486BPOS 2021-07-29 + N-CSR fn.5",
-      "section": "Incentive Fee",
-      "quote": "The Incentive Fee shall be calculated in respect of each Direct Investment, Secondary Investment, Listed PE Investment",
-      "status": "partial",
-      "extracted_by": "Claude (Inc-EP 2026-07-18)",
+      "value": "12.50% incentive fee, calculated PER INVESTMENT (deal-by-deal) on each Direct, Secondary, Listed PE and Opportunistic investment. Waterfall: (i) 100% of proceeds retained by Fund until return of acquisition cost + Preferred Return (8%/yr compounded annually; 6%/yr for Direct Credit); (ii) 100% catch-up to Adviser until Adviser holds 12.50% of preferred return + catch-up; (iii) thereafter 12.50% of further proceeds to Adviser. No incentive fee on Primary Fund Investments, currency hedging, or cash equivalents. Accrued monthly, payable on exit from each investment. Measured drag on NII ratio: 1.45% (N-CSR fn.5). NOTE: terms are from the 2021 base prospectus; the on-disk 424B3 supplement (2026-05-08) contains NO fee changes (officer appointment only), but it references a 2025-08-01 prospectus not on disk, so 'terms unchanged through 2026' is not fully confirmed.",
+      "source": "486BPOS 2021-07-29 (base prospectus); 424B3 2026-05-08 supplement checked - no fee change",
+      "section": "INCENTIVE FEE",
+      "quote": "an additional amount equal to 12.50% multiplied by further Relevant Proceeds ... the 'Preferred Return Rate' equals (x) 8% per annum",
+      "status": "extracted-unverified",
+      "extracted_by": "Claude Code (2026-08-08)",
       "verified_by": ""
     },
     "2.3": {
@@ -219,12 +219,12 @@
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
-      "value": "PARTIAL: transfers INTO Level 3 during period disclosed; full ASC 820 dollar table needs human read of fair-value note.",
+      "value": "ASC 820 hierarchy at 3/31/2026: Level I $529,492,964 (all Short Term Investments); Level II $0 (fund held no Level II securities); Level III $562,354,022 (Direct Credit $79,199,618 + Direct Equity $455,391,311 + Secondary Direct Equity $27,763,093); Total Investments in hierarchy $1,091,846,986. CRITICAL CONTEXT: a further $5,037,585,848 of investments valued at NAV practical expedient is EXCLUDED from the hierarchy (the bulk of the portfolio). L3 rollforward: transfers into L3 $30,651,521, out of L3 $(85,361,200).",
       "source": "N-CSR 2026-06-09 (acc 0001213900-26-054176*)",
-      "section": "Fair Value Measurements note",
-      "quote": "certain investments ... were transferred into Level 3 during the period",
-      "status": "partial",
-      "extracted_by": "Claude (spike 2026-07-09)",
+      "section": "Note 4 - Portfolio Valuation, fair value hierarchy table as of March 31, 2026",
+      "quote": "Total Investments $529,492,964 / $- / $562,354,022 / $1,091,846,986; investments in securities with a fair value of $5,037,585,848 are excluded from the fair value hierarchy",
+      "status": "extracted-unverified",
+      "extracted_by": "Claude Code (2026-08-08)",
       "verified_by": ""
     },
     "4.3": {
@@ -324,8 +324,13 @@
     },
     "6.4": {
       "element": "Tax reporting (1099 vs K-1)",
-      "value": null,
-      "status": "pending"
+      "value": "Form 1099-DIV (fund is a RIC): shareholders receive IRS Form 1099-DIV after each calendar year showing ordinary income / qualified dividend income / long-term capital gain character; cost basis reported on Form 1099 for covered shares. NO Schedule K-1 (no K-1 references in prospectus). Prospectus also states the Fund blocks attribution of UBTI to tax-exempt shareholders (401(k)/IRA-relevant).",
+      "status": "extracted-unverified",
+      "source": "486BPOS 2021-07-29 (base prospectus)",
+      "section": "Tax Reports (summary) + CERTAIN TAX CONSIDERATIONS",
+      "quote": "The Fund will distribute to its Shareholders, after the end of each calendar year, IRS Forms 1099-DIV detailing the amounts includible in such investor's taxable income",
+      "extracted_by": "Claude Code (2026-08-08)",
+      "verified_by": ""
     },
     "6.5": {
       "element": "Service-provider web",

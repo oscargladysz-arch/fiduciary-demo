@@ -237,8 +237,13 @@
     },
     "4.5": {
       "element": "Auditor & opinion",
-      "value": null,
-      "status": "pending"
+      "value": "Cohen & Company, Ltd., Cleveland, Ohio - independent registered public accounting firm (PCAOB-registered). Unqualified opinion on FY2026 consolidated financial statements, opinion dated May 30, 2026. Auditor of one or more Cliffwater-advised investment companies since 2019. NOT Big-4 (same audit firm as hl_paf).",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-08 (FY2026 annual report)",
+      "section": "Report of Independent Registered Public Accounting Firm (signature block)",
+      "quote": "We have served as the auditor of one or more investment companies advised by Cliffwater LLC since 2019. COHEN & COMPANY, LTD. Cleveland, Ohio",
+      "extracted_by": "Claude Code (2026-08-08)",
+      "verified_by": ""
     },
     "4.6": {
       "element": "NAV restatement history",
@@ -322,8 +327,13 @@
     },
     "6.4": {
       "element": "Tax reporting (1099 vs K-1)",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: tax form NOT explicitly named in on-disk filings - searched 486BPOS 2025-07-29, 424B3 2025-08-12 and N-CSR 2026-06-08 for '1099' / 'K-1' / 'Schedule K': zero hits. What IS printed: fund 'has elected to be treated as a regulated investment company' (N-CSR Note 1) and will furnish 'such information as is necessary for them to complete U.S. federal and state income tax or information returns' (486BPOS REPORTS TO SHAREHOLDERS). RIC status implies 1099-DIV (not K-1), but the form number is not printed - confirm via fund tax FAQ or a shareholder tax letter.",
+      "status": "partial",
+      "source": "486BPOS 2025-07-29 + N-CSR 2026-06-08 (form not named in either)",
+      "section": "REPORTS TO SHAREHOLDERS (prospectus); Note 1 Organization (RIC election)",
+      "quote": "such information as is necessary for them to complete U.S. federal and state income tax or information returns",
+      "extracted_by": "Claude Code (2026-08-08)",
+      "verified_by": ""
     },
     "6.5": {
       "element": "Service-provider web",
