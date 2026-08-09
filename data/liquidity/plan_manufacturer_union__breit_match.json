@@ -9,6 +9,14 @@
     "Gating precedent: this issuer has prorated repurchases when requests exceeded caps (3.3) \u2014 capacity on paper has failed in stress before.",
     "Early repurchase economics: Early Repurchase Deduction: repurchased at 98% of transaction price if held < 1 year (2.7) \u2014 relevant to participant-level churn (2.7)."
   ],
+  "stressed_scenario": {
+    "illustrative": true,
+    "assumptions": "tail turnover x2, active turnover x1.5 vs base scenario",
+    "annual_demand_usd": 4886868,
+    "demand_pct_of_position": 12.3,
+    "annual_wrapper_capacity_pct": 24.0,
+    "outcome": "within wrapper capacity (12.3% vs 24%) IF offers are not prorated \u2014 but this issuer HAS prorated under stress (3.3)"
+  },
   "plan_display_label": "US tire & rubber manufacturer bargaining-unit 401(k) plan (~$790M, OH)",
   "plan_direction": "total",
   "wrapper_facts": {

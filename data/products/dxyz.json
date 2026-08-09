@@ -52,18 +52,33 @@
     },
     "1.7": {
       "element": "De-smoothed volatility",
-      "value": null,
-      "status": "pending"
+      "value": "de-smoothing corrects appraisal-lagged NAV series; DXYZ's public series is an exchange MARKET PRICE (daily, not appraisal) - the correction is inapplicable. NAV itself is quarterly-filed (see 4.2/4.7).",
+      "status": "n/a - not publicly available: appraisal-series diagnostic; product's public series is a market price, NAV filed quarterly",
+      "source": "series structure per cells 1.10/4.7",
+      "section": "applicability rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": null,
-      "status": "pending"
+      "value": "Engine outcome (computed): NO meaningful PME/Direct Alpha constructible - the public series is premium-driven price, decoupled from NAV; benchmarking it benchmarks the premium. Escalation documented in the selection artifact; premium decomposition in 4.7 and the DXYZ chart.",
+      "status": "computed",
+      "source": "data/benchmarks/dxyz_selection.json (escalation)",
+      "section": "escalation",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
-      "value": null,
-      "status": "pending"
+      "value": "Computed stress-window performance (market price close - the stress lives in the PREMIUM (NAV rose through it; see 4.7/1.10)): worst full-history peak-to-trough -90.35%. Series data/series/dxyz.csv.",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (stress_windows)",
+      "section": "stress_windows",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.10": {
       "element": "Market price & premium/discount",
@@ -147,8 +162,13 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": null,
-      "status": "pending"
+      "value": "Rank 4 of 4 (cheapest=1) within the six-product evaluation universe by own primary net expense ratio (4.53% per cell 2.3). CAVEAT: universe = this roster only, NOT a market database; ratio bases differ by wrapper and are quoted in each 2.3 cell. kkr_kpec/breit have no TER line (34-Act wrappers) and sit outside this ranking.",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (fee_percentile)",
+      "section": "fee_percentile",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.10": {
       "element": "Value justification",
@@ -207,8 +227,13 @@
     },
     "3.8": {
       "element": "Redemption stress test",
-      "value": null,
-      "status": "pending"
+      "value": "ILLUSTRATIVE redemption stress test (computed, all four reference plans): tail turnover x2, active turnover x1.5 vs base scenario. Anchor plan outcome: demand 19.2%/yr of position vs daily-exchange wrapper capacity - daily exchange liquidity; stress transmits to price, not to a fund gate Per-plan stressed outcomes in data/liquidity/<plan>__dxyz_match.json; consulting-alumni plan EXCEEDS quarterly wrapper capacity under stress.",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__dxyz_match.json (+ 3 other plans)",
+      "section": "stressed_scenario (pipeline artifact, ILLUSTRATIVE)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
@@ -277,13 +302,23 @@
     },
     "4.7": {
       "element": "Premium/discount check",
-      "value": "ACTIVE CELL: premium/discount as market check",
-      "status": "pending"
+      "value": "Premium vs latest FILED quarterly NAV ($24.56 at None): 5.7% at the 2026-07-17 close ($25.97). Filed premium range since listing: -3.1% to 1837.6% (fund's own prospectus table). Live NAV unobservable between filings.",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (dxyz_premium)",
+      "section": "dxyz_premium",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.8": {
       "element": "Smoothing diagnostics",
-      "value": null,
-      "status": "pending"
+      "value": "smoothing diagnostics apply to appraisal-based NAV series; DXYZ's daily series is a market price and its NAV is quarterly-filed - autocorrelation diagnostics on 9 quarterly NAV points are not meaningful.",
+      "status": "n/a - not publicly available: appraisal-series diagnostic; product's public series is a market price, NAV filed quarterly",
+      "source": "series structure per cells 1.10/4.7",
+      "section": "applicability rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.9": {
       "element": "CIT unit valuation",
@@ -297,23 +332,43 @@
     },
     "5.2": {
       "element": "Public index series",
-      "value": null,
-      "status": "pending"
+      "value": "Public investable proxy series held on disk for this strategy: SPY + PSP (menu candidates; engine escalated - see 5.6/benchmark). Daily close + adj_close, contract-validated (date ascending, positive), reproducible via data/manifest + series_manifest.",
+      "status": "fetched",
+      "source": "data/series/series_manifest.json",
+      "section": "series inventory",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": null,
-      "status": "pending"
+      "value": "Alt asset-class index candidates evaluated by the engine (incl. paid/manual ones deliberately kept in the menu and rejected with reasons): Listed private equity proxy (PSP) - REJECTED: fund price is premium/discount-driven and decoupled from NAV | S&P 500 investable proxy (SPY) - REJECTED: fund price is premium/discount-driven and decoupled from NAV",
+      "status": "computed",
+      "source": "data/benchmarks/dxyz_selection.json",
+      "section": "candidates + rejection log",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": null,
-      "status": "pending"
+      "value": "Peer cohort (lane C) as constructed by the engine: no listed pre-IPO-venture peer in universe; escalation stands. Universe = this roster; a market-wide peer database is licensed data not held (documented in the rejection log).",
+      "status": "computed",
+      "source": "data/benchmarks/dxyz_selection.json",
+      "section": "lane C candidate",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": null,
-      "status": "pending"
+      "value": "No PME inputs constructible: engine escalated (premium-driven price series; see 1.8/5.3). The refusal and its reason ARE the documented output.",
+      "status": "computed",
+      "source": "data/benchmarks/dxyz_selection.json",
+      "section": "escalation",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",

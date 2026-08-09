@@ -1,0 +1,90 @@
+{
+  "generated": "2026-08-09",
+  "dxyz_premium": {
+    "last_close": 25.97,
+    "last_close_date": "2026-07-17",
+    "latest_filed_nav": 24.56,
+    "latest_nav_period_end": null,
+    "premium_pct_vs_latest_filed_nav": 5.7,
+    "filed_premium_range_pct": [
+      -3.1,
+      1837.6
+    ],
+    "note": "premium computed vs the most recent FILED quarterly NAV - the live NAV is unobservable between filings; filed range from the fund's own prospectus table",
+    "inputs": [
+      "data/series/dxyz.csv",
+      "data/analytics/dxyz_nav_quarterly.json"
+    ]
+  },
+  "fee_percentile": {
+    "universe": "this six-product evaluation roster (n=4 with a TER line) - NOT a market-wide database; bases differ per product and are quoted from cell 2.3",
+    "entries": [
+      {
+        "product": "breit",
+        "ter_pct": null,
+        "reason": "no comparable TER line item (see 2.1/2.2)",
+        "cited_cell": "2.3"
+      },
+      {
+        "product": "cliffwater_cclfx",
+        "ter_pct": 1.36,
+        "basis_excerpt": "Expense ratios (before waivers, FY26): 1.36% excluding interest expense; 3.31% including interest expense. History (excl-interest): FY25 1.3",
+        "cited_cell": "2.3",
+        "rank": 1,
+        "of": 4,
+        "percentile_low_is_cheap": 12
+      },
+      {
+        "product": "dxyz",
+        "ter_pct": 4.53,
+        "basis_excerpt": "Expense ratio 4.53% of avg net assets (FY2025); prior years 6.28 / 5.92 / 5.13. Net assets $438.0M at 12/31/2025 (vs $70.0M a year prior - t",
+        "cited_cell": "2.3",
+        "rank": 4,
+        "of": 4,
+        "percentile_low_is_cheap": 88
+      },
+      {
+        "product": "hl_paf",
+        "ter_pct": 3.4,
+        "basis_excerpt": "Class I gross/net expenses FY26 3.40%/3.40%, FY25 2.93/2.93, FY24 4.26/4.26. Expense Limit: 1.45% R / 0.75% I / 1.00% D of avg daily net ass",
+        "cited_cell": "2.3",
+        "rank": 3,
+        "of": 4,
+        "percentile_low_is_cheap": 62
+      },
+      {
+        "product": "kkr_kpec",
+        "ter_pct": null,
+        "reason": "no comparable TER line item (see 2.1/2.2)",
+        "cited_cell": "2.3"
+      },
+      {
+        "product": "stepstone_spm",
+        "ter_pct": 1.91,
+        "basis_excerpt": "FY2026 (year ended 3/31/2026) expenses to average net assets: Class I 1.91%, Class D 2.17%, Class S 2.77% - before and after adviser recoupm",
+        "cited_cell": "2.3",
+        "rank": 2,
+        "of": 4,
+        "percentile_low_is_cheap": 38
+      }
+    ]
+  },
+  "stress_windows": {
+    "cliffwater_cclfx": {
+      "cy2022_rate_shock": {
+        "return_pct": 2.05,
+        "max_drawdown_pct": -2.71
+      },
+      "covid_feb_apr_2020": {
+        "return_pct": -1.18,
+        "max_drawdown_pct": -3.91
+      },
+      "worst_peak_to_trough_full_history_pct": -3.91,
+      "series": "data/series/cclfx.csv"
+    },
+    "dxyz": {
+      "worst_peak_to_trough_full_history_pct": -90.35,
+      "series": "data/series/dxyz.csv"
+    }
+  }
+}

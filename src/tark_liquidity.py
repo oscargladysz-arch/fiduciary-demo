@@ -59,6 +59,10 @@ LIQUIDITY_PROFILES = {
 SCENARIO = {"allocation_pct_of_plan": 5.0, "tail_annual_turnover_pct": 20.0,
             "active_annual_turnover_pct": 5.0}
 
+# stressed variant (cell 3.8): separated tail exits at double speed, active
+# churn 1.5x — an ILLUSTRATIVE redemption stress test, not a prediction
+STRESS = {"tail_multiple": 2.0, "active_multiple": 1.5}
+
 
 def plan_direction(plan: dict) -> str:
     """'total' (2F+2G filed), 'partial' (2H filed), or 'other' — from the
@@ -148,8 +152,34 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
             reasons.append(f"Early repurchase economics: {prof['early_fee']} — "
                            "relevant to participant-level churn (2.7).")
 
+    # stressed scenario (cell 3.8) — same demand model, stressed turnover
+    s_tail = alloc * tail_share * (sc_in["tail_annual_turnover_pct"]
+                                   * STRESS["tail_multiple"]) / 100
+    s_active = alloc * (1 - tail_share) * (sc_in["active_annual_turnover_pct"]
+                                           * STRESS["active_multiple"]) / 100
+    s_demand = s_tail + s_active
+    s_pct = s_demand / alloc * 100
+    stressed = {
+        "illustrative": True,
+        "assumptions": f"tail turnover x{STRESS['tail_multiple']:.0f}, active "
+                       f"turnover x{STRESS['active_multiple']:.1f} vs base scenario",
+        "annual_demand_usd": round(s_demand),
+        "demand_pct_of_position": round(s_pct, 1),
+        "annual_wrapper_capacity_pct": annual_capacity_pct,
+        "outcome": ("daily exchange liquidity; stress transmits to price, "
+                    "not to a fund gate" if prof["exchange"] else
+                    ("EXCEEDS annual wrapper capacity — unmet demand rolls "
+                     "into later windows (gating-equivalent outcome)"
+                     if s_pct > annual_capacity_pct else
+                     f"within wrapper capacity ({s_pct:.1f}% vs "
+                     f"{annual_capacity_pct:.0f}%) IF offers are not prorated"
+                     + (" — but this issuer HAS prorated under stress (3.3)"
+                        if prof["gate_history"] else ""))),
+    }
+
     return {
         "product": key, "plan": plan_key, "verdict": verdict, "reasons": reasons,
+        "stressed_scenario": stressed,
         "plan_display_label": a["display_label"],
         "plan_direction": direction,
         "wrapper_facts": {k: v for k, v in prof.items()},

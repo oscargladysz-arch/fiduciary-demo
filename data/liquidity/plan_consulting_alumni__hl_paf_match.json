@@ -8,6 +8,14 @@
     "Scenario demand (illustrative): 13.7% of the position per year vs 20% annual wrapper capacity \u2014 THIN HEADROOM: demand consumes over 60% of wrapper capacity; proration in any oversubscribed quarter would push the shortfall into the next window.",
     "Early repurchase economics: 2.00% if held < 1 year \u2014 relevant to participant-level churn (2.7)."
   ],
+  "stressed_scenario": {
+    "illustrative": true,
+    "assumptions": "tail turnover x2, active turnover x1.5 vs base scenario",
+    "annual_demand_usd": 129497123,
+    "demand_pct_of_position": 26.4,
+    "annual_wrapper_capacity_pct": 20.0,
+    "outcome": "EXCEEDS annual wrapper capacity \u2014 unmet demand rolls into later windows (gating-equivalent outcome)"
+  },
   "plan_display_label": "Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY)",
   "plan_direction": "partial",
   "wrapper_facts": {

@@ -1,0 +1,11 @@
+#!/bin/sh
+# Tark gate — every commit must pass the FULL suite set. Never weaken.
+# Install: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+source .venv/bin/activate 2>/dev/null
+python src/validate_data.py && \
+python src/test_analytics.py && \
+python src/test_benchmark.py && \
+python src/test_memo.py && \
+python src/test_app.py && \
+python src/build_site.py && \
+python src/test_frontend.py

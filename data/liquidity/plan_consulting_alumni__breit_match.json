@@ -9,6 +9,14 @@
     "Gating precedent: this issuer has prorated repurchases when requests exceeded caps (3.3) \u2014 capacity on paper has failed in stress before.",
     "Early repurchase economics: Early Repurchase Deduction: repurchased at 98% of transaction price if held < 1 year (2.7) \u2014 relevant to participant-level churn (2.7)."
   ],
+  "stressed_scenario": {
+    "illustrative": true,
+    "assumptions": "tail turnover x2, active turnover x1.5 vs base scenario",
+    "annual_demand_usd": 129497123,
+    "demand_pct_of_position": 26.4,
+    "annual_wrapper_capacity_pct": 24.0,
+    "outcome": "EXCEEDS annual wrapper capacity \u2014 unmet demand rolls into later windows (gating-equivalent outcome)"
+  },
   "plan_display_label": "Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY)",
   "plan_direction": "partial",
   "wrapper_facts": {

@@ -8,6 +8,14 @@
     "Scenario demand (illustrative): 9.2% of the position per year vs 20% annual wrapper capacity \u2014 adequate headroom at this allocation if offers are not prorated.",
     "Early repurchase economics: 2.00% if held < 1 year \u2014 relevant to participant-level churn (2.7)."
   ],
+  "stressed_scenario": {
+    "illustrative": true,
+    "assumptions": "tail turnover x2, active turnover x1.5 vs base scenario",
+    "annual_demand_usd": 13216612,
+    "demand_pct_of_position": 16.7,
+    "annual_wrapper_capacity_pct": 20.0,
+    "outcome": "within wrapper capacity (16.7% vs 20%) IF offers are not prorated"
+  },
   "plan_display_label": "US casual-dining restaurant group 401(k) plan (~$1.6B, FL)",
   "plan_direction": "total",
   "wrapper_facts": {

@@ -42,13 +42,23 @@
     },
     "1.6": {
       "element": "Volatility & max drawdown",
-      "value": null,
-      "status": "pending"
+      "value": "Public return cadence for this non-traded wrapper is ANNUAL (N-CSR/10-K fiscal-year figures; see data/series_annual). Volatility, drawdown, autocorrelation and de-smoothing require a monthly-or-finer series; estimating them from <=5 annual points is not statistically meaningful. Monthly fact-sheet data sits behind investor-attestation gates (not free-public).",
+      "status": "n/a - not publicly available: sub-annual return series not free-public for this wrapper (annual filing cadence; fact sheets attestation-gated)",
+      "source": "disclosure-cadence assessment vs data/series_annual/",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.7": {
       "element": "De-smoothed volatility",
-      "value": null,
-      "status": "pending"
+      "value": "Public return cadence for this non-traded wrapper is ANNUAL (N-CSR/10-K fiscal-year figures; see data/series_annual). Volatility, drawdown, autocorrelation and de-smoothing require a monthly-or-finer series; estimating them from <=5 annual points is not statistically meaningful. Monthly fact-sheet data sits behind investor-attestation gates (not free-public).",
+      "status": "n/a - not publicly available: sub-annual return series not free-public for this wrapper (annual filing cadence; fact sheets attestation-gated)",
+      "source": "disclosure-cadence assessment vs data/series_annual/",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
@@ -147,8 +157,13 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": null,
-      "status": "pending"
+      "value": "n/a for a TER percentile: this '34-Act wrapper publishes no 1940-Act total-expense-ratio line; the fee burden is management fee + performance participation (cells 2.1/2.2/2.6). A percentile within a TER universe is undefined; cross-product fee comparison lives in the Fee Matrix with bases flagged.",
+      "status": "n/a - not publicly available: no TER line item exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
+      "source": "data/analytics/supplement.json (fee_percentile: ter_pct null)",
+      "section": "fee_percentile",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.10": {
       "element": "Value justification",
@@ -207,8 +222,13 @@
     },
     "3.8": {
       "element": "Redemption stress test",
-      "value": null,
-      "status": "pending"
+      "value": "ILLUSTRATIVE redemption stress test (computed, all four reference plans): tail turnover x2, active turnover x1.5 vs base scenario. Anchor plan outcome: demand 19.2%/yr of position vs 20.0% wrapper capacity - within wrapper capacity (19.2% vs 20%) IF offers are not prorated Per-plan stressed outcomes in data/liquidity/<plan>__kkr_kpec_match.json; consulting-alumni plan EXCEEDS quarterly wrapper capacity under stress.",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__kkr_kpec_match.json (+ 3 other plans)",
+      "section": "stressed_scenario (pipeline artifact, ILLUSTRATIVE)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
@@ -277,8 +297,13 @@
     },
     "4.8": {
       "element": "Smoothing diagnostics",
-      "value": null,
-      "status": "pending"
+      "value": "Public return cadence for this non-traded wrapper is ANNUAL (N-CSR/10-K fiscal-year figures; see data/series_annual). Volatility, drawdown, autocorrelation and de-smoothing require a monthly-or-finer series; estimating them from <=5 annual points is not statistically meaningful. Monthly fact-sheet data sits behind investor-attestation gates (not free-public).",
+      "status": "n/a - not publicly available: sub-annual return series not free-public for this wrapper (annual filing cadence; fact sheets attestation-gated)",
+      "source": "disclosure-cadence assessment vs data/series_annual/",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.9": {
       "element": "CIT unit valuation",
@@ -292,8 +317,13 @@
     },
     "5.2": {
       "element": "Public index series",
-      "value": null,
-      "status": "pending"
+      "value": "Public investable proxy series held on disk for this strategy: PSP + URTH (evergreen-PE comparators). Daily close + adj_close, contract-validated (date ascending, positive), reproducible via data/manifest + series_manifest.",
+      "status": "fetched",
+      "source": "data/series/series_manifest.json",
+      "section": "series inventory",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "5.3": {
       "element": "Alt asset-class indices",
