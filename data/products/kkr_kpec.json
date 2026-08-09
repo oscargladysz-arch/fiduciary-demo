@@ -27,8 +27,13 @@
     },
     "1.4": {
       "element": "Distribution history & composition",
-      "value": null,
-      "status": "pending"
+      "value": "No distributions ever declared or paid: Company did not declare or pay any distributions from inception (initial capitalization December 6, 2022) through December 31, 2025; financial-highlights footnote (9) likewise states no distributions declared or paid during the years ended December 31, 2025, 2024 and 2023. Company states it 'does not expect to make distributions on a regular basis'; distributions made only if, as and when declared by the Manager, and 'some of our distributions may include a return of capital' (prospective). DRIP in place: any cash distributions are automatically reinvested at Transactional NAV unless the holder elects cash; no sales load on DRIP purchases but S/D/U/R-S/R-D/R-U DRIP shares still bear ongoing distribution/servicing fees. No distribution-rate or tax-character (ordinary/capital gain/ROC) table exists because nothing was ever distributed.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Item 7. MD&A \u2014 Operating Results Highlights (Total Returns); Note 10. Financial Highlights footnote (9); Item 1. Business \u2014 Distributions",
+      "quote": "The Company did not declare or pay any distributions from inception through December 31, 2025.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
@@ -62,8 +67,13 @@
     },
     "1.11": {
       "element": "Track record & manager tenure",
-      "value": null,
-      "status": "pending"
+      "value": "Company formed / initially capitalized December 6, 2022; Form 10 registration statement automatically effective June 13, 2023; commenced principal operations August 1, 2023. Externally managed by KKR DAV Manager LLC (the 'Manager'), a wholly-owned KKR subsidiary, under Management Agreement dated July 27, 2023, amended May 30, 2024. Item 10 officer table (with 'since' year): Christopher J. Harrington, 44, Co-Chief Executive Officer, 2023 \u2014 joined KKR in 2008, leads financial services industry team within Americas Private Equity, member of Investment Committee and Portfolio Management Committee; Alisa A. Wood, 47, Co-Chief Executive Officer, 2022 \u2014 joined KKR in 2003, Partner, co-leads KKR's two private equity open-ended perpetual vehicles; Elizabeth Van Aken, 47, CFO, 2025; Sung Bum Cho, 51, General Counsel & Secretary, 2023. Directors (all since 2023): Naratil, Schmitz, Schnabel, Williams (independent half of eight-member Board). No KKR firm-wide AUM figure or adviser founding date is printed in the 10-K.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Item 10. Directors, Executive Officers and Corporate Governance (officer table and bios); Note 1. Organization; Item 7. MD&A \u2014 Results of Operations",
+      "quote": "The Company commenced principal operations on August 1, 2023. ... Alisa A. Wood , Co-Chief Executive Officer of the Company and a member of its Board, joined KKR in 2003",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
@@ -97,8 +107,13 @@
     },
     "2.4": {
       "element": "AFFE",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: No 'Acquired Fund Fees and Expenses' line exists \u2014 K-PEC is a non-'40-Act 10-K filer with no 1940-Act-style fee table anywhere in the filing. Searched full stripped text of the 10-K (FY2025) and 10-Q (Q1 2026) for 'Acquired Fund Fees' (0 hits) and 'fee table' (0 hits). Fee structure is instead disclosed narratively in Note 5. Related Party Transactions and Item 13: Management Fee of 1.25% per annum of month-end NAV for Class S/D/U/I (1.00% for R-classes for 60 months following August 1, 2023, then 1.25%); Performance Participation Allocation of 15.0% over a 5.0% annual Hurdle with High Water Mark and 100% Catch-Up; class-level Distribution/Servicing Fees (0.85%/0.25%); expense reimbursement provisions. No acquired-fund-fee aggregation is printed.",
+      "status": "partial",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Note 5. Related Party Transactions \u2014 Management Agreement (fee structure searched; no AFFE line)",
+      "quote": "the Manager is entitled to receive a management fee (the \u201cManagement Fee\u201d) from the Company",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.5": {
       "element": "Underlying GP economics",
@@ -107,8 +122,13 @@
     },
     "2.6": {
       "element": "Loads & servicing fees",
-      "value": null,
-      "status": "pending"
+      "value": "Sales loads: Class S Shares subject to maximum sales load up to 3.00% of offering price plus dealer-manager fee of 0.50% (certain broker-dealers may charge dealer-manager fee up to 1.50%, with sales load + dealer-manager fee capped at 3.50%). Class D, U, I, R-D, R-U and R-I Shares: no sales load or dealer-manager fees. Ongoing fees paid to KKR Capital Markets LLC (Dealer-Manager, agreement dated July 27, 2023): (a) 0.85% of NAV per annum for Class S, U, R-S and R-U (0.60% Distribution Fee + 0.25% Servicing Fee); (b) 0.25% for Class D and R-D (all shareholder servicing, no distribution component); none on Class I, R-I, E, F, G, H. Fees calculated on Transactional NAV, accrued and payable monthly; Dealer-Manager generally reallows to participating broker-dealers. GAAP accrual of servicing/distribution fees payable to Dealer-Manager: $338,409 thousand at 12/31/2025 vs $176,891 thousand at 12/31/2024.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Item 1. Business (share class terms); Note 5. Related Party Transactions \u2014 Distribution Fees and Servicing Fees; Dealer-Manager Agreement",
+      "quote": "Class S Shares are subject to a maximum sales load of up to 3.00% of the offering price and may be subject to a dealer-manager fee of 0.50%",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.7": {
       "element": "Early repurchase fee",
@@ -157,8 +177,13 @@
     },
     "3.4": {
       "element": "Portfolio liquidity profile",
-      "value": null,
-      "status": "pending"
+      "value": "As of 12/31/2025 ($ thousands): fair value hierarchy \u2014 portfolio companies Level I $23,278, Level II $0, Level III $8,980,760, NAV practical expedient $5,411 (portfolio companies total $9,009,449); money market funds (Level I) $963,528; FX forwards Level II +$27,607 / -$5,177; total investments $9,995,407 (vs total $4,549,771 with Level III $3,918,519 at 12/31/2024). Cash and cash equivalents $964,012 (primarily Morgan Stanley Institutional Liquidity Funds Government Portfolio). Unfunded commitments to portfolio companies $154,215 (vs $29,508 at 12/31/2024). Sensitivity: hypothetical 10% decline in Level III portfolio company fair values = $898,617 decline in net increase in net assets from operations. Liquidity backstops: Revolving Credit Agreement (SMBC as admin agent) upsized to $750,000 aggregate at 11/21/2025 (to $1,000,000 by March 6, 2026 joinder; accordion to $1,500,000; matures 12/23/2027; no outstanding balance at 12/31/2025 or 2024) plus uncommitted unsecured Line of Credit up to $300,000 from affiliate KKR Alternative Assets LLC (extended through 6/19/2026). Illiquidity: no public market for Shares and none expected; Liquidity Portfolio target up to 20% of total assets.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Note 4. Fair Value Measurements; Note 9. Commitments and Contingencies \u2014 Funding Commitments and Others; Note 6. Credit Facility; Item 7A (Level III sensitivity)",
+      "quote": "The Company had $ 154,215 and $ 29,508 of unfunded commitments in portfolio companies as of December 31, 2025 and 2024, respectively.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.5": {
       "element": "TDF/CIT liquidity sleeve",
@@ -197,8 +222,13 @@
     },
     "4.1": {
       "element": "Valuation policy & NAV frequency",
-      "value": null,
-      "status": "pending"
+      "value": "NAV frequency: monthly \u2014 'The Manager determines the NAV of our Shares monthly' (Manager = KKR DAV Manager LLC). The Manager prepares valuations for each asset per valuation policies and procedures approved and regularly reviewed by the Board; the Administrator uses the estimated values plus inputs from other sources to calculate the monthly NAV per Share; 'The Manager is ultimately responsible for the Company's NAV calculations.' Named policy sections in Item 1. Business: 'Net Asset Value \u2014 Calculation of NAV', 'Timing of Valuations' (portfolio companies monitored for material changes monthly), and 'Valuation Policies and Procedures' (fair value consistent with GAAP/ASC 820). At least annually the Manager reviews the appropriateness of the valuation policies and recommends proposed changes to the Board. Risk factors note the monthly NAV is not audited and not governed by prescribed rules; the Board has adopted a NAV Error Correction Policy. As-of context: FY2025 10-K.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Item 1. Business \u2014 Net Asset Value \u2014 Calculation of NAV; Timing of Valuations; Valuation Policies and Procedures",
+      "quote": "The Manager determines the NAV of our Shares monthly.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
@@ -207,8 +237,13 @@
     },
     "4.3": {
       "element": "Independent valuation agent",
-      "value": null,
-      "status": "pending"
+      "value": "Independent valuation involvement disclosed but NO firm is named anywhere in the 10-K or 10-Q: for assets without a reliable readily available market price, the Manager 'engages one or more independent valuation firms to provide positive assurance regarding the reasonableness of such valuations as of the relevant measurement date', with the Manager remaining ultimately responsible for fair value determinations. Note 4 adds that valuation assumptions 'are determined by the Manager and reviewed by the Manager's independent valuation advisor.' Searched both filings for common valuation-firm names (Kroll, Houlihan, Duff & Phelps, Lincoln International, Murray Devine, Stout, Alvarez) \u2014 zero hits; the independent valuation firm(s)/advisor are unnamed as printed.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Item 1. Business \u2014 Net Asset Value \u2014 Valuation Policies and Procedures; Note 4. Fair Value Measurements",
+      "quote": "the Manager engages one or more independent valuation firms to provide positive assurance regarding the reasonableness of such valuations",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.4": {
       "element": "Methodology by asset type",
@@ -227,8 +262,13 @@
     },
     "4.6": {
       "element": "NAV restatement history",
-      "value": null,
-      "status": "pending"
+      "value": "None identified: searched stripped text of both on-disk docs \u2014 10-K (FY2025, filed 2026-03-26) and 10-Q (Q1 2026, filed 2026-05-13) \u2014 for 'restat' (16 hits 10-K / 4 hits 10-Q), 'error correction' (5 hits 10-K / 0 10-Q) and 'reprocess' (0 hits). Every hit is an 'Amended and Restated' agreement title (LLC Agreement, Management Agreement, Expense Limitation Agreement, DRIP, Line of Credit), inflation-accounting boilerplate, or the UNCHECKED cover-page error-correction/recovery-analysis checkboxes \u2014 no historical NAV restatement or error-correction event is disclosed. Prospective framework exists: the Board has adopted a 'NAV Error Correction Policy' under which, depending on nature and size of an error, the Company may be reimbursed or Shareholders paid additional repurchase/distribution proceeds, refunded excess subscription monies, or credited additional Shares; some errors may go uncorrected within the policy's limits (risk factor disclosure).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Item 1A. Risk Factors \u2014 'Monthly NAV calculations are not governed by governmental or independent securities, financial or accounting rules or standards'",
+      "quote": "The Board has adopted a NAV error correction policy (the \u201cNAV Error Correction Policy\u201d)",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.7": {
       "element": "Premium/discount check",
@@ -282,18 +322,33 @@
     },
     "6.1": {
       "element": "Structure map",
-      "value": null,
-      "status": "pending"
+      "value": "KKR Private Equity Conglomerate LLC ('K-PEC'), Delaware limited liability company formed December 6, 2022; governed by Sixth Amended and Restated LLC Agreement dated December 4, 2024; operates so it is NOT an 'investment company' under the Investment Company Act (no exemptive order \u2014 the word 'exemptive' has zero hits) and so it qualifies as a partnership for U.S. federal income tax purposes. Holding company owning portfolio companies through Joint Ventures formed by pooling capital with KKR Vehicles, with Company and KKR Vehicle as co-general partners of each JV; interests held via wholly owned 'Operating Subsidiaries' \u2014 K-PEC Holdings LLC (and similar holdcos) \u2014 which in turn hold JV interests through corporations/LLCs/LPs (e.g., aggregators such as KKR Modena Aggregator L.P., KKR Precise Aggregator L.P., KKR Compass Aggregator L.P.). Other named subsidiaries: K-PEC HedgeCo LLC (Line of Credit borrower; borrower role assigned to K-PEC Asset Funding LLC on 12/30/2025), K-PEC Liquidity Limited (revolver borrower representative). ASC 946 basis of consolidation: only certain wholly owned subsidiaries consolidated; portfolio companies NOT consolidated. Twelve share classes: Investor Shares S, D, U, I, R-S, R-D, R-U, R-I (R-classes closed to purchase after the 18-month Initial Offering; Investor Share R-classes no longer purchasable as of January 2, 2025) plus KKR Shares E, F, G, H; KKR (Kohlberg Kravis Roberts & Co. L.P.) holds all Class G Shares with special governance rights; KKR Group Assets Holdings III L.P. (wholly owned subsidiary of KKR & Co. Inc.) is the Class G beneficial owner.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Note 1. Organization; Note 2 \u2014 Basis of Consolidation; Item 1. Business \u2014 General Description of Business and Operations; Note 11. Income Taxes; Exhibit Index",
+      "quote": "was formed on December 6, 2022 as a limited liability company under the laws of the state of Delaware",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.2": {
       "element": "Strategy & instrument complexity",
-      "value": null,
-      "status": "pending"
+      "value": "Strategy: private equity conglomerate \u2014 acquire, own and control portfolio companies via Joint Ventures with KKR Vehicles (Company typically GP/co-GP; majority of JVs majority-own or primarily control portfolio companies); six business lines: Business & Financial Services; Consumer & Retail; Healthcare; Impact; Industrials; Technology, Media & Telecommunications. Allocation targets as printed: ~80% of assets in portfolio companies; up to 20% of total assets in the 'Liquidity Portfolio' (cash, cash equivalents, liquid investment-grade credit, KKR-managed funds/securities; may exceed 20% at times). Portfolio construction guidelines: no cryptocurrency; no more than 5% of assets in 'blind pools'; no more than 10% in publicly traded equity securities (with carve-outs). Instruments: foreign currency forward contracts to hedge FX on non-USD holdings (FY2025: realized loss $64,346 thousand; unrealized appreciation $27,607 / depreciation $5,177 at 12/31/2025); may enter derivatives, swaps or other financial products to hedge interest rate risk; JV/aggregator LP interests; money market funds. Also alongside KKR's Core Investment Platform for 'core' PE (lower-return, longer-hold investments).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Item 1. Business \u2014 Acquisition Strategies; Liquidity Portfolio guidelines; Item 7A \u2014 Exchange Rate Risk / Interest Rate Risk; Note 4 (FX forwards)",
+      "quote": "we expect 80% of our assets to consist of our portfolio companies ... up to 20% of its total assets in the Liquidity Portfolio",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.3": {
       "element": "Conflicts & affiliated transactions",
-      "value": null,
-      "status": "pending"
+      "value": "Item 13 'Potential Conflicts of Interest' is extensive (KKR Group multi-role conflicts, allocation, Service Providers, fee offsets). Note 5 Related Party Transactions dollar amounts ($ thousands): gross Management Fees earned by Manager $78,707 (2025) / $27,319 (2024) / $1,927 (2023), fully offset \u2014 Management Fees plus certain operating expenses offset $80,803 / $28,693 / $1,468 by 'Other Fees' (transaction/monitoring/break-up fees to KKR); unapplied credits carried forward $27,148 at 12/31/2025. Performance Participation Allocation (15% over 5% hurdle, HWM, 100% catch-up) recognized $203,187 (2025) / $52,896 (2024) / $1,508 (2023); accrual $51,704 at 12/31/2025; satisfied by issuing 4,408,183 Class F Shares ($151,285) for the 10/1/2024-9/30/2025 Reference Period. Dealer-Manager (KKR Capital Markets LLC): arranger fees $2,750 (2025) / $1,000 (2024) on the revolver plus $4,030 for sourcing/organizing/executing acquisitions; accrued distribution/servicing fees payable $338,409. Affiliated acquisitions: tender-offer purchase from affiliate-managed vehicles $288,358 (unrealized appreciation $8,106); purchases from affiliate-managed vehicle $317,822 (2025) / $348,432 (2024); cross-vintage purchases alongside flagship vehicles $165,499 (2025) / $210,000 (2024); recapitalization add-on $133,973 with $64,366 proceeds and $32,761 realized gain. Line of Credit up to $300,000 from KKR Alternative Assets LLC. Expense Limitation Agreement (expired 6/30/2025, not renewed): Manager recouped $13,187 (2025) / $3,433 (2024); Due to Manager $14,608 at 12/31/2025. No co-investment exemptive order (non-'40-Act filer; 'exemptive' zero hits).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Note 5. Related Party Transactions; Item 13. Certain Relationships and Related Transactions, and Director Independence \u2014 Potential Conflicts of Interest",
+      "quote": "the Company recognized a Performance Participation Allocation of $ 203,187 , $ 52,896 and $ 1,508",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.4": {
       "element": "Tax reporting (1099 vs K-1)",
@@ -307,8 +362,13 @@
     },
     "6.5": {
       "element": "Service-provider web",
-      "value": null,
-      "status": "pending"
+      "value": "Custodian: The Bank of New York Mellon (Custody Agreement dated August 1, 2023 with the Company, K-PEC Holdings LLC and K-PEC HedgeCo LLC). Administrator (administrative services): The Bank of New York Mellon (Administrative Services Agreement dated August 1, 2023 with the Company and certain wholly owned subsidiaries); an unnamed 'Administrator' calculates monthly NAV per Share per Item 1. Dealer-Manager/distributor: KKR Capital Markets LLC (Dealer-Manager Agreement dated July 27, 2023). Manager: KKR DAV Manager LLC. Auditor: Deloitte & Touche LLP (PCAOB ID No. 34), independent auditor. Counsel: Simpson Thacher & Bartlett LLP ('Counsel' to the Company, the Manager and affiliates). Transfer agent: not named in the 10-K (only 'sub-transfer agency, platform, sub-accounting' services referenced under the fee provisions). Credit-facility agent: Sumitomo Mitsui Banking Corporation (joint lead arranger and administrative agent under the Revolving Credit Agreement).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K (FY2025), filed 2026-03-26",
+      "section": "Item 15. Exhibits (exhibit index: Custody Agreement, Administrative Services Agreement, Dealer-Manager Agreement); Item 14 (auditor); Item 13 (Counsel)",
+      "quote": "Custody Agreement, dated as of August 1, 2023, between The Bank of New York Mellon and KKR Private Equity Conglomerate LLC",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.6": {
       "element": "Plan operational fit",

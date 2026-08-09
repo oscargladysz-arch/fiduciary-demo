@@ -34,8 +34,13 @@
     },
     "1.4": {
       "element": "Distribution history & composition",
-      "value": null,
-      "status": "pending"
+      "value": "FY2026 (year ended 3/31/2026) distributions to investors totaled $88,161,148 (Class I $52,227,996; Class R $34,331,024; Class D $1,602,128); prior-year total $42,458,537 (Consolidated Statements of Changes in Net Assets). Consolidated Financial Highlights show every per-share distribution row as 'From net realized gains' only: Class I $(0.33) FY2026, $(0.24) FY2025, $(0.12) FY2024, $(0.19) FY2023, $(0.18) FY2022 (no from-income or return-of-capital rows). Tax character (Note 6, tax years ended Sept 30): 2025 \u2014 ordinary income $0, net long-term capital gains $42,458,537; 2024 \u2014 ordinary income $0, net long-term capital gains $10,000,034; i.e., 100% long-term capital gain, no ROC printed. Fund has an opt-out DRIP: all cash distributions reinvested unless shareholder elects otherwise.",
+      "status": "extracted-unverified",
+      "source": "N-CSR (FY2026 annual report), filed 2026-06-09",
+      "section": "Consolidated Statements of Changes in Net Assets; Consolidated Financial Highlights; Note 6 \u2013 Federal Income Taxes",
+      "quote": "Net long term capital gains | | | 42,458,537 | | | 10,000,034",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
@@ -74,8 +79,13 @@
     },
     "1.11": {
       "element": "Track record & manager tenure",
-      "value": null,
-      "status": "pending"
+      "value": "Fund organized as a Delaware trust February 7, 2020; commenced operations January 4, 2021 following reorganization of predecessor Hamilton Lane Evergreen Private Fund LP (EPF, inception September 1, 2020) effective close of business December 31, 2020; Class D shares commenced August 1, 2021. N-CSR Item 13 names 11 Portfolio Managers (as of report date) with year joined Hamilton Lane where printed: Brian Charles Gildea (joined 2009), Richard Hope (2011), Andrew (Drew) Schardt (2008), Thomas Kerr (began at HL 1999), Jacqueline Rantanen (1997), Mario Giannini (joined firm 1993; CEO 2001-2023, Executive Co-Chairman since January 2024), Stephen Brennan (2002), Bryan Jenkins (2012), Juan Delgado-Moreira (2005), Erik Hirsch (1999), Brent Burnett (via 2017 sale of Real Asset Portfolio Management). Adviser (Hamilton Lane Advisors, L.L.C.) 'first established in 1991'; per 2021-dated 486BPOS, as of March 31, 2021 it managed $88,165,263,038.12 discretionary and $630,740,440,310.83 non-discretionary.",
+      "status": "extracted-unverified",
+      "source": "N-CSR (FY2026 annual report), filed 2026-06-09; adviser founding/AUM per 486BPOS base prospectus+SAI, 2021-07-29 (2021-dated)",
+      "section": "Note 1 \u2013 Organization; Item 13 \u2013 Portfolio Managers of Closed-End Management Investment Companies; 486BPOS 'The Adviser'",
+      "quote": "The Fund was organized as a Delaware trust on February 7, 2020 and commenced operations on January 4, 2021.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
@@ -109,8 +119,13 @@
     },
     "2.4": {
       "element": "AFFE",
-      "value": null,
-      "status": "pending"
+      "value": "486BPOS (2021-dated) fee tables include an 'Acquired Fund Fees and Expenses' line of 0.49% for each class (columns Class R / Class I / Class D). With-leverage table: Total Annual Expenses 4.85% / 4.15% / 4.40%; without-leverage table: 4.56% / 3.86% / 4.11%; both less Fee Waiver (0.45)%. Footnote (8): shareholders indirectly bear Portfolio Fund fees; asset-based fees generally 1% to 2.5% (annualized) of commitment and performance/incentive fees typically 10% to 20% of net profits; AFFE 'estimated for the Fund's current fiscal year' and excludes certain performance fees calculated solely on realization/distribution of gains. AFFE is excluded from the Expense Limitation Agreement caps (also stated in FY2026 N-CSR Note 7).",
+      "status": "extracted-unverified",
+      "source": "486BPOS base prospectus+SAI, 2021-07-29 (2021-dated figures)",
+      "section": "SUMMARY OF FUND EXPENSES (fee table and footnote 8)",
+      "quote": "Acquired Fund Fees and Expenses (8) | 0.49% | 0.49% | 0.49% |",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.5": {
       "element": "Underlying GP economics",
@@ -119,8 +134,13 @@
     },
     "2.6": {
       "element": "Loads & servicing fees",
-      "value": null,
-      "status": "pending"
+      "value": "Sales load: Class R maximum sales load imposed on purchases 3.50% of offering price ('Investors in Class R Shares may be charged a sales charge of up to 3.50% of the subscription amount'); Class I and Class D: None (486BPOS, 2021-dated). Maximum early repurchase fee 2.00% of repurchased amount for Class R/I/D shares repurchased before the one-year anniversary of purchase. Distribution and Servicing Fee (Rule 12b-1 plan, confirmed current in FY2026 N-CSR Note 9): up to maximum 0.70%/year on Class R and up to 0.25%/year on Class D, paid to distributor Distribution Services, LLC and/or other qualified recipients; Class I not subject. FY2026 amounts incurred (N-CSR Consolidated Statement of Operations): Class R $12,871,502; Class D $228,092. No dealer-manager fee structure printed.",
+      "status": "extracted-unverified",
+      "source": "486BPOS base prospectus+SAI, 2021-07-29 (loads); FY2026 rates and dollar amounts confirmed in N-CSR filed 2026-06-09, Note 9",
+      "section": "SUMMARY OF FUND EXPENSES \u2013 Shareholder Fees; N-CSR Note 9 \u2013 Shareholder Servicing Plan",
+      "quote": "Maximum Sales Load Imposed on Purchases (as a percentage of offering price) | 3.50% | None | None |",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.7": {
       "element": "Early repurchase fee",
@@ -169,8 +189,13 @@
     },
     "3.4": {
       "element": "Portfolio liquidity profile",
-      "value": null,
-      "status": "pending"
+      "value": "As of March 31, 2026: total net assets $5,785,749,989. Composition (% of net assets, Consolidated Schedule of Investments): Investments 105.9% \u2014 Direct Investments 45.5% (Direct Credit 1.4%, Direct Equity 44.1%), Secondary Investments 51.2% per the Summary of Investments by Strategy table (Secondary Direct Equity 1.5%, Secondary Funds 49.7%; note the SOI section header inconsistently prints 'Secondary Investments \u2014 51.4%', but only 51.2% is consistent with the component sum and the printed 105.9% total), Short Term Investments 9.2% ($529,492,964: JPMorgan U.S. Government Money Market Fund $1,176,239 + UMB Bank money market deposits $445,620,957 and $82,695,768); liabilities in excess of other assets (5.9)%. Fair-value hierarchy: Level III $562,354,022; Level I $529,492,964; no Level II; a further $5,037,585,848 valued at NAV practical expedient is excluded from the hierarchy. Restricted securities $5,599,939,870 = 96.9% of net assets; 'All of the Fund's Investment Funds are generally considered to be illiquid investments.' Unfunded commitments $742,510,823 to private equity investments. Credit backstop (JPMorgan Chase Bank, N.A., Note 16): $250,000,000 committed secured Facility (SOFR+4.21%, terminates 6/30/2028, commitment fee 1.25% on undrawn; NOT utilized during FY2026); Second Facility \u20ac33,450,000 line + \u20ac7,805,000 revolver at SPV (outstanding \u20ac33,450,000 = $38,482,442); Third Facility $38,000,000 line + $5,000,000 revolver at SPV (outstanding $38,000,000).",
+      "status": "extracted-unverified",
+      "source": "N-CSR (FY2026 annual report), filed 2026-06-09",
+      "section": "Consolidated Schedule of Investments (incl. Summary of Investments by Strategy); Note 4 \u2013 Portfolio Valuation; Note 12 \u2013 Commitments; Note 16 \u2013 Line of Credit",
+      "quote": "investments in securities with a fair value of $5,037,585,848 are excluded from the fair value hierarchy as of March 31, 2026.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.5": {
       "element": "TDF/CIT liquidity sleeve",
@@ -214,8 +239,13 @@
     },
     "4.1": {
       "element": "Valuation policy & NAV frequency",
-      "value": null,
-      "status": "pending"
+      "value": "Effective September 8, 2022, pursuant to Rule 2a-5, the Board designated the Adviser (Hamilton Lane Advisors, L.L.C.) as its valuation designee ('Valuation Designee') to perform fair value determinations, and approved new valuation procedures; Board retains oversight and the Valuation Designee develops the written valuation processes/procedures and conducts periodic reviews. The Adviser utilizes a valuation committee of senior members of the management team to review and approve valuation results. NAV frequency: the Fund calculates NAV as of the close of business on the last business day of each month, each date a Share is repurchased, as of the date of any distribution, and at such other times as the Board shall determine (each a 'Determination Date'). Investments in Investment Funds carried at fair value generally at the Fund's pro-rata interest in NAV as reported by underlying administrators/managers (practical expedient), per Note 2/Note 4 policy text.",
+      "status": "extracted-unverified",
+      "source": "N-CSR (FY2026 annual report), filed 2026-06-09",
+      "section": "Note 2 \u2013 Accounting Policies (valuation and NAV calculation); Note 4 \u2013 Portfolio Valuation",
+      "quote": "the Board designated the Adviser as its valuation designee ... The Fund calculates its NAV as of the close of business on the last business day of each month",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
@@ -229,8 +259,13 @@
     },
     "4.3": {
       "element": "Independent valuation agent",
-      "value": null,
-      "status": "pending"
+      "value": "Independent valuation firms are used but NOT named: N-CSR states the Adviser 'utilizes independent valuation firms to provide third-party valuation consulting services for Direct Investments' (same sentence appears in 486BPOS 2021 SAI). No firm name is printed anywhere in the on-disk documents \u2014 searched N-CSR, 486BPOS, SC TO-I and 424B3 for Houlihan, Duff, Kroll, Lincoln International, Murray Devine, Valuation Research/VRC, Alvarez, Stout: zero hits.",
+      "status": "extracted-unverified",
+      "source": "N-CSR (FY2026 annual report), filed 2026-06-09",
+      "section": "Note 2 \u2013 Accounting Policies",
+      "quote": "The Adviser also utilizes independent valuation firms to provide third -party valuation consulting services for Direct Investments.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.4": {
       "element": "Methodology by asset type",
@@ -249,8 +284,13 @@
     },
     "4.6": {
       "element": "NAV restatement history",
-      "value": null,
-      "status": "pending"
+      "value": "None identified: searched all six on-disk hl_paf documents (486BPOS 2021-07-29, 486BXT 2023-09-25, N-CSR 2026-06-09, SC TO-I 2026-05-06, 424B3 2026-05-08, NPORT-P 2026-05-29 XML) for 'restat', 'error correction', 'reprocess'; zero NAV-restatement or error-correction hits. All 'restat' matches (12 in 486BPOS, 1 in SC TO-I, 0 elsewhere) are corporate-instrument titles or amend-and-restate boilerplate: the 'Amended and Restated Agreement and Declaration of Trust' (486BPOS appendix and SC TO-I) and 486BPOS exhibit-list titles 'Amended and Restated Declaration of Trust', 'Amended and Restated Distribution and Service Plan' and 'Form of Amended and Restated Expense Limitation and Reimbursement Agreement'. Quote below is the Fund's NAV-calculation sentence (no restatement language accompanies it).",
+      "status": "extracted-unverified",
+      "source": "N-CSR (FY2026 annual report), filed 2026-06-09 (absence search across all on-disk hl_paf filings)",
+      "section": "Note 2 \u2013 Accounting Policies (NAV calculation); absence search across all filings",
+      "quote": "The Fund calculates its NAV as of the close of business on the last business day of each month",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.7": {
       "element": "Premium/discount check",
@@ -309,18 +349,33 @@
     },
     "6.1": {
       "element": "Structure map",
-      "value": null,
-      "status": "pending"
+      "value": "Legal form: Delaware statutory trust (organized February 7, 2020), registered non-diversified closed-end management investment company; RIC under Subchapter M (taxable year ends September 30; fiscal year ends March 31). Predecessor Hamilton Lane Evergreen Private Fund LP reorganized into the Fund effective close of business December 31, 2020. Six active wholly-owned Subsidiaries as of 3/31/2026 (Note 1 table: name / formation date / domicile / % of total assets): PAF JZ Blocker (9/17/2020, Cayman Islands, 0.0%), PAF Diamondback Blocker (9/8/2022, Cayman Islands, 4.3%), HL PAF Holdings, LLC (3/10/2021, US, 5.5%), HL PAF Splitter, LLC (5/5/2023, US, 76.2%), HL PAF DE Blocker, LLC (5/5/2023, US, 1.0%), HL PAF Da Vinci SPV LLC (8/5/2024, US, 2.5%). Consolidated financial statements include the Subsidiaries; intercompany accounts eliminated. One domestic blocker (LLC electing C-corp treatment) and two foreign blockers (treated as CFCs) require tax provisions. Exemptive relief: SEC order for multi-class structure (three classes: I, R, D); separate SEC co-investment order permitting negotiated 17(d) investments alongside affiliated funds (per 486BPOS).",
+      "status": "extracted-unverified",
+      "source": "N-CSR (FY2026 annual report), filed 2026-06-09",
+      "section": "Note 1 \u2013 Organization (incl. (a) Consolidation of Subsidiaries); Note 6 \u2013 Federal Income Taxes; Note 13 \u2013 Capital Share Transactions",
+      "quote": "As of March 31, 2026, the Fund has six active Subsidiaries:",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.2": {
       "element": "Strategy & instrument complexity",
-      "value": null,
-      "status": "pending"
+      "value": "80% policy (486BPOS, 2021-dated): under normal circumstances at least 80% of net assets (plus borrowings for investment purposes) in 'private assets' = Direct Investments (excluding listed PE), Portfolio Funds, Secondary Investments, Opportunistic Investments. Sleeves defined: Direct Equity / Direct Credit Investments; Portfolio Funds (primary subscriptions); Secondary Investments; Listed PE Investments; Opportunistic Investments (programmatic relationships). Generally not expected to hold more than 20% of net assets in liquid investments (cash/cash equivalents) for extended periods. May hedge FX; hedging techniques may involve swaps, exchange-listed and OTC put and call options, rate caps/floors/collars, futures and forward contracts, and swaptions (2021 prospectus). Current facts (N-CSR FY2026): Note 14 \u2014 'The Fund did not invest in any derivatives during the year ended March 31, 2026'; Note 2 \u2014 the Adviser generally will not hedge currency fluctuations. Actual composition 3/31/2026 (% of net assets): Investments 105.9% \u2014 Direct Investments 45.5% (Direct Credit 1.4%, Direct Equity 44.1%), Secondary Investments 51.2% per the Summary of Investments by Strategy (Secondary Direct Equity 1.5%, Secondary Funds 49.7%; the SOI page header inconsistently prints 51.4%), Short Term Investments 9.2%.",
+      "status": "extracted-unverified",
+      "source": "486BPOS base prospectus+SAI, 2021-07-29 (policy/instruments, 2021-dated); composition and derivatives usage per N-CSR filed 2026-06-09",
+      "section": "Prospectus Summary \u2013 Investment Program; INVESTMENT POLICIES; N-CSR Consolidated Schedule of Investments (incl. Summary of Investments by Strategy) and Note 14 \u2013 Derivatives and Hedging Disclosures",
+      "quote": "the Fund intends to invest at least 80% of its net assets (plus the amount of any borrowings for investment purposes) in \u201cprivate assets\u201d.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.3": {
       "element": "Conflicts & affiliated transactions",
-      "value": null,
-      "status": "pending"
+      "value": "486BPOS 'CONFLICTS OF INTEREST' section (2021) discloses under subheadings: Affiliates (adviser/affiliates may advise competing vehicles, no obligation to refer opportunities; shareholders deemed to waive conflict claims except where non-waivable; Codes of Ethics under Section 17(j)); Allocation of the Adviser's and its Affiliates' Time; Compensation Arrangements. Co-investment exemptive order: SEC order permits the Fund to participate in negotiated '17(d) investments' alongside other funds managed by the Adviser or affiliates, conditioned on (i) approval by majority of Trustees with no financial interest and majority of non-interested Trustees, and (ii) identical price, terms and conditions for each participating fund. Related-party amounts FY2026 (N-CSR Consolidated Statement of Operations): investment management fees $68,825,935; incentive fees $68,676,465; distribution and service fees Class R $12,871,502 and Class D $228,092 (payable to distributor under 12b-1 plan). Current fee terms (N-CSR Note 7): Investment Management Fee 1.40% annualized of Managed Assets; Incentive Fee 10.00% of net profits over Loss Recovery Account balance; Investment Management Agreement approved by shareholders March 14, 2025. N-CSR Note 8 is titled 'Certain Risk Factors and Conflicts of Interest'.",
+      "status": "extracted-unverified",
+      "source": "486BPOS base prospectus+SAI, 2021-07-29 (conflicts section, exemptive order); dollar amounts and current fee terms per N-CSR filed 2026-06-09",
+      "section": "CONFLICTS OF INTEREST; INVESTMENT PROCESS OVERVIEW (exemptive order); N-CSR Consolidated Statement of Operations and Note 7",
+      "quote": "Fund has received an exemptive order from the SEC that permits the Fund to participate in certain negotiated investments (each, a \u201c17(d) investment\u201d)",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.4": {
       "element": "Tax reporting (1099 vs K-1)",
@@ -334,8 +389,13 @@
     },
     "6.5": {
       "element": "Service-provider web",
-      "value": null,
-      "status": "pending"
+      "value": "Per FY2026 N-CSR (Note 11 and back-cover listing): Investment Adviser \u2014 Hamilton Lane Advisors, L.L.C., 110 Washington St, Ste. 1300, Conshohocken, PA; Custodian \u2014 UMB Bank, n.a., Kansas City, MO (affiliate of UMBFS); Fund Administrator, Transfer Agent and Fund Accountant \u2014 UMB Fund Services, Inc. ('UMBFS'), 235 W. Galena Street, Milwaukee, WI; Distributor \u2014 Distribution Services, LLC, 3 Canal Plaza, Suite 100, Portland, ME; Independent Registered Public Accounting Firm \u2014 Cohen & Company, Ltd., Cleveland, OH (audit opinion signed COHEN & COMPANY, LTD.). Fund counsel \u2014 Faegre Drinker Biddle & Reath LLP, One Logan Square, Philadelphia, PA (per 486BPOS 2021; not restated in N-CSR).",
+      "status": "extracted-unverified",
+      "source": "N-CSR (FY2026 annual report), filed 2026-06-09; counsel per 486BPOS 2021-07-29 (2021-dated)",
+      "section": "Note 11 \u2013 Other agreements; back-cover service-provider listing; Report of Independent Registered Public Accounting Firm",
+      "quote": "UMB Fund Services, Inc. (\u201c UMBFS \u201d) serves as the Fund\u2019s fund accountant, transfer agent and administrator; UMB Bank, n.a., an affiliate of UMBFS, serves as the Fund\u2019s custodian.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.6": {
       "element": "Plan operational fit",

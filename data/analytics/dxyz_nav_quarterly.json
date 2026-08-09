@@ -1,0 +1,85 @@
+{
+  "product": "dxyz",
+  "what": "Quarterly NAV per share vs market price high/low with premium/(discount) percent, as printed in the fund's own prospectus table",
+  "source": "424B5 2026-05-26 (prospectus supplement, base prospectus section)",
+  "section": "Price Range of Common Stock and Distributions - Market Information (quarterly NAV / high-low closing price / premium-discount table; footnotes: NAV generally as of last day of quarter; premium calculated as price less NAV divided by NAV)",
+  "quote": "sets forth for all quarters beginning with March 26, 2024, the date our shares first traded on the NYSE, the NAV per share of our common stock",
+  "local_file": "data/raw/dxyz/424B5_2026-05-26_dxyz102_424b5.htm",
+  "extracted_by": "Claude Code (2026-08-09)",
+  "status": "extracted-unverified",
+  "note": "Stored under data/analytics/ (not data/series/) because the series contract requires daily date,close,adj_close files with >=50 rows; this is a 9-row quarterly disclosure table. Parenthesized values in the filing's premium column are discounts (negative).",
+  "rows": [
+    {
+      "period": "Q1 2024 (March 26, 2024 - March 28, 2024)",
+      "nav_per_share": 5.07,
+      "price_high": 25.0,
+      "price_low": 9.0,
+      "premium_pct_at_high": 393.0,
+      "premium_pct_at_low": 77.5
+    },
+    {
+      "period": "Q2 2024 (April 1, 2024 - June 28, 2024)",
+      "nav_per_share": 5.15,
+      "price_high": 99.79,
+      "price_low": 10.8,
+      "premium_pct_at_high": 1837.6,
+      "premium_pct_at_low": 109.7
+    },
+    {
+      "period": "Q3 2024 (July 1, 2024 - September 30, 2024)",
+      "nav_per_share": 5.32,
+      "price_high": 15.18,
+      "price_low": 9.63,
+      "premium_pct_at_high": 185.3,
+      "premium_pct_at_low": 81.0
+    },
+    {
+      "period": "Q4 2024 (October 1, 2024 - December 31, 2024)",
+      "nav_per_share": 6.44,
+      "price_high": 72.54,
+      "price_low": 9.88,
+      "premium_pct_at_high": 1026.4,
+      "premium_pct_at_low": 53.4
+    },
+    {
+      "period": "Q1 2025 (January 1, 2025 - March 31, 2025)",
+      "nav_per_share": 6.31,
+      "price_high": 65.28,
+      "price_low": 28.79,
+      "premium_pct_at_high": 934.5,
+      "premium_pct_at_low": 356.2
+    },
+    {
+      "period": "Q2 2025 (April 1, 2025 - June 30, 2025)",
+      "nav_per_share": 6.92,
+      "price_high": 47.87,
+      "price_low": 26.68,
+      "premium_pct_at_high": 591.8,
+      "premium_pct_at_low": 285.5
+    },
+    {
+      "period": "Q3 2025 (July 1, 2025 - September 30, 2025)",
+      "nav_per_share": 11.37,
+      "price_high": 39.35,
+      "price_low": 35.29,
+      "premium_pct_at_high": 246.1,
+      "premium_pct_at_low": 210.4
+    },
+    {
+      "period": "Q4 2025 (October 1, 2025 - December 31, 2025)",
+      "nav_per_share": 19.93,
+      "price_high": 40.98,
+      "price_low": 19.71,
+      "premium_pct_at_high": 105.6,
+      "premium_pct_at_low": -1.1
+    },
+    {
+      "period": "Q1 2026 (January 1, 2026 - March 31, 2026)",
+      "nav_per_share": 24.56,
+      "price_high": 36.66,
+      "price_low": 23.81,
+      "premium_pct_at_high": 49.3,
+      "premium_pct_at_low": -3.1
+    }
+  ]
+}

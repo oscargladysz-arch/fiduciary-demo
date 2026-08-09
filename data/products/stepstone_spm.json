@@ -27,8 +27,13 @@
     },
     "1.4": {
       "element": "Distribution history & composition",
-      "value": null,
-      "status": "pending"
+      "value": "FY2026 (year ended 3/31/2026) Class I per-share distributions: total $0.70 = $0.01 from net investment income + $0.69 from net realized gains (FY2025 $0.72 = 0.18 + 0.54; FY2024 $0.16; FY2023 $0.96; FY2022 $0.48). No return-of-capital distribution row is printed in the financial highlights. Statement of Changes, Distributions from Distributable Earnings FY2026: Class I $(46,602,157), Class D $(1,023,421), Class S $(14,268,403), total $(61,893,981); FY2025 total $(42,518,587) incl. Class T $(226,929). Tax character of Subchapter M distributions declared: FYE 3/31/2026 ordinary income $4,514,958 + long-term capital gains $57,379,023; FYE 3/31/2025 $8,643,271 + $33,875,316; tax year ended 9/30/2025 $13,354,952 ordinary + $31,152,714 LTCG. Reinvestment of distributions FY2026: Class I $26,992,849.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
+      "section": "Consolidated Financial Highlights (Class I); Consolidated Statements of Changes in Net Assets; Note 13 - Tax Information",
+      "quote": "The tax character of Subchapter M distributions declared for the fiscal years ended March 31, 2026 and March 31, 2025",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
@@ -67,8 +72,13 @@
     },
     "1.11": {
       "element": "Track record & manager tenure",
-      "value": null,
-      "status": "pending"
+      "value": "Named portfolio managers: Thomas Keck (co-founded StepStone; leads global research and SPI database) and Michael Elio (joined StepStone in 2014; private equity team). No explicit 'has managed the Fund since' dates are printed for either PM in any on-disk doc. Adviser: StepStone Group Private Wealth LLC (formerly StepStone Conversus LLC), wholly-owned subsidiary of StepStone Group LP (which is also Sub-Adviser). Scale as printed: 'As of March 31, 2025, StepStone oversaw $709 billion of private markets allocations, including $189 billion of assets under management'; investment team of over 1,300 professionals. Fund organized 9/6/2019, commenced operations 10/1/2020 (N-CSR Note 1). Class inception per N-CSR: I/D/S October 1, 2020, Class R January 2, 2026; NOTE: 486BPOS states 'Class R Shares commenced operations on October 20, 2025' - both statements are verbatim in their respective filings.",
+      "status": "extracted-unverified",
+      "source": "486BPOS 2025-10-20 (prospectus/SAI)",
+      "section": "Management of the Fund - StepStone Team (PM names); Prospectus Summary (AUM); SAI - Information Regarding the Portfolio Managers",
+      "quote": "The personnel of the Advisers who have primary responsibility for ongoing research, recommendations, and portfolio management regarding the Fund\u2019s investment portfolio are Thomas Keck and Michael Elio",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
@@ -102,8 +112,13 @@
     },
     "2.4": {
       "element": "AFFE",
-      "value": null,
-      "status": "pending"
+      "value": "AFFE line present in fee table: Acquired Fund Fees and Expenses 0.59% for ALL classes (S, D, I, R). Footnote (2): based on historic returns of the Investment Funds the Fund invested in during the 12 months ended December 31, 2024; the 0.59% reflects operating expenses of the Investment Funds (management fees, administration fees, professional and other direct fixed fees) after refunds, EXCLUDING Performance Fees or allocations paid solely on realization/distribution of gains; underlying Investment Funds generally charge 1.00%-2.00% management fee on committed capital and approximately 15%-20% of net profits as Performance Fees. Total Annual Fund Operating Expenses incl. AFFE: Class S 3.19%, Class D 2.59%, Class I 2.34%, Class R 3.19%.",
+      "status": "extracted-unverified",
+      "source": "486BPOS 2025-10-20 (prospectus)",
+      "section": "Summary of Fees and Expenses - Annual Fund Operating Expenses, footnote (2)",
+      "quote": "The 0.59% shown as Acquired Fund Fees and Expenses reflects operating expenses of the Investment Funds",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.5": {
       "element": "Underlying GP economics",
@@ -112,8 +127,13 @@
     },
     "2.6": {
       "element": "Loads & servicing fees",
-      "value": null,
-      "status": "pending"
+      "value": "Sales load: Class S 3.50% of purchase amount; Class D, I, R: None. Distribution and/or Shareholder Servicing Fees (max annual rates under Distribution and Shareholder Services Plan, % of average daily net assets): Class S 0.85%, Class R 0.85%, Class D 0.25%, Class I 0.00% (Class I not subject to any distribution/servicing fee); of each rate, 0.25% is shareholder servicing fee and the remainder is a distribution fee. No dealer-manager fee (continuous offering via Distribution Services, LLC as Distributor). Prospectus notes investors may separately pay placement fees, wrap account fees or brokerage commissions to Selling Agents not reflected in the fee table. No early repurchase fee found (0 hits in 486BPOS).",
+      "status": "extracted-unverified",
+      "source": "486BPOS 2025-10-20 (prospectus)",
+      "section": "Summary of Fees and Expenses - Shareholder Fees, footnotes (1) and (4)",
+      "quote": "charged a sales load of 3.50% of the investment amount ... 0.85% for Class S Shares and Class R Shares and 0.25% for Class D Shares",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.7": {
       "element": "Early repurchase fee",
@@ -162,8 +182,13 @@
     },
     "3.4": {
       "element": "Portfolio liquidity profile",
-      "value": null,
-      "status": "pending"
+      "value": "As of 3/31/2026, total investments $5,985,219,502: Level 1 $56,631,533 (Public Securities only); Level 2 $0; Level 3 $291,577,842 (all Co-Investments, incl. CLO and CLO Warehouse positions valued with significant unobservable inputs); $5,637,010,127 valued at NAV as practical expedient and excluded from the fair value hierarchy (Secondary Investments $4,648.8M, Co-Investments $924.6M, Primary Investments $63.7M) - i.e., ~99% of investments are Level 3 or NAV-based. Level 3 rollforward FY2026: $159.0M to $291.6M. Contractual unfunded commitments $1,481.0 million (Note 9). Liquidity resources per shareholder letter: cash $247.3M and $300.0M available under credit facility; $200.0M borrowings outstanding at 3/31/2026 (senior securities table).",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
+      "section": "Note 3 - Fair Value Measurements (hierarchy table); Note 9 - Commitments and Contingencies",
+      "quote": "investments in securities with a fair value of $5,637.0 million are excluded from the fair value hierarchy ... unfunded commitments to provide additional funding of $1,481.0 million",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.5": {
       "element": "TDF/CIT liquidity sleeve",
@@ -207,8 +232,13 @@
     },
     "4.1": {
       "element": "Valuation policy & NAV frequency",
-      "value": null,
-      "status": "pending"
+      "value": "Valuation: pursuant to Rule 2a-5, the Board has designated the Adviser (StepStone Group Private Wealth LLC) as valuation designee to perform fair value determinations; Board approved the Adviser's Valuation Policy; Adviser utilizes resources/personnel of the Sub-Adviser and the Fund's sub-administrator; Board retains ultimate oversight. NAV frequency: DAILY - NAV determined as of close of NYSE regular trading session (normally 4:00 p.m. ET) on each business day the NYSE is open (each a Determination Date); investments valued at fair value per ASC 820 as of each Determination Date. Prospectus adds: daily NAV is based on quarterly valuations reported by Investment Managers typically within 45-60 days of quarter-end ('Valuations Subject to Adjustment' / 'Daily Valuation Risk').",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
+      "section": "Note 2 - Summary of Significant Accounting Policies: Net Asset Value Determination; Valuation of Investments",
+      "quote": "the Board has designated the Adviser as the valuation designee for the Fund to perform fair value determinations",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
@@ -217,8 +247,13 @@
     },
     "4.3": {
       "element": "Independent valuation agent",
-      "value": null,
-      "status": "pending"
+      "value": "No NAMED third-party valuation firm anywhere in the on-disk docs (N-CSR FY2026, 486BPOS 2025-10-20, 424B3 2025-12-31, SC TO-I 2026-05-12): zero hits for Kroll/Houlihan/Duff & Phelps/Lincoln International/Alvarez/Murray Devine/Valuation Research. The Adviser itself is the Rule 2a-5 valuation designee. The SAI refers only generically to unnamed 'independent valuation and brokerage evaluation service providers' that make regular reports to the Board, and N-CSR Note 2 says the Adviser may use 'market data from third party pricing services' in valuing Co-Investments - no firm named in either case.",
+      "status": "extracted-unverified",
+      "source": "486BPOS 2025-10-20 (SAI)",
+      "section": "SAI - Board of Trustees / risk oversight discussion",
+      "quote": "independent valuation and brokerage evaluation service providers, make regular reports regarding the Fund\u2019s activities and related risks to the Board of Trustees",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.4": {
       "element": "Methodology by asset type",
@@ -237,8 +272,13 @@
     },
     "4.6": {
       "element": "NAV restatement history",
-      "value": null,
-      "status": "pending"
+      "value": "None identified: searched stripped texts of N-CSR 2026-06-09, 486BPOS 2025-10-20, 424B3 2025-12-31, SC TO-I 2026-05-12 plus NPORT-P 2026-05-29 XML for 'restat', 'error correction', 'reprocess'; zero NAV-restatement/error-correction hits. All 'restat' matches are either 'Amended and Restated' agreement titles (Declaration of Trust dated 1/29/2020, Advisory Agreement, Distribution and Shareholder Services Plan, Multiple Class Plan) or the Board 15(c) discussion noting adviser composite performance 'restated to reflect the Fund's expected fees and expenses' - not a NAV restatement. Quote below is the Fund's NAV-calculation sentence; no restatement language exists in any searched document.",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
+      "section": "Note 2 - Net Asset Value Determination (searched: N-CSR, 486BPOS, 424B3, SC TO-I, NPORT-P)",
+      "quote": "The NAV of the Fund is determined as of the close of the regular trading session on the New York Stock Exchange",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.7": {
       "element": "Premium/discount check",
@@ -297,18 +337,33 @@
     },
     "6.1": {
       "element": "Structure map",
-      "value": null,
-      "status": "pending"
+      "value": "StepStone Private Markets: Delaware statutory trust organized 9/6/2019 under the Delaware Statutory Trust Act; registered under the 1940 Act as a DIVERSIFIED, closed-end management investment company; commenced operations 10/1/2020; four share classes I/D/S/R (Class T converted into Class S on 1/17/2025). Consolidation structure: consolidates direct wholly-owned subsidiaries SPRIM Holdings LLC and SPRIM Sidewalk LLC (Delaware LLCs) plus indirect wholly-owned subsidiaries SPRIM Intermediate LLC, SPRIM Subsidiary LLC, SPRIM LLC (Series A and Series B) (Delaware LLCs), SPRIM Cayman LLC / SPRIM Cayman II LLC / SPRIM Cayman III LLC (Cayman Islands LLCs), and SPRIM Blue Jay Investco ULC (Canadian unlimited liability corporation); intercompany transactions eliminated. Adviser StepStone Group Private Wealth LLC is a wholly-owned subsidiary of StepStone Group LP (the Sub-Adviser). Exemptive relief: SEC co-investment exemptive order + Multi-Class Exemptive Relief (per 486BPOS).",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
+      "section": "Note 1 - Organization; Note 2 - Basis for Consolidation",
+      "quote": "organized as a Delaware statutory trust under the Delaware Statutory Trust Act on September 6, 2019 ... has consolidated the results of the Fund\u2019s direct wholly-owned subsidiaries",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.2": {
       "element": "Strategy & instrument complexity",
-      "value": null,
-      "status": "pending"
+      "value": "Strategy sleeves: (1) Secondary Investments - secondary purchases of existing interests in operating companies/projects/properties and unaffiliated Investment Funds, incl. Open-Ended Funds, 'Seasoned Investments' (funds already ~25% invested at closing) and stapled secondaries; (2) Co-Investments - direct equity in operating companies alongside lead Investment Managers (Fund holds minority/non-controlling positions); (3) Primary Investments - funds <25% invested. Allocation target as printed: 80% policy - invest and/or commit at least 80% of assets (net assets plus borrowings for investment purposes) in Private Market Assets, with money market funds/cash/Treasuries <=1yr covering unfunded commitments counted as qualifying; 60 days' notice to change. No explicit numeric sleeve ranges printed. Instruments: may include below-investment-grade ('junk') securities; N-CSR shows Level 3 CLO and CLO Warehouse co-investments and public securities. FX: 'The Advisers will not elect to hedge the value of investments made by the Fund against currency fluctuations.'",
+      "status": "extracted-unverified",
+      "source": "486BPOS 2025-10-20 (prospectus)",
+      "section": "Prospectus Summary / Investment Program (Q&A: The Fund's investment strategy is focused on three types)",
+      "quote": "The Fund intends to invest and/or make capital commitments of at least 80% of its assets in Private Market Assets",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.3": {
       "element": "Conflicts & affiliated transactions",
-      "value": null,
-      "status": "pending"
+      "value": "Conflicts disclosures (prospectus 'Conflicts of Interest' section): Advisers manage substantial Other Accounts with differing economic interests and time-allocation conflicts; Other Accounts may take larger stakes or invest where Fund does not. Allocation policy: primaries deferred to Investment Manager; secondaries allocated by StepStone pro rata based on each client's annual portfolio-plan budget; Co-Investment allocation is a hybrid. Co-investment exemptive order: Advisers and Fund obtained SEC exemptive order permitting co-investment alongside affiliates in Private Market Assets, subject to conditions (incl. capacity constraints); plus Multi-Class Exemptive Relief. Affiliated-transaction dollar amounts (N-CSR Note 5, FY2026): Adviser earned $73.2 million Management Fees ($6.9M payable at 3/31/2026); Adviser as Administrator earned $3.4 million Administration Fees ($0.3M payable); Adviser pays Sub-Adviser 50% of the Management Fee.",
+      "status": "extracted-unverified",
+      "source": "486BPOS 2025-10-20 (prospectus)",
+      "section": "Conflicts of Interest; Prospectus Summary (co-investment exemptive order)",
+      "quote": "The Advisers and the Fund have obtained an exemptive order from the SEC that permits the Fund to co-invest alongside its affiliates in Private Market Assets",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.4": {
       "element": "Tax reporting (1099 vs K-1)",
@@ -322,8 +377,13 @@
     },
     "6.5": {
       "element": "Service-provider web",
-      "value": null,
-      "status": "pending"
+      "value": "Administrator: StepStone Group Private Wealth LLC (the Adviser), per Administration Agreement effective 4/27/2023 (fee up to 0.12% of net assets; earned $3.4M FY2026). Sub-Administrator, Fund Accountant AND Transfer Agent: UMB Fund Services, Inc. (sub-admin fee up to 0.08% paid by Administrator from Administration Fee; TA earned $2.7M FY2026). Custodian: UMB Bank, N.A. (holds U.S. assets; foreign assets via designated sub-custodian; earned $0.4M FY2026). Distributor: Distribution Services, LLC. Auditor: Ernst & Young LLP, New York, NY. Legal counsel: Simpson Thacher & Bartlett LLP (Washington DC and New York); special Delaware counsel: Richards, Layton & Finger, P.A., Wilmington DE (per 486BPOS SAI 'Legal Counsel').",
+      "status": "extracted-unverified",
+      "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
+      "section": "Note 6 - Sub-Administrator, Custodian and Transfer Agent; Note 7 - Distribution and Shareholder Servicing Plan",
+      "quote": "UMB Bank, N.A. serves as the Fund\u2019s Custodian pursuant to a custody agreement ... Distribution Services, LLC serves as the Fund\u2019s distributor",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.6": {
       "element": "Plan operational fit",

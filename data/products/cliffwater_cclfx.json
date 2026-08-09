@@ -32,8 +32,13 @@
     },
     "1.4": {
       "element": "Distribution history & composition",
-      "value": null,
-      "status": "pending"
+      "value": "Class I per-share distributions (Consolidated Financial Highlights): FY ended 3/31/2026 total $(1.09), all from net investment income (return of capital \u2014 ; net realized gain \u2014 ); FY2025 $(0.90) all NII; FY2024 $(1.45) = $(1.41) NII + $(0.04) ROC; FY2023 $(0.84) = $(0.69) NII + $(0.15) ROC; stub period 1/1/2022\u20133/31/2022 none; CY2021 $(0.74) = $(0.62) NII + $(0.10) ROC + $(0.02) net realized gain. Statements of Changes in Net Assets: total distributions to shareholders (Class I) $(3,074,160,229) FY2026 and $(1,871,538,694) FY2025. Tax character (Note 7, Federal Income Taxes): tax year ended 12/31/2025 \u2014 ordinary income $3,074,160,229, Return of Capital $0, net long-term capital gains $0; tax year ended 12/31/2024 \u2014 ordinary income $2,345,776,539, ROC $0, net LTCG $17,411,256, total $2,363,187,795.",
+      "status": "extracted-unverified",
+      "source": "N-CSR (annual report, fiscal year ended March 31, 2026), filed 2026-06-08",
+      "section": "Consolidated Financial Highlights \u2013 Class I; Consolidated Statements of Changes in Net Assets; Notes \u2013 7. Federal Income Taxes",
+      "quote": "The tax character of distributions paid during the tax years ended December 31, 2025 and December 31, 2024 were as follows",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
@@ -82,8 +87,13 @@
     },
     "1.11": {
       "element": "Track record & manager tenure",
-      "value": null,
-      "status": "pending"
+      "value": "Named Portfolio Managers (prospectus 'PORTFOLIO MANAGERS' section): Stephen L. Nesbitt (CEO & CIO of the Investment Manager; primarily responsible for day-to-day management; 'portfolio manager of the Fund since its inception'; trustee table shows 'Chief Executive Officer and Chief Investment Officer, Cliffwater LLC (2004 \u2013 Present)'); Caitlin Nemeth, Portfolio Manager (joined the Investment Manager in 2021; previously over a decade at Antares Capital/GE Capital); Frances Beyers, Portfolio Manager (head of capital markets group; previously Refinitiv, Churchill Asset Management, JPMorgan); Samir Patel, Portfolio Manager (joined the Investment Manager in 2022; previously Antares Capital/GE Capital, RSM, Deloitte). Adviser: Cliffwater LLC, Marina del Rey, CA; as of June 30, 2025 approximately $42 billion AUM and $120 billion assets under advisement. Fund inception: N-CSR Note 1 states 'The Fund commenced operations on March 6, 2019.' Prospectus also notes the Investment Manager has recommended direct lending investments to advisory clients since 2011 and actively managed a publicly-traded BDC portfolio since August 2014.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus/SAI dated July 29, 2025, filed 2025-07-29",
+      "section": "MANAGEMENT OF THE FUND \u2013 PORTFOLIO MANAGERS (prospectus); Trustees and Officers table (SAI)",
+      "quote": "Mr. Nesbitt has been the portfolio manager of the Fund since its inception.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
@@ -117,8 +127,13 @@
     },
     "2.4": {
       "element": "AFFE",
-      "value": null,
-      "status": "pending"
+      "value": "Fee table ('FUND FEES AND EXPENSES', Class I Shares, as % of net assets): Management Fees 1.00%; Fees and Interest Payments on Borrowed Funds 1.75%; Acquired Fund Fees and Expenses 0.25%; Other Expenses 0.27%; Total Annual Expenses 3.27%. Footnote (3): 'Fees and Interest Payments on Borrowed Funds,' 'Other Expenses,' and 'Acquired Fund Fees and Expenses' represent estimated amounts that the Fund is currently incurring. Footnote (1): table assumes estimated average net assets of approximately $29.7 billion (Fund's average net assets as of June 30, 2025). Identical AFFE line (0.25%) also appears in the 424B3 filed 2025-08-12.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus dated July 29, 2025, filed 2025-07-29",
+      "section": "FUND FEES AND EXPENSES",
+      "quote": "Acquired Fund Fees and Expenses (3) ... 0.25 %",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.5": {
       "element": "Underlying GP economics",
@@ -127,8 +142,13 @@
     },
     "2.6": {
       "element": "Loads & servicing fees",
-      "value": null,
-      "status": "pending"
+      "value": "No sales loads and no distribution/servicing fees. Prospectus cover table: 'Sales Load ... None' for Class I Shares; Proceeds to Fund = Current Net Asset Value; Foreside Fund Services, LLC acts as principal underwriter on a best-efforts basis. DESCRIPTION OF SHARES: the Fund has multi-class exemptive relief but is authorized to offer only Class I Shares; 'The Fund has not adopted a distribution and/or service plan and the Fund is not permitted to pay fees with respect to Class I Shares under such a plan. No sales loads or conversion features apply to Class I Shares.' No dealer-manager fees disclosed.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus dated July 29, 2025, filed 2025-07-29",
+      "section": "Cover page (Total Offering table); DESCRIPTION OF SHARES",
+      "quote": "No sales loads or conversion features apply to Class I Shares.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.7": {
       "element": "Early repurchase fee",
@@ -172,8 +192,13 @@
     },
     "3.4": {
       "element": "Portfolio liquidity profile",
-      "value": null,
-      "status": "pending"
+      "value": "As of March 31, 2026 (N-CSR): fair value hierarchy table \u2014 Level 3 investments $27,306,832,701 of $39,962,131,663 total investments at fair value, plus $11,508,152,570 measured at NAV as practical expedient; Level 1 $547,782,011 (incl. Short-Term Investments $472,301,989); Level 2 $599,364,381. Cash $581,478,472 (Consolidated Statement of Assets and Liabilities). Unfunded loan commitments: total principal $6,068,005,805 (fair value $6,074,038,325; net unrealized loss $(4,008,485)); Note 13 separately tables unfunded commitments to private investment vehicles (e.g., AG Twinbrook $225,000,000; Antares Senior Loan Parallel Feeder Fund III $468,750,000). Credit facility backstop: senior secured Facility (PNC administrative agent; MassMutual joint lead arranger), as amended effective March 26, 2026, committed up to $7,690,000,000 \u2014 Term Loans $1,426,500,000, Revolving Loan capacity $4,842,500,000, DDTL capacity $1,421,000,000; balances at 3/31/2026 were $1,426,500,000 / $1,250,000,000 / $609,000,000; upsize possible to $10,000,000,000. Senior Notes $6,526,000,000 principal. Illiquidity: 'Shares in the Fund provide limited liquidity since shareholders will not be able to redeem Shares on a daily basis' and are 'suitable only for investors who can bear the risks associated with the limited liquidity of Shares.' Ratio note: Level 3 / total investments at fair value computes to ~68.3% (computed from the two printed figures, not printed in filing).",
+      "status": "extracted-unverified",
+      "source": "N-CSR (annual report, fiscal year ended March 31, 2026), filed 2026-06-08",
+      "section": "Notes \u2013 5. Fair Value of Investments; Notes \u2013 2. Significant Accounting Policies (Commitments and Contingencies; Borrowing, Use of Leverage); Consolidated Statement of Assets and Liabilities; Notes \u2013 13. Private Investment Vehicles; Notes \u2013 3 (Limited Liquidity)",
+      "quote": "the Fund had the following unfunded loan commitments ... total principal amount, fair value and net unrealized gain (loss) of $6,068,005,805, $6,074,038,325, and $(4,008,485), respectively",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.5": {
       "element": "TDF/CIT liquidity sleeve",
@@ -217,8 +242,13 @@
     },
     "4.1": {
       "element": "Valuation policy & NAV frequency",
-      "value": null,
-      "status": "pending"
+      "value": "NAV frequency: daily \u2014 'The Fund calculates its NAV as of the close of business on each Business Day and at such other times as the Board may determine' ('CALCULATION OF NET ASSET VALUE \u2013 GENERAL'); the Administrator calculates the NAV ('the Administrator calculates the Fund's NAV as of the close of business on each Business Day', SUSPENSION OF CALCULATION OF NET ASSET VALUE). Who values: pursuant to Rule 2a-5 the Board has delegated day-to-day responsibility for determining fair values under the Fund's Valuation Procedures to the Investment Manager (Cliffwater LLC) as Valuation Designee. Direct loan values may be adjusted daily based on estimated total return, trued up quarterly when valuations are reported; underlying Fund Manager valuations are quarterly ('The Fund calculates its NAV on a daily basis using the quarterly valuations provided by the Fund Managers'). Valuation Designee provides quarterly Rule 2a-5 reporting to the Board. Policy section names: 'CALCULATION OF NET ASSET VALUE' and 'SUSPENSION OF CALCULATION OF NET ASSET VALUE'.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus dated July 29, 2025, filed 2025-07-29",
+      "section": "CALCULATION OF NET ASSET VALUE (GENERAL; SUSPENSION OF CALCULATION OF NET ASSET VALUE)",
+      "quote": "The Fund calculates its NAV as of the close of business on each Business Day ... to the Investment Manager as Valuation Designee",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
@@ -227,8 +257,13 @@
     },
     "4.3": {
       "element": "Independent valuation agent",
-      "value": null,
-      "status": "pending"
+      "value": "No third-party valuation firm is NAMED in any on-disk filing. The N-CSR (Note 2) says corporate loans are valued using unobservable pricing inputs from the Fund's investment partners 'or other third -party pricing services' (unnamed), that interest rate swaps are marked-to-market daily 'using fair value estimates provided by an independent pricing service' (unnamed), and that fixed-income securities may be valued via 'a recognized pricing service' / 'independent pricing agents' (unnamed). The 486BPOS/424B3 expense lists reference 'engaging third party valuation consultants and agents' without naming any firm. Valuation authority rests with the Investment Manager as Rule 2a-5 Valuation Designee, overseen by the Board/Valuation Committee.",
+      "status": "extracted-unverified",
+      "source": "N-CSR (annual report, fiscal year ended March 31, 2026), filed 2026-06-08",
+      "section": "Notes \u2013 2. Significant Accounting Policies (investment valuation)",
+      "quote": "Corporate loans are generally valued using unobservable pricing inputs received from the Fund\u2019s investment partners or other third -party pricing services.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.4": {
       "element": "Methodology by asset type",
@@ -247,8 +282,13 @@
     },
     "4.6": {
       "element": "NAV restatement history",
-      "value": null,
-      "status": "pending"
+      "value": "None identified: searched 'restat', 'error correction', and 'reprocess' across ccl_ncsr.txt (N-CSR FY2026), ccl_486bpos.txt (486BPOS 2025-07-29), ccl_424b3.txt (424B3 2025-08-12), ccl_n23c3a_20260508.txt (N-23C3A 2026-05-08), and grepped all 12 raw HTML/XML files under data/raw/cliffwater_cclfx/ (including the seven other N-23C3A filings and NPORT-P); the only 'restat' hits are 'Amended and Restated' document titles \u2014 the Agreement and Declaration of Trust as amended and restated September 15, 2021 (in the N-CSR, 486BPOS, and 424B3) plus, in the 486BPOS Part C exhibit list, the Amended and Restated By-Laws, the Amended and Restated Administration, Fund Accounting and Recordkeeping Agreement, and the Amended and Restated Expense Limitation and Reimbursement Agreement. No NAV restatement, error-correction, or reprocessing language found; the N-CSR's only 'misstatement' references are standard PCAOB auditor's-report boilerplate. Quote below is the Fund's NAV-calculation sentence (no restatement disclosure exists to quote).",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus dated July 29, 2025, filed 2025-07-29",
+      "section": "CALCULATION OF NET ASSET VALUE \u2013 GENERAL (absence search across all on-disk Cliffwater CCLFX filings)",
+      "quote": "The Fund calculates its NAV as of the close of business on each Business Day",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.7": {
       "element": "Premium/discount check",
@@ -312,18 +352,33 @@
     },
     "6.1": {
       "element": "Structure map",
-      "value": null,
-      "status": "pending"
+      "value": "Legal form: Delaware statutory trust, registered closed-end management investment company operating as an interval fund; diversified; governed by Agreement and Declaration of Trust as most recently amended and restated September 15, 2021; elected RIC treatment. Exemptive relief: SEC multi-class relief; only Class I Shares issued as of 3/31/2026. Consolidation: Note 1 'Consolidation of Subsidiaries' \u2014 each subsidiary is a wholly owned LLC and all are consolidated with inter-company accounts eliminated; the note tables 63 asset-holding subsidiaries as of March 31, 2026, largest CCLF SPV LLC (inception 2/3/2020, net assets $7,023,237,176, 22.47% of Fund net assets); others include CCLF Holdings (D2) LLC ($2,418,001,671, 7.72%), CCLF Holdings (D7) LLC ($1,506,287,853, 4.82%), KCLF Holdings LLC ($1,175,169,204, 3.76%). Unconsolidated joint ventures (Note 12): FBLC Senior Loan Fund LLC (with Franklin BSP Lending Corporation) and Capstone Lending LLC (with Morgan Stanley Direct Lending Fund), each a Delaware LLC with 50/50 board and not controlled by the Fund.",
+      "status": "extracted-unverified",
+      "source": "N-CSR (annual report, fiscal year ended March 31, 2026), filed 2026-06-08",
+      "section": "Notes \u2013 1. Organization (incl. Consolidation of Subsidiaries); Notes \u2013 12. Related Party Transactions and Arrangements",
+      "quote": "is a Delaware statutory trust registered under the Investment Company Act of 1940 ... as a closed -end management investment company operating as an interval fund",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.2": {
       "element": "Strategy & instrument complexity",
-      "value": null,
-      "status": "pending"
+      "value": "Objectives: primary \u2014 consistent current income; secondary \u2014 capital preservation. 80% policy: under normal market conditions at least 80% of assets (net assets plus borrowings for investment purposes) in loans to companies ('corporate loans'), accessed through seven printed routes: (i) direct loans originated by non-bank lenders; (ii) notes/pass-through obligations on direct loans; (iii) asset-backed securities on pools of direct loans; (iv) companies and/or private investment funds (3(c)(1)/3(c)(7)) primarily holding direct loans; (v) high yield securities; (vi) bank loans; (vii) SPVs and/or joint ventures holding loans or credit-like securities. Printed limit: investments in 3(c)(1)/3(c)(7) hedge funds and private equity funds limited to no more than 15% of assets. Non-U.S. investments permitted; currency fluctuations 'intended to be hedged through the use of currency derivatives or other instruments.' Other instruments: preferred securities, convertible securities, derivatives (options, swaps, futures contracts, forward agreements, reverse repurchase agreements and other similar transactions) for hedging and investment purposes, ETFs and other investment companies, warrants/equity of borrowers, Warehouses (pre-CLO/CDO financing structures); use subject to Rule 18f-4 (VaR leverage limit / derivatives risk management program unless limited derivatives user). Actually held per N-CSR at 3/31/2026: forward foreign currency exchange contracts and interest rate swap contracts (hedging fixed-rate debt).",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus dated July 29, 2025, filed 2025-07-29",
+      "section": "INVESTMENT OPPORTUNITIES AND STRATEGIES; PRINCIPAL RISK FACTORS (DERIVATIVE INSTRUMENTS RISK; WAREHOUSE INVESTMENT RISK)",
+      "quote": "investing at least 80% of its assets (net assets, plus any borrowings for investment purposes) in loans to companies (\u201ccorporate loans\u201d)",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.3": {
       "element": "Conflicts & affiliated transactions",
-      "value": null,
-      "status": "pending"
+      "value": "Conflicts: dedicated 'CONFLICTS OF INTEREST' section \u2014 Investment Manager and affiliates advise other vehicles with similar strategies that may compete for opportunities and may co-invest; shareholders deemed to acknowledge/waive certain conflict claims; valuation conflict disclosed ('participation of the investment professionals of the Investment Manager in the Fund's valuation process could result in a conflict of interest as the Investment Management Fee is based on the value of the Fund's assets'). Co-investment order: NOT held as of this prospectus \u2014 risk factor 'FAILURE TO OBTAIN CO-INVESTMENT EXEMPTIVE RELIEF' states the Fund and Investment Manager 'may seek' Section 17(d) exemptive relief and 'There is no assurance that the Fund or the Investment Manager will receive such exemptive relief.' Affiliated/related-party amounts (N-CSR FY2026, filed 2026-06-08): Investment Management fees $309,391,914 (1.00% annualized of daily net assets; payable $6,861,054 at 3/31/2026); Note 12 affiliated investments \u2014 FBLC Senior Loan Fund LLC (value $53,105,189 at 3/31/2026; return of capital $(20,022,363); dividend income $6,690,429) and Capstone Lending LLC (purchases $23,632,903; value $23,908,620), both 50/50 unconsolidated JVs (with Franklin BSP Lending Corporation and Morgan Stanley Direct Lending Fund respectively).",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus/SAI dated July 29, 2025, filed 2025-07-29",
+      "section": "CONFLICTS OF INTEREST; PRINCIPAL RISK FACTORS \u2013 FAILURE TO OBTAIN CO-INVESTMENT EXEMPTIVE RELIEF",
+      "quote": "The Fund and the Investment Manager may seek exemptive relief from the provisions of Section 17(d) of the Investment Company Act",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.4": {
       "element": "Tax reporting (1099 vs K-1)",
@@ -337,8 +392,13 @@
     },
     "6.5": {
       "element": "Service-provider web",
-      "value": null,
-      "status": "pending"
+      "value": "As printed on the prospectus service-provider page (dated July 29, 2025): Investment Manager \u2014 Cliffwater LLC, 4640 Admiralty Way, 11th Floor, Marina del Rey, CA; Transfer Agent/Administrator \u2014 UMB Fund Services, Inc., 235 West Galena Street, Milwaukee, WI; Custodian Bank \u2014 State Street Bank and Trust Company, 1 Iron Street, Boston, MA; Distributor \u2014 Foreside Fund Services, LLC, Three Canal Plaza, Suite 100, Portland, ME (also named on cover as principal underwriter on a best-efforts basis); Independent Registered Public Accounting Firm \u2014 Cohen & Company, Ltd., 1350 Euclid Avenue, Suite 800, Cleveland, OH; Fund Counsel \u2014 Faegre Drinker Biddle & Reath LLP, One Logan Square, Suite 2000, Philadelphia, PA. No dealer-manager listed.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus dated July 29, 2025, filed 2025-07-29",
+      "section": "Prospectus back cover \u2013 service provider listing (preceding the SAI cover page)",
+      "quote": "Custodian Bank State Street Bank and Trust Company ... Independent Registered Public Accounting Firm Cohen & Company, Ltd.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.6": {
       "element": "Plan operational fit",

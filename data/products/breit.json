@@ -22,12 +22,12 @@
     },
     "1.4": {
       "element": "Distribution history & composition",
-      "value": "PARTIAL: $2.4B monthly net distributions declared FY2025; avg annualized distribution rate by class (I 4.8%, S 3.9%, D 4.6%, T 4.0%). ROC split pending.",
-      "status": "partial",
-      "source": "10-K 2026-02-27 (FY2025)",
-      "section": "Distributions table",
-      "quote": "",
-      "extracted_by": "Claude (Inc-1 2026-07-18)",
+      "value": "EXTENSION (tax character + per-class detail, FY2025 10-K): Distributions for the year ended December 31, 2025 were characterized for federal income tax purposes as 100% return of capital (0% ordinary income, 0% capital gains); 2024: 96.27% ROC / 3.73% capital gains; 2023: 85.01% ROC / 14.99% capital gains. MD&A tax-character table (distributions paid basis; Dec 31 declarations paid in January excluded as subsequent-year tax events) shows 2025: Ordinary Income \u2014%, Capital Gains \u2014%, Return of Capital 100.00%. Per-class total NET distributions declared 2025: Class I $0.6593, Class S $0.5412, Class S-2 $0.1805, Class D $0.6252, Class D-2 $0.2088, Class T $0.5431, Class T-2 $0.1811, OP Units $0.6593; every class received the same aggregate GROSS distribution of $0.6593/share-unit (net varies by class stockholder servicing fee). Monthly distributions declared consecutively since March 2017, generally paid 20 days after month-end; Class C is an accumulating class (no cash distribution). Total FY2025 distributions declared $2,371,454 thousand (50% payable in cash / 50% reinvested in shares); sources: 96% cash flows from operating activities ($2,285,749K), 4% net gains from investment realizations ($85,705K), 0% indebtedness.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Item 7. MD&A \u2014 Distributions (pp. 127\u2013128) and Notes to Consolidated Financial Statements \u2014 Note 14. Equity and Redeemable Non-controlling Interests",
+      "quote": "Distributions for the year ended December 31, 2025 were characterized, for federal income tax purposes, as 100 % return of capital.",
+      "extracted_by": "Claude Code (2026-08-09)",
       "verified_by": ""
     },
     "1.5": {
@@ -62,8 +62,13 @@
     },
     "1.11": {
       "element": "Track record & manager tenure",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: no named individual portfolio managers or 'has managed since' dates exist in the 10-K (externally managed REIT; Part III/Item 10 director-officer bios incorporated by reference to proxy statement to be filed by April 30, 2026). What is printed: externally managed by BX REIT Advisors L.L.C. (the 'Adviser'), part of Blackstone's real estate group; Company incorporated in Maryland on November 16, 2015; elected REIT taxation commencing with taxable year ended December 31, 2017; monthly distributions declared consecutively since March 2017. Blackstone total AUM $1.3 trillion as of December 31, 2025; Blackstone Real Estate: $319.3 billion of investor capital under management and 787 professionals as of December 31, 2025. Signature pages (Feb 27, 2026) name: Katharine A. Keenan, Chief Executive Officer (Principal Executive Officer); Anthony F. Marone, Jr., CFO and Treasurer; Paul Kolodziej, Deputy CFO (Principal Accounting Officer); Frank Cohen, Chairman of the Board; Zaneta Koplewicz and A.J. Agarwal, Co-Presidents and Directors.",
+      "status": "partial",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Item 1. Business \u2014 General Description of Business and Operations / Our Adviser; Signatures",
+      "quote": "We were incorporated in Maryland on November 16, 2015 ... Blackstone had total assets under management of $1.3 trillion as of December 31, 2025",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
@@ -92,8 +97,13 @@
     },
     "2.4": {
       "element": "AFFE",
-      "value": null,
-      "status": "pending"
+      "value": "Not applicable \u2014 none exists: BREIT is a 10-K filer (non-'40-Act REIT) with no 1940-Act-style fee table; no 'Acquired Fund Fees and Expenses' line exists and none can (AFFE is a 1940-Act registered-fund disclosure). Searched stripped 10-K (FY2025) and 10-Q (Q2 2026) for 'acquired fund' \u2014 zero hits in both. Fee structure disclosed instead: annual management fee of 1.25% of NAV payable monthly to the Adviser ($671.0 million incurred FY2025, paid in shares/OP units); performance participation allocation of 12.5% of BREIT OP total return over a 5% hurdle ($592.9 million expense FY2025); class-level stockholder servicing fees (see cell 2.6).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Notes to Consolidated Financial Statements \u2014 Note 10. Related Party and Other Transactions \u2014 Accrued Management Fee",
+      "quote": "The Adviser is entitled to an annual management fee equal to 1.25 % of the Company\u2019s NAV, payable monthly",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.5": {
       "element": "Underlying GP economics",
@@ -102,8 +112,13 @@
     },
     "2.6": {
       "element": "Loads & servicing fees",
-      "value": null,
-      "status": "pending"
+      "value": "As of December 31, 2025 (Item 5 table): selling commissions and dealer manager fees (% of transaction price) up to 3.5% for Class S, S-2, T, T-2; up to 1.5% for Class D, D-2. Stockholder servicing fee (% of NAV): 0.85% for Class S, S-2, T, T-2; 0.25% for Class D, D-2. No selling commissions, dealer manager fees, or stockholder servicing fee for Class I, C, L, L-2, F shares. Class T-2 in Current Offering: upfront selling commissions up to 3.0% plus upfront dealer manager fee 0.5% (sum capped at 3.5%). Class T/T-2 servicing fee splits into 0.65%/yr advisor + 0.20%/yr dealer stockholder servicing fee (sum always 0.85%/yr of NAV). Dealer manager: Blackstone Securities Partners L.P., a registered broker-dealer affiliated with the Adviser; through Dec 31, 2025 it retained none of these fees (all re-allowed to participating broker-dealers). Servicing-fee accrual for Class S/D/T subject to 8.75% fee limitation (Note 10).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Item 5. Market for Registrant's Common Equity \u2014 selling commissions, dealer manager fees, and stockholder servicing fees table",
+      "quote": "Stockholder servicing fee (% of NAV) | 0.85% | 0.85% | 0.25% | 0.25% | 0.85% | 0.85% |",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "2.7": {
       "element": "Early repurchase fee",
@@ -157,8 +172,13 @@
     },
     "3.4": {
       "element": "Portfolio liquidity profile",
-      "value": null,
-      "status": "pending"
+      "value": "Liquidity of $6.7 billion as of February 26, 2026: $5.6 billion available under undrawn revolving credit facilities plus $1.1 billion unrestricted cash and cash equivalents; also $0.2 billion expected disposition proceeds under contract. FY2025 operating cash flows $2.3 billion. Real estate debt investments carried at estimated fair value of $4.8 billion as of December 31, 2025 cited as a potential incremental liquidity source; leverage 47% as of December 31, 2025 (target ~60%). Fair-value hierarchy (Note, Dec 31, 2025, $K): recurring FV assets total $15,816,238 of which Level 3 $4,597,993 (investments in real estate debt $754,693; investments in unconsolidated entities $3,843,300); Level 2 $11,218,245; Level 1 $0; plus $96.6 million measured at NAV practical expedient excluded from hierarchy. (Consolidated properties are held at depreciated cost under GAAP, not in the FV table.) Shares 'should be considered as having only limited liquidity and at times may be illiquid.'",
+      "status": "extracted-unverified",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Item 7. MD&A \u2014 Liquidity and Capital Resources \u2014 Liquidity; Notes to Consolidated Financial Statements \u2014 Fair Value Measurements (recurring basis table)",
+      "quote": "this includes amounts available under our undrawn revolving credit facilities of $5.6 billion as well as unrestricted cash and cash equivalents of $1.1 billion",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "3.5": {
       "element": "TDF/CIT liquidity sleeve",
@@ -202,8 +222,13 @@
     },
     "4.1": {
       "element": "Valuation policy & NAV frequency",
-      "value": null,
-      "status": "pending"
+      "value": "NAV frequency: monthly \u2014 'We calculate and publish NAV monthly' solely for establishing monthly sale/repurchase price. Who values: the Adviser (BX REIT Advisors L.L.C.) calculates fair value of real estate properties monthly, based in part on values from third-party independent appraisers; each property valued by an independent third-party appraisal firm annually; monthly reasonableness review by an independent valuation advisor; the independent valuation advisor does not calculate NAV \u2014 'the Adviser is ultimately and solely responsible for the determination of our NAV.' NAV is computed by State Street Bank and Trust Company ('State Street') or its affiliates using Adviser-provided valuations, per valuation guidelines approved by the board of directors. NAV model adjusts assets/liabilities to fair value generally per ASC 820; NAV not audited and not a GAAP measure. Full policy in 'Net Asset Value Calculation and Valuation Guidelines' in the Prospectus (referenced, not reproduced, in the 10-K).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Item 1A. Risk Factors \u2014 'NAV calculations are not governed by governmental or independent securities, financial or accounting rules or standards'; Item 7. MD&A \u2014 Net Asset Value",
+      "quote": "We calculate and publish NAV monthly solely for purposes of establishing the price at which we sell and repurchase shares of our common stock",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
@@ -212,8 +237,13 @@
     },
     "4.3": {
       "element": "Independent valuation agent",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: the 10-K repeatedly references 'an independent valuation advisor' that reviews monthly property valuations and monthly/quarterly real estate debt valuations for reasonableness (and reviews Adviser valuation assumptions such as discount/exit cap rates), and 'independent third-party appraisal firm(s)' performing annual per-property appraisals \u2014 but NO firm is NAMED anywhere in the on-disk 10-K (FY2025) or 10-Q (Q2 2026). Searched both raw HTML files for Altus, Kroll, SitusAMC, Duff & Phelps, CBRE, Chatham: zero hits. The 10-K states the advisor's role is set forth in the valuation guidelines and directs readers to 'Net Asset Value Calculation and Valuation Guidelines' in the Prospectus (not on disk) \u2014 the name would be there.",
+      "status": "partial",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Item 1A. Risk Factors \u2014 'Valuations and appraisals of our properties and real estate debt are estimates of fair value and may not necessarily correspond to realizable value'",
+      "quote": "with review for reasonableness each month by an independent valuation advisor. Each property will be valued by an independent third-party appraisal firm annually.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.4": {
       "element": "Methodology by asset type",
@@ -237,8 +267,13 @@
     },
     "4.6": {
       "element": "NAV restatement history",
-      "value": null,
-      "status": "pending"
+      "value": "None identified: searched stripped 10-K (FY2025, filed 2026-02-27) and stripped 10-Q (Q2 2026, filed 2026-08-07) for 'restat', 'error correction', and 'reprocess'. Zero NAV-restatement or error-correction events. All hits are (a) the Form 10-K cover-page check boxes, both UNCHECKED ('...reflect the correction of an error to previously issued financial statements. \u2610' and the related clawback-analysis box '\u2610'), and (b) exhibit/charter titles such as 'Second Articles of Amendment and Restatement' and 'Amended and Restated Bylaws' (legal-document restatements, not financial). 'reprocess': 0 hits in both documents.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27 (and Form 10-Q for quarter ended June 30, 2026, filed 2026-08-07)",
+      "section": "Cover page checkboxes; Item 15 Exhibits; NAV-calculation sentence from Item 7. MD&A \u2014 Net Asset Value",
+      "quote": "Our Adviser calculates the fair value of our real estate properties monthly based in part on values provided by third party independent appraisers",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "4.7": {
       "element": "Premium/discount check",
@@ -292,18 +327,33 @@
     },
     "6.1": {
       "element": "Structure map",
-      "value": null,
-      "status": "pending"
+      "value": "Blackstone Real Estate Income Trust, Inc.: Maryland corporation incorporated November 16, 2015; non-listed, perpetual-life REIT (REIT election commencing taxable year ended December 31, 2017). UPREIT structure: BREIT is sole general partner of BREIT Operating Partnership L.P. ('BREIT OP'), a Delaware limited partnership, and owns substantially all assets through BREIT OP; share sale proceeds contributed to BREIT OP for corresponding-class units. Externally managed by BX REIT Advisors L.L.C., a subsidiary of Blackstone Inc.; BREIT Special Limited Partner L.P. (wholly-owned Blackstone subsidiary) holds the performance participation interest in BREIT OP. Nine reportable segments. DST Program (commenced November 2025): sells DST Interests in Delaware statutory trusts holding DST Properties via Section 4(a)(2)/Reg D private placements to accredited investors; each DST Property leased to a wholly-owned BREIT OP subsidiary under a master lease guaranteed by BREIT OP, with BREIT OP retaining a fair-market-value purchase option (FMV Option) to acquire DST Interests for OP units (or units plus cash). Also consolidates securitization vehicles ($6,975,460K real estate loans held at FV, Dec 31, 2025). Share classes: cumulative net proceeds of $80.2 billion through February 27, 2026 from sales of Class I, S, S-2, D, D-2, T, T-2, and C common stock across the continuous public offering and private offerings and BREIT OP units; per Item 5, Class C, L, L-2, and F shares are offered only in a private offering and are not offered in the Current Offering; no Class L, L-2, or F shares were outstanding as of December 31, 2025.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Part I, Item 1. Business \u2014 General Description of Business and Operations; Item 5. Market for Registrant's Common Equity",
+      "quote": "We are the sole general partner of BREIT Operating Partnership L.P. (\u201cBREIT OP\u201d), a Delaware limited partnership, and we own substantially all of our assets through BREIT OP",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.2": {
       "element": "Strategy & instrument complexity",
-      "value": null,
-      "status": "pending"
+      "value": "Strategy: invests primarily in stabilized, income-generating commercial real estate across asset classes in the U.S. (and to a lesser extent outside the U.S.), plus real estate debt to a lesser extent. Nine reportable segments: Rental Housing, Industrial, Net Lease, Data Centers, Hospitality, Self Storage, Retail, Office, and Investments in Real Estate Debt. As of Dec 31, 2025: 4,483 properties and 63,918 single family rental homes. Real estate debt instruments as printed: CMBS, RMBS and other residential credit, real estate-related corporate credit, mortgages, mezzanine and other loans, CDO and CLO interests, equity interests in entities investing in real estate debt, and derivatives. Leverage/complexity: target leverage ratio approximately 60% (actual 47% at Dec 31, 2025); real estate debt portfolio has embedded leverage through reverse repurchase agreements and may have embedded leverage through derivatives including total return swaps, securities lending arrangements and credit default swaps. Interest rate and foreign currency hedging derivatives on balance sheet at Dec 31, 2025: $960,328K assets / $24,274K liabilities (Level 2).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Part I, Item 1. Business \u2014 Investments in Real Estate Debt; Borrowing Policies",
+      "quote": "embedded leverage through the use of derivatives, including, but not limited to, total return swaps, securities lending arrangements and credit default swaps",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.3": {
       "element": "Conflicts & affiliated transactions",
-      "value": null,
-      "status": "pending"
+      "value": "Note 10 'Related Party and Other Transactions' (FY2025): Due to affiliates $791,741K at Dec 31, 2025 (accrued stockholder servicing fee $724,771K; accrued management fee $56,818K; other $10,152K). Management fee 1.25% of NAV: incurred $671.0M (2025), $713.6M (2024), $839.2M (2023), always paid in shares/OP units (48.5M OP units issued to Adviser in 2025). Performance participation (Special Limited Partner, 12.5% over 5% hurdle): $592.9M expense in 2025, paid via 32.2M BREIT OP units for $496.7M net after satisfying the $95.1M net 2024 Shortfall Obligation plus $1.1M interest. Affiliated title agent Lexington National Land Services (Blackstone-owned): paid $26.9M (2025), $26.5M (2024), $7.7M (2023). Captive insurance (Blackstone-managed): $93.3M contributed 2025, of which $1.8M fee to a Blackstone affiliate. Affiliated service providers (Blackstone-advised portfolio companies): Link Logistics Real Estate LLC (logistics), TAH Operations LLC/Tricon (single family rental), LivCor LLC (multifamily), Revantage Corporate Services. DST Program: Adviser asset management fee 1.0% of gross rents ($12K in 2025); Dealer Manager investor servicing fee up to 0.85%/yr and upfront selling commission up to 3.5%. Blackstone owned $4.7B of BREIT shares/OP units and Blackstone employees a further $1.3B as of Feb 27, 2026. Conflicts disclosure (Item 1A): Adviser's fee is based on NAV 'which the Adviser is ultimately responsible for determining' \u2014 calculated by State Street from Adviser valuations.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Notes to Consolidated Financial Statements \u2014 Note 10. Related Party and Other Transactions; Item 1A. Risk Factors (conflicts of interest)",
+      "quote": "the Company incurred management fees of $ 671.0 million, $ 713.6 million and $ 839.2 million, respectively ... resulting in $ 592.9 million of Performance Participation Allocation expense",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.4": {
       "element": "Tax reporting (1099 vs K-1)",
@@ -317,8 +367,13 @@
     },
     "6.5": {
       "element": "Service-provider web",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: names as printed in 10-K \u2014 Auditor: Deloitte & Touche LLP, New York, New York (auditor since 2016; PCAOB ID No. 34). Dealer manager/distributor: Blackstone Securities Partners L.P., registered broker-dealer affiliated with the Adviser. NAV calculation agent: State Street Bank and Trust Company ('State Street') or its affiliates. Adviser: BX REIT Advisors L.L.C. Affiliated operating service providers: Link Logistics Real Estate LLC, TAH Operations LLC (Tricon), LivCor LLC, Revantage Corporate Services LLC / Revantage Global Services; affiliated title agent Lexington National Land Services (LNLS). Missing/not named in the 10-K: transfer agent (referenced only as 'the Company's transfer agent', unnamed), and no administrator, custodian, or legal counsel is identified (non-'40-Act REIT \u2014 these are not required 10-K disclosures).",
+      "status": "partial",
+      "source": "Form 10-K for fiscal year ended December 31, 2025, filed 2026-02-27",
+      "section": "Report of Independent Registered Public Accounting Firm; Item 5 (Dealer Manager); Item 1A. Risk Factors (State Street); Note 10. Related Party and Other Transactions",
+      "quote": "/s/ Deloitte & Touche LLP ... We have served as the Company\u2019s auditor since 2016.",
+      "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
     },
     "6.6": {
       "element": "Plan operational fit",
