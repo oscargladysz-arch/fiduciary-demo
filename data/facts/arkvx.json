@@ -3,104 +3,131 @@
   "cohort_id": "venture",
   "depth": "cohort",
   "membership_rationale": "Interval fund holding venture/growth - the NAV-priced contrast to the two market-priced members; pricing-basis mix is the cohort's disclosed core caveat (composite refused).",
-  "what": "typed projections of evidenced cells - scaffold pending cohort-tier extraction",
-  "generated_by": "src/build_facts.py",
+  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
-      "value": null,
+      "value": "interval_23c3",
       "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "status": "extracted-unverified"
     },
     "mgmt_fee_pct": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 2.75,
+      "source_cell": "2.1",
+      "status": "extracted-unverified"
     },
     "mgmt_fee_base": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "net_assets",
+      "source_cell": "2.1",
+      "note": "average daily net assets",
+      "status": "extracted-unverified"
     },
     "incentive_fee": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": {
+        "present": false
+      },
+      "source_cell": "2.2",
+      "note": "flat management fee only - absence documented",
+      "status": "extracted-unverified"
     },
     "early_repurchase": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": {
+        "present": false
+      },
+      "source_cell": "2.7",
+      "note": "all repurchases at NAV; no early fee",
+      "status": "extracted-unverified"
     },
     "repurchase_cadence_per_year": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 4,
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
     },
     "repurchase_cap_pct": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 5.0,
+      "source_cell": "3.1",
+      "note": "fundamental 5-25% policy; every completed offer at 5%",
+      "status": "extracted-unverified"
     },
     "repurchase_cap_base": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "outstanding_shares",
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
     },
     "gate_history": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": false,
+      "source_cell": "3.3",
+      "note": "no gating or postponement disclosed",
+      "status": "extracted-unverified"
     },
     "tax_form": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "1099",
+      "source_cell": "6.4",
+      "status": "extracted-unverified"
     },
     "auditor": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "Ernst & Young LLP",
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
     },
     "big4": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": true,
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
     },
     "expense_ratio_pct": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 2.9,
+      "source_cell": "2.3",
+      "note": "FY2025 net of waivers (gross 4.39%); single class",
+      "status": "extracted-unverified"
     },
     "net_assets_usd": {
       "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "source_cell": "3.6",
+      "reason": "aggregate net assets not yet carried into a typed cell; verification-queue item",
+      "status": "extracted-unverified"
     },
     "inception": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "2022-09-01",
+      "source_cell": "1.11",
+      "note": "commencement of operations",
+      "status": "extracted-unverified"
     },
     "track_record_years": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 2.9,
+      "source_cell": "1.11",
+      "status": "computed",
+      "note": "(as-of 2025-07-31 minus inception) / 365.25"
+    },
+    "primary_benchmark_id": {
+      "value": "psp_v",
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "selection_score": {
+      "value": 8,
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "pme_primary": {
+      "value": 1.9927,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "direct_alpha_primary": {
+      "value": 19.07,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "liquidity_verdict_by_plan": {
+      "value": {
+        "plan_consulting_alumni": "conditional",
+        "plan_manufacturer_union": "conditional",
+        "plan_restaurant_hourly": "conditional",
+        "plan_tech_media": "conditional"
+      },
+      "source_cell": "3.9",
+      "status": "computed"
     }
   }
 }

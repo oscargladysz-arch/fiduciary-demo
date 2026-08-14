@@ -22,72 +22,69 @@
   "stats": {
     "mgmt_fee_pct": {
       "field": "mgmt_fee_pct",
-      "n": 1,
+      "n": 3,
       "median": 2.5,
-      "min": 2.5,
-      "max": 2.5,
+      "min": 1.75,
+      "max": 2.75,
       "values": {
-        "dxyz": 2.5
+        "dxyz": 2.5,
+        "ssss": 1.75,
+        "arkvx": 2.75
       },
-      "missing": {
-        "ssss": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "arkvx": "cohort-tier extraction in progress (see data/roster_decisions.md)"
-      }
+      "missing": {}
     },
     "expense_ratio_pct": {
       "field": "expense_ratio_pct",
-      "n": 1,
+      "n": 3,
       "median": 4.53,
-      "min": 4.53,
-      "max": 4.53,
+      "min": 2.9,
+      "max": 9.46,
       "values": {
-        "dxyz": 4.53
+        "dxyz": 4.53,
+        "ssss": 9.46,
+        "arkvx": 2.9
       },
-      "missing": {
-        "ssss": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "arkvx": "cohort-tier extraction in progress (see data/roster_decisions.md)"
-      }
+      "missing": {}
     },
     "repurchase_cap_pct": {
       "field": "repurchase_cap_pct",
-      "n": 0,
-      "median": null,
-      "min": null,
-      "max": null,
-      "values": {},
+      "n": 1,
+      "median": 5.0,
+      "min": 5.0,
+      "max": 5.0,
+      "values": {
+        "arkvx": 5.0
+      },
       "missing": {
         "dxyz": "on-exchange liquidity; no fund-level cap",
-        "ssss": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "arkvx": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+        "ssss": "on-exchange liquidity; no fund-level cap"
       }
     },
     "repurchase_cadence_per_year": {
       "field": "repurchase_cadence_per_year",
-      "n": 1,
+      "n": 3,
       "median": 252,
-      "min": 252,
+      "min": 4,
       "max": 252,
       "values": {
-        "dxyz": 252
+        "dxyz": 252,
+        "ssss": 252,
+        "arkvx": 4
       },
-      "missing": {
-        "ssss": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "arkvx": "cohort-tier extraction in progress (see data/roster_decisions.md)"
-      }
+      "missing": {}
     },
     "track_record_years": {
       "field": "track_record_years",
-      "n": 1,
+      "n": 3,
       "median": 3.6,
-      "min": 3.6,
-      "max": 3.6,
+      "min": 2.9,
+      "max": 15.0,
       "values": {
-        "dxyz": 3.6
+        "dxyz": 3.6,
+        "ssss": 15.0,
+        "arkvx": 2.9
       },
-      "missing": {
-        "ssss": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "arkvx": "cohort-tier extraction in progress (see data/roster_decisions.md)"
-      }
+      "missing": {}
     },
     "net_assets_usd": {
       "field": "net_assets_usd",
@@ -99,8 +96,8 @@
         "dxyz": 438000000
       },
       "missing": {
-        "ssss": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "arkvx": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+        "ssss": "aggregate net assets not yet carried into a typed cell; verification-queue item",
+        "arkvx": "aggregate net assets not yet carried into a typed cell; verification-queue item"
       }
     }
   },

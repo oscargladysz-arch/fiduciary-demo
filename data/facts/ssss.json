@@ -3,104 +3,139 @@
   "cohort_id": "venture",
   "depth": "cohort",
   "membership_rationale": "Listed BDC (fka SuRo Capital) holding late-stage growth equity - the second market-priced venture vehicle; gives dxyz a premium/discount comparable. Membership CONDITIONAL on strategy continuity through the Neostellar rename (verification queue).",
-  "what": "typed projections of evidenced cells - scaffold pending cohort-tier extraction",
-  "generated_by": "src/build_facts.py",
+  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
-      "value": null,
+      "value": "listed_bdc",
       "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "status": "extracted-unverified"
     },
     "mgmt_fee_pct": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 1.75,
+      "source_cell": "2.1",
+      "note": "EFFECTIVE 2026-07-15 (externalization): prior history was internally managed with no external fee - the track record and the fee regime do not overlap",
+      "status": "extracted-unverified"
     },
     "mgmt_fee_base": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "gross_incl_borrowings",
+      "source_cell": "2.1",
+      "note": "GROSS assets - leverage-inclusive base",
+      "status": "extracted-unverified"
     },
     "incentive_fee": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": {
+        "present": true,
+        "hurdle_pct": 7.0,
+        "structure": "two-part BDC fee (income + capital gains) per the 2026-07-15 externalization; hurdle 7.00% annualized - full terms in cell 2.2"
+      },
+      "source_cell": "2.2",
+      "status": "extracted-unverified"
     },
     "early_repurchase": {
       "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "source_cell": "2.7",
+      "reason": "exchange-listed; exit is on-market - no repurchase program fee applies",
+      "status": "n/a - exchange-traded: no investor-level repurchase/redemption exists, so no early-repurchase fee is possible; exit is on-exchange sale at market price"
     },
     "repurchase_cadence_per_year": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 252,
+      "source_cell": "3.1",
+      "note": "daily on-exchange dealing (Nasdaq: NSLR)",
+      "status": "extracted-unverified"
     },
     "repurchase_cap_pct": {
       "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "source_cell": "3.1",
+      "reason": "on-exchange liquidity; no fund-level cap",
+      "status": "extracted-unverified"
     },
     "repurchase_cap_base": {
       "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "source_cell": "3.1",
+      "reason": "on-exchange liquidity; no fund-level cap",
+      "status": "extracted-unverified"
     },
     "gate_history": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": false,
+      "source_cell": "3.3",
+      "note": "no redemption right exists to gate",
+      "status": "extracted-unverified"
     },
     "tax_form": {
       "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "source_cell": "6.4",
+      "reason": "form number not printed in on-disk filings; RIC status implies 1099 but the cell is partial",
+      "status": "partial"
     },
     "auditor": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "CBIZ CPAs P.C.",
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
     },
     "big4": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": false,
+      "source_cell": "4.5",
+      "note": "the venture cohort's only non-Big-4 audit",
+      "status": "extracted-unverified"
     },
     "expense_ratio_pct": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 9.46,
+      "source_cell": "2.3",
+      "note": "FY2025 net operating expenses/avg net assets UNDER INTERNAL MANAGEMENT; the fee regime changed 2026-07-15 - forward ratios will differ (see 2.1/2.2)",
+      "status": "extracted-unverified"
     },
     "net_assets_usd": {
       "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "source_cell": "3.6",
+      "reason": "aggregate net assets not yet carried into a typed cell; verification-queue item",
+      "status": "extracted-unverified"
     },
     "inception": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "2011-01-06",
+      "source_cell": "1.11",
+      "note": "the roster's longest listed record (~15 years)",
+      "status": "extracted-unverified"
     },
     "track_record_years": {
+      "value": 15.0,
+      "source_cell": "1.11",
+      "status": "computed",
+      "note": "(as-of 2025-12-31 minus inception) / 365.25"
+    },
+    "primary_benchmark_id": {
       "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
+    },
+    "selection_score": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
+    },
+    "pme_primary": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
+    },
+    "direct_alpha_primary": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
+    },
+    "liquidity_verdict_by_plan": {
+      "value": {
+        "plan_consulting_alumni": "aligned-mechanical",
+        "plan_manufacturer_union": "aligned-mechanical",
+        "plan_restaurant_hourly": "aligned-mechanical",
+        "plan_tech_media": "aligned-mechanical"
+      },
+      "source_cell": "3.9",
+      "status": "computed"
     }
   }
 }

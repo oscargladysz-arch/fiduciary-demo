@@ -7,273 +7,543 @@
   "cells": {
     "1.1": {
       "element": "Net total return series",
-      "value": null,
-      "status": "pending"
+      "value": "NAV-based net total return series, fiscal years ended March 31, all five classes printed. Primary class (Class 4, zero distribution fee, inception 09/30/14 = Fund inception, used in the N-CSR performance graph): FY2026 9.10%, FY2025 10.07%, FY2024 12.08%, FY2023 6.45%, FY2022 18.36% (N-CSR highlights). N-2 ten-year Class 4 table extends: FY2021 35.72%, FY2020 4.15%, FY2019 10.11%, FY2018 14.26%, FY2017 14.27%. DISCREPANCY (recorded 2026-08-15): the N-2 dated 2026-07-31 prints Class 4 FY2025 as 9.94% vs N-CSR 10.07% (same pattern Class 1: 9.09% vs 9.22%); N-CSR value carried as primary. Cumulative return is based on monthly NAV change with distributions reinvested; only fiscal-year (not monthly) return rows are printed.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (FYE 2026-03-31, filed 2026-06-09), Financial Highlights; N-2 filed 2026-07-30 (Prospectus dated 2026-07-31), Class 4 Financial Highlights",
+      "section": "Financial Highlights (Class 1-5, FY2022-FY2026); N-2 FINANCIAL HIGHLIGHTS (ten fiscal years); Portfolio Manager's Comments cumulative-return note",
+      "quote": "The Fund's cumulative total return is based on the monthly change in net asset value (NAV), and assumes that all dividends and distributions were reinvested.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.2": {
       "element": "Trailing & calendar-year returns",
-      "value": null,
-      "status": "pending"
+      "value": "Average annual total returns as of 3/31/2026 (1yr / 5yr / 10yr / since inception, inception date): Class 4: 9.10% / 11.12% / 13.16% / 11.63% (09/30/14); Class 3: 8.88 / 10.84 / 12.87 / 12.50 (10/27/15); Class 2: 8.60 / 10.56 / 12.60 / 12.21 (10/27/15); Class 1: 8.35 / 10.29 / 12.20 / 11.81 (10/27/15); Class 5 (includes max 3.50% sales load): 4.29 / 9.23 / - / 12.72 (07/31/20). MSCI World Index same periods: 18.90 / 10.27 / 11.80 / 10.16 (from Fund inception 09/30/14). Net of fees, NAV-based, reinvestment assumed, periods >1yr annualized. Year-by-year returns are fiscal-year (March 31), not calendar-year; no calendar-year table is printed.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (FYE 2026-03-31, filed 2026-06-09)",
+      "section": "Portfolio Manager's Comments - Average Annual Total Returns table (periods ended March 31, 2026)",
+      "quote": "The table below shows the average annual total returns for AMG Pantheon Fund, LLC and MSCI World Index for the same time periods ended March 31, 2026.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.3": {
       "element": "Gross vs net spread",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: no gross-of-fees RETURN series is printed in any on-disk document - only net total returns. What IS printed is the gross-vs-net EXPENSE-ratio spread, a constant 0.70% for every class every year FY2024-FY2026 (FY2026: Class 1 1.56%/0.86%, Class 2 1.31%/0.61%, Class 3 1.06%/0.36%, Class 4 0.81%/0.11%, Class 5 1.81%/1.11%) = the feeder-level 0.70% management fee waived in full ($41,858,957 FY2026, non-recoupable, waived while the Fund's only investment security is another registered investment company). FY2023/FY2022 ratios include recoupments of 0.07%/0.13%. Feeder ratios exclude the Fund's indirect share of Master Fund expenses (1.19% of average investment balance FY2026).",
+      "status": "partial",
+      "source": "N-CSR FY2026 (FYE 2026-03-31, filed 2026-06-09)",
+      "section": "Financial Highlights ratio rows + footnotes; Note 2 Agreements and Transactions with Affiliates (fee waiver); Note 1c (Master expense share)",
+      "quote": "the Investment Manager waived all investment management fees payable by the Fund in the amount of $41,858,957",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.4": {
       "element": "Distribution history & composition",
-      "value": null,
-      "status": "pending"
+      "value": "Distributions declared/paid at least annually; identical per-unit across classes: FY2026 $0.63, FY2025 $0.25, FY2024 $0.17, FY2023 $0.41, FY2022 $0.72 - all from net realized gain on investments. Class 4 ten-year table adds FY2021 $0.17, FY2020 $0.97, FY2019 $0.36 ($0.31 of it from net investment income - the only NII distribution printed), FY2018 $0.01, FY2017 $0. Tax character (tax years ended Sep 30): 2025 $42,413,014 LTCG / $0 ordinary; 2024 $18,997,428 LTCG / $0 ordinary. On 2025-12-31 the Fund paid $145,007,913 of long-term capital gains. Reinvestment at NAV on ex-dividend date is the default unless the Investor elects cash.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (FYE 2026-03-31, filed 2026-06-09); N-2 filed 2026-07-30 (Class 4 highlights, DRIP default)",
+      "section": "Note 1d Dividends and Distributions + tax-character tables; Financial Highlights distribution rows",
+      "quote": "On December 31, 2025, the Fund paid $145,007,913 of long-term capital gains which primarily consisted of capital gains received from the Master Fund on December 31, 2025.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
-      "value": null,
-      "status": "pending"
+      "value": "Zero hits for 'IRR' / 'internal rate of return' across all four on-disk documents (N-CSR, N-2, SC TO-I, 424B3; checked 2026-08-15). The consolidated SOI lists underlying Investment Funds and co-investments with fair values only - no performance metrics. Risk disclosure affirmatively states the Investment Manager relies on information from Private Fund Investments that cannot be independently verified.",
+      "status": "n/a - not publicly available: underlying fund/GP-level performance (IRR/MOIC/TVPI) is not printed in any on-disk filing",
+      "source": "N-CSR FY2026 (filed 2026-06-09); N-2 filed 2026-07-30 (risk factors)",
+      "section": "Consolidated Schedule of Investments (fair values only); Types of Investments and Related Risk Factors",
+      "quote": "the Investment Manager relies upon information provided to it by the Private Fund Investment that is not, and cannot be, independently verified",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.6": {
       "element": "Volatility & max drawdown",
-      "value": null,
-      "status": "pending"
+      "value": "Public return cadence for this wrapper is ANNUAL; vol/autocorr/de-smoothing need monthly-or-finer series. Fact sheets sit behind attestation gates (not free-public). (vol/drawdown not computable at annual granularity.) Quarterly NAV path on disk is NAV-only and short.",
+      "status": "n/a - not publicly available: sub-annual return series not free-public for this wrapper",
+      "source": "disclosure-cadence assessment vs data/series_annual/amg_pantheon.csv",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.7": {
       "element": "De-smoothed volatility",
-      "value": null,
-      "status": "pending"
+      "value": "Public return cadence for this wrapper is ANNUAL; vol/autocorr/de-smoothing need monthly-or-finer series. Fact sheets sit behind attestation gates (not free-public). (de-smoothed vol not computable at annual granularity.) Quarterly NAV path on disk is NAV-only and short.",
+      "status": "n/a - not publicly available: sub-annual return series not free-public for this wrapper",
+      "source": "disclosure-cadence assessment vs data/series_annual/amg_pantheon.csv",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": null,
-      "status": "pending"
+      "value": "KS-PME 2.4551 / Direct Alpha 9.4%/yr vs Listed private equity investable proxy (PSP) over 2016-03-31 to 2026-03-31. Window-sensitivity disclosure applies; explorable in the Analysis Lab.",
+      "status": "computed",
+      "source": "data/benchmarks/amg_pantheon_selection.json",
+      "section": "primary.comparison",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
-      "value": null,
-      "status": "pending"
+      "value": "Stress observations (computed from printed FY returns): worst disclosed FY 2020-03-31: 4.15%. FY spanning the 2022 shock (2023-03-31): 6.45% - appraisal-lag caveat applies (see de-smoothing lab).",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (stress_windows.amg_pantheon)",
+      "section": "stress_windows",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.10": {
       "element": "Market price & premium/discount",
-      "value": null,
-      "status": "pending"
+      "value": "Structural: unlisted tender-offer fund. Units sold monthly in a continuous offering at NAV; transfer strictly limited by the LLC Agreement; no secondary market exists (N-2: 'Units are not traded on any securities exchange or other market. No secondary market currently exists for Units.').",
+      "status": "n/a - not exchange-listed: units are not traded in any market, so no market price or premium/discount exists",
+      "source": "SC TO-I (filed 2026-08-03), Item 2(c); N-2 filed 2026-07-30 (Limitations on Transfer risk factor)",
+      "section": "Item 2. Subject Company Information (c)",
+      "quote": "Units are not traded in any market, and any transfer thereof is strictly limited by the terms of the Fund's Limited Liability Company Agreement",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.11": {
       "element": "Track record & manager tenure",
-      "value": null,
-      "status": "pending"
+      "value": "Fund inception 09/30/14 (Class 4 inception date; the performance table's dagger footnote marks 09/30/14 as the Fund's inception) - approx. 11.5-year track record at FYE 2026-03-31. Classes 1-3 incepted 10/27/15; Class 5 established 07/31/20 (same date the classes were renamed from Brokerage/Advisory/Institutional/Institutional Plus). Adviser: Pantheon Ventures (US) LP (Delaware LP; AMG indirectly owns a majority). Named portfolio managers with printed tenure: Kevin Dunwoodie and Jeff Miller, PMs of the Fund since February 2019 (both joined Pantheon 2008); Amyn Hassanally since July 2024; Matt Cashion, Imogen Richards, Cullen Wilson also listed (no PM start dates printed). KPMG auditor since 2021.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (filed 2026-06-09) performance table; N-2 filed 2026-07-30, Portfolio Management section",
+      "section": "Average Annual Total Returns table + footnotes; N-2 MANAGEMENT OF THE FUND - Portfolio Management",
+      "quote": "Date reflects inception date of the Fund, not the Index.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
-      "value": null,
-      "status": "pending"
+      "value": "RATE: 0.70% annual. BASE: net assets as of the end of each month, determined before accrual of the fee being calculated and before purchases/repurchases/distributions. WHERE CHARGED: paid by the Master Fund AND by each Subsidiary (Corporate Subsidiary, Lead Fund) - each at 0.70% of its own net assets - borne indirectly by Investors. The Fund (feeder) has an identical 0.70% fee that the Investment Manager contractually waives for any period in which the Fund's only investment security is another registered investment company; FY2026 waiver $41,858,957, not recoupable. Master-level 'Investment advisory and management fees' expense FY2026: $77,833,845.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (filed 2026-06-09), Fund Note 2 and Master Fund Note 2; N-2 fee-table footnote (2)",
+      "section": "Agreements and Transactions with Affiliates (Fund and Master Fund notes); Consolidated Statement of Operations",
+      "quote": "Investment management fees are paid directly by each of the Master Fund and the Subsidiaries to the Investment Manager at the annual rate of 0.70% of the net assets",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.2": {
       "element": "Incentive fee terms",
-      "value": null,
-      "status": "pending"
+      "value": "Documented absence at Fund/Master level: the N-2 fee tables for all five classes print only Management Fee, Distribution and/or Service Fee, Other Expenses, and Acquired Fund Fees and Expenses - no incentive or performance fee line. Every 'incentive fee' occurrence in the N-2 (7 hits, checked 2026-08-15) refers to the underlying Investment Funds, which generally charge 10% to 20% of net profits as carried interest (captured in 2.5); AFFE explicitly excludes those performance-based amounts.",
+      "status": "extracted-unverified",
+      "source": "N-2 filed 2026-07-30 (Prospectus dated 2026-07-31), SUMMARY OF FUND EXPENSES + footnotes (5)/(6)",
+      "section": "SUMMARY OF FUND EXPENSES (Class 1 table; Class 2-5 table)",
+      "quote": "Some or all of the Investment Funds in which the Master Fund intends to invest charge carried interests, incentive fees, or allocations based on the Investment Funds' performance.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.3": {
       "element": "Total expense ratio & waivers",
-      "value": null,
-      "status": "pending"
+      "value": "N-2 fee tables, Total Annual Expenses (as % of net assets attributable to Units): Class 1 3.13%, Class 2 2.88%, Class 3 2.63%, Class 4 2.38%, Class 5 3.38% - each = 0.70% management + 0.75/0.50/0.25/0.00/1.00% distribution-service + 0.87% Other Expenses + 0.81% AFFE; no waiver line in the current tables. Expense cap: Expense Limitation and Reimbursement Agreement holds total annual operating expenses (exclusive of enumerated 'Excluded Expenses' incl. underlying fund fees/AFFE, credit-facility costs, taxes, distribution fee) to 1.45% per annum of month-end net assets; 36-month recoupment window; FY2026 saw no reimbursement or recoupment and nothing is subject to recoupment. Feeder-level highlight ratios (FY2026 net: 0.86/0.61/0.36/0.11/1.11% by class) exclude the Fund's indirect share of Master Fund expenses (1.19% of average investment balance, plus 0.21% current tax benefit and (0.11)% deferred tax expense).",
+      "status": "extracted-unverified",
+      "source": "N-2 filed 2026-07-30, SUMMARY OF FUND EXPENSES; N-CSR FY2026 (filed 2026-06-09), Note 2 (Expense Cap) and Note 1c",
+      "section": "SUMMARY OF FUND EXPENSES; Agreements and Transactions with Affiliates; Financial Highlights ratios",
+      "quote": "The following table illustrates the expenses and fees that the Fund expects to incur and that Investors can expect to bear directly or indirectly.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.4": {
       "element": "AFFE",
-      "value": null,
-      "status": "pending"
+      "value": "AFFE 0.81% for every class (Class 1 table and Class 2-5 table identical). Reflects operating expenses of the Investment Funds (management fees, administration fees, professional and other direct fixed fees); excludes an estimated 0.15% of underlying interest expense/financing costs - including it would raise AFFE to 0.96%; also excludes performance-based fees/allocations calculated on realized (or realized+unrealized) gains. Based on historic returns of Investment Funds held, which may change substantially.",
+      "status": "extracted-unverified",
+      "source": "N-2 filed 2026-07-30 (Prospectus dated 2026-07-31), fee-table footnote (5) (Class 1) / (6) (Class 2-5)",
+      "section": "SUMMARY OF FUND EXPENSES footnotes",
+      "quote": "The 0.81% shown as \"Acquired Fund Fees and Expenses\" reflects operating expenses of the Investment Funds...would increase Acquired Fund Fees and Expenses to 0.96%.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.5": {
       "element": "Underlying GP economics",
-      "value": null,
-      "status": "pending"
+      "value": "Printed underlying-fund economics: Investment Funds generally charge a management fee of 1.00% to 2.00% and 10% to 20% of net profits as a carried interest allocation. Mitigant printed in the N-CSR SOI narrative: direct investments and co-investments, unlike Investment Funds, generally do not bear an additional layer of fees or bear significantly reduced fees - and co-investments + secondaries are the bulk of the portfolio ($2.37B + $3.14B of $6.66B total investments at 3/31/2026).",
+      "status": "extracted-unverified",
+      "source": "N-2 filed 2026-07-30, fee-table footnote (5); N-CSR FY2026 (filed 2026-06-09), Master Fund SOI narrative",
+      "section": "SUMMARY OF FUND EXPENSES footnote; Consolidated Schedule of Investments narrative",
+      "quote": "generally charge a management fee of 1.00% to 2.00%, and 10% to 20% of net profits as a carried interest allocation",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.6": {
       "element": "Loads & servicing fees",
-      "value": null,
-      "status": "pending"
+      "value": "Sales loads: none for Classes 1-4; Class 5 max front-end sales load 3.50% (FY2026: Class 5 investors paid $2,274,007 in loads to distributor/sub-distributor/selling agents). Rule 12b-1 distribution and service plan: 0.75% (Class 1), 0.50% (Class 2), 0.25% (Class 3), 1.00% (Class 5) annually of average monthly net assets; Class 4 pays no distribution fee. Administrator (AMG Funds LLC) fee: 0.05% per annum of average monthly net assets, minimum $86,000/yr. Financial intermediaries may separately charge transaction fees on Class 2/3/4 purchases.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (filed 2026-06-09), Notes 1 and 2; N-2 filed 2026-07-30, Class 2-5 fee table footnote (1)",
+      "section": "Note 1 (Class 5 sales load); Note 2 (12b-1 Plan, Administration Agreement)",
+      "quote": "The Plan authorizes payments to the Distributor of 0.75%, 0.50%, 0.25%, and 1.00% annually of the average monthly net assets",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.7": {
       "element": "Early repurchase fee",
-      "value": null,
-      "status": "pending"
+      "value": "2.00% early repurchase fee, charged on repurchase of Units at any time prior to the day immediately preceding the one-year anniversary of purchase (first-in-first-out basis); payable to and retained by the Fund for remaining Investors; Board may waive where in the Fund's best interests without unfair discrimination. Actually collected: FY2026 $171,912; FY2025 $103,125 (netted against cost of Units tendered).",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (filed 2026-06-09), Note 1g Capital Stock; N-2 filed 2026-07-30, fee-table footnote (1)/(2)",
+      "section": "Note 1g; SUMMARY OF FUND EXPENSES - Maximum early repurchase fee 2.00% all classes",
+      "quote": "a 2.00% early repurchase fee will be charged by the Fund...prior to the day immediately preceding the one-year anniversary of the Investor's purchase of the Units",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.8": {
       "element": "CIT fee schedule",
-      "value": null,
-      "status": "pending"
+      "value": "Not a collective investment trust: AMG Pantheon Fund, LLC is a Delaware LLC registered under the 1940 Act as a closed-end fund, offered by prospectus in five unit classes. No CIT fee schedule exists.",
+      "status": "n/a - CIT only",
+      "source": "n/a (structural; wrapper per N-CSR Note 1)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": null,
-      "status": "pending"
+      "value": "Cohort placement (evergreen_pe, R4 phrasing): mgmt fee: 10th percentile of cohort (n=5), below the median of 1.4 | expense ratio (bases differ - see notes): 30th percentile of cohort (n=5), below the median of 3.19 | repurchase cap: 12th percentile of cohort (n=4), at the median of 5. Stats + caveats in the cohort artifact.",
+      "status": "computed",
+      "source": "data/cohorts/evergreen_pe.json",
+      "section": "stats (R4 phrasing by tark_cohort)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.10": {
       "element": "Value justification",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell: the value-for-fees justification synthesizes the evidenced fee stack (0.70% management fee at Master+Subsidiary level with the feeder fee fully waived; no fund-level incentive fee; 2.38%-3.38% Total Annual Expenses by class incl. 0.81% AFFE; 1.45% expense cap on covered expenses; 12b-1 0-1.00%; Class 5 3.50% load; 2.00% early repurchase fee). The determination itself is the committee's.",
+      "status": "n/a - not publicly available: requires the plan committee's own value-for-fees determination - workflow output, not public product data (inputs live in cells 2.1-2.7)",
+      "source": "n/a (workflow cell)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
-      "value": null,
-      "status": "pending"
+      "value": "Wrapper liquidity: unlisted tender-offer fund; no unitholder redemption right - repurchases only via written tenders at times/amounts/terms set by the Board in its sole discretion. CADENCE: Adviser and Sponsor anticipate recommending quarterly offers (SC TO-I: 'Pantheon expects that it will recommend to the Board that the Fund purchase Units from Members quarterly. However, the Fund is not required to conduct tender offers.'). CAP: expected up to 5% per offer. BASE: 5% of net assets per the N-2 (the live Aug-2026 offer is sized at approx. 5% of Units outstanding). MECHANISM: Rule 13e-4 issuer tender at class NAV on the Valuation Date; 2.00% early repurchase fee inside year one; subscriptions monthly (first business day at NAV). SPV backstop if no >=5% repurchase within two years of a written request (see 3.2).",
+      "status": "extracted-unverified",
+      "source": "N-2 filed 2026-07-30, Summary of Terms + REPURCHASES OF UNITS AND TRANSFERS; SC TO-I (filed 2026-08-03), Item 5(e)",
+      "section": "Repurchases of Units and Transfers; SC TO-I Items 2, 4, 5",
+      "quote": "recommend to the Board that the Fund offer to repurchase Units from Investors on a quarterly basis...up to 5% of the net assets of the Fund",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.2": {
       "element": "Repurchase mechanics",
-      "value": null,
-      "status": "pending"
+      "value": "Mechanics per live offer (SC TO-I filed 2026-08-03): tenders due 11:59 p.m. ET 2026-08-28; purchase price = class NAV as of Valuation Date 2026-09-30 (approx. one month after expiration); payment in cash or a non-interest-bearing uncertificated debt obligation for the Valuation-Date value; withdrawal rights until expiration; some Members must route the Letter of Transmittal via their Financial Advisor. N-2: Board-determined written tenders with notice to Investors; oversubscription handled by extension, pro-rata repurchase, or other permitted action; Fund tenders run contemporaneously with Master Fund tenders (feeder can only exit via Master repurchases). LLC Agreement backstop: if an Investor's written request is not met by a repurchase offer of at least 5% of net assets within two years, the Fund must offer contribution of Units to an SPV that liquidates at least 90% of assets within three fiscal years (no advisory fees after that period).",
+      "status": "extracted-unverified",
+      "source": "SC TO-I (filed 2026-08-03), Items 4-5; N-2 filed 2026-07-30, REPURCHASES OF UNITS AND TRANSFERS",
+      "section": "SC TO-I Item 4 Terms of the Transaction; N-2 repurchase mechanics + SPV provision",
+      "quote": "If a repurchase offer is oversubscribed by Investors who tender Units, the Fund may extend the repurchase offer, repurchase a pro rata portion of the Units tendered",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.3": {
       "element": "Repurchase history",
-      "value": null,
-      "status": "pending"
+      "value": "As disclosed (recorded 2026-08-15): live offer (launched 2026-08-03, expires 2026-08-28) for up to 11,957,272 Units, approx. 5% of the 239,145,444 Units outstanding at 5/31/2026. Completed-tender dollars from N-CSR capital-transaction tables - FY2026 cost of Units tendered $308,275,898 total (Class 1 $147,693,439; Class 2 $48,318,958; Class 3 $76,966,539; Class 4 $1,013,376; Class 5 $34,283,586; 11,349,693 units); FY2025 $133,222,204 total. Balance-sheet 'Payable for Fund Units tendered' $160,579,879 at 3/31/2026. No proration or oversubscription event is disclosed in the on-disk documents; tenders remained a small share of net assets ($6.40B at FYE2026) alongside FY2026 subscriptions of $1.44B.",
+      "status": "extracted-unverified",
+      "source": "SC TO-I (filed 2026-08-03), Item 2(b); N-CSR FY2026 (filed 2026-06-09), Note 1g capital transactions + Statement of Assets and Liabilities",
+      "section": "SC TO-I Item 2; Note 1g Unit transactions by class (FY2026, FY2025)",
+      "quote": "The Units subject to the Offer represent approximately 5% of the Fund's Units outstanding as of May 31, 2026.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.4": {
       "element": "Portfolio liquidity profile",
-      "value": null,
-      "status": "pending"
+      "value": "Master Fund holdings attributes table at 3/31/2026: every private investment category 'Not Redeemable', redemption frequency/notice N/A, remaining lives up to 12 years. Fair value $6,079,798,952 across Buyout $4,982.9M, Growth Equity $581.2M, Venture $186.1M, Infrastructure $169.0M, Private Debt $97.6M, Special Situations $50.0M, Real Assets $13.0M; unfunded commitments $1,761,852,575 (incl. $444.7M for funds whose first capital-call dates are still undetermined). Liquid layer: Level 1 short-term investments in other investment companies $533.3M + common stock $48.1M (incl. $48.1M restricted shares = 0.7% of Fund net assets); Fund-level cash and escrow $228.6M. Co-investments have no contractual lives and terminate when the underlying investment is sold.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (filed 2026-06-09), Master Fund Note 3 attributes table + Consolidated SOI",
+      "section": "Notes to Consolidated Financial Statements - investment attributes table; fair value hierarchy table",
+      "quote": "A listing of the Co-Investments, Primary Private Investment Funds and Secondary Private Investment Funds held by the Master Fund and their attributes, as of March 31, 2026",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.5": {
       "element": "TDF/CIT liquidity sleeve",
-      "value": null,
-      "status": "pending"
+      "value": "No TDF/CIT wrapper exists for this product in the on-disk filings; liquidity-sleeve design is a plan-vehicle question, not an AMG Pantheon disclosure.",
+      "status": "n/a - CIT only",
+      "source": "n/a (structural)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.6": {
       "element": "Fund leverage & facilities",
-      "value": null,
-      "status": "pending"
+      "value": "$1.5 billion revolving credit facility at the Master Fund (amended and restated 2025-12-18, up from $800M, via syndication with three additional lenders plus an increased existing commitment); secured by Master Fund assets incl. Corporate Subsidiary and Lead Fund assets (the Lead Fund was organized to facilitate the facility). Pricing: SOFR + 3.00% on drawn amounts; blended 0.94% commitment fee; 0.25% annual structuring fee; annual agency fee $50,000 + $5,000/lender. NOT UTILIZED during FY2026; credit facility fees of $12,275,481 nonetheless expensed at the Master. Purpose: satisfy repurchases, meet capital calls/unfunded commitments, temporary liquidity. 1940 Act 300% asset-coverage requirement governs borrowings; over-commitment of capital beyond current assets is an authorized strategy.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (filed 2026-06-09), Master Fund Note 8 Credit Agreement + Consolidated Statement of Operations; N-2 filed 2026-07-30 (asset coverage)",
+      "section": "Note 8 CREDIT AGREEMENT; INVESTMENT PROGRAM (Asset Coverage Requirement)",
+      "quote": "The Master Fund has entered into a $1.5 billion credit facility to satisfy repurchase requests...the Master Fund has not utilized the line of credit",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.7": {
       "element": "Plan participant liquidity demand",
-      "value": null,
-      "status": "pending"
+      "value": "Structural: AMG Pantheon filings disclose fund-side liquidity only (3.1-3.4, 3.6). Participant-level demand (separated-with-balance counts, payout elections) is plan data outside any AMG Pantheon document.",
+      "status": "n/a - plan-side workflow: participant liquidity demand comes from a specific plan's Form 5500/recordkeeper census, resolved per plan engagement, not from product filings",
+      "source": "n/a (workflow cell)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.8": {
       "element": "Redemption stress test",
-      "value": null,
-      "status": "pending"
+      "value": "ILLUSTRATIVE redemption stress (computed, all four plans): tail turnover x2, active turnover x1.5 vs base scenario. Anchor plan: demand 19.2%/yr vs 20.0 capacity - within wrapper capacity (19.2% vs 20%) IF offers are not prorated",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__amg_pantheon_match.json (+3 plans)",
+      "section": "stressed_scenario (ILLUSTRATIVE)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": null,
-      "status": "pending"
+      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of outstanding Units (board-discretionary tenders) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__amg_pantheon_match.json",
+      "section": "verdict + reasons",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.1": {
       "element": "Valuation policy & NAV frequency",
-      "value": null,
-      "status": "pending"
+      "value": "NAV FREQUENCY: monthly - NAV of the Master Fund and each class calculated as of close of business on the last business day of each calendar month, plus any distribution date and other Board-determined times ('Determination Dates'); expenses accrued monthly. POLICY: Rule 2a-5 - Board designated the Investment Manager as the Master Fund's Valuation Designee, subject to Board oversight with monthly and quarterly fair-value reports plus an annual process-adequacy assessment. Private Fund Investments valued at GP-reported capital-account balance (most recent balance sheet/capital statement) adjusted for capital activity, material events, and any third-party valuations; the Adviser's Valuation Committee reviews and may adjust; GP valuations may be revised after fiscal-year-end audits.",
+      "status": "extracted-unverified",
+      "source": "N-2 filed 2026-07-30, CALCULATION OF NET ASSET VALUE; N-CSR FY2026 (filed 2026-06-09), Master Fund Note 1a",
+      "section": "CALCULATION OF NET ASSET VALUE; Note 1a VALUATION OF INVESTMENTS",
+      "quote": "The net asset value of the Master Fund and each Class of the Fund will be calculated...on the last business day of each calendar month",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
-      "value": null,
-      "status": "pending"
+      "value": "Master Fund consolidated hierarchy at 3/31/2026: Level 1 $581,361,401 (common stock $48.1M + short-term other-investment-companies $533.3M); Level 2 $0; Level 3 $325,527,462 (co-investments $315.9M + primary funds $9.7M); investments valued at NAV as practical expedient $5,754,271,490 (co-investments $2,053.3M, primaries $562.8M, secondaries $3,138.2M); total investments $6,661,160,353 - i.e., 86.4% NAV-expedient, 4.9% Level 3. L3 roll-forward FY2026: transfers out $17,589,000 (increased price transparency), zero transfers in.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (filed 2026-06-09), Consolidated Schedule of Investments - hierarchy and L3 reconciliation tables",
+      "section": "Consolidated Schedule of Investments (continued) - fair value hierarchy summary",
+      "quote": "The following table summarizes the inputs used to value the Master Fund's investments by the fair value hierarchy levels as of March 31, 2026",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.3": {
       "element": "Independent valuation agent",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: no independent valuation agent is NAMED and no standing engagement is disclosed. Printed capability only: the Master Fund 'may utilize' independent valuation firms for third-party valuation consulting; N-2 adds that GP valuations are adjusted for 'any third-party valuations received by the Adviser'. The Valuation Designee is the affiliated Investment Manager (Pantheon) and its own Valuation Committee reviews/adjusts capital-account values - i.e., valuation authority is internal, third-party input is optional and unnamed.",
+      "status": "partial",
+      "source": "N-CSR FY2026 (filed 2026-06-09), Master Fund Note 1a; N-2 filed 2026-07-30, Calculation of Net Asset Value",
+      "section": "Note 1a VALUATION OF INVESTMENTS",
+      "quote": "the Master Fund may utilize independent valuation firms to provide third-party valuation consulting services",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.4": {
       "element": "Methodology by asset type",
-      "value": null,
-      "status": "pending"
+      "value": "By asset type (Master Fund Note 1a + L3 quantitative table at 3/31/2026): direct investments/certain co-investments - market or income approach (techniques printed: recent round of financing/option pricing model with term 1.75-5.00 and volatility 40-75%; market comparables with EBITDA multiples 8.25x-18.30x avg 13.21x; guideline transaction multiples; discounted cash flow). Investment Funds and certain co-investments - GP/manager-provided valuations (capital-account fair value), latest available adjusted for transaction and market activity. Listed equities - last quoted sale/official close (bid if no trades). Short-term debt =<60 days to maturity - amortized cost if approximating fair value. Open-end registered investment companies - end-of-day NAV. Options - broker quote.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (filed 2026-06-09), Master Fund Note 1a + Level 3 quantitative inputs table",
+      "section": "Note 1a VALUATION OF INVESTMENTS; Quantitative Information about Level 3 Fair Value Measurements",
+      "quote": "the Master Fund primarily uses the market or income approach to estimate the fair value of private investments",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.5": {
       "element": "Auditor & opinion",
-      "value": null,
-      "status": "pending"
+      "value": "KPMG LLP, New York, New York; report dated May 29, 2026; unqualified opinion on the Fund's FY2026 financial statements and five years of financial highlights ('present fairly, in all material respects'); PCAOB-registered; signature block states auditor since 2021. N-2 notes FY2017-FY2020 highlights were audited by the Fund's previous independent registered public accountant. Procedures included confirmation of investments owned by correspondence with the transfer agent.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (filed 2026-06-09), Report of Independent Registered Public Accounting Firm",
+      "section": "Report of Independent Registered Public Accounting Firm (signature block)",
+      "quote": "/s/KPMG LLP...We have served as the Fund's auditor since 2021.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.6": {
       "element": "NAV restatement history",
-      "value": null,
-      "status": "pending"
+      "value": "None identified: searched all four on-disk documents (N-CSR FY2026, N-2 2026-07-30, SC TO-I 2026-08-03, 424B3 2025-08-01) for 'restat' and 'error correction' on 2026-08-15 - zero NAV-restatement hits; every occurrence is 'amended and restated' credit-agreement/LLC-certificate boilerplate (N-CSR 1, N-2 13, 424B3 6, SC TO-I 0). Note the prospectus does warn prospectively that GP-reported valuations 'may be subject to later adjustment or revision' after underlying-fund audits.",
+      "status": "extracted-unverified",
+      "source": "All four on-disk filings (searched 2026-08-15)",
+      "section": "Full-document regex search; N-2 Calculation of Net Asset Value (revision warning)",
+      "quote": "In determining its net asset value, each Class of the Fund and the Master Fund will value its investments as of the relevant Determination Date.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.7": {
       "element": "Premium/discount check",
-      "value": null,
-      "status": "pending"
+      "value": "Not exchange-listed: shares transact at NAV; premium/discount undefined. (Contrast the venture cohort's market-priced members.)",
+      "status": "n/a - not publicly available: no market price for a non-listed NAV-transaction wrapper",
+      "source": "wrapper structure per cell 3.1",
+      "section": "n/a rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.8": {
       "element": "Smoothing diagnostics",
-      "value": null,
-      "status": "pending"
+      "value": "Public return cadence for this wrapper is ANNUAL; vol/autocorr/de-smoothing need monthly-or-finer series. Fact sheets sit behind attestation gates (not free-public). (smoothing rho not computable at annual granularity.) Quarterly NAV path on disk is NAV-only and short.",
+      "status": "n/a - not publicly available: sub-annual return series not free-public for this wrapper",
+      "source": "disclosure-cadence assessment vs data/series_annual/amg_pantheon.csv",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.9": {
       "element": "CIT unit valuation",
-      "value": null,
-      "status": "pending"
+      "value": "No CIT wrapper; unit valuation here refers to the Fund's own LLC Units (monthly NAV, cell 4.1), and CIT unit valuation is a plan-vehicle construct not applicable to this registered fund.",
+      "status": "n/a - CIT only",
+      "source": "n/a (structural)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.1": {
       "element": "Self-declared benchmark",
-      "value": null,
-      "status": "pending"
+      "value": "Self-declared comparison index in the annual report: MSCI World Index - used in both the cumulative-return graph (hypothetical $50,000,000 in Class 4 units vs the index) and the Average Annual Total Returns table (MSCI World rows measured from Fund inception 09/30/14: 1yr 18.90%, 5yr 10.27%, 10yr 11.80%, SI 10.16%). Footnotes: free float-adjusted market-cap index of developed-market equities; unmanaged, not investable, no fees. No benchmark is declared in the N-2 prospectus itself; no PE-specific index is used anywhere.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (filed 2026-06-09), Portfolio Manager's Comments",
+      "section": "CUMULATIVE TOTAL RETURN PERFORMANCE graph + Average Annual Total Returns table, footnotes 5-6",
+      "quote": "This graph compares a hypothetical $50,000,000 investment made in the Fund's Class 4 units on March 31, 2016 to a $50,000,000 investment made in the MSCI World Index",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.2": {
       "element": "Public index series",
-      "value": null,
-      "status": "pending"
+      "value": "Strategy proxy series on disk (PSP/URTH for evergreen PE; VNQ for REITs), manifest-declared; fund-level daily series does not exist (non-traded).",
+      "status": "fetched",
+      "source": "data/series/series_manifest.json",
+      "section": "series inventory",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": null,
-      "status": "pending"
+      "value": "Candidates evaluated incl. paid/manual indices and the real peer-cohort lane; full scoring + rejection ledger in the selection artifact.",
+      "status": "computed",
+      "source": "data/benchmarks/amg_pantheon_selection.json",
+      "section": "candidates + rejection log",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": null,
-      "status": "pending"
+      "value": "Peer cohort evergreen_pe (n=5): members, rationales, stats, composite (or its documented refusal) and caveat block in the cohort artifact; exclusions in data/roster_decisions.md.",
+      "status": "computed",
+      "source": "data/cohorts/evergreen_pe.json",
+      "section": "members + composite",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": null,
-      "status": "pending"
+      "value": "PME inputs (computed): window 2016-03-31 to 2026-03-31; flows [-1, 3.4461]; index daily-anchored. KS-PME 2.4551, Direct Alpha 9.4%/yr.",
+      "status": "computed",
+      "source": "data/benchmarks/amg_pantheon_selection.json",
+      "section": "primary.comparison",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": null,
-      "status": "pending"
+      "value": "Benchmark-suitability memo is a constructed analytics artifact (Lane 3), not an extraction target; product-side input on file is the self-declared MSCI World comparison in 5.1 (an equity index appended to an illiquid PE vehicle - suitability analysis belongs to the engine).",
+      "status": "n/a - constructed (L3)",
+      "source": "n/a (constructed cell)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.7": {
       "element": "Case-law tracker",
-      "value": null,
-      "status": "pending"
+      "value": "Case-law tracking is maintained at the platform level across products, not per-product extraction.",
+      "status": "n/a - cross-product tracker",
+      "source": "n/a (cross-product cell)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.1": {
       "element": "Structure map",
-      "value": null,
-      "status": "pending"
+      "value": "Master-feeder: AMG Pantheon Fund, LLC (Delaware LLC, closed-end non-diversified, perpetual term, five unit classes, CIK 1609211) is a feeder investing substantially all assets in AMG Pantheon Master Fund, LLC (affiliate; Fund owned 96% of Master units at 3/31/2026). The Master invests directly and through two wholly-owned subsidiaries: AMG Pantheon Subsidiary Fund, LLC ('Corporate Subsidiary' - up to 25% of Master total assets, for tax-efficiency and RIC-requirement compliance; net assets $612.7M = 9.22% of consolidated) and AMG Pantheon Lead Fund, LLC ('Lead Fund' - organized to facilitate the revolving credit facility; net assets $5,177.4M = 77.90%). Fund net assets $6,404,045,276 at 3/31/2026.",
+      "status": "extracted-unverified",
+      "source": "SC TO-I (filed 2026-08-03), Item 2; N-CSR FY2026 (filed 2026-06-09), Note 1 and Master Note 1",
+      "section": "Note 1 ORGANIZATION; Master Fund Note 1 (subsidiary sizes)",
+      "quote": "The Fund is a \"feeder fund\" that invests substantially all of its investable assets in AMG Pantheon Master Fund, LLC.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.2": {
       "element": "Strategy & instrument complexity",
-      "value": null,
-      "status": "pending"
+      "value": "Evergreen private-equity vehicle, objective long-term capital appreciation; strategy mix at 3/31/2026 (Master SOI): secondaries $3,138.2M + co-investments $2,369.1M + primary funds $572.5M + common stock $48.1M + short-term $533.3M = $6,661.2M total investments. Prospectus: portfolio 'to date has been invested primarily in portfolio companies (co-investments) and/or secondaries', evolving toward more primaries; over-commitment beyond current assets authorized. Category exposure: Buyout $4,982.9M (82% of private FV), Growth Equity, Venture, Infrastructure, Private Debt, Special Situations, Real Assets; geography 70.4% US, 6.0% UK, 4.6% Germany. Complexity drivers: master-feeder + two subsidiaries, GP-dependent valuations, unfunded commitments $1.76B, credit facility, J-curve management via secondaries/co-investments.",
+      "status": "extracted-unverified",
+      "source": "N-2 filed 2026-07-30, INVESTMENT PROGRAM - Investment Strategies; N-CSR FY2026 (filed 2026-06-09), Consolidated SOI + attributes table",
+      "section": "Investment Strategies; hierarchy/attributes tables; country allocation",
+      "quote": "the private equity portion of the Master Fund's portfolio to date has been invested primarily in portfolio companies (co-investments) and/or secondaries",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.3": {
       "element": "Conflicts & affiliated transactions",
-      "value": null,
-      "status": "pending"
+      "value": "Printed conflicts web: AMG (Affiliated Managers Group, Inc.) indirectly owns a majority of the Adviser (Pantheon); the Administrator (AMG Funds LLC, AMG's US wealth platform) and Distributor (AMG Distributors, Inc., wholly-owned by the Administrator) sit on the AMG side, while sub-administrator and sub-distributor (Pantheon Securities, LLC) are Adviser affiliates. SEC exemptive order permits the Master Fund to co-invest alongside affiliated public/private funds. N-2 CONFLICTS OF INTEREST: Other Accounts time/allocation conflicts; Adviser/affiliates/Distributor may receive payments from private-equity sponsors; Adviser/Distributor may compensate Selling Agents from own resources (incl. preferred-provider lists). Directors' fees split evenly Fund/Master; certain Directors and Officers are officers/directors of the Investment Manager, Administrator, AMG and/or Distributor; 7 affiliated investors owned 0.04% of net assets at 3/31/2026.",
+      "status": "extracted-unverified",
+      "source": "N-2 filed 2026-07-30, CONFLICTS OF INTEREST + Affiliated Transactions; N-CSR FY2026 (filed 2026-06-09), Note 2",
+      "section": "CONFLICTS OF INTEREST; Affiliated Transactions (exemptive order); Note 2 affiliate agreements",
+      "quote": "The Master Fund has obtained an exemptive order from the SEC that permits the Master Fund to invest alongside affiliates",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.4": {
       "element": "Tax reporting (1099 vs K-1)",
-      "value": null,
-      "status": "pending"
+      "value": "Form 1099-DIV literally printed (Other Tax Information): investors receive Form 1099-DIV showing the tax status of distributions - no K-1. Fund qualifies as a regulated investment company under Subchapter M (tax year end September 30); distributions to date entirely long-term capital gain ($0 ordinary income in tax years 2024 and 2025); $42,413,014 designated as capital gain distribution for tax year ended 9/30/2025; maximum allowable designated as qualified dividends. Corporate Subsidiary exists to pursue strategies 'in a potentially tax-efficient manner and to satisfy regulated investment company tax requirements'.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2026 (filed 2026-06-09), Other Tax Information (unaudited) + Note 1e Federal Taxes",
+      "section": "Other Tax Information; Note 1e FEDERAL TAXES",
+      "quote": "The 2024/2025 Form 1099-DIV you received for the Fund showed the tax status of all distributions paid to you during each calendar year.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.5": {
       "element": "Service-provider web",
-      "value": null,
-      "status": "pending"
+      "value": "Adviser/Investment Manager: Pantheon Ventures (US) LP (San Francisco; also sub-administrator). Sponsor/Administrator: AMG Funds LLC, Stamford CT (0.05% of avg monthly net assets, min $86,000). Distributor: AMG Distributors, Inc. (FINRA member; sub-distributor: Pantheon Securities, LLC). Custodian: The Bank of New York Mellon. Transfer agent: BNY Mellon Investment Servicing (US) Inc., Pittsburgh PA (also holds subscription escrow). Auditor: KPMG LLP, New York. Fund counsel on the tender offer: Ropes & Gray LLP (SC TO-I cover). Board: 5 independent directors + 1 interested (Garret W. Weston, AMG); oversees 40 funds in the AMG complex.",
+      "status": "extracted-unverified",
+      "source": "N-2 filed 2026-07-30 (Transfer Agent, sub-administrator); N-CSR FY2026 (filed 2026-06-09), Notes 1h/2 + Directors and Officers; SC TO-I (filed 2026-08-03)",
+      "section": "MANAGEMENT OF THE FUND - Transfer Agent; Note 2 affiliate agreements; Note 1h Cash",
+      "quote": "BNY Mellon Investment Servicing (US) Inc., P.O. Box 534417, Pittsburgh, Pennsylvania 15253-4417, serves as Transfer Agent to the Fund.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.6": {
       "element": "Plan operational fit",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell. Operational-fit inputs that ARE public and already evidenced: monthly subscriptions as of the first business day at NAV with escrowed advance monies (Note 1h), monthly NAV strike (4.1), discretionary quarterly Rule 13e-4 tenders with Letter-of-Transmittal workflow routed via financial advisors and approx. one-month post-expiration Valuation Date (3.2), 2.00% first-year early repurchase fee FIFO (2.7), minimums $10,000 (Class 1/5) to $50,000,000 (Class 4), 1099-DIV tax flow (6.4). Whether a recordkeeper can trade/settle this wrapper is a per-engagement fact.",
+      "status": "n/a - not publicly available: requires plan-specific recordkeeper/trading integration facts - workflow cell completed per plan engagement, not public product data",
+      "source": "n/a (workflow cell)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.7": {
       "element": "Participant communicability",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell. Product-side communicability inputs on file: four-entity master-feeder structure (6.1), co-investment/secondaries PE strategy with $1.76B unfunded commitments and GP-dependent monthly valuations (6.2/4.1), discretionary quarterly 5% tenders with SPV backstop and 2% early-exit fee (3.1/3.2/2.7), 1099-DIV-only reporting (6.4), and an equity-index (MSCI World) performance comparison (5.1). Judging participant comprehension is the committee's assessment.",
+      "status": "n/a - not publicly available: requires plan-committee participant-communication assessment - workflow cell; product-side inputs already evidenced in 6.1/6.2/6.4",
+      "source": "n/a (workflow cell)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.8": {
       "element": "Fiduciary capacity self-assessment",
-      "value": null,
-      "status": "pending"
+      "value": "Fiduciary capacity self-assessment is the committee's own governance output; no product filing can supply it.",
+      "status": "n/a - workflow, not data",
+      "source": "n/a (workflow cell)",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     }
   }
 }

@@ -7,273 +7,543 @@
   "cells": {
     "1.1": {
       "element": "Net total return series",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: no printed multi-year per-class return series exists in the FY2025 10-K. What IS printed: (a) FY2025 calendar-year net total returns 3.0%-3.8% range across classes, including ~$0.63/share cash distributions, less class-specific fees (MD&A); (b) quarter-end NAV-per-share table for 8 quarters 2024Q1-2025Q4 across 7 classes (Class M-I: 12.02 -> 11.72 -> 11.58 -> 11.47 -> 11.41 -> 11.36 -> 11.30 -> 11.27), which with the printed quarterly per-class distribution tables (FY2023/24/25) supports quarterly return construction; (c) Q2-2026 Class M-I total return 1.68% (10-Q, filed 2026-08-11). NAV is struck DAILY but no daily/monthly NAV series is printed in any of the three filings.",
+      "status": "partial",
+      "source": "Form 10-K FY2025 (filed 2026-03-26); Form 10-Q Q2-2026 (filed 2026-08-11)",
+      "section": "Item 7 MD&A - Net Asset Value; Item 5 - NAV as of December 31, 2025 (historical NAV per share table); Note 7 distributions tables",
+      "quote": "For the year ended December 31, 2025, our various classes of common stock had total net returns ranging from 3.0% to 3.8%",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.2": {
       "element": "Trailing & calendar-year returns",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: primary class Class M-I (the performance-graph class, no servicing fee); basis: NAV-based net total return 'post leverage and fees', distributions included. Printed points: FY2025 all-classes calendar return range 3.0%-3.8% incl. ~$0.63/share cash distributions less class-specific fees (10-K MD&A); Q2-2026 Class M-I 1.68% = 1.41% income return + 0.27% appreciation, printed as highest quarterly return since Q2-2022 (10-Q). NO standardized trailing 1/3/5/10-year or per-class calendar-year return table is printed anywhere in the 10-K/10-Q/424B3; the Item 5 performance graph (Class M-I vs S&P 500 vs NFI-ODCE, $100 invested 2021-01-01, dividends reinvested) is an image with no printed data points.",
+      "status": "partial",
+      "source": "Form 10-Q Q2-2026 (filed 2026-08-11); Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "10-Q Item 2 MD&A - Recent Events and Outlook - Net Asset Value; 10-K Item 7 MD&A - Net Asset Value; 10-K Item 5 Performance Graph",
+      "quote": "Our Class M-I shares posted a total return of 1.68% for the three months ended June 30, 2026, comprised of 1.41% of income return and 0.27% related to appreciation.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.3": {
       "element": "Gross vs net spread",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: no gross-of-fees return series is printed; every printed return is net (performance graph caption: Class M-I 'post leverage and fees'; MD&A returns 'less share class-specific fees'). Printed fee-drag components for spread construction: fixed advisory fee $40,893K FY2025 against year-end NAV $2,387,828K (1.25%-of-daily-NAV rate per 2.1, partially waived to 1.0% on Class D/I/S/Z from 2025-10-07); zero performance fees FY2023-FY2025; class stockholder servicing fees 0-0.85%/yr (2.6). Gross-vs-net spread must be constructed, not extracted.",
+      "status": "partial",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Item 5 - Performance Graph; Item 7 MD&A - Net Asset Value; Note 10 Related Party Transactions",
+      "quote": "the cumulative return of our shares of Class M-I common stock (post leverage and fees)",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.4": {
       "element": "Distribution history & composition",
-      "value": null,
-      "status": "pending"
+      "value": "FY2025 gross dividends declared and paid $0.63/share ($0.1575/quarter); FY2024 declared $0.6175; FY2023 $0.58. Per-class amounts paid net of servicing fees, FY2025: Class A $0.53147, M $0.59543, A-I $0.59525, M-I $0.63000, N $0.63000 (I $0.15750 and S $0.14651 partial-year, first issued Q4-2025). Sources-of-distributions table FY2023/24/25: total $139,649K/$156,343K/$168,728K = cash flow from operating activities $59,005K/$75,743K/$93,096K + DRIP reinvestment $80,644K/$80,600K/$75,632K - i.e. cash portion 100% operating cash flow, no return-of-capital funding source line printed. 2026: H1-2026 declared $0.315/share (equity statement); cadence moved to MONTHLY - board approved gross dividends of $0.0525/share for July 2026 (record 2026-07-23) and August 2026 (record 2026-08-21); MD&A now says 'fund monthly distributions'. Tax composition (ordinary vs ROC %) not printed in these filings.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26); Form 10-Q Q2-2026 (filed 2026-08-11)",
+      "section": "Item 5 - Sources of Distributions; Item 7 MD&A; Note 7 - distributions tables; 10-Q Note 13 Subsequent Events and Statements of Equity",
+      "quote": "Our gross dividends declared and paid in 2025 was $0.63 per share.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: direct-property REIT - no underlying GP funds, so no underlying-fund IRR table exists. Closest printed sleeve-level performance (10-K, 2025-12-31, consolidated): 130 properties/portfolios, 29,456,000 sq ft, 95% occupancy - Healthcare 26 (96% occ, 11% of fair value), Industrial 66 (97%, 40%), Residential 22 incl. 2,440 single-family rental homes (92%, 37%), Retail 15 (96%, 12%), Other 1 (parking). Unconsolidated properties listed with ownership % and occupancy (Chicago Parking Garage 100%, NYC Retail Portfolio 14% / 78% occ, Pioneer Tower 100% / 32% occ, The Tremont 75% / 94%). 10-Q (2026-06-30): 130 consolidated properties, 96% stabilized occupancy, avg base rent $13.67/sq ft. Segment NOI by property type is in the financials; no per-sleeve return/IRR series is printed.",
+      "status": "partial",
+      "source": "Form 10-K FY2025 (filed 2026-03-26); Form 10-Q Q2-2026 (filed 2026-08-11)",
+      "section": "Item 2 Properties - operating statistics by property type; 10-Q Item 2 MD&A portfolio table",
+      "quote": "The following table shows our operating statistics by property type for our consolidated properties as of December 31, 2025",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.6": {
       "element": "Volatility & max drawdown",
-      "value": null,
-      "status": "pending"
+      "value": "Public return cadence for this wrapper is ANNUAL; vol/autocorr/de-smoothing need monthly-or-finer series. Fact sheets sit behind attestation gates (not free-public). (vol/drawdown not computable at annual granularity.) Quarterly NAV path on disk is NAV-only and short.",
+      "status": "n/a - not publicly available: sub-annual return series not free-public for this wrapper",
+      "source": "disclosure-cadence assessment vs data/series_annual/jll_ipt.csv",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.7": {
       "element": "De-smoothed volatility",
-      "value": null,
-      "status": "pending"
+      "value": "Public return cadence for this wrapper is ANNUAL; vol/autocorr/de-smoothing need monthly-or-finer series. Fact sheets sit behind attestation gates (not free-public). (de-smoothed vol not computable at annual granularity.) Quarterly NAV path on disk is NAV-only and short.",
+      "status": "n/a - not publicly available: sub-annual return series not free-public for this wrapper",
+      "source": "disclosure-cadence assessment vs data/series_annual/jll_ipt.csv",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": null,
-      "status": "pending"
+      "value": "No PME constructible: annual returns are printed only as per-class RANGES (e.g. '3.0% to 3.8%'), not point values - a return series cannot be typed without fabrication. Verification-queue item (a fact-sheet point series may exist behind attestation).",
+      "status": "n/a - not publicly available: annual returns printed only as per-class ranges; no point series to benchmark",
+      "source": "data/series_annual/jll_ipt.csv (range-only notes)",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
-      "value": null,
-      "status": "pending"
+      "value": "No numeric stress observation constructible: annual returns print only as per-class ranges (jll_ipt) or a single year (sreit). What IS printed is in 1.2/3.3 (incl. sreit's 2022-24 gating history - the liquidity stress showed up in the repurchase queue, not the NAV).",
+      "status": "n/a - not publicly available: no multi-year point return series printed",
+      "source": "data/series_annual (range/single-year prints)",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.10": {
       "element": "Market price & premium/discount",
-      "value": null,
-      "status": "pending"
+      "value": "Non-traded perpetual-life daily-NAV REIT: shares sold continuously at daily NAV and repurchased at daily NAV; no exchange listing exists or is intended ('as a perpetual-life REIT, we are not required to and do not intend to pursue' a listing), so no market price or premium/discount can exist. 19,195 holders of record as of 2026-03-26 across nine classes.",
+      "status": "n/a - not exchange-listed",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Item 5 - Market for Registrant's Common Equity (first paragraph); Risk Factors",
+      "quote": "Our common stock is not currently traded on any exchange, and there is no established public trading market for our common stock.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.11": {
       "element": "Track record & manager tenure",
-      "value": null,
-      "status": "pending"
+      "value": "Incorporated 2004-05-28 (Maryland); REIT-taxed since taxable year 2004 ('since our inception in 2004'); initial public offering commenced 2012-10-01 with continuous public offerings since - the OLDEST daily-NAV REIT in this cohort (daily-NAV strategy 'we began in 2012'; vs BREIT 2017 / SREIT 2018 vintages). Gross proceeds since inception to 2025-12-31 ~$7,583,000K; $7,338,998K 'since the beginning of 2012' per 424B3 (2026-08-12). Fourth Extended Public Offering (up to $1,500,000K) commenced 2025-06-06. Advisor: LaSalle Investment Management, Inc., wholly owned but operationally independent subsidiary of Sponsor JLL (NYSE: JLL); externally managed, no employees; Fifth Amended and Restated Advisory Agreement dated 2025-10-07, term expiring 2026-06-05 (10-K print; 10-Q prints 2027-06-05 post-renewal) with unlimited one-year renewals. KPMG LLP auditor since 2012. JLL and affiliates held 2,521,801 Class M-I + 8,726,003 Class N shares (~$126,589K) at 2025-12-31.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26); 424B3 Supplement No. 7 (filed 2026-08-12); Form 10-Q Q2-2026 (filed 2026-08-11)",
+      "section": "Item 1 Business - The Company / Offerings; Risk Factors; Note 10 Related Party Transactions; Exhibit index (advisory agreement)",
+      "quote": "We were incorporated on May 28, 2004 under the laws of the State of Maryland...On October 1, 2012, we commenced our initial public offering of common stock",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
-      "value": null,
-      "status": "pending"
+      "value": "RATE: 1.25% per annum, fixed. BASE: Company NAV, calculated DAILY (payable to Advisor LaSalle under the Advisory Agreement). Temporary waiver: from 2025-10-07 through 2026-12-31 only, Advisor waives 20% of the fixed fee on NAV attributable to Class D/I/S/Z shares and OP Units - effectively 1.25% -> 1.0% on those classes; waived fees will never be recouped and the waiver will not be extended. Dollars incurred: fixed advisory fees FY2025 $40,893K, FY2024 $40,392K, FY2023 $44,400K; H1-2026 $20,714K (10-Q).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26); Form 10-Q Q2-2026 (filed 2026-08-11)",
+      "section": "Note 10 - Related Party Transactions (10-K); Note 9 - Related Party Transactions (10-Q)",
+      "quote": "we pay an annual fixed advisory fee of 1.25 % of our NAV calculated daily",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.2": {
       "element": "Incentive fee terms",
-      "value": null,
-      "status": "pending"
+      "value": "Incentive terms EXIST: performance fee = 10% of the total return of each share class (or OP Unit class) in excess of 7% per annum, calculated separately per class per calendar year. Accrued when class total return per share exceeds 7% for that calendar year. Documented recent absence of accrual: 'There were no performance fees for the years ended December 31, 2025, 2024 and 2023' and none for H1-2026 or H1-2025 (10-Q). No high-water-mark or loss-carryforward mechanics are printed beyond the annual per-class 7% threshold; risk factor notes the class-level calculation can pay the Advisor on one class and not another.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26); Form 10-Q Q2-2026 (filed 2026-08-11)",
+      "section": "Note 10 - Related Party Transactions; Item 1A Risk Factors (performance component per class); Item 7 MD&A",
+      "quote": "The performance fee is calculated as 10 % of the return in excess of 7 % per annum....There were no performance fees for the years ended December 31, 2025, 2024 and 2023.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.3": {
       "element": "Total expense ratio & waivers",
-      "value": null,
-      "status": "pending"
+      "value": "None exists structurally: '34 Act 10-K REIT wrapper - no 1940-Act fee table and no financial-highlights expense-ratio line ('expense ratio' = zero hits across stripped 10-K/10-Q/424B3, searched 2026-08-15). Printed fee stack instead: fixed advisory fee 1.25% of daily NAV ($40,893K FY2025 vs year-end NAV $2,387,828K); performance fee 10% over 7%/yr (zero accrued FY2023-25); class stockholder servicing fees 0-0.85%/yr of NAV plus selling commissions up to 3.0% (2.6); company-level expenses and property operating expenses run through the Consolidated Statements of Operations, not a ratio disclosure.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26); Form 10-Q Q2-2026 (filed 2026-08-11) - mechanical absence search 2026-08-15",
+      "section": "Document-wide search; Note 10 Related Party Transactions; Consolidated Statements of Operations",
+      "quote": "we pay a fixed advisory fee of 1.25 % of our NAV calculated daily",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.4": {
       "element": "AFFE",
-      "value": null,
-      "status": "pending"
+      "value": "Not applicable - none exists: JLL IPT is a 10-K filer (non-'40-Act REIT) with no 1940-Act fee table; no 'Acquired Fund Fees and Expenses' line exists or can ('acquired fund' = zero hits in stripped 10-K, 10-Q and 424B3, searched 2026-08-15). Fee structure disclosed instead: 1.25%-of-daily-NAV fixed advisory fee, 10%-over-7% performance fee (none accrued FY2023-25), class-level selling commissions and stockholder servicing fees (2.6).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26) - mechanical absence search 2026-08-15",
+      "section": "Document-wide search; Note 10 - Related Party Transactions",
+      "quote": "Pursuant to the Advisory Agreement with LaSalle, we pay an annual fixed advisory fee of 1.25 % of our NAV",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.5": {
       "element": "Underlying GP economics",
-      "value": null,
-      "status": "pending"
+      "value": "Structural: properties are owned directly or through JVs and DSTs - no fund-of-funds layer, so no underlying GP fee/carry table exists. Printed fee-bearing adjacencies: affiliated property manager JLL Americas paid $6,448K FY2025 ($3,543K FY2024, $2,603K FY2023) for property/construction management, leasing and brokerage; DST Program dealer manager fees of up to 5.0% upfront selling commission + 1.0% upfront stockholder servicing + 1.0% placement fee of gross DST purchase price (paid by the taxable REIT subsidiary; $13,270K FY2025); JV interests valued by applying the distribution provisions of JV agreements (promote rates not printed); interests in commingled vehicles may rely on issuer/manager-assigned values.",
+      "status": "n/a - direct property ownership: no underlying GP fund layer; JV promote/fee economics are private JV-agreement terms with no rates printed in the filings",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Note 10 - Related Party Transactions; Item 5 - valuation of JV properties",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.6": {
       "element": "Loads & servicing fees",
-      "value": null,
-      "status": "pending"
+      "value": "Per-class loads/servicing (10-K Note 7, effective 2025-10-07, % of NAV): Class A up to 3.0% selling commission + 0.85%/yr stockholder servicing; Class M none + 0.30%; Class A-I up to 1.5% + 0.30%; Class M-I none + NONE; Class D up to 1.5% + 0.30%; Class I none + NONE; Class N up to 1.0% + NONE; Class S up to 3.0% + 0.85%; Class Z none + 0.30% (D/I/N/S/Z offered only privately). Servicing accrues daily at 1/365th of stated fee; A/M/A-I accrue to the 10% total-underwriting-compensation regulatory limit then auto-convert to Class M-I. Dealer Manager: LaSalle Investment Management Distributors, LLC (Advisor affiliate); FY2025 commissions + servicing paid $12,239K ($11,899K FY2024, $13,969K FY2023), majority reallowed to participating broker-dealers; accrued future servicing fees $201,251K at 2025-12-31. DST Program adds up to 5.0%/1.0%/1.0% upfront commission/servicing/placement fees.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Note 7 - Common Stock and OP Units (class fee table); Note 10 - Related Party Transactions",
+      "quote": "fees payable to LaSalle Investment Management Distributors, LLC, an affiliate of our Advisor and the dealer manager for our offerings",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.7": {
       "element": "Early repurchase fee",
-      "value": null,
-      "status": "pending"
+      "value": "No early-repurchase FEE exists ('early repurchase'/'repurchase deduction' = zero hits in stripped 10-K and 10-Q, searched 2026-08-15; contrast BREIT/SREIT 2% Early Repurchase Deduction). The gate is a HOLDING PERIOD instead: shares are not eligible for repurchase for the first year after purchase, except upon death or disability of a stockholder or certain key-person departures; DRIP shares are exempt from the one-year hold. Effective 2026-03-02 the plan was amended and restated to waive the one-year holding period for certain non-U.S.-investor feeder vehicles. When eligible, repurchase is at full NAV per share on the repurchase date - no discount or deduction printed.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Item 1A Risk Factors - Risks Related to Investing in Shares; Item 9B Other Information - Share Repurchase Plan amendment",
+      "quote": "Shares are not eligible for repurchase for the first year after purchase except upon death or disability of a stockholder",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.8": {
       "element": "CIT fee schedule",
-      "value": null,
-      "status": "pending"
+      "value": "Not a collective investment trust; JLL IPT is a non-traded NAV REIT offered by prospectus and private placements. No CIT fee schedule exists.",
+      "status": "n/a - CIT only",
+      "source": "n/a - structural",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": null,
-      "status": "pending"
+      "value": "Cohort placement (nontraded_reit, R4 phrasing): mgmt fee: at the cohort median of 1.25 (n=3 \u2014 too small for percentile language) | expense ratio (bases differ - see notes): fact unavailable for this member | repurchase cap: above the cohort median of 3.5 (n=2 \u2014 too small for percentile language). Stats + caveats in the cohort artifact.",
+      "status": "computed",
+      "source": "data/cohorts/nontraded_reit.json",
+      "section": "stats (R4 phrasing by tark_cohort)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.10": {
       "element": "Value justification",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell, not an extraction target: the value-for-fees justification is the plan committee's determination weighing the evidenced fee stack (1.25%-of-daily-NAV fixed advisory fee with temporary partial waiver in 2.1; 10%-over-7% class-level performance fee with zero accrual FY2023-25 in 2.2; no TER structurally in 2.3; no AFFE in 2.4; 0-0.85% servicing + up to 3.0% commissions in 2.6; no early-repurchase fee in 2.7) against delivered net returns (FY2025 3.0-3.8% range, 1.1/1.2) and daily liquidity terms with an unbroken fulfillment record (3.1/3.3).",
+      "status": "n/a - not publicly available: requires the plan committee's own value-for-fees determination - workflow output, not public product data (inputs live in cells 2.1-2.9)",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
-      "value": null,
-      "status": "pending"
+      "value": "CADENCE: DAILY - stockholders may request repurchase of all or part of their shares any day at that day's NAV per share (plan first announced 2011; contrast monthly/quarterly windows at BREIT/SREIT). CAP: 5% of the combined NAV of all classes per calendar quarter (~20% of total NAV per printed 12-month arithmetic). BASE: combined NAV of all share classes as of the last day of the previous calendar quarter. MECHANISM: issuer share repurchase plan (not '40-Act tenders); company is not obligated to repurchase and board may modify or suspend at any time; one-year holding period with death/disability/key-person exceptions and DRIP exemption (2.7); purchases likewise daily at daily NAV in continuous public and private offerings.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26); Form 10-Q Q2-2026 (filed 2026-08-11)",
+      "section": "Item 5 - Issuer Purchases of Equity Securities - Share Repurchase Plan; Item 1A Risk Factors; 10-Q Note 7",
+      "quote": "on a daily basis stockholders may request we repurchase all or a portion of their shares of common stock at that day's NAV per share...limits the funds we may use to purchase shares each calendar quarter to 5% of the combined NAV of all classes of shares",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.2": {
       "element": "Repurchase mechanics",
-      "value": null,
-      "status": "pending"
+      "value": "Price = NAV per share of the class on the DATE OF REPURCHASE (not purchase price, not prior-month NAV). Discretion: not obligated to repurchase; may honor some, all or none of requests; board may modify or suspend the plan at any time. Eligibility: one-year holding period (death/disability/key-person exceptions; DRIP shares exempt); minimum-balance forced repurchase provision exists; 2026-03-02 amendment waives the one-year hold for certain non-U.S. feeder vehicles. Funding: combination of operating cash flows, sales of real estate investments, borrowings and offering proceeds; line of credit may fund repurchases if requests exceed offering proceeds (with leverage-ratio consequences). Full plan text incorporated as Exhibit 4.1 to the 10-K.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Item 1A Risk Factors; Item 5 - Share Repurchase Plan; Item 9B - Share Repurchase Plan amendment",
+      "quote": "we will repurchase shares at a price equal to our NAV per share of the class of shares being repurchased on the date of repurchase",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.3": {
       "element": "Repurchase history",
-      "value": null,
-      "status": "pending"
+      "value": "UNBROKEN fulfillment record as disclosed: never deferred nor rejected a repurchase request through 2025-12-31 (10-K), and 100% honored in every later printed period (10-Q). Detail: Q4-2025 fulfilled 100% - 8,861,675 shares at avg $11.34 = 4.0% of NAV (Oct 1.5%, Nov 1.1%, Dec 1.4%). H1-2026 honored 100% - 14,180,741 shares / $159,495K; Q2-2026 100% of requests totaling $69,294K = 3.0% of NAV (Apr 1.1% at $11.25, May 1.0% at $11.27, Jun 0.9% at $11.26). H1-2025 honored 100% - 17,364,778 shares / $199,143K. Context: net redemptions cited as a primary driver of NAV decline from $2,387,828K (2025-12-31) to $2,309,856K (2026-06-30); no gating, proration or suspension event is disclosed anywhere in the three filings.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26); Form 10-Q Q2-2026 (filed 2026-08-11)",
+      "section": "Item 5 - Issuer Purchases of Equity Securities; 10-Q Note 7 - Share Repurchase Plan and Part II Item 2 monthly table",
+      "quote": "As of December 31, 2025, we have neither deferred nor rejected any request for repurchase under our share repurchase plan....we honored 100% of repurchase requests we received and repurchased 14,180,741 shares of common stock in the amount of $ 159,495",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.4": {
       "element": "Portfolio liquidity profile",
-      "value": null,
-      "status": "pending"
+      "value": "Underlying assets are illiquid direct real estate: 'The vast majority of our assets consist of properties that cannot generally be liquidated quickly.' Liquid resources printed: 2025-12-31 >$103,000K total cash on hand + $515,000K Credit Facility capacity; 2026-06-30 >$90,000K cash + $600,000K capacity. FY2025 operating cash flow $131,756K. Repurchases funded from operations, real estate sales, borrowings and offering proceeds; revolver named as ready liquidity source for repurchases. Real-estate-related assets sleeve exists (mortgage loans, securities) but no liquid-sleeve percentage is printed.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26); Form 10-Q Q2-2026 (filed 2026-08-11)",
+      "section": "Item 1A Risk Factors; Item 7 MD&A - Liquidity; 10-Q MD&A - Liquidity",
+      "quote": "The vast majority of our assets consist of properties that cannot generally be liquidated quickly....At June 30, 2026, we had in excess of $90,000 in total cash on hand and $600,000 of capacity under our Credit Facility.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.5": {
       "element": "TDF/CIT liquidity sleeve",
-      "value": null,
-      "status": "pending"
+      "value": "No TDF/CIT wrapper exists for this product in the reviewed filings; liquidity-sleeve design is a plan-vehicle question, not a JLL IPT disclosure.",
+      "status": "n/a - CIT only",
+      "source": "n/a - structural",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.6": {
       "element": "Fund leverage & facilities",
-      "value": null,
-      "status": "pending"
+      "value": "Target company leverage ratio 30-50% (share of total liabilities excl. future stockholder servicing/dealer manager fees over share of fair value of total assets); ACTUAL 32% at 2025-12-31 and 34% at 2024-12-31 - low vs cohort. Charter-level ceiling: precluded from borrowing more than ~75% (statutory formulation). Total outstanding indebtedness $1,930,111K at 2025-12-31; consolidated principal $1,953,211K at 4.33% weighted avg rate (fixed $1,899,778K @ 4.30%, variable $53,433K @ 5.29%). Facilities: $1,000,000K Credit Facility (2022-04-28) = $600,000K revolver + $400,000K term loan, accordion to $1,300,000K; amended 2026-03-12 (syndicate of ten lenders led by JPMorgan Chase Bank) extending both to 2028-03-13 with three 12-month extension options - current-leverage pricing printed as Term SOFR + 1.30%/1.25% (revolver/term) in the 10-K (filed 2026-03-26) and Term SOFR + 1.25%/1.20% in the Q2-2026 10-Q (leverage tier improved between filings). In compliance with debt covenants at 2025-12-31 and 2026-06-30. Interest-rate cap purchased FY2025 ($8,225K premium).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26); Form 10-Q Q2-2026 (filed 2026-08-11)",
+      "section": "Item 1 Business - Financing Strategy; Item 1A Risk Factors - Debt Financing; Item 7 MD&A - consolidated debt table; 10-Q MD&A - Credit Facility",
+      "quote": "Our company leverage ratio was 32% at December 31, 2025 and 34% at December 31, 2024....of between approximately 30% and 50%",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.7": {
       "element": "Plan participant liquidity demand",
-      "value": null,
-      "status": "pending"
+      "value": "Structural: JLL IPT filings disclose fund-side liquidity only (3.1/3.3/3.4). Participant-level demand (separated-with-balance counts, payout elections) is plan data outside any JLL IPT document.",
+      "status": "n/a - plan-side workflow: participant liquidity demand comes from a specific plan's Form 5500/recordkeeper census, resolved per plan engagement, not from product filings",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.8": {
       "element": "Redemption stress test",
-      "value": null,
-      "status": "pending"
+      "value": "ILLUSTRATIVE redemption stress (computed, all four plans): tail turnover x2, active turnover x1.5 vs base scenario. Anchor plan: demand 19.2%/yr vs 20.0 capacity - within wrapper capacity (19.2% vs 20%) IF offers are not prorated",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__jll_ipt_match.json (+3 plans)",
+      "section": "stressed_scenario (ILLUSTRATIVE)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": null,
-      "status": "pending"
+      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; DAILY repurchase requests at that day's NAV, capped at 5% of NAV per calendar quarter. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of combined NAV of all classes (prior quarter-end) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__jll_ipt_match.json",
+      "section": "verdict + reasons",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.1": {
       "element": "Valuation policy & NAV frequency",
-      "value": null,
-      "status": "pending"
+      "value": "NAV FREQUENCY: DAILY - struck at the end of each day the NYSE is open; 'externally advised, daily valued perpetual life REIT' (the cohort's daily-NAV cadence contrast to BREIT/SREIT monthly). Calculation: performed by ALPS (ALPS Fund Services Inc.) effective 2018-01-01 under board-adopted valuation guidelines; Advisor reviews/confirms and oversees. Property valuation: each wholly owned property appraised QUARTERLY under an annual valuation plan managed by independent valuation advisor SitusAMC (4.3); new acquisitions at cost then join the cycle; income-approach DCF is the primary methodology (Topic 820). Daily NAV accrues budgeted portfolio income/expenses, advisory fees, servicing fees; adjustments to actuals applied prospectively ('We do not retroactively adjust the NAV per share of each class for each day'). Caveats printed: 'Our valuation procedures and our NAV are not subject to GAAP or independent audit'; mortgages/company debt valued at COST in NAV; zero-floor rule for underwater property/mortgage pairs.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26); 424B3 Supplement No. 7 (filed 2026-08-12)",
+      "section": "Item 5 - NAV per Share and valuation guidelines; Item 1 Business (identity sentence); Item 1A Risk Factors",
+      "quote": "Effective January 1, 2018, our NAV and our NAV per share are calculated by ALPS, in accordance with the valuation guidelines established by our board of directors.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
-      "value": null,
-      "status": "pending"
+      "value": "GAAP fair-value hierarchy appears only for specific items (real estate itself is at historical cost under GAAP; the daily NAV fair-value process is separate and 'not subject to GAAP or independent audit'). Printed Level 3 items: DST Program financing obligations under fair-value option $1,174,938K at 2025-12-31 ($574,357K 2024; net unrealized loss $44,592K FY2025); fund-investment NAV-based marks (net unrealized loss $900 FY2025); impairments measured with cap-rate/discount-rate inputs - Pioneer Tower $917 FY2025 (7.5% cap / 10% discount), AQ Rittenhouse $11,500 FY2024, 180 North Jefferson $9,635 FY2024, Pioneer Tower $21,100 FY2024. Level 2: six single-family rental homes held for sale. Standard L1/L2/L3 definitions printed in Note 2.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Note 2 - Summary of Significant Accounting Policies - fair value measurements",
+      "quote": "The inputs used in estimating the fair value of these financial liabilities are considered Level 3.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.3": {
       "element": "Independent valuation agent",
-      "value": null,
-      "status": "pending"
+      "value": "Independent valuation advisor: SitusAMC Real Estate Valuation Services, LLC - selected by the Advisor, approved by the board including a majority of independent directors; founded 1931; NOT affiliated with the Company or Advisor; compensated per property appraised, not on values; manages/provides property, real-estate-loan and DST valuations but does NOT calculate the daily NAV (that is ALPS, 4.1). Disclosed relationship caveat: SitusAMC provides valuation services to other clients of the Advisor and affiliates and receives fees for them. Board may retain additional independent valuation firms for private real-estate-related assets and mortgage loans.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Item 5 - NAV per Share (valuation process)",
+      "quote": "our independent valuation advisor, SitusAMC Real Estate Valuation Services, LLC, a valuation firm selected by our Advisor and approved by our board of directors",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.4": {
       "element": "Methodology by asset type",
-      "value": null,
-      "status": "pending"
+      "value": "By asset type (Item 5 valuation guidelines): wholly owned properties - quarterly independent appraisal, income approach (DCF) primary with sales-comparison and replacement-cost alternatives, free-and-clear basis excluding property debt; JV properties - same appraisal then JV-agreement distribution provisions applied; DST Properties - cost until first appraisal cycle, revalued before DST offerings; publicly traded RE securities - last trade/bid via third parties, liquidity discount if restricted; private placements/RE operating businesses - cost then quarterly fair value (commingled-vehicle interests may rely on issuer-assigned values); first mortgages/debt interests - cost until impairment indicator triggers third-party appraisal; liquid non-RE assets - valued daily; ALL liabilities at cost (mortgages, credit facilities); FY2025 DCF key assumptions printed by sector (total company: 5.6% exit cap, 7.3% discount/IRR, 3.1% rent growth, 10.2-yr hold) with sensitivity table.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Item 5 - NAV per Share - valuation guidelines and key assumptions tables",
+      "quote": "the primary methodology used to value properties will be the income approach",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.5": {
       "element": "Auditor & opinion",
-      "value": null,
-      "status": "pending"
+      "value": "Auditor: KPMG LLP, Chicago, Illinois - Auditor Firm ID 185; auditor since 2012; opinion signed 2026-03-26. Unqualified opinion: FY2025/FY2024 balance sheets and three-year statements 'present fairly, in all material respects' in conformity with U.S. GAAP. No ICFR audit: 'The Company is not required to have, nor were we engaged to perform, an audit of its internal control over financial reporting.' Critical-audit-matter discussion touches investment-property hold-period judgments (undiscounted-recovery/impairment). NOTE the valuation-governance seam: KPMG audits the GAAP statements; the daily NAV itself is expressly 'not subject to GAAP or independent audit' (4.1).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Report of Independent Registered Public Accounting Firm (signature block); Item 14",
+      "quote": "/s/ KPMG LLP...We have served as the Company\u2019s auditor since 2012.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.6": {
       "element": "NAV restatement history",
-      "value": null,
-      "status": "pending"
+      "value": "None identified: searched stripped 10-K (FY2025, filed 2026-03-26), 10-Q (Q2-2026, filed 2026-08-11) and 424B3 Supplement No. 7 (filed 2026-08-12) for 'restat'/'error correction' on 2026-08-15. Zero NAV-restatement or error-correction events: hits are only the UNCHECKED 10-K cover-page error-correction checkboxes and amended-and-restated agreement titles (share repurchase plan, director compensation plan). Policy print is prospective-only by design: budget-to-actual adjustments hit NAV on the day made - 'We do not retroactively adjust the NAV per share of each class for each day.'",
+      "status": "extracted-unverified",
+      "source": "All three on-disk JLL IPT filings (mechanical search 2026-08-15)",
+      "section": "Document-wide search; 10-K cover page; Item 5 NAV-calculation paragraph (quoted)",
+      "quote": "NAV per share for each class is calculated by dividing such class's NAV at the end of each trading day by the number of shares outstanding for that class",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.7": {
       "element": "Premium/discount check",
-      "value": null,
-      "status": "pending"
+      "value": "Not exchange-listed: shares transact at NAV; premium/discount undefined. (Contrast the venture cohort's market-priced members.)",
+      "status": "n/a - not publicly available: no market price for a non-listed NAV-transaction wrapper",
+      "source": "wrapper structure per cell 3.1",
+      "section": "n/a rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.8": {
       "element": "Smoothing diagnostics",
-      "value": null,
-      "status": "pending"
+      "value": "Public return cadence for this wrapper is ANNUAL; vol/autocorr/de-smoothing need monthly-or-finer series. Fact sheets sit behind attestation gates (not free-public). (smoothing rho not computable at annual granularity.) Quarterly NAV path on disk is NAV-only and short.",
+      "status": "n/a - not publicly available: sub-annual return series not free-public for this wrapper",
+      "source": "disclosure-cadence assessment vs data/series_annual/jll_ipt.csv",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.9": {
       "element": "CIT unit valuation",
-      "value": null,
-      "status": "pending"
+      "value": "Not a collective investment trust; no CIT unit valuation exists. Share-level daily NAV mechanics are in 4.1.",
+      "status": "n/a - CIT only",
+      "source": "n/a - structural",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.1": {
       "element": "Self-declared benchmark",
-      "value": null,
-      "status": "pending"
+      "value": "Self-declared benchmark EXISTS: NFI-ODCE (NCREIF Fund Index - Open-End Diversified Core Equity) - endorsed in the Item 5 performance graph comparing Class M-I (post leverage and fees) against the S&P 500 and ODCE, $100 invested 2021-01-01, dividends reinvested. Printed endorsement calls ODCE 'appropriate and accepted' for direct real estate funds; printed caveats: ODCE funds have differing fees and lower allowed leverage than the Company ('could increase the Company's volatility relative to the index'); investors cannot invest in the index. Graph is an image; no benchmark return values printed.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Item 5 - Performance Graph and ODCE footnote",
+      "quote": "we feel that the ODCE is an appropriate and accepted index for the purpose of evaluating returns on investments in direct real estate funds",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.2": {
       "element": "Public index series",
-      "value": null,
-      "status": "pending"
+      "value": "Strategy proxy series on disk (PSP/URTH for evergreen PE; VNQ for REITs), manifest-declared; fund-level daily series does not exist (non-traded).",
+      "status": "fetched",
+      "source": "data/series/series_manifest.json",
+      "section": "series inventory",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": null,
-      "status": "pending"
+      "value": "No selection run: no computable return profile exists (see 1.8). The cohort artifact carries this member's comparative context instead.",
+      "status": "n/a - not publicly available: no computable return profile (range-only annual prints)",
+      "source": "data/cohorts/nontraded_reit.json",
+      "section": "membership context",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": null,
-      "status": "pending"
+      "value": "Peer cohort nontraded_reit (n=3): members, rationales, stats, composite (or its documented refusal) and caveat block in the cohort artifact; exclusions in data/roster_decisions.md.",
+      "status": "computed",
+      "source": "data/cohorts/nontraded_reit.json",
+      "section": "members + composite",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": null,
-      "status": "pending"
+      "value": "No PME inputs constructible (see 1.8).",
+      "status": "n/a - not publicly available: no point return series",
+      "source": "data/series_annual/jll_ipt.csv",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": null,
-      "status": "pending"
+      "value": "Benchmark-suitability memo is a constructed analytics artifact (Lane 3), not an extraction target; product-side input on file is the self-declared NFI-ODCE benchmark with printed leverage/fee caveats in 5.1.",
+      "status": "n/a - constructed (L3)",
+      "source": "n/a - constructed downstream",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.7": {
       "element": "Case-law tracker",
-      "value": null,
-      "status": "pending"
+      "value": "Case-law tracking is maintained at the platform level across products, not per-product extraction.",
+      "status": "n/a - cross-product tracker",
+      "source": "n/a - cross-product",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.1": {
       "element": "Structure map",
-      "value": null,
-      "status": "pending"
+      "value": "Maryland corporation (inc. 2004-05-28), externally advised daily-valued perpetual-life REIT (REIT-taxed since 2004). UPREIT: substantially all assets held through JLLIPT Holdings, LP (Delaware; the 'operating partnership'); sole GP is wholly owned JLLIPT Holdings GP, LLC; Company owned 71.5% of OP Units at 2025-12-31 (28.5% third parties; OP Unit issuance proceeds $1,097,417K). Advisor: LaSalle Investment Management, Inc.; Sponsor: JLL (NYSE: JLL). NINE share classes (A, M, A-I, M-I, D, I, N, S, Z) across: Fourth Extended Public Offering (from 2025-06-06, up to $1,500,000K), Class N Private Offering (from 2015-03-03; $98,188K raised), Continuous Private Offering of D/I/S/Z (from 2025-10-07; printed 'aggregate gross proceeds of $6,696,000' - NOTE units inconsistent in filing: surrounding Item 1 amounts are in thousands, but FY2025 share issuances of 272,469 Class I + 317,022 Class S shares at ~$11.3 NAV imply the figure is whole dollars, i.e. ~$6,696K), DRIP. DST Program (from 2019-10-16, cap raised to $3,000,000K on 2024-08-06; ~$2,300,000K raised): 1031-exchange private placements of Delaware statutory trust interests with FMV Option to acquire back into the OP; DST financing obligations at fair value $1,174,938K. Portfolio: interests in 140 properties + 2,440 single-family rental homes in 27 states at 2025-12-31.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Item 1 Business - The Company / Offerings; Item 5",
+      "quote": "We own substantially all of our assets through JLLIPT Holdings, LP, a Delaware limited partnership (our \u201coperating partnership\u201d), of which we are a limited partner.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.2": {
       "element": "Strategy & instrument complexity",
-      "value": null,
-      "status": "pending"
+      "value": "Core diversified US direct real estate: 'well-located, well-leased properties within the healthcare, industrial, residential, retail and other sectors' plus, to a lesser degree, real-estate-related assets (mortgage loans, RE debt/equity securities). Objectives as printed: attractive current income, preserve/protect capital, NAV appreciation over time, enable real estate as an asset class in diversified portfolios. Complexity LOW-MODERATE for the cohort: direct property ownership (no fund-of-funds layer), a few JVs and unconsolidated affiliates, DST syndication program with FMV repurchase option, interest-rate derivatives (rate cap, $8,225K premium FY2025), target leverage 30-50% (32% actual); international investments contemplated only 'over time'. Sector mix at 2025-12-31 by fair value: Industrial 40%, Residential 37%, Retail 12%, Healthcare 11%.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Item 1 - Investment Objectives and Strategy; Item 2 Properties; Item 7 MD&A",
+      "quote": "to pursue investments principally in well-located, well-leased properties within the healthcare, industrial, residential, retail and other sectors",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.3": {
       "element": "Conflicts & affiliated transactions",
-      "value": null,
-      "status": "pending"
+      "value": "Printed conflicts web (all-affiliate stack): (1) Advisor LaSalle is paid on NAV it is ultimately responsible for calculating (fee-on-NAV conflict, quoted); (2) class-level performance fee can reward the Advisor on one class while another declines; (3) LaSalle allocation conflicts - advises other programs incl. the DST Program that compete for investments and tenants; Advisor chooses which properties to syndicate into the DST Program while Advisor and Dealer Manager 'earn fees from the DST Program'; (4) affiliated service payments FY2025: LaSalle fixed advisory fee $40,893K + employment-cost reimbursements; JLL Americas (property/construction mgmt, leasing, brokerage) $6,448K; Dealer Manager LaSalle Investment Management Distributors commissions+servicing $12,239K, DST fees $13,270K via the taxable REIT subsidiary; org/offering cost advances owed to LaSalle $3,049K; (5) JLL owned 2,521,801 M-I + 8,726,003 N shares (~$126,589K).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Item 1A - Risks Related to Conflicts of Interest; Note 10 - Related Party Transactions",
+      "quote": "Our Advisor faces a conflict of interest because the fees it receives for services performed are based on our NAV, for which our Advisor is ultimately responsible for calculating.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.4": {
       "element": "Tax reporting (1099 vs K-1)",
-      "value": null,
-      "status": "pending"
+      "value": "The wrapper's REIT tax status IS printed (qualified to be taxed as a REIT since taxable year 2004; distributions may be return of capital reducing basis), but no tax-form name (Form 1099-DIV or Schedule K-1) appears in any of the three reviewed filings - form identity not extractable under the verbatim rule.",
+      "status": "n/a - tax form not literally printed: zero hits for '1099' and 'K-1' across stripped 10-K, 10-Q and 424B3 (searched 2026-08-15)",
+      "source": "Form 10-K FY2025 (filed 2026-03-26) - mechanical absence search 2026-08-15",
+      "section": "Document-wide search; Item 1 Business (REIT election); Item 1A Federal Income Tax Risks",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.5": {
       "element": "Service-provider web",
-      "value": null,
-      "status": "pending"
+      "value": "Advisor: LaSalle Investment Management, Inc. (wholly owned subsidiary of Sponsor JLL, NYSE: JLL). Dealer Manager (public offerings + DST Program): LaSalle Investment Management Distributors, LLC (Advisor affiliate). Daily NAV calculation agent: ALPS (ALPS Fund Services Inc.), effective 2018-01-01. Independent valuation advisor: SitusAMC Real Estate Valuation Services, LLC (unaffiliated). Auditor: KPMG LLP, Chicago (since 2012). Property management/leasing: mix of large national firms, smaller local firms and affiliate Jones Lang LaSalle Americas, Inc. Credit Facility: syndicate led by JPMorgan Chase Bank, N.A. (nine lenders at 2022 origination incl. Bank of America, PNC Capital Markets, Wells Fargo Securities, Capital One; ten lenders in the 2026-03-12 amendment; exhibit-index credit agreements name JPMorgan Chase Bank, N.A. as counterparty; base rate also references JPMorgan prime; the role label 'administrative agent' does not appear in the stripped text). Transfer agent: NOT named anywhere in the three filings (zero 'transfer agent' hits, searched 2026-08-15).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-26)",
+      "section": "Item 1 Business; Item 5 (ALPS, SitusAMC); Item 14 (KPMG); Note 10; MD&A Credit Facility",
+      "quote": "The terms \u201cAdvisor\u201d and \u201cLaSalle\u201d refer to LaSalle Investment Management, Inc.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.6": {
       "element": "Plan operational fit",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell: operational fit (recordkeeper coding, order handling for a daily-NAV/daily-repurchase-request vehicle with a quarterly 5% cap and one-year hold, DRIP handling, tax-form flows) depends on the specific plan's recordkeeper and trust/custody stack. Product-side inputs already evidenced: daily NAV cadence (4.1), daily purchase/repurchase mechanics with quarterly cap (3.1/3.2), unnamed transfer agent (6.5), non-listed shares (1.10), tax-form absence in filings (6.4).",
+      "status": "n/a - not publicly available: requires plan-specific recordkeeper/trading integration facts - workflow cell completed per plan engagement, not public product data",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.7": {
       "element": "Participant communicability",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell: whether a perpetual-life daily-NAV non-traded REIT with a 5%-of-NAV quarterly repurchase cap, one-year holding period (no early fee), board-suspendable repurchase plan, appraisal-based valuation and an unbroken 100%-fulfillment record can be explained to 404(c) participants is the committee's assessment. Product-side communicability inputs on file: structure map incl. DST program (6.1), strategy/complexity (6.2), liquidity terms and history (3.1/3.3), valuation policy (4.1).",
+      "status": "n/a - not publicly available: requires plan-committee participant-communication assessment - workflow cell; product-side inputs already evidenced in 6.1/6.2/6.4",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.8": {
       "element": "Fiduciary capacity self-assessment",
-      "value": null,
-      "status": "pending"
+      "value": "Fiduciary capacity self-assessment is the committee's own governance output; no product filing can supply it.",
+      "status": "n/a - workflow, not data",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     }
   }
 }

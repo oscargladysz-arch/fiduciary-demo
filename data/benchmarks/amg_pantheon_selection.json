@@ -1,0 +1,102 @@
+{
+  "product": "amg_pantheon",
+  "strategy": "private_equity_evergreen",
+  "source_cells": [
+    "1.2",
+    "5.1"
+  ],
+  "primary": {
+    "candidate": "Listed private equity investable proxy (PSP)",
+    "id": "psp",
+    "lane": "B",
+    "score": 9,
+    "max": 12,
+    "reasons": [
+      "strategy_match 2/3: listed GPs/holdcos - PE exposure with public-market beta",
+      "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+      "investability 2/2: investable, priced daily",
+      "data_quality 2/2: daily series",
+      "provider_independence 2/2: provider unaffiliated with the fund"
+    ],
+    "comparison": {
+      "window": "2016-03-31 to 2026-03-31",
+      "fund_growth_x": 3.4461,
+      "index_growth_x": 1.4036,
+      "ks_pme": 2.4551,
+      "direct_alpha_pct": 9.4,
+      "fund_ann_pct": 13.17,
+      "index_ann_pct": 3.45
+    }
+  },
+  "secondary": {
+    "candidate": "MSCI World investable proxy (URTH)",
+    "id": "urth",
+    "lane": "A/B",
+    "score": 8,
+    "max": 12,
+    "reasons": [
+      "strategy_match 1/3: public equities - liquidity/leverage profile differs materially",
+      "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+      "investability 2/2: investable, priced daily",
+      "data_quality 2/2: daily series",
+      "provider_independence 2/2: provider unaffiliated with the fund"
+    ],
+    "comparison": {
+      "window": "2016-03-31 to 2026-03-31",
+      "fund_growth_x": 3.4461,
+      "index_growth_x": 2.2844,
+      "ks_pme": 1.5085,
+      "direct_alpha_pct": 4.2,
+      "fund_ann_pct": 13.17,
+      "index_ann_pct": 8.61
+    }
+  },
+  "rejected": [
+    {
+      "candidate": "PME / Direct Alpha vs PSP",
+      "id": "pme_psp",
+      "lane": "D",
+      "score": 8,
+      "max": 12,
+      "reasons": [
+        "strategy_match 2/3: wealth-ratio PME over the fund's fiscal window",
+        "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+        "investability 2/2: investable, priced daily",
+        "data_quality 1/2: annual-window series",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "outranked: score 8/12 vs primary 9/12 and secondary 8/12 - only two slots; retained in log as viable alternate"
+    },
+    {
+      "candidate": "Cambridge Associates US PE benchmark",
+      "id": "cambridge_pe",
+      "lane": "B",
+      "score": 7,
+      "max": 12,
+      "reasons": [
+        "strategy_match 3/3: drawdown-fund universe - wrapper mismatch vs evergreen also applies",
+        "risk_liquidity_match 2/3: appraisal-cadence series, closer to the fund's NAV process",
+        "investability 0/2: not investable / not held",
+        "data_quality 0/2: licensed data not held (no Preqin/Cambridge subscription) - candidate cannot be computed, only cited",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 8/12 - only two slots; retained in log as viable alternate"
+    },
+    {
+      "candidate": "Peer cohort: evergreen_pe (hl_paf, stepstone_spm, kkr_kpec, ares_pmf, amg_pantheon)",
+      "id": "peer_evergreen",
+      "lane": "C",
+      "score": 7,
+      "max": 12,
+      "reasons": [
+        "strategy_match 3/3: n=5 equal-weight annual composite on printed FY returns (data/cohorts/evergreen_pe.json); fiscal year-ends differ and kkr_kpec joins cross-wrapper under the documented fallback - both disclosed in the caveat block",
+        "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+        "investability 0/2: not investable / not held",
+        "data_quality 1/2: annual series",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 8/12 - only two slots; retained in log as viable alternate"
+    }
+  ],
+  "escalation": null
+}

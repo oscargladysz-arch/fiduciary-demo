@@ -84,8 +84,8 @@ def fee_percentile() -> dict:
 def stress_windows() -> dict:
     out = {}
     # daily-series tier
-    for key, ticker in (("cliffwater_cclfx", "cclfx"), ("dxyz", "dxyz"), ("pflex", "pflex"), ("arkvx", "arkvx")):
-        s = load_series(ticker, "adj_close" if key != "dxyz" else "close")
+    for key, ticker in (("cliffwater_cclfx", "cclfx"), ("dxyz", "dxyz"), ("pflex", "pflex"), ("arkvx", "arkvx"), ("ssss", "nslr")):
+        s = load_series(ticker, "adj_close" if key not in ("dxyz", "ssss") else "close")
         w = {}
         cal22 = [v for d, v in s if "2022-01-01" <= d <= "2022-12-31"]
         if len(cal22) > 30:
@@ -161,10 +161,42 @@ def breit_monthly_diagnostics() -> dict | None:
     }
 
 
+def ssss_premium() -> dict | None:
+    """NSLR (fka SSSS) market price vs printed quarterly NAV — the venture
+    cohort's second market-priced member; with dxyz_premium this shows
+    premium/discount pricing as a PATTERN, not a one-fund anecdote."""
+    q = DATA / "series_quarterly" / "ssss_nav.csv"
+    if not q.exists():
+        return None
+    with open(q, newline="") as fh:
+        nav_rows = [(r["date"], float(r["nav_per_share"]))
+                    for r in csv.DictReader(fh)]
+    px = load_series("nslr", "close")
+    last_date, last_close = px[-1]
+    nav_d, nav_v = nav_rows[-1]
+    by_date = dict(px)
+    hist = []
+    for d, nv in nav_rows:
+        pxs = [v for dd, v in px if dd <= d]
+        if pxs:
+            hist.append(round((pxs[-1] / nv - 1) * 100, 1))
+    return {
+        "last_close": last_close, "last_close_date": last_date,
+        "latest_printed_nav": nav_v, "latest_nav_date": nav_d,
+        "premium_pct_vs_latest_printed_nav": round((last_close / nav_v - 1) * 100, 1),
+        "premium_pct_at_each_printed_quarter": hist,
+        "note": "price at-or-before each printed quarter-end NAV; a persistent "
+                "DISCOUNT is this fund's premium/discount signature - the "
+                "mirror image of dxyz's premium",
+        "inputs": ["data/series/nslr.csv", "data/series_quarterly/ssss_nav.csv"],
+    }
+
+
 def main() -> None:
     doc = {
         "generated": date.today().isoformat(),
         "dxyz_premium": dxyz_premium(),
+        "ssss_premium": ssss_premium(),
         "fee_percentile": fee_percentile(),
         "stress_windows": stress_windows(),
         "breit_monthly_diagnostics": breit_monthly_diagnostics(),

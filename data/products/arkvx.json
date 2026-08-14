@@ -7,273 +7,543 @@
   "cells": {
     "1.1": {
       "element": "Net total return series",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: only fiscal-year points printed in filings. Single-class NAV total returns (FYE July 31): FY2023 (9/1/2022 commencement to 7/31/2023, not annualized) +26.20% (NAV $20.00 to $25.24); FY2024 +3.86% ($26.02); FY2025 +29.62% ($33.62). Net assets grew $24,919k / $64,041k / $207,930k. Daily-NAV fund (ticker ARKVX) but no monthly/daily series is printed in filings; quarterly pre-offer spot NAVs available from N-23C3A notices (see quarterly_nav: $25.72 on 2024-09-04 to $49.85 on 2026-05-27).",
+      "status": "partial",
+      "source": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+      "section": "Consolidated Financial Highlights",
+      "quote": "Net asset value total return is calculated assuming an initial investment made at the net asset value at the beginning of the period",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.2": {
       "element": "Trailing & calendar-year returns",
-      "value": null,
-      "status": "pending"
+      "value": "Average Annual Total Returns as of 7/31/2025 (single class then offered; NAV total-return basis, dividends reinvested, net of fees, reflects waivers): 1-year +29.62%; since inception 9/1/2022 +20.42% annualized. Printed comparison rows in same table: S&P 500 Index 16.33% / 19.29%; MSCI World Net Index 15.72% / 18.02%. Calendar-year returns are NOT printed in on-disk filings - only fiscal-July-year returns in the Financial Highlights (see 1.1 / annual_series).",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+      "section": "Management's Discussion of Fund Performance - Average Annual Total Returns as of 7/31/25",
+      "quote": "Average Annual Total Returns as of 7/31/25 ... The Fund\u2019s inception date is 9/1/22.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.3": {
       "element": "Gross vs net spread",
-      "value": null,
-      "status": "pending"
+      "value": "No performance-fee layer, so gross-vs-net spread is entirely expense waivers/reimbursements. FY2025 ratios: 4.39% gross vs 2.90% net (1.49pp waived/reimbursed); FY2024 5.32% vs 2.90% (2.42pp); FY2023 annualized 9.33% vs 2.90% (6.43pp). Contractual cap 2.90% of average daily net assets (with listed exclusions); amended 7/3/2025 to remain in effect indefinitely until the Board approves termination; Adviser may NOT recoup waived/reimbursed amounts. Reimbursement receivable from Adviser at 7/31/2025: $442,717.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+      "section": "Consolidated Financial Highlights; MDFP performance disclosure; Note 3 Expense Limitation Agreement",
+      "quote": "Performance reflects applicable fee waivers and/or expense limitations in effect during the periods shown and in their absence, performance would be reduced.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.4": {
       "element": "Distribution history & composition",
-      "value": null,
-      "status": "pending"
+      "value": "Sparse, gains-only distribution history: per-share FY2023 $0.00, FY2024 $0.20, FY2025 $0.10 (Financial Highlights line 'Accumulated Net realized gains'; none from net investment income - the Fund runs a net investment loss). Tax character: FY2024 ordinary income $289,005 / LTCG $0; FY2025 ordinary $0 / LTCG $345,035. Policy: NII and net capital gains typically distributed at least annually (prospectus: annual distribution policy). DRP administered by BNY Mellon Investment Servicing (US) Inc.: shareholders automatically enrolled, reinvestment in same class at NAV, opt-out by written instruction.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08) + 486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+      "section": "Financial Highlights; Note 2 Dividend Distributions; Note 6 Federal Income Tax; prospectus Summary of Terms - Distributions / Dividend Reinvestment Plan",
+      "quote": "Net investment income, if any, and net capital gains, if any, are typically distributed to shareholders at least annually.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
-      "value": null,
-      "status": "pending"
+      "value": "The Fund invests directly - partly via unaffiliated SPVs - in ~46 named private companies (annual-report descriptions include Anthropic, OpenAI, SpaceX, xAI, Neuralink, Lambda Labs, Replit, Epic Games, Databricks, Figure AI, Groq, Revolut, Boom Supersonic, Perplexity) plus public tech equities. No underlying-fund/GP performance exists to print. Position-level anchor at 7/31/2025: top-10 = 48.3% of net assets, led by SpaceX 11.5%, X.AI Holdings 6.8%, Neuralink 5.8%, Lambda Labs 5.3%, OpenAI 5.2%.",
+      "status": "n/a - not publicly available: direct venture portfolio (no underlying funds or GP sleeves); no sleeve-level return series exists or is printed in any on-disk filing",
+      "source": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+      "section": "The ARK Venture Fund's Private Investments; Top 10 Holdings; Consolidated Schedule of Investments footnote (c)",
+      "quote": "these securities have been purchased through unaffiliated Special Purpose Vehicles (\u201cSPVs\u201d) in which the Fund has a direct investment of ownership units of the SPVs.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.6": {
       "element": "Volatility & max drawdown",
-      "value": null,
-      "status": "pending"
+      "value": "Computed from daily NAV (adj, n=48 monthly): annualized vol 24.45%; max drawdown -18.15% (since 2022-08-31).",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (stress_windows.arkvx) + data/series/arkvx.csv",
+      "section": "computed diagnostics",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.7": {
       "element": "De-smoothed volatility",
-      "value": null,
-      "status": "pending"
+      "value": "De-smoothed (Geltner AR1) annualized vol 23.99% vs 24.45% observed (rho -0.026, n=48). Daily-struck NAV on Level-3-heavy venture holdings - the rho quantifies how much stale marks smooth it.",
+      "status": "computed",
+      "source": "data/series/arkvx.csv (computed)",
+      "section": "computed diagnostics",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": null,
-      "status": "pending"
+      "value": "KS-PME 1.9927 / Direct Alpha 19.07%/yr vs Listed private equity proxy (PSP) over 2022-08-31 to 2026-08-13. Window-sensitivity disclosure applies; explorable in the Analysis Lab.",
+      "status": "computed",
+      "source": "data/benchmarks/arkvx_selection.json",
+      "section": "primary.comparison",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
-      "value": null,
-      "status": "pending"
+      "value": "Computed stress windows (daily NAV): worst full-history peak-to-trough -19.1% (series starts 2022-08-31; no CY2022/COVID coverage).",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (stress_windows.arkvx)",
+      "section": "stress_windows",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.10": {
       "element": "Market price & premium/discount",
-      "value": null,
-      "status": "pending"
+      "value": "Shares are unlisted with no secondary market expected; entry at NAV (plus any Class S load) and exit only via quarterly NAV repurchase offers - premium/discount is undefined by construction. Cohort contrast role: ARKVX delivers SpaceX/OpenAI/xAI/Anthropic-type venture exposure priced at NAV daily, versus the listed closed-end shell route (DXYZ) where market price can detach from NAV.",
+      "status": "n/a - not publicly available: no market price exists for this unlisted interval fund; shares are bought and repurchased at NAV, so premium/discount is undefined",
+      "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+      "section": "Summary of Terms - Share Repurchase Program; prospectus cover (Unlisted Closed-End Fund)",
+      "quote": "The Shares have no history of public trading, nor is it intended that the Shares will be listed on a public exchange at this time.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.11": {
       "element": "Track record & manager tenure",
-      "value": null,
-      "status": "pending"
+      "value": "Track record from 9/1/2022 commencement (organized as Delaware statutory trust 1/11/2022): 3 fiscal years through FYE 7/31/2025, ~3.9 years at extraction (2026-08-15). Sole named portfolio manager: Catherine D. Wood, Chief Investment Officer of the Fund; founded ARK Investment Management LLC and registered it with the SEC in January 2014; previously CIO of Global Thematic Strategies at AllianceBernstein LP ($5B AUM) after 12 years there; 18 years at Jennison Associates before that.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08) + 486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+      "section": "Note 1 Organization; prospectus Management of the Fund - Portfolio Manager",
+      "quote": "The Fund was organized as a Delaware statutory trust on January 11, 2022 and commenced operations on September 1, 2022.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
-      "value": null,
-      "status": "pending"
+      "value": "RATE: 2.75% per annum. BASE: average DAILY NET ASSETS of the Fund; fee accrued daily, paid monthly; same 2.75% across Class D/S/U in the Oct-2025 fee table. FY2025 management fees incurred: $3,193,989. No breakpoints disclosed. (Highest flat management fee in this cohort's interval-fund lane; partially offset by the non-recoupable 2.90% expense cap.)",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08), Note 3, CIK 1905088",
+      "section": "Note 3 Management and Other Agreements - Management; prospectus Summary of Fees and Expenses",
+      "quote": "The Fund pays the Adviser a fee calculated daily and payable monthly at an annual rate ... of the average daily net assets of the Fund) of 2.75% (\u201cManagement Fee\u201d)",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.2": {
       "element": "Incentive fee terms",
-      "value": null,
-      "status": "pending"
+      "value": "None - documented absence. Adviser compensation is the flat 2.75% Management Fee only, 'in return for providing investment management services'. Full-text searches of the FY2025 N-CSR, 486BPOS (2025-10-27) and 424B3 (2026-01-23) return zero hits for 'incentive fee', 'performance fee' and 'carried interest' (the sole 'incentive' hit is proxy-voting language about portfolio-company compensation programs). The Statement of Operations expense lines contain no incentive/performance item.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08), Note 3 + full-text search of all on-disk arkvx filings (searched 2026-08-15), CIK 1905088",
+      "section": "Note 3 Management and Other Agreements; Consolidated Statement of Operations",
+      "quote": "of 2.75% (\u201cManagement Fee\u201d) in return for providing investment management services",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.3": {
       "element": "Total expense ratio & waivers",
-      "value": null,
-      "status": "pending"
+      "value": "Audited FY2025 (single class): 4.39% gross / 2.90% net of average net assets (FY2024 5.32/2.90; FY2023 annualized 9.33/2.90). Prospectus (10/28/2025) projections per class: total annual fund expenses D 3.49% / S 4.19% / U 4.09% (incl. mgmt 2.75%, interest 0.04%, distribution/servicing 0.15/0.85/0.75, other operating 0.54%, AFFE 0.01%); after fee waiver (0.01%) + expense reimbursement (0.58%): D 2.90% / S 3.60% / U 3.50%. Expense Limitation Agreement caps operating expenses (excl. investment costs, taxes, brokerage, AFFE, litigation/indemnification/shareholder meetings, organizational/offering, extraordinary) at 2.90/3.60/3.50% by class; indefinite until Board terminates; NO Adviser recoupment.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08) + 486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+      "section": "Consolidated Financial Highlights ratios; Summary of Fees and Expenses; Note 3 Expense Limitation Agreement",
+      "quote": "exceed 2.90% of the Fund\u2019s average daily net assets (\u201cExpense Limit\u201d)",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.4": {
       "element": "AFFE",
-      "value": null,
-      "status": "pending"
+      "value": "AFFE 0.01% for each class (Class D/S/U), prospectus fee table projected for fiscal year ending 7/31/2026 - pro rata share of fees of other funds held (ETFs and money market funds; the only pooled holding at 7/31/2025 was a $9.4M money market fund position). Excluded from the expense-cap calculation and from Financial Highlights expense ratios.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+      "section": "Summary of Fees and Expenses - Annual Fund Expenses, footnote (6)",
+      "quote": "Acquired Fund Fees and Expenses represent the Fund\u2019s pro rata share of fees and expenses incurred indirectly as a result of investing in other funds",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.5": {
       "element": "Underlying GP economics",
-      "value": null,
-      "status": "pending"
+      "value": "No GP economics layer: the Fund buys private company securities directly or through unaffiliated Special Purpose Vehicles. Filings state SPV positions are valued on the underlying securities and the Fund's ownership percentage, but print no SPV management fee or carry terms. Only indirect-vehicle cost disclosed is AFFE 0.01% (ETFs/money market).",
+      "status": "n/a - not publicly available: no underlying GPs exist (direct venture investing); SPV fee/carry terms, if any, are not printed in any on-disk filing",
+      "source": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+      "section": "Consolidated Schedule of Investments footnote (c)",
+      "quote": "The shares, cost basis and fair value stated are determined based on the underlying securities purchased by the SPV and the Fund\u2019s ownership percentage.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.6": {
       "element": "Loads & servicing fees",
-      "value": null,
-      "status": "pending"
+      "value": "FY2025 wrapper (single class): NO sales load; shareholder servicing fee 0.15%/yr of average daily net assets paid monthly in arrears to Distributor (Foreside), which may pass the full amount to platforms/intermediaries. Oct-2025 three-class structure: Distribution and Shareholder Services Fee D 0.15% / S 0.85% / U 0.75%; sales load D/U none, Class S up to 3.50% of amount invested. Jan-2026 supplement schedule for Class S via arranged Intermediaries: 2.50% (<$100k), 2.00% ($100k-<$250k), 0% + 1.50% CDSC within 12 months ($250k+); up to 3.50% through other Selling Agents; dealer allowance up to 2.50%/2.00%; 1.50% one-time commission on $250k+ trades.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08), Note 3 + 486BPOS (filed 2025-10-27) + 424B3 supplement (filed 2026-01-23), CIK 1905088",
+      "section": "Note 3 Distribution; Summary of Fees and Expenses; 424B3 Purchase of Class S Shares",
+      "quote": "The Fund pays to the Distributor a shareholder servicing fee, payable monthly in arrears, at an annual rate of 0.15% of the average daily net assets of the Fund.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.7": {
       "element": "Early repurchase fee",
-      "value": null,
-      "status": "pending"
+      "value": "No Rule 23c-3 early-repurchase fee: all repurchases are at NAV and the strings 'early repurchase' / 'repurchase fee' have zero hits in the FY2025 N-CSR and the 486BPOS (searched 2026-08-15). Only early-exit charge is class-level: Class S purchases of $250,000+ carry a 1.50% contingent deferred sales charge if tendered for repurchase within 12 months of purchase (424B3, 2026-01-23); Class S purchases under $250,000 and all Class D/U shares have no deferred charge.",
+      "status": "extracted-unverified",
+      "source": "424B3 supplement (filed 2026-01-23) + full-text search of N-CSR FY2025 and 486BPOS, CIK 1905088",
+      "section": "424B3 - revised footnote (1) to Annual Fund Expenses; Purchase of Class S Shares",
+      "quote": "a CDSC of 1.50% may be imposed on shares tendered for repurchase within 12 months of purchase",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.8": {
       "element": "CIT fee schedule",
-      "value": null,
-      "status": "pending"
+      "value": "Not a collective investment trust: continuously offered registered interval fund (Rule 23c-3); fee structure is fully in cells 2.1-2.7.",
+      "status": "n/a - CIT only: ARKVX is a 1940-Act registered closed-end interval fund with SEC-registered shares, not a collective investment trust; no CIT fee schedule exists",
+      "source": "N-CSR FY2025 (filed 2025-10-08), Note 1, CIK 1905088",
+      "section": "Note 1 Organization",
+      "quote": "The Fund operates as an \u201cinterval fund\u201d and continuously offers its shares of beneficial interest (\u201cShares\u201d).",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": null,
-      "status": "pending"
+      "value": "Cohort placement (venture, R4 phrasing): mgmt fee: above the cohort median of 2.5 (n=3 \u2014 too small for percentile language) | expense ratio (bases differ - see notes): below the cohort median of 4.53 (n=3 \u2014 too small for percentile language) | repurchase cap: only member with this fact (n=1). Stats + caveats in the cohort artifact.",
+      "status": "computed",
+      "source": "data/cohorts/venture.json",
+      "section": "stats (R4 phrasing by tark_cohort)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.10": {
       "element": "Value justification",
-      "value": null,
-      "status": "pending"
+      "value": "Committee synthesis cell. Product-side input on file: the June 26, 2025 15(c) discussion records that an independent data provider's report found the Fund's management fee 'generally was in line with the applicable peer group median' and its net expense ratio likewise 'in line with the applicable peer group median'; Trustees unanimously approved continuation of the Management Agreement.",
+      "status": "n/a - not publicly available: value-for-fees justification is the adopting committee's own workflow output, not public product data (inputs live in cells 2.1-2.7)",
+      "source": "N-CSR FY2025 (filed 2025-10-08), Board Approval of Management Agreement (Unaudited), CIK 1905088",
+      "section": "Board Approval of Management Agreement - factors (c) and (d)",
+      "quote": "the management fee paid by the Fund generally was in line with the applicable peer group median",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
-      "value": null,
-      "status": "pending"
+      "value": "TRUE interval fund. CADENCE: quarterly Rule 23c-3 repurchase offers in March, June, September, December. CAP: fundamental policy 5%-25% of outstanding shares; Fund expects, and every actual offer to date has been, the 5% minimum. BASE: 5% of outstanding SHARES (share count), repurchased at NAV. MECHANISM: written notice 21-42 calendar days before the Repurchase Request Deadline (quarter-end, strictly observed); NAV pricing on the deadline (allowed up to 14 calendar days after); payment expected 1-3 business days and no later than 7 calendar days after pricing. Fundamental policy changeable only by majority shareholder vote.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27) + N-CSR FY2025 Note 7, CIK 1905088",
+      "section": "Summary of Terms - Share Repurchase Program; Note 7 Repurchase Offers",
+      "quote": "makes quarterly offers to repurchase between 5% and 25% of its outstanding Shares at NAV, pursuant to Rule 23c-3 under the 1940 Act",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.2": {
       "element": "Repurchase mechanics",
-      "value": null,
-      "status": "pending"
+      "value": "Mechanics: Repurchase Offer Notice mailed 21-42 days pre-deadline; tenders through intermediaries/transfer agent (BNY Mellon Investment Servicing) by the quarter-end deadline at NYSE close; NAV determined on the deadline (may be up to 14 calendar days later); payment 1-3 business days (max 7 calendar) after pricing. Oversubscription: pro rata repurchase, with discretionary exception to accept in full holders of fewer than 100 shares tendering all shares; unfilled tenders wait for the next quarter bearing NAV risk. Suspension/postponement only by majority Board vote including majority of Independent Trustees, on enumerated regulatory grounds. Funding: cash or draws on the $15M Texas Capital Bank facility.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08), Note 7 + 486BPOS prospectus (filed 2025-10-27), CIK 1905088",
+      "section": "Note 7 Repurchase Offers; prospectus Periodic Repurchase Offers (pro rata; Suspension or Postponement)",
+      "quote": "Written notification of each quarterly repurchase offer (the \u201cRepurchase Offer Notice\u201d) is sent to Shareholders at least 21 and not more than 42 calendar days",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.3": {
       "element": "Repurchase history",
-      "value": null,
-      "status": "pending"
+      "value": "No gating, suspension or postponement disclosed in any on-disk filing. FY2025 audited results (each offer = 5.00% of shares): Sep-2024 (deadline 9/30/2024) repurchased 5.00% / 128,863 shares - the offer was fully utilized at its cap (proration, if any, not stated); Dec-2024 4.51% / 165,165; Mar-2025 3.89% / 185,124; Jun-2025 3.22% / 186,009. Cadence trail: 8 consecutive quarterly N-23C3A notices on disk (2024-09-06, 2024-12-02, 2025-03-07, 2025-06-02, 2025-09-02, 2025-12-02, 2026-03-02, 2026-05-28), every one offering 5% at NAV with a quarter-end deadline - uninterrupted through the June-2026 offer.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08), Note 7 results table + N-23C3A notices 2024-09-06 through 2026-05-28, CIK 1905088",
+      "section": "Note 7 Repurchase Offers (FY2025 results); N-23C3A shareholder notices",
+      "quote": "During the year ended July 31, 2025, the Fund completed four quarterly repurchase offers.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.4": {
       "element": "Portfolio liquidity profile",
-      "value": null,
-      "status": "pending"
+      "value": "Barbell profile at 7/31/2025: total investments $207,693,668 = liquid Level 1 $36,894,997 (17.8%: public equities $27,452,610 + money market fund $9,442,387) vs restricted Level 3 private positions $170,798,671 (82.2%, all restricted securities not publicly salable without registration). Strategy target 20%-90% private. Liquidity backstop for the quarterly windows: $15,000,000 Texas Capital Bank credit facility whose stated purpose is temporarily financing share repurchases (FY2025: drew $3.0M for 58 days).",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+      "section": "Fair value hierarchy summary; Schedule of Investments footnote (b); Note 3 Line of Credit",
+      "quote": "The purpose of the Facility is primarily to finance temporarily the repurchase of shares of the Fund.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.5": {
       "element": "TDF/CIT liquidity sleeve",
-      "value": null,
-      "status": "pending"
+      "value": "No CIT/TDF liquidity sleeve: shareholder liquidity comes solely from the wrapper's quarterly Rule 23c-3 repurchase offers at NAV (see 3.1-3.3).",
+      "status": "n/a - CIT only: no TDF/CIT vehicle exists; liquidity is delivered by the interval-fund wrapper itself",
+      "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+      "section": "Prospectus cover - Structure",
+      "quote": "the Fund is structured as an \u201cinterval fund\u201d and conducts periodic repurchase offers for a portion of its outstanding Shares",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.6": {
       "element": "Fund leverage & facilities",
-      "value": null,
-      "status": "pending"
+      "value": "POLICY: leverage permitted up to 1940-Act limits - borrowings/notes up to 33 1/3% of total assets (preferred shares 50%), used opportunistically; reverse repos/dollar rolls also permitted. ACTUAL: $15,000,000 Texas Capital Bank credit agreement (entered 9/25/2024) primarily to temporarily finance share repurchases; FY2025 usage: $3,000,000 drawn for 58 days at 6.81% average rate ($31,800 interest), 0.50% commitment fee on unused ($64,042 paid), $265,782 upfront/legal fees. Prior PNC facility terminated 9/24/2024, never drawn in FY2025 ($8,844 commitment fees). Fee-table interest line: 0.04% of net assets. No preferred shares or notes outstanding disclosed.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08), Note 3 Line of Credit + 486BPOS Summary of Terms - Leverage, CIK 1905088",
+      "section": "Note 3 Line of Credit; prospectus Summary of Terms - Leverage",
+      "quote": "The maximum amount of the borrowing under the Facility is $15,000,000.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.7": {
       "element": "Plan participant liquidity demand",
-      "value": null,
-      "status": "pending"
+      "value": "No plan is attached to this cohort record. Product-side input on file: large/concentrated shareholders' repurchase requests can oversubscribe the 5% quarterly offer and force proration for all tendering holders (the Sep-2024 offer was fully utilized at 5.00%).",
+      "status": "n/a - not publicly available: plan-side demand profile requires an adopting plan's own participant data - plan-side cell, not product data",
+      "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+      "section": "Principal Risks - large shareholder / repurchase oversubscription risk",
+      "quote": "Repurchase requests by these Shareholders of their Shares of the Fund may cause repurchases to be oversubscribed",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.8": {
       "element": "Redemption stress test",
-      "value": null,
-      "status": "pending"
+      "value": "ILLUSTRATIVE redemption stress (computed, all four plans): tail turnover x2, active turnover x1.5 vs base scenario. Anchor plan: demand 19.2%/yr vs 20.0 capacity - within wrapper capacity (19.2% vs 20%) IF offers are not prorated",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__arkvx_match.json (+3 plans)",
+      "section": "stressed_scenario (ILLUSTRATIVE)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": null,
-      "status": "pending"
+      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of outstanding shares (fundamental 5-25% policy; every completed offer at 5%) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__arkvx_match.json",
+      "section": "verdict + reasons",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.1": {
       "element": "Valuation policy & NAV frequency",
-      "value": null,
-      "status": "pending"
+      "value": "NAV FREQUENCY: daily - determined each business day at NYSE close (ordinarily 4:00 p.m. ET), per-class; fees/expenses accrued daily. POLICY: Board designated the ADVISER as valuation designee under Board-reviewed/overseen procedures; exchange-traded securities at closing market prices (Level 1); private companies fair-valued primarily via the market approach (precedent transactions adjusted for market movement of like-kind public comparables, financing rounds, financials, size/liquidity/restrictions); an independent pricing service prepares valuations for every non-traded holding for the Adviser's Pricing Committee; money market fund at its NAV. Daily NAV + 82% Level 3 book is the structural tension the record prices in.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27) + N-CSR FY2025 Note 2, CIK 1905088",
+      "section": "Prospectus Determination of Net Asset Value; Summary of Terms - Valuation; N-CSR Note 2 Investment Valuation",
+      "quote": "The NAV of the Fund is determined each business day as of the close of trading (ordinarily 4:00 p.m., Eastern time) on the New York Stock Exchange.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
-      "value": null,
-      "status": "pending"
+      "value": "At 7/31/2025 (total investments $207,693,668): Level 1 $36,894,997 (17.8%), Level 2 $0, Level 3 $170,798,671 (82.2%). Level 3 by type: preferred stocks in private companies $93,159,430; common stocks in private companies $48,291,411; SAFEs $18,457,500; convertible interest rights $8,318,557; convertible note $1,500,000; warrants $1,071,773. L3 rollforward FY2025: $53,945,640 opening + $86,955,538 purchases - $1,000,000 realized loss + $30,897,493 unrealized appreciation = $170,798,671; zero transfers in/out.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+      "section": "Fair value hierarchy summary + Level 3 reconciliation, Consolidated Schedule of Investments",
+      "quote": "total investments in restricted securities were $170,798,671 and are classified as Level 3",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.3": {
       "element": "Independent valuation agent",
-      "value": null,
-      "status": "pending"
+      "value": "No independent valuation AGENT of record: the Board appointed the ADVISER (ARK) as valuation designee for fair-value determinations. Independence layer: the Adviser is authorized to use independent third-party pricing services and independent third-party valuation services, and the Fund 'utilizes the services of an independent pricing service' that prepares valuations for each non-traded portfolio investment (the firm is not named in the filings); Adviser's Pricing Committee considers them; Board retains ultimate authority.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+      "section": "Summary of Terms - Valuation; Determination of Net Asset Value",
+      "quote": "The Fund utilizes the services of an independent pricing service, which prepares valuations for each of the Fund\u2019s portfolio investments that are not publicly traded",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.4": {
       "element": "Methodology by asset type",
-      "value": null,
-      "status": "pending"
+      "value": "By asset type at 7/31/2025: public equities - closing prices on principal market (Level 1); money market fund - at its NAV; ALL private-company types (preferred, common, SAFEs, convertible interest rights, convertible notes, warrants) - Market Approach. Unobservable input 'Precedent Transactions' applies to every private type; the 'Market Movement' adjustment input is printed only for preferred stocks (2.60)%-25.12% (wavg 7.62%), common stocks 4.74%-23.10% (wavg 17.82%) and SAFEs (0.25)%-54.50% (wavg 19.81%) - convertible interest rights, convertible notes and warrants show Precedent Transactions only (range/weighted average N/A). Factors: latest funding round, financials/forecasts, public-comparable movement, position size, liquidity, transfer restrictions.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+      "section": "Note 2 Investment Valuation; Level 3 valuation techniques and unobservable inputs table",
+      "quote": "management primarily uses the market approach to estimate the fair value of private companies",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.5": {
       "element": "Auditor & opinion",
-      "value": null,
-      "status": "pending"
+      "value": "Ernst & Young LLP, New York, NY; unqualified ('present fairly, in all material respects') opinion on the FY2025 consolidated financial statements, report dated September 26, 2025; PCAOB-registered; auditor of ARK Invest funds since 2022; procedures included direct confirmation of securities owned with custodian, brokers and others.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+      "section": "Report of Independent Registered Public Accounting Firm (signature block)",
+      "quote": "/s/ Ernst & Young LLP ... We have served as the auditor of one or more ARK Invest investment companies since 2022.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.6": {
       "element": "NAV restatement history",
-      "value": null,
-      "status": "pending"
+      "value": "None identified: searched 'restat', 'error correction', 'correction of an error' across all 11 on-disk stripped filings (N-CSR FY2025, 486BPOS 2025-10-27, 424B3 2026-01-23, eight N-23C3A notices 2024-09-06 through 2026-05-28) on 2026-08-15; the only 'restat' hits are agreement names ('Amended and Restated Expense Limitation Agreement', 'Amended and Restated Declaration of Trust'). No NAV restatement or error-correction disclosure exists in the on-disk record.",
+      "status": "extracted-unverified",
+      "source": "Full-text search of all on-disk arkvx filings (2026-08-15) + N-CSR FY2025 MDFP, CIK 1905088",
+      "section": "MDFP performance disclosure (NAV calculation sentence); full-text search",
+      "quote": "The NAV is typically calculated at 4:00 pm Eastern time on each business day the New York Stock Exchange is open for trading.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.7": {
       "element": "Premium/discount check",
-      "value": null,
-      "status": "pending"
+      "value": "Not exchange-listed (interval fund): purchases/repurchases at NAV; premium/discount undefined - the NAV-priced contrast inside the venture cohort.",
+      "status": "n/a - not publicly available: no market price for a non-listed NAV-transaction wrapper",
+      "source": "wrapper structure per cell 3.1",
+      "section": "n/a rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.8": {
       "element": "Smoothing diagnostics",
-      "value": null,
-      "status": "pending"
+      "value": "Smoothing diagnostics: lag-1 rho -0.026 (n=48 monthly, daily-struck NAV, Level-3-heavy book). Compare cohort: dxyz/ssss are market-priced (inapplicable); this is the venture cohort's only appraisal-side estimate.",
+      "status": "computed",
+      "source": "data/series/arkvx.csv (computed)",
+      "section": "computed diagnostics",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.9": {
       "element": "CIT unit valuation",
-      "value": null,
-      "status": "pending"
+      "value": "Not a CIT: daily per-class NAV computed at the registered fund at NYSE close (see 4.1); no separate unit-valuation layer exists.",
+      "status": "n/a - CIT only: not a CIT; valuation happens at the registered fund itself and there is no CIT unit layer",
+      "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+      "section": "Determination of Net Asset Value",
+      "quote": "The NAV of the Fund is determined each business day as of the close of trading (ordinarily 4:00 p.m., Eastern time) on the New York Stock Exchange.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.1": {
       "element": "Self-declared benchmark",
-      "value": null,
-      "status": "pending"
+      "value": "No prospectus-declared benchmark: the word 'benchmark' has zero occurrences in the 486BPOS (searched 2026-08-15). Self-selected comparison indices appear in the N-CSR MDFP: S&P 500 Index and MSCI World (Net) Index, printed beside Fund returns in the Average Annual Total Returns table and as the growth-of-$10,000 chart lines; the shareholder-letter footnote defines them as the broad-based global equity indexes. As of 7/31/25 (1Y / since-inception ann.): Fund 29.62/20.42 vs S&P 500 16.33/19.29, MSCI World Net 15.72/18.02.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+      "section": "MDFP - Average Annual Total Returns table; Growth of an Assumed $10,000 Investment chart labels",
+      "quote": "PX Index is the S&P 500 Index ... 1WO Index is the MSCI World Index",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.2": {
       "element": "Public index series",
-      "value": null,
-      "status": "pending"
+      "value": "ARKVX daily close+adj on disk (990 rows since 2022-08-31, manifest-declared) + strategy proxies PSP/SPY.",
+      "status": "fetched",
+      "source": "data/series/series_manifest.json",
+      "section": "series inventory",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": null,
-      "status": "pending"
+      "value": "Candidates evaluated incl. paid/manual indices and the real peer-cohort lane; full scoring + rejection ledger in the selection artifact.",
+      "status": "computed",
+      "source": "data/benchmarks/arkvx_selection.json",
+      "section": "candidates + rejection log",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": null,
-      "status": "pending"
+      "value": "Peer cohort venture (n=3): members, rationales, stats, composite (or its documented refusal) and caveat block in the cohort artifact; exclusions in data/roster_decisions.md.",
+      "status": "computed",
+      "source": "data/cohorts/venture.json",
+      "section": "members + composite",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": null,
-      "status": "pending"
+      "value": "PME inputs (computed): window 2022-08-31 to 2026-08-13; flows [-1, 2.915]; index daily-anchored. KS-PME 1.9927, Direct Alpha 19.07%/yr.",
+      "status": "computed",
+      "source": "data/benchmarks/arkvx_selection.json",
+      "section": "primary.comparison",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": null,
-      "status": "pending"
+      "value": "Constructed-cell placeholder. Product-side input on file: the Fund measures itself (and its CODM assesses segment performance) against broad public equity indexes - S&P 500 and MSCI World - while carrying an 82.2% Level 3 private venture book (4.2), i.e., a listed-equity yardstick over an overwhelmingly private, precedent-transaction-marked portfolio (see 5.1, 4.4).",
+      "status": "n/a - constructed (L3): benchmark suitability memo is an engine/workflow artifact, not filing data",
+      "source": "N-CSR FY2025 (filed 2025-10-08), Note 10 segment disclosure, CIK 1905088",
+      "section": "Note 10 Other Matters - segment reporting (comparative benchmarks)",
+      "quote": "to assess the segment\u2019s performance versus the Fund\u2019s comparative benchmarks",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.7": {
       "element": "Case-law tracker",
-      "value": null,
-      "status": "pending"
+      "value": "Case-law tracking is maintained at the cross-product level, not per product record.",
+      "status": "n/a - cross-product tracker",
+      "source": "n/a",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.1": {
       "element": "Structure map",
-      "value": null,
-      "status": "pending"
+      "value": "Delaware statutory trust (organized 1/11/2022) - non-diversified, closed-end, continuously-offered Rule 23c-3 interval fund (1940 Act file 811-23778); Adviser ARK Investment Management LLC. Private exposure held through wholly-owned consolidated subsidiary ARK Venture Private Holdings LLC (Delaware LLC, Fund is sole member) and its subsidiaries; prospectus tax section also discloses a Cayman Subsidiary treated as a CFC. Single share class through FY2025; the 10/28/2025 prospectus registers Class D/S/U but states the Fund offers only Class D unless/until SEC Multi-Class Exemptive Relief (applied for) is granted - the 1/23/2026 supplement details Class S sales-charge mechanics. Adviser and Adviser-advised feeder vehicles owned 40,255 and 113,244 shares at 7/31/2025. Board: 4 Trustees, 3 independent.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08), Notes 1-4 + 486BPOS (filed 2025-10-27) + 424B3 (filed 2026-01-23), CIK 1905088",
+      "section": "Note 1 Organization; Note 2 Wholly-owned Subsidiary; prospectus cover (Multi-Class Exemptive Relief); tax disclosure (Cayman Subsidiary)",
+      "quote": "The Subsidiary is a Delaware limited liability company and the Fund is its sole member.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.2": {
       "element": "Strategy & instrument complexity",
-      "value": null,
-      "status": "pending"
+      "value": "Venture/growth equity interval fund on the 'disruptive innovation' theme: under normal circumstances substantially all assets in equities, with 20%-90% in private companies (early- to late-stage) and the remainder in public micro-to-large-cap equities (developed + emerging). Instruments held at 7/31/2025: private preferred/common stock, SAFEs, convertible notes, convertible interest rights, warrants (some via unaffiliated SPVs), public common stocks, money market fund. Non-diversified; concentrated in technology-sector industry groups. FY2025 portfolio turnover 8%; top-10 = 48.3% of net assets. Complexity drivers: 82.2% Level 3, SAFE/convertible structures, SPV wrappers, credit-facility leverage.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27) + N-CSR FY2025, CIK 1905088",
+      "section": "Investment Objective, Strategies and Policies; Note 9 Concentration Risk; Schedule of Investments",
+      "quote": "the Fund expects to invest 20% - 90% of its assets in securities of private companies and the remainder of its assets in publicly traded securities",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.3": {
       "element": "Conflicts & affiliated transactions",
-      "value": null,
-      "status": "pending"
+      "value": "Disclosed conflicts: side-by-side management of other ARK accounts (trade allocation/aggregation, contrary positions, limited opportunities, soft dollars) with duty-of-loyalty tension across clients; mitigants are Adviser allocation policies. Affiliated ownership: at 7/31/2025 the Adviser owned 40,255 shares and Adviser-advised feeder vehicles 113,244 shares. Adviser-friendly-to-fund terms noted: Adviser paid $885,178 organizational/offering costs and waives/reimburses under the ELA, both non-recoupable. SPVs used for access are unaffiliated. No affiliated-transaction fee income disclosed.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08), Note 4 + 486BPOS SAI Conflicts of Interest, CIK 1905088",
+      "section": "SAI - Conflicts of Interest; Note 4 Shares of Beneficial Interest; Note 3 Organizational and Offering Costs",
+      "quote": "the Adviser and feeder vehicles advised by the Adviser owned 40,255 and 113,244 Shares of the Fund, respectively",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.4": {
       "element": "Tax reporting (1099 vs K-1)",
-      "value": null,
-      "status": "pending"
+      "value": "Form 1099 - literally printed: annual statement on Form 1099-DIV identifying distribution sources furnished to shareholders (corrected Form 1099 issued when income is reclassified). Fund intends to continue qualifying as a Subchapter M RIC (no entity-level tax if distributions requirements met). No K-1: not a partnership.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27) + N-CSR FY2025 Note 6, CIK 1905088",
+      "section": "Summary of Terms - Reports to Shareholders; SAI Fiscal Year; Reports; Note 6 Federal Income Tax",
+      "quote": "a statement on Form 1099-DIV identifying the sources of the distributions paid by the Fund to Shareholders for tax purposes will be furnished to Shareholders",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.5": {
       "element": "Service-provider web",
-      "value": null,
-      "status": "pending"
+      "value": "Adviser: ARK Investment Management LLC (St. Petersburg, FL). Administrator + Custodian + Transfer Agent + Accounting Agent: The Bank of New York Mellon (single provider, four capacities); BNY Mellon Investment Servicing (US) Inc. administers the DRP and receives repurchase tenders. Distributor: Foreside Fund Services, LLC (through investment platforms and financial intermediaries). Auditor: Ernst & Young LLP. Credit facility lender: Texas Capital Bank (previously PNC Bank). Fund counsel on N-2: Dechert LLP; agent for service: Corporation Service Company (Wilmington, DE).",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-10-08), Note 3, CIK 1905088",
+      "section": "Note 3 Management and Other Agreements - Administrator/Custodian/Transfer Agent; Distribution; Line of Credit",
+      "quote": "The Bank of New York Mellon is the administrator for the Fund, the custodian of the Fund\u2019s assets and also provides transfer agency, fund accounting and various administrative services",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.6": {
       "element": "Plan operational fit",
-      "value": null,
-      "status": "pending"
+      "value": "No plan attached to this cohort record. Product-side facts already evidenced: daily NAV at NYSE close with ticker ARKVX (4.1); $500 minimum, waivable, subsequent investments any amount; continuous offering at NAV through Foreside and platform/intermediary channels; quarterly Rule 23c-3 exit windows only (Mar/Jun/Sep/Dec), tenders via BNY Mellon transfer agency (3.1/3.2); 1099-DIV tax reporting (6.4).",
+      "status": "n/a - not publicly available: requires plan-specific recordkeeper/trading-integration facts - workflow cell completed per plan engagement, not public product data",
+      "source": "N-CSR FY2025 (filed 2025-10-08), Note 3 + Note 4, CIK 1905088",
+      "section": "Note 3 Distribution; Note 4 Shares of Beneficial Interest",
+      "quote": "The Fund\u2019s Shares are continuously offered and distributed primarily by Foreside Fund Services, LLC (\u201cDistributor\u201d) and its associated persons through investment platforms and financial intermediaries",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.7": {
       "element": "Participant communicability",
-      "value": null,
-      "status": "pending"
+      "value": "Committee-judgment cell. Product-side communication facts: the Fund's own cover disclosure instructs investors to consider the Shares illiquid despite the quarterly offers, brands the fund long-term-only, and warns private early-stage holdings are 'highly speculative' with valuation uncertainty up to complete loss; offsetting simplicity: daily NAV, single ticker, 1099-DIV.",
+      "status": "n/a - not publicly available: requires plan-committee participant-communication assessment - workflow cell; product-side inputs evidenced in 6.1/6.2/6.4",
+      "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+      "section": "Prospectus cover - Interval Fund / Unlisted Closed-End Fund bullets",
+      "quote": "you should consider the Shares to be illiquid",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.8": {
       "element": "Fiduciary capacity self-assessment",
-      "value": null,
-      "status": "pending"
+      "value": "Committee workflow cell. Product-side suitability framing on file: the prospectus restricts suitability to long-term investors able to bear limited liquidity, and the annual report adds that the Fund 'should be considered a speculative investment' suitable only for investors who can sustain complete loss.",
+      "status": "n/a - workflow, not data: fiduciary capacity self-assessment is the committee's own output; no public filing supplies it",
+      "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+      "section": "Prospectus - Structure (suitability sentence); N-CSR Note 9 Valuation Risk",
+      "quote": "An investment in the Fund is suitable only for long-term investors who can bear the risks associated with the limited liquidity of the Shares.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     }
   }
 }

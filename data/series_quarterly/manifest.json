@@ -8,6 +8,34 @@
       "what": "quarterly NAV per share as printed - NAV path only, distributions excluded",
       "status": "extracted-unverified",
       "extracted_by": "Claude Code (2026-08-14), adversarially verified"
+    },
+    "sreit_nav": {
+      "rows": 5,
+      "note": "Class I, printed rows only. 2025 quarter-ends from the FY2025 10-K Item 5 monthly NAV table (filed 2026-03-20); 2026-06-30 from the Q2-2026 10-Q NAV Per Share table (filed 2026-08-12). 2026-03-31 is NOT printed in the on-disk documents (Q1-2026 10-Q not on disk) and is not interpolated; pre-2025 qua",
+      "what": "quarterly NAV per share as printed - NAV path only",
+      "status": "extracted-unverified",
+      "extracted_by": "Claude Code (2026-08-15), adversarially verified"
+    },
+    "ssss_nav": {
+      "rows": 16,
+      "note": "Quarterly NAV per share 2023Q1-2025Q4 from the 10-K Item 5 price-range/premium-discount table (\"NAV per share is determined as of the last day in the relevant quarter\"), reproduced with 2026 rows in the N-2 \"Price Range of Common Stock and Distributions\"; 2026-03-31 $14.24 printed in N-2 (\"Our net a",
+      "what": "quarterly NAV per share as printed - NAV path only",
+      "status": "extracted-unverified",
+      "extracted_by": "Claude Code (2026-08-15), adversarially verified"
+    },
+    "breit_nav": {
+      "rows": 13,
+      "note": "quarter-end subset of the printed monthly NAV table (data/series_monthly/breit_nav.csv)",
+      "what": "quarterly NAV per share - NAV path only",
+      "status": "extracted-unverified",
+      "extracted_by": "derived from the verified monthly extraction"
+    },
+    "amg_pantheon_nav": {
+      "rows": 10,
+      "note": "Honest granularity: only fiscal-year-end (March 31) Class 4 NAVs per unit are printed in the on-disk filings (N-CSR FY2026 highlights; N-2 ten-year Class 4 highlights). NAV is struck monthly (last business day of each calendar month) but no intra-year month-end or quarter-end NAV series is published",
+      "what": "fiscal quarter-end NAV per Unit as printed",
+      "status": "extracted-unverified",
+      "extracted_by": "Claude Code (2026-08-15), adversarially verified"
     }
   }
 }

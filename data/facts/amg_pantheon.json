@@ -3,104 +3,133 @@
   "cohort_id": "evergreen_pe",
   "depth": "cohort",
   "membership_rationale": "Evergreen PE (Pantheon) tender-offer LLC - wrapper and strategy twin of hl_paf/stepstone_spm.",
-  "what": "typed projections of evidenced cells - scaffold pending cohort-tier extraction",
-  "generated_by": "src/build_facts.py",
+  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
-      "value": null,
+      "value": "tender_offer",
       "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "status": "extracted-unverified"
     },
     "mgmt_fee_pct": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 0.7,
+      "source_cell": "2.1",
+      "note": "the cohort's lowest headline rate",
+      "status": "extracted-unverified"
     },
     "mgmt_fee_base": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "net_assets",
+      "source_cell": "2.1",
+      "note": "month-end net assets",
+      "status": "extracted-unverified"
     },
     "incentive_fee": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": {
+        "present": false
+      },
+      "source_cell": "2.2",
+      "note": "no incentive fee at Fund or Master level - fee tables print none",
+      "status": "extracted-unverified"
     },
     "early_repurchase": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": {
+        "present": true,
+        "rate_pct": 2.0,
+        "window": "< 1 year"
+      },
+      "source_cell": "2.7",
+      "note": "FIFO",
+      "status": "extracted-unverified"
     },
     "repurchase_cadence_per_year": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 4,
+      "source_cell": "3.3",
+      "status": "extracted-unverified"
     },
     "repurchase_cap_pct": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 5.0,
+      "source_cell": "3.3",
+      "note": "live offer approx. 5% of outstanding Units",
+      "status": "extracted-unverified"
     },
     "repurchase_cap_base": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "outstanding_shares",
+      "source_cell": "3.3",
+      "status": "extracted-unverified"
     },
     "gate_history": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": false,
+      "source_cell": "3.3",
+      "status": "extracted-unverified"
     },
     "tax_form": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "1099",
+      "source_cell": "6.4",
+      "status": "extracted-unverified"
     },
     "auditor": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "KPMG LLP",
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
     },
     "big4": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": true,
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
     },
     "expense_ratio_pct": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 2.38,
+      "source_cell": "2.3",
+      "note": "Class 4 (inception class) Total Annual Expenses; classes range 2.38-3.38% (differ only by distribution/servicing)",
+      "status": "extracted-unverified"
     },
     "net_assets_usd": {
       "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "source_cell": "3.6",
+      "reason": "aggregate net assets not yet carried into a typed cell; verification-queue item",
+      "status": "extracted-unverified"
     },
     "inception": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "2014-09-30",
+      "source_cell": "1.11",
+      "note": "Fund inception (Class 4) - the roster's longest '40-Act evergreen-PE record",
+      "status": "extracted-unverified"
     },
     "track_record_years": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 11.5,
+      "source_cell": "1.11",
+      "status": "computed",
+      "note": "(as-of 2026-03-31 minus inception) / 365.25"
+    },
+    "primary_benchmark_id": {
+      "value": "psp",
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "selection_score": {
+      "value": 9,
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "pme_primary": {
+      "value": 2.4551,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "direct_alpha_primary": {
+      "value": 9.4,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "liquidity_verdict_by_plan": {
+      "value": {
+        "plan_consulting_alumni": "conditional",
+        "plan_manufacturer_union": "conditional",
+        "plan_restaurant_hourly": "conditional",
+        "plan_tech_media": "conditional"
+      },
+      "source_cell": "3.9",
+      "status": "computed"
     }
   }
 }

@@ -3,7 +3,7 @@
   "plan": "plan_consulting_alumni",
   "verdict": "conditional-weak",
   "reasons": [
-    "STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed) \u2014 a trustee-directed sleeve could hold this wrapper directly; the daily-menu constraint (12x/year dealing) applies only to the participant-directed portion (cell 3.5).",
+    "STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed) \u2014 a trustee-directed sleeve could hold this wrapper directly; the daily-menu constraint (this wrapper deals 12x/year) applies only to the participant-directed portion (cell 3.5).",
     "Capacity: 12x per year at 2.0% of aggregate NAV (monthly; 5% quarterly) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
     "Scenario demand (illustrative): 13.7% of the position per year vs 24% annual wrapper capacity \u2014 adequate headroom at this allocation if offers are not prorated.",
     "Gating precedent: this issuer has prorated repurchases when requests exceeded caps (3.3) \u2014 capacity on paper has failed in stress before.",

@@ -37,6 +37,21 @@
         "provider_independence 2/2: provider unaffiliated with the fund"
       ],
       "rejection": "fund price is premium/discount-driven and decoupled from NAV; benchmarking the price benchmarks the premium, not the portfolio"
+    },
+    {
+      "candidate": "Peer cohort: venture (dxyz, ssss, arkvx)",
+      "id": "peer_venture",
+      "lane": "C",
+      "score": 5,
+      "max": 12,
+      "reasons": [
+        "strategy_match 3/3: n=3 but composite REFUSED: members' pricing bases are heterogeneous (market price vs NAV) - averaging premiums against appraisals would fabricate a series (data/cohorts/venture.json)",
+        "risk_liquidity_match 0/3: no computable series",
+        "investability 0/2: not investable / not held",
+        "data_quality 0/2: none series",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "fund price is premium/discount-driven and decoupled from NAV; benchmarking the price benchmarks the premium, not the portfolio"
     }
   ],
   "escalation": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from available data. Required next: public NAV series (quarterly filings) plus a premium/NAV decomposition before any comparator is defensible."

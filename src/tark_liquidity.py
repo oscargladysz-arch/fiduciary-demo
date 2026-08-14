@@ -71,9 +71,54 @@ LIQUIDITY_PROFILES = {
               "source_cell": "3.1",
               "history": "8 N-23C3A filings on disk; FY2025 offers "
                          "undersubscribed (max 4.32% tendered vs 5% cap) (3.3)"},
-    # profiles for the remaining cohort-tier products are added ONLY as their
-    # 3.1/2.7/3.3 extractions land — a profile string that outruns its cells
-    # would be fabrication (invariant 4)
+    "ares_pmf": {"kind": "tender_offer", "cadence_per_year": 4, "cap_pct": 5.0,
+                 "cap_base": "NAV (board-discretionary quarterly tenders, "
+                 "Rule 13e-4 - NOT an interval fund)", "exchange": False,
+                 "gate_history": False,
+                 "early_fee": "2.00% of NAV if held < 1 year, FIFO (2.7)",
+                 "source_cell": "3.1 + 3.3",
+                 "history": "four offers conducted in EACH of FY2025/FY2026 (3.3)"},
+    "amg_pantheon": {"kind": "tender_offer", "cadence_per_year": 4,
+                     "cap_pct": 5.0, "cap_base": "outstanding Units "
+                     "(board-discretionary tenders)", "exchange": False,
+                     "gate_history": False,
+                     "early_fee": "2.00% if held < 1 year, FIFO (2.7)",
+                     "source_cell": "3.1 + 3.3"},
+    "sreit": {"kind": "share_repurchase_plan", "cadence_per_year": 12,
+              "cap_pct": 0.0,
+              "cap_base": "SUSPENDED (April 2026): ordinary repurchases no "
+              "longer accepted - death/qualifying-disability and sub-$5,000 "
+              "accounts only (up to $5.0M/month each). Cap history: 2%/month "
+              "+ 5%/quarter (2017) -> 0.33%/1% (May 2024) -> 0.5%/1.5% "
+              "(June 2025) -> closed (April 2026)", "exchange": False,
+              "gate_history": True,
+              "early_fee": "5% Early Repurchase Deduction: 95% of transaction "
+                           "price if held < 1 year (2.7)",
+              "source_cell": "3.1 + 3.3"},
+    "jll_ipt": {"kind": "share_repurchase_plan", "cadence_per_year": 4,
+                "cap_pct": 5.0, "cap_base": "combined NAV of all classes "
+                "(prior quarter-end)", "exchange": False,
+                "dealing": "DAILY repurchase requests at that day's NAV, "
+                           "capped at 5% of NAV per calendar quarter",
+                "gate_history": False,
+                "early_fee": "no fee; one-year holding period with "
+                             "death/disability exceptions (2.7)",
+                "source_cell": "3.1 + 3.3",
+                "history": "never deferred nor rejected a repurchase request "
+                           "through 2025-12-31; 100% honored in later printed "
+                           "periods (3.3)"},
+    "ssss": {"kind": "listed_bdc", "cadence_per_year": 252, "cap_pct": None,
+             "cap_base": "on-exchange (Nasdaq: NSLR, fka SSSS)",
+             "exchange": True, "gate_history": False, "early_fee": "n/a",
+             "source_cell": "3.1"},
+    "arkvx": {"kind": "interval_23c3", "cadence_per_year": 4, "cap_pct": 5.0,
+              "cap_base": "outstanding shares (fundamental 5-25% policy; "
+              "every completed offer at 5%)", "exchange": False,
+              "gate_history": False, "early_fee": "none - repurchases at NAV, "
+              "no early repurchase fee (2.7)",
+              "source_cell": "3.1 + 3.3",
+              "history": "8 N-23C3A filings on disk; no gating or "
+                         "postponement disclosed (3.3)"},
 }
 
 # illustrative scenario parameters — LABELED, adjustable, never asserted as fact
@@ -133,10 +178,12 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
                        "liquidity is real, the price basis is not (1.10, 4.7).")
     else:
         verdict = "conditional"
+        dealing = prof.get("dealing",
+                           f"this wrapper deals {prof['cadence_per_year']}x/year")
         if direction == "total":
             reasons.append("STRUCTURAL GAP: a participant-directed 404(c) menu "
                            "assumes daily pricing and daily participant liquidity; "
-                           f"this wrapper deals {prof['cadence_per_year']}x/year. "
+                           f"{dealing}. "
                            "Direct DIA use requires a bridging structure — CIT "
                            "sleeve, managed account, or TDF sleeve (cell 3.5).")
         elif direction == "partial":
@@ -144,7 +191,7 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
                            "participant-directed per its own Form 5500 codes (2H, "
                            "no 2G/404(c) code filed) — a trustee-directed sleeve "
                            "could hold this wrapper directly; the daily-menu "
-                           f"constraint ({prof['cadence_per_year']}x/year dealing) "
+                           f"constraint ({dealing}) "
                            "applies only to the participant-directed portion "
                            "(cell 3.5).")
         else:

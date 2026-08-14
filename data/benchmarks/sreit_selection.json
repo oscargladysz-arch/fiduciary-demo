@@ -1,0 +1,94 @@
+{
+  "product": "sreit",
+  "strategy": "nontraded_reit",
+  "source_cells": [
+    "1.2",
+    "5.1"
+  ],
+  "primary": {
+    "candidate": "Listed REIT investable proxy (VNQ)",
+    "id": "vnq",
+    "lane": "B",
+    "score": 9,
+    "max": 12,
+    "reasons": [
+      "strategy_match 2/3: listed equity REITs - same asset class, but exchange pricing vs monthly appraisal NAV is a regime difference",
+      "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+      "investability 2/2: investable, priced daily",
+      "data_quality 2/2: daily series",
+      "provider_independence 2/2: provider unaffiliated with the fund"
+    ],
+    "comparison": {
+      "window": "2024-12-31 to 2025-12-31",
+      "fund_growth_x": 0.976,
+      "index_growth_x": 1.0325,
+      "ks_pme": 0.9453,
+      "direct_alpha_pct": -5.47,
+      "fund_ann_pct": -2.4,
+      "index_ann_pct": 3.25
+    }
+  },
+  "secondary": {
+    "candidate": "NCREIF Fund Index - ODCE (private core RE)",
+    "id": "odce",
+    "lane": "B",
+    "score": 8,
+    "max": 12,
+    "reasons": [
+      "strategy_match 3/3: private open-end core RE funds - the strategy-exact yardstick; index data is member/subscription distribution, series not held",
+      "risk_liquidity_match 2/3: appraisal-cadence series, closer to the fund's NAV process",
+      "investability 0/2: not investable / not held",
+      "data_quality 1/2: quarterly-manual series",
+      "provider_independence 2/2: provider unaffiliated with the fund"
+    ],
+    "comparison": null
+  },
+  "rejected": [
+    {
+      "candidate": "PME / Direct Alpha vs VNQ",
+      "id": "pme_vnq",
+      "lane": "D",
+      "score": 8,
+      "max": 12,
+      "reasons": [
+        "strategy_match 2/3: wealth-ratio PME vs listed-REIT proxy over the since-inception window",
+        "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+        "investability 2/2: investable, priced daily",
+        "data_quality 1/2: annual-window series",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "outranked: score 8/12 vs primary 9/12 and secondary 8/12 - only two slots; retained in log as viable alternate"
+    },
+    {
+      "candidate": "Cambridge Associates Real Estate benchmark",
+      "id": "cambridge_re",
+      "lane": "B",
+      "score": 7,
+      "max": 12,
+      "reasons": [
+        "strategy_match 3/3: private RE drawdown-fund universe - licensed data not held",
+        "risk_liquidity_match 2/3: appraisal-cadence series, closer to the fund's NAV process",
+        "investability 0/2: not investable / not held",
+        "data_quality 0/2: licensed data not held (no Preqin/Cambridge subscription) - candidate cannot be computed, only cited",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 8/12 - only two slots; retained in log as viable alternate"
+    },
+    {
+      "candidate": "Peer cohort: nontraded_reit (breit, sreit, jll_ipt)",
+      "id": "peer_reit",
+      "lane": "C",
+      "score": 7,
+      "max": 12,
+      "reasons": [
+        "strategy_match 3/3: n=3; equal-weight annual composite overlap currently one year (2025: breit + sreit; jll_ipt prints returns only as per-class ranges) - THIN, disclosed (data/cohorts/nontraded_reit.json)",
+        "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+        "investability 0/2: not investable / not held",
+        "data_quality 1/2: annual series",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 8/12 - only two slots; retained in log as viable alternate"
+    }
+  ],
+  "escalation": null
+}

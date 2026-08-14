@@ -22,17 +22,16 @@
   "stats": {
     "mgmt_fee_pct": {
       "field": "mgmt_fee_pct",
-      "n": 1,
+      "n": 3,
       "median": 1.25,
       "min": 1.25,
       "max": 1.25,
       "values": {
-        "breit": 1.25
+        "breit": 1.25,
+        "sreit": 1.25,
+        "jll_ipt": 1.25
       },
-      "missing": {
-        "sreit": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "jll_ipt": "cohort-tier extraction in progress (see data/roster_decisions.md)"
-      }
+      "missing": {}
     },
     "expense_ratio_pct": {
       "field": "expense_ratio_pct",
@@ -43,49 +42,50 @@
       "values": {},
       "missing": {
         "breit": "no TER line item exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
-        "sreit": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "jll_ipt": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+        "sreit": "no TER line exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
+        "jll_ipt": "no TER line exists for this '34-Act wrapper; components in 2.1/2.2/2.6"
       }
     },
     "repurchase_cap_pct": {
       "field": "repurchase_cap_pct",
-      "n": 1,
-      "median": 2.0,
+      "n": 2,
+      "median": 3.5,
       "min": 2.0,
-      "max": 2.0,
+      "max": 5.0,
       "values": {
-        "breit": 2.0
+        "breit": 2.0,
+        "jll_ipt": 5.0
       },
       "missing": {
-        "sreit": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "jll_ipt": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+        "sreit": "plan SUSPENDED April 2026; cap history 2%/mo (2017) -> 0.33% (2024) -> 0.5% (2025) -> closed (2026)"
       }
     },
     "repurchase_cadence_per_year": {
       "field": "repurchase_cadence_per_year",
-      "n": 1,
-      "median": 12,
-      "min": 12,
+      "n": 2,
+      "median": 8.0,
+      "min": 4,
       "max": 12,
       "values": {
-        "breit": 12
+        "breit": 12,
+        "jll_ipt": 4
       },
       "missing": {
-        "sreit": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "jll_ipt": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+        "sreit": "plan SUSPENDED April 2026 - ordinary requests no longer accepted (death/disability and sub-$5,000 accounts only)"
       }
     },
     "track_record_years": {
       "field": "track_record_years",
-      "n": 0,
-      "median": null,
-      "min": null,
-      "max": null,
-      "values": {},
+      "n": 2,
+      "median": 10.6,
+      "min": 8.0,
+      "max": 13.2,
+      "values": {
+        "sreit": 8.0,
+        "jll_ipt": 13.2
+      },
       "missing": {
-        "breit": "explicit Class I inception date not printed in on-disk filings; ITD basis year (2017 REIT election) sits in partial cell 6.4",
-        "sreit": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "jll_ipt": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+        "breit": "explicit Class I inception date not printed in on-disk filings; ITD basis year (2017 REIT election) sits in partial cell 6.4"
       }
     },
     "net_assets_usd": {
@@ -97,8 +97,8 @@
       "values": {},
       "missing": {
         "breit": "aggregate NAV printed in the MD&A NAV-by-class table but not yet carried into a typed cell; verification-queue item",
-        "sreit": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "jll_ipt": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+        "sreit": "aggregate NAV not yet carried into a typed cell; verification-queue item",
+        "jll_ipt": "aggregate NAV not yet carried into a typed cell; verification-queue item"
       }
     }
   },
@@ -106,7 +106,17 @@
     "refused": false,
     "granularity": "annual (fiscal years as filed; year-end months differ across members and are disclosed per row)",
     "weighting": "equal-weight across members reporting that year",
-    "rows": []
+    "rows": [
+      {
+        "year": "2025",
+        "composite_return_pct": 2.85,
+        "n": 2,
+        "members": [
+          "breit",
+          "sreit"
+        ]
+      }
+    ]
   },
   "caveats": [],
   "exclusion_log": "data/roster_decisions.md"

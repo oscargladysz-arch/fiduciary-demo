@@ -16,35 +16,74 @@
       "data/analytics/dxyz_nav_quarterly.json"
     ]
   },
+  "ssss_premium": {
+    "last_close": 10.52,
+    "last_close_date": "2026-08-14",
+    "latest_printed_nav": 13.44,
+    "latest_nav_date": "2026-06-30",
+    "premium_pct_vs_latest_printed_nav": -21.7,
+    "premium_pct_at_each_printed_quarter": [
+      10.5,
+      -48.6,
+      -52.3,
+      -56.5,
+      -57.0,
+      -50.7,
+      -36.5,
+      -42.2,
+      -40.0,
+      -12.0,
+      -25.4,
+      -10.6,
+      -2.5,
+      16.7,
+      -24.8,
+      -6.7
+    ],
+    "note": "price at-or-before each printed quarter-end NAV; a persistent DISCOUNT is this fund's premium/discount signature - the mirror image of dxyz's premium",
+    "inputs": [
+      "data/series/nslr.csv",
+      "data/series_quarterly/ssss_nav.csv"
+    ]
+  },
   "fee_percentile": {
-    "universe": "this six-product evaluation roster (n=6 with a TER line) - NOT a market-wide database; bases differ per product and are quoted from cell 2.3",
+    "universe": "this six-product evaluation roster (n=11 with a TER line) - NOT a market-wide database; bases differ per product and are quoted from cell 2.3",
     "entries": [
       {
         "product": "amg_pantheon",
-        "ter_pct": null,
-        "reason": "no comparable TER line item (see 2.1/2.2)",
-        "cited_cell": "2.3"
+        "ter_pct": 3.13,
+        "basis_excerpt": "N-2 fee tables, Total Annual Expenses (as % of net assets attributable to Units): Class 1 3.13%, Class 2 2.88%, Class 3 2.63%, Class 4 2.38%",
+        "cited_cell": "2.3",
+        "rank": 4,
+        "of": 11,
+        "percentile_low_is_cheap": 32
       },
       {
         "product": "ares_pmf",
-        "ter_pct": null,
-        "reason": "no comparable TER line item (see 2.1/2.2)",
-        "cited_cell": "2.3"
+        "ter_pct": 5.02,
+        "basis_excerpt": "FY2026 ratios to average net assets: gross 5.02% I / 5.21% D / 5.85% A; net after waivers 4.99% / 5.18% / 5.82% (include incentive-fee drag ",
+        "cited_cell": "2.3",
+        "rank": 8,
+        "of": 11,
+        "percentile_low_is_cheap": 68
       },
       {
         "product": "arkvx",
-        "ter_pct": null,
-        "reason": "no comparable TER line item (see 2.1/2.2)",
-        "cited_cell": "2.3"
+        "ter_pct": 4.39,
+        "basis_excerpt": "Audited FY2025 (single class): 4.39% gross / 2.90% net of average net assets (FY2024 5.32/2.90; FY2023 annualized 9.33/2.90). Prospectus (10",
+        "cited_cell": "2.3",
+        "rank": 6,
+        "of": 11,
+        "percentile_low_is_cheap": 50
       },
       {
         "product": "bcred",
         "ter_pct": 7.0,
         "basis_excerpt": "10-K FY2025 financial highlights net expense ratio (of average net assets): 7.0% Class I / 7.9% Class S / 7.3% Class D - equal to total oper",
         "cited_cell": "2.3",
-        "rank": 6,
-        "of": 6,
-        "percentile_low_is_cheap": 92
+        "rank": 10,
+        "of": 11,
+        "percentile_low_is_cheap": 86
       },
       {
         "product": "breit",
@@ -57,33 +96,36 @@
         "ter_pct": 1.36,
         "basis_excerpt": "Expense ratios (before waivers, FY26): 1.36% excluding interest expense; 3.31% including interest expense. History (excl-interest): FY25 1.3",
         "cited_cell": "2.3",
-        "rank": 1,
-        "of": 6,
-        "percentile_low_is_cheap": 8
+        "rank": 2,
+        "of": 11,
+        "percentile_low_is_cheap": 14
       },
       {
         "product": "dxyz",
         "ter_pct": 4.53,
         "basis_excerpt": "Expense ratio 4.53% of avg net assets (FY2025); prior years 6.28 / 5.92 / 5.13. Net assets $438.0M at 12/31/2025 (vs $70.0M a year prior - t",
         "cited_cell": "2.3",
-        "rank": 4,
-        "of": 6,
-        "percentile_low_is_cheap": 58
+        "rank": 7,
+        "of": 11,
+        "percentile_low_is_cheap": 59
       },
       {
         "product": "hl_paf",
         "ter_pct": 3.4,
         "basis_excerpt": "Class I gross/net expenses FY26 3.40%/3.40%, FY25 2.93/2.93, FY24 4.26/4.26. Expense Limit: 1.45% R / 0.75% I / 1.00% D of avg daily net ass",
         "cited_cell": "2.3",
-        "rank": 3,
-        "of": 6,
-        "percentile_low_is_cheap": 42
+        "rank": 5,
+        "of": 11,
+        "percentile_low_is_cheap": 41
       },
       {
         "product": "jll_ipt",
-        "ter_pct": null,
-        "reason": "no comparable TER line item (see 2.1/2.2)",
-        "cited_cell": "2.3"
+        "ter_pct": 1.25,
+        "basis_excerpt": "None exists structurally: '34 Act 10-K REIT wrapper - no 1940-Act fee table and no financial-highlights expense-ratio line ('expense ratio' ",
+        "cited_cell": "2.3",
+        "rank": 1,
+        "of": 11,
+        "percentile_low_is_cheap": 5
       },
       {
         "product": "kkr_kpec",
@@ -96,9 +138,9 @@
         "ter_pct": 5.12,
         "basis_excerpt": "FY2025 actual ratios to average net assets (Consolidated Financial Highlights, FYE 6/30/2025; gross=net, no waivers): Institutional 5.12% in",
         "cited_cell": "2.3",
-        "rank": 5,
-        "of": 6,
-        "percentile_low_is_cheap": 75
+        "rank": 9,
+        "of": 11,
+        "percentile_low_is_cheap": 77
       },
       {
         "product": "sreit",
@@ -108,18 +150,21 @@
       },
       {
         "product": "ssss",
-        "ter_pct": null,
-        "reason": "no comparable TER line item (see 2.1/2.2)",
-        "cited_cell": "2.3"
+        "ter_pct": 9.46,
+        "basis_excerpt": "Two regimes printed. HISTORY (internally managed, Note 8 highlights): net operating expenses/avg net assets 9.46% FY2025, 10.68% FY2024, 9.7",
+        "cited_cell": "2.3",
+        "rank": 11,
+        "of": 11,
+        "percentile_low_is_cheap": 95
       },
       {
         "product": "stepstone_spm",
         "ter_pct": 1.91,
         "basis_excerpt": "FY2026 (year ended 3/31/2026) expenses to average net assets: Class I 1.91%, Class D 2.17%, Class S 2.77% - before and after adviser recoupm",
         "cited_cell": "2.3",
-        "rank": 2,
-        "of": 6,
-        "percentile_low_is_cheap": 25
+        "rank": 3,
+        "of": 11,
+        "percentile_low_is_cheap": 23
       }
     ]
   },
@@ -159,6 +204,42 @@
       },
       "worst_peak_to_trough_full_history_pct": -19.1,
       "series": "data/series/arkvx.csv"
+    },
+    "ssss": {
+      "cy2022_rate_shock": {
+        "return_pct": -70.17,
+        "max_drawdown_pct": -72.53
+      },
+      "covid_feb_apr_2020": {
+        "return_pct": -6.55,
+        "max_drawdown_pct": -48.13
+      },
+      "worst_peak_to_trough_full_history_pct": -81.97,
+      "series": "data/series/nslr.csv"
+    },
+    "amg_pantheon": {
+      "note": "annual disclosure cadence - fiscal-year figures are the finest public stress observations for this wrapper",
+      "series": "data/series_annual/amg_pantheon.csv",
+      "fy_spanning_2022_shock": {
+        "fy_end": "2023-03-31",
+        "return_pct": 6.45
+      },
+      "worst_disclosed_fy": {
+        "fy_end": "2020-03-31",
+        "return_pct": 4.15
+      }
+    },
+    "ares_pmf": {
+      "note": "annual disclosure cadence - fiscal-year figures are the finest public stress observations for this wrapper",
+      "series": "data/series_annual/ares_pmf.csv",
+      "fy_spanning_2022_shock": {
+        "fy_end": "2023-03-31",
+        "return_pct": 9.27
+      },
+      "worst_disclosed_fy": {
+        "fy_end": "2023-03-31",
+        "return_pct": 9.27
+      }
     },
     "bcred": {
       "note": "annual disclosure cadence - fiscal-year figures are the finest public stress observations for this wrapper",
@@ -206,6 +287,14 @@
       "worst_disclosed_fy": {
         "fy_end": "2023-12-31",
         "return_pct": 1.63
+      }
+    },
+    "sreit": {
+      "note": "annual disclosure cadence - fiscal-year figures are the finest public stress observations for this wrapper",
+      "series": "data/series_annual/sreit.csv",
+      "worst_disclosed_fy": {
+        "fy_end": "2025-12-31",
+        "return_pct": -2.4
       }
     },
     "stepstone_spm": {

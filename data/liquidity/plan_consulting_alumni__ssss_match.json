@@ -1,0 +1,52 @@
+{
+  "product": "ssss",
+  "plan": "plan_consulting_alumni",
+  "verdict": "aligned-mechanical",
+  "reasons": [
+    "Daily exchange liquidity mechanically satisfies daily participant dealing (3.1).",
+    "BUT price-vs-NAV decoupling means participants transact at the premium/discount, not at portfolio value \u2014 the liquidity is real, the price basis is not (1.10, 4.7)."
+  ],
+  "stressed_scenario": {
+    "illustrative": true,
+    "assumptions": "tail turnover x2, active turnover x1.5 vs base scenario",
+    "annual_demand_usd": 129497123,
+    "demand_pct_of_position": 26.4,
+    "annual_wrapper_capacity_pct": null,
+    "outcome": "daily exchange liquidity; stress transmits to price, not to a fund gate"
+  },
+  "plan_display_label": "Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY)",
+  "plan_direction": "partial",
+  "wrapper_facts": {
+    "kind": "listed_bdc",
+    "cadence_per_year": 252,
+    "cap_pct": null,
+    "cap_base": "on-exchange (Nasdaq: NSLR, fka SSSS)",
+    "exchange": true,
+    "gate_history": false,
+    "early_fee": "n/a",
+    "source_cell": "3.1"
+  },
+  "scenario": {
+    "allocation_pct_of_plan": 5.0,
+    "tail_annual_turnover_pct": 20.0,
+    "active_annual_turnover_pct": 5.0,
+    "illustrative": true,
+    "plan_allocation_usd": 490513484,
+    "annual_demand_usd": 67314264,
+    "demand_pct_of_position": 13.7,
+    "annual_wrapper_capacity_pct": null
+  },
+  "plan_inputs": {
+    "net_assets": 9810269680.0,
+    "tail_share_pct": 58.2,
+    "separated_with_balances": 20253.0
+  },
+  "citations": [
+    "3.1",
+    "3.3",
+    "3.5",
+    "3.7",
+    "3.9",
+    "plan: plan_consulting_alumni.json (Form 5500, plan year 2024-01-01 to 2024-12-31)"
+  ]
+}

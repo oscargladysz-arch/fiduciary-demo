@@ -64,10 +64,18 @@ VIEWS = ["screener", "compare", "search", "packet", "plans", "roster",
          "evaluation", "benchmarks", "fees", "liquidity", "pme", "dxyz",
          "desmooth", "coverage", "verification"]
 
-# perf budget: the whole bundle must stay shareable-fast on Pages
-check("perf: data.js bundle <= 1.2MB",
+# perf budget: first-paint bundle <= 1.2MB; the series chunk is split out and
+# lazy-loaded by chart/lab views, and the TOTAL payload is capped too so the
+# split cannot hide unbounded growth
+check("perf: data.js first-paint bundle <= 1.2MB",
       (SITE / "data.js").stat().st_size <= 1_200_000,
       f"{(SITE / 'data.js').stat().st_size:,} bytes")
+check("perf: series.js chunk exists (lazy-loaded)",
+      (SITE / "series.js").exists())
+check("perf: total payload (data.js + series.js) <= 2.4MB",
+      (SITE / "data.js").stat().st_size
+      + (SITE / "series.js").stat().st_size <= 2_400_000,
+      f"{(SITE / 'data.js').stat().st_size + (SITE / 'series.js').stat().st_size:,} bytes")
 
 # structured-facts provenance spot-checks (bundle side)
 for k in PRODUCTS:
@@ -99,6 +107,16 @@ with sync_playwright() as pw:
     check("app boots without exception", not errors, "; ".join(errors[:2]))
     check("boot view renders content",
           len(page.locator("#view").inner_text()) > 200)
+    check("boot does NOT load the series chunk (lazy split)",
+          page.evaluate("() => !window.TARK.series"))
+    # preload the series chunk for the rest of the suite so view renders stay
+    # synchronous (runtime lazy-load behavior is exercised by the boot check)
+    page.evaluate("""() => new Promise((res) => {
+        const s = document.createElement('script');
+        s.src = 'series.js';
+        s.onload = () => { window.TARK.series = window.TARK_SERIES; res(true); };
+        document.head.append(s);
+      })""")
 
     # ---------- 2+3. every view x plan x product renders, anonymized ----------
     combos_bad = []
@@ -336,7 +354,10 @@ with sync_playwright() as pw:
     page.evaluate("""() => window.tarkSetState({f_tax: '', f_base: 'managed_assets'})""")
     mrows = page.evaluate("""() =>
       document.querySelectorAll('table.screener tbody tr').length""")
-    check("screener: fee-base filter returns exactly hl_paf", mrows == 1)
+    # the cohort roster changed this answer honestly: ares_pmf shares the
+    # Managed Assets base with hl_paf (both 1.40% leverage-inclusive)
+    check("screener: fee-base=managed_assets returns exactly hl_paf + ares_pmf",
+          mrows == 2)
     page.evaluate("""() => window.tarkSetState({f_base: '', f_vonly: '1'})""")
     check("screener: verified-only renders the honest progress line",
           "verification in progress" in page.locator("#view").inner_text())

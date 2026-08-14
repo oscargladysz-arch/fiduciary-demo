@@ -49,10 +49,12 @@ see "Depth discipline" below).
 - **ssss** — CIK 1509470 verified as **Neostellar Capital Corp.** — the
   entity formerly named SuRo Capital Corp. (SSSS). R1 CAUGHT A RENAME the
   candidate menu didn't know about. Profile: 10-K 2026-03-11, 10-Q
-  2026-08-06, N-2 2026-07-31 ✓ listed BDC. CONDITION: strategy continuity
-  (pre-IPO growth portfolio) must be confirmed from the current 10-K during
-  extraction before membership is final; if the strategy pivoted with the
-  rename, replace with an alternate and re-log.
+  2026-08-06, N-2 2026-07-31 ✓ listed BDC. CONDITION RESOLVED (2026-08-15): strategy continuity CONFIRMED by extraction
+  - the investment-objective sentence is verbatim-identical pre- and post-
+  rename (10-K as SuRo Capital vs N-2 as Neostellar); the rename accompanied
+  an EXTERNALIZATION of management (new 1.75%-of-gross-assets fee regime
+  effective 2026-07-15, cells 2.1/2.2), not a strategy pivot. Ticker now
+  NSLR. Membership FINAL.
 - **arkvx** — ARK Venture Fund, CIK 1905088. Profile: N-CSR 2025-10-08 (FYE
   July), 486BPOS 2025-10-27, N-23C3A x15 ✓ interval fund holding
   venture/growth. Membership: venture exposure in a registered wrapper —

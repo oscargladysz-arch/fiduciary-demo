@@ -1,0 +1,72 @@
+{
+  "product": "arkvx",
+  "strategy": "preipo_venture",
+  "source_cells": [
+    "1.2",
+    "5.1"
+  ],
+  "primary": {
+    "candidate": "Listed private equity proxy (PSP)",
+    "id": "psp_v",
+    "lane": "B",
+    "score": 8,
+    "max": 12,
+    "reasons": [
+      "strategy_match 1/3: nearest liquid cousin to pre-IPO exposure",
+      "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+      "investability 2/2: investable, priced daily",
+      "data_quality 2/2: daily series",
+      "provider_independence 2/2: provider unaffiliated with the fund"
+    ],
+    "comparison": {
+      "window": "2022-08-31 to 2026-08-13",
+      "fund_growth_x": 2.915,
+      "index_growth_x": 1.4628,
+      "ks_pme": 1.9927,
+      "direct_alpha_pct": 19.07,
+      "fund_ann_pct": 30.67,
+      "index_ann_pct": 9.98
+    }
+  },
+  "secondary": {
+    "candidate": "S&P 500 investable proxy (SPY)",
+    "id": "spy",
+    "lane": "B",
+    "score": 7,
+    "max": 12,
+    "reasons": [
+      "strategy_match 0/3: large-cap public equity - wrong asset class",
+      "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
+      "investability 2/2: investable, priced daily",
+      "data_quality 2/2: daily series",
+      "provider_independence 2/2: provider unaffiliated with the fund"
+    ],
+    "comparison": {
+      "window": "2022-08-31 to 2026-08-13",
+      "fund_growth_x": 2.915,
+      "index_growth_x": 1.9842,
+      "ks_pme": 1.4691,
+      "direct_alpha_pct": 10.23,
+      "fund_ann_pct": 30.67,
+      "index_ann_pct": 18.69
+    }
+  },
+  "rejected": [
+    {
+      "candidate": "Peer cohort: venture (dxyz, ssss, arkvx)",
+      "id": "peer_venture",
+      "lane": "C",
+      "score": 5,
+      "max": 12,
+      "reasons": [
+        "strategy_match 3/3: n=3 but composite REFUSED: members' pricing bases are heterogeneous (market price vs NAV) - averaging premiums against appraisals would fabricate a series (data/cohorts/venture.json)",
+        "risk_liquidity_match 0/3: no computable series",
+        "investability 0/2: not investable / not held",
+        "data_quality 0/2: none series",
+        "provider_independence 2/2: provider unaffiliated with the fund"
+      ],
+      "rejection": "score 5/12 below primary threshold 7"
+    }
+  ],
+  "escalation": null
+}

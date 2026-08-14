@@ -138,10 +138,32 @@ function buildTopbar() {
     () => window.tarkPalette.open());
 }
 
+/* the price/NAV series chunk is lazy-loaded (perf budget): chart/lab views
+ * wait for series.js; screener/compare/plans first-paint stays light */
+const SERIES_VIEWS = new Set(["evaluation", "pme", "dxyz", "desmooth"]);
+let seriesLoading = false;
+function ensureSeries() {
+  const root = document.getElementById("view");
+  root.innerHTML = `<div class="nochart"><div class="k">Loading series</div>
+    Loading the price/NAV series chunk — split from the core bundle so the
+    screener and comparison views paint instantly.</div>`;
+  if (!seriesLoading) {
+    seriesLoading = true;
+    const s = document.createElement("script");
+    s.src = "series.js";
+    s.onload = () => { window.TARK.series = window.TARK_SERIES; render(); };
+    document.head.append(s);
+  }
+}
+
 function render() {
   document.body.dataset.density = state.density;
   buildNav();
   buildTopbar();
+  if (SERIES_VIEWS.has(state.view) && !window.TARK.series) {
+    ensureSeries();
+    return;
+  }
   const root = document.getElementById("view");
   const entry = VIEWS.find(([id]) => id === state.view);
   root.innerHTML = "";

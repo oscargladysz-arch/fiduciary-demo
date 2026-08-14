@@ -32,83 +32,79 @@
   "stats": {
     "mgmt_fee_pct": {
       "field": "mgmt_fee_pct",
-      "n": 3,
+      "n": 5,
       "median": 1.4,
-      "min": 1.25,
+      "min": 0.7,
       "max": 1.4,
       "values": {
         "hl_paf": 1.4,
         "stepstone_spm": 1.4,
-        "kkr_kpec": 1.25
+        "kkr_kpec": 1.25,
+        "ares_pmf": 1.4,
+        "amg_pantheon": 0.7
       },
-      "missing": {
-        "ares_pmf": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "amg_pantheon": "cohort-tier extraction in progress (see data/roster_decisions.md)"
-      }
+      "missing": {}
     },
     "expense_ratio_pct": {
       "field": "expense_ratio_pct",
-      "n": 3,
+      "n": 5,
       "median": 3.19,
       "min": 1.91,
-      "max": 3.4,
+      "max": 5.02,
       "values": {
         "hl_paf": 3.4,
         "stepstone_spm": 1.91,
-        "kkr_kpec": 3.19
+        "kkr_kpec": 3.19,
+        "ares_pmf": 5.02,
+        "amg_pantheon": 2.38
       },
-      "missing": {
-        "ares_pmf": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "amg_pantheon": "cohort-tier extraction in progress (see data/roster_decisions.md)"
-      }
+      "missing": {}
     },
     "repurchase_cap_pct": {
       "field": "repurchase_cap_pct",
-      "n": 3,
+      "n": 4,
       "median": 5.0,
       "min": 5.0,
       "max": 5.0,
       "values": {
         "hl_paf": 5.0,
         "stepstone_spm": 5.0,
-        "kkr_kpec": 5.0
+        "kkr_kpec": 5.0,
+        "amg_pantheon": 5.0
       },
       "missing": {
-        "ares_pmf": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "amg_pantheon": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+        "ares_pmf": "offer sizes are board-set per quarter (Rule 13e-4 tenders); no standing percentage cap is printed"
       }
     },
     "repurchase_cadence_per_year": {
       "field": "repurchase_cadence_per_year",
-      "n": 3,
+      "n": 5,
       "median": 4,
       "min": 4,
       "max": 4,
       "values": {
         "hl_paf": 4,
         "stepstone_spm": 4,
-        "kkr_kpec": 4
+        "kkr_kpec": 4,
+        "ares_pmf": 4,
+        "amg_pantheon": 4
       },
-      "missing": {
-        "ares_pmf": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "amg_pantheon": "cohort-tier extraction in progress (see data/roster_decisions.md)"
-      }
+      "missing": {}
     },
     "track_record_years": {
       "field": "track_record_years",
-      "n": 3,
+      "n": 5,
       "median": 5.2,
       "min": 2.4,
-      "max": 5.5,
+      "max": 11.5,
       "values": {
         "hl_paf": 5.2,
         "stepstone_spm": 5.5,
-        "kkr_kpec": 2.4
+        "kkr_kpec": 2.4,
+        "ares_pmf": 4.0,
+        "amg_pantheon": 11.5
       },
-      "missing": {
-        "ares_pmf": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "amg_pantheon": "cohort-tier extraction in progress (see data/roster_decisions.md)"
-      }
+      "missing": {}
     },
     "net_assets_usd": {
       "field": "net_assets_usd",
@@ -122,8 +118,8 @@
         "kkr_kpec": 9500000000
       },
       "missing": {
-        "ares_pmf": "cohort-tier extraction in progress (see data/roster_decisions.md)",
-        "amg_pantheon": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+        "ares_pmf": "aggregate net assets not yet carried into a typed cell; verification-queue item",
+        "amg_pantheon": "aggregate net assets not yet carried into a typed cell; verification-queue item"
       }
     }
   },
@@ -134,18 +130,21 @@
     "rows": [
       {
         "year": "2022",
-        "composite_return_pct": 25.1,
-        "n": 2,
+        "composite_return_pct": 22.85,
+        "n": 3,
         "members": [
+          "amg_pantheon",
           "hl_paf",
           "stepstone_spm"
         ]
       },
       {
         "year": "2023",
-        "composite_return_pct": 8.65,
-        "n": 3,
+        "composite_return_pct": 8.34,
+        "n": 5,
         "members": [
+          "amg_pantheon",
+          "ares_pmf",
           "hl_paf",
           "kkr_kpec",
           "stepstone_spm"
@@ -153,9 +152,11 @@
       },
       {
         "year": "2024",
-        "composite_return_pct": 12.76,
-        "n": 3,
+        "composite_return_pct": 13.49,
+        "n": 5,
         "members": [
+          "amg_pantheon",
+          "ares_pmf",
           "hl_paf",
           "kkr_kpec",
           "stepstone_spm"
@@ -163,9 +164,11 @@
       },
       {
         "year": "2025",
-        "composite_return_pct": 13.16,
-        "n": 3,
+        "composite_return_pct": 13.9,
+        "n": 5,
         "members": [
+          "amg_pantheon",
+          "ares_pmf",
           "hl_paf",
           "kkr_kpec",
           "stepstone_spm"
@@ -173,9 +176,11 @@
       },
       {
         "year": "2026",
-        "composite_return_pct": 12.53,
-        "n": 2,
+        "composite_return_pct": 10.94,
+        "n": 4,
         "members": [
+          "amg_pantheon",
+          "ares_pmf",
           "hl_paf",
           "stepstone_spm"
         ]

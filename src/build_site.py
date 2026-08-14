@@ -355,15 +355,10 @@ def main() -> None:
         "dxyz_nav": _with_period_ends(json.loads(
             (DATA / "analytics" / "dxyz_nav_quarterly.json").read_text())),
         "series_manifest": load_series_manifest(),
-        "series": {
-            "dxyz_daily": [[d, round(v, 4)] for d, v in load_series("dxyz", "close")],
-            "cclfx": daily_series("cclfx"),
-            "bkln": daily_series("bkln"),
-            "psp": daily_series("psp"),
-            "urth": daily_series("urth"),
-            "spy": daily_series("spy"),
-            "vnq": daily_series("vnq"),
-        },
+        # series payload is SPLIT into site/series.js (lazy-loaded by the
+        # chart/lab views) to keep the first-paint bundle inside the perf
+        # budget; window.TARK.series is merged in by ensureSeries()
+        "series": None,
         "pme_profiles": pme_profiles(),
         "proxy_library": PROXY_LIBRARY,
         "swap_matrix": swap_matrix(),
@@ -373,8 +368,22 @@ def main() -> None:
                         for p in (DATA / "memos").glob("*_decision_memo.docx")),
     }
 
+    series_payload = json.dumps({
+        "dxyz_daily": [[d, round(v, 4)] for d, v in load_series("dxyz", "close")],
+        "cclfx": daily_series("cclfx"),
+        "pflex": daily_series("pflex"),
+        "arkvx": daily_series("arkvx"),
+        "nslr_daily": [[d, round(v, 4)] for d, v in load_series("nslr", "close")],
+        "nslr": daily_series("nslr"),
+        "bkln": daily_series("bkln"),
+        "psp": daily_series("psp"),
+        "urth": daily_series("urth"),
+        "spy": daily_series("spy"),
+        "vnq": daily_series("vnq"),
+    }, separators=(",", ":"))
+
     payload = json.dumps(bundle, separators=(",", ":"))
-    low = payload.lower()
+    low = (payload + series_payload).lower()
     leaks = sorted(n for n in sponsor_names if n in low)
     if leaks:
         raise SystemExit(f"ANONYMIZATION FAILURE: sponsor token(s) {leaks} "
@@ -382,6 +391,8 @@ def main() -> None:
 
     SITE.mkdir(exist_ok=True)
     (SITE / "data.js").write_text("window.TARK = " + payload + ";\n")
+    (SITE / "series.js").write_text("window.TARK_SERIES = " + series_payload
+                                    + ";\n")
 
     memo_dir = SITE / "memos"
     memo_dir.mkdir(exist_ok=True)

@@ -7,273 +7,543 @@
   "cells": {
     "1.1": {
       "element": "Net total return series",
-      "value": null,
-      "status": "pending"
+      "value": "Net (after-expense) total return series, single common class, as printed in Note 8 Financial Highlights: NAV basis 2021 +30.25% / 2022 (36.01)% / 2023 +8.12% / 2024 (16.40)% / 2025 +28.59%; market-value basis 2021 +60.05% / 2022 (69.45)% / 2023 +3.68% / 2024 +49.24% / 2025 +69.05%. Interim (10-Q, six months ended 2026-06-30): NAV basis +66.13% (NAV $8.09 to $13.44), market basis +32.84%; Q2-2026 alone NAV (5.62)%, market +17.09%. Footnote: returns adjusted for dividends and equity issuances. No gross-of-expense series printed. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-11), Form 10-Q Q2-2026 (filed 2026-08-06)",
+      "section": "Note 8 - Financial Highlights (both filings)",
+      "quote": "Total return based on net asset value (2) | | | 28.59 | %",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.2": {
       "element": "Trailing & calendar-year returns",
-      "value": null,
-      "status": "pending"
+      "value": "Primary class = the single class of common stock; two printed bases: NAV total return and market-value total return (see 1.1 for the full calendar-year series 2021-2025 and H1-2026). No trailing 1/3/5/10-yr annualized return table is printed in any of the three filings; nearest trailing figure is the 10-K performance-graph 5-yr cumulative: $100.00 invested 12/31/2020 in SSSS = $134.86 at 12/31/2025 (S&P 500 $182.25; Nasdaq Stock Index $180.33). Six-month 2026 figures in 10-Q Note 8 are unannualized (66.13% NAV = 8.09 to 13.44 arithmetic). Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-11); Form 10-Q Q2-2026 (filed 2026-08-06)",
+      "section": "Note 8 - Financial Highlights; Part II Item 5 - Performance Graph",
+      "quote": "Total return based on market value (2) | | | 69.05 | % ... SSSS | | $ | 100.00",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.3": {
       "element": "Gross vs net spread",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: no gross-of-fees return series is printed anywhere in the 10-K/10-Q/N-2 - only net 'Total return based on net asset value/market value'. What IS printed is the expense wedge: FY2025 ratio of net operating expenses to average net assets 9.46% (2024 10.68%, 2023 9.70%, 2022 5.87%, 2021 2.88%) and net investment loss ratio (8.59)% FY2025; H1-2026 annualized 12.88% / (12.15)% (inflated by Externalization vesting acceleration). No fee waivers printed (internally managed through 7/14/2026 - no management fee to waive). Extracted 2026-08-15.",
+      "status": "partial",
+      "source": "Form 10-K FY2025 (filed 2026-03-11); Form 10-Q Q2-2026 (filed 2026-08-06)",
+      "section": "Note 8 - Financial Highlights, Ratios/Supplemental Data",
+      "quote": "Ratio of net operating expenses to average net assets (3) | | | 9.46 | %",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.4": {
       "element": "Distribution history & composition",
-      "value": null,
-      "status": "pending"
+      "value": "Full lifetime distribution table printed (formation through 12/31/2025): total $12.60/share declared. Episodic, gains-driven - not a yield product: FY2025 two $0.25 dividends (declared 7/3/2025 paid 7/31/2025 $5,972,027; declared 11/3/2025 paid 12/5/2025 $6,281,422), both footnoted 100% from realized gains, zero return of capital; NO distributions in FY2023 or FY2024; FY2022 $0.11; FY2021 $8.00 declared across six distributions (two $0.25s plus $2.50/$2.25/$2.00/$0.75) - the $2.50, $2.25 and $2.00 distributions were payable in cash or stock at stockholder election with aggregate cash capped at ~50% of each distribution (fns 11-13); the only ROC ever footnoted is $66,487 of the 2016 $887,240 distribution. Company states it does not anticipate quarterly distributions ('much less consistent than the distributions of other BDCs that primarily make debt investments'). DRIP is opt-out: distributions default to stock unless cash elected. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "Part II Item 5 - Distributions (table + footnotes 1-17)",
+      "quote": "All of the $5,972,027 distribution paid on July 31, 2025 represented a distribution from realized gains. None of the distribution represented a return of capital.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.5": {
       "element": "Underlying sleeve/GP performance",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: no underlying fund/SPV IRR or return series is printed - filings disclose SPV positions at cost vs fair value plus distribution facts, not vehicle-level returns. Printed sleeve facts (10-Q SOI, 6/30/2026): ARK Type One Deep Ventures Fund LLC (OpenAI Series A-2 Preferred, acq. 9/25/2024) cost $17.5M -> FV $59.3M (16.66% of net assets); IH10, LLC (VAST Data Series B via SPV, acq. 10/9/2024) cost $12.0M -> FV $34.0M (9.55%); CW Opportunity 2 LP (CoreWeave Class A common): Q2-2026 distributions ~12.2% of initial investment, retains ~55.9%; Magnetar Opportunity 2025-4 LP (TensorWave Series B) $5.0M + $15.0M classes at ~cost. Note 13 prints summarized financials of unconsolidated subsidiaries, not returns. Extracted 2026-08-15.",
+      "status": "partial",
+      "source": "Form 10-Q Q2-2026 (filed 2026-08-06)",
+      "section": "Condensed Consolidated Schedule of Investments footnotes (5)-(8); Note 13 - Supplemental Financial Data",
+      "quote": "The distributions represented approximately 12.2 % of the initial investment in CW Opportunity 2 LP.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.6": {
       "element": "Volatility & max drawdown",
-      "value": null,
-      "status": "pending"
+      "value": "Computed from NSLR daily MARKET PRICE (2,514 obs since 2016, incl. the SSSS era): worst full-history peak-to-trough -81.97%. PRICE basis - includes premium/discount swings, not just portfolio moves (see 4.7).",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (stress_windows.ssss)",
+      "section": "computed diagnostics (price basis)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.7": {
       "element": "De-smoothed volatility",
-      "value": null,
-      "status": "pending"
+      "value": "De-smoothing inapplicable: the public series is an exchange market price, not an appraisal NAV; quarterly NAV points (16 on disk) are too sparse for rho estimation.",
+      "status": "n/a - not publicly available: market-price series; appraisal-series diagnostic inapplicable",
+      "source": "series structure per cells 1.10/4.7",
+      "section": "applicability rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": null,
-      "status": "pending"
+      "value": "Engine outcome (computed): NO meaningful PME - price is premium/discount-driven, decoupled from NAV (the venture cohort's market-priced pattern; see 4.7). Escalation in the selection artifact.",
+      "status": "computed",
+      "source": "data/benchmarks/ssss_selection.json",
+      "section": "escalation",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
-      "value": null,
-      "status": "pending"
+      "value": "Computed stress windows (market price): CY2022 -70.17% (max dd -72.53%); COVID Feb-Apr 2020 -6.55% (dd -48.13%); worst full-history -81.97%. PRICE basis: discount widening amplifies portfolio stress (4.7).",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (stress_windows.ssss)",
+      "section": "stress_windows",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.10": {
       "element": "Market price & premium/discount",
-      "value": null,
-      "status": "pending"
+      "value": "LISTED BDC - full quarterly premium/discount table printed (10-K Item 5 for FY2023-FY2025; N-2 adds 2026 interim). Violent swings: 2023 low-close discounts to (62.1)% (Q3-23); Q4-2025 high close +26.3% premium / low +9.1%; 3/10/2026 close $9.68 = ~19.7% premium to 12/31/2025 NAV $8.09; then Q1-2026 period-end close $10.71 = (24.8)% discount to 3/31/2026 NAV $14.24 (N-2: high $10.71 / low $8.70, (24.8)%/(38.9)%); Q2-2026 high $14.91 / low $10.79 (NAV not yet determined at N-2 date); 7/29/2026 last sale $9.76. Per 10-Q, 6/30/2026 market $12.54 vs NAV $13.44. Prices retroactively adjusted for stock dividends. 17 holders of record (incl. Cede & Co.) at 3/10/2026. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-11); Form N-2 (filed 2026-07-31); Form 10-Q Q2-2026 (filed 2026-08-06)",
+      "section": "10-K Part II Item 5 price-range table; N-2 'Price Range of Common Stock and Distributions'; 10-Q Note 8",
+      "quote": "which represented an approximately 19.7% premium to our NAV of $8.09 per share as of December 31, 2025. ... our shares of common stock traded at a discount equal to approximately 24.8%",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "1.11": {
       "element": "Track record & manager tenure",
-      "value": null,
-      "status": "pending"
+      "value": "Track record: inception (development stage) 1/6/2011; BDC operations since IPO May 2011; investment operations since Q2 2011 - a 15-year listed record through 2026. Name/ticker lineage printed: GSVC -> SSSS -> NSLR; Sutter Rock -> SuRo Capital effective 6/22/2020; SuRo -> Neostellar effective 7/15/2026. Management eras: internally managed 3/12/2019-7/14/2026 (Internalization); externally managed by Neostellar Advisors LLC from 7/15/2026 (jointly owned by its investment professionals and Magnetar JV Entity; Magnetar platform ~$17.8B AUM at 12/31/2025). Continuity: Mark D. Klein (Chairman, CEO & President) is the sole named portfolio manager ('No other member of the Investment Committee is jointly and primarily responsible'); Klein and CFO/CCO Allison Green 'continue to manage our day-to-day operations', now as Adviser employees; Magnetar Ventures Team added to Investment Committee. Adviser itself is newly formed (2026). Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form N-2 (filed 2026-07-31); Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "N-2 Business/The Externalization/Portfolio Management; 10-K Item 1 - Business",
+      "quote": "Our date of inception was January 6, 2011 ... we commenced operations as a BDC upon completion of our IPO in May 2011",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
-      "value": null,
-      "status": "pending"
+      "value": "CURRENT (from Effective Date 7/15/2026): Base Management Fee RATE 1.75% per annum; BASE = GROSS assets (leverage-inclusive fee base - includes assets bought with borrowings), payable monthly in arrears, computed on average gross assets at the end of the two most recently completed calendar quarters, adjusted for equity/debt raises, repurchases or redemptions in the current quarter. PRIOR era (all of FY2025 and through 7/14/2026): internally managed - NO management fee existed; the analogous cost was direct compensation expense $8,831,788 FY2025 ($9,159,673 FY2024; $9,482,867 FY2023). N-2 fee table shows the 1.75%-of-gross-assets fee as 1.75% of net assets at 3/31/2026 levels. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form N-2 (filed 2026-07-31); Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "N-2 Prospectus Summary - Management Fee / Fees and Expenses fn (5); 10-K Consolidated Statements of Operations",
+      "quote": "The Base Management Fee is calculated at an annual rate of 1.75% of our gross assets, payable monthly in arrears ... calculated based on the average value of our gross assets at the end of the two most recently completed calendar quarters",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.2": {
       "element": "Incentive fee terms",
-      "value": null,
-      "status": "pending"
+      "value": "Two-part Incentive Fee (new with 7/15/2026 Externalization; none existed while internally managed). (a) Income-Based Fee, quarterly: hurdle 1.75%/quarter (7.00% annualized) on Pre-Incentive Fee Net Investment Income vs prior-quarter net assets; 100% catch-up between 1.75% and 2.1875% (8.75% ann.); 20.0% above 2.1875%. PIFNII excludes realized/unrealized capital losses, so the fee 'may be payable to the Adviser even if our net asset value decreases in a given period'. (b) Capital Gains Fee, annual in arrears commencing 12/31/2026: 20.0% of realized capital gains, lesser-of per-investment (with non-compounded preferred return/hurdle + catch-up) vs cumulative net of realized losses and unrealized depreciation on Eligible Investments, less prior payments. CARVE-OUT: no incentive fee on Pre-Existing Investments (held before the Effective Date) - so the N-2 fee-table incentive line is 0.00% today and 'not expected to remain at this level'. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form N-2 (filed 2026-07-31); Form 10-Q Q2-2026 (filed 2026-08-06)",
+      "section": "N-2 Management and Other Agreements - Incentive Fee; 10-Q Note 12 - Subsequent Events/Note 3",
+      "quote": "compared to a \u201churdle rate\u201d of 1.75% per quarter (7.00% annualized) ... (iii) 20.0% of the amount of our Pre-Incentive Fee Net Investment Income, if any, that exceeds 2.1875% in any calendar quarter.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.3": {
       "element": "Total expense ratio & waivers",
-      "value": null,
-      "status": "pending"
+      "value": "Two regimes printed. HISTORY (internally managed, Note 8 highlights): net operating expenses/avg net assets 9.46% FY2025, 10.68% FY2024, 9.70% FY2023, 5.87% FY2022, 2.88% FY2021; H1-2026 12.88% annualized (includes accelerated vesting at Externalization); no waivers/support printed. PRO-FORMA EXTERNAL (N-2 fee table, % of net assets at 3/31/2026 $361.6M/$14.24): base management fee 1.75% + incentive 0.00% + interest on borrowed funds 1.28% + other expenses 2.15% + AFFE 0.06% = TOTAL ANNUAL EXPENSES 5.24%; example $46/$139/$220/$429 per $1,000 over 1/3/5/10 yrs at 5% (interest component adjusted for 6.00% Notes maturity 12/30/2026). 10-Q prints Externalization's claimed 'expected annual expense savings of approximately 0.77% of average total assets'. Administrator expenses reimbursed under Administration Agreement (in 'Other expenses'). Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form N-2 (filed 2026-07-31); Form 10-K FY2025 (filed 2026-03-11); Form 10-Q Q2-2026 (filed 2026-08-06)",
+      "section": "N-2 Fees and Expenses (table + fns 5-10, Example); 10-K/10-Q Note 8 Financial Highlights",
+      "quote": "Total annual expenses | | | 5.24 | % ... You would pay the following expenses on a $1,000 investment, assuming a 5% annual return",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.4": {
       "element": "AFFE",
-      "value": null,
-      "status": "pending"
+      "value": "AFFE line printed in the N-2 fee table: Acquired fund fees and expenses 0.06% of net assets attributable to common stock (estimate); footnote 10 defines it as 'the estimated indirect fees and expenses attributable to our investments in other investment companies and private funds (including special purpose vehicles), presented in accordance with Item 3 of Form N-2' - i.e., the second-layer SPV economics of cell 2.5 surface here. The FY2025 10-K (internally managed 1934-Act wrapper) has no fee table and prints no AFFE line - structural for a 10-K; the N-2 supplies it. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form N-2 (filed 2026-07-31)",
+      "section": "Fees and Expenses - Annual expenses table + footnote (10)",
+      "quote": "Acquired fund fees and expenses (9)(10) | | | 0.06 | % (10)",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.5": {
       "element": "Underlying GP economics",
-      "value": null,
-      "status": "pending"
+      "value": "SPV-by-SPV economics ARE printed (10-Q SOI footnotes, 6/30/2026): ARK Type One Deep Ventures Fund LLC (OpenAI): 1% management fee/yr + 10% incentive fee, NO hurdle (fees adjust cost basis); IH10, LLC (VAST Data): no management or incentive fee (prepaid operating expenses); Magnetar Opportunity 2025-4 LP (TensorWave; Magnetar-affiliated vehicle): no management fee, 20% incentive fee over 15% annual IRR hurdle; CW Opportunity 2 LP (CoreWeave): no management fee, 20% incentive fee over 15% IRR hurdle; 1789 Capital Nirvana II LP (Plaid; consolidated wholly-owned SPV): 7% origination fee paid at investment. Largest second-layer exposure: OpenAI via ARK SPV = 16.66% of net assets. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-Q Q2-2026 (filed 2026-08-06)",
+      "section": "Condensed Consolidated Schedule of Investments - footnotes (5), (6), (7), (8), (9)",
+      "quote": "ARK Type One Deep Ventures Fund LLC charges a 1 % management fee per year, and an incentive fee of 10%, not subject to a hurdle rate.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.6": {
       "element": "Loads & servicing fees",
-      "value": null,
-      "status": "pending"
+      "value": "No loads or servicing fees on the shares themselves - investors buy/sell on Nasdaq at market (brokerage commissions are investor-side). N-2 shelf fee table prints stockholder transaction expenses as: sales load -%, offering expenses -%, DRIP expenses -%, total -% (fn 1: any underwritten offering's load would be disclosed in the prospectus supplement). No 12b-1/servicing/distribution fee line exists. DRIP: fund pays plan administrator's fees; no brokerage charges to participants EXCEPT $15 transaction fee + brokerage commission if the participant has the plan administrator (Equiniti) sell shares. Historical note: fee table is offering-contingent, not a standing charge. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form N-2 (filed 2026-07-31)",
+      "section": "Fees and Expenses - Stockholder transaction expenses + footnotes (1)-(4); Dividend Reinvestment Plan",
+      "quote": "Sales load ( as a percentage of offering price ) | | | \u2014 | % (1) ... the plan administrator is authorized to deduct a $ 15 transaction fee plus brokerage commission from the proceeds.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.7": {
       "element": "Early repurchase fee",
-      "value": null,
-      "status": "pending"
+      "value": "Structural absence, documented: shares are Nasdaq-listed and exit is by selling on-exchange; there is no continuous offering, no periodic tender/repurchase right for holders, and no early-repurchase deduction concept anywhere in the three filings (the N-2 transaction-expense table has no repurchase-fee line; the only repurchase program is the ISSUER buying stock at its discretion, cell 3.2). The cost of early exit is the bid and the premium/discount (cell 1.10), not a fee. Extracted 2026-08-15.",
+      "status": "n/a - exchange-traded: no investor-level repurchase/redemption exists, so no early-repurchase fee is possible; exit is on-exchange sale at market price",
+      "source": "Form 10-K FY2025 (filed 2026-03-11); Form N-2 (filed 2026-07-31)",
+      "section": "10-K Item 1/Item 5 (listing); N-2 Fees and Expenses",
+      "quote": "Our common stock is traded on the Nasdaq Global Select Market under the symbol \u201cSSSS\u201d.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.8": {
       "element": "CIT fee schedule",
-      "value": null,
-      "status": "pending"
+      "value": "Not a collective investment trust; exchange-listed BDC common stock. No CIT fee schedule exists.",
+      "status": "n/a - CIT only",
+      "source": "n/a - structural",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": null,
-      "status": "pending"
+      "value": "Cohort placement (venture, R4 phrasing): mgmt fee: below the cohort median of 2.5 (n=3 \u2014 too small for percentile language) | expense ratio (bases differ - see notes): above the cohort median of 4.53 (n=3 \u2014 too small for percentile language) | repurchase cap: fact unavailable for this member. Stats + caveats in the cohort artifact.",
+      "status": "computed",
+      "source": "data/cohorts/venture.json",
+      "section": "stats (R4 phrasing by tark_cohort)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "2.10": {
       "element": "Value justification",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell, not an extraction target: the value-for-fees justification weighs the evidenced fee stack (1.75%-of-GROSS-assets base fee 2.1; 20% two-part incentive with Pre-Existing-Investment carve-out 2.2; 5.24% pro-forma total expenses vs 9.46-12.88% printed history 2.3; AFFE 0.06% 2.4; SPV second-layer fees incl. 1%+10% on the OpenAI sleeve 2.5) against delivered net returns (1.1/1.2) and the premium/discount pathology (1.10). Extracted 2026-08-15.",
+      "status": "n/a - not publicly available: requires the plan committee's own value-for-fees determination - workflow output, not public product data (inputs live in cells 2.1-2.7)",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.1": {
       "element": "Wrapper liquidity terms",
-      "value": null,
-      "status": "pending"
+      "value": "Listed BDC: continuous intraday exchange liquidity on the Nasdaq Global Select Market - cadence: any trading day; cap: none (market depth only); base: market price, not NAV; mechanism: open-market sale through a broker. Ticker SSSS through 7/14/2026, NSLR from 7/15/2026 (Nasdaq Capital Market before 11/24/2021, same symbol). No subscription/tender cycle, no repurchase right against the fund, no lock-up. The 6.00% Notes due 2026 are separately exchange-listed (SSSSL). The liquidity risk borne is price: shares 'have recently traded, and may in the future trade, at discounts from NAV or at premiums that may prove to be unsustainable' (10-K risk factor). Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-Q Q2-2026 (filed 2026-08-06); Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "10-Q Note 12/MD&A (ticker change); 10-K Item 1/Item 5",
+      "quote": "The Company\u2019s common stock continues to trade on the Nasdaq Global Select Market, now under the ticker symbol \u201cNSLR.\u201d",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.2": {
       "element": "Repurchase mechanics",
-      "value": null,
-      "status": "pending"
+      "value": "No shareholder redemption mechanics exist (exchange exit only). ISSUER-side: discretionary open-market Share Repurchase Program - announced 8/8/2017 at $5.0M, repeatedly extended/increased by the Board; most recently 10/29/2025 extended to the earlier of (i) 10/31/2026 or (ii) $64.3M cumulative repurchases; $25.0M capacity remaining at 12/31/2025; expressly suspendable/terminable at any time with no obligation; subject to insider-trading policies and Exchange Act Rule 10b-18 ('affiliated purchaser' definition referenced in the Issuer Purchases table). DRIP (opt-out): distributions default to newly issued stock; cash requires written election received by Equiniti no later than 10 days before the record date (written-or-telephonic notice is printed only for instructing the plan administrator to sell shares). Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-11); Form N-2 (filed 2026-07-31)",
+      "section": "10-K Item 5 - Issuer Purchases of Equity Securities fn (1); MD&A - Share Repurchase Program; N-2 Dividend Reinvestment Plan",
+      "quote": "The Share Repurchase Program may be suspended, terminated or modified at any time for any reason and does not obligate us to acquire any specific number of shares",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.3": {
       "element": "Repurchase history",
-      "value": null,
-      "status": "pending"
+      "value": "As disclosed: NO gating events possible (no investor redemption right to gate) and no buyback activity recently - zero shares repurchased under the Share Repurchase Program in FY2025 and FY2024; Q4-2025 monthly table all zeros; $25.0M remained authorized at 12/31/2025 of the $64.3M cumulative cap. Earlier-year program activity shows in Note 8 highlights as accretive per-share effects: Repurchase of common stock +$0.32 (2023), +$0.11 (2022), +$0.17 (2024 - printed in highlights while MD&A states no program repurchases in 2024; both statements printed, not reconciled here). H1-2026: only $5,897,743 of shares repurchased for tax withholdings on vesting of employee equity awards (not the Program). Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-11); Form 10-Q Q2-2026 (filed 2026-08-06)",
+      "section": "10-K MD&A - Share Repurchase Program + Item 5 table + Note 8; 10-Q Statements of Changes in Net Assets",
+      "quote": "During the years ended December 31, 2025 and 2024, we did not repurchase any shares of our common stock under the discretionary open-market Share Repurchase Program.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.4": {
       "element": "Portfolio liquidity profile",
-      "value": null,
-      "status": "pending"
+      "value": "Deeply illiquid asset base inside a liquid wrapper: at 6/30/2026, Level 3 = $404,132,245 of $405,851,701 total investments (99.6% - arithmetic); publicly traded portfolio companies just $1.7M. Blanket SOI legend: all portfolio investments restricted as to resale unless noted. Equity positions are 'generally' non-income producing, so operating cash relies on realizations/raises: 'our investments generally do not produce current income, and therefore, we may be dependent on future capital raising to meet our operating needs'. Portfolio turnover 5.27% FY2025 (4.03% H1-2026) - low-turnover by design. Industry mix at 6/30/2026: Consumer Goods & Services 40.7% of portfolio, AI Infrastructure & Applications 34.1%, SaaS 10.0%. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-Q Q2-2026 (filed 2026-08-06); Form N-2 (filed 2026-07-31); Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "10-Q SOI legend + Note 4 hierarchy + MD&A industry table; N-2 Business; 10-K Note 8 (turnover)",
+      "quote": "All of the Company\u2019s portfolio investments are restricted as to resale, unless otherwise noted",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.5": {
       "element": "TDF/CIT liquidity sleeve",
-      "value": null,
-      "status": "pending"
+      "value": "No TDF/CIT wrapper exists for this product; a liquidity sleeve is a plan-vehicle design question, not a Neostellar disclosure.",
+      "status": "n/a - CIT only",
+      "source": "n/a - structural",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.6": {
       "element": "Fund leverage & facilities",
-      "value": null,
-      "status": "pending"
+      "value": "Fixed-rate unsecured leverage, 200% asset-coverage regime (BDC baseline; the Company states it does NOT currently intend to seek approval to drop to 150%). Outstanding at 6/30/2026: 6.00% Notes due 12/30/2026 (Nasdaq-listed SSSSL) face $35,829,825, effective rate 6.43%, carrying $35.7M; 6.50% Convertible Notes due 8/14/2029 face $27,000,000 (down from $35.0M at 12/31/2025 via conversions; $7.8M converted to equity H1-2026), effective 8.06%. Post-quarter: $20.0M 6.50% redeemable promissory note sold 7/16/2026 to MCP Investing LLC (Magnetar affiliate), semi-annual cash interest, matures 2029. Ten-year senior-securities table printed: FY2025 asset coverage per unit $3,899 per $1,000 (FY2024 $3,110); no credit facility outstanding FY2016-FY2025. FY2025 interest expense $5,088,054. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-Q Q2-2026 (filed 2026-08-06); Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "10-Q Statements of A&L fns (2)/(3), Note 10, Note 12; 10-K Item 1 Regulation/Senior Securities table",
+      "quote": "required to meet an asset coverage ratio ... of at least 200% after each issuance of senior securities",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.7": {
       "element": "Plan participant liquidity demand",
-      "value": null,
-      "status": "pending"
+      "value": "Structural: the filings disclose only fund-side and market-side liquidity (3.1/3.4, 1.10). Participant-level demand (separated-with-balance counts, payout elections) is plan data outside any Neostellar document.",
+      "status": "n/a - plan-side workflow: participant liquidity demand comes from a specific plan's Form 5500/recordkeeper census, resolved per plan engagement, not from product filings",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.8": {
       "element": "Redemption stress test",
-      "value": null,
-      "status": "pending"
+      "value": "ILLUSTRATIVE redemption stress (computed, all four plans): tail turnover x2, active turnover x1.5 vs base scenario. Anchor plan: demand 19.2%/yr vs daily-exchange capacity - daily exchange liquidity; stress transmits to price, not to a fund gate",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__ssss_match.json (+3 plans)",
+      "section": "stressed_scenario (ILLUSTRATIVE)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": null,
-      "status": "pending"
+      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): ALIGNED-MECHANICAL. Daily exchange liquidity mechanically satisfies daily participant dealing (3.1). BUT price-vs-NAV decoupling means participants transact at the premium/discount, not at portfolio value \u2014 the liquidity is real, the price basis is not (1.10, 4.7). Per-plan artifacts in data/liquidity/.",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__ssss_match.json",
+      "section": "verdict + reasons",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.1": {
       "element": "Valuation policy & NAV frequency",
-      "value": null,
-      "status": "pending"
+      "value": "QUARTERLY valuation cadence: 'The Company values its assets on a quarterly basis, or more frequently if required under the 1940 Act.' Board-determined fair value in good faith under Rule 2a-5 and ASC 820, assisted by a Valuation Committee; executive officers/investment professionals prepare valuations from most recent portfolio-company financials/forecasts; independent valuation firm engaged for non-traded names (4.3); fair-value hierarchy classifications reviewed quarterly. Market prices exist daily (listed shares) but NAV is quarterly - the NAV lag behind intraday price is structural (see 1.10: Q2-2026 NAV still undetermined at the 7/31 N-2, only an estimate range $13.25-$13.75 printed). Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-11); Form N-2 (filed 2026-07-31)",
+      "section": "10-K Note 2 - Significant Accounting Policies - Investments at Fair Value; Item 1 - Determination of NAV",
+      "quote": "The Company values its assets on a quarterly basis, or more frequently if required under the 1940 Act. ... valued at fair value as determined in good faith by our Board of Directors and in accordance with Rule 2a-5 as promulgated under the 1940 Act",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.2": {
       "element": "Fair-value hierarchy (L1/2/3)",
-      "value": null,
-      "status": "pending"
+      "value": "Printed hierarchy (10-Q Note 4): at 6/30/2026 Level 1 $1,719,456 (public common stock + options) / Level 2 $0 / Level 3 $404,132,245 / total $405,851,701 - Level 3 = 99.6% (arithmetic). At 12/31/2025: L1 $4,209,263 / L2 $0 / L3 $221,302,242 / total $225,511,505 (L3 98.1%, arithmetic). Level 3 composition 6/30/2026: preferred stock $354.8M, common stock $45.4M, options $2.7M, debt $1.2M. 10-K states 'The majority of the Company's investments are Level 3 investments and are subject to a high degree of judgment and uncertainty in determining fair value.' Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-Q Q2-2026 (filed 2026-08-06); Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "10-Q Note 4 - Investments at Fair Value - Investment Valuation Inputs tables",
+      "quote": "Total Investments at Fair Value | | $ | 1,719,456 | | | $ | \u2014 | | | $ | 404,132,245 | | | $ | 405,851,701",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.3": {
       "element": "Independent valuation agent",
-      "value": null,
-      "status": "pending"
+      "value": "Independent valuation firm IS engaged but NOT named in any of the three filings: engaged 'to perform independent valuations of our investments that are not publicly traded or for which there are no readily available market quotations', and may also be engaged for secondary-market-traded names with thin trading or wide trade disparity. Its recommended valuations, alongside management's, form 'a component of the foundation' of the Board's final fair-value determination (with the Valuation Committee). Auditor's CAM procedures also involved its own valuation specialists. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "Item 1 - Business - Determination of Net Asset Value; Report of Independent Registered Public Accounting Firm (CAM)",
+      "quote": "We also engage an independent valuation firm to perform independent valuations of our investments that are not publicly traded or for which there are no readily available market quotations.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.4": {
       "element": "Methodology by asset type",
-      "value": null,
-      "status": "pending"
+      "value": "Quantitative Level 3 inputs table printed (10-K, 12/31/2025): Preferred stock in private companies $169.6M - Market Approach (revenue multiples 0.52x-7.95x, wtd avg 3.47x; precedent transactions 25%-100%, wa 76%) + PWERM (revenue multiples 1.42x-5.60x; dissolution risk 100%; precedent transaction 90%); Common stock $46.7M - Market Approach (revenue multiples 0.57x-5.23x, wa 4.99x; precedent 100%; AFFO multiple 8.42x) + PWERM; Options $4.2M - Option Pricing Model (term 0.50-1.36 yrs, wa 0.88; volatility 45-50%, wa 48%) + PWERM + Market Approach; Debt investments $0.76M - Market Approach (revenue multiples 0.57x-5.05x; precedent 25%). Board also used a hybrid market/income approach for certain names; precedent transactions include recent financing rounds, company purchases, and tender offers. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "Note 4 - Significant Unobservable Inputs for Level 3 Assets and Liabilities (table + fns 1-8)",
+      "quote": "the Board of Directors used a hybrid market and income approach to value certain common and preferred stock investments ... Option Pricing Model | | Term to Expiration (Years)",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.5": {
       "element": "Auditor & opinion",
-      "value": null,
-      "status": "pending"
+      "value": "Auditor (signature block): CBIZ CPAs P.C., Boston, MA - PCAOB ID 199 - report dated March 11, 2026, on FY2025 statements and the senior-securities table; tenure line: auditor since 2019, '(such date takes into account the acquisition of the attest business of Marcum LLP by CBIZ CPAs P.C. effective November 1, 2024)'. Predecessor signature also printed: /s/ Marcum LLP (PCAOB ID 688), Boston, MA, dated March 12, 2025 ('auditor since 2019 through 2025') on FY2024. Critical audit matter: valuation of Level 3 investments (preferred, common, debt, options) - significant management judgment, unobservable inputs; procedures included valuation specialists. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "Item 8 - Reports of Independent Registered Public Accounting Firm (pages 70-71), signature blocks",
+      "quote": "/s/ CBIZ CPAs P.C . CBIZ CPAs P.C. We have served as the Company\u2019s auditor since 2019.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.6": {
       "element": "NAV restatement history",
-      "value": null,
-      "status": "pending"
+      "value": "None identified: searched 'restat' and 'error correction' across all three on-disk filings (10-K FY2025, 10-Q Q2-2026, N-2 2026-07-31). Every hit is a false positive: 'Articles of Amendment and Restatement' (charter exhibits), the 'Second Amended and Restated 2019 Equity Incentive Plan', 'Amended and Restated Bylaws', and the 10-K cover-page error-correction checkboxes, which are UNCHECKED. No NAV restatement or error correction to previously issued financial statements is disclosed. NAV determination sentence anchoring the series: quarterly per-share NAV as of the last day of each quarter (see 1.10 table, 4.1). Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-11); absence checked in 10-Q Q2-2026 and N-2 2026-07-31",
+      "section": "10-K cover page checkboxes; Item 5 price-range table fn (1); grep of all three stripped filings",
+      "quote": "NAV per share is determined as of the last day in the relevant quarter",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.7": {
       "element": "Premium/discount check",
-      "value": null,
-      "status": "pending"
+      "value": "Premium/(discount) vs printed quarterly NAV (computed): -21.7% at the 2026-08-14 close ($10.52 vs NAV $13.44 at 2026-06-30). Across the 16 printed quarters: -57.0% to 16.7%. A persistent DISCOUNT - the mirror image of dxyz's premium; together they show market pricing decoupled from NAV as a PATTERN.",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (ssss_premium)",
+      "section": "ssss_premium",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.8": {
       "element": "Smoothing diagnostics",
-      "value": null,
-      "status": "pending"
+      "value": "Smoothing diagnostics inapplicable to a market-price series; NAV cadence is quarterly (n=16 printed points).",
+      "status": "n/a - not publicly available: market-price series; NAV quarterly only",
+      "source": "series structure per cells 1.10/4.7",
+      "section": "applicability rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "4.9": {
       "element": "CIT unit valuation",
-      "value": null,
-      "status": "pending"
+      "value": "No CIT wrapper; unit valuation is a plan-vehicle construct not applicable to directly held listed BDC shares.",
+      "status": "n/a - CIT only",
+      "source": "n/a - structural",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.1": {
       "element": "Self-declared benchmark",
-      "value": null,
-      "status": "pending"
+      "value": "Self-declared comparison indices WITH a printed no-suitable-benchmark disclaimer: the 10-K Item 5 Performance Graph compares cumulative total stockholder return vs the S&P 500 Stock Index and the Nasdaq Stock Index for the five years ended 12/31/2025, expressly because the Company does not believe an appropriate strategy-matched index exists. Printed $100-at-12/31/2020 series: SSSS 172.71 / 51.29 / 53.14 / 79.43 / 134.86 (2021-2025); S&P 500 ends 182.25; Nasdaq ends 180.33. No NAV-performance benchmark is declared anywhere; graph is stock-price+dividends only and is furnished, not filed. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "Part II Item 5 - Performance Graph",
+      "quote": "we do not believe there is an appropriate index of companies with an investment strategy similar to our own with which to compare the return on our common stock",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.2": {
       "element": "Public index series",
-      "value": null,
-      "status": "pending"
+      "value": "NSLR daily close+adj on disk (2,514 rows since 2016-08-15, incl. SSSS-era history, manifest-declared) + quarterly NAV series (16 printed points).",
+      "status": "fetched",
+      "source": "data/series/series_manifest.json + data/series_quarterly/manifest.json",
+      "section": "series inventory",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": null,
-      "status": "pending"
+      "value": "Engine escalated: candidates evaluated and ALL rejected with the decoupling reason; ledger in the selection artifact.",
+      "status": "computed",
+      "source": "data/benchmarks/ssss_selection.json",
+      "section": "escalation",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": null,
-      "status": "pending"
+      "value": "Peer cohort venture (n=3): members, rationales, stats, composite (or its documented refusal) and caveat block in the cohort artifact; exclusions in data/roster_decisions.md.",
+      "status": "computed",
+      "source": "data/cohorts/venture.json",
+      "section": "members + composite",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": null,
-      "status": "pending"
+      "value": "No PME inputs constructible: engine escalation (premium-driven price). The refusal is the documented output.",
+      "status": "computed",
+      "source": "data/benchmarks/ssss_selection.json",
+      "section": "escalation",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": null,
-      "status": "pending"
+      "value": "Benchmark-suitability memo is a constructed analytics artifact (Lane 3), not an extraction target; the product-side input on file is 5.1's printed no-suitable-index disclaimer plus the S&P 500/Nasdaq graph pairing.",
+      "status": "n/a - constructed (L3)",
+      "source": "n/a - constructed downstream",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "5.7": {
       "element": "Case-law tracker",
-      "value": null,
-      "status": "pending"
+      "value": "Case-law tracking is maintained at the platform level across products, not per-product extraction.",
+      "status": "n/a - cross-product tracker",
+      "source": "n/a - cross-product",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.1": {
       "element": "Structure map",
-      "value": null,
-      "status": "pending"
+      "value": "Structure map: Maryland corporation (inc. 1/6/2011); non-diversified closed-end company electing BDC status under the 1940 Act; RIC under Subchapter M; single class of listed common stock (Nasdaq: NSLR, fka SSSS/GSVC) + listed 6.00% Notes (SSSSL) + 6.50% Convertible Notes 2029 + 6.50% Magnetar redeemable note. Externally managed from 7/15/2026: Adviser = Neostellar Advisors LLC (jointly owned by its investment professionals and Magnetar JV Entity); Administrator = Neostellar Administrative Services LLC (Adviser affiliate). Consolidated subsidiaries (10-K Note 1 schedule, all Delaware, 100% owned): GSV Capital Lending, LLC (2012); SuRo Capital Sports, LLC (2021); 1789 Capital Nirvana II LP (2025; consolidated VIE, Company is primary beneficiary/sole LP); SRCI Advisors, LLC (2025); plus wholly owned Taxable Subsidiaries GSVC AE/AV/SW/SVDS Holdings, Inc. (2012-2013). Portfolio exposure runs through third-party SPV/fund layers: ARK Type One (OpenAI), IH10 (VAST Data), CW Opportunity 2 (CoreWeave), Magnetar Opportunity 2025-4 (TensorWave), True Global Ventures 4 Plus. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-11); Form 10-Q Q2-2026 (filed 2026-08-06); Form N-2 (filed 2026-07-31)",
+      "section": "10-K Note 1 - Organization (subsidiaries table, VIE); N-2 Prospectus Summary - The Externalization; 10-Q Note 4 fns",
+      "quote": "The Company determined that 1789 Capital Nirvana II LP is a VIE and the Company is the primary beneficiary.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.2": {
       "element": "Strategy & instrument complexity",
-      "value": null,
-      "status": "pending"
+      "value": "Strategy: pre-IPO/late-stage growth equity in 'rapidly growing venture capital-backed emerging companies', acquired via direct rounds, private secondary marketplaces, selling-stockholder negotiations, and SPVs/funds; opportunistically SPAC founders equity/warrants/forward purchase agreements/PIPEs and private credit; select public equities. Instruments: preferred stock (typically convertible, non-income-producing), common stock, options/warrants, SAFEs, debt investments, LP/LLC interests in SPVs (second-layer fees, cell 2.5). Sub-sector focus printed: AI Infrastructure & Applications, Consumer Goods & Services, SaaS, FinTech, Logistics; portfolio mix at 6/30/2026: Consumer 40.7%, AI Infra & Apps 34.1%, SaaS 10.0% of portfolio FV. Non-diversified; low turnover (5.27% FY2025); complexity flags: SPV chains, VIE consolidation, SPAC-sponsor legacy positions, 99.6% Level 3. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form N-2 (filed 2026-07-31); Form 10-Q Q2-2026 (filed 2026-08-06); Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "N-2 Business/Investment Strategy; 10-Q MD&A industry table; 10-K Item 1",
+      "quote": "We invest principally in the equity securities of what we believe to be rapidly growing venture capital-backed emerging companies ... Artificial Intelligence Infrastructure & Applications | | | 138,342,634 | | | | 34.1 | %",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.3": {
       "element": "Conflicts & affiliated transactions",
-      "value": null,
-      "status": "pending"
+      "value": "Dense post-Externalization conflict set, all printed: (1) Investment Advisory and Administration Agreements 'were not negotiated on an arm's-length basis' - adviser professionals who negotiated had economic interests; (2) NO co-investment exemptive relief yet: N-2 (7/31/2026) states relief 'we have not yet obtained'; per the 10-Q, the Company, the Adviser and affiliated funds/accounts filed the exemptive application with the SEC on 8/3/2026 ('There can be no assurance if or when such relief will be granted'); (3) Adviser/Magnetar manage overlapping funds - allocation conflicts; (4) Erik Falk, Magnetar Partner/Head of Strategy, appointed interested director 7/15/2026; (5) MCP Investing LLC (Magnetar affiliate) bought the $20.0M 6.50% redeemable note 7/16/2026; (6) the Company holds Magnetar Opportunity 2025-4 LP, a Magnetar SPV charging 20% incentive over a 15% IRR hurdle (2.5); (7) legacy remote-affiliate positions (Skillsoft via Churchill entities - Klein's brother Michael Klein a control person, per 10-Q Note 3; AltC Sponsor LLC per 10-K); (8) Income-Based Fee payable even in NAV-decline quarters (2.2); screening policies/procedures disclosed. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form N-2 (filed 2026-07-31); Form 10-Q Q2-2026 (filed 2026-08-06); Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "N-2 Risk Factors (Externalization-related) ; 10-Q Note 3 - Related-Party Arrangements + Note 12",
+      "quote": "The Investment Advisory Agreement and the Administration Agreement were not negotiated on an arm\u2019s-length basis. ... Our ability to co-invest with affiliates is subject to exemptive relief that we have not yet obtained.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.4": {
       "element": "Tax reporting (1099 vs K-1)",
-      "value": null,
-      "status": "pending"
+      "value": "PARTIAL: the literal form name is NOT printed - the string '1099' appears zero times in all three on-disk filings (searched 10-K, 10-Q, N-2 on 2026-08-15); no K-1/partnership language exists either (corporate RIC, not a partnership). What IS printed: RIC election under Subchapter M with dividend-distribution mechanics (90% distribution requirement, 4% excise tax framework, distributions may include return of capital deemed for tax purposes, retained-capital-gains deemed-distribution/tax-credit mechanics), i.e., shareholders receive corporate dividends - the 1099-DIV regime in substance, but the form name itself cannot be quoted from these filings.",
+      "status": "partial",
+      "source": "Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "Note 9 - Income Taxes; Item 5 - Distributions; absence of '1099'/'K-1' verified by search across all three stripped filings",
+      "quote": "The Company elected to be treated and intends to qualify annually as a RIC under Subchapter M of the Code",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.5": {
       "element": "Service-provider web",
-      "value": null,
-      "status": "pending"
+      "value": "Service-provider web (post-7/15/2026): Adviser Neostellar Advisors LLC (Delaware RIA; jointly owned by investment professionals + Magnetar JV Entity); Administrator Neostellar Administrative Services LLC (Adviser affiliate; office facilities, bookkeeping, oversees custodians/transfer agents/other agents; expenses reimbursed); Custodian Western Alliance Trust Company, N.A., Phoenix AZ (custody agreement dated 4/19/2023, exhibit 10.7); Transfer agent, distribution paying agent, registrar AND DRIP plan administrator Equiniti Trust Company, LLC, 48 Wall Street, NY; Auditor CBIZ CPAs P.C., Boston (PCAOB 199; predecessor Marcum LLP PCAOB 688). Principal office 640 Fifth Avenue, 12th Floor, NY. Extracted 2026-08-15.",
+      "status": "extracted-unverified",
+      "source": "Form N-2 (filed 2026-07-31); Form 10-K FY2025 (filed 2026-03-11)",
+      "section": "N-2 'Custodian, Transfer and Distribution Paying Agent and Registrar' (p.78) + Administration Agreement; 10-K Exhibit index 10.7",
+      "quote": "Our investments are held under a custody agreement with Western Alliance Trust Company, National Association. ... Equiniti Trust Company, LLC acts as our transfer agent, distribution paying agent and registrar.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.6": {
       "element": "Plan operational fit",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell: operational fit (recordkeeper handling of an exchange-traded ticket in a participant-directed menu, daily trading/settlement vs QUARTERLY NAV, dividend/DRIP coding) depends on the plan's recordkeeper and trading stack. Product-side facts already evidenced: Nasdaq-listed common stock NSLR with daily dealing (3.1), quarterly NAV only (4.1), opt-out DRIP via Equiniti (3.2/6.5).",
+      "status": "n/a - not publicly available: requires plan-specific recordkeeper/trading integration facts - workflow cell completed per plan engagement, not public product data",
+      "source": "n/a - per-plan engagement workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.7": {
       "element": "Participant communicability",
-      "value": null,
-      "status": "pending"
+      "value": "Workflow cell: whether participants can be fairly given to understand a listed fund of Level 3 pre-IPO positions that swung from a 62% discount (2023) to a 26% premium (Q4-2025) back to a 25% discount (Q1-2026), with quarterly NAV, episodic gains-only distributions, SPV fee layers, and a mid-2026 externalization to a Magnetar-affiliated adviser, is the committee's communication assessment. Product-side inputs on file: 6.1 structure, 6.2 complexity, 6.4 tax, 1.10 premium/discount, 2.2 new incentive fee.",
+      "status": "n/a - not publicly available: requires plan-committee participant-communication assessment - workflow cell; product-side inputs already evidenced in 6.1/6.2/6.4/1.10",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     },
     "6.8": {
       "element": "Fiduciary capacity self-assessment",
-      "value": null,
-      "status": "pending"
+      "value": "Fiduciary capacity self-assessment is the committee's own governance output; no product filing can supply it.",
+      "status": "n/a - workflow, not data",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
     }
   }
 }

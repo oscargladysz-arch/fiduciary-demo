@@ -1,0 +1,54 @@
+{
+  "product": "amg_pantheon",
+  "plan": "plan_consulting_alumni",
+  "verdict": "conditional",
+  "reasons": [
+    "STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed) \u2014 a trustee-directed sleeve could hold this wrapper directly; the daily-menu constraint (this wrapper deals 4x/year) applies only to the participant-directed portion (cell 3.5).",
+    "Capacity: 4x per year at 5.0% of outstanding Units (board-discretionary tenders) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
+    "Scenario demand (illustrative): 13.7% of the position per year vs 20% annual wrapper capacity \u2014 THIN HEADROOM: demand consumes over 60% of wrapper capacity; proration in any oversubscribed quarter would push the shortfall into the next window.",
+    "Early repurchase economics: 2.00% if held < 1 year, FIFO (2.7) \u2014 relevant to participant-level churn (2.7)."
+  ],
+  "stressed_scenario": {
+    "illustrative": true,
+    "assumptions": "tail turnover x2, active turnover x1.5 vs base scenario",
+    "annual_demand_usd": 129497123,
+    "demand_pct_of_position": 26.4,
+    "annual_wrapper_capacity_pct": 20.0,
+    "outcome": "EXCEEDS annual wrapper capacity \u2014 unmet demand rolls into later windows (gating-equivalent outcome)"
+  },
+  "plan_display_label": "Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY)",
+  "plan_direction": "partial",
+  "wrapper_facts": {
+    "kind": "tender_offer",
+    "cadence_per_year": 4,
+    "cap_pct": 5.0,
+    "cap_base": "outstanding Units (board-discretionary tenders)",
+    "exchange": false,
+    "gate_history": false,
+    "early_fee": "2.00% if held < 1 year, FIFO (2.7)",
+    "source_cell": "3.1 + 3.3"
+  },
+  "scenario": {
+    "allocation_pct_of_plan": 5.0,
+    "tail_annual_turnover_pct": 20.0,
+    "active_annual_turnover_pct": 5.0,
+    "illustrative": true,
+    "plan_allocation_usd": 490513484,
+    "annual_demand_usd": 67314264,
+    "demand_pct_of_position": 13.7,
+    "annual_wrapper_capacity_pct": 20.0
+  },
+  "plan_inputs": {
+    "net_assets": 9810269680.0,
+    "tail_share_pct": 58.2,
+    "separated_with_balances": 20253.0
+  },
+  "citations": [
+    "3.1",
+    "3.3",
+    "3.5",
+    "3.7",
+    "3.9",
+    "plan: plan_consulting_alumni.json (Form 5500, plan year 2024-01-01 to 2024-12-31)"
+  ]
+}

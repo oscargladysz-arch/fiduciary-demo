@@ -3,104 +3,136 @@
   "cohort_id": "nontraded_reit",
   "depth": "cohort",
   "membership_rationale": "Perpetual NAV REIT of older vintage - same wrapper class; NAV cadence and scale differences disclosed.",
-  "what": "typed projections of evidenced cells - scaffold pending cohort-tier extraction",
-  "generated_by": "src/build_facts.py",
+  "what": "typed projections of evidenced cells - zero new facts",
+  "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
-      "value": null,
+      "value": "nontraded_reit",
       "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "status": "extracted-unverified"
     },
     "mgmt_fee_pct": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 1.25,
+      "source_cell": "2.1",
+      "note": "temporary partial waiver 2025-10-07 through 2026-12-31 (see cell 2.1)",
+      "status": "extracted-unverified"
     },
     "mgmt_fee_base": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "nav",
+      "source_cell": "2.1",
+      "note": "NAV calculated DAILY",
+      "status": "extracted-unverified"
     },
     "incentive_fee": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": {
+        "present": true,
+        "rate_pct": 10.0,
+        "hurdle_pct": 7.0,
+        "structure": "10% of each class's total return above 7%/yr, per calendar year; no fees earned FY2023-FY2025"
+      },
+      "source_cell": "2.2",
+      "status": "extracted-unverified"
     },
     "early_repurchase": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": {
+        "present": false
+      },
+      "source_cell": "2.7",
+      "note": "no fee; one-year holding period with death/disability exceptions",
+      "status": "extracted-unverified"
     },
     "repurchase_cadence_per_year": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 4,
+      "source_cell": "3.1",
+      "note": "DAILY repurchase requests at that day's NAV under a quarterly 5% cap - the cohort's most liquid plan",
+      "status": "extracted-unverified"
     },
     "repurchase_cap_pct": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": 5.0,
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
     },
     "repurchase_cap_base": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "nav",
+      "source_cell": "3.1",
+      "note": "combined NAV of all classes, prior quarter-end",
+      "status": "extracted-unverified"
     },
     "gate_history": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": false,
+      "source_cell": "3.3",
+      "note": "never deferred nor rejected a request through 2025-12-31, as disclosed",
+      "status": "extracted-unverified"
     },
     "tax_form": {
       "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "source_cell": "6.4",
+      "reason": "tax-form name not literally printed; REIT status and possible return-of-capital character are printed (cell 6.4)",
+      "status": "n/a - tax form not literally printed: zero hits for '1099' and 'K-1' across stripped 10-K, 10-Q and 424B3 (searched 2026-08-15)"
     },
     "auditor": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "KPMG LLP",
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
     },
     "big4": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": true,
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
     },
     "expense_ratio_pct": {
       "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "source_cell": "2.3",
+      "reason": "no TER line exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
+      "status": "extracted-unverified"
     },
     "net_assets_usd": {
       "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "source_cell": "3.6",
+      "reason": "aggregate NAV not yet carried into a typed cell; verification-queue item",
+      "status": "extracted-unverified"
     },
     "inception": {
-      "value": null,
-      "source_cell": "6.1",
-      "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "value": "2012-10-01",
+      "source_cell": "1.11",
+      "note": "continuous public offering commencement (REIT-taxed since 2004 as a private predecessor)",
+      "status": "extracted-unverified"
     },
     "track_record_years": {
+      "value": 13.2,
+      "source_cell": "1.11",
+      "status": "computed",
+      "note": "(as-of 2025-12-31 minus inception) / 365.25"
+    },
+    "primary_benchmark_id": {
       "value": null,
-      "source_cell": "6.1",
+      "source_cell": "1.8",
       "status": "pending",
-      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      "reason": "engine selection not yet run for this cohort-tier product"
+    },
+    "selection_score": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "pending",
+      "reason": "engine selection not yet run for this cohort-tier product"
+    },
+    "pme_primary": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "pending",
+      "reason": "engine selection not yet run for this cohort-tier product"
+    },
+    "direct_alpha_primary": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "pending",
+      "reason": "engine selection not yet run for this cohort-tier product"
+    },
+    "liquidity_verdict_by_plan": {
+      "value": null,
+      "source_cell": "3.9",
+      "status": "pending",
+      "reason": "liquidity profile lands with cell 3.1 extraction"
     }
   }
 }

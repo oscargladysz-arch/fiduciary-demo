@@ -70,6 +70,44 @@ PRODUCT_PROFILES = {
         "price_nav_decoupled": True,            # cells 1.10 / 4.7: -90.3% DD,
         "source_cells": ["1.10", "4.7"],        # +188.6% cum, 162.6% vol
     },
+    "ares_pmf": {
+        "strategy": "private_equity_evergreen",
+        "series": None, "granularity": "annual",
+        "fy_returns": None, "fy_window": None,   # injected from profiles_input
+        "self_declared": "see cell 5.1",
+        "source_cells": ["1.2", "5.1"],
+    },
+    "amg_pantheon": {
+        "strategy": "private_equity_evergreen",
+        "series": None, "granularity": "annual",
+        "fy_returns": None, "fy_window": None,   # injected (10 fiscal years)
+        "self_declared": "see cell 5.1",
+        "source_cells": ["1.2", "5.1"],
+    },
+    "sreit": {
+        "strategy": "nontraded_reit",
+        "series": None, "granularity": "annual",
+        "fy_returns": None, "fy_window": None,   # injected (single printed year
+                                                 # - SHORT window, disclosed)
+        "self_declared": "see cell 5.1",
+        "source_cells": ["1.2", "5.1"],
+    },
+    "arkvx": {
+        "strategy": "preipo_venture",
+        "series": "arkvx",
+        "granularity": "monthly",
+        "self_declared": "see cell 5.1",
+        "source_cells": ["1.2", "5.1"],
+    },
+    "ssss": {
+        "strategy": "preipo_venture",
+        "series": "nslr",
+        "granularity": "daily",
+        "self_declared": "see cell 5.1",
+        "price_nav_decoupled": True,   # listed BDC trading at persistent
+                                       # discount/premium to NAV (cells 1.10/4.7)
+        "source_cells": ["1.10", "5.1"],
+    },
     "pflex": {
         "strategy": "private_credit",
         "series": "pflex",
@@ -146,10 +184,15 @@ STRATEGY_MENU = {
          "lane": "B", "series": None, "provider": "Cambridge Associates",
          "independent": True, "data": "quarterly-paid", "strategy_match": 3,
          "match_note": "drawdown-fund universe - wrapper mismatch vs evergreen also applies"},
-        {"id": "peer_evergreen", "name": "Peer cohort: evergreen PE funds in universe",
-         "lane": "C", "series": None, "provider": "constructed",
+        {"id": "peer_evergreen", "name": "Peer cohort: evergreen_pe (hl_paf, "
+                                         "stepstone_spm, kkr_kpec, ares_pmf, "
+                                         "amg_pantheon)",
+         "lane": "C", "series": None, "provider": "constructed (Tark cohort engine)",
          "independent": True, "data": "annual", "strategy_match": 3,
-         "match_note": "hl_paf / stepstone_spm / kkr_kpec - n small, annual granularity"},
+         "match_note": "n=5 equal-weight annual composite on printed FY returns "
+                       "(data/cohorts/evergreen_pe.json); fiscal year-ends "
+                       "differ and kkr_kpec joins cross-wrapper under the "
+                       "documented fallback - both disclosed in the caveat block"},
         {"id": "pme_psp", "name": "PME / Direct Alpha vs PSP",
          "lane": "D", "series": "psp", "provider": "constructed (Tark)",
          "independent": True, "data": "annual-window", "strategy_match": 2,
@@ -164,6 +207,13 @@ STRATEGY_MENU = {
          "lane": "B", "series": "psp", "provider": "Invesco / Red Rocks",
          "independent": True, "data": "daily", "strategy_match": 1,
          "match_note": "nearest liquid cousin to pre-IPO exposure"},
+        {"id": "peer_venture", "name": "Peer cohort: venture (dxyz, ssss, arkvx)",
+         "lane": "C", "series": None, "provider": "constructed (Tark cohort engine)",
+         "independent": True, "data": "none", "strategy_match": 3,
+         "match_note": "n=3 but composite REFUSED: members' pricing bases are "
+                       "heterogeneous (market price vs NAV) - averaging "
+                       "premiums against appraisals would fabricate a series "
+                       "(data/cohorts/venture.json)"},
     ],
     "pe_conglomerate": [
         {"id": "psp_k", "name": "Listed private equity investable proxy (PSP)",
@@ -207,11 +257,14 @@ STRATEGY_MENU = {
          "lane": "B", "series": None, "provider": "Cambridge Associates",
          "independent": True, "data": "quarterly-paid", "strategy_match": 3,
          "match_note": "private RE drawdown-fund universe - licensed data not held"},
-        {"id": "peer_reit", "name": "Peer cohort: non-traded REITs in universe",
-         "lane": "C", "series": None, "provider": "constructed",
-         "independent": True, "data": "none", "strategy_match": 3,
-         "match_note": "no second non-traded REIT in the current six-product "
-                       "universe"},
+        {"id": "peer_reit", "name": "Peer cohort: nontraded_reit (breit, "
+                                    "sreit, jll_ipt)",
+         "lane": "C", "series": None, "provider": "constructed (Tark cohort engine)",
+         "independent": True, "data": "annual", "strategy_match": 3,
+         "match_note": "n=3; equal-weight annual composite overlap currently "
+                       "one year (2025: breit + sreit; jll_ipt prints returns "
+                       "only as per-class ranges) - THIN, disclosed "
+                       "(data/cohorts/nontraded_reit.json)"},
         {"id": "pme_vnq", "name": "PME / Direct Alpha vs VNQ",
          "lane": "D", "series": "vnq", "provider": "constructed (Tark)",
          "independent": True, "data": "annual-window", "strategy_match": 2,
