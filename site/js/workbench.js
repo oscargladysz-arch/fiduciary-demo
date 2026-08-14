@@ -26,12 +26,14 @@ function shortName(key) {
 const WRAPPER_LABEL = {
   tender_offer: "tender-offer", interval_23c3: "interval (23c-3)",
   listed_cef: "listed CEF", nontraded_reit: "non-traded REIT",
-  nontraded_llc: "non-traded LLC",
+  nontraded_llc: "non-traded LLC", nontraded_bdc: "non-traded BDC",
+  listed_bdc: "listed BDC",
 };
 const BASE_LABEL = {
   net_assets: "net assets", managed_assets: "MANAGED assets",
   gross_incl_borrowings: "GROSS incl. borrowings", nav: "NAV",
   outstanding_shares: "outstanding shares", aggregate_nav: "aggregate NAV",
+  lesser_of_dual_base: "LESSER-OF dual base",
 };
 
 /* render a fact into a table cell: value or honest gap; provenance click */
@@ -129,6 +131,8 @@ export function viewScreener(root, state, setState) {
     </select>`;
 
   let rows = PRODUCTS.filter((k) => {
+    if (F.f_cohort && T.facts_meta[k]?.cohort_id !== F.f_cohort) return false;
+    if (F.f_depth && T.facts_meta[k]?.depth !== F.f_depth) return false;
     if (F.f_wrapper && fact(k, "wrapper_type").value !== F.f_wrapper) return false;
     if (F.f_base && fact(k, "mgmt_fee_base").value !== F.f_base) return false;
     if (F.f_tax && fact(k, "tax_form").value !== F.f_tax) return false;
@@ -166,6 +170,8 @@ export function viewScreener(root, state, setState) {
       <div class="sub">Typed projections of evidenced cells — every value click-through
         to its citation; gaps are honest, not blank.</div></div>
     <div class="filterbar">
+      ${sel("f_cohort", "cohort", Object.keys(T.cohorts))}
+      ${sel("f_depth", "depth", ["full", "cohort"])}
       ${sel("f_wrapper", "wrapper", Object.keys(WRAPPER_LABEL))}
       ${sel("f_base", "fee base", Object.keys(BASE_LABEL).filter((b) => PRODUCTS.some((k) => fact(k, "mgmt_fee_base").value === b)))}
       ${sel("f_tax", "tax", ["1099", "K-1"])}
@@ -254,7 +260,27 @@ export function viewCompare(root, state, setState) {
     <label class="${picked.includes(k) ? "on" : ""}">
       <input type="checkbox" data-cmp="${k}" ${picked.includes(k) ? "checked" : ""}
         style="display:none">${esc(shortName(k))}</label>`).join("")}
-    <button class="copylink" data-copylink>copy link</button></div>`;
+    <button class="copylink" data-copylink>copy link</button>
+    <span class="lbl" style="margin-left:10px">peer-suggest:</span>
+    ${Object.keys(T.cohorts).map((c) =>
+      `<button class="citebtn" data-cmpcohort="${c}">vs ${esc(c)}</button>`).join(" ")}
+  </div>`;
+
+  // cross-wrapper caveats surface automatically when a comparison spans
+  // wrapper types (assembled from the caveat matrix — data, not prose)
+  const crossCaveats = (() => {
+    if (keys.length < 2) return "";
+    const attrs = T.caveat_matrix.wrapper_attributes;
+    const wts = keys.map((k) => fact(k, "wrapper_type").value).filter(Boolean);
+    const out = [];
+    for (const rule of T.caveat_matrix.pair_caveats) {
+      const a = rule.attrs[0];
+      if (new Set(wts.map((w) => attrs[w]?.[a])).size > 1) out.push(rule.caveat);
+    }
+    return out.length ? `<div class="banner amber"><b>Cross-wrapper comparison —
+      caveats apply:</b><ul style="margin:6px 0 0 18px">${out.map((c) =>
+      `<li style="margin-bottom:3px">${esc(c)}</li>`).join("")}</ul></div>` : "";
+  })();
 
   if (!keys.length) {
     root.innerHTML = `<div class="viewhead"><h1>Comparison</h1>
@@ -307,6 +333,7 @@ export function viewCompare(root, state, setState) {
       <div class="sub">Material differences highlighted amber; fee-base traps,
         K-1, gating and sub-1.0 PME flagged red. Every value cites its cell.</div></div>
     ${picker}
+    ${crossCaveats}
     <div class="tablewrap"><table class="grid compare">
       <thead><tr><th style="min-width:170px">Fact</th>
         ${keys.map((k) => `<th class="prodcol">${esc(shortName(k))}</th>`).join("")}</tr></thead>
@@ -327,6 +354,11 @@ function wireCompare(root, picked, setState) {
     if (cb.checked) next = [...next, cb.dataset.cmp];
     setState({ compare: next.slice(-4).join(",") });
   }));
+  root.querySelectorAll("[data-cmpcohort]").forEach((b) =>
+    b.addEventListener("click", () => setState({
+      compare: Object.keys(T.cohorts[b.dataset.cmpcohort].members)
+        .slice(0, 4).join(","),
+    })));
 }
 
 /* =========================================================== VERIFICATION */
@@ -530,6 +562,14 @@ export function initPalette(setState, VIEWS) {
           label: `Density: ${d}`, run: () => setState({ density: d }) });
       }
     }
+    // command: cohort <id> — jump to a cohort page
+    for (const c of Object.keys(T.cohorts)) {
+      if (ql && (`cohort ${c}`.includes(ql) || c.includes(ql.replace(/^cohort\s*/, "")))
+          && ql.length >= 3) {
+        out.push({ kind: "command", label: `Cohort: ${T.cohorts[c].label}`,
+          run: () => setState({ view: "cohorts", cohort: c }) });
+      }
+    }
     // cell id + product ("2.1 hl_paf" or "hl 2.1")
     const cellM = ql.match(/(\d+\.\d+)/);
     if (cellM) {
@@ -588,4 +628,108 @@ export function initPalette(setState, VIEWS) {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); open(); }
   });
   window.tarkPalette = { open, close, entries }; // for tests
+}
+
+/* ============================================================== COHORTS */
+export function viewCohorts(root, state, setState) {
+  const cid = T.cohorts[state.cohort] ? state.cohort : "private_credit";
+  const C = T.cohorts[cid];
+  const members = Object.keys(C.members);
+
+  const FIELD_ROWS = [
+    ["mgmt_fee_pct", "Mgmt fee %"], ["mgmt_fee_base", "Fee base"],
+    ["incentive_fee", "Incentive"], ["expense_ratio_pct", "Expense ratio %"],
+    ["early_repurchase", "Early repurchase"],
+    ["repurchase_cadence_per_year", "Cadence /yr"],
+    ["repurchase_cap_pct", "Cap %"], ["gate_history", "Gate history"],
+    ["tax_form", "Tax form"], ["big4", "Big-4 audit"],
+    ["track_record_years", "Track record (yrs)"],
+    ["pme_primary", "KS-PME (primary)"],
+  ];
+  const cell = (k, field) => {
+    const f = fact(k, field);
+    if (!f) return `<td class="cap">—</td>`;
+    if (f.value === null || f.value === undefined) {
+      const rsn = String(f.reason || "no value");
+      return `<td><span class="cap" title="${esc(rsn)}">n/a — ${esc(rsn.length > 46 ? rsn.slice(0, 46) + "…" : rsn)}</span></td>`;
+    }
+    let v = f.value;
+    if (typeof v === "object") {
+      v = v.present === false ? "none" :
+          `${v.present ? "yes" : ""}${v.rate_pct != null ? " " + v.rate_pct + "%" : ""}${v.hurdle_pct != null ? " / " + v.hurdle_pct + "% hurdle" : ""}${v.window ? " " + v.window : ""}`;
+    }
+    if (typeof v === "boolean") v = v ? "yes" : "no";
+    return `<td class="num">${esc(String(v))} <button class="citebtn" data-cite data-key="${k}" data-cid="${esc(f.source_cell)}">src</button></td>`;
+  };
+
+  // range bars per stat field
+  const rangeBar = (field, label) => {
+    const st = C.stats[field];
+    if (!st || st.n === 0) return "";
+    const lo = st.min, hi = st.max, span = (hi - lo) || 1;
+    const marks = Object.entries(st.values).map(([k, v]) =>
+      `<div class="rmark" style="left:${((v - lo) / span * 100).toFixed(1)}%"
+            title="${esc(T.products[k].fund_name)}: ${v}">
+         <span>${esc(k.split("_")[0])}</span></div>`).join("");
+    const missing = Object.keys(st.missing || {}).length;
+    return `<div class="rangerow"><div class="rlabel">${esc(label)}
+        <span class="cap">n=${st.n}${missing ? ` · ${missing} n/a` : ""} · median ${st.median}</span></div>
+      <div class="rtrack"><div class="rmed" style="left:${((st.median - lo) / span * 100).toFixed(1)}%"></div>${marks}</div>
+      <div class="rminmax"><span>${st.min}</span><span>${st.max}</span></div></div>`;
+  };
+
+  const comp = C.composite;
+  const exclusions = T.roster_decisions_md.split("## Considered and excluded")[1]?.split("##")[0] || "";
+
+  root.innerHTML = `
+    <div class="viewhead"><h1>Cohort: ${esc(C.label)}</h1>
+      <div class="sub">n=${C.n} · membership is an argued judgment — every
+        rationale below, every exclusion logged. Cohorts:
+        ${Object.keys(T.cohorts).map((c) =>
+          `<a href="#" data-cohort="${c}" style="margin-right:9px;${c === cid ? "font-weight:700" : ""}">${esc(c)}</a>`).join("")}</div></div>
+    ${(C.caveats || []).length ? `<div class="banner amber"><b>Comparability caveats
+      (assembled from the wrapper matrix):</b><ul style="margin:6px 0 0 18px">
+      ${C.caveats.map((c) => `<li style="margin-bottom:4px">${esc(c)}</li>`).join("")}</ul></div>` : ""}
+    <div class="tablewrap"><table class="grid">
+      <thead><tr><th>Fact</th>${members.map((k) => `<th>
+        ${esc(T.products[k].fund_name.split(" (")[0].slice(0, 26))}<br>
+        <span class="chip ${C.members[k].depth === "full" ? "extracted" : "wrapper"}">${C.members[k].depth} depth</span>
+      </th>`).join("")}</tr></thead>
+      <tbody>${FIELD_ROWS.map(([f, label]) => `<tr>
+        <td style="font-weight:600">${esc(label)}</td>
+        ${members.map((k) => cell(k, f)).join("")}</tr>`).join("")}</tbody>
+    </table></div>
+    <h2 style="margin:18px 0 6px">Ranges</h2>
+    <div class="card">${["mgmt_fee_pct", "expense_ratio_pct", "repurchase_cap_pct",
+                         "track_record_years"].map((f) =>
+      rangeBar(f, (FIELD_ROWS.find(([id]) => id === f) || [f, f])[1])).join("")}</div>
+    <h2 style="margin:18px 0 6px">Composite</h2>
+    ${comp.refused ? `<div class="nochart"><div class="k">Composite refused</div>
+        ${esc(comp.reason)}</div>`
+      : `<div class="chartbox"><div id="compchart"></div>
+         <div class="chartnote">${esc(comp.granularity)} · ${esc(comp.weighting)}.
+           Per-row membership shown in the tooltip; rows require ≥2 reporting members.</div></div>`}
+    <h2 style="margin:18px 0 6px">Membership rationales</h2>
+    ${members.map((k) => `<div class="cellrow"><div class="head">
+        <span class="el">${esc(T.products[k].fund_name)}</span>
+        <span class="chip wrapper">${esc(C.members[k].wrapper_type)}</span></div>
+      <div class="plain">${esc(C.members[k].membership_rationale)}</div></div>`).join("")}
+    <h2 style="margin:18px 0 6px">Exclusion log</h2>
+    <div class="cap" style="margin-bottom:6px">Every candidate considered and not
+      admitted, with its reason (data/roster_decisions.md).</div>
+    <div class="cellrow"><div class="plain" style="white-space:pre-wrap">${esc(exclusions.trim())}</div></div>`;
+
+  root.querySelectorAll("[data-cohort]").forEach((a) => a.addEventListener("click",
+    (e) => { e.preventDefault(); setState({ view: "cohorts", cohort: a.dataset.cohort }); }));
+  if (!comp.refused && comp.rows.length) {
+    import("./charts.js").then(({ lineChart }) => {
+      const box = root.querySelector("#compchart");
+      if (!box) return;
+      lineChart(box, {
+        series: [{ points: comp.rows.map((r) => [`${r.year}-12-31`, r.composite_return_pct]),
+          label: `equal-weight composite (${cid})`, color: "#593380", width: 2, markers: true }],
+        height: 220, includeZero: true, yFormat: (v) => v.toFixed(0) + "%",
+      });
+    });
+  }
 }

@@ -359,6 +359,20 @@ def main() -> None:
         # chart/lab views) to keep the first-paint bundle inside the perf
         # budget; window.TARK.series is merged in by ensureSeries()
         "series": None,
+        "cohorts": {p.stem: json.loads(p.read_text())
+                    for p in sorted((DATA / "cohorts").glob("*.json"))
+                    if p.stem != "caveat_matrix"},
+        "facts_meta": {p.stem: {k: json.loads(p.read_text())[k]
+                                for k in ("cohort_id", "depth",
+                                          "membership_rationale")}
+                       for p in sorted((DATA / "facts").glob("*.json"))},
+        "series_quarterly": {p.stem.replace("_nav", ""): [
+            [r["date"], float(r["nav_per_share"])]
+            for r in __import__("csv").DictReader(open(p, newline=""))]
+            for p in sorted((DATA / "series_quarterly").glob("*_nav.csv"))},
+        "caveat_matrix": json.loads(
+            (DATA / "cohorts" / "caveat_matrix.json").read_text()),
+        "roster_decisions_md": (DATA / "roster_decisions.md").read_text(),
         "pme_profiles": pme_profiles(),
         "proxy_library": PROXY_LIBRARY,
         "swap_matrix": swap_matrix(),

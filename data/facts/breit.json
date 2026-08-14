@@ -84,7 +84,7 @@
       "value": null,
       "source_cell": "2.9",
       "reason": "no TER line item exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
-      "status": "n/a - not publicly available: no TER line item exists for this '34-Act wrapper; components in 2.1/2.2/2.6"
+      "status": "computed"
     },
     "net_assets_usd": {
       "value": null,

@@ -6,7 +6,7 @@ import { viewPlans, viewRoster, viewEvaluation, viewBenchmarks, viewPme,
          viewLiquidity, viewFees, viewDxyz, viewDesmooth, viewCoverage,
          esc } from "./views.js";
 import { viewScreener, viewCompare, viewVerification, viewSearch, viewPacket,
-         initPalette } from "./workbench.js";
+         viewCohorts, initPalette } from "./workbench.js";
 
 const T = window.TARK;
 
@@ -19,6 +19,7 @@ const VIEWS = [
   ["roster", "Candidate Roster", viewRoster, "context"],
   ["evaluation", "Six-Factor Evaluation", viewEvaluation, "record"],
   ["benchmarks", "Benchmark Selection", viewBenchmarks, "record"],
+  ["cohorts", "Cohorts", viewCohorts, "record"],
   ["fees", "Fee Matrix", viewFees, "record"],
   ["liquidity", "Liquidity Match", viewLiquidity, "record"],
   ["pme", "Analysis Lab", viewPme, "analytics"],
@@ -48,10 +49,14 @@ const VALID = {
   win: (v) => !v || /^\d{1,3}$/.test(v),
   rho: (v) => !v || /^0?\.\d{1,2}$|^0$/.test(v),
   density: (v) => ["comfortable", "compact"].includes(v),
+  cohort: (v) => !v || !!T.cohorts[v],
+  f_cohort: (v) => !v || !!T.cohorts[v],
+  f_depth: (v) => !v || ["full", "cohort"].includes(v),
   f_wrapper: (v) => !v || ["tender_offer", "interval_23c3", "listed_cef",
-    "nontraded_reit", "nontraded_llc"].includes(v),
+    "nontraded_reit", "nontraded_llc", "nontraded_bdc", "listed_bdc"].includes(v),
   f_base: (v) => !v || ["net_assets", "managed_assets", "gross_incl_borrowings",
-    "nav", "outstanding_shares", "aggregate_nav"].includes(v),
+    "nav", "outstanding_shares", "aggregate_nav",
+    "lesser_of_dual_base"].includes(v),
   f_tax: (v) => !v || ["1099", "K-1"].includes(v),
   f_gate: (v) => !v || ["yes", "no"].includes(v),
   f_big4: (v) => !v || ["yes", "no"].includes(v),

@@ -264,7 +264,11 @@ export function viewEvaluation(root, state) {
   root.innerHTML = `
     <div class="viewhead"><h1>Six-Factor Evaluation</h1>
       <div class="sub">${esc(p.fund_name)} — ${gloss(p.wrapper)} · coverage
-        <b class="num">${c.coverage_pct}%</b></div></div>
+        <b class="num">${c.coverage_pct}%</b>
+        ${T.facts_meta && T.facts_meta[key] ? `
+          · <span class="chip ${T.facts_meta[key].depth === "full" ? "extracted" : "wrapper"}">${T.facts_meta[key].depth} depth</span>
+          · <a href="#" onclick="window.tarkSetState({view:'cohorts',cohort:'${esc(T.facts_meta[key].cohort_id)}'});return false">view cohort: ${esc(T.facts_meta[key].cohort_id)}</a>` : ""}
+      </div></div>
     <div class="chartbox" style="margin-bottom:4px"><div id="prodchart"></div>
       <div class="chartnote" id="prodchartnote"></div></div>
     <div class="rollup">${rollupHtml}</div>
@@ -885,6 +889,41 @@ export function viewFees(root) {
 }
 
 /* ========================================================== DXYZ CHART */
+function nslrPanel(root) {
+  // the venture cohort's second market-priced member: DXYZ's premium has a
+  // MIRROR — NSLR's persistent discount. Pattern, not anecdote.
+  const sp = T.supplement.ssss_premium;
+  const px = T.series.nslr_daily;
+  const qnav = (T.series_quarterly || {}).ssss || [];
+  if (!sp || !px || !qnav.length) return;
+  const box = root.querySelector("#nslrpanel");
+  if (!box) return;
+  box.innerHTML = `
+    <h2 style="margin:20px 0 6px">The pattern, not the anecdote: NSLR (fka
+      SuRo/SSSS), the cohort's other market-priced member</h2>
+    <div class="statrow">
+      ${stat("Premium/(discount) now", sp.premium_pct_vs_latest_printed_nav + "%",
+             `close ${sp.last_close_date} vs printed NAV ${sp.latest_nav_date}`)}
+      ${stat("Across 16 printed quarters",
+             `${Math.min(...sp.premium_pct_at_each_printed_quarter)}% – ${Math.max(...sp.premium_pct_at_each_printed_quarter)}%`)}
+    </div>
+    <div class="chartbox"><div id="nslrchart"></div>
+      <div class="chartnote">DXYZ trades at a PREMIUM to NAV; NSLR at a
+        persistent DISCOUNT — two listed venture vehicles, two opposite gaps,
+        one conclusion: the market price is not the portfolio. This is why the
+        engine escalates BOTH rather than benchmarking either price
+        (data/analytics/supplement.json ssss_premium; both selection
+        artifacts).</div></div>`;
+  lineChart(box.querySelector("#nslrchart"), {
+    series: [
+      { points: px, label: "NSLR market price (daily close)", color: "#593380", width: 1.3 },
+      { points: qnav, label: "NAV per share (quarterly, printed)",
+        color: "#9d2f26", markersOnly: true, markers: true },
+    ],
+    height: 280, yFormat: (v) => "$" + v.toFixed(0),
+  });
+}
+
 export function viewDxyz(root) {
   const nav = T.dxyz_nav;
   const px = T.series.dxyz_daily;
@@ -926,7 +965,8 @@ export function viewDxyz(root) {
         <td class="num">$${r.price_low?.toFixed(2) ?? "—"}</td>
         <td class="num">${r.premium_pct_at_high ?? "—"}%</td>
         <td class="num">${r.premium_pct_at_low ?? "—"}%</td></tr>`).join("")}
-    </tbody></table></div>`;
+    </tbody></table></div>
+    <div id="nslrpanel"></div>`;
 
   lineChart(root.querySelector("#dxyzchart"), {
     series: [
@@ -941,6 +981,7 @@ export function viewDxyz(root) {
     ],
     height: 340, logY: true, yFormat: (v) => "$" + v.toFixed(0),
   });
+  nslrPanel(root);
 }
 
 /* ======================================================== DE-SMOOTHING */

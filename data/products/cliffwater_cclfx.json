@@ -187,12 +187,12 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Rank 1 of 4 (cheapest=1) within the six-product evaluation universe by own primary net expense ratio (1.36% per cell 2.3). CAVEAT: universe = this roster only, NOT a market database; ratio bases differ by wrapper and are quoted in each 2.3 cell. kkr_kpec/breit have no TER line (34-Act wrappers) and sit outside this ranking.",
+      "value": "Cohort placement (private_credit, R4 phrasing): mgmt fee: below the cohort median of 1.25 (n=3 \u2014 too small for percentile language) | expense ratio (bases differ - see notes): below the cohort median of 1.97 (n=3 \u2014 too small for percentile language) | repurchase cap: at the cohort median of 5 (n=3 \u2014 too small for percentile language). Stats + caveats in the cohort artifact; the prior universe-of-6 percentile is superseded by cohort placement.",
       "status": "computed",
-      "source": "data/analytics/supplement.json (fee_percentile)",
-      "section": "fee_percentile",
+      "source": "data/cohorts/private_credit.json",
+      "section": "stats (R4 phrasing by tark_cohort)",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-09)",
+      "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
     "2.10": {

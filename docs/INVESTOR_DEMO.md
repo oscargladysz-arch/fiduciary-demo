@@ -35,6 +35,11 @@ The build refuses to emit the bundle if any plan-sponsor token would leak.
 4. Open the Pages URL, hard-refresh (Cmd+Shift+R) to bust module cache.
 5. Land on **Reference Plans** with the tech/media plan selected (default).
 
+## Cohort build notes
+- Roster is 14 (6 full-depth + 8 cohort-depth); cohorts view under The Record.
+- Full gate suite runs in ~13s; no pre-commit/pre-push split needed (R5).
+- Series chunk lazy-loads (series.js); hard-refresh twice after redeploys.
+
 ## Known rough edges (workbench build)
 - Search queries and pins are local (localStorage) by design — they never
   enter URLs; a shared link reproduces configuration, not your query text.

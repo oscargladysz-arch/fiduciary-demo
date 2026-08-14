@@ -496,3 +496,17 @@ body[data-density="compact"] h1 { font-size: 20px; }
   .rollup { grid-template-columns: repeat(3, 1fr); }
   .cardgrid.g2 { grid-template-columns: 1fr; }
 }
+
+/* ------------------------------------------------------- cohort ranges */
+.rangerow { padding: 8px 0 14px; }
+.rangerow .rlabel { font-size: 12.5px; font-weight: 600; margin-bottom: 6px; }
+.rtrack { position: relative; height: 10px; background: var(--line-2);
+  border-radius: 5px; }
+.rmark { position: absolute; top: -3px; width: 3px; height: 16px;
+  background: var(--plum-700); transform: translateX(-1px); }
+.rmark span { position: absolute; top: 16px; left: -8px; font-size: 9px;
+  color: var(--ink-3); font-family: var(--tnum); }
+.rmed { position: absolute; top: -1px; width: 2px; height: 12px;
+  background: var(--warn); }
+.rminmax { display: flex; justify-content: space-between; font-size: 10px;
+  color: var(--ink-3); font-family: var(--tnum); margin-top: 16px; }

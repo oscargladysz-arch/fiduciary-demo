@@ -43,3 +43,23 @@ from the statuses (machine-parsed: keep the `- key cell_id —` line format).
 - breit net assets — carry the NAV-by-class total into a typed cell
 
 ### Then: everything else at `extracted-unverified`, per product, in cell order.
+
+## Cohort roster additions (2026-08-15) — ordered by demo salience
+
+The eight cohort-tier products' comparison-critical cells, queued after the
+existing items. Fee/liquidity traps and the exhibits the demo leans on first:
+
+- ssss 2.1 — the 1.75%-on-GROSS-assets externalization fee (regime change; demo-load-bearing)
+- sreit 3.1 — the cap shrink-and-suspension chronology (2% -> 0.33% -> 0.5% -> closed)
+- sreit 3.3 — gating story quantified (requests exceeded limits since Oct 2022)
+- bcred 2.2 — two-part BDC incentive fee (12.5% income / 5% hurdle / 12.5% gains)
+- pflex 2.1 — the LESSER-of dual fee base (novel base enum)
+- ares_pmf 2.2 — 12.5% Loss-Recovery-Account incentive (mirrors hl_paf's 2025 restructure)
+- jll_ipt 2.2 — 10%-over-7% performance fee with three fee-free years
+- jll_ipt 3.1 — daily-dealing / quarterly-cap plan (the liquidity contrast)
+- amg_pantheon 2.1 — 0.70% on net assets (cohort's lowest headline rate)
+- arkvx 3.1/3.3 — interval cadence + clean 5% fulfillment record
+- ssss 1.11 — rename/ticker lineage (SuRo -> Neostellar, SSSS -> NSLR)
+- bcred/sreit/pantheon/ssss quarterly NAV series spot-checks (data/series_quarterly/)
+- remaining critical-set cells (1.2, 2.3, 2.6, 2.7, 4.1, 4.5, 5.1, 6.2, 6.4) per product
+- facts hand-mappings for the 8 new products (data/facts/ vs cells)

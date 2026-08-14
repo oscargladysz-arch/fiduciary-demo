@@ -153,6 +153,34 @@ def build_memo(key: str) -> Path:
             row.cells[1].width = Inches(0.8)
             row.cells[2].width = Inches(3.3)
 
+    # ---- cohort placement + exclusion log (peer-comparison layer) ----
+    facts_path = DATA / "facts" / f"{key}.json"
+    if facts_path.exists():
+        fdoc = json.loads(facts_path.read_text())
+        cid = fdoc.get("cohort_id")
+        cpath = DATA / "cohorts" / f"{cid}.json"
+        if cid and cpath.exists():
+            co = json.loads(cpath.read_text())
+            doc.add_heading("Peer cohort placement", level=1)
+            doc.add_paragraph(
+                f"Evidence depth tier: {fdoc.get('depth', 'cohort').upper()}. "
+                f"Cohort: {co['label']} (n={co['n']}). Membership rationale: "
+                f"{fdoc.get('membership_rationale', '')}")
+            v29 = p["cells"]["2.9"].get("value")
+            if v29:
+                doc.add_paragraph(str(v29))
+            comp = co.get("composite", {})
+            if comp.get("refused"):
+                doc.add_paragraph("Cohort composite: REFUSED — "
+                                  + comp.get("reason", ""))
+            for cv in co.get("caveats", []):
+                doc.add_paragraph(f"Caveat: {cv}", style="List Bullet")
+            doc.add_paragraph(
+                "Cohort exclusion log: every candidate considered and not "
+                "admitted is recorded with its reason in "
+                "data/roster_decisions.md (rendered on the site's Cohorts "
+                "view). Membership is an argued judgment, not a tag.")
+
     doc.add_heading("Provenance", level=1)
     counts: dict[str, int] = {}
     for cell in p["cells"].values():

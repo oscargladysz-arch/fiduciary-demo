@@ -491,6 +491,61 @@ with sync_playwright() as pw:
             memo_bad.append(k)
     check("all decision memos served", not memo_bad, "; ".join(memo_bad))
 
+    # ---------- cohort layer (C4) ----------
+    t = view_text("cohorts")
+    check("cohort page renders with caveats + rationale + exclusion log",
+          "Comparability caveats" in t and "Membership rationales" in t
+          and "Exclusion log" in t)
+    check("cohort range bars render",
+          page.locator(".rangerow").count() >= 3)
+    t = page.evaluate("""() => { window.tarkSetState({view: 'cohorts',
+        cohort: 'venture'}); return document.getElementById('view').innerText; }""")
+    check("venture cohort shows the composite REFUSAL honestly",
+          "composite refused" in t.lower()
+          and "refused, not fudged" in t.lower().replace("\n", " "))
+    t = page.evaluate("""() => { window.tarkSetState({view: 'cohorts',
+        cohort: 'evergreen_pe'}); return document.getElementById('view').innerText; }""")
+    check("evergreen cohort carries the kkr fallback note",
+          "authorized fallback" in t)
+    # R4 phrasing law over the BUNDLE: no ordinal-percentile language for
+    # members of n<4 cohorts (evergreen n=5 members may use it)
+    import re as _re
+    small_cohorts = [c for c, d in bundle["cohorts"].items() if d["n"] < 4]
+    r4_bad = []
+    for k, meta in bundle["facts_meta"].items():
+        if meta.get("cohort_id") in small_cohorts:
+            v29 = str(bundle["products"][k]["cells"]["2.9"].get("value") or "")
+            if _re.search(r"\d+(st|nd|rd|th) percentile", v29):
+                r4_bad.append(k)
+    check("R4: no ordinal percentile phrasing in n<4 cohort placements",
+          not r4_bad, "; ".join(r4_bad))
+    check("R4: evergreen (n=5) placements DO use percentile language",
+          _re.search(r"\d+(st|nd|rd|th) percentile",
+                     str(bundle["products"]["hl_paf"]["cells"]["2.9"]["value"])) is not None)
+    # screener cohort filter correctness
+    page.evaluate("""() => window.tarkSetState({view: 'screener',
+        f_cohort: 'private_credit', f_base: '', f_tax: ''})""")
+    pc_rows = page.evaluate("""() =>
+        document.querySelectorAll('table.screener tbody tr').length""")
+    check("screener: cohort filter private_credit returns exactly 3", pc_rows == 3)
+    page.evaluate("""() => window.tarkSetState({f_cohort: '', f_depth: 'cohort'})""")
+    d_rows = page.evaluate("""() =>
+        document.querySelectorAll('table.screener tbody tr').length""")
+    check("screener: depth=cohort returns exactly the 8 cohort-tier products",
+          d_rows == 8, str(d_rows))
+    page.evaluate("""() => window.tarkSetState({f_depth: ''})""")
+    # DXYZ/NSLR exhibit
+    view_text("dxyz")
+    check("premium-pattern exhibit renders (NSLR panel + chart)",
+          page.locator("#nslrpanel svg").count() == 1
+          and "DISCOUNT" in page.locator("#nslrpanel").inner_text())
+    # compare peer-suggest + cross-wrapper caveats
+    page.evaluate("""() => window.tarkSetState({view: 'compare',
+        compare: 'cliffwater_cclfx,bcred'})""")
+    t = page.locator("#view").inner_text()
+    check("cross-wrapper comparison surfaces caveats automatically",
+          "Cross-wrapper comparison" in t and "LEVERAGE-REGIME MIX" in t)
+
     check("no page errors across the whole run", not errors,
           "; ".join(errors[:3]))
     browser.close()
