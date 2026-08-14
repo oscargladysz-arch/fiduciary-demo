@@ -70,9 +70,26 @@ PRODUCT_PROFILES = {
         "price_nav_decoupled": True,            # cells 1.10 / 4.7: -90.3% DD,
         "source_cells": ["1.10", "4.7"],        # +188.6% cum, 162.6% vol
     },
+    "pflex": {
+        "strategy": "private_credit",
+        "series": "pflex",
+        "granularity": "monthly",
+        "self_declared": None,   # cell 5.1: documented absence (comparator
+                                 # index shown in shareholder report is
+                                 # expressly not a designated benchmark)
+        "source_cells": ["5.1", "1.1", "1.2"],
+    },
     # profiles below are filled by fill_profile_from_cells() at selection time
     # from the extracted 1.2 evidence (annualized since-inception, Class I) —
     # values injected by run_benchmark.py, never hard-coded here
+    "bcred": {
+        "strategy": "private_credit",
+        "series": None,
+        "granularity": "annual",
+        "fy_returns": None, "fy_window": None,   # injected from profiles_input
+        "self_declared": None,                    # cell 5.1: documented absence
+        "source_cells": ["1.2", "5.1"],
+    },
     "kkr_kpec": {
         "strategy": "pe_conglomerate",
         "series": None,
@@ -103,10 +120,14 @@ STRATEGY_MENU = {
          "lane": "B", "series": None, "provider": "Cliffwater (the Fund's own adviser)",
          "independent": False, "data": "quarterly-manual", "strategy_match": 3,
          "match_note": "direct lending - exact strategy match"},
-        {"id": "peer_credit", "name": "Peer cohort: same-strategy interval credit funds",
-         "lane": "C", "series": None, "provider": "constructed",
-         "independent": True, "data": "none", "strategy_match": 3,
-         "match_note": "no same-strategy peer in current 6-product universe"},
+        {"id": "peer_credit", "name": "Peer cohort: private_credit (cclfx, "
+                                      "bcred, pflex)",
+         "lane": "C", "series": None, "provider": "constructed (Tark cohort engine)",
+         "independent": True, "data": "annual", "strategy_match": 3,
+         "match_note": "n=3 equal-weight annual composite on printed FY "
+                       "returns (data/cohorts/private_credit.json); "
+                       "cross-wrapper mix (interval + BDC) disclosed in the "
+                       "cohort caveat block"},
         {"id": "pme_bkln", "name": "PME / Direct Alpha vs BKLN",
          "lane": "D", "series": "bkln", "provider": "constructed (Tark)",
          "independent": True, "data": "daily", "strategy_match": 2,

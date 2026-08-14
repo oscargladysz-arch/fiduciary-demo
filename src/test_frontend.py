@@ -181,10 +181,22 @@ with sync_playwright() as pw:
     t = view_text("liquidity", plan="plan_restaurant_hourly",
                   product="cliffwater_cclfx")
     check("plan switch changes liquidity: restaurant tail 28.2%", "28.2" in t)
-    ill_missing = [f"{pl}/{pr}" for pl in PLANS for pr in PRODUCTS
-                   if "ILLUSTRATIVE" not in view_text("liquidity", pl, pr)]
-    check("ILLUSTRATIVE label visible for all 24 liquidity combos",
+    # every combo WITH a liquidity match must show ILLUSTRATIVE; combos whose
+    # profile has not landed (cohort-tier, cell 3.1 pending) must say so
+    # honestly instead — both states are asserted, neither is skipped
+    ill_missing, pend_missing = [], []
+    for pl in PLANS:
+        for pr in PRODUCTS:
+            t = view_text("liquidity", pl, pr)
+            if f"{pl}__{pr}" in bundle["liquidity"]:
+                if "ILLUSTRATIVE" not in t:
+                    ill_missing.append(f"{pl}/{pr}")
+            elif "pending" not in t.lower():
+                pend_missing.append(f"{pl}/{pr}")
+    check("ILLUSTRATIVE label visible for every matched liquidity combo",
           not ill_missing, "; ".join(ill_missing[:4]))
+    check("matchless combos state the pending profile honestly",
+          not pend_missing, "; ".join(pend_missing[:4]))
 
     # ---------- 6. interactive recompute sanity ----------
     view_text("pme", product="cliffwater_cclfx")
@@ -305,7 +317,8 @@ with sync_playwright() as pw:
           page.locator("#prodchart svg").count() == 1)
     t = view_text("coverage")
     check("taxonomy line on screen", "0 unresolved" in t)
-    check("coverage rings render", page.locator("#prodrings .ring").count() == 6)
+    check("coverage rings render (one per roster product)",
+          page.locator("#prodrings .ring").count() == len(PRODUCTS))
     check("taxonomy donut renders", page.locator("#taxdonut svg").count() == 1)
     t = view_text("fees")
     check("fee bar chart renders", page.locator("#feechart svg").count() == 1)

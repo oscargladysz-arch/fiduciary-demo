@@ -1,5 +1,8 @@
 {
   "product_key": "kkr_kpec",
+  "cohort_id": "evergreen_pe",
+  "depth": "full",
+  "membership_rationale": "'34-Act conglomerate of controlled PE businesses - joins under the authorized fallback (its Reg D twins have no public filings); cross-wrapper caveats carried by the cohort caveat block.",
   "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {

@@ -1,0 +1,84 @@
+{
+  "what": "Comparability caveats by wrapper-type pair, assembled into each cohort's caveat block. Maintained as data (R3): the engine composes prose from these entries, it does not invent them. pricing_class (NAV|MARKET) governs composite refusal; pricing_basis text feeds captions.",
+  "wrapper_attributes": {
+    "interval_23c3": {
+      "liquidity_law": "Rule 23c-3 OBLIGATION (board cannot skip a window)",
+      "nav_cadence": "daily NAV",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "pricing_basis": "NAV",
+      "pricing_class": "NAV"
+    },
+    "tender_offer": {
+      "liquidity_law": "board-DISCRETIONARY tender offers (nothing compels the next one)",
+      "nav_cadence": "daily-to-monthly NAV",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "pricing_basis": "NAV",
+      "pricing_class": "NAV"
+    },
+    "nontraded_bdc": {
+      "liquidity_law": "board-discretionary share repurchases",
+      "nav_cadence": "quarterly NAV determinations",
+      "leverage_regime": "BDC 150% asset-coverage regime - materially MORE leverage headroom than 1940-Act funds",
+      "pricing_basis": "NAV",
+      "pricing_class": "NAV"
+    },
+    "nontraded_reit": {
+      "liquidity_law": "share-repurchase plan with monthly/quarterly caps, board may amend or suspend",
+      "nav_cadence": "monthly appraisal NAV",
+      "leverage_regime": "charter-level borrowing limits; no 1940-Act coverage test",
+      "pricing_basis": "NAV (appraisal)",
+      "pricing_class": "NAV"
+    },
+    "nontraded_llc": {
+      "liquidity_law": "board-discretionary share repurchases",
+      "nav_cadence": "monthly transactional NAV",
+      "leverage_regime": "no 1940-Act leverage limits (34-Act conglomerate)",
+      "pricing_basis": "transactional NAV",
+      "pricing_class": "NAV"
+    },
+    "listed_cef": {
+      "liquidity_law": "continuous exchange dealing",
+      "nav_cadence": "quarterly filed NAV",
+      "leverage_regime": "1940-Act limits",
+      "pricing_basis": "MARKET PRICE - premium/discount to NAV is the investor's actual basis",
+      "pricing_class": "MARKET"
+    },
+    "listed_bdc": {
+      "liquidity_law": "continuous exchange dealing",
+      "nav_cadence": "quarterly NAV determinations",
+      "leverage_regime": "BDC 150% asset-coverage regime",
+      "pricing_basis": "MARKET PRICE - premium/discount to NAV is the investor's actual basis",
+      "pricing_class": "MARKET"
+    }
+  },
+  "pair_caveats": [
+    {
+      "attrs": [
+        "pricing_basis"
+      ],
+      "rule": "differs",
+      "caveat": "PRICING-BASIS MIX: some members transact at NAV, others at exchange market price - return comparisons mix appraisal dynamics with premium/discount dynamics; composites across this line are refused, not averaged."
+    },
+    {
+      "attrs": [
+        "leverage_regime"
+      ],
+      "rule": "differs",
+      "caveat": "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds - fee bases and return volatility are not like-for-like."
+    },
+    {
+      "attrs": [
+        "liquidity_law"
+      ],
+      "rule": "differs",
+      "caveat": "LIQUIDITY-LAW MIX: Rule 23c-3 obligations, discretionary tenders, and repurchase plans give different worst-case exit rights; cadence numbers alone overstate comparability."
+    },
+    {
+      "attrs": [
+        "nav_cadence"
+      ],
+      "rule": "differs",
+      "caveat": "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing; volatility and drawdown comparisons inherit that difference (see de-smoothing lab)."
+    }
+  ]
+}

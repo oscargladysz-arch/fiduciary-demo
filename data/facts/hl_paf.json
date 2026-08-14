@@ -1,5 +1,8 @@
 {
   "product_key": "hl_paf",
+  "cohort_id": "evergreen_pe",
+  "depth": "full",
+  "membership_rationale": "Evergreen PE fund-of-funds/secondaries in a tender-offer wrapper - founding cohort member.",
   "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {

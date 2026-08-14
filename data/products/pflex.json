@@ -1,0 +1,549 @@
+{
+  "product_key": "pflex",
+  "fund_name": "PIMCO Flexible Credit Income Fund",
+  "cik": "1688554",
+  "wrapper": "TRUE interval fund (Rule 23c-3), flexible credit",
+  "depth": "cohort",
+  "cells": {
+    "1.1": {
+      "element": "Net total return series",
+      "value": "PARTIAL: only fiscal-year points printed. Institutional Class FY (June) total returns / FYE NAV: FY2021 +28.02% ($9.68), FY2022 -10.97% ($7.89), FY2023 +0.53% ($6.81), FY2024 +13.85% ($6.94), FY2025 +14.10% ($7.11). Fund net assets 6/30/2025 $3,596,873k (Institutional $2,703,469k of it). Intra-year series not printed in filings; daily NAV published via ticker PFLEX (Institutional).",
+      "status": "partial",
+      "source": "N-CSR FY2025 (filed 2025-09-05, FYE 2025-06-30), CIK 1688554",
+      "section": "Consolidated Financial Highlights; Important Information About the Funds",
+      "quote": "Total return is calculated by determining the percentage change in NAV in the specific period.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.2": {
+      "element": "Trailing & calendar-year returns",
+      "value": "Average Annual Total Return, period ended 6/30/2025 (1Y / 5Y / since commencement 02/22/17): Institutional (PFLEX) 14.10% / 8.27% / 6.09%; Class A-1 (PFAIX) 13.52 / 7.85 / 5.51; Class A-2 (PFALX) 13.52 / 7.67 / 5.41, and adjusted for max 3.00% sales charge 11.28 / 7.23 / 5.16; Class A-3 (PFASX) 13.25 / 7.46 / 5.18; Class A-4 (PFFLX) 13.25 / 7.46 / 5.28, adjusted 11.01 / 7.02 / 4.90. SEC-required comparison index ICE BofA US High Yield: 10.24 / 6.01 / 4.93. Calendar-year returns are not printed in the on-disk filings; fiscal-June-year class returns are in the Financial Highlights (see 1.1 / annual_series).",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05, FYE 2025-06-30), CIK 1688554",
+      "section": "PIMCO Flexible Credit Income Fund - Average Annual Total Return table (period ended June 30, 2025)",
+      "quote": "All Fund returns are net of fees and expenses and include applicable fee waivers and/or expense limitations.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.3": {
+      "element": "Gross vs net spread",
+      "value": "Gross = net currently: FY2025 Institutional ratios show 'Expenses' 5.12% identical to 'Expenses Excluding Waivers' 5.12% (and 1.97% = 1.97% excluding interest expense) - no active waiver spread; FY2025 waived-fees table lists only the EM sister fund (PFLEX $0 waived). Prospectus fee table (Oct 2025) has no waiver/reimbursement line. Only safety net: Expense Limitation Agreement (through 11/1/2025, auto-renewing 1-year terms) capping 'Specified Expenses' (organizational, LEI, pro rata Trustees' fees) at 0.07% of net assets, with 36-month PIMCO recoupment.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Note 9(d) Expense Limitation; Consolidated Financial Highlights ratios",
+      "quote": "to waive its management fee, or reimburse each Fund ... (the \u201cSpecified Expenses\u201d) exceed 0.07% of each Fund\u2019s net assets",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.4": {
+      "element": "Distribution history & composition",
+      "value": "Policy: income dividends declared daily, paid monthly. Institutional per-share distributions (all From Net Investment Income; $0.00 From Net Realized Capital Gain every year): FY2021 $0.77, FY2022 $0.80, FY2023 $1.11, FY2024 $0.76, FY2025 $0.77. Fund-level tax-basis distributions (thousands): FY2025 ordinary income $340,442 / LT capital gain $0 / return of capital $0; FY2024 $308,168 / $0 / $0. FY2025 ordinary dividends: 7.41% qualified dividend income; qualified interest income $267,013k.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus (filed 2025-10-24) + N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Prospectus 'Distributions'; N-CSR Financial Highlights, tax-basis distributions table, Federal Income Tax Information",
+      "quote": "The Fund intends to declare income dividends daily and distribute them to Common Shareholders monthly",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.5": {
+      "element": "Underlying sleeve/GP performance",
+      "value": "PFLEX invests directly across public and private credit instruments (position-level Consolidated Schedule of Investments); there are no sub-advised sleeves and no underlying-fund IRR/return tables. Private Funds are disclosed only as a permitted investment with generic two-layer-fee risk language - no underlying-vehicle performance is printed.",
+      "status": "n/a - not publicly available: direct multi-sector credit portfolio; no sleeve or underlying-GP/fund-level return series is printed in any on-disk filing",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Investment Objective and Strategy Overview; Consolidated Schedule of Investments",
+      "quote": "utilizing a flexible asset allocation strategy among multiple public and private credit sectors in the global credit markets",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.6": {
+      "element": "Volatility & max drawdown",
+      "value": "Computed from daily adj-close (distributions reinvested), monthly sampling (n=114): annualized vol 8.62%; max drawdown -19.38% (full history since 2017-02-23). A REAL drawdown record across two crises - contrast appraisal-based peers.",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (stress_windows.pflex) + data/series/pflex.csv",
+      "section": "computed diagnostics",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.7": {
+      "element": "De-smoothed volatility",
+      "value": "De-smoothed (Geltner AR1) annualized vol 9.81% vs 8.62% observed (rho 0.124, n=114). Low-to-moderate autocorrelation - daily-priced multi-sector credit shows far less smoothing than appraisal-based peers.",
+      "status": "computed",
+      "source": "data/analytics/supplement.json + data/series/pflex.csv",
+      "section": "computed diagnostics",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.8": {
+      "element": "Risk-adjusted metrics (PME etc)",
+      "value": "KS-PME 1.2639 / Direct Alpha 2.5%/yr vs Senior loan investable proxy (BKLN, for Morningstar LSTA class) over 2017-02-23 to 2026-08-13 (fund 1.7811x vs index 1.4092x). Window-sensitivity disclosure applies (methodology 3); explorable in the Analysis Lab.",
+      "status": "computed",
+      "source": "data/benchmarks/pflex_selection.json (primary.comparison)",
+      "section": "primary.comparison",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.9": {
+      "element": "Stress-window performance",
+      "value": "Computed stress windows (daily adj): CY2022 rate shock -15.18% (max dd -17.89%); COVID Feb-Apr 2020 -18.63% (dd -24.6%); worst full-history peak-to-trough -24.6%. The cohort's only member with real crisis prints.",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (stress_windows.pflex)",
+      "section": "stress_windows",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.10": {
+      "element": "Market price & premium/discount",
+      "value": "Common Shares are not exchange-listed and have no trading market; purchases are at NAV (plus any sales charge) and liquidity is via quarterly NAV repurchase offers only.",
+      "status": "n/a - not publicly available: no market price exists for this unlisted continuously-offered interval fund; shares are sold and repurchased at NAV, so premium/discount is undefined",
+      "source": "486BPOS prospectus (filed 2025-10-24), CIK 1688554",
+      "section": "Prospectus cover / Fund summary",
+      "quote": "The Fund\u2019s Common Shares are not listed for trading on any national securities exchange. The Fund\u2019s Common Shares have no trading market and no market is expected to develop.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.11": {
+      "element": "Track record & manager tenure",
+      "value": "Fund and Institutional Class inception 02/22/2017 (about 8.4-year track record at FYE 6/30/2025); class inceptions: A-4 11/30/2018, A-2 10/28/2019, A-3 11/09/2020, A-1 01/29/2021. Diversified. Portfolio managers as of 9/2/2025 - Item 13 lists eleven individuals with primary day-to-day responsibility: Daniel J. Ivascyn (Group CIO; lead PM since inception Feb 2017), Alfred T. Murata (PM since inception Feb 2017), Jamie Weinstein (since Nov 2020; ex-KKR special situations), and, each since April 2025, Jason Steiner, Josh Anderson, Russell Gannaway, Jason Duko, Matthew Tuten, Michael Chiao, Vineet Agrawal and Will Dionisio. Effective 4/1/2025, Ivascyn, Murata, Weinstein, Steiner, Anderson and Gannaway are collectively responsible for the overall portfolio; Duko, Tuten, Chiao, Agrawal and Dionisio have sector-focused responsibilities.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Inception dates/diversification table; Item 13. Portfolio Managers of Closed-End Management Investment Companies",
+      "quote": "Mr. Ivascyn has been the lead portfolio manager of the Fund since its inception in February 2017.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.1": {
+      "element": "Management fee (rate AND base)",
+      "value": "RATE AND BASE - effective 4/1/2025: annual fee, payable monthly, equal to the LESSER of (i) 1.30% of average daily 'total managed assets' (total assets including reverse-repo/dollar-roll/borrowing assets, minus accrued liabilities other than those financings) and (ii) 1.75% of average daily net assets (excluding preferred). Prior to 4/1/2025: 1.30% of total managed assets. Unified management fee: PIMCO also pays most operating expenses (audit, custody, legal, transfer agency, printing). Prospectus fee table states Management Fees 1.75% as % of net assets attributable to common shares. Board approved the amendment 3/26/2025 partly on PIMCO's representation fees collected would not be higher than under the prior rate.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Note 9(a) Fees and Expenses + fee-rate table footnote (3); Important Information About the Funds; 15(c) approval discussion",
+      "quote": "the lesser of (i) 1.30% of the Fund\u2019s average daily \u201ctotal managed assets\u201d and (ii) 1.75% of the Fund\u2019s average daily net assets",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.2": {
+      "element": "Incentive fee terms",
+      "value": "Documented absence: no incentive or performance fee at fund level. The fee structure is the unified management fee plus class-level distribution/servicing fees only; the prospectus Summary of Fund Expenses has no incentive-fee line, and every 'incentive fee' occurrence in the filings (2 in N-CSR, prospectus conflicts section) refers to OTHER PIMCO client accounts in allocation-conflict disclosure, not to this Fund.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus (filed 2025-10-24) + N-CSR FY2025 Note 9, CIK 1688554",
+      "section": "Summary of Fund Expenses footnote 1; Note 9 Fees and Expenses",
+      "quote": "The Fund pays for the advisory, supervisory and administrative services it requires under what is essentially an all-in fee structure (the \u201cunified management fee\u201d).",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.3": {
+      "element": "Total expense ratio & waivers",
+      "value": "FY2025 actual ratios to average net assets (Consolidated Financial Highlights, FYE 6/30/2025; gross=net, no waivers): Institutional 5.12% incl. interest expense / 1.97% excl. interest; A-1 6.45% / 2.60% (f); A-2 5.62% / 2.47%; A-3 5.87% / 2.72%; A-4 5.80% / 2.70%. Prospectus fee table (486BPOS, as % of net assets attributable to common shares, reflecting FY2025 avg reverse-repo leverage 35.41% of total managed assets): Total Annual Fund Operating Expenses 4.91% / 5.41% / 5.41% / 5.66% / 5.66% (Inst / A-1 / A-2 / A-3 / A-4), of which Interest Payments on Borrowed Funds 3.15% and Other Expenses 0.01%; excluding interest 1.76% / 2.26% / 2.26% / 2.51% / 2.51%.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus (filed 2025-10-24) + N-CSR FY2025 Financial Highlights, CIK 1688554",
+      "section": "Summary of Fund Expenses (Annual Fund Operating Expenses + footnote 3); Consolidated Financial Highlights - Ratios to Average Net Assets",
+      "quote": "Excluding such expense, Total Annual Fund Operating Expenses are 1.76 %, 2.26 %, 2.26 %, 2.51 % and 2.51 %",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.4": {
+      "element": "AFFE",
+      "value": "No AFFE line: the Summary of Fund Expenses (486BPOS, Oct 2025) contains only Management Fees 1.75%, Distribution and/or Service (12b-1) Fees N/A-0.75%, Interest Payments on Borrowed Funds 3.15%, Other Expenses 0.01%; the string 'Acquired Fund' appears zero times in the entire prospectus - documented structural absence of an Acquired Fund Fees and Expenses line item.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus (filed 2025-10-24), CIK 1688554",
+      "section": "Summary of Fund Expenses - Annual Fund Operating Expenses table",
+      "quote": "\u201cOther Expenses\u201d are based on estimated amounts for the current fiscal year.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.5": {
+      "element": "Underlying GP economics",
+      "value": "The only underlying-vehicle economics disclosure is generic Private Funds risk language (two layers of asset-based fees plus any performance fees IF the Fund invests through Private Funds); no fee ranges, no named underlying GPs, no AFFE.",
+      "status": "n/a - not publicly available: no numeric underlying-fund fee ranges are printed anywhere in the on-disk filings; the fund invests directly and its fee table carries no AFFE line",
+      "source": "486BPOS prospectus (filed 2025-10-24), CIK 1688554",
+      "section": "Other Pooled Investment Vehicles / Private Funds risk",
+      "quote": "a shareholder would bear two layers of asset-based fees and expenses \u2013 at the Fund level and the Private Fund level",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.6": {
+      "element": "Loads & servicing fees",
+      "value": "Per class (486BPOS, Oct 2025): Institutional (PFLEX) - no load, no 12b-1, minimum $1,000,000 initial / no subsequent minimum. A-1 (PFAIX) - no load, 0.50% distribution/servicing. A-2 (PFALX) - max initial sales charge 3.00% permitted, currently 2.00% elected (breakpoints; $250,000+ load-waived but 1.00% EWC if repurchased within 12 months), 0.50% distribution/servicing. A-3 (PFASX) - no load, 0.75%. A-4 (PFFLX) - same load schedule as A-2, 0.75%. A-class minimums $2,500 initial / $50 subsequent. Distribution/servicing fees are % of average daily net assets of the class under 12b-1-compliant Distribution and Servicing Plans (exemptive-order condition); Distributor PIMCO Investments LLC retained $11,308 of PFLEX CDSCs in FY2025.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus (filed 2025-10-24) + N-CSR FY2025 Note 9(b), CIK 1688554",
+      "section": "Summary of Fund Expenses - Shareholder Transaction Expenses; Plan of Distribution - Share Classes / Sales Charge; Note 9(b) Distribution and Servicing Fees",
+      "quote": "Although the Fund is permitted to charge a maximum sales charge of 3.00%, the Fund has elected to currently charge a maximum sales charge of 2.00%.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.7": {
+      "element": "Early repurchase fee",
+      "value": "Documented absence of a Rule 23c-3 early repurchase fee: fee table 'Maximum Early Withdrawal Charge (Load)' is None for Institutional/A-1/A-3 and 1.00% for A-2/A-4 - and that EWC applies ONLY to load-waived purchases of $250,000+ repurchased within 12 months of purchase (a CDSC substitute for the waived sales charge, not a repurchase fee on interval-fund tenders generally). The phrase 'repurchase fee' appears once in the prospectus, only in the unified-fee services list ('repurchase fee application and monitoring systems and procedures (if applicable)'); no 2% 23c-3 repurchase fee is charged.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus (filed 2025-10-24), CIK 1688554",
+      "section": "Summary of Fund Expenses; Early Withdrawal Charges - Class A-2 and Class A-4 Common Shares",
+      "quote": "you will be subject to a 1% early withdrawal charge (\u201cEWC\u201d) if your Class A-2 or Class A-4 Common Shares are repurchased within 12 months of their purchase.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.8": {
+      "element": "CIT fee schedule",
+      "value": "Not a collective investment trust: PFLEX is a 1940-Act registered closed-end interval fund with SEC-registered share classes; no CIT fee schedule exists.",
+      "status": "n/a - CIT only",
+      "source": "486BPOS prospectus (filed 2025-10-24), CIK 1688554",
+      "section": "Fund summary - interval fund structure",
+      "quote": "The Fund is an \u201cinterval fund,\u201d a type of fund that, in order to provide liquidity to shareholders, has adopted a fundamental investment policy",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.9": {
+      "element": "Fee peer percentile",
+      "value": "Cohort placement (private_credit, R4 phrasing): mgmt fee: above the cohort median of 1.25 (n=3 \u2014 too small for percentile language) | expense ratio (bases differ - see notes): at the cohort median of 1.97 (n=3 \u2014 too small for percentile language) | repurchase cap: at the cohort median of 5 (n=3 \u2014 too small for percentile language). Stats + caveats in the cohort artifact.",
+      "status": "computed",
+      "source": "data/cohorts/private_credit.json",
+      "section": "stats (R4 phrasing by tark_cohort)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.10": {
+      "element": "Value justification",
+      "value": "Value-for-fees justification is a committee synthesis of the fee evidence against performance and services. Product-side input on file: the FY2025 15(c) discussion records that PFLEX's contractual and actual management fee rates under the unified fee were above the Broadridge Expense Group medians, with the Trustees preferring total-expense-ratio comparisons given the unified structure.",
+      "status": "n/a - not publicly available: requires the plan committee's own value-for-fees determination - workflow output, not public product data (inputs live in cells 2.1-2.7)",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Approval of Investment Management Agreement (15(c) discussion)",
+      "quote": "The Trustees determined that a comparison of each Fund\u2019s total expense ratio with the total expense ratios of its Broadridge Expense Group would generally provide more meaningful comparisons",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.1": {
+      "element": "Wrapper liquidity terms",
+      "value": "Interval fund under Rule 23c-3: FUNDAMENTAL policy of quarterly repurchase offers for between 5% and 25% of outstanding Common Shares at NAV; currently expects 5% per quarter (the minimum permitted). Cap base = aggregate Common Shares outstanding as of the Repurchase Request Deadline; if oversubscribed the Fund may (not must) repurchase up to 2% more, then prorates (de minimis exception for holders of <100 shares tendering all). Deadlines expected each February, May, August and November; written Repurchase Offer Notice at least 21 calendar days before each deadline. Mechanism: NAV-priced written tender under Rule 23c-3, Board-approved.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus (filed 2025-10-24), CIK 1688554",
+      "section": "Fund summary - Repurchase Offers; Principal Risks - Repurchase Offers Risk",
+      "quote": "has adopted a fundamental investment policy to make quarterly offers to repurchase between 5% and 25% of its outstanding Common Shares at NAV",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.2": {
+      "element": "Repurchase mechanics",
+      "value": "Current cycle (N-23C3A, Date of Notification July 2, 2026; joint filing for CAFLX/PFLEX/EMFLX/PMFLX): PFLEX offer amount 5% of outstanding shares; Repurchase Request Deadline NYSE close (ordinarily 4:00 p.m. ET) August 5, 2026, strictly observed; Repurchase Pricing Date expected the same day (must be no later than 14 days after the deadline); payment distributed no later than 7 calendar days after the Pricing Date; requests modifiable/withdrawable any time before the deadline; next quarterly deadline expected November 5, 2026.",
+      "status": "extracted-unverified",
+      "source": "N-23C3A repurchase offer notification (filed 2026-07-02), CIK 1688554",
+      "section": "Repurchase Offer Statement paras. 3 (Deadline), 4 (Pricing Date), payment terms",
+      "quote": "in settlement of the Fund\u2019s repurchase of shares no later than seven (7) calendar days after the Repurchase Pricing Date",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.3": {
+      "element": "Repurchase history",
+      "value": "FY2025 repurchase results (N-CSR Note 14 table, all four offers at 5%): deadline 8/7/2024 - 18,406,351 shares tendered, $129,396,644 paid, 4.32% of outstanding repurchased; 11/7/2024 - 13,634,106, $98,301,900, 3.10%; 2/7/2025 - 11,671,831, $83,103,435, 2.52%; 5/7/2025 - 11,871,031, $82,859,799, 2.36%. Every tendered share was repurchased; Proration % 'N/A' in all four rows - no offer oversubscribed, no gating. Cadence paper trail on disk: 8 consecutive quarterly N-23C3A filings (notifications 10/7/2024 through 7/2/2026; deadlines 11/7/24, 2/7/25, 5/7/25, 8/7/25, 11/7/25, 2/5/26, 5/5/26, 8/5/26), each at 5% for PFLEX - no skipped quarter.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05) + 8 N-23C3A filings 2024-10-07..2026-07-02, CIK 1688554",
+      "section": "Note 14. Repurchase Offering - PFLEX repurchase offers table; N-23C3A notifications",
+      "quote": "The following table summarizes the repurchase offers completed by the Fund for all share classes during the year ended June 30, 2025.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.4": {
+      "element": "Portfolio liquidity profile",
+      "value": "As of 6/30/2025 (thousands): total investments at fair value $5,379,220 - Level 1 $416,686 (7.7%), Level 2 $3,812,308 (70.9%), Level 3 $1,150,226 (21.4%); cash $7,146. Allocation (% of investments at value): loan participations/assignments 26.3%, non-agency MBS 22.0%, ABS 16.3%, corporate bonds 15.7%, short-term instruments 8.2%, common stocks 5.4%. Repurchase funding policy: available cash or sales of portfolio securities; Fund may hold back payments received on investments to accumulate cash.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Fair Value Measurements (Notes to Consolidated Schedule of Investments); Allocation Breakdown; Note 14",
+      "quote": "repurchases generally will be funded from available cash or sales of portfolio securities",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.5": {
+      "element": "TDF/CIT liquidity sleeve",
+      "value": "No CIT/TDF liquidity sleeve exists: liquidity is delivered by the wrapper itself via quarterly Rule 23c-3 repurchase offers at NAV.",
+      "status": "n/a - CIT only",
+      "source": "486BPOS prospectus (filed 2025-10-24), CIK 1688554",
+      "section": "Fund summary - unlisted closed-end interval fund",
+      "quote": "the Fund is structured as an \u201cinterval fund\u201d and conducts quarterly repurchase offers for a portion of its outstanding Common Shares",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.6": {
+      "element": "Fund leverage & facilities",
+      "value": "Leverage is via reverse repurchase agreements (no bank credit facility or preferred shares disclosed): payable for reverse repos $1,857,462k against net assets $3,596,873k at 6/30/2025 (~51.6% of net assets); Total Effective Leverage 34.13% of total managed assets at 6/30/2025; FY2025 average 35.41% of average total managed assets (54.82% of average net assets attributable to common shares) at a 5.66% weighted-average interest cost. Counterparty-level reverse-repo schedule printed (BNY, BOS, SOG, etc.; rates roughly 4.5-5.6%, predominantly ~5.1-5.6% on USD positions with small GBP positions near 4.5%; maturities into Dec 2025). Note: the management-fee base includes reverse-repo assets (see 2.1/6.3).",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus (filed 2025-10-24) + N-CSR FY2025, CIK 1688554",
+      "section": "Summary of Fund Expenses footnote 2; Consolidated Statement of Assets and Liabilities; Borrowings and Other Financing Transactions (reverse repos); leverage footnote (1)",
+      "quote": "leverage in the form of reverse repurchase agreements averaged over the fiscal year ended June 30, 2025, which represented 35.41 % of the Fund\u2019s average total managed assets",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.7": {
+      "element": "Plan participant liquidity demand",
+      "value": "No plan is attached to this cohort record. Product-side input on file: large-shareholder risk disclosure that concentrated repurchase requests can exceed the quarterly offer and trigger proration.",
+      "status": "n/a - not publicly available: plan-side demand profile requires the adopting plan's own participant data (Form 5500) - plan-side cell, not product data",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Principal Risks - Large Shareholder Risk / Repurchase Offers Risk",
+      "quote": "a Fund may be adversely impacted if such shareholders purchase or request repurchases of large amounts of Common Shares",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.8": {
+      "element": "Redemption stress test",
+      "value": "ILLUSTRATIVE redemption stress (computed, all four plans): tail turnover x2, active turnover x1.5 vs base scenario. Anchor plan: demand 19.2%/yr vs 20.0% capacity - within wrapper capacity (19.2% vs 20%) IF offers are not prorated",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__pflex_match.json (+3 plans)",
+      "section": "stressed_scenario (ILLUSTRATIVE)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.9": {
+      "element": "Product-to-plan liquidity match",
+      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of outstanding shares (fundamental 5-25% policy; currently 5%) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts for all four reference plans in data/liquidity/.",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__pflex_match.json",
+      "section": "verdict + reasons",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.1": {
+      "element": "Valuation policy & NAV frequency",
+      "value": "DAILY NAV: per-class NAV computed each NYSE trading day as of NYSE close (normally 4:00 p.m. ET) by dividing portfolio value plus other assets less liabilities by shares outstanding; not calculated on days the NYSE is closed. Assets with readily available market quotations at market value; all others fair-valued in good faith under Rule 2a-5, with the Board having designated the adviser PIMCO as Valuation Designee; later-known information is not used to retroactively adjust NAV.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Note 3. Investment Valuation and Fair Value Measurements (a) Investment Valuation Policies",
+      "quote": "On each day that the New York Stock Exchange (\u201cNYSE\u201d) is open, each Fund\u2019s shares are ordinarily valued as of the close of regular trading",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.2": {
+      "element": "Fair-value hierarchy (L1/2/3)",
+      "value": "As of 6/30/2025 (thousands): Investments in securities/affiliates at value - Level 1 $416,686, Level 2 $3,812,308, Level 3 $1,150,226, total $5,379,220 (L3 = 21.4% of investments). Derivative assets $14,910 (all L2); derivative liabilities $(39,425) including L3 $(2,704). Grand totals across investments + derivatives: L1 $416,686 / L2 $3,790,497 / L3 $1,147,522 = $5,354,705. L3 reconciliation and significant-unobservable-input tables printed per U.S. GAAP.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Fair Value Measurements summary table, Notes to Consolidated Schedule of Investments (PFLEX)",
+      "quote": "The following is a summary of the fair valuations according to the inputs used as of June 30, 2025",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.3": {
+      "element": "Independent valuation agent",
+      "value": "No independent third-party valuation agent is named: the Board designated the ADVISER, PIMCO, as Valuation Designee under Rule 2a-5 for all Fund investments; PIMCO carries out the designation through internal teams and committees under its own policies and procedures. External inputs come from Pricing Sources and broker-dealer quotations (see 4.4), not from an independent valuation firm.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Note 3. Investment Valuation and Fair Value Measurements",
+      "quote": "the Board has designated PIMCO as the valuation designee (\u201cValuation Designee\u201d) for each Fund to perform the fair value determination",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.4": {
+      "element": "Methodology by asset type",
+      "value": "By asset type: exchange-traded common stocks/ETFs/futures/rights/warrants at last reported sale or settlement price (Level 1); registered open-end funds at NAV (Level 1); fixed income (corporate, convertible and municipal bonds, agencies, sovereigns, bank loans, short-term paper) via broker/dealer quotes or Pricing Sources using internal models with observable inputs - yield curves, prepayment speeds, credit spreads, default rates (Level 2); mortgage-related and ABS via Pricing Source tranche-level models using current market data, estimated cash flows, market-based yield spreads and collateral performance (Level 2); foreign-close movement adjustments (Level 2); methods relying on significant unobservable inputs are categorized Level 3.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Note 3(c) Valuation Techniques and the Fair Value Hierarchy",
+      "quote": "valued on the basis of quotes obtained from brokers and dealers or Pricing Sources that use broker-dealer quotations, reported trades or valuation estimates",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.5": {
+      "element": "Auditor & opinion",
+      "value": "PricewaterhouseCoopers LLP, Kansas City, Missouri; opinion dated August 27, 2025 on the FY2025 financial statements (PFLEX presented on a consolidated basis) - unqualified ('present fairly, in all material respects'); PCAOB-registered; tenure: auditor of one or more investment companies in PIMCO Interval Funds since 2016 (~9 years at signing).",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Report of Independent Registered Public Accounting Firm (signature block)",
+      "quote": "We have served as the auditor of one or more investment companies in PIMCO Interval Funds since 2016.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.6": {
+      "element": "NAV restatement history",
+      "value": "None identified: searched 'restat', 'error correction' and 'reprocess' across all 11 on-disk stripped filings (N-CSR FY2025, 486BPOS 2025-10-24, 424B3 2025-04-04, eight N-23C3A 2024-10-07 through 2026-07-02) and grepped the raw HTML under data/raw/pflex/. Only 'restat' hits are the issuer name 'Corestate Capital Holding SA' in the Schedule of Investments and 'Amended and Restated' Declaration of Trust/Bylaws boilerplate; zero 'error correction' hits; no NAV restatement disclosed. Subsequent-events note: none identified requiring recognition or disclosure.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05) + all on-disk PFLEX filings, CIK 1688554",
+      "section": "Note 3(a) Investment Valuation Policies (NAV-calculation sentence); full-document search",
+      "quote": "The NAV of a Fund\u2019s shares, or each of its share classes, as applicable, is determined by dividing the total value of portfolio investments and other assets",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.7": {
+      "element": "Premium/discount check",
+      "value": "Not exchange-listed: shares transact at NAV; no market price exists, premium/discount undefined. (Contrast the venture cohort's market-priced members.)",
+      "status": "n/a - not publicly available: no market price for a non-listed NAV-transaction wrapper",
+      "source": "wrapper structure per cell 3.1",
+      "section": "n/a rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.8": {
+      "element": "Smoothing diagnostics",
+      "value": "Smoothing diagnostics: lag-1 rho 0.124 (n=114 monthly). Compare cohort: cclfx 0.139, breit 0.483 - pflex's daily mark-to-market pricing shows the least smoothing in the credit cohort.",
+      "status": "computed",
+      "source": "data/analytics/supplement.json + data/series/pflex.csv",
+      "section": "computed diagnostics",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.9": {
+      "element": "CIT unit valuation",
+      "value": "Not a CIT: valuation happens at the registered fund itself - daily per-class NAV at NYSE close (see 4.1); there is no CIT unit layer.",
+      "status": "n/a - CIT only",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Note 3(a) Investment Valuation Policies",
+      "quote": "each Fund\u2019s shares are ordinarily valued as of the close of regular trading (normally 4:00 p.m., Eastern time)",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.1": {
+      "element": "Self-declared benchmark",
+      "value": "Documented absence of a self-declared benchmark: the shareholder report shows ICE BofA US High Yield Index (1Y 10.24%, 5Y 6.01%, since 02/22/17 4.93%, as of 6/30/2025) solely because the SEC requires an appropriate broad-based index, and the Fund expressly disclaims it - not managed to an index, index not to be viewed as a benchmark and 'not intended to be indicative of the Fund's investment strategies, portfolio components or past or future performance.'",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "PFLEX performance page - index disclosure and Index Descriptions",
+      "quote": "the Fund is not managed to an index nor should the index be viewed as a \u201cbenchmark\u201d for the Fund\u2019s performance",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.2": {
+      "element": "Public index series",
+      "value": "PFLEX daily close+adj on disk (2,380 rows, 2017-02-23 to 2026-08-13, manifest-declared) + strategy proxy BKLN. Reproducible via series manifest.",
+      "status": "fetched",
+      "source": "data/series/series_manifest.json",
+      "section": "series inventory",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.3": {
+      "element": "Alt asset-class indices",
+      "value": "Candidates evaluated incl. paid/manual indices, with the peer cohort now a real lane-C candidate (7/12 - reaches threshold, outranked; retained as viable alternate). Full scoring + rejection ledger in the selection artifact.",
+      "status": "computed",
+      "source": "data/benchmarks/pflex_selection.json",
+      "section": "candidates + rejection log",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.4": {
+      "element": "Peer universe & returns",
+      "value": "Peer cohort private_credit (n=3: cclfx, bcred, pflex) - equal-weight annual composite on printed FY returns; cross-wrapper mix (interval + BDC) disclosed in the cohort caveat block. Membership rationales in data/facts; exclusions in data/roster_decisions.md.",
+      "status": "computed",
+      "source": "data/cohorts/private_credit.json",
+      "section": "members + composite",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.5": {
+      "element": "PME / Direct Alpha inputs",
+      "value": "PME inputs (computed): window 2017-02-23 to 2026-08-13; flows [-1 at start, 1.7811 at end]; index BKLN adj-close daily-anchored. KS-PME 1.2639, Direct Alpha 2.5%/yr.",
+      "status": "computed",
+      "source": "data/benchmarks/pflex_selection.json + data/benchmarks/profiles_input.json",
+      "section": "primary.comparison",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.6": {
+      "element": "Benchmark suitability memo",
+      "value": "Benchmark suitability memo is a constructed engine/workflow artifact, not filing data. Product-side input: the fund itself declares the SEC-required ICE BofA US High Yield Index non-indicative of its strategy (see 5.1).",
+      "status": "n/a - constructed (L3)",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "PFLEX performance page - index disclosure",
+      "quote": "Performance of an index is shown in light of a requirement by the Securities and Exchange Commission",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.7": {
+      "element": "Case-law tracker",
+      "value": "Case-law tracking is maintained at the cross-product level, not per product record.",
+      "status": "n/a - cross-product tracker",
+      "source": "n/a",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.1": {
+      "element": "Structure map",
+      "value": "Massachusetts business trust; closed-end management investment company continuously offering shares; interval fund (Rule 23c-3 fundamental policy); DIVERSIFIED; commenced operations 02/22/2017. Five share classes (Institutional/A-1/A-2/A-3/A-4; all NAV $7.11 at 6/30/2025) under an SEC exemptive order permitting multi-class structure with 12b-1-compliant distribution/servicing plans. Financials consolidated with three wholly-formed Delaware LLC subsidiaries - PFLEXLS I LLC, CLM 13648 LLC, MLM 13648 LLC - investment vehicles established so certain loans could be effected. Manager: PIMCO (majority-owned subsidiary of Allianz Asset Management of America LLC); unified-fee arrangement; SEC co-investment exemptive relief.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Note 1. Organization; Note 15. Basis for Consolidation; Note 9; inception/diversification table",
+      "quote": "PIMCO Flexible Credit Income Fund commenced operations on February 22, 2017. Each Fund is a closed-end management investment company that continuously offers its",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.2": {
+      "element": "Strategy & instrument complexity",
+      "value": "Flexible multi-sector credit: objective is attractive risk-adjusted returns and current income across global credit - corporate debt (fixed/variable/floating bonds, loans, convertibles and contingent convertibles, stressed/distressed/defaulted), mortgage-related and consumer instruments, CDOs including CLOs, government/sovereign debt, municipals, EM issuers; may invest without limit in investment grade OR below-investment-grade ('junk') securities. Instruments in use per FY2025 filings: loan participations/assignments (26.3% of investments), non-agency MBS (22.0%), ABS (16.3%), corporates (15.7%), plus reverse repos, forwards, futures, swaps; loan origination, Alt Lending ABS and Private Funds permitted. High complexity: leverage + derivatives + 21.4% Level 3.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Investment Objective and Strategy Overview; Allocation Breakdown as of June 30, 2025",
+      "quote": "investing, under normal circumstances across a wide array of global credit sectors, including corporate, mortgage, consumer, emerging market and municipal credit markets",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.3": {
+      "element": "Conflicts & affiliated transactions",
+      "value": "Affiliation web: PIMCO is a majority-owned subsidiary of Allianz Asset Management; Distributor PIMCO Investments LLC is a wholly-owned PIMCO subsidiary and retained PFLEX CDSCs ($11,308 FY2025). SEC co-investment exemptive relief permits investing alongside PIMCO affiliates and PIMCO-managed funds, subject to conditions. Leverage-fee conflict expressly acknowledged in the 15(c) discussion: the fee is charged on a base that includes reverse-repo leverage. The adviser also serves as Rule 2a-5 Valuation Designee (see 4.3); prospectus carries extensive allocation-of-investment-opportunities conflicts disclosure.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Note 9 (related parties), Note 10 Related Party Transactions (co-investment relief); 15(c) discussion",
+      "quote": "PIMCO may have a financial incentive for the Funds to use or continue to use leverage on which management fees are charged",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.4": {
+      "element": "Tax reporting (1099 vs K-1)",
+      "value": "Form 1099-DIV (literally printed): tax character of all dividends/distributions reported on Form 1099-DIV at each calendar year end; 'In January 2026, you will be advised on IRS Form 1099-DIV as to the federal tax status of the dividends and distributions received by you in calendar year 2025.' Regulated-fund 1099 reporting - no K-1.",
+      "status": "extracted-unverified",
+      "source": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
+      "section": "Distribution Information / Federal Income Tax Information (Unaudited)",
+      "quote": "The tax character of all dividends and distributions is reported on Form 1099-DIV",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.5": {
+      "element": "Service-provider web",
+      "value": "Investment Manager: PIMCO (Pacific Investment Management Company LLC), Newport Beach. Distributor/principal underwriter: PIMCO Investments LLC (affiliate). Primary custodian: State Street Bank and Trust Company (also fund accounting, sub-administration, compliance services). UMB Bank, n.a.: custodian for processing investor subscriptions and repurchases. Wells Fargo Bank, N.A.: custodian of certain Subsidiaries' assets. Transfer agent/registrar/dividend disbursement/DRIP agent: SS&C Global Investor and Distribution Solutions, Inc., 801 Pennsylvania Avenue, Kansas City, MO. Auditor: PricewaterhouseCoopers LLP, Kansas City, MO. As printed in the prospectus dated October 2025.",
+      "status": "extracted-unverified",
+      "source": "486BPOS prospectus (filed 2025-10-24), CIK 1688554",
+      "section": "Fund summary - service providers; Transfer agent paragraph",
+      "quote": "State Street Bank and Trust Company serves as the primary custodian of the Fund\u2019s assets",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.6": {
+      "element": "Plan operational fit",
+      "value": "Operational fit depends on the adopting plan's recordkeeper stack. Product-side facts already evidenced: daily NAV at NYSE close (4.1), NYSE-close order cut-offs at SS&C transfer agency with Authorized Intermediary transmission by 9:00 a.m. ET next business day, quarterly 23c-3 windows (3.1/3.2), service-provider web (6.5).",
+      "status": "n/a - not publicly available: requires plan-specific recordkeeper/trading integration facts - workflow cell completed per plan engagement, not public product data",
+      "source": "486BPOS prospectus (filed 2025-10-24), CIK 1688554",
+      "section": "Plan of Distribution - purchase/repurchase order processing",
+      "quote": "orders must be received in good order by the Fund's transfer agent, SS&C Global Investor and Distribution Solutions Inc., prior to NYSE Close",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.7": {
+      "element": "Participant communicability",
+      "value": "Communicability is a committee judgment built on the evidenced structure (6.1), high strategy/instrument complexity with leverage and 21.4% Level 3 (6.2), and simple 1099-DIV tax reporting (6.4). The fund's own disclosure frames shares as illiquid and long-term-only - a key participant-communication fact.",
+      "status": "n/a - not publicly available: requires plan-committee participant-communication assessment - workflow cell; product-side inputs already evidenced in 6.1/6.2/6.4",
+      "source": "486BPOS prospectus (filed 2025-10-24), CIK 1688554",
+      "section": "Fund summary - Repurchase Offers / unlisted closed-end fund",
+      "quote": "Investors should consider Common Shares of the Fund to be an illiquid investment.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.8": {
+      "element": "Fiduciary capacity self-assessment",
+      "value": "Fiduciary capacity self-assessment is the committee's own workflow output; no public filing supplies it. Product-side suitability framing on file: the prospectus limits suitability to long-term investors able to bear limited liquidity.",
+      "status": "n/a - workflow, not data",
+      "source": "486BPOS prospectus (filed 2025-10-24), CIK 1688554",
+      "section": "Fund summary - suitability",
+      "quote": "An investment in the Fund is suitable only for long-term investors who can bear the risks associated with the limited liquidity of the Common Shares.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    }
+  }
+}

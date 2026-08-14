@@ -14,7 +14,7 @@
     "annual_wrapper_capacity_pct": null,
     "outcome": "daily exchange liquidity; stress transmits to price, not to a fund gate"
   },
-  "plan_display_label": "US tire & rubber manufacturer bargaining-unit 401(k) plan (~$790M, OH)",
+  "plan_display_label": "US industrial manufacturer 401(k) plan (~$0.8B, OH)",
   "plan_direction": "total",
   "wrapper_facts": {
     "kind": "listed_cef",

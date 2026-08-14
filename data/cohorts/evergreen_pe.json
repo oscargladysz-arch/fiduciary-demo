@@ -1,0 +1,193 @@
+{
+  "cohort_id": "evergreen_pe",
+  "label": "Evergreen private equity ('40-Act funds + '34-Act conglomerate)",
+  "members": {
+    "hl_paf": {
+      "wrapper_type": "tender_offer",
+      "depth": "full",
+      "membership_rationale": "Evergreen PE fund-of-funds/secondaries in a tender-offer wrapper - founding cohort member."
+    },
+    "stepstone_spm": {
+      "wrapper_type": "tender_offer",
+      "depth": "full",
+      "membership_rationale": "Evergreen PE multi-strategy (secondaries-led) tender-offer fund - founding cohort member."
+    },
+    "kkr_kpec": {
+      "wrapper_type": "nontraded_llc",
+      "depth": "full",
+      "membership_rationale": "'34-Act conglomerate of controlled PE businesses - joins under the authorized fallback (its Reg D twins have no public filings); cross-wrapper caveats carried by the cohort caveat block."
+    },
+    "ares_pmf": {
+      "wrapper_type": "tender_offer",
+      "depth": "cohort",
+      "membership_rationale": "Secondaries-led evergreen PE tender-offer fund - wrapper and strategy twin of hl_paf/stepstone_spm."
+    },
+    "amg_pantheon": {
+      "wrapper_type": "tender_offer",
+      "depth": "cohort",
+      "membership_rationale": "Evergreen PE (Pantheon) tender-offer LLC - wrapper and strategy twin of hl_paf/stepstone_spm."
+    }
+  },
+  "n": 5,
+  "stats": {
+    "mgmt_fee_pct": {
+      "field": "mgmt_fee_pct",
+      "n": 3,
+      "median": 1.4,
+      "min": 1.25,
+      "max": 1.4,
+      "values": {
+        "hl_paf": 1.4,
+        "stepstone_spm": 1.4,
+        "kkr_kpec": 1.25
+      },
+      "missing": {
+        "ares_pmf": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "amg_pantheon": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "expense_ratio_pct": {
+      "field": "expense_ratio_pct",
+      "n": 3,
+      "median": 3.19,
+      "min": 1.91,
+      "max": 3.4,
+      "values": {
+        "hl_paf": 3.4,
+        "stepstone_spm": 1.91,
+        "kkr_kpec": 3.19
+      },
+      "missing": {
+        "ares_pmf": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "amg_pantheon": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "repurchase_cap_pct": {
+      "field": "repurchase_cap_pct",
+      "n": 3,
+      "median": 5.0,
+      "min": 5.0,
+      "max": 5.0,
+      "values": {
+        "hl_paf": 5.0,
+        "stepstone_spm": 5.0,
+        "kkr_kpec": 5.0
+      },
+      "missing": {
+        "ares_pmf": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "amg_pantheon": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "repurchase_cadence_per_year": {
+      "field": "repurchase_cadence_per_year",
+      "n": 3,
+      "median": 4,
+      "min": 4,
+      "max": 4,
+      "values": {
+        "hl_paf": 4,
+        "stepstone_spm": 4,
+        "kkr_kpec": 4
+      },
+      "missing": {
+        "ares_pmf": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "amg_pantheon": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "track_record_years": {
+      "field": "track_record_years",
+      "n": 3,
+      "median": 5.2,
+      "min": 2.4,
+      "max": 5.5,
+      "values": {
+        "hl_paf": 5.2,
+        "stepstone_spm": 5.5,
+        "kkr_kpec": 2.4
+      },
+      "missing": {
+        "ares_pmf": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "amg_pantheon": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "net_assets_usd": {
+      "field": "net_assets_usd",
+      "n": 3,
+      "median": 5828900000,
+      "min": 5785749989,
+      "max": 9500000000,
+      "values": {
+        "hl_paf": 5785749989,
+        "stepstone_spm": 5828900000,
+        "kkr_kpec": 9500000000
+      },
+      "missing": {
+        "ares_pmf": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "amg_pantheon": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    }
+  },
+  "composite": {
+    "refused": false,
+    "granularity": "annual (fiscal years as filed; year-end months differ across members and are disclosed per row)",
+    "weighting": "equal-weight across members reporting that year",
+    "rows": [
+      {
+        "year": "2022",
+        "composite_return_pct": 25.1,
+        "n": 2,
+        "members": [
+          "hl_paf",
+          "stepstone_spm"
+        ]
+      },
+      {
+        "year": "2023",
+        "composite_return_pct": 8.65,
+        "n": 3,
+        "members": [
+          "hl_paf",
+          "kkr_kpec",
+          "stepstone_spm"
+        ]
+      },
+      {
+        "year": "2024",
+        "composite_return_pct": 12.76,
+        "n": 3,
+        "members": [
+          "hl_paf",
+          "kkr_kpec",
+          "stepstone_spm"
+        ]
+      },
+      {
+        "year": "2025",
+        "composite_return_pct": 13.16,
+        "n": 3,
+        "members": [
+          "hl_paf",
+          "kkr_kpec",
+          "stepstone_spm"
+        ]
+      },
+      {
+        "year": "2026",
+        "composite_return_pct": 12.53,
+        "n": 2,
+        "members": [
+          "hl_paf",
+          "stepstone_spm"
+        ]
+      }
+    ]
+  },
+  "caveats": [
+    "PRICING-BASIS MIX: some members transact at NAV, others at exchange market price - return comparisons mix appraisal dynamics with premium/discount dynamics; composites across this line are refused, not averaged. [amg_pantheon: NAV; ares_pmf: NAV; hl_paf: NAV; kkr_kpec: transactional NAV; stepstone_spm: NAV]",
+    "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds - fee bases and return volatility are not like-for-like. [amg_pantheon: 1940-Act asset-coverage limits; ares_pmf: 1940-Act asset-coverage limits; hl_paf: 1940-Act asset-coverage limits; kkr_kpec: no 1940-Act leverage limits (34-Act conglomerate); stepstone_spm: 1940-Act asset-coverage limits]",
+    "LIQUIDITY-LAW MIX: Rule 23c-3 obligations, discretionary tenders, and repurchase plans give different worst-case exit rights; cadence numbers alone overstate comparability. [amg_pantheon: board-DISCRETIONARY tender offers (nothing compels the next one); ares_pmf: board-DISCRETIONARY tender offers (nothing compels the next one); hl_paf: board-DISCRETIONARY tender offers (nothing compels the next one); kkr_kpec: board-discretionary share repurchases; stepstone_spm: board-DISCRETIONARY tender offers (nothing compels the next one)]",
+    "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing; volatility and drawdown comparisons inherit that difference (see de-smoothing lab). [amg_pantheon: daily-to-monthly NAV; ares_pmf: daily-to-monthly NAV; hl_paf: daily-to-monthly NAV; kkr_kpec: monthly transactional NAV; stepstone_spm: daily-to-monthly NAV]",
+    "kkr_kpec joins under the authorized fallback: its structural twins are Reg D vehicles with no public filings (data/roster_decisions.md - 'The kkr_kpec ruling'). Cross-wrapper caveats apply."
+  ],
+  "exclusion_log": "data/roster_decisions.md"
+}

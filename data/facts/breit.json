@@ -1,5 +1,8 @@
 {
   "product_key": "breit",
+  "cohort_id": "nontraded_reit",
+  "depth": "full",
+  "membership_rationale": "Non-traded monthly-NAV REIT with 2%/5% repurchase plan - the cohort's reference member.",
   "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {

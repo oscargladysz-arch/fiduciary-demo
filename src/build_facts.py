@@ -176,6 +176,71 @@ MAPPING = {
                           "on-disk filings; ITD basis year (2017 REIT "
                           "election) sits in partial cell 6.4", "6.4"),
     },
+    "bcred": {
+        "wrapper_type": F("nontraded_bdc", "6.1"),
+        "mgmt_fee_pct": F(1.25, "2.1"),
+        "mgmt_fee_base": F("net_assets", "2.1",
+                           note="month-start net assets; payable monthly, "
+                                "settled quarterly"),
+        "incentive_fee": F({"present": True, "rate_pct": 12.5,
+                            "hurdle_pct": 5.0,
+                            "structure": "two-part BDC fee: 12.5% of income over "
+                                         "a 5.0% annualized hurdle with 100% "
+                                         "catch-up, PLUS 12.5% of realized "
+                                         "capital gains"}, "2.2"),
+        "early_repurchase": F({"present": True, "rate_pct": 2.0,
+                               "window": "< 1 year"}, "2.7",
+                              note="repurchased at 98% of NAV"),
+        "repurchase_cadence_per_year": F(4, "3.1"),
+        "repurchase_cap_pct": F(5.0, "3.1"),
+        "repurchase_cap_base": F("nav", "3.1",
+                                 note="board-discretionary quarterly tenders"),
+        "gate_history": F(False, "3.3",
+                          note="completed tenders printed every quarter "
+                               "2023-2026H1, all requests satisfied"),
+        "tax_form": F("1099", "6.4"),
+        "auditor": F("Deloitte & Touche LLP", "4.5"),
+        "big4": F(True, "4.5"),
+        "expense_ratio_pct": F(7.0, "2.3",
+                               note="FY2025 Class I, INCLUDES interest/financing "
+                                    "cost of BDC leverage - not like-for-like "
+                                    "with unlevered '40-Act ratios"),
+        "net_assets_usd": null("aggregate net assets not yet carried into a "
+                               "typed cell; verification-queue item", "3.6"),
+        "inception": F("2021-01-07", "1.11", note="escrow break / operations start"),
+    },
+    "pflex": {
+        "wrapper_type": F("interval_23c3", "6.1"),
+        "mgmt_fee_pct": F(1.30, "2.1"),
+        "mgmt_fee_base": F("lesser_of_dual_base", "2.1",
+                           note="LESSER of 1.30% of average daily total managed "
+                                "assets (leverage-inclusive) and the net-assets "
+                                "formulation - a hybrid base; effective 4/1/2025"),
+        "incentive_fee": F({"present": False}, "2.2",
+                           note="unified management fee; no incentive-fee line "
+                                "in the fee table"),
+        "early_repurchase": F({"present": False}, "2.7",
+                              note="no Rule 23c-3 early repurchase fee; 1.00% "
+                                   "contingent load on A-2/A-4 classes only"),
+        "repurchase_cadence_per_year": F(4, "3.1"),
+        "repurchase_cap_pct": F(5.0, "3.1",
+                                note="fundamental 5-25% policy; currently 5%"),
+        "repurchase_cap_base": F("outstanding_shares", "3.1"),
+        "gate_history": F(False, "3.3",
+                          note="FY2025 offers undersubscribed (max 4.32% "
+                               "tendered vs 5% cap)"),
+        "tax_form": F("1099", "6.4"),
+        "auditor": F("PricewaterhouseCoopers LLP", "4.5"),
+        "big4": F(True, "4.5"),
+        "expense_ratio_pct": F(1.97, "2.3",
+                               note="FY2025 Institutional, EXCLUDING interest "
+                                    "expense (5.12% including reverse-repo "
+                                    "interest); gross=net, no waivers"),
+        "net_assets_usd": F(3596873000, "3.6", approx=True,
+                            note="$3,596,873k net assets as printed"),
+        "inception": F("2017-02-22", "1.11",
+                       note="fund and Institutional class inception"),
+    },
     "stepstone_spm": {
         "wrapper_type": F("tender_offer", "3.1"),
         "mgmt_fee_pct": F(1.40, "2.1"),
@@ -206,7 +271,65 @@ MAPPING = {
 # the record; used only for the computed track_record_years field)
 AS_OF = {"hl_paf": "2026-03-31", "cliffwater_cclfx": "2026-03-31",
          "dxyz": "2025-12-31", "kkr_kpec": "2025-12-31",
-         "breit": "2025-12-31", "stepstone_spm": "2026-03-31"}
+         "breit": "2025-12-31", "stepstone_spm": "2026-03-31",
+         "bcred": "2025-12-31", "pflex": "2025-06-30",
+         "ares_pmf": "2026-03-31", "amg_pantheon": "2026-03-31",
+         "sreit": "2025-12-31", "jll_ipt": "2025-12-31",
+         "ssss": "2025-12-31", "arkvx": "2025-07-31"}
+
+# cohort metadata (R3: membership is an argued judgment; exclusions live in
+# data/roster_decisions.md). depth per R2.
+COHORT_META = {
+    "cliffwater_cclfx": ("private_credit", "full",
+        "Direct corporate lending in a Rule 23c-3 interval wrapper - the "
+        "cohort's reference member; daily NAV, quarterly obligated liquidity."),
+    "bcred": ("private_credit", "cohort",
+        "Direct-lending private credit in a non-traded BDC chassis - same "
+        "strategy as cclfx on different plumbing (150% asset-coverage "
+        "leverage, discretionary quarterly tenders, monthly NAV); admitted "
+        "deliberately cross-wrapper so the caveat machinery has real work."),
+    "pflex": ("private_credit", "cohort",
+        "Flexible multi-sector credit in the SAME wrapper as cclfx (interval, "
+        "quarterly 5%) - wrapper twin, broader credit mandate (loans, "
+        "structured, EM); mandate breadth is the disclosed mismatch."),
+    "hl_paf": ("evergreen_pe", "full",
+        "Evergreen PE fund-of-funds/secondaries in a tender-offer wrapper - "
+        "founding cohort member."),
+    "stepstone_spm": ("evergreen_pe", "full",
+        "Evergreen PE multi-strategy (secondaries-led) tender-offer fund - "
+        "founding cohort member."),
+    "kkr_kpec": ("evergreen_pe", "full",
+        "'34-Act conglomerate of controlled PE businesses - joins under the "
+        "authorized fallback (its Reg D twins have no public filings); "
+        "cross-wrapper caveats carried by the cohort caveat block."),
+    "ares_pmf": ("evergreen_pe", "cohort",
+        "Secondaries-led evergreen PE tender-offer fund - wrapper and "
+        "strategy twin of hl_paf/stepstone_spm."),
+    "amg_pantheon": ("evergreen_pe", "cohort",
+        "Evergreen PE (Pantheon) tender-offer LLC - wrapper and strategy "
+        "twin of hl_paf/stepstone_spm."),
+    "breit": ("nontraded_reit", "full",
+        "Non-traded monthly-NAV REIT with 2%/5% repurchase plan - the "
+        "cohort's reference member."),
+    "sreit": ("nontraded_reit", "cohort",
+        "Non-traded monthly-NAV REIT - breit's closest structural twin "
+        "(class structure, repurchase plan, 2022-24 stress history)."),
+    "jll_ipt": ("nontraded_reit", "cohort",
+        "Perpetual NAV REIT of older vintage - same wrapper class; NAV "
+        "cadence and scale differences disclosed."),
+    "dxyz": ("venture", "full",
+        "Listed CEF holding pre-IPO tech - the premium-pricing fail case; "
+        "the cohort exists to show premium vs NAV pricing as a PATTERN."),
+    "ssss": ("venture", "cohort",
+        "Listed BDC (fka SuRo Capital) holding late-stage growth equity - "
+        "the second market-priced venture vehicle; gives dxyz a "
+        "premium/discount comparable. Membership CONDITIONAL on strategy "
+        "continuity through the Neostellar rename (verification queue)."),
+    "arkvx": ("venture", "cohort",
+        "Interval fund holding venture/growth - the NAV-priced contrast to "
+        "the two market-priced members; pricing-basis mix is the cohort's "
+        "disclosed core caveat (composite refused)."),
+}
 
 
 def years_between(d0: str, d1: str) -> float:
@@ -220,8 +343,28 @@ def main() -> None:
     out_dir = DATA / "facts"
     out_dir.mkdir(exist_ok=True)
     plans = plan_keys()
+    FIELD_ORDER = list(MAPPING["hl_paf"].keys())
     for key in product_keys():
         cells = load_product(key)["cells"]
+        cohort_id, depth, rationale = COHORT_META[key]
+        if key not in MAPPING:
+            # cohort-tier product whose extraction has not landed: an honest
+            # all-null scaffold (screener shows the reason, never a blank)
+            facts = {field: {"value": None, "source_cell": "6.1",
+                             "status": "pending",
+                             "reason": "cohort-tier extraction in progress "
+                                       "(see data/roster_decisions.md)"}
+                     for field in FIELD_ORDER}
+            facts["track_record_years"] = dict(facts["inception"])
+            doc = {"product_key": key, "cohort_id": cohort_id, "depth": depth,
+                   "membership_rationale": rationale,
+                   "what": "typed projections of evidenced cells - scaffold "
+                           "pending cohort-tier extraction",
+                   "generated_by": "src/build_facts.py",
+                   "facts": facts}
+            (out_dir / f"{key}.json").write_text(json.dumps(doc, indent=2))
+            print(f"{key}: SCAFFOLD (extraction in progress)")
+            continue
         facts = {}
         for field, f in MAPPING[key].items():
             cell = cells[f["source_cell"]]
@@ -241,6 +384,25 @@ def main() -> None:
                 "reason": facts["inception"].get("reason", "inception unmapped")}
         # engine outputs — pulled from artifacts, never retyped
         sel_path = DATA / "benchmarks" / f"{key}_selection.json"
+        if not sel_path.exists():
+            for fld in ("primary_benchmark_id", "selection_score",
+                        "pme_primary", "direct_alpha_primary"):
+                facts[fld] = {"value": None, "source_cell": "1.8",
+                              "status": "pending",
+                              "reason": "engine selection not yet run for this "
+                                        "cohort-tier product"}
+            facts["liquidity_verdict_by_plan"] = {
+                "value": None, "source_cell": "3.9", "status": "pending",
+                "reason": "liquidity profile lands with cell 3.1 extraction"}
+            doc = {"product_key": key, "cohort_id": cohort_id, "depth": depth,
+                   "membership_rationale": rationale,
+                   "what": "typed projections of evidenced cells - zero new facts",
+                   "generated_by": "src/build_facts.py (hand-mapping machine-"
+                                   "checked by validate_data.py)",
+                   "facts": facts}
+            (out_dir / f"{key}.json").write_text(json.dumps(doc, indent=2))
+            print(f"{key}: {len(facts)} fields (engine artifacts pending)")
+            continue
         sel = json.loads(sel_path.read_text())
         if sel.get("primary"):
             comp = sel["primary"].get("comparison") or {}
@@ -263,7 +425,8 @@ def main() -> None:
                                       f"{pk}__{key}_match.json").read_text())["verdict"]
                       for pk in plans},
             "source_cell": "3.9", "status": "computed"}
-        doc = {"product_key": key,
+        doc = {"product_key": key, "cohort_id": cohort_id, "depth": depth,
+               "membership_rationale": rationale,
                "what": "typed projections of evidenced cells - zero new facts; "
                        "every field carries its source_cell and mirrors its status",
                "generated_by": "src/build_facts.py (hand-mapping machine-checked "

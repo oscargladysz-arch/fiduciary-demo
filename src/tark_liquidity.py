@@ -53,6 +53,27 @@ LIQUIDITY_PROFILES = {
     "dxyz": {"kind": "listed_cef", "cadence_per_year": 252, "cap_pct": None,
              "cap_base": "on-exchange (NYSE)", "exchange": True,
              "gate_history": False, "early_fee": "n/a", "source_cell": "3.1"},
+    # ---- cohort-tier roster ----
+    "bcred": {"kind": "share_repurchase_plan", "cadence_per_year": 4,
+              "cap_pct": 5.0, "cap_base": "NAV of outstanding shares "
+              "(board-discretionary quarterly tenders)", "exchange": False,
+              "gate_history": False,
+              "early_fee": "2% Early Repurchase Deduction: repurchased at 98% "
+                           "of NAV if held < 1 year (2.7)",
+              "source_cell": "3.1 + 3.3",
+              "history": "completed quarterly tenders printed for every "
+                         "quarter 2023-2026H1, all requests satisfied (3.3)"},
+    "pflex": {"kind": "interval_23c3", "cadence_per_year": 4, "cap_pct": 5.0,
+              "cap_base": "outstanding shares (fundamental 5-25% policy; "
+              "currently 5%)", "exchange": False, "gate_history": False,
+              "early_fee": "none at fund level; 1.00% contingent load on "
+                           "A-2/A-4 classes only (2.7)",
+              "source_cell": "3.1",
+              "history": "8 N-23C3A filings on disk; FY2025 offers "
+                         "undersubscribed (max 4.32% tendered vs 5% cap) (3.3)"},
+    # profiles for the remaining cohort-tier products are added ONLY as their
+    # 3.1/2.7/3.3 extractions land — a profile string that outruns its cells
+    # would be fabrication (invariant 4)
 }
 
 # illustrative scenario parameters — LABELED, adjustable, never asserted as fact
@@ -202,6 +223,8 @@ if __name__ == "__main__":
     out.mkdir(exist_ok=True)
     for pk in plan_keys():
         for key in load_products():
+            if key not in LIQUIDITY_PROFILES:
+                continue  # cohort-tier product whose 3.1 has not landed yet
             m = run_match(key, pk)
             (out / f"{pk}__{key}_match.json").write_text(json.dumps(m, indent=2))
             if pk == ANCHOR_PLAN_KEY:

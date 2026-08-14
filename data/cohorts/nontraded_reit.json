@@ -1,0 +1,113 @@
+{
+  "cohort_id": "nontraded_reit",
+  "label": "Non-traded NAV REITs",
+  "members": {
+    "breit": {
+      "wrapper_type": "nontraded_reit",
+      "depth": "full",
+      "membership_rationale": "Non-traded monthly-NAV REIT with 2%/5% repurchase plan - the cohort's reference member."
+    },
+    "sreit": {
+      "wrapper_type": "nontraded_reit",
+      "depth": "cohort",
+      "membership_rationale": "Non-traded monthly-NAV REIT - breit's closest structural twin (class structure, repurchase plan, 2022-24 stress history)."
+    },
+    "jll_ipt": {
+      "wrapper_type": "nontraded_reit",
+      "depth": "cohort",
+      "membership_rationale": "Perpetual NAV REIT of older vintage - same wrapper class; NAV cadence and scale differences disclosed."
+    }
+  },
+  "n": 3,
+  "stats": {
+    "mgmt_fee_pct": {
+      "field": "mgmt_fee_pct",
+      "n": 1,
+      "median": 1.25,
+      "min": 1.25,
+      "max": 1.25,
+      "values": {
+        "breit": 1.25
+      },
+      "missing": {
+        "sreit": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "jll_ipt": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "expense_ratio_pct": {
+      "field": "expense_ratio_pct",
+      "n": 0,
+      "median": null,
+      "min": null,
+      "max": null,
+      "values": {},
+      "missing": {
+        "breit": "no TER line item exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
+        "sreit": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "jll_ipt": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "repurchase_cap_pct": {
+      "field": "repurchase_cap_pct",
+      "n": 1,
+      "median": 2.0,
+      "min": 2.0,
+      "max": 2.0,
+      "values": {
+        "breit": 2.0
+      },
+      "missing": {
+        "sreit": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "jll_ipt": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "repurchase_cadence_per_year": {
+      "field": "repurchase_cadence_per_year",
+      "n": 1,
+      "median": 12,
+      "min": 12,
+      "max": 12,
+      "values": {
+        "breit": 12
+      },
+      "missing": {
+        "sreit": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "jll_ipt": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "track_record_years": {
+      "field": "track_record_years",
+      "n": 0,
+      "median": null,
+      "min": null,
+      "max": null,
+      "values": {},
+      "missing": {
+        "breit": "explicit Class I inception date not printed in on-disk filings; ITD basis year (2017 REIT election) sits in partial cell 6.4",
+        "sreit": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "jll_ipt": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "net_assets_usd": {
+      "field": "net_assets_usd",
+      "n": 0,
+      "median": null,
+      "min": null,
+      "max": null,
+      "values": {},
+      "missing": {
+        "breit": "aggregate NAV printed in the MD&A NAV-by-class table but not yet carried into a typed cell; verification-queue item",
+        "sreit": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "jll_ipt": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    }
+  },
+  "composite": {
+    "refused": false,
+    "granularity": "annual (fiscal years as filed; year-end months differ across members and are disclosed per row)",
+    "weighting": "equal-weight across members reporting that year",
+    "rows": []
+  },
+  "caveats": [],
+  "exclusion_log": "data/roster_decisions.md"
+}

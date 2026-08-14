@@ -1,0 +1,166 @@
+{
+  "cohort_id": "private_credit",
+  "label": "Private credit (interval fund + non-traded BDC)",
+  "members": {
+    "cliffwater_cclfx": {
+      "wrapper_type": "interval_23c3",
+      "depth": "full",
+      "membership_rationale": "Direct corporate lending in a Rule 23c-3 interval wrapper - the cohort's reference member; daily NAV, quarterly obligated liquidity."
+    },
+    "bcred": {
+      "wrapper_type": "nontraded_bdc",
+      "depth": "cohort",
+      "membership_rationale": "Direct-lending private credit in a non-traded BDC chassis - same strategy as cclfx on different plumbing (150% asset-coverage leverage, discretionary quarterly tenders, monthly NAV); admitted deliberately cross-wrapper so the caveat machinery has real work."
+    },
+    "pflex": {
+      "wrapper_type": "interval_23c3",
+      "depth": "cohort",
+      "membership_rationale": "Flexible multi-sector credit in the SAME wrapper as cclfx (interval, quarterly 5%) - wrapper twin, broader credit mandate (loans, structured, EM); mandate breadth is the disclosed mismatch."
+    }
+  },
+  "n": 3,
+  "stats": {
+    "mgmt_fee_pct": {
+      "field": "mgmt_fee_pct",
+      "n": 3,
+      "median": 1.25,
+      "min": 1.0,
+      "max": 1.3,
+      "values": {
+        "cliffwater_cclfx": 1.0,
+        "bcred": 1.25,
+        "pflex": 1.3
+      },
+      "missing": {}
+    },
+    "expense_ratio_pct": {
+      "field": "expense_ratio_pct",
+      "n": 3,
+      "median": 1.97,
+      "min": 1.36,
+      "max": 7.0,
+      "values": {
+        "cliffwater_cclfx": 1.36,
+        "bcred": 7.0,
+        "pflex": 1.97
+      },
+      "missing": {}
+    },
+    "repurchase_cap_pct": {
+      "field": "repurchase_cap_pct",
+      "n": 3,
+      "median": 5.0,
+      "min": 5.0,
+      "max": 5.0,
+      "values": {
+        "cliffwater_cclfx": 5.0,
+        "bcred": 5.0,
+        "pflex": 5.0
+      },
+      "missing": {}
+    },
+    "repurchase_cadence_per_year": {
+      "field": "repurchase_cadence_per_year",
+      "n": 3,
+      "median": 4,
+      "min": 4,
+      "max": 4,
+      "values": {
+        "cliffwater_cclfx": 4,
+        "bcred": 4,
+        "pflex": 4
+      },
+      "missing": {}
+    },
+    "track_record_years": {
+      "field": "track_record_years",
+      "n": 3,
+      "median": 6.8,
+      "min": 5.0,
+      "max": 8.4,
+      "values": {
+        "cliffwater_cclfx": 6.8,
+        "bcred": 5.0,
+        "pflex": 8.4
+      },
+      "missing": {}
+    },
+    "net_assets_usd": {
+      "field": "net_assets_usd",
+      "n": 1,
+      "median": 3596873000,
+      "min": 3596873000,
+      "max": 3596873000,
+      "values": {
+        "pflex": 3596873000
+      },
+      "missing": {
+        "cliffwater_cclfx": "net assets ~$31.26B printed, but the carrying cells (1.1/3.6) are partial - verification unlocks this fact",
+        "bcred": "aggregate net assets not yet carried into a typed cell; verification-queue item"
+      }
+    }
+  },
+  "composite": {
+    "refused": false,
+    "granularity": "annual (fiscal years as filed; year-end months differ across members and are disclosed per row)",
+    "weighting": "equal-weight across members reporting that year",
+    "rows": [
+      {
+        "year": "2021",
+        "composite_return_pct": 17.0,
+        "n": 3,
+        "members": [
+          "bcred",
+          "cliffwater_cclfx",
+          "pflex"
+        ]
+      },
+      {
+        "year": "2022",
+        "composite_return_pct": -1.86,
+        "n": 3,
+        "members": [
+          "bcred",
+          "cliffwater_cclfx",
+          "pflex"
+        ]
+      },
+      {
+        "year": "2023",
+        "composite_return_pct": 7.33,
+        "n": 3,
+        "members": [
+          "bcred",
+          "cliffwater_cclfx",
+          "pflex"
+        ]
+      },
+      {
+        "year": "2024",
+        "composite_return_pct": 12.73,
+        "n": 3,
+        "members": [
+          "bcred",
+          "cliffwater_cclfx",
+          "pflex"
+        ]
+      },
+      {
+        "year": "2025",
+        "composite_return_pct": 11.23,
+        "n": 3,
+        "members": [
+          "bcred",
+          "cliffwater_cclfx",
+          "pflex"
+        ]
+      }
+    ]
+  },
+  "caveats": [
+    "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds - fee bases and return volatility are not like-for-like. [bcred: BDC 150% asset-coverage regime - materially MORE leverage headroom than 1940-Act funds; cliffwater_cclfx: 1940-Act asset-coverage limits; pflex: 1940-Act asset-coverage limits]",
+    "LIQUIDITY-LAW MIX: Rule 23c-3 obligations, discretionary tenders, and repurchase plans give different worst-case exit rights; cadence numbers alone overstate comparability. [bcred: board-discretionary share repurchases; cliffwater_cclfx: Rule 23c-3 OBLIGATION (board cannot skip a window); pflex: Rule 23c-3 OBLIGATION (board cannot skip a window)]",
+    "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing; volatility and drawdown comparisons inherit that difference (see de-smoothing lab). [bcred: quarterly NAV determinations; cliffwater_cclfx: daily NAV; pflex: daily NAV]"
+  ],
+  "exclusion_log": "data/roster_decisions.md"
+}

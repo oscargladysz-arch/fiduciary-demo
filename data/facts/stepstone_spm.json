@@ -1,5 +1,8 @@
 {
   "product_key": "stepstone_spm",
+  "cohort_id": "evergreen_pe",
+  "depth": "full",
+  "membership_rationale": "Evergreen PE multi-strategy (secondaries-led) tender-offer fund - founding cohort member.",
   "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {

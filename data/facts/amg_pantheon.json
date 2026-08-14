@@ -1,0 +1,106 @@
+{
+  "product_key": "amg_pantheon",
+  "cohort_id": "evergreen_pe",
+  "depth": "cohort",
+  "membership_rationale": "Evergreen PE (Pantheon) tender-offer LLC - wrapper and strategy twin of hl_paf/stepstone_spm.",
+  "what": "typed projections of evidenced cells - scaffold pending cohort-tier extraction",
+  "generated_by": "src/build_facts.py",
+  "facts": {
+    "wrapper_type": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "mgmt_fee_pct": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "mgmt_fee_base": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "incentive_fee": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "early_repurchase": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "repurchase_cadence_per_year": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "repurchase_cap_pct": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "repurchase_cap_base": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "gate_history": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "tax_form": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "auditor": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "big4": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "expense_ratio_pct": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "net_assets_usd": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "inception": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    },
+    "track_record_years": {
+      "value": null,
+      "source_cell": "6.1",
+      "status": "pending",
+      "reason": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+    }
+  }
+}

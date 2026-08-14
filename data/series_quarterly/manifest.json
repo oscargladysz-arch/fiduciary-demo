@@ -1,0 +1,13 @@
+{
+  "generated": "2026-08-15",
+  "series": {
+    "bcred_nav": {
+      "rows": 10,
+      "class": "Class I",
+      "note": "Class I (Class S and D print identical NAVs every period shown), printed rows only. 2025 quarter-ends from the FY2025 10-K monthly NAV Per Share table (MD&A Item 5 and Note 9); 2026-03-31 and 2026-06-30 from the Q2-2026 10-Q month-end NAV table; 2021-2024 rows are the Dec-31 fiscal year-end NAVs from 10-K Note 10 financial highlights (intra-year 2021-2024 quarter-ends are NOT printed in the two on",
+      "what": "quarterly NAV per share as printed - NAV path only, distributions excluded",
+      "status": "extracted-unverified",
+      "extracted_by": "Claude Code (2026-08-14), adversarially verified"
+    }
+  }
+}

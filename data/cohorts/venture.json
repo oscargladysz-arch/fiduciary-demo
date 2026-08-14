@@ -1,0 +1,118 @@
+{
+  "cohort_id": "venture",
+  "label": "Pre-IPO / venture growth (listed CEF + listed BDC + interval fund)",
+  "members": {
+    "dxyz": {
+      "wrapper_type": "listed_cef",
+      "depth": "full",
+      "membership_rationale": "Listed CEF holding pre-IPO tech - the premium-pricing fail case; the cohort exists to show premium vs NAV pricing as a PATTERN."
+    },
+    "ssss": {
+      "wrapper_type": "listed_bdc",
+      "depth": "cohort",
+      "membership_rationale": "Listed BDC (fka SuRo Capital) holding late-stage growth equity - the second market-priced venture vehicle; gives dxyz a premium/discount comparable. Membership CONDITIONAL on strategy continuity through the Neostellar rename (verification queue)."
+    },
+    "arkvx": {
+      "wrapper_type": "interval_23c3",
+      "depth": "cohort",
+      "membership_rationale": "Interval fund holding venture/growth - the NAV-priced contrast to the two market-priced members; pricing-basis mix is the cohort's disclosed core caveat (composite refused)."
+    }
+  },
+  "n": 3,
+  "stats": {
+    "mgmt_fee_pct": {
+      "field": "mgmt_fee_pct",
+      "n": 1,
+      "median": 2.5,
+      "min": 2.5,
+      "max": 2.5,
+      "values": {
+        "dxyz": 2.5
+      },
+      "missing": {
+        "ssss": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "arkvx": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "expense_ratio_pct": {
+      "field": "expense_ratio_pct",
+      "n": 1,
+      "median": 4.53,
+      "min": 4.53,
+      "max": 4.53,
+      "values": {
+        "dxyz": 4.53
+      },
+      "missing": {
+        "ssss": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "arkvx": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "repurchase_cap_pct": {
+      "field": "repurchase_cap_pct",
+      "n": 0,
+      "median": null,
+      "min": null,
+      "max": null,
+      "values": {},
+      "missing": {
+        "dxyz": "on-exchange liquidity; no fund-level cap",
+        "ssss": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "arkvx": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "repurchase_cadence_per_year": {
+      "field": "repurchase_cadence_per_year",
+      "n": 1,
+      "median": 252,
+      "min": 252,
+      "max": 252,
+      "values": {
+        "dxyz": 252
+      },
+      "missing": {
+        "ssss": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "arkvx": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "track_record_years": {
+      "field": "track_record_years",
+      "n": 1,
+      "median": 3.6,
+      "min": 3.6,
+      "max": 3.6,
+      "values": {
+        "dxyz": 3.6
+      },
+      "missing": {
+        "ssss": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "arkvx": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    },
+    "net_assets_usd": {
+      "field": "net_assets_usd",
+      "n": 1,
+      "median": 438000000,
+      "min": 438000000,
+      "max": 438000000,
+      "values": {
+        "dxyz": 438000000
+      },
+      "missing": {
+        "ssss": "cohort-tier extraction in progress (see data/roster_decisions.md)",
+        "arkvx": "cohort-tier extraction in progress (see data/roster_decisions.md)"
+      }
+    }
+  },
+  "composite": {
+    "refused": true,
+    "reason": "members' pricing bases are heterogeneous (market price vs NAV); an equal-weight composite would average premium/discount dynamics against appraisal NAVs - refused, not fudged"
+  },
+  "caveats": [
+    "PRICING-BASIS MIX: some members transact at NAV, others at exchange market price - return comparisons mix appraisal dynamics with premium/discount dynamics; composites across this line are refused, not averaged. [arkvx: NAV; dxyz: MARKET PRICE - premium/discount to NAV is the investor's actual basis; ssss: MARKET PRICE - premium/discount to NAV is the investor's actual basis]",
+    "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds - fee bases and return volatility are not like-for-like. [arkvx: 1940-Act asset-coverage limits; dxyz: 1940-Act limits; ssss: BDC 150% asset-coverage regime]",
+    "LIQUIDITY-LAW MIX: Rule 23c-3 obligations, discretionary tenders, and repurchase plans give different worst-case exit rights; cadence numbers alone overstate comparability. [arkvx: Rule 23c-3 OBLIGATION (board cannot skip a window); dxyz: continuous exchange dealing; ssss: continuous exchange dealing]",
+    "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing; volatility and drawdown comparisons inherit that difference (see de-smoothing lab). [arkvx: daily NAV; dxyz: quarterly filed NAV; ssss: quarterly NAV determinations]"
+  ],
+  "exclusion_log": "data/roster_decisions.md"
+}

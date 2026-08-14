@@ -1,0 +1,549 @@
+{
+  "product_key": "bcred",
+  "fund_name": "Blackstone Private Credit Fund",
+  "cik": "1803498",
+  "wrapper": "non-traded BDC ('34 Act reporting; continuous offering)",
+  "depth": "cohort",
+  "cells": {
+    "1.1": {
+      "element": "Net total return series",
+      "value": "Printed NAV-based net total return series, Class I: FY2021 12.6%, FY2022 3.6%, FY2023 14.4%, FY2024 11.0%, FY2025 8.0% (10-K Note 10); H1-2026 0.2% (10-Q). Underlying month-end NAV per share printed for all 12 months of 2023 (24.85 Jan -> 25.39 Dec), 2024 (25.41 Jan -> 25.42 Dec) and 2025 (25.42 Jan -> 24.79 Dec) in 10-K Note 9, and Jan-Jun 2026 (24.68 -> 23.65) in the 10-Q, each with monthly declared-distribution tables - supports monthly return construction for 2023 through H1-2026.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13); Form 10-Q Q2-2026 (filed 2026-08-12)",
+      "section": "Item 5 - NAV Per Share table; Note 9 Net Assets - Net Asset Value per Share and Offering Price (monthly NAV tables for 2025, 2024, 2023) and Distributions tables; Note 10 Financial Highlights",
+      "quote": "The following table presents our monthly NAV per share for each of the classes of shares for the year ended December 31, 2025",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.2": {
+      "element": "Trailing & calendar-year returns",
+      "value": "Calendar-year 'Total return based on NAV' - Class I | Class S | Class D: FY2025 8.0% | 7.1% | 7.8%; FY2024 11.0% | 10.1% | 10.7%; FY2023 14.4% | 13.4% | 14.1%; FY2022 3.6% | 2.7% | 3.3%; FY2021 12.6% | 11.6% | 7.4% (Class D commenced 2021-05-01). H1-2026 (to 2026-06-30): 0.2% | (0.2)% | 0.1%; H1-2025: 4.3% | 3.9% | 4.2%. No trailing 3y/5y/inception-annualized returns are printed in the 10-K or 10-Q.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13) Note 10; Form 10-Q Q2-2026 (filed 2026-08-12) Note 10",
+      "section": "Note 10. Financial Highlights and Senior Securities (FY2025, FY2024, FY2023, FY2022, FY2021 tables; six months ended June 30, 2026 and 2025 tables)",
+      "quote": "Total return based on NAV (4) | 8.0 | % | 7.1 | % | 7.8 | %",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.3": {
+      "element": "Gross vs net spread",
+      "value": "PARTIAL: no gross-of-fees RETURN series is printed anywhere in the 10-K/10-Q (only net 'Total return based on NAV'). What IS printed is the gross-vs-net EXPENSE-ratio spread: FY2025 total operating expense ratio 7.0%/7.9%/7.3% (I/S/D) vs identical net ratios - expense support/(recoupment) and management/income-incentive fee waivers = 0.0% for all classes (also 0.0% FY2022-FY2024; FY2021 waivers were 0.6%/0.5%/0.2% of average net assets under the Prior Adviser's first-six-months waiver).",
+      "status": "partial",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Note 10. Financial Highlights - expense-ratio footnote (5) for each fiscal year",
+      "quote": "the ratio of total operating expenses to average net assets was 7.0 %, 7.9 % and 7.3 %...which represented 0.0 %, 0.0 % and 0.0 %",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.4": {
+      "element": "Distribution history & composition",
+      "value": "Distributions declared every month since January 2021. Class I monthly regular distribution $0.2200 in early 2025 (declared 2025-01-22, record 2025-01-31, paid 2025-02-27, $228.8M). FY totals per share (Class I): FY2025 $2.58, FY2024 $2.64, FY2023 $2.57, FY2022 $2.23, FY2021 $2.11 (incl. $0.02 realized gains); H1-2026 $1.20. Tax composition: 100% of dividends declared FY2023-FY2025 derived from ordinary income on a tax basis - zero return of capital and zero capital-gain distributions those years.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Item 5/Note 9 - Distributions (declared-and-payable tables); Note 12 (tax-basis distribution character); Item 1 - Distributions ('declared distributions each month beginning in January 2021')",
+      "quote": "All of the dividends declared during the years ended December 31, 2025, 2024 and 2023 were derived from ordinary income, as determined on a tax basis.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.5": {
+      "element": "Underlying sleeve/GP performance",
+      "value": "PARTIAL: direct-origination BDC - no underlying third-party GP funds exist. Nearest printed sleeve-level facts are the two unconsolidated joint ventures: BCRED Emerald JV LP (partner: a large North American pension fund; commenced operations 2022-01-18 per Item 1 / 2022-01-19 per Note 11) and BCRED Verdelite JV LP (partner managed by a CLO-focused credit firm; commenced 2022-10-21). Investments in joint ventures at fair value $1,791.8M = 2.2% of total investments at 2025-12-31, measured at NAV. No JV-level return or IRR series is printed.",
+      "status": "partial",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Item 1 - Joint Ventures; Note 11. Joint Ventures; portfolio-composition table (Item 7)",
+      "quote": "was formed as a joint venture between the Company and a large North American pension fund",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.6": {
+      "element": "Volatility & max drawdown",
+      "value": "Sub-annual total-return series not free-public for this wrapper: NAV path is quarterly (n=10 printed points, distributions excluded) and total returns are annual. Vol/drawdown on <=5 annual points is not statistically meaningful; the printed annual record (12.6/3.6/14.4/11.0/8.0%) and quarterly NAV path are in data/series_annual + data/series_quarterly.",
+      "status": "n/a - not publicly available: sub-annual total-return series not free-public (annual highlights; quarterly NAV path excludes distributions)",
+      "source": "disclosure-cadence assessment vs data/series_annual/bcred.csv",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.7": {
+      "element": "De-smoothed volatility",
+      "value": "De-smoothing requires a monthly-or-finer return series; bcred's public cadence is annual returns + quarterly NAV path (too short, n=9 changes). See cohort peers for computed rho contrasts.",
+      "status": "n/a - not publicly available: monthly return series not free-public for this wrapper",
+      "source": "disclosure-cadence assessment",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.8": {
+      "element": "Risk-adjusted metrics (PME etc)",
+      "value": "KS-PME 1.2378 / Direct Alpha 4.38%/yr vs Senior loan investable proxy (BKLN, for Morningstar LSTA class) over 2021-01-07 to 2025-12-31 (fund 1.5998x vs index 1.2924x). Window-sensitivity disclosure applies (methodology 3); explorable in the Analysis Lab.",
+      "status": "computed",
+      "source": "data/benchmarks/bcred_selection.json (primary.comparison)",
+      "section": "primary.comparison",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.9": {
+      "element": "Stress-window performance",
+      "value": "Stress observations (computed from printed disclosures): worst disclosed FY 2022: 3.6% total return (Class I, the 2022 rate-shock year) - POSITIVE through a -13% loan-index year; quarterly-valuation smoothing caveat applies (4.8). All tenders through the period satisfied in full (3.3).",
+      "status": "computed",
+      "source": "data/analytics/supplement.json (stress_windows.bcred)",
+      "section": "stress_windows",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.10": {
+      "element": "Market price & premium/discount",
+      "value": "Non-traded perpetual-life BDC: shares sold monthly in a continuous offering at NAV; no listing, so no market price or premium/discount exists. 10-K Item 5: no established public trading market; holders of record as of 2026-03-09: 64,194 Class I / 79,975 Class S / 188 Class D.",
+      "status": "n/a - not exchange-listed",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Item 5. Market for Registrant's Common Equity - Market Information / Holders",
+      "quote": "no established public trading market for our common stock",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.11": {
+      "element": "Track record & manager tenure",
+      "value": "Track record starts at escrow break 2021-01-07 (trust formed 2020-02-11) - about 5.0 years of operating history at the FY2025 10-K (filed 2026-03-13); Deloitte 'auditor since 2020'. Externally managed: Adviser Blackstone Private Credit Strategies LLC + Sub-Adviser Blackstone Credit BDC Advisors LLC (current advisory structure effective 2025-01-01; the Prior Adviser waived management and income incentive fees for the first six months post-escrow). Named portfolio managers (prospectus, as of 2025-12-31): Brad Marshall, Michael Zawadzki, Teddy Desloge, backed by a 12-member Investment Committee; Marshall owns over $1,000,000 of Fund shares. Supplement No. 2 (2026-07-24): Jonathan Bock departed as Co-CEO 2026-07-20, Katherine Rubenstein as COO 2026-06-15; Brad Marshall became sole Chief Executive Officer.",
+      "status": "extracted-unverified",
+      "source": "Prospectus dated 2026-05-01 (486BPOS) - Portfolio Management; Form 10-K FY2025 (escrow break, adviser history); 424B3 Supplement No. 2 dated 2026-07-24 (officer changes)",
+      "section": "Prospectus - PORTFOLIO MANAGEMENT - Investment Personnel; 10-K Item 1/advisory-agreement notes; Supplement No. 2 - Updates to Prospectus",
+      "quote": "The portfolio managers primarily responsible for the day-to-day management of the Fund are Brad Marshall, Michael Zawadzki and Teddy Desloge",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.1": {
+      "element": "Management fee (rate AND base)",
+      "value": "RATE: 1.25% per annum. BASE: the value of the Company's net assets (total assets less liabilities, consolidated GAAP) as of the beginning of the first calendar day of the applicable month; payable monthly, settled and paid quarterly in arrears; prorated for partial months. FY2025 base management fees $566.6M (FY2024 $432.4M, FY2023 $316.2M); $153.1M payable at 2025-12-31.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Note 3. Agreements and Related Party Transactions - Base Management Fees",
+      "quote": "The management fee is payable monthly and is settled and paid quarterly in arrears at an annual rate of 1.25 % of the value of the Company\u2019s net assets",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.2": {
+      "element": "Incentive fee terms",
+      "value": "TWO-PART incentive fee, components independent. (i) INCOME: 12.5% of Pre-Incentive Fee Net Investment Income Returns, quarterly in arrears; hurdle 1.25%/quarter (5.0% annualized) on prior-quarter net assets; 100% catch-up from 1.25% to 1.43% (5.72% annualized); 12.5% thereafter; income includes accrued-not-received PIK/OID; FY2025 accrual $626.7M (FY2024 $543.7M, FY2023 $446.9M). (ii) CAPITAL GAINS: 12.5% of cumulative realized capital gains from inception, net of realized losses and unrealized depreciation, less amounts previously paid, annually in arrears; $0 accrued FY2023-FY2025.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Note 3. Agreements and Related Party Transactions - Incentive Fees (i) Income Based Incentive Fee, (ii) Capital Gains Based Incentive Fee",
+      "quote": "hurdle rate of 1.25 % per quarter ( 5.0 % annualized)...12.5 % of cumulative realized capital gains from inception",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.3": {
+      "element": "Total expense ratio & waivers",
+      "value": "10-K FY2025 financial highlights net expense ratio (of average net assets): 7.0% Class I / 7.9% Class S / 7.3% Class D - equal to total operating expense ratio (expense support/recoupment and fee waivers 0.0% all classes; ratios exclude expenses of underlying investment companies incl. JVs). History (Class I net): FY2021 4.8%, FY2022 7.5%, FY2023 10.3%, FY2024 8.3%, FY2025 7.0%; H1-2026 annualized 7.1%/8.0%/7.4%. Prospectus fee table (2026-05-01, FY2025 actuals, avg net assets $45,472.6M): total annual expenses 7.07% I / 7.92% S / 7.32% D = 1.25% mgmt + 1.38% incentive + 0/0.85/0.25% servicing + 4.25% interest on borrowed funds + 0.17% other + 0.02% AFFE.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13) Note 10; Prospectus dated 2026-05-01 (486BPOS) FEES AND EXPENSES table; Form 10-Q Q2-2026",
+      "section": "Note 10. Financial Highlights - Ratios and footnote (5); Prospectus - FEES AND EXPENSES (annual expenses as percentage of net assets)",
+      "quote": "the ratio of total operating expenses to average net assets was 7.0 %, 7.9 % and 7.3 % on Class I, Class S and Class D",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.4": {
+      "element": "AFFE",
+      "value": "AFFE printed in the prospectus fee table (2026-05-01): 0.02% of net assets for each of Class I, Class S and Class D (line 'Acquired Fund Fees and Expenses (9)'). 10-K expense-ratio footnote separately states highlight ratios do not include expenses of investment companies the Company invests in, including joint ventures.",
+      "status": "extracted-unverified",
+      "source": "Prospectus dated 2026-05-01 (486BPOS)",
+      "section": "FEES AND EXPENSES - Annual expenses (as a percentage of net assets attributable to Common Shares)",
+      "quote": "Acquired Fund Fees and Expenses (9)...0.02 | %",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.5": {
+      "element": "Underlying GP economics",
+      "value": "Structural: BCRED originates loans directly; there is no fund-of-funds layer, so no underlying GP fee/carry table exists. The two JVs (Note 11) disclose commitments and ownership splits but print no partner fee or promote rates. De minimis structured-finance equity (0.4% of FV) carries embedded CLO economics, also not itemized.",
+      "status": "n/a - direct-origination BDC: no underlying third-party GP funds; joint-venture partner economics are private LP-agreement terms with no fee/carry rates printed in the filings",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Note 11. Joint Ventures; Item 7 portfolio composition",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.6": {
+      "element": "Loads & servicing fees",
+      "value": "By class - upfront: no upfront selling commissions paid to the Fund on any class; intermediary-charged transaction/placement fees capped at 3.5% of NAV (Class S) and 1.5% of NAV (Class D); none permitted on Class I. Ongoing shareholder servicing and/or distribution fee (annualized, % of aggregate class NAV, paid monthly in arrears to Intermediary Manager Blackstone Securities Partners L.P., reallowed to brokers): Class I 0% / Class S 0.85% / Class D 0.25%. Class distributions differ by exactly these fees.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13); Prospectus dated 2026-05-01 (fee-table footnotes 1 and 6 corroborate)",
+      "section": "Item 1 - Description of Our Common Shares (Class I/S/D); Distribution and Servicing Plan table",
+      "quote": "0.85% per annum of the aggregate NAV of our outstanding Class S shares...0.25% per annum of the aggregate NAV of our outstanding Class D shares",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.7": {
+      "element": "Early repurchase fee",
+      "value": "2% Early Repurchase Deduction: shares not outstanding at least one year are repurchased at 98% of NAV (one-year clock runs issuance date to subscription date following the repurchase valuation date). Waivable for death, divorce, qualified disability, failure to maintain the $500 minimum account balance, trade/operational error, approved discretionary model programs, and certain non-U.S. feeder vehicles; deduction retained by the Fund for remaining shareholders. Per-share effect FY2023-FY2025 rounds to $0.00 (FY2022 Class I $0.01).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Item 1 - Share Repurchase Program; Note 10 financial highlights ('Early repurchase deduction fees' rows)",
+      "quote": "shares that have not been outstanding for at least one year will be repurchased at 98% of such NAV (an \u201cEarly Repurchase Deduction\u201d )",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.8": {
+      "element": "CIT fee schedule",
+      "value": "Not a collective investment trust; BCRED is a non-traded BDC offered by prospectus. No CIT fee schedule exists.",
+      "status": "n/a - CIT only",
+      "source": "n/a - structural",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.9": {
+      "element": "Fee peer percentile",
+      "value": "Cohort placement (private_credit, R4 phrasing): mgmt fee: at the cohort median of 1.25 (n=3 \u2014 too small for percentile language) | expense ratio (bases differ - see notes): above the cohort median of 1.97 (n=3 \u2014 too small for percentile language) | repurchase cap: at the cohort median of 5 (n=3 \u2014 too small for percentile language). Stats + caveats in the cohort artifact.",
+      "status": "computed",
+      "source": "data/cohorts/private_credit.json",
+      "section": "stats (R4 phrasing by tark_cohort)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "2.10": {
+      "element": "Value justification",
+      "value": "Workflow cell, not an extraction target: the value-for-fees justification is the plan committee's determination weighing the evidenced BCRED fee stack (1.25%-of-NAV management fee in 2.1; two-part 12.5% incentive with 5% hurdle in 2.2; ~7.0-7.9% total expense ratio dominated by 4.25% interest expense in 2.3; 0.02% AFFE in 2.4; 0/0.85%/0.25% class servicing fees in 2.6; 2% Early Repurchase Deduction in 2.7) against delivered net returns (1.1/1.2) and liquidity terms (3.1/3.3).",
+      "status": "n/a - not publicly available: requires the plan committee's own value-for-fees determination - workflow output, not public product data (inputs live in cells 2.1-2.9)",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.1": {
+      "element": "Wrapper liquidity terms",
+      "value": "CADENCE: quarterly tender offers at Board discretion (no obligation to offer in any quarter; Board may amend/suspend). CAP: up to 5% of the NAV of Common Shares outstanding, by number of shares or aggregate NAV. CAP BASE: as of the close of the PREVIOUS calendar quarter, assessed each quarter. MECHANISM: Rule 13e-4 issuer tender offers priced at NAV per share as of the last calendar day of the applicable quarter (98% of NAV if held <1 year, cell 2.7); pro-rata allocation if oversubscribed; suspension triggers at-least-quarterly Board reconsideration. Current SC TO-I (2026-08-04): up to 90,421,330 shares, approximately 5% of the 1,808,426,610 shares outstanding at 2026-06-30.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13); SC TO-I (filed 2026-08-04)",
+      "section": "Item 1 - Share Repurchase Program; SC TO-I Item 2 Subject Company Information",
+      "quote": "up to 5% of the NAV of the Company\u2019s Common Shares outstanding (either by number of shares or aggregate NAV) as of the close of the previous calendar quarter",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.2": {
+      "element": "Repurchase mechanics",
+      "value": "Mechanics: quarterly Rule 13e-4 tenders; commencement ~2 months and request deadline ~1 month before the quarter-end pricing date (FY2025 pattern: commence 2025-02-03, deadline 2025-03-03, priced at 2025-03-31 NAV); shareholders must submit notice of intent BEFORE the repurchase-date NAV is known but may withdraw before the repurchase date; price = quarter-end NAV (98% if <1 year); oversubscription allocated pro rata by shares tendered without regard to class; repurchased shares retired; repurchases outside the program permitted under Rule 23c-1(a)(10).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Item 1 - Share Repurchase Program; Risk Factors (repurchase-program limitations); Note 9 repurchase tables (dates)",
+      "quote": "If less than the full amount of Common Shares requested to be repurchased in any given repurchase offer are repurchased, funds will be allocated pro rata",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.3": {
+      "element": "Repurchase history",
+      "value": "Completed quarterly tenders printed for every quarter 2023-2026H1. FY2023: 36.1M/48.5M/19.5M/21.0M shares = 3.9%/5.2%/2.0%/2.0% of prior-quarter shares - 'All repurchase requests were satisfied in full.' FY2024: 21.9M/18.0M/21.5M/20.9M = 1.9%/1.5%/1.6%/1.5% - all in full (plus separate 42,937-share repurchase at Aug-2024 NAV). FY2025: 23.0M/43.6M/31.8M/85.0M = 1.5%/2.6%/1.8%/4.5% ($581.0M/$1,096.0M/$793.7M/$2,107.5M) - all in full. 2026 STRESS: Q1-2026 tender repurchased 133.7M shares = 7.0% ($3,232.8M); Q2-2026 93.2M = 5.0% ($2,204.3M) WITH PRORATION - first printed gating: requests exceeded quarterly limits, accepted pro-rata (10-Q footnote 4). Aug-2026 tender open for ~5% (SC TO-I).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13) Note 9; Form 10-Q Q2-2026 (filed 2026-08-12) Note 9 + Part II Item 2; SC TO-I (filed 2026-08-04)",
+      "section": "Share Repurchases tables (FY2025/FY2024/FY2023; six months ended 2026-06-30) with footnotes",
+      "quote": "the Company received repurchase requests that exceeded its quarterly limits and accepted requests on a pro-rata basis in accordance with the terms of the Company\u2019s share repurchase program",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.4": {
+      "element": "Portfolio liquidity profile",
+      "value": "Illiquid private-credit book: Level 3 = $75.0B of $82.2B total investments (91.3% incl. $1.79B NAV-measured JVs) at 2025-12-31; 89.2% first lien private loans; unfunded commitments $13.4B principal (delayed draws/revolvers). Offsetting liquidity: liquid publicly traded large-issuer securities held partly to support the repurchase program (Item 1); as of 2026-06-30 (10-Q): $1.1B unrestricted cash plus $16.2B available to borrow under credit facilities (subject to borrowing base) and continuous-offering proceeds.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13); Form 10-Q Q2-2026 (filed 2026-08-12)",
+      "section": "Item 7 - portfolio composition and unfunded commitments; Note 5 fair-value hierarchy; 10-Q MD&A - Financial Condition, Liquidity and Capital Resources",
+      "quote": "As of December 31, 2025 the Company had unfunded commitments, including delayed draw term loans and revolvers, in the aggregate principal amount of $13.4 billion",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.5": {
+      "element": "TDF/CIT liquidity sleeve",
+      "value": "No TDF/CIT wrapper exists for this product; liquidity-sleeve design is a plan-vehicle question, not a BCRED disclosure.",
+      "status": "n/a - CIT only",
+      "source": "n/a - structural",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.6": {
+      "element": "Fund leverage & facilities",
+      "value": "Core leverage: 1940-Act 150% minimum asset coverage election (Section 61(a)(2), sole-shareholder approval 2020-08-26; up to 2:1 debt-to-equity). Actual asset coverage 235.7% (2025-12-31), 226.5% (2024-12-31), 221.3% (2026-06-30). Total outstanding principal $35,085.9M at 2025-12-31 ($35.3B at 2026-06-30), by bucket: SPV financing facilities $14,155.3M (named 'Peak' facilities, some multi-currency); Revolving Credit Facility (Citi agent; amended/restated 2025-08-08) $2,259.2M; private placement bonds $2,375.0M; unsecured notes $9,474.6M; CLO debt securitizations $5,964.9M; short-term borrowings $856.8M. FY2025 weighted average interest rate on all borrowings 6.11% (FY2024 7.13%, FY2023 6.93%); average principal outstanding FY2025 $31,044.6M; facility covenants include 150% asset coverage at all times.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13) Note 7/Note 10 and Item 1; Form 10-Q Q2-2026 (filed 2026-08-12) MD&A",
+      "section": "Note 7. Borrowings (contractual maturities table; weighted-average rate); Item 1 - Regulation (asset coverage); 10-Q MD&A - Borrowings",
+      "quote": "we had an aggregate principal amount of $35.3 billion and $35.1 billion of debt outstanding and our asset coverage ratio was 221.3 % and 235.7 %",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.7": {
+      "element": "Plan participant liquidity demand",
+      "value": "Structural: BCRED filings disclose fund-side liquidity only (3.1/3.3/3.4). Participant-level demand (separated-with-balance counts, payout elections) is plan data outside any BCRED document.",
+      "status": "n/a - plan-side workflow: participant liquidity demand comes from a specific plan's Form 5500/recordkeeper census, resolved per plan engagement, not from product filings",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.8": {
+      "element": "Redemption stress test",
+      "value": "ILLUSTRATIVE redemption stress (computed, all four plans): tail turnover x2, active turnover x1.5 vs base scenario. Anchor plan: demand 19.2%/yr vs 20.0% capacity - within wrapper capacity (19.2% vs 20%) IF offers are not prorated",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__bcred_match.json (+3 plans)",
+      "section": "stressed_scenario (ILLUSTRATIVE)",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "3.9": {
+      "element": "Product-to-plan liquidity match",
+      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of NAV of outstanding shares (board-discretionary quarterly tenders) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts for all four reference plans in data/liquidity/.",
+      "status": "computed",
+      "source": "data/liquidity/plan_tech_media__bcred_match.json",
+      "section": "verdict + reasons",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.1": {
+      "element": "Valuation policy & NAV frequency",
+      "value": "NAV FREQUENCY: monthly - NAV determined for each class as of the last day of each calendar month; shares issued at the prior month-end NAV; class NAV = class assets minus class liabilities over class shares. POLICY: fair value per ASC 820 determined in good faith by the Board on Audit Committee recommendation, via multi-step process: Advisers' valuation team preliminary values -> independent valuation firms' quarter-end ranges (except de minimis) -> Advisers' valuation committee -> Audit Committee -> Board; majority of investments expected Level 3.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Item 5 - NAV Per Share; Note 2 Significant Accounting Policies / Item 7 Critical Accounting Estimates - valuation process",
+      "quote": "We expect to determine our NAV for each class of shares as of the last day of each calendar month.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.2": {
+      "element": "Fair-value hierarchy (L1/2/3)",
+      "value": "Fair-value hierarchy at 2025-12-31 ($K): Level 1 $19,774 / Level 2 $5,364,336 / Level 3 $75,023,423 / subtotal $80,407,533; plus investments measured at NAV (JVs) $1,791,813 = total investments $82,199,346. Level 3 = 91.3% of total investments at fair value. First lien debt splits L2 $4,559,314 / L3 $68,786,055; equity & other nearly all L3 ($2,897,350).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Note 5. Fair Value Measurements - fair value hierarchy of financial instruments (December 31, 2025 table)",
+      "quote": "Total investments | $ | 19,774 | $ | 5,364,336 | $ | 75,023,423 | $ | 82,199,346",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.3": {
+      "element": "Independent valuation agent",
+      "value": "PARTIAL: independent valuation firms ARE engaged (recommended by the Advisers, engaged at the direction of the Board) and prepare quarter-end valuation ranges for Level 3 investments other than de minimis positions, plus supporting methodology analyses - but no firm is NAMED anywhere in the 10-K.",
+      "status": "partial",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Item 7 - Critical Accounting Estimates / Note 2 - valuation process bullets",
+      "quote": "independent valuation firms engaged by the Board prepare quarter-end valuations of such investments except de minimis investments, as determined by the Advisers",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.4": {
+      "element": "Methodology by asset type",
+      "value": "By asset type (Note 5 unobservable-inputs table, 2025-12-31): performing debt - market-interest-rate YIELD ANALYSIS (contractual cash flows discounted at market yield): first lien $66,420.8M, discount rate 2.81%-32.47% (WA 9.06%); second lien $2,477.0M by same technique. Credit-impaired debt - enterprise-value 'waterfall' or recovery method; asset-recoverability/market-multiple (5.50x-12.47x, WA 10.76x) for $1,886.9M; broker market quotations for $471.2M; equity via performance/market multiples and option-pricing volatility; JV interests measured at fair value using the NAV practical expedient (excluded from the fair-value hierarchy per Note 5).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Note 2 - Valuation of Portfolio Investments; Note 5 - significant unobservable inputs table (December 31, 2025) and NAV-practical-expedient footnote",
+      "quote": "For debt investments that are not determined to be credit-impaired, the Advisers generally use a market interest rate yield analysis to determine fair value",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.5": {
+      "element": "Auditor & opinion",
+      "value": "Deloitte & Touche LLP, New York, New York. Opinion signed March 13, 2026 (unqualified; critical audit matter: Level 3 fair-value measurements, $75,023,423K of investments). Tenure: auditor since 2020 - six fiscal years through FY2025.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Report of Independent Registered Public Accounting Firm - signature block",
+      "quote": "/s/ DELOITTE & TOUCHE LLP New York, New York March 13, 2026 We have served as the Company\u2019s auditor since 2020.",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.6": {
+      "element": "NAV restatement history",
+      "value": "None identified: searched stripped 10-K (FY2025, filed 2026-03-13), 10-Q (Q2-2026, filed 2026-08-12), prospectus 486BPOS (2026-05-01), SC TO-I (2026-08-04) and 424B3 Supplement No. 2 (2026-07-24) for 'restat' and 'error correction'. Zero NAV-restatement or error-correction events: every hit is an amended-and-restated agreement title (Declaration of Trust, advisory agreements, Revolving Credit Facility), hyperinflationary-accounting boilerplate, or the 10-K cover-page error-correction checkbox - which is UNCHECKED ('...reflect the correction of an error to previously issued financial statements. \u2610').",
+      "status": "extracted-unverified",
+      "source": "All five on-disk BCRED filings (mechanical search 2026-08-14)",
+      "section": "Document-wide search; 10-K cover page; Item 5 NAV-determination paragraph (quoted)",
+      "quote": "The NAV per share for each class of shares is determined by dividing the value of total assets attributable to the class minus liabilities attributable to the class",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.7": {
+      "element": "Premium/discount check",
+      "value": "Not exchange-listed: shares transact at NAV; no market price exists, premium/discount undefined. (Contrast the venture cohort's market-priced members.)",
+      "status": "n/a - not publicly available: no market price for a non-listed NAV-transaction wrapper",
+      "source": "wrapper structure per cell 3.1",
+      "section": "n/a rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.8": {
+      "element": "Smoothing diagnostics",
+      "value": "Smoothing diagnostics need monthly-or-finer marks; quarterly valuations (n=9 changes) cannot support a meaningful rho estimate. Level 3 concentration (4.2) is the qualitative smoothing indicator on record.",
+      "status": "n/a - not publicly available: quarterly NAV cadence; rho estimation not meaningful at n=9",
+      "source": "disclosure-cadence assessment",
+      "section": "granularity rationale",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "4.9": {
+      "element": "CIT unit valuation",
+      "value": "No CIT wrapper; unit valuation is a plan-vehicle construct not applicable to direct BDC shares.",
+      "status": "n/a - CIT only",
+      "source": "n/a - structural",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.1": {
+      "element": "Self-declared benchmark",
+      "value": "ABSENCE DOCUMENTED: no self-declared performance benchmark anywhere in the FY2025 10-K or the 2026-05-01 prospectus. Zero hits for 'Cliffwater' or 'S&P 500' in either document; the 12 case-insensitive 'LSTA' substring hits in the 10-K are all XBRL context-ID artifacts of the '2025-1 BSL Static' debt-securitization tranche naming (the match spans 'BSLStatic'), not an index reference; every 'benchmark' occurrence concerns affiliated-service-provider cost benchmarking or benchmark interest rates (SOFR) - never a performance index. The issuer's only self-declared performance basis is NAV-based total return (financial highlights).",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13) and Prospectus dated 2026-05-01 (486BPOS) - document-wide searches for benchmark/index names run on stripped text 2026-08-14",
+      "section": "Note 10 Financial Highlights footnote (4) (quoted, the declared performance basis); document-wide benchmark search",
+      "quote": "Total return is calculated as the change in NAV per share during the period, plus distributions per share (assuming dividends and distributions are reinvested in accordance with the Company's distribution reinvestment plan) divided by the beginning NAV per share",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.2": {
+      "element": "Public index series",
+      "value": "No fund-level daily series exists (non-traded). Strategy proxy BKLN daily on disk; bcred quarterly NAV path in data/series_quarterly/bcred_nav.csv (extracted, adversarially verified).",
+      "status": "fetched",
+      "source": "data/series/series_manifest.json + data/series_quarterly/manifest.json",
+      "section": "series inventory",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.3": {
+      "element": "Alt asset-class indices",
+      "value": "Candidates evaluated incl. paid/manual indices, with the peer cohort now a real lane-C candidate (7/12 - reaches threshold, outranked; retained as viable alternate). Full scoring + rejection ledger in the selection artifact.",
+      "status": "computed",
+      "source": "data/benchmarks/bcred_selection.json",
+      "section": "candidates + rejection log",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.4": {
+      "element": "Peer universe & returns",
+      "value": "Peer cohort private_credit (n=3: cclfx, bcred, pflex) - equal-weight annual composite on printed FY returns; cross-wrapper mix (interval + BDC) disclosed in the cohort caveat block. Membership rationales in data/facts; exclusions in data/roster_decisions.md.",
+      "status": "computed",
+      "source": "data/cohorts/private_credit.json",
+      "section": "members + composite",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.5": {
+      "element": "PME / Direct Alpha inputs",
+      "value": "PME inputs (computed): window 2021-01-07 to 2025-12-31; flows [-1 at start, 1.5998 at end]; index BKLN adj-close daily-anchored. KS-PME 1.2378, Direct Alpha 4.38%/yr.",
+      "status": "computed",
+      "source": "data/benchmarks/bcred_selection.json + data/benchmarks/profiles_input.json",
+      "section": "primary.comparison",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.6": {
+      "element": "Benchmark suitability memo",
+      "value": "Benchmark-suitability memo is a constructed analytics artifact (Lane 3), not an extraction target; product-side input on file is the documented benchmark absence in 5.1.",
+      "status": "n/a - constructed (L3)",
+      "source": "n/a - constructed downstream",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "5.7": {
+      "element": "Case-law tracker",
+      "value": "Case-law tracking is maintained at the platform level across products, not per-product extraction.",
+      "status": "n/a - cross-product tracker",
+      "source": "n/a - cross-product",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.1": {
+      "element": "Structure map",
+      "value": "Delaware statutory trust formed 2020-02-11; non-diversified closed-end management investment company; elected BDC regulation under the 1940 Act; elected RIC treatment under Subchapter M (intends to qualify annually); perpetual-life non-traded BDC sold monthly at NAV in a continuous offering (broke escrow 2021-01-07). Externally managed: Adviser Blackstone Private Credit Strategies LLC (also Administrator since 2025-01-01) + Sub-Adviser Blackstone Credit BDC Advisors LLC. Structure beneath: wholly-owned SPV financing subsidiaries ('Peak' facilities), CLO securitization issuers, taxable corporate subsidiary BCRED Investments LLC, two unconsolidated JVs (Emerald, Verdelite); share classes I/S/D; feeder vehicles for non-U.S. investors referenced.",
+      "status": "extracted-unverified",
+      "source": "Prospectus dated 2026-05-01 (486BPOS) - Prospectus Summary; Form 10-K FY2025 - Item 1/Note 1",
+      "section": "Prospectus Summary - 'What is Blackstone Private Credit Fund?'; 10-K Item 1. Business - The Company",
+      "quote": "We are a Delaware statutory trust formed on February 11, 2020. We are a non-diversified, closed-end management investment company that has elected to be regulated as a BDC",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.2": {
+      "element": "Strategy & instrument complexity",
+      "value": "STRATEGY: U.S. private-credit direct lending - predominantly first lien senior secured and unitranche loans (incl. first-out/last-out) to U.S. private companies; also second lien, unsecured, subordinated/mezzanine, structured credit and broadly syndicated loans; at least 70% U.S. private companies (BDC requirement), some European/other non-U.S., no emerging markets; objectives: current income and, to a lesser extent, long-term capital appreciation. INSTRUMENTS/BOOK (2025-12-31): 89.2% first lien / 4.0% second lien / 0.1% unsecured / 0.6% SF debt / 0.4% SF equity / 2.2% JVs / 3.5% equity & other across 700 portfolio companies ($82.2B FV); 99.7% of performing debt floating rate (SOFR-referenced, mostly with floors); PIK/OID deferred-income features; interest-rate swaps with hedge accounting; liquid large-issuer securities sleeve for repurchase-program liquidity.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Item 1. Business - Investment Strategy; Item 7 - portfolio composition; Note 4 (floating-rate percentage)",
+      "quote": "predominantly direct lending to U.S. private companies through (i) first lien senior secured and unitranche loans (including first-out/last-out loans)",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.3": {
+      "element": "Conflicts & affiliated transactions",
+      "value": "SEC co-investment exemptive relief in place: co-investment transactions with Blackstone, the Advisers and their affiliates subject to conditions (fair-and-equitable-opportunity policies required; Advisers may still allocate deals away). Extensive printed conflicts web: allocation among Other Blackstone Credit & Insurance Clients and overlapping Blackstone Insurance Clients; affiliated service providers charging fees with NO management-fee offset (e.g., Lexington National Land Services title/escrow; benchmarking of affiliate rates discretionary and sometimes omitted); Administrator, Sub-Administrator and Intermediary Manager (Blackstone Securities Partners L.P.) are affiliates. FY2025 accruals to affiliated Adviser: management fees $566.6M + income incentive fees $626.7M.",
+      "status": "extracted-unverified",
+      "source": "Form 10-K FY2025 (filed 2026-03-13)",
+      "section": "Item 1 - Allocation of Investment Opportunities and Potential Conflicts of Interest; Risk Factors - conflicts; Note 3 related-party amounts",
+      "quote": "We have obtained exemptive relief from the SEC that allows us to engage in co-investment transactions with Blackstone, the Advisers and their respective affiliates",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.4": {
+      "element": "Tax reporting (1099 vs K-1)",
+      "value": "Form 1099-DIV (or Form 1099-B if required) literally printed for U.S. shareholders - prospectus states 1099-DIV expected mailed by January 31 each year; Form 1042-S for non-U.S. shareholders. No K-1 (RIC under Subchapter M, not a partnership). FY2023-FY2025 dividends 100% ordinary income on a tax basis (cell 1.4).",
+      "status": "extracted-unverified",
+      "source": "Prospectus dated 2026-05-01 (486BPOS)",
+      "section": "Prospectus Summary Q&A - periodic updates / 'When will I get my detailed tax information?'",
+      "quote": "an annual Internal Revenue Service (\u201cIRS\u201d) Form 1099-DIV or IRS Form 1099-B, if required, and, in the case of non-U.S. shareholders, an annual IRS Form 1042-S",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.5": {
+      "element": "Service-provider web",
+      "value": "Custodian: State Street Bank and Trust Company (100 Summer Street, Boston, MA). Transfer agent / distribution disbursing agent: SS&C GIDS, Inc. (Kansas City, MO; Agency Agreement in 10-K exhibit list). Auditor: Deloitte & Touche LLP, New York (since 2020). Adviser/Administrator: Blackstone Private Credit Strategies LLC (Administrator effective 2025-01-01); Sub-Adviser: Blackstone Credit BDC Advisors LLC; third-party sub-administrator: State Street Bank and Trust Company (State Street Sub-Administration Agreement, assigned effective 2025-01-01). Intermediary Manager: Blackstone Securities Partners L.P. Escrow agent (2020 offering): UMB Bank, N.A. Revolving Credit Facility agent: Citi.",
+      "status": "extracted-unverified",
+      "source": "Prospectus dated 2026-05-01 (486BPOS) - Custodian section; Form 10-K FY2025 - Note 3 Administration Agreements, auditor signature, exhibit index; Form 10-Q (Citi agent)",
+      "section": "Prospectus - CUSTODIAN, TRANSFER AND DISTRIBUTION PAYING AGENT AND REGISTRAR; 10-K Note 3 / Exhibits 10.10-10.11",
+      "quote": "Our securities are held under a custody agreement by State Street Bank and Trust Company. ... SS&C GIDS, Inc. acts as our transfer agent and distribution disbursing agent",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.6": {
+      "element": "Plan operational fit",
+      "value": "Workflow cell: operational fit (recordkeeper coding, order handling for a monthly-subscription/quarterly-tender vehicle priced at prior-month-end NAV, tender-window administration incl. pro-ration events like Q2-2026, DRIP handling, 1099-DIV flows via SS&C GIDS) depends on the specific plan's recordkeeper and trust/custody stack. Product-side inputs already evidenced: monthly NAV and offering cadence (4.1), quarterly 5% tender mechanics (3.1/3.2), transfer agent and custodian (6.5), tax form (6.4).",
+      "status": "n/a - not publicly available: requires plan-specific recordkeeper/trading integration facts - workflow cell completed per plan engagement, not public product data",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.7": {
+      "element": "Participant communicability",
+      "value": "Workflow cell: whether a perpetual non-traded BDC with monthly NAV, a discretionary quarterly tender capped at 5% (prorated in Q2-2026), a 2% early-repurchase deduction, ~7% total expense ratio dominated by leverage cost, and 100%-ordinary-income monthly distributions can be explained to 404(c) participants is the committee's assessment. Product-side communicability inputs on file: structure map (6.1), strategy/instrument complexity incl. 2:1 leverage capacity (6.2/3.6), liquidity terms and 2026 gating instance (3.1/3.3), tax reporting (6.4).",
+      "status": "n/a - not publicly available: requires plan-committee participant-communication assessment - workflow cell; product-side inputs already evidenced in 6.1/6.2/6.4",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "6.8": {
+      "element": "Fiduciary capacity self-assessment",
+      "value": "Fiduciary capacity self-assessment is the committee's own governance output; no product filing can supply it.",
+      "status": "n/a - workflow, not data",
+      "source": "n/a - plan-side workflow",
+      "section": "n/a",
+      "quote": "",
+      "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    }
+  }
+}

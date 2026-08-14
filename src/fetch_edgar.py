@@ -114,10 +114,99 @@ PRODUCTS = {
     "ares_pmf": {
         "name": "Ares Private Markets Fund",
         "cik": "1876006",
-        "wrapper": "tender-offer fund ('40 Act) [bench: swap candidate]",
+        "wrapper": "tender-offer fund ('40 Act)",
+        "depth": "cohort",
+        "doc_sets": {
+            "prospectus": ["486BPOS", "424B3"],
+            "annual_report": ["N-CSR"],
+            "tender": ["SC TO-I"],
+        },
+    },
+    # ---- cohort-tier roster (verified live on EDGAR 2026-08-14; every
+    # acceptance and rejection reasoned in data/roster_decisions.md) ----
+    "bcred": {
+        "name": "Blackstone Private Credit Fund",
+        "cik": "1803498",
+        "wrapper": "non-traded BDC ('34 Act reporting; continuous offering)",
+        "depth": "cohort",
+        "doc_sets": {
+            "prospectus": ["486BPOS", "424B3"],
+            "annual_report": ["10-K"],
+            "quarterly_report": ["10-Q"],
+            "tender": ["SC TO-I"],
+        },
+    },
+    "pflex": {
+        "name": "PIMCO Flexible Credit Income Fund",
+        "cik": "1688554",
+        "wrapper": "TRUE interval fund (Rule 23c-3), flexible credit",
+        "depth": "cohort",
+        "doc_sets": {
+            "prospectus": ["486BPOS", "424B3"],
+            "annual_report": ["N-CSR"],
+        },
+        "history_sets": {
+            "repurchase_history": {"form": "N-23C3A", "count": 8},
+        },
+    },
+    "amg_pantheon": {
+        "name": "AMG Pantheon Fund, LLC",
+        "cik": "1609211",
+        "wrapper": "tender-offer fund ('40 Act), evergreen PE",
+        "depth": "cohort",
         "doc_sets": {
             "prospectus": ["N-2", "424B3"],
             "annual_report": ["N-CSR"],
+            "tender": ["SC TO-I"],
+        },
+    },
+    "sreit": {
+        "name": "Starwood Real Estate Income Trust, Inc.",
+        "cik": "1711929",
+        "wrapper": "non-traded REIT ('34 Act reporting)",
+        "depth": "cohort",
+        "doc_sets": {
+            "prospectus": ["424B3"],
+            "annual_report": ["10-K"],
+            "quarterly_report": ["10-Q"],
+        },
+    },
+    "jll_ipt": {
+        "name": "JLL Income Property Trust, Inc.",
+        "cik": "1314152",
+        "wrapper": "non-traded REIT ('34 Act reporting, perpetual NAV REIT)",
+        "depth": "cohort",
+        "doc_sets": {
+            "prospectus": ["424B3"],
+            "annual_report": ["10-K"],
+            "quarterly_report": ["10-Q"],
+        },
+    },
+    "ssss": {
+        "name": "Neostellar Capital Corp. (fka SuRo Capital Corp., SSSS)",
+        "cik": "1509470",
+        "wrapper": "LISTED BDC (exchange-traded; pre-IPO growth holdings)",
+        "depth": "cohort",
+        "note": "renamed from SuRo Capital Corp. - caught by R1 live verification; "
+                "strategy continuity MUST be confirmed from the current 10-K "
+                "during extraction before cohort membership is final",
+        "doc_sets": {
+            "prospectus": ["N-2"],
+            "annual_report": ["10-K"],
+            "quarterly_report": ["10-Q"],
+        },
+    },
+    "arkvx": {
+        "name": "ARK Venture Fund",
+        "cik": "1905088",
+        "wrapper": "TRUE interval fund (Rule 23c-3), venture/growth (ARKVX)",
+        "depth": "cohort",
+        "doc_sets": {
+            "prospectus": ["486BPOS", "424B3"],
+            "annual_report": ["N-CSR"],
+        },
+        "history_sets": {
+            "repurchase_history": {"form": "N-23C3A", "count": 8},
         },
     },
 }

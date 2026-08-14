@@ -69,6 +69,36 @@
       "pulled": "2026-07-18",
       "role": "index_proxy",
       "note": "US real estate investable proxy (Vanguard Real Estate ETF) - BREIT comparator class"
+    },
+    {
+      "ticker": "PFLEX",
+      "source": "Yahoo Finance v8 chart API (close + adjclose)",
+      "rows": 2380,
+      "first": "2017-02-23",
+      "last": "2026-08-13",
+      "pulled": "2026-08-14",
+      "note": "PFLEX daily series - cohort roster",
+      "role": "fund"
+    },
+    {
+      "ticker": "ARKVX",
+      "source": "Yahoo Finance v8 chart API (close + adjclose)",
+      "rows": 990,
+      "first": "2022-08-31",
+      "last": "2026-08-13",
+      "pulled": "2026-08-14",
+      "note": "ARKVX daily series - cohort roster",
+      "role": "fund"
+    },
+    {
+      "ticker": "NSLR",
+      "source": "Yahoo Finance v8 chart API (close + adjclose)",
+      "rows": 2514,
+      "first": "2016-08-15",
+      "last": "2026-08-14",
+      "pulled": "2026-08-14",
+      "note": "Neostellar (fka SuRo Capital SSSS) daily price - listed BDC, venture cohort premium/discount comparable",
+      "role": "fund"
     }
   ],
   "schema": "date,close,adj_close - adj_close folds distributions back in (total-return proxy); REQUIRED for distributing funds like CCLFX where raw NAV materially understates return",

@@ -84,7 +84,7 @@ def fee_percentile() -> dict:
 def stress_windows() -> dict:
     out = {}
     # daily-series tier
-    for key, ticker in (("cliffwater_cclfx", "cclfx"), ("dxyz", "dxyz")):
+    for key, ticker in (("cliffwater_cclfx", "cclfx"), ("dxyz", "dxyz"), ("pflex", "pflex"), ("arkvx", "arkvx")):
         s = load_series(ticker, "adj_close" if key != "dxyz" else "close")
         w = {}
         cal22 = [v for d, v in s if "2022-01-01" <= d <= "2022-12-31"]

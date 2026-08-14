@@ -17,7 +17,7 @@
     "annual_wrapper_capacity_pct": 24.0,
     "outcome": "within wrapper capacity (12.3% vs 24%) IF offers are not prorated \u2014 but this issuer HAS prorated under stress (3.3)"
   },
-  "plan_display_label": "US tire & rubber manufacturer bargaining-unit 401(k) plan (~$790M, OH)",
+  "plan_display_label": "US industrial manufacturer 401(k) plan (~$0.8B, OH)",
   "plan_direction": "total",
   "wrapper_facts": {
     "kind": "share_repurchase_plan",

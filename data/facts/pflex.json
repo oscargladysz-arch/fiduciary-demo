@@ -1,0 +1,134 @@
+{
+  "product_key": "pflex",
+  "cohort_id": "private_credit",
+  "depth": "cohort",
+  "membership_rationale": "Flexible multi-sector credit in the SAME wrapper as cclfx (interval, quarterly 5%) - wrapper twin, broader credit mandate (loans, structured, EM); mandate breadth is the disclosed mismatch.",
+  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
+  "facts": {
+    "wrapper_type": {
+      "value": "interval_23c3",
+      "source_cell": "6.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_pct": {
+      "value": 1.3,
+      "source_cell": "2.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_base": {
+      "value": "lesser_of_dual_base",
+      "source_cell": "2.1",
+      "note": "LESSER of 1.30% of average daily total managed assets (leverage-inclusive) and the net-assets formulation - a hybrid base; effective 4/1/2025",
+      "status": "extracted-unverified"
+    },
+    "incentive_fee": {
+      "value": {
+        "present": false
+      },
+      "source_cell": "2.2",
+      "note": "unified management fee; no incentive-fee line in the fee table",
+      "status": "extracted-unverified"
+    },
+    "early_repurchase": {
+      "value": {
+        "present": false
+      },
+      "source_cell": "2.7",
+      "note": "no Rule 23c-3 early repurchase fee; 1.00% contingent load on A-2/A-4 classes only",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cadence_per_year": {
+      "value": 4,
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cap_pct": {
+      "value": 5.0,
+      "source_cell": "3.1",
+      "note": "fundamental 5-25% policy; currently 5%",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cap_base": {
+      "value": "outstanding_shares",
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "gate_history": {
+      "value": false,
+      "source_cell": "3.3",
+      "note": "FY2025 offers undersubscribed (max 4.32% tendered vs 5% cap)",
+      "status": "extracted-unverified"
+    },
+    "tax_form": {
+      "value": "1099",
+      "source_cell": "6.4",
+      "status": "extracted-unverified"
+    },
+    "auditor": {
+      "value": "PricewaterhouseCoopers LLP",
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "big4": {
+      "value": true,
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "expense_ratio_pct": {
+      "value": 1.97,
+      "source_cell": "2.3",
+      "note": "FY2025 Institutional, EXCLUDING interest expense (5.12% including reverse-repo interest); gross=net, no waivers",
+      "status": "extracted-unverified"
+    },
+    "net_assets_usd": {
+      "value": 3596873000,
+      "source_cell": "3.6",
+      "approx": true,
+      "note": "$3,596,873k net assets as printed",
+      "status": "extracted-unverified"
+    },
+    "inception": {
+      "value": "2017-02-22",
+      "source_cell": "1.11",
+      "note": "fund and Institutional class inception",
+      "status": "extracted-unverified"
+    },
+    "track_record_years": {
+      "value": 8.4,
+      "source_cell": "1.11",
+      "status": "computed",
+      "note": "(as-of 2025-06-30 minus inception) / 365.25"
+    },
+    "primary_benchmark_id": {
+      "value": "bkln",
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "selection_score": {
+      "value": 9,
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "pme_primary": {
+      "value": 1.2639,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "direct_alpha_primary": {
+      "value": 2.5,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "liquidity_verdict_by_plan": {
+      "value": {
+        "plan_consulting_alumni": "conditional",
+        "plan_manufacturer_union": "conditional",
+        "plan_restaurant_hourly": "conditional",
+        "plan_tech_media": "conditional"
+      },
+      "source_cell": "3.9",
+      "status": "computed"
+    }
+  }
+}
