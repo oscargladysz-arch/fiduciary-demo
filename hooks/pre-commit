@@ -3,7 +3,9 @@
 # Install: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
 source .venv/bin/activate 2>/dev/null
 python src/validate_data.py && \
+python src/validate_census.py && \
 python src/test_analytics.py && \
+python src/test_cohort.py && \
 python src/test_benchmark.py && \
 python src/test_memo.py && \
 python src/test_app.py && \

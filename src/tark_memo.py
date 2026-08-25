@@ -49,7 +49,8 @@ def _cell_lines(product: dict, factor_label: str, limit: int = 4) -> str:
     picks = []
     for cid, cell in cells_by_factor(product)[factor_label]:
         if status_kind(cell.get("status", "")) in ("extracted", "verified",
-                                                   "computed", "partial"):
+                                                   "computed", "partial",
+                                                   "structured"):
             v = (cell.get("value") or "").strip()
             if v:
                 picks.append(f"{cid}: {v[:220]}")
@@ -192,7 +193,10 @@ def build_memo(key: str) -> Path:
         "this product: "
         + ", ".join(f"{k}: {v}" for k, v in sorted(counts.items())) + ". "
         "Cells marked extracted-unverified or computed await independent "
-        "verification; verified cells have been independently re-checked.")
+        "verification; verified cells have been independently re-checked. "
+        "Cells marked structured come directly from machine-readable "
+        "regulatory data (N-CEN structured datasets, XBRL company facts) "
+        "with the source dataset cited; no model judgment is involved.")
     doc.add_paragraph(f"Data sources include SEC EDGAR filings (see "
                       f"data/manifest.csv) and DOL EBSA Form 5500 bulk data. "
                       f"{anchor['anonymization_rule']}")
