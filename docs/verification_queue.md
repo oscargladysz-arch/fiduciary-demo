@@ -63,3 +63,16 @@ existing items. Fee/liquidity traps and the exhibits the demo leans on first:
 - bcred/sreit/pantheon/ssss quarterly NAV series spot-checks (data/series_quarterly/)
 - remaining critical-set cells (1.2, 2.3, 2.6, 2.7, 4.1, 4.5, 5.1, 6.2, 6.4) per product
 - facts hand-mappings for the 8 new products (data/facts/ vs cells)
+
+## Census additions (2026-08-25) — structured cells rank LOW
+
+Cells with status `structured` came from machine-readable regulatory data
+(N-CEN structured datasets, XBRL company facts, submissions JSON) with the
+dataset row cited — no model judgment was involved, so mis-transcription
+risk is the only failure mode. They rank BELOW every extracted-unverified
+cell: verify them last, by spot-checking the cited dataset row.
+
+- promoted products' `structured` prefills (4.5 auditor flag, 4.6 NAV-error
+  flag, 1.10 unlisted n/a) — spot-check against the cited N-CEN accession
+- census.json itself is validated mechanically (src/validate_census.py);
+  it is T1 by construction and does not enter this queue cell-by-cell

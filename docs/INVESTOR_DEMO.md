@@ -68,3 +68,27 @@ The build refuses to emit the bundle if any plan-sponsor token would leak.
 - No number reaches a surface unless it is in the cited data layer or is
   recomputed live from it; scenario math is always labeled ILLUSTRATIVE.
 - `verified` status can only be set by a human editing the evidence CSV.
+
+## Census build additions (2026-08-25)
+
+- **New views**: Universe (T1 screener over 3,599 wrappers) and The Funnel
+  (dark universe → registered universe → censused → evaluated → verified).
+  Both load a separate lazy chunk (`census.data.js`, ≤500KB) — landing-page
+  paint is unaffected.
+- **Universe numbers to say out loud**: 72,502 Form D pooled funds in 24
+  months (the dark universe) vs 3,599 registered wrappers (245 interval,
+  516 tender CEF, 378 BDC, 1,072 non-traded REIT, 213 listed CEF, 1,174
+  unlisted CEF other, 1 reconciled '34-Act).
+- **Tier language discipline**: T1 "structured filing data" (blue badge) =
+  machine-read regulatory datasets, no model judgment; T2
+  "extracted-unverified" = AI extraction with citations; T3 "verified" =
+  human-signed. Never blur them in the meeting — the separation IS the
+  product.
+- **Census provenance**: hover any T1 value for {source dataset, accession,
+  as-of}. Name "hints" are always badged and never filter by default (C2).
+- **Promotion pipeline**: `python src/promote.py <cik> --key <key>` — R1
+  identity check against live EDGAR, 54-cell scaffold, census answers
+  prefilled at status `structured`, extraction worklist printed. Run live
+  in a meeting only with network; otherwise narrate from the two shipped
+  case studies (ocic, cion_ares).
+- Pre-commit now runs 9 gates (census validator + cohort suite added).
