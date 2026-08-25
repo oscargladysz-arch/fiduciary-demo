@@ -570,6 +570,24 @@ export function initPalette(setState, VIEWS) {
           run: () => setState({ view: "cohorts", cohort: c }) });
       }
     }
+    // command: universe <class> — jump to a filtered census view
+    const UCLASSES = { bdc: "BDCs", interval_23c3: "interval funds",
+      tender_cef: "tender-offer CEFs", nontraded_reit: "non-traded REITs",
+      listed_cef: "listed CEFs", unlisted_cef_other: "unlisted CEFs (other)" };
+    if (ql.startsWith("universe") || ql.startsWith("census")) {
+      out.push({ kind: "command", label: "Universe: all wrapper classes",
+        run: () => setState({ view: "census", c_class: "", c_cik: "" }) });
+      for (const [uc, ulabel] of Object.entries(UCLASSES)) {
+        if (!ql.split(/\s+/)[1] || `${uc} ${ulabel}`.includes(ql.split(/\s+/)[1])) {
+          out.push({ kind: "command", label: `Universe: ${ulabel}`,
+            run: () => setState({ view: "census", c_class: uc, c_cik: "" }) });
+        }
+      }
+    }
+    if ("funnel".includes(ql) && ql.length >= 3) {
+      out.push({ kind: "command", label: "The Funnel — universe → evaluated → verified",
+        run: () => setState({ view: "funnel" }) });
+    }
     // cell id + product ("2.1 hl_paf" or "hl 2.1")
     const cellM = ql.match(/(\d+\.\d+)/);
     if (cellM) {

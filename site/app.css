@@ -211,6 +211,32 @@ h3 { font-size: 14px; font-weight: 600; }
   letter-spacing: 0.1em; font-size: 9.5px; }
 .chip.trap { background: var(--alarm-soft); color: var(--alarm); }
 .chip.okbase { background: var(--mute-soft); color: var(--ink-2); }
+.chip.hint { background: none; color: var(--mute); border: 1px dotted var(--line);
+  font-weight: 400; font-style: italic; margin-left: 4px; }
+.chip.plain { background: var(--paper); color: var(--ink-2);
+  border: 1px solid var(--line-2); font-weight: 500; margin: 2px; }
+
+/* ------------------------------------------------------------- census */
+.tierlegend { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center;
+  background: var(--paper); border: 1px solid var(--line-2);
+  border-radius: var(--radius); padding: 8px 12px; margin: 10px 0 14px; }
+.tierlegend .cap { margin-right: 10px; }
+.linklike { background: none; border: none; padding: 0; cursor: pointer;
+  color: var(--plum-700); text-decoration: underline; font: inherit;
+  font-size: inherit; }
+.funnelbar { background: var(--mute-soft); border-radius: 999px; height: 8px;
+  overflow: hidden; margin-top: 8px; min-width: 80px; }
+.funnelbar .fill { background: var(--plum-600); height: 100%;
+  border-radius: 999px; }
+.card.dark { background: var(--plum-950); color: #efe9f7;
+  border-color: var(--plum-800); }
+.card.dark h3, .card.dark .cap { color: #cdbfe2; }
+.filestrip { display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+  margin: 8px 0 14px; }
+.hintfilter { font-size: 11.5px; }
+.hintfilter summary { cursor: pointer; color: var(--mute); }
+table.grid tr[data-cik] { cursor: pointer; }
+table.grid tr[data-cik]:hover td { background: var(--plum-100); }
 
 /* glossary term chips: plain-language first, term-of-art on hover/tap */
 .term { border-bottom: 1.5px dotted var(--plum-400); cursor: help;
@@ -510,3 +536,6 @@ body[data-density="compact"] h1 { font-size: 20px; }
   background: var(--warn); }
 .rminmax { display: flex; justify-content: space-between; font-size: 10px;
   color: var(--ink-3); font-family: var(--tnum); margin-top: 16px; }
+
+/* T1 structured filing data — its own badge (teal-blue, off the brand axis) */
+.chip.structured { background: #e2ecf7; color: #1d4f8f; }

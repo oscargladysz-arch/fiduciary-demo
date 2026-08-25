@@ -63,6 +63,9 @@ PRODUCTS = list(bundle["products"].keys())
 VIEWS = ["screener", "compare", "search", "packet", "plans", "roster",
          "evaluation", "benchmarks", "fees", "liquidity", "pme", "dxyz",
          "desmooth", "coverage", "verification"]
+# census views ignore plan/product context — swept once each (renders +
+# anonymization), not across the full combo grid
+CENSUS_VIEWS = ["census", "funnel"]
 
 # perf budget: first-paint bundle <= 1.2MB; the series chunk is split out and
 # lazy-loaded by chart/lab views, and the TOTAL payload is capped too so the
@@ -76,6 +79,13 @@ check("perf: total payload (data.js + series.js) <= 2.4MB",
       (SITE / "data.js").stat().st_size
       + (SITE / "series.js").stat().st_size <= 2_400_000,
       f"{(SITE / 'data.js').stat().st_size + (SITE / 'series.js').stat().st_size:,} bytes")
+check("perf: census.data.js lazy chunk exists and <= 500KB",
+      (SITE / "census.data.js").exists()
+      and (SITE / "census.data.js").stat().st_size <= 500_000,
+      f"{(SITE / 'census.data.js').stat().st_size:,} bytes"
+      if (SITE / "census.data.js").exists() else "missing")
+census_bundle = json.loads(
+    (SITE / "census.data.js").read_text()[len("window.TARK_CENSUS = "):-2])
 
 # structured-facts provenance spot-checks (bundle side)
 for k in PRODUCTS:
@@ -109,12 +119,20 @@ with sync_playwright() as pw:
           len(page.locator("#view").inner_text()) > 200)
     check("boot does NOT load the series chunk (lazy split)",
           page.evaluate("() => !window.TARK.series"))
-    # preload the series chunk for the rest of the suite so view renders stay
-    # synchronous (runtime lazy-load behavior is exercised by the boot check)
+    check("boot does NOT load the census chunk (lazy split)",
+          page.evaluate("() => !window.TARK_CENSUS"))
+    # preload both lazy chunks for the rest of the suite so view renders stay
+    # synchronous (runtime lazy-load behavior is exercised by the boot checks)
     page.evaluate("""() => new Promise((res) => {
         const s = document.createElement('script');
         s.src = 'series.js';
-        s.onload = () => { window.TARK.series = window.TARK_SERIES; res(true); };
+        s.onload = () => { window.TARK.series = window.TARK_SERIES; window.TARK.liquidity = window.TARK_LIQ; res(true); };
+        document.head.append(s);
+      })""")
+    page.evaluate("""() => new Promise((res) => {
+        const s = document.createElement('script');
+        s.src = 'census.data.js';
+        s.onload = () => res(true);
         document.head.append(s);
       })""")
 
@@ -141,6 +159,16 @@ with sync_playwright() as pw:
           f"combos render", not combos_bad, "; ".join(combos_bad[:5]))
     check("anonymization holds across every rendered combo", not leak_bad,
           "; ".join(leak_bad[:5]))
+    for view in CENSUS_VIEWS:
+        n_err = len(errors)
+        text = page.evaluate(
+            """(v) => { window.tarkSetState({view: v});
+                 return document.getElementById('view').innerText; }""", view)
+        low = text.lower()
+        check(f"census view '{view}' renders without exception",
+              len(errors) == n_err and len(text.strip()) > 200)
+        check(f"census view '{view}' anonymization sweep",
+              not any(tok in low for tok in FORBIDDEN))
 
     def view_text(view, plan="plan_tech_media", product="hl_paf"):
         # open every disclosure so hidden prose is included in the sweep —
@@ -202,11 +230,15 @@ with sync_playwright() as pw:
     # every combo WITH a liquidity match must show ILLUSTRATIVE; combos whose
     # profile has not landed (cohort-tier, cell 3.1 pending) must say so
     # honestly instead — both states are asserted, neither is skipped
+    # liquidity matches ride the lazy series chunk now (perf split) — read
+    # them from series.js line 2 for the assertion set
+    liq_line = (SITE / "series.js").read_text().splitlines()[1]
+    bundle_liq = json.loads(liq_line[len("window.TARK_LIQ = "):-1])
     ill_missing, pend_missing = [], []
     for pl in PLANS:
         for pr in PRODUCTS:
             t = view_text("liquidity", pl, pr)
-            if f"{pl}__{pr}" in bundle["liquidity"]:
+            if f"{pl}__{pr}" in bundle_liq:
                 if "ILLUSTRATIVE" not in t:
                     ill_missing.append(f"{pl}/{pr}")
             elif "pending" not in t.lower():
@@ -354,10 +386,11 @@ with sync_playwright() as pw:
     page.evaluate("""() => window.tarkSetState({f_tax: '', f_base: 'managed_assets'})""")
     mrows = page.evaluate("""() =>
       document.querySelectorAll('table.screener tbody tr').length""")
-    # the cohort roster changed this answer honestly: ares_pmf shares the
-    # Managed Assets base with hl_paf (both 1.40% leverage-inclusive)
-    check("screener: fee-base=managed_assets returns exactly hl_paf + ares_pmf",
-          mrows == 2)
+    # the roster changed this answer honestly twice: ares_pmf (cohort
+    # build) and cion_ares (census promotion) share the leverage-inclusive
+    # Managed Assets base with hl_paf
+    check("screener: fee-base=managed_assets returns hl_paf + ares_pmf + cion_ares",
+          mrows == 3, str(mrows))
     page.evaluate("""() => window.tarkSetState({f_base: '', f_vonly: '1'})""")
     check("screener: verified-only renders the honest progress line",
           "verification in progress" in page.locator("#view").inner_text())
@@ -426,6 +459,114 @@ with sync_playwright() as pw:
     check("palette: compare command", "Compare" in pal["cmp"])
     check("palette: cell jump entry", "2.7" in pal["cell"] and "KKR" in pal["cell"])
     check("palette: view jump entry", pal["view"] == "Screener")
+
+    # ---------- census (T1 universe) ----------
+    # earlier share-link round-trips reloaded the page, wiping the preloaded
+    # lazy chunks — re-inject them so census renders are synchronous again
+    page.evaluate("""() => new Promise((res) => {
+        if (window.TARK_CENSUS) return res(true);
+        const s = document.createElement('script');
+        s.src = 'census.data.js';
+        s.onload = () => res(true);
+        document.head.append(s);
+      })""")
+    t = view_text("census")
+    check("census: universe total on screen",
+          f"{census_bundle['total']:,}" in t)
+    check("census: tier legend on the screener surface",
+          "T1 structured filing data" in t and "T3 verified" in t)
+    n_int = census_bundle["counts_by_class"]["interval_23c3"]
+    page.evaluate("""() => window.tarkSetState({view: 'census',
+      c_class: 'interval_23c3'})""")
+    t = page.locator("#view").inner_text()
+    check("census: interval filter shows the real class count",
+          f"{n_int:,} of" in t or f"{n_int} of" in t)
+    # index row: [nm, clsCode, flags, assets, laDate, tc, tl, hintMask, promo]
+    CODE = {v: k for k, v in census_bundle["cls_codes"].items()}
+    def crow(cik):
+        r = census_bundle["entities"][cik]
+        return {"nm": r[0], "cls": census_bundle["cls_codes"][r[1]],
+                "flags": r[2], "ta": r[3], "promo": r[8]}
+    # cclfx: present, interval-flagged (self+behavior agree), promoted —
+    # and the link round-trips
+    cclfx = crow("1735964")
+    check("census: cclfx is in the universe, interval class, promoted",
+          cclfx["cls"] == "interval_23c3"
+          and cclfx["promo"] == "cliffwater_cclfx"
+          and bool(cclfx["flags"] & 8))  # crosscheck agreement bit
+    page.evaluate("""() => window.tarkSetState({c_cik: '1735964'})""")
+    page.wait_for_timeout(600)  # detail shard fetch
+    t = page.locator("#view").inner_text()
+    check("census: cclfx detail shows evaluated tier + evidence",
+          "evaluated roster" in t and "Detection evidence" in t)
+    page.evaluate("""() => document.querySelector('[data-goproduct]').click()""")
+    check("census: promotion link lands on the evaluation record",
+          page.evaluate("() => decodeURIComponent(location.hash)")
+          .find("view=evaluation") >= 0
+          and page.evaluate("() => decodeURIComponent(location.hash)")
+          .find("product=cliffwater_cclfx") >= 0)
+    # the two census promotions link both ways
+    for cik, key in (("1812554", "ocic"), ("1678124", "cion_ares")):
+        e = crow(cik)
+        check(f"census: promotion {key} linked in the universe index",
+              e["promo"] == key and bool(e["flags"] & 16))
+    # known non-traded REITs classified correctly (OTC quotation != listed)
+    for cik, nm in (("1662972", "breit"), ("1711929", "sreit")):
+        e = crow(cik)
+        check(f"census: {nm} is nontraded_reit and NOT exchange-listed",
+              e["cls"] == "nontraded_reit" and not (e["flags"] & 1))
+    # C2: name hints are badged and never filter by default
+    unfiltered = page.evaluate("""() => {
+      window.tarkSetState({view: 'census', c_cik: '', c_class: '', c_hint: ''});
+      return document.querySelectorAll('tr[data-cik]').length; }""")
+    hint_ok = page.evaluate("""() =>
+      [...document.querySelectorAll('.chip.hint')].every(
+        (c) => (c.title || '').includes('not a strategy claim'))""")
+    check("census C2: every hint chip carries the not-a-strategy-claim badge",
+          bool(hint_ok))
+    check("census C2: default view applies no hint filter",
+          unfiltered == 400)  # top-400 slice of the full universe, unfiltered
+    # URL round-trip with census params (IDs/enums only) — detail shard
+    # fetch is async, so wait for the rendered heading
+    page.goto(f"http://127.0.0.1:{PORT}/#view=census&c_class=nontraded_reit"
+              "&c_cik=1662972", wait_until="networkidle")
+    page.wait_for_timeout(900)
+    t = page.locator("#view").inner_text()
+    check("census: shared entity link round-trips to the detail page",
+          "Blackstone Real Estate Income Trust" in t
+          and "Detection evidence" in t)
+    check("census: promoted detail offers the evaluation record",
+          "evaluated roster" in t)
+    # detail shards + search sidecar exist and are honest sizes
+    shard_dir = SITE / "census" / "d"
+    check("census: 64 detail shards on disk",
+          len(list(shard_dir.glob("*.json"))) == census_bundle["shards"])
+    check("census: search sidecar exists (lazy, memory-only filters)",
+          (SITE / "census" / "search.json").exists())
+    page.goto(f"http://127.0.0.1:{PORT}/", wait_until="networkidle")
+    page.evaluate("""() => new Promise((res) => {
+        const s = document.createElement('script');
+        s.src = 'series.js';
+        s.onload = () => { window.TARK.series = window.TARK_SERIES; window.TARK.liquidity = window.TARK_LIQ; res(true); };
+        document.head.append(s);
+      })""")
+    page.evaluate("""() => new Promise((res) => {
+        const s = document.createElement('script');
+        s.src = 'census.data.js';
+        s.onload = () => res(true);
+        document.head.append(s);
+      })""")
+    # funnel: true counts, no padding
+    t = view_text("funnel")
+    dk = census_bundle["dark_universe"]["formd_new_notices"]
+    check("funnel: dark-universe Form D count on screen",
+          f"{dk:,}" in t)
+    check("funnel: universe total and evaluated count are the real numbers",
+          f"{census_bundle['total']:,}" in t
+          and f"{len(PRODUCTS)}" in t)
+    nprom = sum(1 for r in census_bundle["entities"].values() if r[8])
+    check("census: promoted links equal the roster size",
+          nprom == len(PRODUCTS), f"{nprom} vs {len(PRODUCTS)}")
 
     # verification view mirrors the queue
     view_text("verification")
@@ -527,12 +668,15 @@ with sync_playwright() as pw:
         f_cohort: 'private_credit', f_base: '', f_tax: ''})""")
     pc_rows = page.evaluate("""() =>
         document.querySelectorAll('table.screener tbody tr').length""")
-    check("screener: cohort filter private_credit returns exactly 3", pc_rows == 3)
+    # census promotions grew private_credit 3 -> 5 (cion_ares, ocic)
+    check("screener: cohort filter private_credit returns exactly 5",
+          pc_rows == 5, str(pc_rows))
     page.evaluate("""() => window.tarkSetState({f_cohort: '', f_depth: 'cohort'})""")
     d_rows = page.evaluate("""() =>
         document.querySelectorAll('table.screener tbody tr').length""")
-    check("screener: depth=cohort returns exactly the 8 cohort-tier products",
-          d_rows == 8, str(d_rows))
+    check("screener: depth=cohort returns the 10 cohort-tier products "
+          "(8 cohort build + 2 census promotions)",
+          d_rows == 10, str(d_rows))
     page.evaluate("""() => window.tarkSetState({f_depth: ''})""")
     # DXYZ/NSLR exhibit
     view_text("dxyz")

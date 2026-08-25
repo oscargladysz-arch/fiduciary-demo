@@ -256,6 +256,147 @@ def parse_verification_queue() -> dict:
             "source": "docs/verification_queue.md"}
 
 
+def census_chunk() -> str:
+    """site/census.data.js — the lazy T1 universe chunk. Compact keys, every
+    field keeps its {source, ref, as_of} provenance (C3). Budget: <=500KB."""
+    census = json.loads((DATA / "census" / "census.json").read_text())
+    uni = json.loads((DATA / "census" / "universe.json").read_text())
+
+    def slim(rec: dict) -> dict:
+        e: dict = {"cik": rec["cik"],
+                   "nm": (rec.get("entity_name_current", {}).get("value")
+                          or rec["name"]),
+                   "cls": rec["wrapper_class"], "sig": rec["all_signals"],
+                   "ev": rec["detection_evidence"]}
+        if rec.get("listed"):
+            e["lif"] = rec["listed"]
+        ex = (rec.get("exchanges", {}) or {}).get("value") or []
+        if ex:
+            e["ex"] = [x for x in ex if x and x.upper() != "OTC"]
+        if (rec.get("tickers", {}) or {}).get("value"):
+            e["tk"] = rec["tickers"]
+        for src, dst in (("first_filing", "ff"), ("latest_annual", "la"),
+                         ("filing_summary", "fs"), ("total_assets", "ta"),
+                         ("nav_per_share_structured", "nav"),
+                         ("interval_crosscheck", "ic"),
+                         ("entity_name_current", "enc")):
+            if src in rec:
+                e[dst] = rec[src]
+        if "fs" in e and isinstance(e["fs"].get("value"), dict):
+            top = sorted(e["fs"]["value"].items(), key=lambda kv: -kv[1])[:6]
+            e["fs"] = {**e["fs"], "value": dict(top)}
+        nc = rec.get("ncen")
+        if nc:
+            ref = nc["investment_company_type"]["ref"]
+            as_of = nc["investment_company_type"]["as_of"]
+            val = {"ict": nc["investment_company_type"]["value"],
+                   "auditor": nc["auditor"]["value"],
+                   "nav_err": nc["nav_error_corrected"]["value"],
+                   "oq": nc["opinion_qualified"]["value"]}
+            if "primary_fund" in nc:
+                pfv = dict(nc["primary_fund"]["value"])
+                pfv["advisers"] = (pfv.get("advisers") or [])[:3]
+                val["pf"] = pfv
+            e["nc"] = {"value": val, "source": "ncen", "ref": ref,
+                       "as_of": as_of}
+        if (rec.get("tender_activity", {}) or {}).get("value"):
+            e["toi"] = rec["tender_activity"]["value"]
+        hint = (rec.get("name_hint", {}) or {}).get("value") or []
+        if hint:
+            e["hint"] = hint
+        if rec["promotion"]["status"] != "none":
+            e["promo"] = rec["promotion"]["product_key"]
+        return e
+
+    # ---- 3,599 entities cannot fit one <=500KB chunk with provenance, so
+    # the census ships in three honest pieces:
+    #   census.data.js       light INDEX (screener fields only), <=500KB hard
+    #   census/d/<k>.json    64 detail shards - the full slim records with
+    #                        per-field provenance, fetched on interaction
+    #   census/search.json   auditor/adviser sidecar, fetched only when a
+    #                        text filter is used (never in the URL)
+    CLS_CODE = {"bdc": "b", "interval_23c3": "i", "tender_cef": "t",
+                "nontraded_reit": "r", "listed_cef": "l",
+                "unlisted_cef_other": "u", "nontraded_34act_other": "o"}
+    N_SHARDS = 64
+    hints_all = sorted({h for r in census["entities"].values()
+                        for h in ((r.get("name_hint", {}) or {})
+                                  .get("value") or [])})
+    hint_bit = {h: 1 << i for i, h in enumerate(hints_all)}
+
+    ddir = SITE / "census" / "d"
+    ddir.mkdir(parents=True, exist_ok=True)
+    shards: dict[int, dict] = {i: {} for i in range(N_SHARDS)}
+    index: dict[str, list] = {}
+    search: dict[str, str] = {}
+    for cik, rec in census["entities"].items():
+        s = slim(rec)
+        shards[int(cik) % N_SHARDS][cik] = s
+        nc = rec.get("ncen")
+        flags = 0
+        if (rec.get("listed", {}) or {}).get("value"):
+            flags |= 1
+        if nc:
+            flags |= 2
+            pf = (nc.get("primary_fund", {}) or {}).get("value") or {}
+            if pf.get("is_interval") == "Y":
+                flags |= 4
+            icx = (rec.get("interval_crosscheck", {}) or {}).get("value") or {}
+            if icx.get("agreement"):
+                flags |= 8
+        if rec["promotion"]["status"] != "none":
+            flags |= 16
+        if nc or "total_assets" in rec or "latest_annual" in rec:
+            flags |= 32
+        ta = (rec.get("total_assets", {}) or {}).get("value") or {}
+        la = (rec.get("latest_annual", {}) or {}).get("value") or {}
+        toi = (rec.get("tender_activity", {}) or {}).get("value") or {}
+        hm = 0
+        for h in (rec.get("name_hint", {}) or {}).get("value") or []:
+            hm |= hint_bit[h]
+        row = [s["nm"], CLS_CODE[rec["wrapper_class"]], flags,
+               ta.get("value") or 0, la.get("date") or "",
+               toi.get("count") or 0, toi.get("last") or "", hm,
+               rec["promotion"].get("product_key") or ""]
+        index[cik] = row
+        if nc:
+            terms = [nc["auditor"]["value"] or ""]
+            pf = (nc.get("primary_fund", {}) or {}).get("value") or {}
+            terms += pf.get("advisers") or []
+            joined = " | ".join(t for t in terms if t).lower()
+            if joined:
+                search[cik] = joined
+
+    for i, sh in shards.items():
+        (ddir / f"{i}.json").write_text(json.dumps(sh, separators=(",", ":")))
+    (SITE / "census" / "search.json").write_text(
+        json.dumps(search, separators=(",", ":")))
+
+    doc = {
+        "what": census["what"], "tiers": census["tiers"],
+        "as_of": census["as_of"],
+        "counts_by_class": census["counts_by_class"],
+        "total": census["total"],
+        "dark_universe": uni["dark_universe"],
+        "method_notes": uni["method_notes"],
+        "cls_codes": {v: k for k, v in CLS_CODE.items()},
+        "hints": hints_all,
+        "shards": N_SHARDS,
+        "row_fields": ["nm", "cls_code", "flags(1=listed,2=ncen,4=interval-"
+                       "self,8=crosscheck-agree,16=evaluated,32=structured-"
+                       "facts)", "assets_usd", "latest_annual_date",
+                       "tender_count", "tender_last", "hint_mask",
+                       "promo_key"],
+        "entities": index,
+    }
+    payload = json.dumps(doc, separators=(",", ":"))
+    if len(payload) > 500_000:
+        raise SystemExit(f"census chunk {len(payload):,}B exceeds the 500KB "
+                         "lazy-chunk budget — trim the transform, do not "
+                         "ship a bloated first-class page.")
+    return payload
+
+
 def main() -> None:
     plans_raw = {k: load_plan(k) for k in plan_keys()}
     # distinctive sponsor tokens = every word of the private identity that is
@@ -348,7 +489,9 @@ def main() -> None:
                                              if k != "plan_tech_media"],
         "benchmarks": benchmarks,
         "min_primary_score": MIN_PRIMARY_SCORE,
-        "liquidity": liquidity,
+        # per-plan liquidity match artifacts ride the lazy series chunk —
+        # only the Liquidity view reads them; merged by ensureSeries()
+        "liquidity": None,
         "liquidity_profiles": LIQUIDITY_PROFILES,
         "scenario_defaults": SCENARIO,
         "metrics": json.loads((DATA / "analytics" / "metrics.json").read_text()),
@@ -387,6 +530,7 @@ def main() -> None:
         "cclfx": daily_series("cclfx"),
         "pflex": daily_series("pflex"),
         "arkvx": daily_series("arkvx"),
+        "cadux": daily_series("cadux"),
         "nslr_daily": [[d, round(v, 4)] for d, v in load_series("nslr", "close")],
         "nslr": daily_series("nslr"),
         "bkln": daily_series("bkln"),
@@ -396,8 +540,9 @@ def main() -> None:
         "vnq": daily_series("vnq"),
     }, separators=(",", ":"))
 
+    census_payload = census_chunk()
     payload = json.dumps(bundle, separators=(",", ":"))
-    low = (payload + series_payload).lower()
+    low = (payload + series_payload + census_payload).lower()
     leaks = sorted(n for n in sponsor_names if n in low)
     if leaks:
         raise SystemExit(f"ANONYMIZATION FAILURE: sponsor token(s) {leaks} "
@@ -405,17 +550,21 @@ def main() -> None:
 
     SITE.mkdir(exist_ok=True)
     (SITE / "data.js").write_text("window.TARK = " + payload + ";\n")
-    (SITE / "series.js").write_text("window.TARK_SERIES = " + series_payload
-                                    + ";\n")
+    (SITE / "series.js").write_text(
+        "window.TARK_SERIES = " + series_payload + ";\n"
+        + "window.TARK_LIQ = "
+        + json.dumps(liquidity, separators=(",", ":")) + ";\n")
+    (SITE / "census.data.js").write_text("window.TARK_CENSUS = "
+                                         + census_payload + ";\n")
 
     memo_dir = SITE / "memos"
     memo_dir.mkdir(exist_ok=True)
     for m in (DATA / "memos").glob("*_decision_memo.docx"):
         shutil.copy2(m, memo_dir / m.name)
 
-    print(f"site/data.js written ({len(payload):,} bytes), "
-          f"{len(bundle['memos'])} memos copied, sponsor tokens screened: "
-          f"{len(sponsor_names)}")
+    print(f"site/data.js written ({len(payload):,} bytes), census chunk "
+          f"{len(census_payload):,} bytes, {len(bundle['memos'])} memos "
+          f"copied, sponsor tokens screened: {len(sponsor_names)}")
 
 
 if __name__ == "__main__":
