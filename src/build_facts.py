@@ -241,6 +241,100 @@ MAPPING = {
         "inception": F("2017-02-22", "1.11",
                        note="fund and Institutional class inception"),
     },
+    "ocic": {
+        "wrapper_type": F("nontraded_bdc", "6.1"),
+        "mgmt_fee_pct": F(1.25, "2.1"),
+        "mgmt_fee_base": F("net_assets", "2.1",
+                           note="average net assets at the two most recently "
+                                "completed month-ends; payable monthly in "
+                                "arrears (advisory-agreement language "
+                                "governs over contradictory risk-factor "
+                                "boilerplate)"),
+        "incentive_fee": F({"present": True, "rate_pct": 12.5,
+                            "hurdle_pct": 5.0,
+                            "structure": "two-part BDC fee: 12.5% of income "
+                                         "over a 1.25%/quarter (5.0% "
+                                         "annualized) NAV hurdle with 100% "
+                                         "catch-up to 1.43%, PLUS 12.5% of "
+                                         "cumulative net realized gains"},
+                           "2.2"),
+        "early_repurchase": F({"present": False}, "2.7",
+                              note="N-2 fee table: no early withdrawal "
+                                   "charge for any class - unlike bcred's "
+                                   "2% deduction"),
+        "repurchase_cadence_per_year": F(4, "3.1"),
+        "repurchase_cap_pct": F(5.0, "3.1"),
+        "repurchase_cap_base": F("outstanding_shares", "3.1",
+                                 note="board-discretionary 13e-4 tenders; "
+                                      "may suspend or terminate at any "
+                                      "time"),
+        "gate_history": null("12 consecutive quarterly tenders completed "
+                             "FY2023-FY2025 with no disclosed suspension, "
+                             "BUT tendered-vs-repurchased counts are never "
+                             "disclosed - proration cannot be ruled out "
+                             "from public filings, so a clean False would "
+                             "overclaim", "3.3"),
+        "tax_form": F("1099", "6.4"),
+        "auditor": F("KPMG LLP", "4.5"),
+        "big4": F(True, "4.5"),
+        "expense_ratio_pct": F(8.4, "2.3",
+                               note="FY2025 actual net expense ratio, Class "
+                                    "I, INCLUDES interest/financing cost of "
+                                    "BDC leverage (N-2 fee-table totals "
+                                    "9.94/9.34/9.09 S/D/I incl. 7.59% "
+                                    "interest) - not like-for-like with "
+                                    "unlevered '40-Act ratios"),
+        "net_assets_usd": F(19760273000, "3.6", approx=True,
+                            note="FY2025 net assets as printed"),
+        "inception": F("2020-11-10", "1.11",
+                       note="commenced operations; renamed from Owl Rock "
+                            "Core Income Corp. 2023-07-06"),
+    },
+    "cion_ares": {
+        "wrapper_type": F("interval_23c3", "6.1"),
+        "mgmt_fee_pct": F(1.25, "2.1"),
+        "mgmt_fee_base": F("managed_assets", "2.1",
+                           note="leverage-inclusive: total assets (incl. "
+                                "assets attributable to Preferred Shares or "
+                                "indebtedness) minus non-debt liabilities; "
+                                "equals 1.89% of net assets at FY2025 actual "
+                                "leverage per the prospectus's own "
+                                "restatement"),
+        "incentive_fee": F({"present": True, "rate_pct": 15.0,
+                            "hurdle_pct": 6.0,
+                            "structure": "15% of income-only pre-incentive-fee "
+                                         "net investment income per class, "
+                                         "quarterly; 1.50%/quarter hurdle on "
+                                         "average daily class NAV, full "
+                                         "catch-up at 1.765%"}, "2.2"),
+        "early_repurchase": F({"present": False}, "2.7",
+                              note="'The Fund will not charge a repurchase "
+                                   "fee'; 1.00% Class C CDSC < 365 days "
+                                   "only"),
+        "repurchase_cadence_per_year": F(4, "3.1"),
+        "repurchase_cap_pct": F(5.0, "3.1",
+                                note="fundamental 5-25% policy; Fund states "
+                                     "it expects only the 5% minimum"),
+        "repurchase_cap_base": F("outstanding_shares", "3.1"),
+        "gate_history": F(False, "3.3",
+                          note="all four FY2025 offers at 5.00%, "
+                               "undersubscribed (2.09-2.88% repurchased)"),
+        "tax_form": F("1099", "6.4"),
+        "auditor": F("Ernst & Young LLP", "4.5"),
+        "big4": F(True, "4.5"),
+        "expense_ratio_pct": F(3.76, "2.3",
+                               note="FY2025 actual Class I EXCLUDING interest "
+                                    "expense; prospectus fee-table totals "
+                                    "6.90% (I) to 7.74% (C) including 3.14% "
+                                    "interest; no contractual cap - "
+                                    "discretionary expense support only, $0 "
+                                    "paid FY2025"),
+        "net_assets_usd": F(5160261000, "3.6", approx=True,
+                            note="FY2025 net assets as printed"),
+        "inception": F("2017-01-26", "1.11",
+                       note="commencement of operations (Class A); Class I "
+                            "7/12/2017"),
+    },
     "ares_pmf": {
         "wrapper_type": F("tender_offer", "6.1"),
         "mgmt_fee_pct": F(1.40, "2.1"),
@@ -472,6 +566,7 @@ AS_OF = {"hl_paf": "2026-03-31", "cliffwater_cclfx": "2026-03-31",
          "dxyz": "2025-12-31", "kkr_kpec": "2025-12-31",
          "breit": "2025-12-31", "stepstone_spm": "2026-03-31",
          "bcred": "2025-12-31", "pflex": "2025-06-30",
+         "cion_ares": "2025-12-31", "ocic": "2025-12-31",
          "ares_pmf": "2026-03-31", "amg_pantheon": "2026-03-31",
          "sreit": "2025-12-31", "jll_ipt": "2025-12-31",
          "ssss": "2025-12-31", "arkvx": "2025-07-31"}
@@ -491,6 +586,17 @@ COHORT_META = {
         "Flexible multi-sector credit in the SAME wrapper as cclfx (interval, "
         "quarterly 5%) - wrapper twin, broader credit mandate (loans, "
         "structured, EM); mandate breadth is the disclosed mismatch."),
+    "cion_ares": ("private_credit", "cohort",
+        "Diversified credit in the cclfx/pflex wrapper (interval, quarterly "
+        "5%) - joins via the census promotion pipeline; dual-adviser "
+        "CION+Ares structure and a leverage-inclusive Managed Assets fee "
+        "base (1.89% of net assets at FY2025 leverage) widen the cohort's "
+        "fee-base axis; daily Class I NAV (CADUX)."),
+    "ocic": ("private_credit", "cohort",
+        "Perpetual non-traded BDC running quarterly 13e-4 tenders - bcred's "
+        "closest structural twin, admitted via the census promotion "
+        "pipeline (46 SC TO-I filings as T1 cadence evidence; Owl Rock -> "
+        "Blue Owl rename verified in the SEC record)."),
     "hl_paf": ("evergreen_pe", "full",
         "Evergreen PE fund-of-funds/secondaries in a tender-offer wrapper - "
         "founding cohort member."),

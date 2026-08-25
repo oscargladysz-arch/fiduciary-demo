@@ -1,112 +1,122 @@
 {
-  "series": [
-    {
-      "ticker": "DXYZ",
-      "source": "Yahoo Finance v8 chart API (close + adjclose)",
-      "rows": 579,
-      "first": "2024-03-26",
-      "last": "2026-07-17",
-      "pulled": "2026-07-18",
-      "note": "market price + adj close - cell 1.10 (fail-case exhibit)",
-      "role": "fund"
-    },
-    {
-      "ticker": "CCLFX",
-      "source": "Yahoo Finance v8 chart API (close + adjclose)",
-      "rows": 1789,
-      "first": "2019-06-05",
-      "last": "2026-07-17",
-      "pulled": "2026-07-18",
-      "note": "daily NAV + adj close (total-return proxy incl. distributions) - cells 1.1/1.7/4.8",
-      "role": "fund"
-    },
-    {
-      "ticker": "SPY",
-      "source": "Yahoo Finance v8 chart API (close + adjclose)",
-      "rows": 2010,
-      "first": "2018-07-18",
-      "last": "2026-07-17",
-      "pulled": "2026-07-18",
-      "role": "index_proxy",
-      "note": "S&P 500 investable proxy (SPDR S&P 500 ETF)"
-    },
-    {
-      "ticker": "URTH",
-      "source": "Yahoo Finance v8 chart API (close + adjclose)",
-      "rows": 2010,
-      "first": "2018-07-18",
-      "last": "2026-07-17",
-      "pulled": "2026-07-18",
-      "role": "index_proxy",
-      "note": "MSCI World investable proxy (iShares MSCI World ETF) - SPRIM's stated benchmark class"
-    },
-    {
-      "ticker": "BKLN",
-      "source": "Yahoo Finance v8 chart API (close + adjclose)",
-      "rows": 2010,
-      "first": "2018-07-18",
-      "last": "2026-07-17",
-      "pulled": "2026-07-18",
-      "role": "index_proxy",
-      "note": "US senior/leveraged loan investable proxy (Invesco Senior Loan ETF) - CCLFX's stated comparator class"
-    },
-    {
-      "ticker": "PSP",
-      "source": "Yahoo Finance v8 chart API (close + adjclose)",
-      "rows": 2010,
-      "first": "2018-07-18",
-      "last": "2026-07-17",
-      "pulled": "2026-07-18",
-      "role": "index_proxy",
-      "note": "listed private equity investable proxy (Invesco Global Listed Private Equity ETF)"
-    },
-    {
-      "ticker": "VNQ",
-      "source": "Yahoo Finance v8 chart API (close + adjclose)",
-      "rows": 2010,
-      "first": "2018-07-18",
-      "last": "2026-07-17",
-      "pulled": "2026-07-18",
-      "role": "index_proxy",
-      "note": "US real estate investable proxy (Vanguard Real Estate ETF) - BREIT comparator class"
-    },
-    {
-      "ticker": "PFLEX",
-      "source": "Yahoo Finance v8 chart API (close + adjclose)",
-      "rows": 2380,
-      "first": "2017-02-23",
-      "last": "2026-08-13",
-      "pulled": "2026-08-14",
-      "note": "PFLEX daily series - cohort roster",
-      "role": "fund"
-    },
-    {
-      "ticker": "ARKVX",
-      "source": "Yahoo Finance v8 chart API (close + adjclose)",
-      "rows": 990,
-      "first": "2022-08-31",
-      "last": "2026-08-13",
-      "pulled": "2026-08-14",
-      "note": "ARKVX daily series - cohort roster",
-      "role": "fund"
-    },
-    {
-      "ticker": "NSLR",
-      "source": "Yahoo Finance v8 chart API (close + adjclose)",
-      "rows": 2514,
-      "first": "2016-08-15",
-      "last": "2026-08-14",
-      "pulled": "2026-08-14",
-      "note": "Neostellar (fka SuRo Capital SSSS) daily price - listed BDC, venture cohort premium/discount comparable",
-      "role": "fund"
-    }
-  ],
-  "schema": "date,close,adj_close - adj_close folds distributions back in (total-return proxy); REQUIRED for distributing funds like CCLFX where raw NAV materially understates return",
-  "excluded": {
-    "hl_paf": "class tickers unverified - annual series from filings suffices for v0",
-    "stepstone_spm": "same",
-    "kkr_kpec": "non-traded, no ticker",
-    "breit": "non-traded, no ticker"
+ "series": [
+  {
+   "ticker": "DXYZ",
+   "source": "Yahoo Finance v8 chart API (close + adjclose)",
+   "rows": 579,
+   "first": "2024-03-26",
+   "last": "2026-07-17",
+   "pulled": "2026-07-18",
+   "note": "market price + adj close - cell 1.10 (fail-case exhibit)",
+   "role": "fund"
   },
-  "proxy_disclosure": "index_proxy series are investable ETF total-return proxies for their index families; labeled as proxies on all demo surfaces"
+  {
+   "ticker": "CCLFX",
+   "source": "Yahoo Finance v8 chart API (close + adjclose)",
+   "rows": 1789,
+   "first": "2019-06-05",
+   "last": "2026-07-17",
+   "pulled": "2026-07-18",
+   "note": "daily NAV + adj close (total-return proxy incl. distributions) - cells 1.1/1.7/4.8",
+   "role": "fund"
+  },
+  {
+   "ticker": "SPY",
+   "source": "Yahoo Finance v8 chart API (close + adjclose)",
+   "rows": 2010,
+   "first": "2018-07-18",
+   "last": "2026-07-17",
+   "pulled": "2026-07-18",
+   "role": "index_proxy",
+   "note": "S&P 500 investable proxy (SPDR S&P 500 ETF)"
+  },
+  {
+   "ticker": "URTH",
+   "source": "Yahoo Finance v8 chart API (close + adjclose)",
+   "rows": 2010,
+   "first": "2018-07-18",
+   "last": "2026-07-17",
+   "pulled": "2026-07-18",
+   "role": "index_proxy",
+   "note": "MSCI World investable proxy (iShares MSCI World ETF) - SPRIM's stated benchmark class"
+  },
+  {
+   "ticker": "BKLN",
+   "source": "Yahoo Finance v8 chart API (close + adjclose)",
+   "rows": 2010,
+   "first": "2018-07-18",
+   "last": "2026-07-17",
+   "pulled": "2026-07-18",
+   "role": "index_proxy",
+   "note": "US senior/leveraged loan investable proxy (Invesco Senior Loan ETF) - CCLFX's stated comparator class"
+  },
+  {
+   "ticker": "PSP",
+   "source": "Yahoo Finance v8 chart API (close + adjclose)",
+   "rows": 2010,
+   "first": "2018-07-18",
+   "last": "2026-07-17",
+   "pulled": "2026-07-18",
+   "role": "index_proxy",
+   "note": "listed private equity investable proxy (Invesco Global Listed Private Equity ETF)"
+  },
+  {
+   "ticker": "VNQ",
+   "source": "Yahoo Finance v8 chart API (close + adjclose)",
+   "rows": 2010,
+   "first": "2018-07-18",
+   "last": "2026-07-17",
+   "pulled": "2026-07-18",
+   "role": "index_proxy",
+   "note": "US real estate investable proxy (Vanguard Real Estate ETF) - BREIT comparator class"
+  },
+  {
+   "ticker": "PFLEX",
+   "source": "Yahoo Finance v8 chart API (close + adjclose)",
+   "rows": 2380,
+   "first": "2017-02-23",
+   "last": "2026-08-13",
+   "pulled": "2026-08-14",
+   "note": "PFLEX daily series - cohort roster",
+   "role": "fund"
+  },
+  {
+   "ticker": "ARKVX",
+   "source": "Yahoo Finance v8 chart API (close + adjclose)",
+   "rows": 990,
+   "first": "2022-08-31",
+   "last": "2026-08-13",
+   "pulled": "2026-08-14",
+   "note": "ARKVX daily series - cohort roster",
+   "role": "fund"
+  },
+  {
+   "ticker": "NSLR",
+   "source": "Yahoo Finance v8 chart API (close + adjclose)",
+   "rows": 2514,
+   "first": "2016-08-15",
+   "last": "2026-08-14",
+   "pulled": "2026-08-14",
+   "note": "Neostellar (fka SuRo Capital SSSS) daily price - listed BDC, venture cohort premium/discount comparable",
+   "role": "fund"
+  },
+  {
+   "ticker": "CADUX",
+   "source": "Yahoo Finance v8 chart API (close + adjclose)",
+   "rows": 2293,
+   "first": "2017-07-11",
+   "last": "2026-08-24",
+   "pulled": "2026-08-25",
+   "note": "CION Ares Diversified Credit Fund CLASS I NAV daily series (ticker CADUX; note: CADCX is Class C)",
+   "role": "fund"
+  }
+ ],
+ "schema": "date,close,adj_close - adj_close folds distributions back in (total-return proxy); REQUIRED for distributing funds like CCLFX where raw NAV materially understates return",
+ "excluded": {
+  "hl_paf": "class tickers unverified - annual series from filings suffices for v0",
+  "stepstone_spm": "same",
+  "kkr_kpec": "non-traded, no ticker",
+  "breit": "non-traded, no ticker"
+ },
+ "proxy_disclosure": "index_proxy series are investable ETF total-return proxies for their index families; labeled as proxies on all demo surfaces"
 }

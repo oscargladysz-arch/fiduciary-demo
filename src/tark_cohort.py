@@ -29,9 +29,12 @@ from tark_data import DATA
 COHORTS = {
     "private_credit": {
         "label": "Private credit (interval fund + non-traded BDC)",
-        "members": ["cliffwater_cclfx", "bcred", "pflex"],
+        "members": ["cliffwater_cclfx", "bcred", "pflex", "cion_ares",
+                    "ocic"],
         "wrapper_types": {"cliffwater_cclfx": "interval_23c3",
-                          "bcred": "nontraded_bdc", "pflex": "interval_23c3"},
+                          "bcred": "nontraded_bdc", "pflex": "interval_23c3",
+                          "cion_ares": "interval_23c3",
+                          "ocic": "nontraded_bdc"},
     },
     "evergreen_pe": {
         "label": "Evergreen private equity ('40-Act funds + '34-Act conglomerate)",

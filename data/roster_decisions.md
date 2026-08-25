@@ -115,3 +115,39 @@ statistical honesty (R4 phrasing gates bind at n=3 and n=5 either way).
 Choice: 14 products fully landed over 18 partially landed, per the
 mission's own priority rule. The four next-wave candidates above are
 verified leads for the next roster pass.
+
+## Census promotions (2026-08-25) — 14 → 16 via the T1 pipeline
+
+Both promotions ran through `src/promote.py` against the census universe
+(3,599 enumerated wrappers): R1 identity verified against live SEC
+submissions, 54-cell scaffold with census-answerable cells prefilled at
+status `structured`, then cohort-tier extraction from primary filings.
+
+### ocic — Blue Owl Credit Income Corp. (CIK 1812554) — ADMITTED
+
+R1: live submissions name "Blue Owl Credit Income Corp."; former name
+"Owl Rock Core Income Corp." (rename verified from the SEC formerNames
+record — same CIK, continuous filing history since 2020). Census T1 class:
+bdc (Form N-54A election), unlisted, with 46 SC TO-I tender filings
+2021-08→2026-07 — a perpetual-life non-traded BDC running quarterly
+tenders. Admission rationale (R3): the private_credit cohort's non-traded
+BDC seat was held by bcred alone; OCIC is the closest structural twin in
+the wrapper (perpetual non-traded BDC, quarterly 13e-4 tenders, direct
+lending) and was already logged as a verified next-wave lead in the cohort
+mission. Depth: cohort.
+
+### cion_ares — CION Ares Diversified Credit Fund (CIK 1678124) — ADMITTED
+
+R1: live submissions name matches; no former names. Census T1 class:
+interval_23c3 (39 Form N-23C3A filings 2017→2026-06, self-classified
+"Interval Fund" in N-CEN — crosscheck agreement). Admission rationale
+(R3): joins private_credit as its fourth interval-wrapper member; its
+dual-adviser structure (CION Investment Management + Ares Capital
+Management sub-adviser) and multi-sector credit mandate widen the cohort's
+mandate axis the same way pflex does, and the fund publishes daily
+class-level NAV under public tickers (Class A CADEX, Class C CADCX,
+Class I CADUX — the evaluation uses Class I) at material scale.
+Depth: cohort.
+
+Both funds' cohort membership carries the standing private_credit caveat
+matrix (wrapper differences: BDC-tender vs interval-23c3 obligations).

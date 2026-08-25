@@ -1,0 +1,136 @@
+{
+  "product_key": "cion_ares",
+  "cohort_id": "private_credit",
+  "depth": "cohort",
+  "membership_rationale": "Diversified credit in the cclfx/pflex wrapper (interval, quarterly 5%) - joins via the census promotion pipeline; dual-adviser CION+Ares structure and a leverage-inclusive Managed Assets fee base (1.89% of net assets at FY2025 leverage) widen the cohort's fee-base axis; daily Class I NAV (CADUX).",
+  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
+  "facts": {
+    "wrapper_type": {
+      "value": "interval_23c3",
+      "source_cell": "6.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_pct": {
+      "value": 1.25,
+      "source_cell": "2.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_base": {
+      "value": "managed_assets",
+      "source_cell": "2.1",
+      "note": "leverage-inclusive: total assets (incl. assets attributable to Preferred Shares or indebtedness) minus non-debt liabilities; equals 1.89% of net assets at FY2025 actual leverage per the prospectus's own restatement",
+      "status": "extracted-unverified"
+    },
+    "incentive_fee": {
+      "value": {
+        "present": true,
+        "rate_pct": 15.0,
+        "hurdle_pct": 6.0,
+        "structure": "15% of income-only pre-incentive-fee net investment income per class, quarterly; 1.50%/quarter hurdle on average daily class NAV, full catch-up at 1.765%"
+      },
+      "source_cell": "2.2",
+      "status": "extracted-unverified"
+    },
+    "early_repurchase": {
+      "value": {
+        "present": false
+      },
+      "source_cell": "2.7",
+      "note": "'The Fund will not charge a repurchase fee'; 1.00% Class C CDSC < 365 days only",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cadence_per_year": {
+      "value": 4,
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cap_pct": {
+      "value": 5.0,
+      "source_cell": "3.1",
+      "note": "fundamental 5-25% policy; Fund states it expects only the 5% minimum",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cap_base": {
+      "value": "outstanding_shares",
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "gate_history": {
+      "value": false,
+      "source_cell": "3.3",
+      "note": "all four FY2025 offers at 5.00%, undersubscribed (2.09-2.88% repurchased)",
+      "status": "extracted-unverified"
+    },
+    "tax_form": {
+      "value": "1099",
+      "source_cell": "6.4",
+      "status": "extracted-unverified"
+    },
+    "auditor": {
+      "value": "Ernst & Young LLP",
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "big4": {
+      "value": true,
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "expense_ratio_pct": {
+      "value": 3.76,
+      "source_cell": "2.3",
+      "note": "FY2025 actual Class I EXCLUDING interest expense; prospectus fee-table totals 6.90% (I) to 7.74% (C) including 3.14% interest; no contractual cap - discretionary expense support only, $0 paid FY2025",
+      "status": "extracted-unverified"
+    },
+    "net_assets_usd": {
+      "value": 5160261000,
+      "source_cell": "3.6",
+      "approx": true,
+      "note": "FY2025 net assets as printed",
+      "status": "extracted-unverified"
+    },
+    "inception": {
+      "value": "2017-01-26",
+      "source_cell": "1.11",
+      "note": "commencement of operations (Class A); Class I 7/12/2017",
+      "status": "extracted-unverified"
+    },
+    "track_record_years": {
+      "value": 8.9,
+      "source_cell": "1.11",
+      "status": "computed",
+      "note": "(as-of 2025-12-31 minus inception) / 365.25"
+    },
+    "primary_benchmark_id": {
+      "value": "bkln",
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "selection_score": {
+      "value": 9,
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "pme_primary": {
+      "value": 1.2376,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "direct_alpha_primary": {
+      "value": 2.37,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "liquidity_verdict_by_plan": {
+      "value": {
+        "plan_consulting_alumni": "conditional",
+        "plan_manufacturer_union": "conditional",
+        "plan_restaurant_hourly": "conditional",
+        "plan_tech_media": "conditional"
+      },
+      "source_cell": "3.9",
+      "status": "computed"
+    }
+  }
+}

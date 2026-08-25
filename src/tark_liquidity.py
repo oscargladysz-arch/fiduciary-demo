@@ -71,6 +71,34 @@ LIQUIDITY_PROFILES = {
               "source_cell": "3.1",
               "history": "8 N-23C3A filings on disk; FY2025 offers "
                          "undersubscribed (max 4.32% tendered vs 5% cap) (3.3)"},
+    "ocic": {"kind": "share_repurchase_plan", "cadence_per_year": 4,
+             "cap_pct": 5.0, "cap_base": "outstanding shares per quarter "
+             "(Rule 13e-4 issuer tenders, board-discretionary, may suspend "
+             "or terminate at any time)", "exchange": False,
+             "gate_history": False,
+             "early_fee": "none - N-2 fee table shows no early withdrawal "
+                          "charge for any class (2.7)",
+             "source_cell": "3.1 + 3.3",
+             "history": "12 consecutive quarterly tenders completed "
+                        "FY2023-FY2025, no disclosed suspension; demand "
+                        "accelerating (FY2025 repurchases ~$2.00B vs $639M "
+                        "FY2024; May 2026 offer sized at the full 5% cap); "
+                        "shares TENDERED vs repurchased not disclosed - "
+                        "proration cannot be ruled out from filings (3.3)"},
+    "cion_ares": {"kind": "interval_23c3", "cadence_per_year": 4,
+                  "cap_pct": 5.0, "cap_base": "outstanding shares "
+                  "(fundamental 5-25% policy; Fund states it expects only "
+                  "the 5% minimum; optional +2% then pro rata)",
+                  "exchange": False, "gate_history": False,
+                  "early_fee": "none - 'The Fund will not charge a "
+                               "repurchase fee'; 1.00% CDSC on Class C "
+                               "< 365 days only (2.7)",
+                  "source_cell": "3.1 + 3.3",
+                  "history": "all four FY2025 offers at 5.00% and "
+                             "undersubscribed (2.09-2.88% actually "
+                             "repurchased, $480.0M total); MRPS 225% "
+                             "asset-coverage trigger can cap repurchases "
+                             "at 5% (3.3/3.6)"},
     "ares_pmf": {"kind": "tender_offer", "cadence_per_year": 4, "cap_pct": 5.0,
                  "cap_base": "NAV (board-discretionary quarterly tenders, "
                  "Rule 13e-4 - NOT an interval fund)", "exchange": False,

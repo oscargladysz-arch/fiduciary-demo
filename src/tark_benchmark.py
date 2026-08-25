@@ -117,10 +117,25 @@ PRODUCT_PROFILES = {
                                  # expressly not a designated benchmark)
         "source_cells": ["5.1", "1.1", "1.2"],
     },
+    "cion_ares": {
+        "strategy": "private_credit",
+        "series": "cadux",           # CLASS I daily NAV (ticker CADUX;
+        "granularity": "monthly",    # CADCX is the Class C ticker)
+        "self_declared": "Credit Suisse Leveraged Loan Index",  # cell 5.1
+        "source_cells": ["5.1", "1.1", "1.2"],
+    },
     # profiles below are filled by fill_profile_from_cells() at selection time
     # from the extracted 1.2 evidence (annualized since-inception, Class I) —
     # values injected by run_benchmark.py, never hard-coded here
     "bcred": {
+        "strategy": "private_credit",
+        "series": None,
+        "granularity": "annual",
+        "fy_returns": None, "fy_window": None,   # injected from profiles_input
+        "self_declared": None,                    # cell 5.1: documented absence
+        "source_cells": ["1.2", "5.1"],
+    },
+    "ocic": {
         "strategy": "private_credit",
         "series": None,
         "granularity": "annual",
@@ -159,10 +174,10 @@ STRATEGY_MENU = {
          "independent": False, "data": "quarterly-manual", "strategy_match": 3,
          "match_note": "direct lending - exact strategy match"},
         {"id": "peer_credit", "name": "Peer cohort: private_credit (cclfx, "
-                                      "bcred, pflex)",
+                                      "bcred, pflex, cion_ares, ocic)",
          "lane": "C", "series": None, "provider": "constructed (Tark cohort engine)",
          "independent": True, "data": "annual", "strategy_match": 3,
-         "match_note": "n=3 equal-weight annual composite on printed FY "
+         "match_note": "n=5 equal-weight annual composite on printed FY "
                        "returns (data/cohorts/private_credit.json); "
                        "cross-wrapper mix (interval + BDC) disclosed in the "
                        "cohort caveat block"},

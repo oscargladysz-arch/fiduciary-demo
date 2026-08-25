@@ -1,0 +1,136 @@
+{
+  "product_key": "ocic",
+  "cohort_id": "private_credit",
+  "depth": "cohort",
+  "membership_rationale": "Perpetual non-traded BDC running quarterly 13e-4 tenders - bcred's closest structural twin, admitted via the census promotion pipeline (46 SC TO-I filings as T1 cadence evidence; Owl Rock -> Blue Owl rename verified in the SEC record).",
+  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
+  "facts": {
+    "wrapper_type": {
+      "value": "nontraded_bdc",
+      "source_cell": "6.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_pct": {
+      "value": 1.25,
+      "source_cell": "2.1",
+      "status": "extracted-unverified"
+    },
+    "mgmt_fee_base": {
+      "value": "net_assets",
+      "source_cell": "2.1",
+      "note": "average net assets at the two most recently completed month-ends; payable monthly in arrears (advisory-agreement language governs over contradictory risk-factor boilerplate)",
+      "status": "extracted-unverified"
+    },
+    "incentive_fee": {
+      "value": {
+        "present": true,
+        "rate_pct": 12.5,
+        "hurdle_pct": 5.0,
+        "structure": "two-part BDC fee: 12.5% of income over a 1.25%/quarter (5.0% annualized) NAV hurdle with 100% catch-up to 1.43%, PLUS 12.5% of cumulative net realized gains"
+      },
+      "source_cell": "2.2",
+      "status": "extracted-unverified"
+    },
+    "early_repurchase": {
+      "value": {
+        "present": false
+      },
+      "source_cell": "2.7",
+      "note": "N-2 fee table: no early withdrawal charge for any class - unlike bcred's 2% deduction",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cadence_per_year": {
+      "value": 4,
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cap_pct": {
+      "value": 5.0,
+      "source_cell": "3.1",
+      "status": "extracted-unverified"
+    },
+    "repurchase_cap_base": {
+      "value": "outstanding_shares",
+      "source_cell": "3.1",
+      "note": "board-discretionary 13e-4 tenders; may suspend or terminate at any time",
+      "status": "extracted-unverified"
+    },
+    "gate_history": {
+      "value": null,
+      "source_cell": "3.3",
+      "reason": "12 consecutive quarterly tenders completed FY2023-FY2025 with no disclosed suspension, BUT tendered-vs-repurchased counts are never disclosed - proration cannot be ruled out from public filings, so a clean False would overclaim",
+      "status": "partial"
+    },
+    "tax_form": {
+      "value": "1099",
+      "source_cell": "6.4",
+      "status": "extracted-unverified"
+    },
+    "auditor": {
+      "value": "KPMG LLP",
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "big4": {
+      "value": true,
+      "source_cell": "4.5",
+      "status": "extracted-unverified"
+    },
+    "expense_ratio_pct": {
+      "value": 8.4,
+      "source_cell": "2.3",
+      "note": "FY2025 actual net expense ratio, Class I, INCLUDES interest/financing cost of BDC leverage (N-2 fee-table totals 9.94/9.34/9.09 S/D/I incl. 7.59% interest) - not like-for-like with unlevered '40-Act ratios",
+      "status": "extracted-unverified"
+    },
+    "net_assets_usd": {
+      "value": 19760273000,
+      "source_cell": "3.6",
+      "approx": true,
+      "note": "FY2025 net assets as printed",
+      "status": "extracted-unverified"
+    },
+    "inception": {
+      "value": "2020-11-10",
+      "source_cell": "1.11",
+      "note": "commenced operations; renamed from Owl Rock Core Income Corp. 2023-07-06",
+      "status": "extracted-unverified"
+    },
+    "track_record_years": {
+      "value": 5.1,
+      "source_cell": "1.11",
+      "status": "computed",
+      "note": "(as-of 2025-12-31 minus inception) / 365.25"
+    },
+    "primary_benchmark_id": {
+      "value": "bkln",
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "selection_score": {
+      "value": 9,
+      "source_cell": "5.3",
+      "status": "computed"
+    },
+    "pme_primary": {
+      "value": 1.152,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "direct_alpha_primary": {
+      "value": 2.87,
+      "source_cell": "1.8",
+      "status": "computed"
+    },
+    "liquidity_verdict_by_plan": {
+      "value": {
+        "plan_consulting_alumni": "conditional",
+        "plan_manufacturer_union": "conditional",
+        "plan_restaurant_hourly": "conditional",
+        "plan_tech_media": "conditional"
+      },
+      "source_cell": "3.9",
+      "status": "computed"
+    }
+  }
+}
