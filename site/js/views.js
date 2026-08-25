@@ -22,13 +22,14 @@ export function esc(s) {
 }
 
 const STATUS_PREFIXES = ["pending", "partial", "extracted", "verified",
-  "computed", "fetched", "n/a"];
+  "structured", "computed", "fetched", "n/a"];
 export function statusKind(status) {
   for (const p of STATUS_PREFIXES) if (String(status).startsWith(p)) return p;
   return "unknown";
 }
 
 const CHIP_LABEL = {
+  structured: "structured filing data (T1)",
   verified: "verified", extracted: "extracted · unverified",
   computed: "computed", partial: "partial", fetched: "series fetched",
   pending: "pending", "n/a": "n/a",

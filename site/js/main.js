@@ -7,10 +7,13 @@ import { viewPlans, viewRoster, viewEvaluation, viewBenchmarks, viewPme,
          esc } from "./views.js";
 import { viewScreener, viewCompare, viewVerification, viewSearch, viewPacket,
          viewCohorts, initPalette } from "./workbench.js";
+import { viewCensus, viewFunnel } from "./census.js";
 
 const T = window.TARK;
 
 const VIEWS = [
+  ["census", "Universe", viewCensus, "universe"],
+  ["funnel", "The Funnel", viewFunnel, "universe"],
   ["screener", "Screener", viewScreener, "workbench"],
   ["compare", "Comparison", viewCompare, "workbench"],
   ["search", "Evidence Search", viewSearch, "workbench"],
@@ -28,7 +31,7 @@ const VIEWS = [
   ["coverage", "Coverage & Provenance", viewCoverage, "integrity"],
   ["verification", "Verification", viewVerification, "integrity"],
 ];
-const GROUPS = { workbench: "Workbench", context: "Context",
+const GROUPS = { universe: "Universe (T1)", workbench: "Workbench", context: "Context",
   record: "The Record", analytics: "Interactive Analytics",
   integrity: "Integrity" };
 
@@ -39,6 +42,8 @@ const state = {
   f_wrapper: "", f_base: "", f_tax: "", f_gate: "", f_big4: "",
   f_verdict: "", f_vonly: "", pme_min: "", pme_max: "",
   sort: "", dir: "", cols: "",
+  c_class: "", c_listed: "", c_interval: "", c_tender: "", c_eval: "",
+  c_amin: "", c_amax: "", c_hint: "", c_cik: "",
 };
 const VALID = {
   view: (v) => VIEWS.some(([id]) => id === v),
@@ -68,6 +73,18 @@ const VALID = {
   sort: (v) => !v || /^[a-z0-9_]{1,16}$/.test(v),
   dir: (v) => !v || ["asc", "desc"].includes(v),
   cols: (v) => !v || /^[a-z0-9.]{1,200}$/.test(v),
+  /* census filters: enums + numbers only; text search never enters the URL */
+  c_class: (v) => !v || ["bdc", "interval_23c3", "tender_cef",
+    "nontraded_reit", "listed_cef", "unlisted_cef_other",
+    "nontraded_34act_other"].includes(v),
+  c_listed: (v) => !v || ["yes", "no"].includes(v),
+  c_interval: (v) => !v || v === "1",
+  c_tender: (v) => !v || ["24m", "60m", "ever"].includes(v),
+  c_eval: (v) => !v || ["yes", "no"].includes(v),
+  c_amin: (v) => !v || /^\d{1,7}$/.test(v),
+  c_amax: (v) => !v || /^\d{1,7}$/.test(v),
+  c_hint: (v) => !v || /^[a-z-]{1,20}\?$/.test(v),
+  c_cik: (v) => !v || /^\d{1,10}$/.test(v),
 };
 
 function readHash() {
@@ -145,7 +162,8 @@ function buildTopbar() {
 
 /* the price/NAV series chunk is lazy-loaded (perf budget): chart/lab views
  * wait for series.js; screener/compare/plans first-paint stays light */
-const SERIES_VIEWS = new Set(["evaluation", "pme", "dxyz", "desmooth"]);
+const SERIES_VIEWS = new Set(["evaluation", "pme", "dxyz", "desmooth",
+                              "liquidity"]);
 let seriesLoading = false;
 function ensureSeries() {
   const root = document.getElementById("view");
@@ -156,7 +174,29 @@ function ensureSeries() {
     seriesLoading = true;
     const s = document.createElement("script");
     s.src = "series.js";
-    s.onload = () => { window.TARK.series = window.TARK_SERIES; render(); };
+    s.onload = () => {
+      window.TARK.series = window.TARK_SERIES;
+      window.TARK.liquidity = window.TARK_LIQ;
+      render();
+    };
+    document.head.append(s);
+  }
+}
+
+/* the census chunk (T1 universe, ~1.3k entities) is lazy-loaded the same
+ * way — the universe views wait for census.js.data; nothing else pays */
+const CENSUS_VIEWS = new Set(["census", "funnel"]);
+let censusLoading = false;
+function ensureCensus() {
+  const root = document.getElementById("view");
+  root.innerHTML = `<div class="nochart"><div class="k">Loading the universe</div>
+    Loading the census chunk — the full T1 universe is split from the core
+    bundle so the evaluated-roster views paint instantly.</div>`;
+  if (!censusLoading) {
+    censusLoading = true;
+    const s = document.createElement("script");
+    s.src = "census.data.js";
+    s.onload = () => render();
     document.head.append(s);
   }
 }
@@ -167,6 +207,10 @@ function render() {
   buildTopbar();
   if (SERIES_VIEWS.has(state.view) && !window.TARK.series) {
     ensureSeries();
+    return;
+  }
+  if (CENSUS_VIEWS.has(state.view) && !window.TARK_CENSUS) {
+    ensureCensus();
     return;
   }
   const root = document.getElementById("view");
