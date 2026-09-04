@@ -1287,6 +1287,50 @@ with sync_playwright() as pw:
 
     check("no page errors across the whole run", not errors,
           "; ".join(errors[:3]))
+    # ---------- VERIFY 6: the ten Tier 1 cells, drawer against the evidence CSV
+    import csv as _csv
+    tier1 = [it for it in bundle["verification_queue"]["queue"] if it["tier"] == 1]
+    t1_bad = []
+    for it in tier1:
+        rows = {r["cell_id"]: r for r in _csv.DictReader(open(BASE / "data" / "evidence" / f"{it['product']}_evidence.csv", newline=""))}
+        r = rows[it["cell"]]
+        view_text("evaluation", product=it["product"])
+        page.locator(f'[data-cite][data-cid="{it["cell"]}"]').first.click()
+        body = page.locator("#drawer .dbody").inner_text()
+        page.evaluate("() => { document.getElementById('drawer').classList.remove('open'); }")
+        norm = lambda t: re.sub(r"\s+", " ", t).strip()
+        if not (norm(r["source_doc"]) in norm(body) and norm(r["quote"]) in norm(body)
+                and (not r.get("accession") or r["accession"].startswith("multiple") or r["accession"] in norm(body))):
+            t1_bad.append(f"{it['product']} {it['cell']}")
+    check(f"Tier 1 manual check, automated: drawer document, quote and accession equal the CSV for all {len(tier1)} cells "
+          "(EDGAR HTTP status cannot be checked from this container)", bool(tier1) and not t1_bad, "; ".join(t1_bad))
+
+    # ---------- VERIFY 5: mobile (390 px) and print renders of Roster, Evaluation, Benchmarks
+    mobile = browser.new_page(viewport={"width": 390, "height": 844})
+    m_err = []
+    mobile.on("pageerror", lambda e: m_err.append(str(e)))
+    mobile.goto(f"http://127.0.0.1:{PORT}/", wait_until="networkidle")
+    mobile.evaluate("""() => new Promise((res) => { const s = document.createElement('script'); s.src = 'series.js';
+        s.onload = () => { window.tarkMergeLazy(); res(true); }; document.head.append(s); })""")
+    overflow = []
+    for v in ("roster", "evaluation", "benchmarks"):
+        mobile.evaluate(f"() => window.tarkSetState({{view: '{v}', plan: 'plan_tech_media', product: 'hl_paf'}})")
+        mobile.wait_for_timeout(200)
+        w = mobile.evaluate("() => [document.documentElement.scrollWidth, window.innerWidth]")
+        if w[0] > w[1] + 2:
+            overflow.append(f"{v}: {w[0]}px wide in a {w[1]}px viewport")
+    check("mobile 390 px: Roster, Evaluation and Benchmarks render without horizontal overflow or errors",
+          not overflow and not m_err, "; ".join(overflow + m_err[:2]))
+    mobile.emulate_media(media="print")
+    p_err = []
+    for v in ("roster", "evaluation", "benchmarks"):
+        mobile.evaluate(f"() => window.tarkSetState({{view: '{v}', plan: 'plan_tech_media', product: 'hl_paf'}})")
+        mobile.wait_for_timeout(200)
+        if len(mobile.locator("#view").inner_text()) < 200:
+            p_err.append(v)
+    check("print media: the same three views still render their content", not p_err and not m_err, "; ".join(p_err))
+    mobile.close()
+
     browser.close()
 
 httpd.shutdown()

@@ -90,7 +90,7 @@ re-check is never presented as human verification.
    live. It is the human-verification interface and reads like a ledger.
 
 ## What is enforced by machines (say this in the meeting)
-- Pre-commit runs 17 gates, in this order: `validate_data` (data contract),
+- Pre-commit runs 18 gates, in this order: `validate_data` (data contract),
   `validate_census` (T1 census), `test_evidence_immutable` (T2 rows change
   only through an allowlisted correction), `corrections_log` (every changed
   published number is logged), `test_invariants` (verified count is 0, no
@@ -101,7 +101,10 @@ re-check is never presented as human verification.
   blurred), `test_ingest` (the extraction contract, offline with a mock
   client), `test_memo`, `test_app` (Streamlit suite),
   `test_artifacts_fresh` (committed artifacts reproduce from a clean
-  producer run), `build_site` (anonymization gate), `test_frontend` (render
+  producer run), `build_site` (anonymization gate), `reconcile` (one number,
+  every surface: facts, headlines, cards, cells 1.8 and 3.9, match files and
+  memo agree on expense ratio, management fee, KS-PME, Direct Alpha and the
+  liquidity verdict), `test_frontend` (render
   sweep across every view, product and plan with the HTML parsed,
   anonymization, JS/Python parity, runtime dead-key check). The full hook
   ran in 39 seconds on 2026-09-04 in the remote build container. There is

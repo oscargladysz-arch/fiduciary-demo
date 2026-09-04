@@ -568,3 +568,16 @@ body[data-density="compact"] h1 { font-size: 20px; }
   body.print-pins #nav, body.print-pins #topbar, body.print-pins .viewhead,
   body.print-pins .packet-actions, body.print-pins .mv { display: none !important; }
 }
+
+/* small screens (VERIFY 5): the header selects shrink, stat rows wrap, cards
+ * never force the page wider than the viewport */
+@media (max-width: 600px) {
+  #main { padding-left: var(--s4); padding-right: var(--s4); }
+  .ctxchip { max-width: 100%; }
+  .ctxchip select { max-width: 60vw; }
+  .statrow { flex-wrap: wrap; }
+  .stat { min-width: 0; flex: 1 1 140px; }
+  .card, .viewhead, .factorblock, .cellrow { min-width: 0; overflow-wrap: anywhere; }
+  .rollup { grid-template-columns: repeat(2, 1fr); }
+  .cardgrid.g2, .cardgrid.g3 { grid-template-columns: 1fr; }
+}
