@@ -1064,3 +1064,22 @@ plan)" section and marks each committee cell stated or open in the
 recommendation. No advisor file is committed: inventing a signer would
 be fabrication. The offline gates exercise the validator, the
 not-evidence rule, the form and the memo section.
+
+### 6.27 P2-7: verification is a person signing, and only that
+`src/verify_cell.py <product> <cell> --signer "Name, role" --date
+YYYY-MM-DD` is the one path that writes a verified status. It refuses an
+empty signer, a signer that names a script, model or agent, a non-ISO
+date, any cell that is not extracted-unverified, and any cell without a
+source and a verbatim quote. It changes only the status and verified_by
+(the value, source, section and quote stay as they were), writes the
+product JSON and the evidence CSV together, and allowlists the two
+columns in the corrections log with the signer as the reason.
+`--dry-run` prints the signed row and writes nothing. The Verification
+view shows, under every queue row in the document's order, the recorded
+value beside the verbatim quote with its source, and a signer-and-date
+form that emits that exact command, refusing to emit anything without
+both. The site writes nothing, and the service stays one endpoint. The
+tests exercise every refusal and the dry run in a scratch copy and
+assert that no verified row exists afterwards: no test, producer or
+build ever writes verified, and the record's verified count stays 0
+until a person runs the command.

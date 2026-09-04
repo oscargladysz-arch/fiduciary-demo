@@ -257,6 +257,32 @@ check("advisor: an advisor-stated status inside an evidence cell is refused by v
 check("advisor: the six cells are exactly the committee cells",
       set(ADVISOR_STATED_CELLS) == {"6.6", "6.8", "3.7", "2.8", "3.5", "4.9"})
 
+# ---------------- verify_cell (P2-7): every refusal, the dry run, never a write
+import verify_cell  # noqa: E402
+def refused(*a, **kw):
+    try:
+        verify_cell.apply(*a, **kw)
+        return False
+    except SystemExit:
+        return True
+before = (DATA / "products" / f"{KEY}.json").read_text()
+check("verify: an empty signer is refused", refused(KEY, "2.1", "", "2026-09-04"))
+check("verify: a non-ISO date is refused", refused(KEY, "2.1", "A. Person, chair", "Sept 4 2026"))
+check("verify: a signer naming a model, script or agent is refused",
+      refused(KEY, "2.1", "Claude Code", "2026-09-04") and refused(KEY, "2.1", "ingest.py run", "2026-09-04"))
+check("verify: a partial cell cannot be verified", refused(KEY, "3.1", "A. Person, chair", "2026-09-04"))
+check("verify: a pending cell cannot be verified", refused(KEY, "1.1", "A. Person, chair", "2026-09-04"))
+check("verify: a structured cell cannot be verified", refused(KEY, "4.5", "A. Person, chair", "2026-09-04"))
+row = verify_cell.apply(KEY, "2.1", "A. Person, committee chair", "2026-09-04", dry_run=True)
+after = (DATA / "products" / f"{KEY}.json").read_text()
+check("verify: the dry run shows the signed row and writes nothing",
+      row["status"] == "verified - A. Person, committee chair, 2026-09-04"
+      and row["verified_by"] == "A. Person, committee chair, 2026-09-04"
+      and row["value"] == prod["cells"]["2.1"]["value"] and row["quote"] == prod["cells"]["2.1"]["quote"]
+      and before == after and load_product(KEY)["cells"]["2.1"]["status"] == "extracted-unverified")
+check("verify: no verified row exists in the scratch record after the tests",
+      all(not str(c["status"]).startswith("verified") for c in load_product(KEY)["cells"].values()))
+
 # ---------------- the service: one endpoint, honest refusals, no job state
 (SCRATCH / "data" / "census").mkdir(exist_ok=True)
 shutil.copy(BASE / "data" / "census" / "census.json", SCRATCH / "data" / "census" / "census.json")

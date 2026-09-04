@@ -412,14 +412,48 @@ export function viewVerification(root, state, setState) {
             <td>${esc(cell.element)}</td>
             <td>${chip(cell.status)}</td>
             <td>${citeBtn(it.product, it.cell)}
-              <a href="#" data-goto-cell="${it.product}">open →</a></td></tr>`;
+              <a href="#" data-goto-cell="${it.product}">open →</a></td></tr>
+            <tr class="verifyrow" data-verify-for="${it.product}:${it.cell}"><td colspan="6">
+              <details class="verifyform" data-verify-form="${it.product}:${it.cell}">
+                <summary class="cap">verify: value beside the verbatim quote, then sign</summary>
+                <div class="sidebyside">
+                  <div><div class="cap">Value as recorded</div><div class="plain">${esc(cell.value || "")}</div></div>
+                  <div><div class="cap">Verbatim quote, ${esc(cell.source || "no source")}</div>
+                    <div class="quote">${cell.quote ? esc(cell.quote) : "no quote on record, this cell cannot be verified"}</div></div>
+                </div>
+                <label class="cap">Signer (name and role)<input data-f="signer" type="text"></label>
+                <label class="cap">Date<input data-f="date" type="date"></label>
+                <button class="btn ghost" data-verify-make>make the verification command</button>
+                <span class="cap" data-verify-msg></span>
+                <pre class="cmd" data-verify-cmd hidden></pre>
+              </details></td></tr>`;
         }).join("")}
       </tbody></table></div>`).join("")}
     <p class="cap footer-rule">Verification flips a row to 'verified' + signs
-      verified_by in data/evidence/*.csv AND the product JSON (humans only).
-      The build can never do this.</p>`;
+      verified_by in data/evidence/*.csv AND the product JSON (humans only,
+      through src/verify_cell.py, which refuses an empty signer or date and any
+      cell without a verbatim quote). The build and this site can never do this.</p>`;
   root.querySelectorAll("[data-goto-cell]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault(); setState({ view: "evaluation", product: a.dataset.gotoCell }); }));
+  root.querySelectorAll("[data-verify-form]").forEach((form) => {
+    const [product, cid] = form.dataset.verifyForm.split(":");
+    const hasQuote = !!(T.products[product].cells[cid].quote);
+    form.querySelector("[data-verify-make]").addEventListener("click", () => {
+      const signer = form.querySelector('[data-f="signer"]').value.trim();
+      const date = form.querySelector('[data-f="date"]').value.trim();
+      const msg = form.querySelector("[data-verify-msg]");
+      const out = form.querySelector("[data-verify-cmd]");
+      if (!hasQuote) { msg.textContent = "no verbatim quote on record, nothing to verify against"; out.hidden = true; return; }
+      if (!signer || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        msg.textContent = "signer and an ISO date are both required, nothing was produced";
+        out.hidden = true;
+        return;
+      }
+      out.textContent = `python src/verify_cell.py ${product} ${cid} --signer ${JSON.stringify(signer)} --date ${date}`;
+      out.hidden = false;
+      msg.textContent = "run this in the repository as yourself, the site writes nothing";
+    });
+  });
 }
 
 /* ================================================================ SEARCH */

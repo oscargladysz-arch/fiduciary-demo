@@ -959,8 +959,10 @@ with sync_playwright() as pw:
 
     # verification view mirrors the queue
     view_text("verification")
+    # queue rows carry data-q. Each now has a verify row beneath it (P2-7),
+    # so the count reads the queue rows themselves, not every table row.
     qrows = page.evaluate("""() =>
-      document.querySelectorAll('table.grid tbody tr').length""")
+      document.querySelectorAll('table.grid tbody tr[data-q]').length""")
     check("verification view renders the full queue",
           qrows == len(bundle["verification_queue"]["queue"]))
     vq = bundle["verification_queue"]
@@ -1047,6 +1049,28 @@ with sync_playwright() as pw:
           href_tech == "memos/plan_tech_media__cliffwater_cclfx_decision_memo.docx"
           and href_cons == "memos/plan_consulting_alumni__cliffwater_cclfx_decision_memo.docx",
           f"{href_tech} / {href_cons}")
+
+    # ---------- P2-7: verification view, quote beside value, command from signer and date
+    view_text("verification")
+    order = page.evaluate("() => [...document.querySelectorAll('tr[data-q]')].map((r) => r.dataset.q)")
+    check("verification: queue order is the document's order, unchanged by the forms",
+          order == [f"{it['product']}:{it['cell']}" for it in bundle["verification_queue"]["queue"]])
+    check("verification: every queue row has a verify form with the value and the quote side by side",
+          page.locator("[data-verify-form]").count() == len(order)
+          and page.locator("[data-verify-form] .sidebyside").count() == len(order))
+    vf = page.locator("[data-verify-form]").first
+    vf.evaluate("(d) => { d.open = true; }")
+    vf.locator("[data-verify-make]").click()
+    check("verification: no signer or date produces nothing and says why",
+          "both required" in vf.locator("[data-verify-msg]").inner_text()
+          and vf.locator("[data-verify-cmd]").is_hidden())
+    vf.locator('[data-f="signer"]').fill("A. Person, committee chair")
+    vf.locator('[data-f="date"]').fill("2026-09-04")
+    vf.locator("[data-verify-make]").click()
+    check("verification: the command names the product, cell, signer and date, nothing is written by the site",
+          vf.locator("[data-verify-cmd]").inner_text()
+          == f"python src/verify_cell.py {order[0].replace(':', ' ')} --signer \"A. Person, committee chair\" --date 2026-09-04"
+          and "writes nothing" in vf.locator("[data-verify-msg]").inner_text())
 
     # ---------- P1-26: authority panel and rule references ----------
     page.evaluate("() => { document.querySelector('details.authority').open = true; }")

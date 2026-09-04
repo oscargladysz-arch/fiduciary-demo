@@ -547,3 +547,11 @@ body[data-density="compact"] h1 { font-size: 20px; }
 .advisorform label { display: block; margin: 6px 0; }
 .advisorform textarea, .advisorform input { display: block; width: 100%; max-width: 640px; font: inherit;
   padding: 4px 6px; border: 1px solid var(--line); border-radius: 3px; }
+
+/* verification form (P2-7): value beside the verbatim quote, then a signer and a date */
+.verifyrow td { padding: 2px 8px 8px; background: var(--paper); }
+.verifyform label { display: block; margin: 6px 0; }
+.verifyform input { display: block; width: 100%; max-width: 420px; font: inherit; padding: 4px 6px;
+  border: 1px solid var(--line); border-radius: 3px; }
+.sidebyside { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 6px 0; }
+@media (max-width: 720px) { .sidebyside { grid-template-columns: 1fr; } }
