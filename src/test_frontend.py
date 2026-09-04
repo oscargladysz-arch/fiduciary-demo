@@ -1050,6 +1050,36 @@ with sync_playwright() as pw:
           and href_cons == "memos/plan_consulting_alumni__cliffwater_cclfx_decision_memo.docx",
           f"{href_tech} / {href_cons}")
 
+    # ---------- P2-8: plan intake form emits the intake file, refuses a sponsor-like label
+    view_text("plans")
+    pf = page.locator("[data-plan-form]")
+    pf.evaluate("(d) => { d.open = true; }")
+    pf.locator("[data-plan-make]").click()
+    check("plan intake: an empty form produces nothing and says why",
+          "required" in pf.locator("[data-plan-msg]").inner_text() and pf.locator("[data-plan-patch]").is_hidden())
+    pf.locator('[data-f="display_label"]').fill("Acme Widgets Inc. 401(k)")
+    pf.locator("[data-plan-make]").click()
+    check("plan intake: a sponsor-like label is refused before anything else",
+          "sponsor name" in pf.locator("[data-plan-msg]").inner_text())
+    pf.locator('[data-f="display_label"]').fill("US regional hospital 403(b) plan (~$400M, OH)")
+    for f, v in (("net_assets_eoy", "400000000"), ("with_account_balances", "5000"), ("active_eoy", "4200"),
+                 ("separated_deferred_vested", "700"), ("pension_benefit_codes", "2e2g2j2k")):
+        pf.locator(f'[data-f="{f}"]').fill(v)
+    pf.locator("[data-plan-make]").click()
+    check("plan intake: without the anonymization confirmation nothing is produced",
+          "confirm" in pf.locator("[data-plan-msg]").inner_text() and pf.locator("[data-plan-patch]").is_hidden())
+    pf.locator('[data-f="anonymization_label"]').check()
+    pf.locator("[data-plan-make]").click()
+    try:
+        intake_doc = json.loads(pf.locator("[data-plan-patch]").inner_text().split("\n", 1)[1])
+    except Exception:  # noqa: BLE001
+        intake_doc = {}
+    check("plan intake: the file carries the label, the confirmation, the codes upper-cased and a derived preview",
+          intake_doc.get("anonymization_label") == "US regional hospital 403(b) plan (~$400M, OH)"
+          and intake_doc.get("pension_benefit_codes") == "2E2G2J2K"
+          and intake_doc.get("derived_preview", {}).get("avg_balance_per_account") == 80000
+          and "identity_private" not in intake_doc)
+
     # ---------- P2-7: verification view, quote beside value, command from signer and date
     view_text("verification")
     order = page.evaluate("() => [...document.querySelectorAll('tr[data-q]')].map((r) => r.dataset.q)")

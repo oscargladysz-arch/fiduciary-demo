@@ -1083,3 +1083,21 @@ tests exercise every refusal and the dry run in a scratch copy and
 assert that no verified row exists afterwards: no test, producer or
 build ever writes verified, and the record's verified count stays 0
 until a person runs the command.
+
+### 6.28 P2-8: a plan enters the record anonymized or not at all
+`src/plan_intake.py <intake.json>` writes `data/plans/<plan_key>.json`
+from the plan's own Form 5500 and Schedule H primitives. The
+anonymization label is required and must equal the display label, and a
+label that looks like a sponsor name or an EIN is refused (the CLI and
+the Plans view share the same pattern). No identity block is stored for
+an intake plan, `validate_plan` accepts `identity_private` absent when
+`anonymization_label` is present and equal to the label, and now
+requires the pension benefit codes the liquidity engine reads for plan
+direction. Derived figures are recomputed from the primitives and never
+taken from the form. Schedule H lines left empty are null with a reason.
+The Plans view carries an "Add your plan" form that emits the intake
+file and refuses to emit anything without the label, the confirmation,
+the required figures and the codes. The new plan gets its liquidity
+matches and memos for every product on the next producer run and build,
+with no code change. Tests: the CLI's refusals and its recomputation in a
+scratch copy, the form's refusals and its output in the browser.

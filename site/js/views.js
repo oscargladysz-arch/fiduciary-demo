@@ -248,9 +248,67 @@ export function viewPlans(root, state, setState) {
       <div class="sub">Four real 401(k) plans from public Form 5500 filings. The
         selected plan drives every liquidity verdict.</div></div>
     <div class="cardgrid g2">${cards}</div>
+    <details class="planform" data-plan-form>
+      <summary class="cap">Add your plan (anonymized label required, the site writes nothing)</summary>
+      <p class="cap">The intake stores no sponsor identity. Describe the plan (industry, size,
+        state) and confirm the label names no sponsor. Derived figures are recomputed from
+        the primitives by src/plan_intake.py, never taken from this form.</p>
+      <div class="formgrid">
+        <label class="cap">Anonymized label<input data-f="display_label" type="text" placeholder="US regional hospital 403(b) plan (~$400M, OH)"></label>
+        <label class="cap">Plan year<input data-f="plan_year" type="text" placeholder="2024-01-01 to 2024-12-31"></label>
+        <label class="cap">Net assets, end of year<input data-f="net_assets_eoy" type="number" min="0"></label>
+        <label class="cap">Net assets, beginning of year<input data-f="net_assets_boy" type="number" min="0"></label>
+        <label class="cap">Total administrative expenses<input data-f="tot_admin_expenses" type="number" min="0"></label>
+        <label class="cap">Accounts with balances<input data-f="with_account_balances" type="number" min="0"></label>
+        <label class="cap">Active participants, end of year<input data-f="active_eoy" type="number" min="0"></label>
+        <label class="cap">Separated participants with balances<input data-f="separated_deferred_vested" type="number" min="0"></label>
+        <label class="cap">Retirees receiving benefits<input data-f="retired_receiving" type="number" min="0"></label>
+        <label class="cap">Pension benefit codes (Form 5500 line 8a)<input data-f="pension_benefit_codes" type="text" placeholder="2E2G2J2K"></label>
+        <label class="cap">Schedule H line 2e, benefit payments (optional)<input data-f="benefit_payments_2e" type="number" min="0"></label>
+        <label class="cap">Schedule H line 2a(1)(B), participant contributions (optional)<input data-f="participant_contributions_2a1b" type="number" min="0"></label>
+      </div>
+      <label class="cap"><input data-f="anonymization_label" type="checkbox"> I confirm the label names no sponsor, plan name or EIN</label>
+      <button class="btn ghost" data-plan-make>make the intake file</button>
+      <span class="cap" data-plan-msg></span>
+      <pre class="cmd" data-plan-patch hidden></pre>
+    </details>
     <p class="cap footer-rule">${esc(T.plans[state.plan].anonymization_rule)}</p>`;
   root.querySelectorAll("[data-plan]").forEach((c) =>
     c.addEventListener("click", () => setState({ plan: c.dataset.plan })));
+  wirePlanForm(root);
+}
+
+/* plan intake form (P2-8): emits the intake file for src/plan_intake.py. The
+ * sponsor hint mirrors the CLI's, the CLI is the one that validates and writes. */
+const SPONSOR_HINT = /\b(inc|llc|l\.l\.c|corp|corporation|ltd|limited|company|co|lp|l\.p|plc|group holdings)\b\.?|\b\d{2}-\d{7}\b/i;
+function wirePlanForm(root) {
+  const form = root.querySelector("[data-plan-form]");
+  if (!form) return;
+  form.querySelector("[data-plan-make]").addEventListener("click", () => {
+    const get = (f) => form.querySelector(`[data-f="${f}"]`);
+    const msg = form.querySelector("[data-plan-msg]");
+    const out = form.querySelector("[data-plan-patch]");
+    const label = get("display_label").value.trim();
+    const num = (f) => { const v = get(f).value.trim(); return v === "" ? null : Number(v); };
+    const doc = { display_label: label, plan_year: get("plan_year").value.trim(),
+      pension_benefit_codes: get("pension_benefit_codes").value.trim().toUpperCase() };
+    for (const f of ["net_assets_eoy", "net_assets_boy", "tot_admin_expenses", "with_account_balances",
+                     "active_eoy", "separated_deferred_vested", "retired_receiving",
+                     "benefit_payments_2e", "participant_contributions_2a1b"]) doc[f] = num(f);
+    const fail = (t) => { msg.textContent = t; out.hidden = true; };
+    if (!label) return fail("an anonymized label is required, nothing was produced");
+    if (SPONSOR_HINT.test(label)) return fail("the label looks like a sponsor name or an EIN, describe the plan instead");
+    if (!get("anonymization_label").checked) return fail("confirm that the label names no sponsor, nothing was produced");
+    if (!(doc.net_assets_eoy > 0) || !(doc.with_account_balances > 0) || doc.active_eoy === null
+        || doc.separated_deferred_vested === null || !doc.pension_benefit_codes)
+      return fail("net assets, accounts, active and separated participants and the benefit codes are required");
+    doc.anonymization_label = label;
+    doc.derived_preview = { avg_balance_per_account: Math.round(doc.net_assets_eoy / doc.with_account_balances),
+      liquidity_tail_pct: Math.round(doc.separated_deferred_vested / doc.with_account_balances * 1000) / 10 };
+    out.textContent = "# save as intake.json, then python src/plan_intake.py intake.json\n" + JSON.stringify(doc, null, 2);
+    out.hidden = false;
+    msg.textContent = "intake file ready, the CLI recomputes the derived figures and validates before writing";
+  });
 }
 
 /* ============================================================== ROSTER */

@@ -467,10 +467,22 @@ def validate_plan(key: str) -> list[str]:
         a = load_plan(key)
     except Exception as e:  # noqa: BLE001
         return [f"{key}: cannot load ({e})"]
-    for req in ("display_label", "identity_private", "participants",
-                "financials", "derived", "source"):
+    for req in ("display_label", "participants", "financials", "derived", "source",
+                "plan_characteristics"):
         if req not in a:
             errs.append(f"{key}: missing '{req}'")
+    # a reference plan carries its identity block (sponsor tokens the build
+    # screens for), an intake plan carries an anonymization label instead
+    if "identity_private" not in a:
+        lab = str(a.get("anonymization_label") or "").strip()
+        if not lab:
+            errs.append(f"{key}: no identity_private and no anonymization_label")
+        elif lab != str(a.get("display_label") or "").strip():
+            errs.append(f"{key}: anonymization_label must equal display_label")
+    if a.get("plan_key") not in (None, key):
+        errs.append(f"{key}: plan_key inside the file is {a.get('plan_key')!r}")
+    if not str((a.get("plan_characteristics") or {}).get("pension_benefit_codes") or "").strip():
+        errs.append(f"{key}: plan_characteristics.pension_benefit_codes missing (plan direction reads it)")
     fin, part, der = a.get("financials", {}), a.get("participants", {}), a.get("derived", {})
     net = fin.get("net_assets_eoy")
     bal = part.get("with_account_balances")

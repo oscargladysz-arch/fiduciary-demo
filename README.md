@@ -28,7 +28,8 @@ the evidence row). Only a human editing `data/evidence/*.csv` can set
   (`ingest.py`, structured extraction with a verbatim-quote contract, offline
   gate `test_ingest.py`, calibration against an evaluated product with
   `calibrate_ingest.py`), human verification of one cell (`verify_cell.py`,
-  signer and date required, the only path that writes verified), the site build
+  signer and date required, the only path that writes verified), plan intake
+  under an anonymized label (`plan_intake.py`), the site build
   (`build_site.py`), the one-endpoint
   evaluation service (`service/app.py`, see `service/README.md`), the
   validators and gates (`validate_*.py`, `test_*.py`, `corrections_log.py`).

@@ -283,6 +283,44 @@ check("verify: the dry run shows the signed row and writes nothing",
 check("verify: no verified row exists in the scratch record after the tests",
       all(not str(c["status"]).startswith("verified") for c in load_product(KEY)["cells"].values()))
 
+# ---------------- plan intake (P2-8): anonymized label required, derived recomputed
+import plan_intake  # noqa: E402
+from tark_data import validate_plan  # noqa: E402
+FORM = {"display_label": "US regional hospital 403(b) plan (~$400M, OH)",
+        "anonymization_label": "US regional hospital 403(b) plan (~$400M, OH)",
+        "plan_year": "2024-01-01 to 2024-12-31", "net_assets_eoy": 400_000_000, "net_assets_boy": 360_000_000,
+        "tot_admin_expenses": 800_000, "with_account_balances": 5000, "active_eoy": 4200,
+        "separated_deferred_vested": 700, "retired_receiving": 30, "pension_benefit_codes": "2E2G2J2K",
+        "derived": {"avg_balance_per_account": 1}}
+def intake_refused(form):
+    try:
+        plan_intake.intake(form)
+        return False
+    except SystemExit:
+        return True
+check("intake: a label that looks like a sponsor is refused",
+      intake_refused({**FORM, "display_label": "Acme Widgets Inc. 401(k)", "anonymization_label": "Acme Widgets Inc. 401(k)"}))
+check("intake: an EIN in the label is refused",
+      intake_refused({**FORM, "display_label": "plan 12-3456789", "anonymization_label": "plan 12-3456789"}))
+check("intake: without the anonymization confirmation it is refused",
+      intake_refused({k: v for k, v in FORM.items() if k != "anonymization_label"}))
+check("intake: missing benefit codes are refused", intake_refused({**FORM, "pension_benefit_codes": ""}))
+check("intake: separated above accounts is refused", intake_refused({**FORM, "separated_deferred_vested": 6000}))
+out = plan_intake.intake(FORM)
+newp = json.loads(out.read_text())
+check("intake: the plan file validates like a reference plan and stores no identity block",
+      validate_plan(newp["plan_key"]) == [] and "identity_private" not in newp
+      and newp["anonymization_label"] == newp["display_label"])
+check("intake: derived figures are recomputed from the primitives, the form's own are ignored",
+      newp["derived"]["avg_balance_per_account"] == 80000 and newp["derived"]["admin_expense_ratio_pct"] == 0.2
+      and newp["derived"]["yoy_net_asset_growth_pct"] == 11.1)
+check("intake: Schedule H lines left empty are null with a reason, never zero",
+      newp["schedule_h"]["benefit_payments_2e"]["value"] is None and newp["schedule_h"]["benefit_payments_2e"]["reason"])
+check("intake: the same key twice is refused", intake_refused(FORM))
+check("intake: a labeled plan reads as fully participant-directed from its codes",
+      __import__("tark_liquidity").plan_direction(newp) == "total")
+out.unlink()
+
 # ---------------- the service: one endpoint, honest refusals, no job state
 (SCRATCH / "data" / "census").mkdir(exist_ok=True)
 shutil.copy(BASE / "data" / "census" / "census.json", SCRATCH / "data" / "census" / "census.json")
