@@ -7,3 +7,6 @@ site/data.js
 site/memos/
 site/series.js
 data/census/raw/
+
+# local virtualenv
+.venv/
