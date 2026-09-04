@@ -4,6 +4,9 @@ from pathlib import Path
 from docx import Document
 
 BASE = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(BASE / "src"))
+from tark_anon import forbidden_tokens  # noqa: E402
+FORBIDDEN = forbidden_tokens()
 FAILS = []
 def check(name, cond):
     print(f"[{'PASS' if cond else 'FAIL'}] {name}")
@@ -24,7 +27,8 @@ for k in keys:
     check(f"{k}: memo exists", p.exists())
     if p.exists():
         texts[k] = text_of(p)
-        check(f"{k}: anonymization holds", "spotify" not in texts[k])
+        check(f"{k}: anonymization holds",
+              not any(t in texts[k] for t in FORBIDDEN))
         check(f"{k}: rule cited", "91 fr 16088" in texts[k])
 check("cclfx: PME + CDLI rejection in memo",
       "ks-pme 1.2532" in texts["cliffwater_cclfx"] and "cliffwater direct lending index" in texts["cliffwater_cclfx"])

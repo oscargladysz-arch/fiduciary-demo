@@ -15,8 +15,11 @@ PRODUCTS = ["breit", "cliffwater_cclfx", "dxyz", "hl_paf", "kkr_kpec",
             "stepstone_spm"]
 PLANS = ["plan_tech_media", "plan_restaurant_hourly", "plan_consulting_alumni",
          "plan_manufacturer_union"]
-# the anonymization rule, lowercased: NO reference-plan sponsor name, ever
-FORBIDDEN = ["spotify", "darden", "mckinsey", "goodyear"]
+# the anonymization rule: NO reference-plan sponsor token, ever. The list
+# (sponsor, plan name, EIN, ack id) comes from the one shared module.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from tark_anon import forbidden_tokens  # noqa: E402
+FORBIDDEN = forbidden_tokens()
 
 FAILS = []
 

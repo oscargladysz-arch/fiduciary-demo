@@ -21,10 +21,40 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parents[1]
-DATA = BASE / "data"
+# TARK_DATA_DIR lets the freshness gate run the whole producer chain into a
+# scratch copy of the record and diff it against the committed artifacts.
+DATA = Path(os.environ.get("TARK_DATA_DIR") or (BASE / "data")).resolve()
+
+
+def record_as_of() -> str:
+    """The record's as-of date, stamped on every machine-written artifact
+    (memo date, computed cells, supplement). TARK_AS_OF overrides
+    data/as_of.json. Never the wall clock: producers must be reproducible so
+    the freshness gate can compare a fresh run against the committed files."""
+    v = os.environ.get("TARK_AS_OF", "").strip()
+    if v:
+        return v
+    p = DATA / "as_of.json"
+    if p.exists():
+        return json.loads(p.read_text())["record_as_of"]
+    raise SystemExit("record as-of date missing: set TARK_AS_OF or add "
+                     "data/as_of.json {\"record_as_of\": \"YYYY-MM-DD\"}")
+
+
+def sec_user_agent() -> str:
+    """Identified User-Agent for SEC and other fetchers. The contact comes
+    from the environment, never from source. SEC fair-access policy requires
+    a name and email, so the fetchers refuse to run without one."""
+    contact = os.environ.get("TARK_SEC_CONTACT", "").strip()
+    if not contact:
+        raise SystemExit("TARK_SEC_CONTACT is not set. Export it as "
+                         "'Your Name your@email' (SEC fair-access policy "
+                         "requires an identified User-Agent).")
+    return f"Tark research tool ({contact})"
 
 # ---------------------------------------------------------------- registry
 FACTORS = {
@@ -219,11 +249,24 @@ def validate_product(key: str) -> list[str]:
     if sorted(ev_ids) != sorted(CELLS):
         errs.append(f"{key}: evidence CSV cell set differs from registry "
                     f"({len(ev_ids)} rows)")
+    # the JSON cell and the CSV row are one record in two stores: every
+    # field must agree, not only the status (33 extracted_by drifts shipped
+    # before this check existed)
+    FIELD_PAIRS = (("value", "value"), ("source", "source_doc"),
+                   ("section", "source_section"), ("quote", "quote"),
+                   ("extracted_by", "extracted_by"),
+                   ("verified_by", "verified_by"))
     for r in ev:
         cid = r["cell_id"]
-        if cid in cells and r["status"] != cells[cid].get("status"):
-            errs.append(f"{key}:{cid}: status drift JSON='{cells[cid].get('status')}' "
+        if cid not in cells:
+            continue
+        c = cells[cid]
+        if r["status"] != c.get("status"):
+            errs.append(f"{key}:{cid}: status drift JSON='{c.get('status')}' "
                         f"CSV='{r['status']}'")
+        for jf, cf in FIELD_PAIRS:
+            if str(c.get(jf) or "").strip() != str(r.get(cf) or "").strip():
+                errs.append(f"{key}:{cid}: {jf} differs between JSON and CSV")
     return errs
 
 

@@ -17,14 +17,20 @@ BASE = Path(__file__).resolve().parents[2]
 RAW = BASE / "data" / "census" / "raw"
 RAW.mkdir(parents=True, exist_ok=True)
 
-UA = {"User-Agent": "Oscar Gladysz oscargladysz@gmail.com"}
+import sys as _sys  # noqa: E402
+_sys.path.insert(0, str(BASE / "src"))
+from tark_data import sec_user_agent  # noqa: E402  (contact from TARK_SEC_CONTACT)
+
+
+def ua() -> dict:
+    return {"User-Agent": sec_user_agent()}
 PACE = 0.25  # 4/sec < the 5/sec ceiling
 
 
 def get(url: str, as_json: bool = True, retries: int = 3):
     for attempt in range(retries):
         try:
-            req = urllib.request.Request(url, headers=UA)
+            req = urllib.request.Request(url, headers=ua())
             with urllib.request.urlopen(req, timeout=90) as r:
                 data = r.read()
             time.sleep(PACE)

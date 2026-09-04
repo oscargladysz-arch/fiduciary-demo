@@ -311,3 +311,38 @@ model with one ILLUSTRATIVE sleeve example.
 ## 4. Baseline recorded 2026-09-04 (before any change)
 
 See `docs/BUILD_REPORT_6.md`, section "Baseline".
+
+## 5. Entries appended during P0
+
+### 5.1 P0-0: the 33 JSON versus CSV `extracted_by` drifts
+All 33 were the same shape: the product JSON carried the extraction pass
+date ("Claude (Inc-1 2026-07-18)") and the CSV omitted it ("Claude
+(Inc-1)"). The CSV was synced to the JSON. Nothing was invented, the date
+was already in the record. Each of the 33 rows is allowlisted in
+`docs/crosscheck_report.md` with this reason, and `validate_product` now
+compares value, source, section, quote, extracted_by and verified_by
+between the two stores, not only status.
+
+### 5.2 P0-0: identified User-Agent from the environment
+The three hardcoded contact strings (`src/fetch_edgar.py`,
+`src/fetch_series.py`, `src/census/edgar_api.py`) now read
+`TARK_SEC_CONTACT`. There is no fallback contact value: SEC fair-access
+policy requires a real name and email, and a made-up default would be a
+false identity, so the fetchers refuse to run until the variable is set
+(`export TARK_SEC_CONTACT='Your Name your@email'`). The Yahoo fetcher no
+longer spoofs a browser User-Agent. `promote.py` keeps the wall-clock date
+for `date_pulled`, because that field records when a pull happened, not
+the record's as-of date.
+
+### 5.3 P0-0: the freshness gate covers four artifact families first
+`src/test_artifacts_fresh.py` compares liquidity, facts, cohorts, benchmark
+selections and memos. All five reproduced exactly from a fresh run on
+2026-09-04 (the memos only after the date moved from the wall clock to the
+record as-of). `data/analytics/supplement.json` joins the set in P0-3, once
+`fee_percentile` reads typed facts, so that the regex-derived bars for
+`cion_ares` and `ocic` are never regenerated and published.
+
+### 5.4 P0-0: the pre-commit chain grew from 9 to 12 gates
+Added: `test_evidence_immutable`, `corrections_log check`,
+`test_artifacts_fresh`. `docs/INVESTOR_DEMO.md` is updated in P0-10 and a
+test derives the count from `hooks/pre-commit`.

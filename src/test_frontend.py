@@ -28,7 +28,9 @@ from playwright.sync_api import sync_playwright
 BASE = Path(__file__).resolve().parents[1]
 SITE = BASE / "site"
 PORT = 8477
-FORBIDDEN = ["spotify", "darden", "mckinsey", "goodyear"]
+sys.path.insert(0, str(BASE / "src"))
+from tark_anon import forbidden_tokens  # noqa: E402
+FORBIDDEN = forbidden_tokens()
 
 FAILS = []
 

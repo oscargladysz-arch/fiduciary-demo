@@ -18,11 +18,11 @@ from __future__ import annotations
 import csv
 import json
 import re
-from datetime import date
 from pathlib import Path
 
 from tark_analytics import max_drawdown
-from tark_data import DATA, load_product, load_series, product_keys
+from tark_data import (DATA, load_product, load_series, product_keys,
+                       record_as_of)
 
 OUT = DATA / "analytics" / "supplement.json"
 
@@ -194,7 +194,7 @@ def ssss_premium() -> dict | None:
 
 def main() -> None:
     doc = {
-        "generated": date.today().isoformat(),
+        "generated": record_as_of(),
         "dxyz_premium": dxyz_premium(),
         "ssss_premium": ssss_premium(),
         "fee_percentile": fee_percentile(),

@@ -36,8 +36,11 @@ from pathlib import Path
 
 import requests
 
-USER_AGENT = "Oscar Gladysz oscargladysz@gmail.com"
-HEADERS = {"User-Agent": USER_AGENT, "Accept-Encoding": "gzip, deflate"}
+from tark_data import sec_user_agent  # noqa: E402  (contact from TARK_SEC_CONTACT)
+
+
+def headers() -> dict:
+    return {"User-Agent": sec_user_agent(), "Accept-Encoding": "gzip, deflate"}
 REPO_ROOT = Path(__file__).resolve().parents[1]
 RAW_DIR = REPO_ROOT / "data" / "raw"
 MANIFEST = REPO_ROOT / "data" / "manifest.csv"
@@ -215,7 +218,7 @@ PRODUCTS = {
 def polite_get(url, as_json=False):
     """GET with identified UA, pacing, and one retry on throttle/outage."""
     for attempt in (1, 2):
-        resp = requests.get(url, headers=HEADERS, timeout=60)
+        resp = requests.get(url, headers=headers(), timeout=60)
         if resp.status_code in (429, 503) and attempt == 1:
             time.sleep(2.0)
             continue

@@ -26,6 +26,7 @@ from tark_data import (BASE, DATA, CELLS, FACTORS, load_evidence, load_plan,
                        load_product, load_products, load_series,
                        load_series_manifest, plan_keys, product_keys,
                        status_kind)
+from tark_anon import docx_text, forbidden_tokens, leaks
 from tark_liquidity import LIQUIDITY_PROFILES, SCENARIO
 
 SITE = BASE / "site"
@@ -399,22 +400,9 @@ def census_chunk() -> str:
 
 def main() -> None:
     plans_raw = {k: load_plan(k) for k in plan_keys()}
-    # distinctive sponsor tokens = every word of the private identity that is
-    # not generic corporate/plan boilerplate (those words legitimately appear
-    # in anonymized display labels, e.g. 'tire & rubber manufacturer')
-    STOP = {"the", "inc", "inc.", "llc", "llp", "co", "co.", "company",
-            "corporation", "corp", "corp.", "usa", "us", "group", "and", "of",
-            "for", "plan", "trust", "savings", "profit", "sharing",
-            "retirement", "employee", "employees", "bargaining", "unit",
-            "restaurants", "tire", "rubber", "&", "(psrp)", "401(k)"}
-    sponsor_names: set[str] = set()
-    for p in plans_raw.values():
-        ident = p.get("identity_private", {})
-        for field in ("sponsor", "plan_name"):
-            for w in str(ident.get(field, "")).split():
-                w = w.strip(",.()").lower()
-                if w and len(w) > 3 and w not in STOP and not w.startswith("401("):
-                    sponsor_names.add(w)
+    # forbidden tokens (sponsor, plan name, EIN, ack id) come from ONE module
+    # shared with every test suite: src/tark_anon.py
+    sponsor_names = set(forbidden_tokens())
 
     plans_pub = {}
     for k, p in plans_raw.items():
@@ -543,10 +531,16 @@ def main() -> None:
     census_payload = census_chunk()
     payload = json.dumps(bundle, separators=(",", ":"))
     low = (payload + series_payload + census_payload).lower()
-    leaks = sorted(n for n in sponsor_names if n in low)
-    if leaks:
-        raise SystemExit(f"ANONYMIZATION FAILURE: sponsor token(s) {leaks} "
-                         f"would enter site/data.js — build refused.")
+    leaked = sorted(n for n in sponsor_names if n in low)
+    if leaked:
+        raise SystemExit(f"ANONYMIZATION FAILURE: sponsor token(s) {leaked} "
+                         f"would enter site/data.js. Build refused.")
+    # the memos ship from site/memos/: screen their text with the same list
+    for m in sorted((DATA / "memos").glob("*_decision_memo.docx")):
+        bad = leaks(docx_text(m))
+        if bad:
+            raise SystemExit(f"ANONYMIZATION FAILURE: token(s) {bad} in "
+                             f"{m.name}. Build refused.")
 
     SITE.mkdir(exist_ok=True)
     (SITE / "data.js").write_text("window.TARK = " + payload + ";\n")

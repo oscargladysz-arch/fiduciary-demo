@@ -1,7 +1,7 @@
 """
 Daily price/NAV series fetcher (build-time only; the site itself makes no
 external calls). Pulls date/close/adjclose from the Yahoo Finance v8 chart
-API — the same source and file contract as the original six series — and
+API — the same source and file contract as every other daily series — and
 updates data/series/series_manifest.json.
 
 Usage: python src/fetch_series.py TICKER [role-note...]
@@ -16,16 +16,19 @@ from datetime import date, datetime, timezone
 
 import requests
 
-from tark_data import DATA
+from tark_data import DATA, sec_user_agent
 
-UA = {"User-Agent": "Mozilla/5.0 (Macintosh) tark-research "
-                    "(oscargladysz@gmail.com)"}
+
+def ua() -> dict:
+    # an honest, identified client string (no browser spoofing); the contact
+    # comes from TARK_SEC_CONTACT
+    return {"User-Agent": sec_user_agent()}
 
 
 def fetch(ticker: str) -> list[tuple[str, float, float]]:
     url = (f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
            f"?range=10y&interval=1d&events=div%2Csplit")
-    r = requests.get(url, headers=UA, timeout=60)
+    r = requests.get(url, headers=ua(), timeout=60)
     r.raise_for_status()
     res = r.json()["chart"]["result"][0]
     ts = res["timestamp"]

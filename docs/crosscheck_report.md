@@ -97,3 +97,62 @@ None. Every one of the 44 cells was re-located in its cited on-disk document (in
 2. **hl_paf management fee history:** 486BPOS (2021) fee table says 1.50% of average daily Managed Assets; the FY2026 N-CSR says 1.40% calculated monthly. Cell 2.1 (citing the N-CSR) is correct as recorded, but the rate changed sometime after 2021 — worth a one-line note in the cell when verifying.
 3. **Location nuance:** cliffwater 1.2's quote lives in the Letter to Shareholders, not the cited "Fund Performance" section (same document, pages apart).
 4. **Inference flags:** dxyz 3.1 "no fund-level repurchase program" and hl_paf 3.1 "NOT Rule 23c-3 interval" are absence-of-mention inferences, consistent with (but not stated by) the filings.
+
+---
+
+## Corrections 2026-09
+
+Machine-managed by `python src/corrections_log.py`. One row per published
+number that changed relative to `origin/main`: the old value, the new value,
+the cause (task id from the remediation brief) and the surfaces that carry
+it. `python src/corrections_log.py check` runs in the pre-commit gate and
+fails when a changed number has no row here.
+
+<!-- tark:corrections-2026-09:begin -->
+| product | field | old | new | new_sha | cause | surfaces | date |
+|---|---|---|---|---|---|---|---|
+<!-- tark:corrections-2026-09:end -->
+
+## Evidence allowlist
+
+T2 evidence rows (extracted, partial, fetched, structured) that were
+deliberately edited, with the reason. `python src/test_evidence_immutable.py`
+fails on any change to a protected row that is not listed here.
+
+<!-- tark:evidence-allowlist:begin -->
+| product | cell | column | reason | date |
+|---|---|---|---|---|
+| breit | 2.1 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| breit | 2.2 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| breit | 3.1 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| breit | 3.6 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| breit | 4.5 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| dxyz | 1.2 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| dxyz | 2.3 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| dxyz | 3.1 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| dxyz | 4.2 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| hl_paf | 1.1 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| hl_paf | 1.2 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| hl_paf | 2.1 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| hl_paf | 2.3 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| hl_paf | 2.7 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| hl_paf | 3.1 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| hl_paf | 3.6 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| hl_paf | 4.5 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| hl_paf | 5.1 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| kkr_kpec | 2.1 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| kkr_kpec | 2.2 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| kkr_kpec | 2.3 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| kkr_kpec | 3.1 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| kkr_kpec | 4.5 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| kkr_kpec | 6.4 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| stepstone_spm | 1.2 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| stepstone_spm | 2.1 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| stepstone_spm | 2.2 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| stepstone_spm | 2.7 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| stepstone_spm | 3.1 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| stepstone_spm | 3.6 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| stepstone_spm | 4.5 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| stepstone_spm | 5.1 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| stepstone_spm | 6.4 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+<!-- tark:evidence-allowlist:end -->

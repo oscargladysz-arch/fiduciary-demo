@@ -12,7 +12,6 @@ Anonymization: only the plan's display label ever appears (test-enforced).
 from __future__ import annotations
 
 import json
-from datetime import date
 from pathlib import Path
 
 from docx import Document
@@ -20,7 +19,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt
 
 from tark_data import (DATA, FACTORS, cells_by_factor, load_anchor_plan,
-                       load_products, status_kind)
+                       load_products, record_as_of, status_kind)
 
 RULE = ("DOL proposed rule, Fiduciary Duties in Selecting Designated "
         "Investment Alternatives, 91 FR 16088 (Mar. 31, 2026), RIN 1210-AC38")
@@ -82,7 +81,7 @@ def build_memo(key: str) -> Path:
     sub = doc.add_paragraph()
     sub.add_run(f"Plan: {anchor['display_label']}\n").bold = True
     sub.add_run(f"Product: {p['fund_name']} ({p['wrapper']}, CIK {p['cik']})\n")
-    sub.add_run(f"Date: {date.today().isoformat()}    Status: DRAFT — demo "
+    sub.add_run(f"Date: {record_as_of()}    Status: DRAFT — demo "
                 "build; cells marked extracted-unverified pend independent "
                 "verification.")
 
