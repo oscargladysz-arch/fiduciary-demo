@@ -169,7 +169,8 @@ PROXY_LIBRARY = {
 
 
 def pme_profiles() -> dict:
-    """Window-explorer profiles for ALL six products at honest granularity."""
+    """Window-explorer profiles at honest granularity (extended to every
+    product with a series in P1-15)."""
     from tark_benchmark import PRODUCT_PROFILES as PP
     import json as _json
     pi = _json.loads((DATA / "benchmarks" / "profiles_input.json").read_text())

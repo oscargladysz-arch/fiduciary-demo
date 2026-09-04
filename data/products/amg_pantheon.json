@@ -297,7 +297,7 @@
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of outstanding Units (board-discretionary tenders) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
+      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure — CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of outstanding Units (board-discretionary tenders) — a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
       "status": "computed",
       "source": "data/liquidity/plan_tech_media__amg_pantheon_match.json",
       "section": "verdict + reasons",
@@ -427,12 +427,12 @@
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort evergreen_pe (n=5): members, rationales, stats, composite (or its documented refusal) and caveat block in the cohort artifact; exclusions in data/roster_decisions.md.",
+      "value": "Peer cohort evergreen_pe (n=5: hl_paf, stepstone_spm, kkr_kpec, ares_pmf, amg_pantheon). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2022 (n=3), 2023 (n=5), 2024 (n=5), 2025 (n=5), 2026 (n=4). Wrapper types in the cohort: nontraded_llc, tender_offer. Cross-wrapper differences are disclosed in the cohort caveat block (5 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md.",
       "status": "computed",
       "source": "data/cohorts/evergreen_pe.json",
-      "section": "members + composite",
+      "section": "members, composite and caveats blocks",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.5": {

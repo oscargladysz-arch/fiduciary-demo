@@ -51,7 +51,7 @@
       "status": "n/a - not publicly available: underlying Portfolio Fund/GP-level returns are LP-only reporting; filings disclose holdings at fair value (see 3.4/SOI), not underlying fund IRRs",
       "source": "N-CSR (FY2026 annual report), filed 2026-06-04, Note 3 (absence search across ncsr, 486bpos, sctoi, 424b3 stripped texts)",
       "section": "Note 3 - FAIR VALUE MEASUREMENTS (underlying-valuation disclaimer); absence search across all on-disk ares_pmf filings",
-      "quote": "has been estimated by the respective Portfolio Funds\u2019 management and is based upon available information in the absence of readily ascertainable fair values",
+      "quote": "has been estimated by the respective Portfolio Funds’ management and is based upon available information in the absence of readily ascertainable fair values",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -121,7 +121,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR (FY2026 annual report), filed 2026-06-04, Note 4; rate/base restated in 486BPOS filed 2026-07-29, fee table fn (3)",
       "section": "Note 4 - INVESTMENT ADVISORY SERVICES AND OTHER AGREEMENTS - Advisory Agreement; 486BPOS SUMMARY OF FUND FEES AND EXPENSES fn (3)",
-      "quote": "a quarterly advisory fee at an annual rate of 1.40% based on the value of the Fund\u2019s Managed Assets",
+      "quote": "a quarterly advisory fee at an annual rate of 1.40% based on the value of the Fund’s Managed Assets",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -141,7 +141,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR (FY2026 annual report), filed 2026-06-04 - Financial Highlights + Note 4 Expense Limitation Agreement; 486BPOS filed 2026-07-29 fee table",
       "section": "Consolidated Financial Highlights - RATIOS TO AVERAGE NET ASSETS; Note 4 - Expense Limitation Agreement; 486BPOS SUMMARY OF FUND FEES AND EXPENSES",
-      "quote": "after fee waivers, the Fund\u2019s total annual expense ratio was 4.99% for Class I, 5.18% for Class D and 5.82% for Class A",
+      "quote": "after fee waivers, the Fund’s total annual expense ratio was 4.99% for Class I, 5.18% for Class D and 5.82% for Class A",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -221,7 +221,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR filed 2026-06-04, Notes 6-7 and Risk Factors; SC TO-I filed 2026-06-01, Item 1; 486BPOS filed 2026-07-29 facing sheet",
       "section": "Note 7 - REPURCHASE OF SHARES; Note 6 - PURCHASE OF SHARES; Note 10 Risk Factors (Closed-End Fund Structure); SC TO-I Item 1; 486BPOS registrant-characterization checkboxes",
-      "quote": "the Fund conduct repurchase offers of no more than 5% of the Fund\u2019s net assets on a quarterly basis",
+      "quote": "the Fund conduct repurchase offers of no more than 5% of the Fund’s net assets on a quarterly basis",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -297,7 +297,7 @@
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of NAV (board-discretionary quarterly tenders, Rule 13e-4 - NOT an interval fund) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
+      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure — CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of NAV (board-discretionary quarterly tenders, Rule 13e-4 - NOT an interval fund) — a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
       "status": "computed",
       "source": "data/liquidity/plan_tech_media__ares_pmf_match.json",
       "section": "verdict + reasons",
@@ -351,7 +351,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR (FY2026 annual report), filed 2026-06-04 - Report of Independent Registered Public Accounting Firm + Item 4; 486BPOS filed 2026-07-29 INDEPENDENT REGISTERED PUBLIC ACCOUNTING FIRM",
       "section": "Report of Independent Registered Public Accounting Firm (signature block); N-CSR Item 4 - Principal Accountant Fees and Services",
-      "quote": "Ernst & Young LLP (\u201c E&Y \u201d), the Fund\u2019s independent registered public accounting firm",
+      "quote": "Ernst & Young LLP (“ E&Y ”), the Fund’s independent registered public accounting firm",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -427,12 +427,12 @@
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort evergreen_pe (n=5): members, rationales, stats, composite (or its documented refusal) and caveat block in the cohort artifact; exclusions in data/roster_decisions.md.",
+      "value": "Peer cohort evergreen_pe (n=5: hl_paf, stepstone_spm, kkr_kpec, ares_pmf, amg_pantheon). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2022 (n=3), 2023 (n=5), 2024 (n=5), 2025 (n=5), 2026 (n=4). Wrapper types in the cohort: nontraded_llc, tender_offer. Cross-wrapper differences are disclosed in the cohort caveat block (5 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md.",
       "status": "computed",
       "source": "data/cohorts/evergreen_pe.json",
-      "section": "members + composite",
+      "section": "members, composite and caveats blocks",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.5": {

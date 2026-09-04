@@ -7,7 +7,7 @@ data/analytics/supplement.json with full provenance:
     quarterly NAV/share, plus the filed premium range
   - fee percentile within the evaluation universe (cell 2.9): each product's
     own primary net expense ratio as extracted in cell 2.3 — universe = this
-    six-product roster, bases differ and are quoted per product
+    evaluation roster, bases differ and are quoted per product
   - stress-window stats (cell 1.9) where a daily series exists; annual-tier
     products are computed from data/series_annual/ files when present
 
@@ -75,9 +75,10 @@ def fee_percentile() -> dict:
         e["rank"] = i + 1
         e["of"] = n
         e["percentile_low_is_cheap"] = round((i + 0.5) / n * 100)
-    return {"universe": "this six-product evaluation roster (n=%d with a TER "
-                        "line) - NOT a market-wide database; bases differ per "
-                        "product and are quoted from cell 2.3" % n,
+    return {"universe": "this %d-product evaluation roster (n=%d with a TER "
+                        "line), not a market-wide database. Bases differ per "
+                        "product and are quoted from cell 2.3"
+                        % (len(product_keys()), n),
             "entries": entries}
 
 

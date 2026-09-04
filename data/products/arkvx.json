@@ -21,7 +21,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
       "section": "Management's Discussion of Fund Performance - Average Annual Total Returns as of 7/31/25",
-      "quote": "Average Annual Total Returns as of 7/31/25 ... The Fund\u2019s inception date is 9/1/22.",
+      "quote": "Average Annual Total Returns as of 7/31/25 ... The Fund’s inception date is 9/1/22.",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -51,7 +51,7 @@
       "status": "n/a - not publicly available: direct venture portfolio (no underlying funds or GP sleeves); no sleeve-level return series exists or is printed in any on-disk filing",
       "source": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
       "section": "The ARK Venture Fund's Private Investments; Top 10 Holdings; Consolidated Schedule of Investments footnote (c)",
-      "quote": "these securities have been purchased through unaffiliated Special Purpose Vehicles (\u201cSPVs\u201d) in which the Fund has a direct investment of ownership units of the SPVs.",
+      "quote": "these securities have been purchased through unaffiliated Special Purpose Vehicles (“SPVs”) in which the Fund has a direct investment of ownership units of the SPVs.",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -121,7 +121,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR FY2025 (filed 2025-10-08), Note 3, CIK 1905088",
       "section": "Note 3 Management and Other Agreements - Management; prospectus Summary of Fees and Expenses",
-      "quote": "The Fund pays the Adviser a fee calculated daily and payable monthly at an annual rate ... of the average daily net assets of the Fund) of 2.75% (\u201cManagement Fee\u201d)",
+      "quote": "The Fund pays the Adviser a fee calculated daily and payable monthly at an annual rate ... of the average daily net assets of the Fund) of 2.75% (“Management Fee”)",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -131,7 +131,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR FY2025 (filed 2025-10-08), Note 3 + full-text search of all on-disk arkvx filings (searched 2026-08-15), CIK 1905088",
       "section": "Note 3 Management and Other Agreements; Consolidated Statement of Operations",
-      "quote": "of 2.75% (\u201cManagement Fee\u201d) in return for providing investment management services",
+      "quote": "of 2.75% (“Management Fee”) in return for providing investment management services",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -141,7 +141,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR FY2025 (filed 2025-10-08) + 486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
       "section": "Consolidated Financial Highlights ratios; Summary of Fees and Expenses; Note 3 Expense Limitation Agreement",
-      "quote": "exceed 2.90% of the Fund\u2019s average daily net assets (\u201cExpense Limit\u201d)",
+      "quote": "exceed 2.90% of the Fund’s average daily net assets (“Expense Limit”)",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -151,7 +151,7 @@
       "status": "extracted-unverified",
       "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
       "section": "Summary of Fees and Expenses - Annual Fund Expenses, footnote (6)",
-      "quote": "Acquired Fund Fees and Expenses represent the Fund\u2019s pro rata share of fees and expenses incurred indirectly as a result of investing in other funds",
+      "quote": "Acquired Fund Fees and Expenses represent the Fund’s pro rata share of fees and expenses incurred indirectly as a result of investing in other funds",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -161,7 +161,7 @@
       "status": "n/a - not publicly available: no underlying GPs exist (direct venture investing); SPV fee/carry terms, if any, are not printed in any on-disk filing",
       "source": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
       "section": "Consolidated Schedule of Investments footnote (c)",
-      "quote": "The shares, cost basis and fair value stated are determined based on the underlying securities purchased by the SPV and the Fund\u2019s ownership percentage.",
+      "quote": "The shares, cost basis and fair value stated are determined based on the underlying securities purchased by the SPV and the Fund’s ownership percentage.",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -191,13 +191,13 @@
       "status": "n/a - CIT only: ARKVX is a 1940-Act registered closed-end interval fund with SEC-registered shares, not a collective investment trust; no CIT fee schedule exists",
       "source": "N-CSR FY2025 (filed 2025-10-08), Note 1, CIK 1905088",
       "section": "Note 1 Organization",
-      "quote": "The Fund operates as an \u201cinterval fund\u201d and continuously offers its shares of beneficial interest (\u201cShares\u201d).",
+      "quote": "The Fund operates as an “interval fund” and continuously offers its shares of beneficial interest (“Shares”).",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Cohort placement (venture, R4 phrasing): mgmt fee: above the cohort median of 2.5 (n=3 \u2014 too small for percentile language) | expense ratio (bases differ - see notes): below the cohort median of 4.53 (n=3 \u2014 too small for percentile language) | repurchase cap: only member with this fact (n=1). Stats + caveats in the cohort artifact.",
+      "value": "Cohort placement (venture, R4 phrasing): mgmt fee: above the cohort median of 2.5 (n=3 — too small for percentile language) | expense ratio (bases differ - see notes): below the cohort median of 4.53 (n=3 — too small for percentile language) | repurchase cap: only member with this fact (n=1). Stats + caveats in the cohort artifact.",
       "status": "computed",
       "source": "data/cohorts/venture.json",
       "section": "stats (R4 phrasing by tark_cohort)",
@@ -231,7 +231,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR FY2025 (filed 2025-10-08), Note 7 + 486BPOS prospectus (filed 2025-10-27), CIK 1905088",
       "section": "Note 7 Repurchase Offers; prospectus Periodic Repurchase Offers (pro rata; Suspension or Postponement)",
-      "quote": "Written notification of each quarterly repurchase offer (the \u201cRepurchase Offer Notice\u201d) is sent to Shareholders at least 21 and not more than 42 calendar days",
+      "quote": "Written notification of each quarterly repurchase offer (the “Repurchase Offer Notice”) is sent to Shareholders at least 21 and not more than 42 calendar days",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -261,7 +261,7 @@
       "status": "n/a - CIT only: no TDF/CIT vehicle exists; liquidity is delivered by the interval-fund wrapper itself",
       "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
       "section": "Prospectus cover - Structure",
-      "quote": "the Fund is structured as an \u201cinterval fund\u201d and conducts periodic repurchase offers for a portion of its outstanding Shares",
+      "quote": "the Fund is structured as an “interval fund” and conducts periodic repurchase offers for a portion of its outstanding Shares",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -297,7 +297,7 @@
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of outstanding shares (fundamental 5-25% policy; every completed offer at 5%) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
+      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure — CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of outstanding shares (fundamental 5-25% policy; every completed offer at 5%) — a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
       "status": "computed",
       "source": "data/liquidity/plan_tech_media__arkvx_match.json",
       "section": "verdict + reasons",
@@ -331,7 +331,7 @@
       "status": "extracted-unverified",
       "source": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
       "section": "Summary of Terms - Valuation; Determination of Net Asset Value",
-      "quote": "The Fund utilizes the services of an independent pricing service, which prepares valuations for each of the Fund\u2019s portfolio investments that are not publicly traded",
+      "quote": "The Fund utilizes the services of an independent pricing service, which prepares valuations for each of the Fund’s portfolio investments that are not publicly traded",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -427,12 +427,12 @@
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort venture (n=3): members, rationales, stats, composite (or its documented refusal) and caveat block in the cohort artifact; exclusions in data/roster_decisions.md.",
+      "value": "Peer cohort venture (n=3: dxyz, ssss, arkvx). Composite REFUSED: members' pricing bases are heterogeneous (market price vs NAV); an equal-weight composite would average premium/discount dynamics against appraisal NAVs - refused, not fudged. Wrapper types in the cohort: interval_23c3, listed_bdc, listed_cef. Cross-wrapper differences are disclosed in the cohort caveat block (4 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md.",
       "status": "computed",
       "source": "data/cohorts/venture.json",
-      "section": "members + composite",
+      "section": "members, composite and caveats blocks",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.5": {
@@ -451,7 +451,7 @@
       "status": "n/a - constructed (L3): benchmark suitability memo is an engine/workflow artifact, not filing data",
       "source": "N-CSR FY2025 (filed 2025-10-08), Note 10 segment disclosure, CIK 1905088",
       "section": "Note 10 Other Matters - segment reporting (comparative benchmarks)",
-      "quote": "to assess the segment\u2019s performance versus the Fund\u2019s comparative benchmarks",
+      "quote": "to assess the segment’s performance versus the Fund’s comparative benchmarks",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -511,7 +511,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR FY2025 (filed 2025-10-08), Note 3, CIK 1905088",
       "section": "Note 3 Management and Other Agreements - Administrator/Custodian/Transfer Agent; Distribution; Line of Credit",
-      "quote": "The Bank of New York Mellon is the administrator for the Fund, the custodian of the Fund\u2019s assets and also provides transfer agency, fund accounting and various administrative services",
+      "quote": "The Bank of New York Mellon is the administrator for the Fund, the custodian of the Fund’s assets and also provides transfer agency, fund accounting and various administrative services",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -521,7 +521,7 @@
       "status": "n/a - not publicly available: requires plan-specific recordkeeper/trading-integration facts - workflow cell completed per plan engagement, not public product data",
       "source": "N-CSR FY2025 (filed 2025-10-08), Note 3 + Note 4, CIK 1905088",
       "section": "Note 3 Distribution; Note 4 Shares of Beneficial Interest",
-      "quote": "The Fund\u2019s Shares are continuously offered and distributed primarily by Foreside Fund Services, LLC (\u201cDistributor\u201d) and its associated persons through investment platforms and financial intermediaries",
+      "quote": "The Fund’s Shares are continuously offered and distributed primarily by Foreside Fund Services, LLC (“Distributor”) and its associated persons through investment platforms and financial intermediaries",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },

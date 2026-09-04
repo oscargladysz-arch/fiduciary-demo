@@ -7,7 +7,8 @@ committed ones. Any drift between the record and its derived artifacts fails
 the gate. The gate never writes into the repository.
 
 Compared (normalized: keys named "generated" dropped, docx by extracted
-text): liquidity, facts, cohorts, benchmark selections, memos.
+text, CSV by parsed rows): liquidity, facts, cohorts, benchmark selections,
+product JSONs and evidence CSVs (engine-owned cells), memos.
 The supplement joins the set in P0-3, once fee_percentile reads typed facts
 instead of a regex over cell prose.
 
@@ -31,6 +32,8 @@ ARTIFACTS = [
     "facts/*.json",
     "cohorts/*.json",
     "benchmarks/*_selection.json",
+    "products/*.json",      # engine-owned cells written by write_computed_cells
+    "evidence/*.csv",       # the same cells in the evidence ledger
     "memos/*.docx",
 ]
 SKIP_STEPS = {"supplement"}   # joins in P0-3 (see module docstring)
@@ -50,6 +53,10 @@ def load(path: Path):
         return norm(json.loads(path.read_text()))
     if path.suffix == ".docx":
         return docx_text(path)
+    if path.suffix == ".csv":
+        import csv
+        with open(path, newline="") as fh:
+            return list(csv.DictReader(fh))
     return path.read_bytes()
 
 

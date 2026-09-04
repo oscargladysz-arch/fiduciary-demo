@@ -215,8 +215,7 @@ export function viewScreener(root, state, setState) {
         ${visCols.map(([, , render]) => render(k, state)).join("")}
       </tr>`).join("")}</tbody></table></div>
     <p class="cap" style="margin-top:8px">${rows.length} of ${PRODUCTS.length}
-      products match. Six rows today; the grid, filters and URL state are built
-      for six hundred. Facts layer: data/facts/*.json — zero new facts, every
+      products match. Facts layer: data/facts/*.json, zero new facts, every
       field carries its source cell (validator-enforced).</p>`;
 
   root.querySelectorAll("[data-f]").forEach((el) => el.addEventListener("change", () => {

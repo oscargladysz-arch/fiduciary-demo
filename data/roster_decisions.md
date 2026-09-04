@@ -4,19 +4,19 @@ Rule R1: no product enters the registry without live EDGAR verification —
 CIK resolves, filing profile matches the expected wrapper, and a current
 prospectus/annual exists. Rule R3: every membership reasoned; every candidate
 considered and excluded logged here with its reason. This file must mention
-every registry key (validator-enforced).
+every registry key (enforced by src/test_docs.py).
 
 ## Cohorts as landed
 
 | cohort_id | members | n | note |
 |---|---|---|---|
-| private_credit | cliffwater_cclfx (full), bcred, pflex | 3 | deliberately cross-wrapper: interval fund + non-traded BDC |
+| private_credit | cliffwater_cclfx (full), bcred, pflex, cion_ares, ocic | 5 | deliberately cross-wrapper: interval fund + non-traded BDC. cion_ares and ocic joined via the census promotion pipeline (2026-08-25, see below) |
 | evergreen_pe | hl_paf (full), stepstone_spm (full), kkr_kpec (full), ares_pmf, amg_pantheon | 5 | includes kkr_kpec under the authorized fallback (below) |
 | nontraded_reit | breit (full), sreit, jll_ipt | 3 | |
 | venture | dxyz (full), ssss, arkvx | 3 | listed CEF + listed BDC + interval fund — premium/discount comparability is the point |
 
-Roster: 6 full-depth + 8 cohort-depth = **14 products** (vs the 18 aspiration —
-see "Depth discipline" below).
+Roster: 6 full-depth + 8 cohort-depth + 2 census promotions = **16 products**
+(vs the 18 aspiration, see "Depth discipline" below).
 
 ## Accepted (verification evidence)
 

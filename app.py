@@ -123,8 +123,10 @@ def render_anchor():
 # --------------------------------------------------------------- roster view
 def render_roster():
     st.title("Candidate Roster")
-    st.caption("Six real products, six wrappers — every cell traceable to a "
-               "public filing via data/evidence/.")
+    st.caption(f"{len(PRODUCTS)} real products across "
+               f"{len({p.get('wrapper') for p in PRODUCTS.values()})} wrapper "
+               "strings. Every cell is traceable to a public filing via "
+               "data/evidence/.")
     rows = []
     for k, p in PRODUCTS.items():
         rows.append({

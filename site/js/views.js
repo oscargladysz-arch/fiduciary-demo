@@ -207,8 +207,9 @@ export function viewPlans(root, state, setState) {
 export function viewRoster(root, state, setState) {
   root.innerHTML = `
     <div class="viewhead"><h1>Candidate Roster</h1>
-      <div class="sub">Six real products, six wrappers — every figure traceable to
-        a public filing.</div></div>
+      <div class="sub">${Object.keys(T.products).length} real products across
+        ${new Set(Object.values(T.facts).map((f) => f.wrapper_type?.value).filter(Boolean)).size}
+        wrapper types. Every figure is traceable to a public filing.</div></div>
     <div class="cardgrid g2" id="rostercards"></div>`;
   const grid = root.querySelector("#rostercards");
   for (const [k, p] of Object.entries(T.products)) {
@@ -889,9 +890,11 @@ export function viewFees(root) {
       <h3 style="margin-bottom:4px">Own net expense ratio, where one exists</h3>
       <div id="feechart"></div>
       <div class="chartnote">From each fund's cell 2.3 as extracted (bases differ
-        by wrapper and are quoted per product). kkr_kpec and breit have NO TER
-        line — '34-Act wrappers; their burden is fee + performance participation
-        (2.1/2.2), flagged in the matrix below. Universe = this roster
+        by wrapper and are quoted per product). No TER line for
+        ${(T.supplement.fee_percentile.entries.filter((e) => e.ter_pct === null)
+            .map((e) => T.products[e.product]?.fund_name.split(" (")[0]).join(", ")) || "none"}:
+        their burden is fee plus performance participation (2.1/2.2), flagged in
+        the matrix below. Universe = this roster
         (data/analytics/supplement.json fee_percentile).</div></div>
     <div class="tablewrap"><table class="grid">
       <thead><tr><th style="min-width:120px">Cell</th>
@@ -1120,9 +1123,10 @@ export function viewCoverage(root) {
       <div class="card" style="display:flex;gap:16px;align-items:center">
         <div id="taxdonut"></div>
         <div><h3>The record, whole</h3>
-          <div class="cap">${tax.total} cells across six products. Every cell is
+          <div class="cap">${Object.values(T.products).reduce((a, p) => a + Object.keys(p.cells).length, 0)}
+            cells across ${Object.keys(T.products).length} products. Every cell is
             evidenced, computed, or carries a documented reason it cannot be
-            public-sourced. Zero unresolved.</div></div></div>
+            public-sourced.</div></div></div>
       <div class="card"><h3 class="num" style="font-size:28px;color:var(--ok)">${cc.confirmed}/${cc.cells_checked}</h3>
         <div class="cap">cells CONFIRMED by an independent re-location pass;
           ${cc.corrected} discrepancies found and corrected in the open;

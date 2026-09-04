@@ -3,7 +3,7 @@
   "fund_name": "StepStone Private Markets",
   "cik": "1789470",
   "wrapper": "tender-offer fund ('40 Act)",
-  "note": "Current base prospectus is FRESH (486BPOS 2025-10-20) + fat 424B3 2025-12-31 \u2014 better than PAF's 2021 base.",
+  "note": "Current base prospectus is FRESH (486BPOS 2025-10-20) + fat 424B3 2025-12-31 — better than PAF's 2021 base.",
   "cells": {
     "1.1": {
       "element": "Net total return series",
@@ -106,13 +106,13 @@
       "status": "extracted-unverified",
       "source": "486BPOS 2025-10-20 (prospectus/SAI)",
       "section": "Management of the Fund - StepStone Team (PM names); Prospectus Summary (AUM); SAI - Information Regarding the Portfolio Managers",
-      "quote": "The personnel of the Advisers who have primary responsibility for ongoing research, recommendations, and portfolio management regarding the Fund\u2019s investment portfolio are Thomas Keck and Michael Elio",
+      "quote": "The personnel of the Advisers who have primary responsibility for ongoing research, recommendations, and portfolio management regarding the Fund’s investment portfolio are Thomas Keck and Michael Elio",
       "extracted_by": "Claude Code (2026-08-09)",
       "verified_by": ""
     },
     "2.1": {
       "element": "Management fee (rate AND base)",
-      "value": "1.40% annualized on daily NET ASSETS (contrast: PAF charges same 1.40% on MANAGED ASSETS incl. leverage \u2014 fee-base comparison lands).",
+      "value": "1.40% annualized on daily NET ASSETS (contrast: PAF charges same 1.40% on MANAGED ASSETS incl. leverage — fee-base comparison lands).",
       "status": "extracted-unverified",
       "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
       "section": "Note 5 - Investment Adviser",
@@ -282,7 +282,7 @@
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Verdict: CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of outstanding shares \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
+      "value": "Verdict: CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure — CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of outstanding shares — a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
       "status": "computed",
       "source": "data/liquidity/stepstone_spm_match.json",
       "section": "verdict + reasons",
@@ -306,7 +306,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
       "section": "Note 3 - Fair Value Measurements: hierarchy summary table + Level 3 reconciliation",
-      "quote": "Total Investments | | $ | 56,631,533 | | | $ | \u2014 | | | $ | 291,577,842 | | | $ | 5,637,010,127 | | | $ | 5,985,219,502",
+      "quote": "Total Investments | | $ | 56,631,533 | | | $ | — | | | $ | 291,577,842 | | | $ | 5,637,010,127 | | | $ | 5,985,219,502",
       "extracted_by": "Claude Code (2026-08-09)",
       "verified_by": ""
     },
@@ -316,7 +316,7 @@
       "status": "extracted-unverified",
       "source": "486BPOS 2025-10-20 (SAI)",
       "section": "SAI - Board of Trustees / risk oversight discussion",
-      "quote": "independent valuation and brokerage evaluation service providers, make regular reports regarding the Fund\u2019s activities and related risks to the Board of Trustees",
+      "quote": "independent valuation and brokerage evaluation service providers, make regular reports regarding the Fund’s activities and related risks to the Board of Trustees",
       "extracted_by": "Claude Code (2026-08-09)",
       "verified_by": ""
     },
@@ -407,12 +407,12 @@
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort (lane C) as constructed by the engine: evergreen-PE peers in universe: hl_paf, kkr_kpec (annual granularity; see their 1.2 cells). Universe = this roster; a market-wide peer database is licensed data not held (documented in the rejection log).",
+      "value": "Peer cohort evergreen_pe (n=5: hl_paf, stepstone_spm, kkr_kpec, ares_pmf, amg_pantheon). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2022 (n=3), 2023 (n=5), 2024 (n=5), 2025 (n=5), 2026 (n=4). Wrapper types in the cohort: nontraded_llc, tender_offer. Cross-wrapper differences are disclosed in the cohort caveat block (5 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md. Analyst note: A market-wide peer database is licensed data not held, so the peer universe is this roster (documented in the rejection log).",
       "status": "computed",
-      "source": "data/benchmarks/stepstone_spm_selection.json",
-      "section": "lane C candidate",
+      "source": "data/cohorts/evergreen_pe.json",
+      "section": "members, composite and caveats blocks",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-09)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.5": {
@@ -441,7 +441,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
       "section": "Note 1 - Organization; Note 2 - Basis for Consolidation",
-      "quote": "organized as a Delaware statutory trust under the Delaware Statutory Trust Act on September 6, 2019 ... has consolidated the results of the Fund\u2019s direct wholly-owned subsidiaries",
+      "quote": "organized as a Delaware statutory trust under the Delaware Statutory Trust Act on September 6, 2019 ... has consolidated the results of the Fund’s direct wholly-owned subsidiaries",
       "extracted_by": "Claude Code (2026-08-09)",
       "verified_by": ""
     },
@@ -481,7 +481,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR 2026-06-09 (FY ended 3/31/2026)",
       "section": "Note 6 - Sub-Administrator, Custodian and Transfer Agent; Note 7 - Distribution and Shareholder Servicing Plan",
-      "quote": "UMB Bank, N.A. serves as the Fund\u2019s Custodian pursuant to a custody agreement ... Distribution Services, LLC serves as the Fund\u2019s distributor",
+      "quote": "UMB Bank, N.A. serves as the Fund’s Custodian pursuant to a custody agreement ... Distribution Services, LLC serves as the Fund’s distributor",
       "extracted_by": "Claude Code (2026-08-09)",
       "verified_by": ""
     },

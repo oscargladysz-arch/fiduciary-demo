@@ -131,7 +131,7 @@
       "status": "extracted-unverified",
       "source": "Form N-2 (filed 2026-07-31); Form 10-Q Q2-2026 (filed 2026-08-06)",
       "section": "N-2 Management and Other Agreements - Incentive Fee; 10-Q Note 12 - Subsequent Events/Note 3",
-      "quote": "compared to a \u201churdle rate\u201d of 1.75% per quarter (7.00% annualized) ... (iii) 20.0% of the amount of our Pre-Incentive Fee Net Investment Income, if any, that exceeds 2.1875% in any calendar quarter.",
+      "quote": "compared to a “hurdle rate” of 1.75% per quarter (7.00% annualized) ... (iii) 20.0% of the amount of our Pre-Incentive Fee Net Investment Income, if any, that exceeds 2.1875% in any calendar quarter.",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -171,7 +171,7 @@
       "status": "extracted-unverified",
       "source": "Form N-2 (filed 2026-07-31)",
       "section": "Fees and Expenses - Stockholder transaction expenses + footnotes (1)-(4); Dividend Reinvestment Plan",
-      "quote": "Sales load ( as a percentage of offering price ) | | | \u2014 | % (1) ... the plan administrator is authorized to deduct a $ 15 transaction fee plus brokerage commission from the proceeds.",
+      "quote": "Sales load ( as a percentage of offering price ) | | | — | % (1) ... the plan administrator is authorized to deduct a $ 15 transaction fee plus brokerage commission from the proceeds.",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -181,7 +181,7 @@
       "status": "n/a - exchange-traded: no investor-level repurchase/redemption exists, so no early-repurchase fee is possible; exit is on-exchange sale at market price",
       "source": "Form 10-K FY2025 (filed 2026-03-11); Form N-2 (filed 2026-07-31)",
       "section": "10-K Item 1/Item 5 (listing); N-2 Fees and Expenses",
-      "quote": "Our common stock is traded on the Nasdaq Global Select Market under the symbol \u201cSSSS\u201d.",
+      "quote": "Our common stock is traded on the Nasdaq Global Select Market under the symbol “SSSS”.",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -197,7 +197,7 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Cohort placement (venture, R4 phrasing): mgmt fee: below the cohort median of 2.5 (n=3 \u2014 too small for percentile language) | expense ratio (bases differ - see notes): above the cohort median of 4.53 (n=3 \u2014 too small for percentile language) | repurchase cap: fact unavailable for this member. Stats + caveats in the cohort artifact.",
+      "value": "Cohort placement (venture, R4 phrasing): mgmt fee: below the cohort median of 2.5 (n=3 — too small for percentile language) | expense ratio (bases differ - see notes): above the cohort median of 4.53 (n=3 — too small for percentile language) | repurchase cap: fact unavailable for this member. Stats + caveats in the cohort artifact.",
       "status": "computed",
       "source": "data/cohorts/venture.json",
       "section": "stats (R4 phrasing by tark_cohort)",
@@ -221,7 +221,7 @@
       "status": "extracted-unverified",
       "source": "Form 10-Q Q2-2026 (filed 2026-08-06); Form 10-K FY2025 (filed 2026-03-11)",
       "section": "10-Q Note 12/MD&A (ticker change); 10-K Item 1/Item 5",
-      "quote": "The Company\u2019s common stock continues to trade on the Nasdaq Global Select Market, now under the ticker symbol \u201cNSLR.\u201d",
+      "quote": "The Company’s common stock continues to trade on the Nasdaq Global Select Market, now under the ticker symbol “NSLR.”",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -251,7 +251,7 @@
       "status": "extracted-unverified",
       "source": "Form 10-Q Q2-2026 (filed 2026-08-06); Form N-2 (filed 2026-07-31); Form 10-K FY2025 (filed 2026-03-11)",
       "section": "10-Q SOI legend + Note 4 hierarchy + MD&A industry table; N-2 Business; 10-K Note 8 (turnover)",
-      "quote": "All of the Company\u2019s portfolio investments are restricted as to resale, unless otherwise noted",
+      "quote": "All of the Company’s portfolio investments are restricted as to resale, unless otherwise noted",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -297,7 +297,7 @@
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): ALIGNED-MECHANICAL. Daily exchange liquidity mechanically satisfies daily participant dealing (3.1). BUT price-vs-NAV decoupling means participants transact at the premium/discount, not at portfolio value \u2014 the liquidity is real, the price basis is not (1.10, 4.7). Per-plan artifacts in data/liquidity/.",
+      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): ALIGNED-MECHANICAL. Daily exchange liquidity mechanically satisfies daily participant dealing (3.1). BUT price-vs-NAV decoupling means participants transact at the premium/discount, not at portfolio value — the liquidity is real, the price basis is not (1.10, 4.7). Per-plan artifacts in data/liquidity/.",
       "status": "computed",
       "source": "data/liquidity/plan_tech_media__ssss_match.json",
       "section": "verdict + reasons",
@@ -321,7 +321,7 @@
       "status": "extracted-unverified",
       "source": "Form 10-Q Q2-2026 (filed 2026-08-06); Form 10-K FY2025 (filed 2026-03-11)",
       "section": "10-Q Note 4 - Investments at Fair Value - Investment Valuation Inputs tables",
-      "quote": "Total Investments at Fair Value | | $ | 1,719,456 | | | $ | \u2014 | | | $ | 404,132,245 | | | $ | 405,851,701",
+      "quote": "Total Investments at Fair Value | | $ | 1,719,456 | | | $ | — | | | $ | 404,132,245 | | | $ | 405,851,701",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -351,7 +351,7 @@
       "status": "extracted-unverified",
       "source": "Form 10-K FY2025 (filed 2026-03-11)",
       "section": "Item 8 - Reports of Independent Registered Public Accounting Firm (pages 70-71), signature blocks",
-      "quote": "/s/ CBIZ CPAs P.C . CBIZ CPAs P.C. We have served as the Company\u2019s auditor since 2019.",
+      "quote": "/s/ CBIZ CPAs P.C . CBIZ CPAs P.C. We have served as the Company’s auditor since 2019.",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -427,12 +427,12 @@
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort venture (n=3): members, rationales, stats, composite (or its documented refusal) and caveat block in the cohort artifact; exclusions in data/roster_decisions.md.",
+      "value": "Peer cohort venture (n=3: dxyz, ssss, arkvx). Composite REFUSED: members' pricing bases are heterogeneous (market price vs NAV); an equal-weight composite would average premium/discount dynamics against appraisal NAVs - refused, not fudged. Wrapper types in the cohort: interval_23c3, listed_bdc, listed_cef. Cross-wrapper differences are disclosed in the cohort caveat block (4 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md.",
       "status": "computed",
       "source": "data/cohorts/venture.json",
-      "section": "members + composite",
+      "section": "members, composite and caveats blocks",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.5": {
@@ -491,7 +491,7 @@
       "status": "extracted-unverified",
       "source": "Form N-2 (filed 2026-07-31); Form 10-Q Q2-2026 (filed 2026-08-06); Form 10-K FY2025 (filed 2026-03-11)",
       "section": "N-2 Risk Factors (Externalization-related) ; 10-Q Note 3 - Related-Party Arrangements + Note 12",
-      "quote": "The Investment Advisory Agreement and the Administration Agreement were not negotiated on an arm\u2019s-length basis. ... Our ability to co-invest with affiliates is subject to exemptive relief that we have not yet obtained.",
+      "quote": "The Investment Advisory Agreement and the Administration Agreement were not negotiated on an arm’s-length basis. ... Our ability to co-invest with affiliates is subject to exemptive relief that we have not yet obtained.",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },

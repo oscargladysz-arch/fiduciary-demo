@@ -197,7 +197,7 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Cohort placement (nontraded_reit, R4 phrasing): mgmt fee: at the cohort median of 1.25 (n=3 \u2014 too small for percentile language) | expense ratio (bases differ - see notes): fact unavailable for this member | repurchase cap: above the cohort median of 3.5 (n=2 \u2014 too small for percentile language). Stats + caveats in the cohort artifact.",
+      "value": "Cohort placement (nontraded_reit, R4 phrasing): mgmt fee: at the cohort median of 1.25 (n=3 — too small for percentile language) | expense ratio (bases differ - see notes): fact unavailable for this member | repurchase cap: above the cohort median of 3.5 (n=2 — too small for percentile language). Stats + caveats in the cohort artifact.",
       "status": "computed",
       "source": "data/cohorts/nontraded_reit.json",
       "section": "stats (R4 phrasing by tark_cohort)",
@@ -297,7 +297,7 @@
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; DAILY repurchase requests at that day's NAV, capped at 5% of NAV per calendar quarter. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of combined NAV of all classes (prior quarter-end) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
+      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; DAILY repurchase requests at that day's NAV, capped at 5% of NAV per calendar quarter. Direct DIA use requires a bridging structure — CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of combined NAV of all classes (prior quarter-end) — a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
       "status": "computed",
       "source": "data/liquidity/plan_tech_media__jll_ipt_match.json",
       "section": "verdict + reasons",
@@ -351,7 +351,7 @@
       "status": "extracted-unverified",
       "source": "Form 10-K FY2025 (filed 2026-03-26)",
       "section": "Report of Independent Registered Public Accounting Firm (signature block); Item 14",
-      "quote": "/s/ KPMG LLP...We have served as the Company\u2019s auditor since 2012.",
+      "quote": "/s/ KPMG LLP...We have served as the Company’s auditor since 2012.",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -427,12 +427,12 @@
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort nontraded_reit (n=3): members, rationales, stats, composite (or its documented refusal) and caveat block in the cohort artifact; exclusions in data/roster_decisions.md.",
+      "value": "Peer cohort nontraded_reit (n=3: breit, sreit, jll_ipt). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2025 (n=2). Wrapper types in the cohort: nontraded_reit. Cross-wrapper differences are disclosed in the cohort caveat block (0 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md.",
       "status": "computed",
       "source": "data/cohorts/nontraded_reit.json",
-      "section": "members + composite",
+      "section": "members, composite and caveats blocks",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.5": {
@@ -471,7 +471,7 @@
       "status": "extracted-unverified",
       "source": "Form 10-K FY2025 (filed 2026-03-26)",
       "section": "Item 1 Business - The Company / Offerings; Item 5",
-      "quote": "We own substantially all of our assets through JLLIPT Holdings, LP, a Delaware limited partnership (our \u201coperating partnership\u201d), of which we are a limited partner.",
+      "quote": "We own substantially all of our assets through JLLIPT Holdings, LP, a Delaware limited partnership (our “operating partnership”), of which we are a limited partner.",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -511,7 +511,7 @@
       "status": "extracted-unverified",
       "source": "Form 10-K FY2025 (filed 2026-03-26)",
       "section": "Item 1 Business; Item 5 (ALPS, SitusAMC); Item 14 (KPMG); Note 10; MD&A Credit Facility",
-      "quote": "The terms \u201cAdvisor\u201d and \u201cLaSalle\u201d refer to LaSalle Investment Management, Inc.",
+      "quote": "The terms “Advisor” and “LaSalle” refer to LaSalle Investment Management, Inc.",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },

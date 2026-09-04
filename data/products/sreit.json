@@ -197,7 +197,7 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Cohort placement (nontraded_reit, R4 phrasing): mgmt fee: at the cohort median of 1.25 (n=3 \u2014 too small for percentile language) | expense ratio (bases differ - see notes): fact unavailable for this member | repurchase cap: fact unavailable for this member. Stats + caveats in the cohort artifact.",
+      "value": "Cohort placement (nontraded_reit, R4 phrasing): mgmt fee: at the cohort median of 1.25 (n=3 — too small for percentile language) | expense ratio (bases differ - see notes): fact unavailable for this member | repurchase cap: fact unavailable for this member. Stats + caveats in the cohort artifact.",
       "status": "computed",
       "source": "data/cohorts/nontraded_reit.json",
       "section": "stats (R4 phrasing by tark_cohort)",
@@ -287,7 +287,7 @@
     },
     "3.8": {
       "element": "Redemption stress test",
-      "value": "ILLUSTRATIVE redemption stress (computed, all four plans): tail turnover x2, active turnover x1.5 vs base scenario. Anchor plan: demand 19.2%/yr vs 0.0 capacity - EXCEEDS annual wrapper capacity \u2014 unmet demand rolls into later windows (gating-equivalent outcome)",
+      "value": "ILLUSTRATIVE redemption stress (computed, all four plans): tail turnover x2, active turnover x1.5 vs base scenario. Anchor plan: demand 19.2%/yr vs 0.0 capacity - EXCEEDS annual wrapper capacity — unmet demand rolls into later windows (gating-equivalent outcome)",
       "status": "computed",
       "source": "data/liquidity/plan_tech_media__sreit_match.json (+3 plans)",
       "section": "stressed_scenario (ILLUSTRATIVE)",
@@ -297,7 +297,7 @@
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL-WEAK. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 12x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 12x per year at 0.0% of SUSPENDED (April 2026): ordinary repurchases no longer accepted - death/qualifying-disability and sub-$5,000 accounts only (up to $5.0M/month each). Cap history: 2%/month + 5%/quarter (2017) -> 0.33%/1% (May 2024) -> 0.5%/1.5% (June 2025) -> closed (April 2026) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
+      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL-WEAK. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 12x/year. Direct DIA use requires a bridging structure — CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 12x per year at 0.0% of SUSPENDED (April 2026): ordinary repurchases no longer accepted - death/qualifying-disability and sub-$5,000 accounts only (up to $5.0M/month each). Cap history: 2%/month + 5%/quarter (2017) -> 0.33%/1% (May 2024) -> 0.5%/1.5% (June 2025) -> closed (April 2026) — a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
       "status": "computed",
       "source": "data/liquidity/plan_tech_media__sreit_match.json",
       "section": "verdict + reasons",
@@ -427,12 +427,12 @@
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort nontraded_reit (n=3): members, rationales, stats, composite (or its documented refusal) and caveat block in the cohort artifact; exclusions in data/roster_decisions.md.",
+      "value": "Peer cohort nontraded_reit (n=3: breit, sreit, jll_ipt). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2025 (n=2). Wrapper types in the cohort: nontraded_reit. Cross-wrapper differences are disclosed in the cohort caveat block (0 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md.",
       "status": "computed",
       "source": "data/cohorts/nontraded_reit.json",
-      "section": "members + composite",
+      "section": "members, composite and caveats blocks",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.5": {

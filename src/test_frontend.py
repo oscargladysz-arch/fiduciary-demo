@@ -12,7 +12,7 @@ What it enforces:
   6. interactive recompute: moved sliders change the numbers on screen
   7. JS<->Python parity: the ported analytics pass the SAME toy cases as
      src/test_analytics.py, and the browser reproduces the committed engine
-     numbers (KS-PME/Direct Alpha) and all 24 bundled liquidity scenarios
+     numbers (KS-PME/Direct Alpha) and every bundled liquidity scenario
 """
 import json
 import re
@@ -432,7 +432,7 @@ with sync_playwright() as pw:
     check("parity: AR(1) round-trip recovers true series",
           abs(toys["rec0"] - -0.01) < 1e-12 and abs(toys["recN"] - 0.025) < 1e-12)
 
-    # liquidity scenario parity vs all 24 bundled matches (default params)
+    # liquidity scenario parity vs every bundled match (default params)
     mism = page.evaluate("""() => {
       const out = [];
       for (const [k, m] of Object.entries(window.TARK.liquidity)) {
@@ -445,7 +445,7 @@ with sync_playwright() as pw:
       }
       return out;
     }""")
-    check("parity: JS scenario matches all 24 bundled liquidity scenarios",
+    check(f"parity: JS scenario matches all {len(bundle_liq)} bundled liquidity scenarios",
           not mism, "; ".join(mism[:4]))
 
     # ---------- 7b. design-pass additions ----------
