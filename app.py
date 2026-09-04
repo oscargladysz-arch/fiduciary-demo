@@ -18,7 +18,7 @@ import json                                    # noqa: E402
 
 import streamlit as st                         # noqa: E402
 
-from tark_data import (DATA, FACTORS, cells_by_factor,  # noqa: E402
+from tark_data import (coverage_summary, DATA, FACTORS, cells_by_factor,  # noqa: E402
                        load_evidence, load_plan, load_products, plan_keys,
                        status_kind)
 
@@ -48,17 +48,9 @@ def product_label(key: str) -> str:
     return PRODUCTS[key]["fund_name"]
 
 
-def coverage_pct(key: str) -> int:
-    s = p = pend = 0
-    for row in load_evidence(key):
-        k = status_kind(row["status"])
-        if k in ("extracted", "verified"):
-            s += 1
-        elif k in ("partial", "fetched"):
-            p += 1
-        elif k != "n/a":
-            pend += 1
-    return round((s + p) / (s + p + pend) * 100) if (s + p + pend) else 0
+def coverage_line(key: str) -> str:
+    """The one coverage formula (tark_data.coverage_summary), per kind."""
+    return coverage_summary(key)["headline"]
 
 
 # ------------------------------------------------------------------ sidebar
@@ -134,12 +126,12 @@ def render_roster():
             "fund": p["fund_name"],
             "wrapper": p["wrapper"],
             "CIK": p["cik"],
-            "evidence coverage %": coverage_pct(k),
+            "evidence coverage": coverage_line(k),
             "note": p.get("note", p.get("identity_note", "")),
         })
     st.dataframe(rows, width="stretch", hide_index=True)
-    st.caption("Coverage counts seeded + partial cells over all applicable "
-               "cells (run `python src/coverage.py` for the same numbers).")
+    st.caption("Coverage per status kind from tark_data.coverage_summary, the "
+               "same function the static site and `python src/coverage.py` use.")
 
 
 # ----------------------------------------------------------- evaluation view
@@ -148,7 +140,7 @@ def render_evaluation():
     st.title("Six-Factor Evaluation")
     st.subheader(p["fund_name"])
     st.caption(f"{p['wrapper']} · CIK {p['cik']} · evidence coverage "
-               f"{coverage_pct(product_key)}%")
+               f"{coverage_line(product_key)}")
 
     tabs = st.tabs([f"{n} · {label}" for n, label in FACTORS.items()])
     grouped = cells_by_factor(p)

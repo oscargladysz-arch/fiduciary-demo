@@ -89,6 +89,38 @@ export function gloss(s) {
 }
 window.TarkGloss = gloss;   // test seam: textContent(gloss(s)) must equal s
 
+/* coverage: per status kind, never one merged number. structured is T1,
+ * extracted is T2, verified is T3; n/a stays visible as its own segment. */
+export const KINDS = [
+  ["structured", "structured (T1)", "#2456a6"],
+  ["extracted", "extracted-unverified (T2)", "#256e46"],
+  ["verified", "verified (T3)", "#b8860b"],
+  ["computed", "computed", "#14636d"],
+  ["partial", "partial", "#c98a1a"],
+  ["fetched", "series fetched", "#e0b45a"],
+  ["na", "documented n/a", "#d8d3dd"],
+  ["pending", "pending", "#9d2f26"],
+];
+export function kindSegments(c) {
+  return KINDS.filter(([k]) => (c[k] || 0) > 0)
+    .map(([k, label, color]) => ({ label, value: c[k], color }));
+}
+export function kindLine(c) {
+  return KINDS.filter(([k]) => (c[k] || 0) > 0)
+    .map(([k, label]) => `${c[k]} ${label}`).join(" · ");
+}
+export function kindLegend() {
+  return KINDS.map(([, label, color]) =>
+    `<span><span class="sw" style="background:${color}"></span>${label}</span>`).join("");
+}
+export function kindDonut(c, size = 64) {
+  const box = document.createElement("div");
+  donut(box, { size, segments: kindSegments(c), center: `${c.verified || 0}`,
+    centerSub: "T3" });
+  box.title = c.headline || "";
+  return box;
+}
+
 /* typed-fact formatters: print only the fields the fact carries. A fee
  * whose rate is unknown says so instead of printing "undefined%". */
 export function fmtIncentive(v) {
@@ -240,9 +272,7 @@ export function viewRoster(root, state, setState) {
           <h3>${esc(p.fund_name)}</h3>
           <div style="margin:5px 0"><span class="chip wrapper">${gloss(p.wrapper)}</span>
             <span class="cap"> CIK ${esc(p.cik)}</span></div>
-          <div class="cap">${c.extracted + c.verified} extracted · ${c.computed}
-            computed · ${c.partial + c.fetched} partial · ${c.na} documented-n/a
-            · ${c.pending} pending</div>
+          <div class="cap">${kindLine(c)}</div>
         </div>
       </div>
       <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap">
@@ -250,7 +280,7 @@ export function viewRoster(root, state, setState) {
         <button class="btn ghost" data-goto="benchmarks" data-key="${k}">Benchmark</button>
         ${T.memos.includes(k) ? `<a class="btn ghost" href="memos/${k}_decision_memo.docx" download>Memo ↓</a>` : ""}
       </div>`;
-    card.querySelector("[data-ring]").append(ring(c.coverage_pct));
+    card.querySelector("[data-ring]").append(kindDonut(c, 64));
     grid.append(card);
   }
   root.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click",
@@ -306,7 +336,7 @@ export function viewEvaluation(root, state) {
   root.innerHTML = `
     <div class="viewhead"><h1>Six-Factor Evaluation</h1>
       <div class="sub">${esc(p.fund_name)} — ${gloss(p.wrapper)} · coverage
-        <b class="num">${c.coverage_pct}%</b>
+        <b class="num">${esc(c.headline)}</b>
         ${T.facts_meta && T.facts_meta[key] ? `
           · <span class="chip ${T.facts_meta[key].depth === "full" ? "extracted" : "wrapper"}">${T.facts_meta[key].depth} depth</span>
           · <a href="#" onclick="window.tarkSetState({view:'cohorts',cohort:'${esc(T.facts_meta[key].cohort_id)}'});return false">view cohort: ${esc(T.facts_meta[key].cohort_id)}</a>` : ""}
@@ -1207,34 +1237,24 @@ export function viewCoverage(root) {
             evidenced, computed, or carries a documented reason it cannot be
             public-sourced.</div></div></div>
       <div class="card"><h3 class="num" style="font-size:28px;color:var(--ok)">${cc.confirmed}/${cc.cells_checked}</h3>
-        <div class="cap">cells CONFIRMED by an independent re-location pass;
-          ${cc.corrected} discrepancies found and corrected in the open;
-          ${cc.unlocatable} unlocatable. ${esc(cc.source)}</div></div>
-      <div class="card"><h3 class="num" style="font-size:28px;color:var(--plum-700)">0</h3>
-        <div class="cap">cells human-verified so far — the verification
+        <div class="cap">${esc(cc.tile)} Source: ${esc(cc.source)}. An agent
+          re-check is a machine re-check, not human verification.</div></div>
+      <div class="card"><h3 class="num" style="font-size:28px;color:var(--plum-700)">${tax.counts.verified}</h3>
+        <div class="cap">cells human-verified so far (T3). The verification
           interface is data/evidence/*.csv, and nothing is marked verified until
           a human signs the row. Honesty is load-bearing.</div></div>
     </div>
     <div class="cardgrid g3" id="prodrings"></div>
-    <div class="legend" style="margin-top:10px">
-      <span><span class="sw" style="background:var(--ok)"></span>extracted/verified</span>
-      <span><span class="sw" style="background:var(--calc)"></span>computed</span>
-      <span><span class="sw" style="background:var(--warn)"></span>partial/fetched</span>
-      <span><span class="sw" style="background:#d8d3dd"></span>documented n/a</span></div>
+    <div class="legend" style="margin-top:10px">${kindLegend()}</div>
     <p class="cap footer-rule">Bundle generated ${esc(T.generated)} from the same
       data layer the validator gates. Every number on every surface is
       real-and-cited or labeled ILLUSTRATIVE.</p>`;
 
   donut(root.querySelector("#taxdonut"), {
     size: 150,
-    segments: [
-      { label: "evidenced", value: tax.counts.extracted + (tax.counts.verified || 0)
-          + tax.counts.partial + tax.counts.fetched, color: "#256e46" },
-      { label: "computed", value: tax.counts.computed, color: "#14636d" },
-      { label: "documented n/a", value: tax.counts["n/a"], color: "#d8d3dd" },
-    ],
-    center: `${Math.round((tax.total - tax.counts["n/a"]) / tax.total * 100)}%`,
-    centerSub: "resolvable, resolved",
+    segments: kindSegments(tax.counts),
+    center: `${tax.counts.verified}`,
+    centerSub: "human-verified (T3)",
   });
 
   const grid = root.querySelector("#prodrings");
@@ -1247,9 +1267,8 @@ export function viewCoverage(root) {
     card.style.alignItems = "center";
     card.innerHTML = `<div data-r></div><div>
       <h3 style="font-size:13.5px">${esc(T.products[k].fund_name)}</h3>
-      <div class="cap">${c.extracted} extracted · ${c.computed} computed ·
-        ${c.partial + c.fetched} partial · ${c.na} documented-n/a</div></div>`;
-    card.querySelector("[data-r]").append(ring(c.coverage_pct, "#593380", 72));
+      <div class="cap">${kindLine(c)}</div></div>`;
+    card.querySelector("[data-r]").append(kindDonut(c, 72));
     grid.append(card);
   }
 }

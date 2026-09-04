@@ -6,6 +6,7 @@ python src/validate_data.py && \
 python src/validate_census.py && \
 python src/test_evidence_immutable.py && \
 python src/corrections_log.py check && \
+python src/test_invariants.py && \
 python src/test_analytics.py && \
 python src/test_cohort.py && \
 python src/test_benchmark.py && \

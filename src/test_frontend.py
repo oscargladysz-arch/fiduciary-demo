@@ -553,9 +553,30 @@ with sync_playwright() as pw:
     check("evaluation product chart renders (tier-driven)",
           page.locator("#prodchart svg").count() == 1)
     t = view_text("coverage")
-    check("taxonomy line on screen", "0 unresolved" in t)
-    check("coverage rings render (one per roster product)",
-          page.locator("#prodrings .ring").count() == len(PRODUCTS))
+    # the taxonomy line is per status kind (T1 / T2 / T3 named), computed
+    # from the live record; "0 unresolved" used to count n/a as resolved
+    tax = bundle["taxonomy"]
+    rec = {k: 0 for k in ("structured", "extracted", "verified", "computed",
+                          "partial", "fetched", "na", "pending")}
+    for k in PRODUCTS:
+        for cell in bundle["products"][k]["cells"].values():
+            st = str(cell.get("status", "pending"))
+            kind = next((p for p in ("pending", "partial", "extracted", "verified",
+                                     "structured", "computed", "fetched", "n/a")
+                         if st.startswith(p)), "pending")
+            rec["na" if kind == "n/a" else kind] += 1
+    check("taxonomy counts equal the record recomputed from the bundle",
+          tax["counts"] == rec and tax["total"] == sum(rec.values()),
+          f"{tax['counts']} vs {rec}")
+    check("taxonomy line names the tiers and pending on screen",
+          "(T1)" in t and "(T2)" in t and "(T3)" in t and "pending" in t)
+    check("taxonomy: cion_ares structured=1 and pending=0 (the CION 98% defect)",
+          bundle["evidence_counts"]["cion_ares"]["structured"] == 1
+          and bundle["evidence_counts"]["cion_ares"]["pending"] == 0)
+    check("crosscheck tile reads from the report header and names an agent pass",
+          "re-located by an agent pass" in t and "Human verification: 0" in t)
+    check("coverage rings render (one per-kind donut per roster product)",
+          page.locator("#prodrings svg").count() == len(PRODUCTS))
     check("taxonomy donut renders", page.locator("#taxdonut svg").count() == 1)
     t = view_text("fees")
     check("fee bar chart renders", page.locator("#feechart svg").count() == 1)

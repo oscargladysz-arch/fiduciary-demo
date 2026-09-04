@@ -22,7 +22,8 @@ from datetime import date
 from pathlib import Path
 
 from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
-from tark_data import (BASE, DATA, CELLS, FACTORS, load_evidence, load_plan,
+from tark_data import (BASE, DATA, CELLS, FACTORS, coverage_summary,
+                       coverage_totals, load_evidence, load_plan,
                        load_product, load_products, load_series,
                        load_series_manifest, plan_keys, product_keys,
                        status_kind)
@@ -35,13 +36,6 @@ RULE_CAPTION = ("Six-factor framework per DOL proposed rule, Fiduciary Duties in
                 "Selecting Designated Investment Alternatives — 91 FR 16088 "
                 "(Mar 31, 2026), RIN 1210-AC38. Safe harbor attaches to a "
                 "documented, objective, thorough, analytical process.")
-
-# integrity stat, sourced from the independent cross-check pass; see the
-# report for the cell-by-cell record (v9 adjudicated the 2 discrepancies)
-CROSSCHECK = {"cells_checked": 44, "confirmed": 42, "corrected": 2,
-              "unlocatable": 0,
-              "source": "docs/crosscheck_report.md (independent re-location "
-                        "pass, 2026-08-08; both discrepancies corrected in v9)"}
 
 # glossary: plain-language primary, term-of-art secondary. Rendered as chips
 # with hover definitions wherever these terms appear in headline lines.
@@ -234,21 +228,33 @@ def cell_display(cell: dict, cid: str = "", fx: dict | None = None) -> dict:
 
 
 def evidence_counts(key: str) -> dict:
-    c = {"extracted": 0, "verified": 0, "computed": 0, "partial": 0,
-         "fetched": 0, "pending": 0, "na": 0}
-    for row in load_evidence(key):
-        k = status_kind(row["status"])
-        if k == "n/a":
-            c["na"] += 1
-        elif k in c:
-            c[k] += 1
-        else:
-            c["pending"] += 1
-    seeded = c["extracted"] + c["verified"] + c["computed"]
-    soft = c["partial"] + c["fetched"]
-    applicable = seeded + soft + c["pending"]
-    c["coverage_pct"] = round((seeded + soft) / applicable * 100) if applicable else 0
-    return c
+    """Per-kind coverage for one product: the shared formula in tark_data."""
+    return coverage_summary(key)
+
+
+def crosscheck_summary() -> dict:
+    """The cross-check tile is read from the machine-readable header of
+    docs/crosscheck_report.md, never a literal. The human-verified count is
+    live from the record. An agent pass is described as an agent pass."""
+    text = (BASE / "docs" / "crosscheck_report.md").read_text()
+    m = re.search(r"<!-- tark:crosscheck\n(.*?)-->", text, re.S)
+    if not m:
+        raise SystemExit("docs/crosscheck_report.md lacks the tark:crosscheck header")
+    kv = {}
+    for line in m.group(1).splitlines():
+        if ":" in line:
+            k, v = line.split(":", 1)
+            kv[k.strip()] = v.strip()
+    ints = {k: int(kv[k]) for k in ("cells_checked", "confirmed", "corrected",
+                                    "unlocatable", "products")}
+    verified = coverage_totals()["counts"]["verified"]
+    return {**ints, "date": kv["date"], "run_by": kv["run_by"],
+            "human_verified": verified,
+            "tile": (f"{ints['cells_checked']} cells re-located by an agent pass "
+                     f"({ints['products']} products, {kv['date']}), "
+                     f"{ints['confirmed']} confirmed, {ints['corrected']} corrected. "
+                     f"Human verification: {verified}."),
+            "source": "docs/crosscheck_report.md"}
 
 
 def daily_series(ticker: str, column: str = "adj_close") -> list:
@@ -627,7 +633,7 @@ def main() -> None:
         "cell_display": display,
         "factor_rollups": rollups,
         "glossary": GLOSSARY,
-        "taxonomy": json.loads((DATA / "analytics" / "taxonomy.json").read_text()),
+        "taxonomy": coverage_totals(),   # live, per kind, never a frozen file
         "supplement": json.loads((DATA / "analytics" / "supplement.json").read_text()),
         "series_annual": series_annual,
         "series_monthly": monthly,
@@ -669,7 +675,7 @@ def main() -> None:
         "proxy_library": PROXY_LIBRARY,
         "swap_matrix": swap_matrix(),
         "verification_queue": parse_verification_queue(),
-        "crosscheck": CROSSCHECK,
+        "crosscheck": crosscheck_summary(),
         "memos": sorted(p.stem.replace("_decision_memo", "")
                         for p in (DATA / "memos").glob("*_decision_memo.docx")),
     }

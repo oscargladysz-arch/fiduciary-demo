@@ -1,3 +1,12 @@
+<!-- tark:crosscheck
+cells_checked: 44
+confirmed: 42
+corrected: 2
+unlocatable: 0
+products: 6
+date: 2026-08-08
+run_by: agent pass (Claude Code, six checker agents, one per product). Not human verification.
+-->
 # Cross-check report — independent re-location pass (CF2 accelerator)
 
 **Date:** 2026-08-08

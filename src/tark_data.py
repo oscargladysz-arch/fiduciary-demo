@@ -331,6 +331,58 @@ def validate_series() -> list[str]:
     return errs
 
 
+# ------------------------------------------------------------- coverage
+COVERAGE_KINDS = ("structured", "extracted", "verified", "computed", "partial",
+                  "fetched", "na", "pending")
+
+
+def coverage_summary(key: str) -> dict:
+    """The ONE coverage formula (coverage.py, build_site.py and app.py all
+    call this). Counts per status kind, never one merged number: structured
+    is T1, extracted is T2, verified is T3, computed is the pipeline's own
+    output, partial and fetched are soft, n/a is documented-unavailable and
+    stays in the denominator as its own segment. `resolvable` = cells that
+    are not n/a; `resolved` = resolvable cells that carry content."""
+    c = {k: 0 for k in COVERAGE_KINDS}
+    for row in load_evidence(key):
+        kind = status_kind(row["status"])
+        kind = "na" if kind == "n/a" else kind
+        c[kind if kind in c else "pending"] += 1
+    total = sum(c.values())
+    resolvable = total - c["na"]
+    resolved = resolvable - c["pending"]
+    c.update({
+        "total": total, "resolvable": resolvable, "resolved": resolved,
+        "resolved_pct": round(resolved / resolvable * 100) if resolvable else 0,
+        "headline": (f"{resolved} of {resolvable} resolvable, {c['verified']} verified, "
+                     f"{c['na']} n/a by wrapper"
+                     + (f", {c['pending']} pending" if c["pending"] else "")),
+    })
+    return c
+
+
+def coverage_totals() -> dict:
+    """Record-wide per-kind counts plus the one-line taxonomy the Coverage
+    view prints. Computed from the live record on every build."""
+    tot = {k: 0 for k in COVERAGE_KINDS}
+    for key in product_keys():
+        c = coverage_summary(key)
+        for k in COVERAGE_KINDS:
+            tot[k] += c[k]
+    total = sum(tot.values())
+    na = tot["na"]
+    resolvable = total - na
+    resolved = resolvable - tot["pending"]
+    line = (f"{resolved} of {resolvable} resolvable cells resolved · "
+            f"{tot['structured']} structured (T1) · {tot['extracted']} "
+            f"extracted-unverified (T2) · {tot['verified']} verified (T3) · "
+            f"{tot['computed']} computed · {tot['partial'] + tot['fetched']} "
+            f"partial · {na} documented n/a · {tot['pending']} pending")
+    return {"counts": tot, "total": total, "resolvable": resolvable,
+            "resolved": resolved, "line": line,
+            "products": len(product_keys())}
+
+
 # statuses a non-null structured fact may cite (invariant: the screener layer
 # contains zero new facts — only typed projections of evidenced cells)
 FACT_OK_STATUS = ("extracted", "verified", "computed", "fetched",
