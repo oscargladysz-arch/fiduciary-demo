@@ -1028,3 +1028,20 @@ python src/produce.py && python src/build_site.py && bash hooks/pre-commit
 The validate gate refuses a product in `data/products` without a registry
 entry, so a half-added product cannot pass. No cost or time estimate is
 given for either run.
+
+### 6.25 P2-5: evaluate this fund, with nothing pretended
+The census entity card for an unevaluated fund now shows the exact ingest
+command for that CIK with a suggested product key and a copy button, and
+says that the registry entry comes first. When a service URL was given
+at build time (`TARK_SERVICE_URL`), an "Evaluate this fund" button posts
+to `POST /evaluate` and prints the service's answer as returned. Without
+one the card says no service is connected and shows no button. The
+service (`service/app.py`, FastAPI, one route, no docs pages) runs the
+ingest synchronously and answers refused (reason and commands), completed
+or failed (exit code, output tail, report path), or timed out. There is
+no queue, no job id and no progress state: the service reports only what
+happened. The offline ingest gate drives it with the test client:
+outside-census, no-registry, already-evaluated and malformed-key
+refusals, one route, no job fields. The frontend gate opens an
+unevaluated entity and checks the command and the honest no-service
+state. fastapi, uvicorn and httpx join the requirements.

@@ -229,8 +229,18 @@ export function viewCensusEntity(root, state, setState) {
   });
 }
 
+/* a product key suggestion from the entity name: lowercase, letters, digits
+ * and underscores, the ticker in parentheses dropped, 2 to 32 characters */
+export function suggestKey(name) {
+  const base = String(name || "").replace(/\(.*?\)/g, "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 32);
+  return base.length >= 2 ? base : `cik_${base}`;
+}
+
 function renderEntity(root, e, state, setState) {
   const nc = e.nc ? e.nc.value : null;
+  const serviceUrl = T.service_url;      // null unless a service was connected at build time
+  const cmd = `python src/ingest.py ${e.cik} --key ${suggestKey(e.nm)}`;
   root.innerHTML = `
     <p><button class="linklike" data-back>← back to the universe</button></p>
     <h1>${esc(e.nm || "(name pending)")} <span class="cap">CIK ${e.cik}</span></h1>
@@ -255,7 +265,18 @@ function renderEntity(root, e, state, setState) {
           prefills what the census already answers (marked
           <span class="chip structured">structured filing data (T1)</span>),
           and emits the extraction worklist for the rest. Nothing here is
-          extracted or verified until that work is actually done.</p>`}
+          extracted or verified until that work is actually done.</p>
+          <p class="cap">The registry entry (cohort, strategy, wrapper, a person's
+            judgments) comes first, then this command on a machine with the
+            filings and a key:</p>
+          <pre class="cmd" data-cmd>${esc(cmd)}</pre>
+          <button class="btn ghost" data-copycmd>copy command</button>
+          ${serviceUrl
+            ? `<button class="primary" data-evaluate>Evaluate this fund</button>
+               <span class="cap">posts to ${esc(serviceUrl)}/evaluate and shows its answer as returned</span>`
+            : `<span class="cap">No evaluation service is connected to this build, so the
+               button is not shown. Run the command.</span>`}
+          <div data-evalresult></div>`}
       </div>
     </div>
     <h2>Structured facts <span class="cap">(every row carries source · ref · as-of)</span></h2>
@@ -300,6 +321,33 @@ function renderEntity(root, e, state, setState) {
   const gp = root.querySelector("[data-goproduct]");
   if (gp) gp.addEventListener("click", () => setState(
     { view: "evaluation", product: gp.dataset.goproduct, c_cik: "" }));
+  const cp = root.querySelector("[data-copycmd]");
+  if (cp) cp.addEventListener("click", () => {
+    navigator.clipboard?.writeText(cmd);
+    cp.textContent = "copied";
+  });
+  const ev = root.querySelector("[data-evaluate]");
+  if (ev) ev.addEventListener("click", async () => {
+    const out = root.querySelector("[data-evalresult]");
+    ev.disabled = true;
+    out.innerHTML = `<p class="cap">Request sent. The service runs the ingest synchronously and
+      answers when it is done or refused, so this can take a while.</p>`;
+    try {
+      const r = await fetch(`${serviceUrl}/evaluate`, { method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ cik: String(e.cik), key: suggestKey(e.nm) }) });
+      const j = await r.json();
+      out.innerHTML = `<p><b>Service answer:</b> ${esc(j.status || "no status")}
+        ${j.reason ? `<span class="cap">${esc(j.reason)}</span>` : ""}
+        ${j.exit_code !== undefined ? `<span class="cap">exit code ${esc(String(j.exit_code))}</span>` : ""}</p>
+        ${j.output_tail ? `<pre class="cmd">${esc(j.output_tail.join("\n"))}</pre>` : ""}
+        ${j.report ? `<p class="cap">report: ${esc(j.report)}</p>` : ""}
+        ${j.commands ? `<pre class="cmd">${esc(j.commands.join("\n"))}</pre>` : ""}`;
+    } catch (err) {
+      out.innerHTML = `<p class="cap">Service unreachable: ${esc(String(err))}. Run the command.</p>`;
+    }
+    ev.disabled = false;
+  });
 }
 
 /* ------------------------------------------------------------- funnel */

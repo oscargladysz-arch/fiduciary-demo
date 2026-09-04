@@ -16,6 +16,7 @@ Run:  python src/build_site.py     -> site/data.js, site/memos/*.docx
 from __future__ import annotations
 
 import json
+import os
 import re
 from datetime import date
 from pathlib import Path
@@ -541,6 +542,8 @@ def main() -> None:
         "generated": date.today().isoformat(),
         "facts": facts,
         # the rule record once, the mapping basis once, per cell only what differs
+        # an evaluation service, when one is connected at build time (P2-5)
+        "service_url": (os.environ.get("TARK_SERVICE_URL") or "").rstrip("/") or None,
         "rule": {**RULE, "authority": authority(),
                  "mapping_basis": rule_ref("1.1", authority())["basis"]},
         "rule_refs": {cid: {k: v for k, v in rule_ref(cid, authority()).items() if k != "basis"}

@@ -853,6 +853,18 @@ with sync_playwright() as pw:
     check("census entity: anonymization sweep",
           not any(tok in t.lower() for tok in FORBIDDEN))
     page.evaluate("() => window.tarkSetState({view: 'census', c_cik: ''})")
+    # an unevaluated entity (P2-5): copyable command, honest service state
+    page.evaluate("() => window.tarkSetState({view: 'census', c_cik: '1467631'})")
+    page.wait_for_selector("#view [data-back]", timeout=15000)
+    t = page.locator("#view").inner_text()
+    check("census entity (unevaluated): the ingest command with this CIK is copyable",
+          "python src/ingest.py 1467631 --key " in t and page.locator("[data-copycmd]").count() == 1
+          and page.locator("[data-cmd]").inner_text().startswith("python src/ingest.py 1467631"))
+    check("census entity (unevaluated): no service connected to this build, no button, no job state",
+          (bundle.get("service_url") is None) == ("No evaluation service is connected" in t)
+          and page.locator("[data-evaluate]").count() == (0 if bundle.get("service_url") is None else 1)
+          and not any(w in t.lower() for w in ("queued", "job id", "in progress")))
+    page.evaluate("() => window.tarkSetState({view: 'census', c_cik: ''})")
     # index rows are compact arrays; the field order ships in the chunk as
     # row_fields and the screener decodes with it (one source)
     RF = [f.split("(")[0] for f in census_bundle["row_fields"]]

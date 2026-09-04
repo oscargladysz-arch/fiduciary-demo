@@ -224,6 +224,30 @@ summ = summarize(rows)
 check("calibration: the summary counts cells, located, partial and pending",
       summ["cells"] == 3 and summ["located"] == 1 and summ["partial"] == 1 and summ["pending"] == 1)
 
+# ---------------- the service: one endpoint, honest refusals, no job state
+(SCRATCH / "data" / "census").mkdir(exist_ok=True)
+shutil.copy(BASE / "data" / "census" / "census.json", SCRATCH / "data" / "census" / "census.json")
+sys.path.insert(0, str(BASE))
+from starlette.testclient import TestClient  # noqa: E402
+from service.app import app  # noqa: E402
+tc = TestClient(app)
+routes = [r.path for r in app.routes if getattr(r, "methods", None)]
+check("service: exactly one endpoint, POST /evaluate, no docs pages",
+      routes == ["/evaluate"] and app.docs_url is None and app.openapi_url is None)
+r1 = tc.post("/evaluate", json={"cik": "1", "key": "nobody"}).json()
+check("service: a CIK outside the census is refused with the reason and the commands",
+      r1["status"] == "refused" and "census" in r1["reason"] and any("promote.py" in c for c in r1["commands"]))
+r2 = tc.post("/evaluate", json={"cik": "1467631", "key": "acap_strategic"}).json()
+check("service: a census CIK without a registry entry is refused, the registry comes first",
+      r2["status"] == "refused" and "registry" in r2["reason"] and "python src/ingest.py 1467631 --key acap_strategic --skip-fetch" in r2["commands"])
+r3 = tc.post("/evaluate", json={"cik": "1735964", "key": "cliffwater_cclfx"}).json()
+check("service: an already evaluated CIK is refused by name",
+      r3["status"] == "refused" and "already evaluated as cliffwater_cclfx" in r3["reason"])
+r4 = tc.post("/evaluate", json={"cik": "1467631", "key": "Bad Key!"}).json()
+check("service: a malformed key is refused", r4["status"] == "refused" and "key must match" in r4["reason"])
+check("service: no answer carries a job id, queue or progress field",
+      all(not (set(r) & {"job_id", "job", "queued", "progress", "state"}) for r in (r1, r2, r3, r4)))
+
 shutil.rmtree(SCRATCH, ignore_errors=True)
 print(f"\n{len(FAILS)} failure(s)." if FAILS else "\nAll ingest checks pass.")
 sys.exit(1 if FAILS else 0)

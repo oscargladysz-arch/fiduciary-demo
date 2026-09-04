@@ -27,7 +27,8 @@ the evidence row). Only a human editing `data/evidence/*.csv` can set
   `tark_cohort.py`, `tark_memo.py`), the ingestion of a new fund from its CIK
   (`ingest.py`, structured extraction with a verbatim-quote contract, offline
   gate `test_ingest.py`, calibration against an evaluated product with
-  `calibrate_ingest.py`), the site build (`build_site.py`), the
+  `calibrate_ingest.py`), the site build (`build_site.py`), the one-endpoint
+  evaluation service (`service/app.py`, see `service/README.md`), the
   validators and gates (`validate_*.py`, `test_*.py`, `corrections_log.py`).
 - `site/`: the static frontend. Vanilla JS, hash-routed, reads only the
   bundles the build writes (`data.js`, `series.js`, `census.data.js`,
