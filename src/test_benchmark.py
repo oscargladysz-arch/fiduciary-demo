@@ -188,6 +188,28 @@ check_true("amg_pantheon: fund growth is the hand product of FY2020 to FY2026 (2
 check_true("amg_pantheon: KS-PME equals the hand ratio on the clipped window",
            abs(comp["ks_pme"] - hand_fund / hand_index) < 1e-3)
 
+# ---- P1-3: the ILLUSTRATIVE monthly-schedule row exists for daily NAV
+# products only, with its contribution count, and never for annual tiers
+sched_bad = []
+for sp in sorted(bench_dir.glob("*_selection.json")):
+    sel = json.loads(sp.read_text())
+    key = sp.stem.replace("_selection", "")
+    daily = bool(PRODUCT_PROFILES[key].get("series"))
+    for slot in ("primary", "secondary"):
+        comp = ((sel.get(slot) or {}).get("comparison")) or {}
+        if not comp:
+            continue
+        has = "ks_pme_monthly_schedule" in comp
+        if has != daily:
+            sched_bad.append(f"{key}/{slot}: schedule row {'present' if has else 'absent'}")
+        if has and not (comp["schedule_contributions"] >= 12
+                        and comp["schedule_note"].startswith("ILLUSTRATIVE")
+                        and "two-point figure is primary" in comp["schedule_note"]):
+            sched_bad.append(f"{key}/{slot}: schedule row malformed")
+check_true("monthly-schedule KS-PME: daily products only, labeled ILLUSTRATIVE, "
+           "two-point primary" + (": " + "; ".join(sched_bad) if sched_bad else ""),
+           not sched_bad)
+
 # ---- v1 snapshot is frozen history: every byte pinned by its manifest
 import hashlib  # noqa: E402
 SNAP = Path(__file__).resolve().parents[1] / "data" / "benchmarks" / "v1_snapshot"

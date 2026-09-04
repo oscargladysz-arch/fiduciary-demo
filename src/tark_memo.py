@@ -136,6 +136,17 @@ def build_memo(key: str) -> Path:
                     "window-sensitive and can be smoothing-flattered. "
                     "Conclusions should be read with the methodology's "
                     "window-sensitivity analysis.")
+                doc.add_paragraph(
+                    "Two-point comparison: one contribution at the window start "
+                    "and one valuation at the end. Direct Alpha is the "
+                    "annualized form of the same two flows."
+                    + (f" ILLUSTRATIVE monthly-schedule KS-PME "
+                       f"{comp['ks_pme_monthly_schedule']} "
+                       f"({comp['schedule_contributions']} equal contributions "
+                       "at the window start and each month-end inside it, "
+                       "valued at the window end). The two-point figure is "
+                       "primary."
+                       if comp.get("ks_pme_monthly_schedule") is not None else ""))
             for r in s["reasons"]:
                 doc.add_paragraph(r, style="List Bullet")
 

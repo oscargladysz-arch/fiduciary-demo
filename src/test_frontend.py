@@ -342,6 +342,10 @@ with sync_playwright() as pw:
     check("plans: liquidity tail 1,847 rendered", "1,847" in t)
     t = view_text("benchmarks", product="cliffwater_cclfx")
     check("benchmark cclfx: KS-PME 1.2532 on screen", "1.2532" in t)
+    tl = t.lower()   # stat labels render uppercase (CSS), inner_text follows
+    check("benchmark cclfx: monthly-schedule row labeled ILLUSTRATIVE, two-point stated primary",
+          "monthly schedule" in tl and "illustrative" in tl and "two-point figure is primary" in tl
+          and "direct alpha is the annualized form of the same two flows" in tl)
     check("benchmark cclfx: CDLI sits in rejection log",
           "Cliffwater Direct Lending Index" in t)
     check("benchmark cclfx: independence rejection is truthful",
@@ -374,6 +378,10 @@ with sync_playwright() as pw:
                  if (comp) {
                    const shown = parseFloat(document.querySelector('#pme_ks').textContent);
                    if (Math.abs(shown - comp.ks_pme) > 1e-4) bad.push(`pme ${k}: lab KS-PME ${shown} vs artifact ${comp.ks_pme}`);
+                   const sched = document.querySelector('#pme_sched').textContent;
+                   if (comp.ks_pme_monthly_schedule != null) {
+                     if (Math.abs(parseFloat(sched) - comp.ks_pme_monthly_schedule) > 1e-4) bad.push(`pme ${k}: lab schedule ${sched} vs artifact ${comp.ks_pme_monthly_schedule}`);
+                   } else if (!sched.includes('n/a')) bad.push(`pme ${k}: annual tier shows a schedule figure`);
                  }
                } else if (!empty || empty.dataset.labEmpty !== k || !empty.textContent.includes(p.fund_name)) {
                  bad.push(`pme ${k}: no profile and no empty state naming it`);

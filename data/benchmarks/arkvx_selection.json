@@ -27,7 +27,10 @@
       "ks_pme": 1.8974,
       "direct_alpha_pct": 17.96,
       "fund_ann_pct": 30.12,
-      "index_ann_pct": 10.31
+      "index_ann_pct": 10.31,
+      "ks_pme_monthly_schedule": 1.8103,
+      "schedule_contributions": 47,
+      "schedule_note": "ILLUSTRATIVE: 47 equal contributions, at the window start and each month-end inside it, valued at the window end. The two-point figure is primary."
     }
   },
   "secondary": {
@@ -52,7 +55,10 @@
       "ks_pme": 1.3988,
       "direct_alpha_pct": 9.04,
       "fund_ann_pct": 30.12,
-      "index_ann_pct": 19.33
+      "index_ann_pct": 19.33,
+      "ks_pme_monthly_schedule": 1.3812,
+      "schedule_contributions": 47,
+      "schedule_note": "ILLUSTRATIVE: 47 equal contributions, at the window start and each month-end inside it, valued at the window end. The two-point figure is primary."
     }
   },
   "rejected": [

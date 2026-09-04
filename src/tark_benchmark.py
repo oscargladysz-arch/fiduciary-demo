@@ -26,7 +26,8 @@ increment; prose-parsing evidence strings would be brittle now.
 from __future__ import annotations
 
 from tark_analytics import (_level_on, cumulative_growth, direct_alpha,
-                            effective_window, ks_pme, year_frac)
+                            effective_window, ks_pme, monthly_schedule_flows,
+                            year_frac)
 from tark_data import load_series
 
 MIN_PRIMARY_SCORE = 7
@@ -367,11 +368,23 @@ def comparison_stats(profile: dict, cand: dict) -> dict | None:
     index = load_series(cand["series"], "adj_close")
     i0, i1 = index[0][0], index[-1][0]
     years = None
+    schedule: dict = {}
     if profile.get("series"):
         fund = load_series(profile["series"], "adj_close")
         fund_window = (fund[0][0], fund[-1][0])
         d0, d1, note = effective_window(fund_window[0], fund_window[1], index)
         f_growth = _level_on(fund, d1) / _level_on(fund, d0)
+        # second, ILLUSTRATIVE row for daily NAV products only: equal
+        # contributions on a monthly schedule instead of one at the start
+        sched = monthly_schedule_flows(fund, d0, d1)
+        schedule = {
+            "ks_pme_monthly_schedule": round(ks_pme(sched, index), 4),
+            "schedule_contributions": len(sched) - 1,
+            "schedule_note": (f"ILLUSTRATIVE: {len(sched) - 1} equal contributions, "
+                              "at the window start and each month-end inside it, "
+                              "valued at the window end. The two-point figure "
+                              "is primary."),
+        }
     elif profile.get("fy_returns"):
         bounds = fiscal_year_bounds(profile["fy_window"], len(profile["fy_returns"]))
         fund_window = (profile["fy_window"][0], profile["fy_window"][1])
@@ -425,6 +438,7 @@ def comparison_stats(profile: dict, cand: dict) -> dict | None:
         "direct_alpha_pct": round((direct_alpha(flows, index) or 0) * 100, 2),
         "fund_ann_pct": round((f_growth ** (1 / years) - 1) * 100, 2),
         "index_ann_pct": round((i_growth ** (1 / years) - 1) * 100, 2),
+        **schedule,
     }
 
 

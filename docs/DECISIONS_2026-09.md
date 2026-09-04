@@ -545,3 +545,21 @@ tool gained `--head` so a past commit's state can be logged under its own
 task, and the P1-1 selection rows are backfilled under the P1-1 cause with
 that note. The gate `check` still compares the working tree with
 `origin/main`, so nothing published can now change without a row.
+
+### 6.3 P1-3: the flows are stated, and a second schedule is labeled
+Every comparison is two-point: one contribution at the window start, one
+valuation at the end. The card, the memo and the methodology now say so,
+and say that Direct Alpha is the annualized form of the same two flows
+rather than a second piece of evidence. For the four daily NAV products a
+second row, `ks_pme_monthly_schedule`, contributes one unit of cash at the
+window start and at each fund month-end inside the window, each buying
+`1 / NAV` units, valued once at the end. It is labeled ILLUSTRATIVE on the
+card, in the lab, in the memo and in the methodology, the contribution
+count is printed beside it, and the two-point figure stays primary in the
+rubric. Annual-tier products get no such row because no intra-year NAV
+path is on record, and the lab prints "n/a on annual data" for them
+rather than leaving the cell blank. The lab computes the schedule with
+the same code path and the frontend gate asserts parity with the
+artifact. `docs/benchmark_methodology.md` starts here with sections 1 to
+3 (windows, annualization, flows) and joins the copy gate's owned
+documents. The rubric sections follow in the P1-B preparation.

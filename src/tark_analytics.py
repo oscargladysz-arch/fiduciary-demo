@@ -180,6 +180,24 @@ def ks_pme(flows: list[tuple[str, float]], index: list[tuple[str, float]]) -> fl
     return fv_pos / fv_neg
 
 
+def monthly_schedule_flows(fund: list[tuple[str, float]], d0: str,
+                           d1: str) -> list[tuple[str, float]]:
+    """ILLUSTRATIVE flow schedule: one unit of cash at the window start and
+    at each fund month-end strictly inside the window, each buying 1 / NAV
+    units, valued once at the window end. A schedule assumption, not a
+    fact: the two-point comparison stays primary. Mirrored by
+    monthlyScheduleFlows in site/js/analytics.js."""
+    win = [(d, v) for d, v in fund if d0 <= d <= d1]
+    dates = [d0] + [d for d, _ in month_end_points(win) if d0 < d < d1]
+    units = 0.0
+    flows: list[tuple[str, float]] = []
+    for d in dates:
+        units += 1.0 / _level_on(fund, d)
+        flows.append((d, -1.0))
+    flows.append((d1, units * _level_on(fund, d1)))
+    return flows
+
+
 def direct_alpha(flows: list[tuple[str, float]],
                  index: list[tuple[str, float]]) -> float | None:
     """

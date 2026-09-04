@@ -8,7 +8,7 @@
 
 import { annVol, beta, calendarYearReturns, desmoothGeltner, directAlpha,
          drawdownEpisodes, effectiveWindow, fiscalYearBounds, ksPme,
-         lag1Autocorr, levelOn,
+         lag1Autocorr, levelOn, monthlyScheduleFlows,
          monthEndPoints, periodReturns, rollingReturns,
          rollingVol } from "./analytics.js";
 import { computeScenario, scenarioReason } from "./liquidity.js";
@@ -380,8 +380,15 @@ export function viewBenchmarks(root, state, setState) {
         ${stat("Direct Alpha", `${comp.direct_alpha_pct}%<small>/yr</small>`)}
         ${stat("Fund", `${comp.fund_ann_pct}%<small>/yr</small>`)}
         ${stat("Benchmark", `${comp.index_ann_pct}%<small>/yr</small>`)}
+        ${comp.ks_pme_monthly_schedule != null
+          ? stat("KS-PME, monthly schedule", `${comp.ks_pme_monthly_schedule} <span class="chip illustrative">ILLUSTRATIVE</span>`)
+          : ""}
       </div>
-      <div class="cap">${gloss("KS-PME")} and ${gloss("Direct Alpha")} on
+      <div class="cap">Two-point comparison: one contribution at the window start, one
+        valuation at the end. ${gloss("Direct Alpha")} is the annualized form of the same
+        two flows.${comp.ks_pme_monthly_schedule != null
+          ? ` The monthly-schedule figure is ${esc(comp.schedule_note)}` : ""}
+        ${gloss("KS-PME")} and ${gloss("Direct Alpha")} on
         appraisal-lagged NAVs are window-sensitive, disclosed, and explorable:
         <a href="#" data-goto="pme">move the window yourself →</a>
         <span class="num">(${esc(comp.window)}${comp.window_note ? `, ${esc(comp.window_note)}` : ""})</span></div>`
@@ -508,6 +515,7 @@ export function viewPme(root, state, setState) {
           ${stat("Fund growth", `<span id="pme_fg"></span>×`)}
           ${stat("Proxy growth", `<span id="pme_ig"></span>×`)}
           ${stat("Window", `<span id="pme_win" style="font-size:12px"></span>`)}
+          ${stat("KS-PME, monthly schedule", `<span id="pme_sched"></span> <span class="chip illustrative">ILLUSTRATIVE</span>`)}
         </div>
         <div class="chartbox" style="border:0;padding:6px 0 0"><div id="pmechart"></div></div>
         <div class="chartnote" id="pmenote"></div>
@@ -646,6 +654,9 @@ export function viewPme(root, state, setState) {
     root.querySelector("#pme_da").textContent =
       da === null ? "n/a" : `${(da * 100).toFixed(2)}%`;
     root.querySelector("#pme_fg").textContent = fGrowth.toFixed(4);
+    root.querySelector("#pme_sched").textContent = (!hasFy && !isAnnual)
+      ? ksPme(monthlyScheduleFlows(fundDaily, d0, d1), idxDaily).toFixed(4)
+      : "n/a on annual data";
     root.querySelector("#pme_ig").textContent = iGrowth.toFixed(4);
     root.querySelector("#pme_win").textContent = `${d0} → ${d1}${clipNote ? ` (${clipNote})` : ""}`;
     root.querySelector("#winout").textContent = d0;

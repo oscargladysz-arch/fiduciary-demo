@@ -5,6 +5,7 @@ Run: python src/test_analytics.py   (exit 0 = all pass)
 import sys
 
 from tark_analytics import (
+    monthly_schedule_flows,
     ann_return, ann_vol, beta, calendar_year_returns, cumulative_growth,
     desmooth_geltner, direct_alpha, drawdown_episodes, ks_pme, lag1_autocorr,
     max_drawdown, month_end_points, period_returns, rolling_returns,
@@ -85,6 +86,18 @@ beat = [("2020-01-01", -100.0), ("2021-01-01", 180.0)]
 check("PME = 1.2 on outperformance", ks_pme(beat, idx_up), 1.2, 1e-12)
 check_true("Direct Alpha > 0 on outperformance",
            (direct_alpha(beat, idx_up) or 0) > 0.10)
+# monthly schedule: a fund that IS the index has PME 1 on any schedule
+sched_idx = [("2020-01-31", 100.0), ("2020-02-29", 104.0), ("2020-03-31", 99.0),
+             ("2020-04-30", 110.0), ("2020-05-29", 121.0)]
+fl = monthly_schedule_flows(sched_idx, "2020-01-31", "2020-05-29")
+check_true("monthly schedule: one contribution at the start and each inner month-end (4)",
+           len(fl) == 5 and [d for d, _ in fl[:-1]]
+           == ["2020-01-31", "2020-02-29", "2020-03-31", "2020-04-30"])
+check("monthly schedule: fund equal to the index gives PME 1", ks_pme(fl, sched_idx), 1.0, 1e-12)
+beat_fund = [(d, v * (1 + 0.01 * i)) for i, (d, v) in enumerate(sched_idx)]
+check_true("monthly schedule: a fund that beats the index every month gives PME > 1",
+           ks_pme(monthly_schedule_flows(beat_fund, "2020-01-31", "2020-05-29"), sched_idx) > 1.0)
+
 # flat index: PME reduces to (dist + nav) / contrib
 idx_flat = [("2020-01-01", 100.0), ("2021-01-01", 100.0)]
 mixed = [("2020-01-01", -100.0), ("2020-07-01", 30.0), ("2021-01-01", 90.0)]

@@ -34,7 +34,8 @@ SURFACE_MODULES = [
 # console-only scripts (validators, tests, fetchers, shots, produce) print to
 # the developer, not to a surface, and stay out of scope
 OWNED_DOCS = ["docs/DECISIONS_2026-09.md", "docs/BUILD_REPORT_6.md",
-              "README.md", "docs/INVESTOR_DEMO.md"]
+              "README.md", "docs/INVESTOR_DEMO.md",
+              "docs/benchmark_methodology.md"]
 
 BAD = re.compile("[—;]")
 SLOT = "\x00"

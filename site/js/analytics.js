@@ -155,6 +155,19 @@ export function ksPme(flows, index) {
   return fvPos / fvNeg;
 }
 
+/** ILLUSTRATIVE flow schedule: one unit of cash at the window start and at
+ * each fund month-end strictly inside the window, each buying 1 / NAV
+ * units, valued once at the window end (mirrors tark_analytics) */
+export function monthlyScheduleFlows(fund, d0, d1) {
+  const win = fund.filter(([d]) => d >= d0 && d <= d1);
+  const dates = [d0, ...monthEndPoints(win).map(([d]) => d).filter((d) => d > d0 && d < d1)];
+  let units = 0;
+  const flows = [];
+  for (const d of dates) { units += 1 / levelOn(fund, d); flows.push([d, -1.0]); }
+  flows.push([d1, units * levelOn(fund, d1)]);
+  return flows;
+}
+
 export function directAlpha(flows, index) {
   const T = flows[flows.length - 1][0];
   const iT = levelOn(index, T);
