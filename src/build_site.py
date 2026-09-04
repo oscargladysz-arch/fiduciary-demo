@@ -334,8 +334,10 @@ def census_chunk() -> str:
                           or rec["name"]),
                    "cls": rec["wrapper_class"], "sig": rec["all_signals"],
                    "ev": rec["detection_evidence"]}
-        if rec.get("listed"):
-            e["lif"] = rec["listed"]
+        if rec.get("listed_common"):
+            e["lif"] = rec["listed_common"]        # exchange status of the common shares (P2-11)
+        if (rec.get("listed") or {}).get("value") is None and rec.get("listed"):
+            e["lsig"] = rec["listed"]              # the raw signal, null with its reason
         ex = (rec.get("exchanges", {}) or {}).get("value") or []
         if ex:
             e["ex"] = [x for x in ex if x and x.upper() != "OTC"]
@@ -400,7 +402,7 @@ def census_chunk() -> str:
         shards[int(cik) % N_SHARDS][cik] = s
         nc = rec.get("ncen")
         flags = 0
-        if (rec.get("listed", {}) or {}).get("value"):
+        if (rec.get("listed_common", {}) or {}).get("value") is True:
             flags |= 1
         if nc:
             flags |= 2
@@ -449,7 +451,7 @@ def census_chunk() -> str:
         "cls_codes": {v: k for k, v in CLS_CODE.items()},
         "hints": hints_all,
         "shards": N_SHARDS,
-        "row_fields": ["nm", "cls_code", "flags(1=listed,2=ncen,4=interval-"
+        "row_fields": ["nm", "cls_code", "flags(1=listed common,2=ncen,4=interval-"
                        "self,8=crosscheck-agree,16=evaluated,32=structured-"
                        "facts)", "assets_usd", "latest_annual_date",
                        "tender_count", "tender_last", "hint_mask",

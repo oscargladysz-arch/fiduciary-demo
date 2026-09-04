@@ -200,9 +200,11 @@ def main() -> None:
             "wrapper_class": ent["wrapper_class"],
             "all_signals": ent["all_signals"],
             "detection_evidence": ent["detection_evidence"],
-            "listed": F(ent["listed"], "submissions",
-                        "company_tickers.json + submissions exchanges "
-                        "(OTC quotation excluded)", today),
+            "listed": {**F(ent["listed"], "submissions",
+                           "company_tickers.json + submissions exchanges "
+                           "(OTC quotation excluded)", today),
+                       **({"reason": "submissions unreachable at enumeration, listing unknown"}
+                          if ent["listed"] is None else {})},
             "tickers": F(ent["tickers"], "submissions",
                          "SEC company_tickers.json", today),
             "name_hint": {"value": name_hint(ent["name"]),
@@ -326,6 +328,10 @@ def main() -> None:
         "total": len(census),
         "entities": census,
     }
+    # P2-11: share-class aware listing and the N-23C3A recency rule, applied
+    # here so a rebuild reproduces the committed classification
+    from reclassify_listed import apply as _reclassify
+    _reclassify(doc, uni)
     (OUT / "census.json").write_text(json.dumps(doc, indent=1))
     promoted = sum(1 for r in census.values()
                    if r["promotion"]["status"] != "none")

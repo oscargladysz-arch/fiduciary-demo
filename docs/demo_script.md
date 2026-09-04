@@ -1,7 +1,7 @@
 # Tark Demo Script — 7 minutes (census build)
 ### Setup: reset per docs/INVESTOR_DEMO.md; land on the Universe view. Fallback: docs/screenshots/.
 
-**0:00 — The Funnel.** "Start with the honest picture of the market. 72,502 private pooled funds raised money in the last 24 months — the dark universe: no NAV, no fee table, nothing a fiduciary can inspect. Below it, the entire REGISTERED alternatives universe: 3,599 wrappers, enumerated from SEC filing behavior — 245 interval funds, 516 tender CEFs, 378 BDCs, over a thousand non-traded REITs. This is the whole addressable universe, counted, and we can show you every one."
+**0:00 — The Funnel.** "Start with the honest picture of the market. 72,502 private pooled funds raised money in the last 24 months — the dark universe: no NAV, no fee table, nothing a fiduciary can inspect. Below it, the entire REGISTERED alternatives universe: 3,599 wrappers, enumerated from SEC filing behavior — 241 interval funds, 516 tender CEFs, 378 BDCs, over a thousand non-traded REITs. This is the whole addressable universe, counted, and we can show you every one."
 
 **1:00 — Universe screener.** "Every row is T1 — structured filing data: machine-read from N-CEN, XBRL, and the EDGAR submissions stream. No AI judgment anywhere on this page. Wrapper classes come from what a fund FILED, never from its name — the name gives you at most a badged 'hint' that is excluded from filters by default. Filter: interval funds, structured assets over $1B. Every number carries its dataset, its accession, its as-of date — hover any cell."
 

@@ -54,8 +54,8 @@ surfaces recompute them from the record. Where each number lives:
 - **Roster:** 16 products. The count on the Candidate Roster header comes
   from the record.
 - **Universe (validator-enforced T1 counts, not human-verified):** 3,599
-  registered wrappers (245 interval, 516 tender CEF, 378 BDC, 1,072
-  non-traded REIT, 213 listed CEF, 1,174 unlisted CEF other, 1 reconciled
+  registered wrappers (241 interval, 516 tender CEF, 378 BDC, 1,072
+  non-traded REIT, 217 listed CEF, 1,174 unlisted CEF other, 1 reconciled
   '34-Act), against 72,502 Form D pooled funds raising in the trailing 24
   months (the dark universe). Census as of 2026-08-25.
 - **Verification queue:** the Tier 1 rows (the cells the demo speaks aloud)

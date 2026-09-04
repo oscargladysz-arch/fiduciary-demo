@@ -284,7 +284,8 @@ function renderEntity(root, e, state, setState) {
       <thead><tr><th>Field</th><th>Value</th><th>Provenance</th></tr></thead>
       <tbody>
         ${provRow("Current entity name", e.enc)}
-        ${provRow("Exchange-listed", e.lif, (v) => v ? ((e.ex || []).join(", ") || "yes") : "no")}
+        ${provRow("Exchange-listed (common shares)", e.lif, (v) => v ? ((e.ex || []).join(", ") || "yes") : "no")}
+        ${e.lsig ? provRow("Listing signal (submissions)", e.lsig) : ""}
         ${e.tk && e.tk.value && e.tk.value.length ? provRow("Tickers (SEC oracle, OTC quotation ≠ listing)", e.tk, (v) => v.map(esc).join(", ")) : ""}
         ${provRow("First filing on record", e.ff)}
         ${provRow("Latest annual report", e.la, (v) => `${esc(v.form)} filed ${esc(v.date)}`)}

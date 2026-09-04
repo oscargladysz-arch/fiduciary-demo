@@ -1142,3 +1142,26 @@ not hold) still needs a machine that reaches sec.gov. No extracted row
 changed status: the three "all on-disk filings" citations moved from
 unresolved to a set, and the two ambiguous breit references stay
 ambiguous with their candidates listed.
+
+### 6.31 P2-11: listing is about a share class, and an old interval fund is a listed CEF
+The submissions oracle says whether some class of an entity trades on an
+exchange, which is not the same as the common shares being listed, and
+four funds the census classed as interval funds (MXF, IFN, CCIF, DMA)
+stopped filing N-23C3A between 2009 and 2021 while their shares trade on
+the NYSE. `src/census/reclassify_listed.py`, applied to both census
+files and called by the census build on a rebuild, gives every record
+`listed_common` and `listed_other_classes` (the latter null: the census
+does not enumerate share classes), reclassifies an exchange-listed
+interval record whose last N-23C3A is more than 24 months before the
+census as-of to listed_cef with the rule and dates appended to its
+evidence (reversible on a fresh N-23C3A), and leaves the two exchange-
+listed interval funds that still file N-23C3A (CIK 1551047 and 1644771)
+with listing null and the reason that offline the census cannot tell
+which class is listed. The enumeration keeps listing tri-state instead of
+coercing to a boolean, the census validator requires the two fields,
+refuses an interval record with listed True, and recomputes the class
+counts from the entities in both files. The screener's Listed column
+and flag read the common-share field, the entity view shows the raw
+signal with its reason when it is null, and promote never prefills
+cell 1.10 on a null. Counts moved: interval_23c3 245 to 241, listed_cef
+213 to 217, and the runbook and script say the new numbers.

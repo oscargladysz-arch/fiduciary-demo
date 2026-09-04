@@ -65,7 +65,8 @@ def main() -> int:
         pd = json.loads(pj.read_text())
         roster_ciks[str(int(pd["cik"]))] = pd["product_key"]
 
-    PROV_FIELDS = ("listed", "tickers", "first_filing", "latest_annual",
+    PROV_FIELDS = ("listed", "listed_common", "listed_other_classes",
+                   "tickers", "first_filing", "latest_annual",
                    "filing_summary", "total_assets", "n23c3a_activity",
                    "tender_activity", "interval_crosscheck",
                    "entity_name_current", "exchanges",
@@ -78,6 +79,13 @@ def main() -> int:
                         f"'{rec.get('wrapper_class')}'")
         if not rec.get("detection_evidence"):
             errs.append(f"{cik}: classification without detection_evidence")
+        # P2-11: share-class aware listing, and no exchange-listed interval fund
+        # without the null-with-reason that says which class is unknown
+        if "listed_common" not in rec or "listed_other_classes" not in rec:
+            errs.append(f"{cik}: listed_common or listed_other_classes missing")
+        if rec.get("wrapper_class") == "interval_23c3" and (rec.get("listed") or {}).get("value") is True:
+            errs.append(f"{cik}: interval_23c3 with listed True (reclassify by the N-23C3A recency "
+                        "rule or leave listing null with the reason)")
         nh = rec.get("name_hint", {})
         if nh and nh.get("authoritative") is not False:
             errs.append(f"{cik}: name_hint not marked non-authoritative (C2)")
@@ -102,9 +110,18 @@ def main() -> int:
         elif rec["promotion"].get("product_key") != key:
             errs.append(f"roster {key}: census promotion link missing/wrong")
 
-    # universe/census class counts must agree
+    # universe/census class counts must agree, and equal the entities
     if doc.get("counts_by_class") != uni.get("counts_by_class"):
         errs.append("counts_by_class drift between universe and census")
+    for label, d in (("census", doc), ("universe", uni)):
+        recount: dict[str, int] = {}
+        for r in d.get("entities", {}).values():
+            recount[r["wrapper_class"]] = recount.get(r["wrapper_class"], 0) + 1
+        if dict(sorted(recount.items())) != dict(sorted((d.get("counts_by_class") or {}).items())):
+            errs.append(f"{label}: counts_by_class does not equal the entities")
+    for cik, r in uni.get("entities", {}).items():
+        if r.get("listed") is None and not r.get("listed_reason"):
+            errs.append(f"universe {cik}: listed null without listed_reason")
 
     # documentation strings in the data must equal the constants in code.
     # This only reports drift: src/census/sync_notes.py rewrites the fields

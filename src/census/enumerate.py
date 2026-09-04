@@ -56,6 +56,15 @@ METHOD_NOTES = [
     "detectable from filing behavior",
     "EFTS coverage is 2001+. Funds whose only relevant filings "
     "predate 2001 are not seen",
+    "listing is tri-state (True, False, null with a reason) and "
+    "share-class aware: listed_common is the exchange status taken for "
+    "the common shares, listed_other_classes is null because the census "
+    "does not enumerate share classes. An interval_23c3 record that is "
+    "exchange-listed and whose last N-23C3A is more than 24 months before "
+    "the census as-of is reclassified to listed_cef by the N-23C3A "
+    "recency rule (src/census/reclassify_listed.py, reversible on a fresh "
+    "N-23C3A). One that still files N-23C3A keeps its class with listing "
+    "null: offline, the census cannot tell which share class is listed",
     "roster reconciliation: an evaluated roster product whose "
     "wrapper has no distinguishing form signature (non-traded "
     "'34-Act reporting company) is added individually with its "
@@ -229,7 +238,7 @@ def main() -> None:
                          "wrapper_class": klass,
                          "detection_evidence": evidence,
                          "all_signals": [klass],
-                         "listed": bool(exch),
+                         "listed": exch,      # True, False, or None when submissions were unreachable
                          "exchanges": ex_names,
                          "tickers": listed.get(int(cik), []),
                          **(extra or {})}

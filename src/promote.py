@@ -138,7 +138,10 @@ def main() -> int:
             f"N-CEN {ref} (structured dataset)",
             "REGISTRANT.IS_NAV_ERROR_CORRECTED",
             f"IS_NAV_ERROR_CORRECTED={nav_err or 'N'}")
-    listed = (rec.get("listed", {}) or {}).get("value")
+    listed = (rec.get("listed_common", rec.get("listed", {})) or {}).get("value")
+    if listed is None:
+        print("  1.10 left pending: the census cannot tell whether the common shares are "
+              "listed (listed_common is null with its reason), nothing prefilled")
     if listed is False:
         cells["1.10"] = structured_cell(
             CELLS["1.10"],

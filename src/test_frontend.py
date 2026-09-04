@@ -904,6 +904,25 @@ with sync_playwright() as pw:
         e = crow(cik)
         check(f"census: {nm} is nontraded_reit and NOT exchange-listed",
               e["cls"] == "nontraded_reit" and not (e["flags"] & 1))
+    # P2-11: the N-23C3A recency rule and share-class aware listing
+    for cik, nm in (("65433", "MXF"), ("917100", "IFN"), ("1517767", "CCIF"), ("1523289", "DMA")):
+        e = crow(cik)
+        check(f"census: {nm} reclassified to listed_cef by the recency rule, listed common shares",
+              e["cls"] == "listed_cef" and bool(e["flags"] & 1))
+    for cik, nm in (("1551047", "TIPLX"), ("1644771", "RSF")):
+        e = crow(cik)
+        check(f"census: {nm} stays interval_23c3 with the listing flag off (class listed is unknown)",
+              e["cls"] == "interval_23c3" and not (e["flags"] & 1))
+    page.evaluate("() => window.tarkSetState({view: 'census', c_cik: '65433'})")
+    page.wait_for_selector("#view [data-back]", timeout=15000)
+    check("census entity: the reclassified fund shows the rule and its dates in its evidence",
+          "N-23C3A recency rule" in page.locator("#view").inner_text())
+    page.evaluate("() => window.tarkSetState({view: 'census', c_cik: '1644771'})")
+    page.wait_for_selector("#view [data-back]", timeout=15000)
+    check("census entity: the still-active listed interval fund shows the listing signal row with its reason",
+          "Listing signal (submissions)" in page.locator("#view").inner_text()
+          and page.locator("#view [title*='which share class is listed']").count() >= 1)
+    page.evaluate("() => window.tarkSetState({view: 'census', c_cik: ''})")
     # C2: name hints are badged and never filter by default
     unfiltered = page.evaluate("""() => {
       window.tarkSetState({view: 'census', c_cik: '', c_class: '', c_hint: ''});
