@@ -37,6 +37,7 @@ STEPS = [
     ("facts-engine", "build_facts.py"),
     ("analytics", "run_analytics.py"),      # cclfx de-smoothing diagnostic
     ("supplement", "run_supplement.py"),      # fee_percentile reads the facts
+    ("citations", "resolve_citations.py"),   # offline accession resolution
     ("computed-cells", "write_computed_cells.py"),
     ("memos", "tark_memo.py"),
 ]

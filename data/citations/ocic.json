@@ -1,0 +1,519 @@
+{
+  "product": "ocic",
+  "what": "filing references in the evidence CSV resolved against data/manifest.csv, offline. exact: form and filed date (or written accession) match one held filing. range: every held filing of that form between the two written dates. set: every held filing of that form when the citation names them as a plural with no date. form_only: no date written, one such filing held. accession_in_text: the citation carries its own accession, not a held filing, URL is the EDGAR folder. ambiguous and unresolved: stated reason, no accession invented",
+  "cells": {
+    "1.1": [
+      {
+        "text": "10-K FY2025 (FYE 2025-12-31), filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "1.2": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "1.3": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "1.4": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "1.5": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "1.6": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "1.7": [
+      {
+        "text": "10-K FY2025 financial highlights",
+        "form": "10-K",
+        "match": "form_only",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm",
+        "reason": "no date written, the only 10-K filing held for this product"
+      }
+    ],
+    "1.9": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "1.11": [
+      {
+        "text": "N-2 registration statement, filed 2025-04-15, CIK 1812554 (rename",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2025-04-15",
+        "accession": "0001628280-25-017887",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000162828025017887/ck0001812554-20250415.htm",
+        "local_path": "data/raw/ocic/N-2_2025-04-15.htm"
+      },
+      {
+        "text": "10-K FY2025, filed 2026-03-03 (formation, ops, AUM",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "2.1": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "2.2": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "2.3": [
+      {
+        "text": "N-2 registration statement, filed 2025-04-15, CIK 1812554",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2025-04-15",
+        "accession": "0001628280-25-017887",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000162828025017887/ck0001812554-20250415.htm",
+        "local_path": "data/raw/ocic/N-2_2025-04-15.htm"
+      }
+    ],
+    "2.4": [
+      {
+        "text": "N-2 registration statement, filed 2025-04-15, CIK 1812554",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2025-04-15",
+        "accession": "0001628280-25-017887",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000162828025017887/ck0001812554-20250415.htm",
+        "local_path": "data/raw/ocic/N-2_2025-04-15.htm"
+      }
+    ],
+    "2.5": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "2.6": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554 (Note 3",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      },
+      {
+        "text": "N-2 filed 2025-04-15 (fee table",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2025-04-15",
+        "accession": "0001628280-25-017887",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000162828025017887/ck0001812554-20250415.htm",
+        "local_path": "data/raw/ocic/N-2_2025-04-15.htm"
+      }
+    ],
+    "2.7": [
+      {
+        "text": "N-2 registration statement, filed 2025-04-15, CIK 1812554",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2025-04-15",
+        "accession": "0001628280-25-017887",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000162828025017887/ck0001812554-20250415.htm",
+        "local_path": "data/raw/ocic/N-2_2025-04-15.htm"
+      }
+    ],
+    "2.8": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "2.10": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "3.1": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "3.2": [
+      {
+        "text": "SC TO-I, filed 2026-05-26, CIK 1812554 (with",
+        "form": "SC TO-I",
+        "match": "exact",
+        "filing_date": "2026-05-26",
+        "accession": "0001628280-26-038223",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000162828026038223/blueowlcreditincomecorp-sc.htm",
+        "local_path": "data/raw/ocic/SCTO-I_2026-05-26.htm"
+      },
+      {
+        "text": "10-K FY2025 program terms",
+        "form": "10-K",
+        "match": "form_only",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm",
+        "reason": "no date written, the only 10-K filing held for this product"
+      }
+    ],
+    "3.3": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554 (Note 9 repurchase table",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      },
+      {
+        "text": "SC TO-I filed 2026-05-26",
+        "form": "SC TO-I",
+        "match": "exact",
+        "filing_date": "2026-05-26",
+        "accession": "0001628280-26-038223",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000162828026038223/blueowlcreditincomecorp-sc.htm",
+        "local_path": "data/raw/ocic/SCTO-I_2026-05-26.htm"
+      }
+    ],
+    "3.4": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "3.5": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "3.6": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "4.1": [
+      {
+        "text": "N-2 registration statement, filed 2025-04-15, CIK 1812554 (with",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2025-04-15",
+        "accession": "0001628280-25-017887",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000162828025017887/ck0001812554-20250415.htm",
+        "local_path": "data/raw/ocic/N-2_2025-04-15.htm"
+      },
+      {
+        "text": "10-K Note 2",
+        "form": "10-K",
+        "match": "form_only",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm",
+        "reason": "no date written, the only 10-K filing held for this product"
+      }
+    ],
+    "4.2": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "4.3": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "4.4": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "4.5": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "4.6": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "4.7": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "4.8": [
+      {
+        "text": "10-K FY2025 Note 6 Fair Value",
+        "form": "10-K",
+        "match": "form_only",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm",
+        "reason": "no date written, the only 10-K filing held for this product"
+      }
+    ],
+    "4.9": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "5.1": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "6.1": [
+      {
+        "text": "SC TO-I, filed 2026-05-26, CIK 1812554 (with",
+        "form": "SC TO-I",
+        "match": "exact",
+        "filing_date": "2026-05-26",
+        "accession": "0001628280-26-038223",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000162828026038223/blueowlcreditincomecorp-sc.htm",
+        "local_path": "data/raw/ocic/SCTO-I_2026-05-26.htm"
+      },
+      {
+        "text": "10-K FY2025 Item 1",
+        "form": "10-K",
+        "match": "form_only",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm",
+        "reason": "no date written, the only 10-K filing held for this product"
+      }
+    ],
+    "6.2": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "6.3": [
+      {
+        "text": "10-K FY2025, filed 2026-03-03, CIK 1812554",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm"
+      }
+    ],
+    "6.4": [
+      {
+        "text": "N-2 registration statement, filed 2025-04-15, CIK 1812554 (tax reporting",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2025-04-15",
+        "accession": "0001628280-25-017887",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000162828025017887/ck0001812554-20250415.htm",
+        "local_path": "data/raw/ocic/N-2_2025-04-15.htm"
+      },
+      {
+        "text": "10-K FY2025 (RIC status, tax character",
+        "form": "10-K",
+        "match": "form_only",
+        "filing_date": "2026-03-03",
+        "accession": "0001812554-26-000011",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000181255426000011/orcic-20251231.htm",
+        "local_path": "data/raw/ocic/10-K_2026-03-03_orcic-20251231.htm",
+        "reason": "no date written, the only 10-K filing held for this product"
+      }
+    ],
+    "6.5": [
+      {
+        "text": "N-2 registration statement, filed 2025-04-15, CIK 1812554",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2025-04-15",
+        "accession": "0001628280-25-017887",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000162828025017887/ck0001812554-20250415.htm",
+        "local_path": "data/raw/ocic/N-2_2025-04-15.htm"
+      }
+    ],
+    "6.7": [
+      {
+        "text": "N-2 registration statement, filed 2025-04-15, CIK 1812554",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2025-04-15",
+        "accession": "0001628280-25-017887",
+        "url": "https://www.sec.gov/Archives/edgar/data/1812554/000162828025017887/ck0001812554-20250415.htm",
+        "local_path": "data/raw/ocic/N-2_2025-04-15.htm"
+      }
+    ]
+  },
+  "counts": {
+    "exact": 41,
+    "form_only": 6
+  }
+}

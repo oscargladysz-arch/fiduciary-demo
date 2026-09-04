@@ -1,0 +1,660 @@
+{
+  "product": "arkvx",
+  "what": "filing references in the evidence CSV resolved against data/manifest.csv, offline. exact: form and filed date (or written accession) match one held filing. range: every held filing of that form between the two written dates. set: every held filing of that form when the citation names them as a plural with no date. form_only: no date written, one such filing held. accession_in_text: the citation carries its own accession, not a held filing, URL is the EDGAR folder. ambiguous and unresolved: stated reason, no accession invented",
+  "cells": {
+    "1.1": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "1.2": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "1.3": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "1.4": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      },
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      }
+    ],
+    "1.5": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "1.10": [
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      }
+    ],
+    "1.11": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      },
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      }
+    ],
+    "2.1": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08), Note 3, CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "2.2": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08), Note 3",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "2.3": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      },
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      }
+    ],
+    "2.4": [
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      }
+    ],
+    "2.5": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "2.6": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08), Note 3",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      },
+      {
+        "text": "486BPOS (filed 2025-10-27",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      },
+      {
+        "text": "424B3 supplement (filed 2026-01-23), CIK 1905088",
+        "form": "424B3",
+        "match": "exact",
+        "filing_date": "2026-01-23",
+        "accession": "0001213900-26-007261",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390026007261/ea0273949-01_424b3.htm",
+        "local_path": "data/raw/arkvx/424B3_2026-01-23_ea0273949-01_424b3.htm"
+      }
+    ],
+    "2.7": [
+      {
+        "text": "424B3 supplement (filed 2026-01-23",
+        "form": "424B3",
+        "match": "exact",
+        "filing_date": "2026-01-23",
+        "accession": "0001213900-26-007261",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390026007261/ea0273949-01_424b3.htm",
+        "local_path": "data/raw/arkvx/424B3_2026-01-23_ea0273949-01_424b3.htm"
+      },
+      {
+        "text": "full-text search of N-CSR FY2025 and",
+        "form": "N-CSR",
+        "match": "form_only",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm",
+        "reason": "no date written, the only N-CSR filing held for this product"
+      },
+      {
+        "text": "486BPOS, CIK 1905088",
+        "form": "486BPOS",
+        "match": "form_only",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm",
+        "reason": "no date written, the only 486BPOS filing held for this product"
+      }
+    ],
+    "2.8": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08), Note 1, CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "2.10": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08), Board Approval of Management Agreement (Unaudited), CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "3.1": [
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      },
+      {
+        "text": "N-CSR FY2025 Note 7, CIK 1905088",
+        "form": "N-CSR",
+        "match": "form_only",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm",
+        "reason": "no date written, the only N-CSR filing held for this product"
+      }
+    ],
+    "3.2": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08), Note 7",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      },
+      {
+        "text": "486BPOS prospectus (filed 2025-10-27), CIK 1905088",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      }
+    ],
+    "3.3": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08), Note 7 results table",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      },
+      {
+        "text": "N-23C3A notices 2024-09-06 through 2026-05-28, CIK 1905088",
+        "form": "N-23C3A",
+        "match": "range",
+        "filings": [
+          {
+            "filing_date": "2024-09-06",
+            "accession": "0001213900-24-076289",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390024076289/ea0212891-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2024-09-06_ea0212891-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2024-12-02",
+            "accession": "0001213900-24-104278",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390024104278/ea0223085-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2024-12-02_ea0223085-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2025-03-07",
+            "accession": "0001213900-25-021670",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025021670/ea0233183-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2025-03-07_ea0233183-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2025-06-02",
+            "accession": "0001213900-25-049697",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025049697/ea0243221-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2025-06-02_ea0243221-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2025-09-02",
+            "accession": "0001213900-25-082968",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025082968/ea0254097-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2025-09-02_ea0254097-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2025-12-02",
+            "accession": "0001213900-25-116961",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025116961/ea0266731-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2025-12-02_ea0266731-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2026-03-02",
+            "accession": "0001213900-26-022007",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390026022007/ea0279013-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2026-03-02_ea0279013-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2026-05-28",
+            "accession": "0001213900-26-061764",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390026061764/ea0291278-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2026-05-28_ea0291278-01_n23c3a.htm"
+          }
+        ],
+        "reason": "8 N-23C3A filings held between 2024-09-06 and 2026-05-28"
+      }
+    ],
+    "3.4": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "3.5": [
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      }
+    ],
+    "3.6": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08), Note 3 Line of Credit",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      },
+      {
+        "text": "486BPOS Summary of Terms - Leverage, CIK 1905088",
+        "form": "486BPOS",
+        "match": "form_only",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm",
+        "reason": "no date written, the only 486BPOS filing held for this product"
+      }
+    ],
+    "3.7": [
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      }
+    ],
+    "4.1": [
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      },
+      {
+        "text": "N-CSR FY2025 Note 2, CIK 1905088",
+        "form": "N-CSR",
+        "match": "form_only",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm",
+        "reason": "no date written, the only N-CSR filing held for this product"
+      }
+    ],
+    "4.2": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "4.3": [
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      }
+    ],
+    "4.4": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "4.5": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "4.6": [
+      {
+        "text": "N-CSR FY2025 MDFP, CIK 1905088",
+        "form": "N-CSR",
+        "match": "form_only",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm",
+        "reason": "no date written, the only N-CSR filing held for this product"
+      }
+    ],
+    "4.9": [
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      }
+    ],
+    "5.1": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08, FYE 2025-07-31), CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "5.6": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08), Note 10 segment disclosure, CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "6.1": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08), Notes 1-4",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      },
+      {
+        "text": "486BPOS (filed 2025-10-27",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      },
+      {
+        "text": "424B3 (filed 2026-01-23), CIK 1905088",
+        "form": "424B3",
+        "match": "exact",
+        "filing_date": "2026-01-23",
+        "accession": "0001213900-26-007261",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390026007261/ea0273949-01_424b3.htm",
+        "local_path": "data/raw/arkvx/424B3_2026-01-23_ea0273949-01_424b3.htm"
+      }
+    ],
+    "6.2": [
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      },
+      {
+        "text": "N-CSR FY2025, CIK 1905088",
+        "form": "N-CSR",
+        "match": "form_only",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm",
+        "reason": "no date written, the only N-CSR filing held for this product"
+      }
+    ],
+    "6.3": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08), Note 4",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      },
+      {
+        "text": "486BPOS SAI Conflicts of Interest, CIK 1905088",
+        "form": "486BPOS",
+        "match": "form_only",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm",
+        "reason": "no date written, the only 486BPOS filing held for this product"
+      }
+    ],
+    "6.4": [
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      },
+      {
+        "text": "N-CSR FY2025 Note 6, CIK 1905088",
+        "form": "N-CSR",
+        "match": "form_only",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm",
+        "reason": "no date written, the only N-CSR filing held for this product"
+      }
+    ],
+    "6.5": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08), Note 3, CIK 1905088",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "6.6": [
+      {
+        "text": "N-CSR FY2025 (filed 2025-10-08), Note 3",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2025-10-08",
+        "accession": "0001213900-25-097285",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      }
+    ],
+    "6.7": [
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      }
+    ],
+    "6.8": [
+      {
+        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-27",
+        "accession": "0001213900-25-102648",
+        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+      }
+    ]
+  },
+  "counts": {
+    "exact": 47,
+    "form_only": 9,
+    "range": 1
+  }
+}

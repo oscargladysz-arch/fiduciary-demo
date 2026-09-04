@@ -1,0 +1,481 @@
+{
+  "product": "bcred",
+  "what": "filing references in the evidence CSV resolved against data/manifest.csv, offline. exact: form and filed date (or written accession) match one held filing. range: every held filing of that form between the two written dates. set: every held filing of that form when the citation names them as a plural with no date. form_only: no date written, one such filing held. accession_in_text: the citation carries its own accession, not a held filing, URL is the EDGAR folder. ambiguous and unresolved: stated reason, no accession invented",
+  "cells": {
+    "1.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001803498-26-000048",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000048/bcred-20260630.htm",
+        "local_path": "data/raw/bcred/10-Q_2026-08-12_bcred-20260630.htm"
+      }
+    ],
+    "1.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13) Note 10",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12) Note 10",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001803498-26-000048",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000048/bcred-20260630.htm",
+        "local_path": "data/raw/bcred/10-Q_2026-08-12_bcred-20260630.htm"
+      }
+    ],
+    "1.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "1.4": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "1.5": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "1.10": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "1.11": [
+      {
+        "text": "Prospectus dated 2026-05-01 (486BPOS) - Portfolio Management",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2026-05-01",
+        "accession": "0001193125-26-198102",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000119312526198102/d120436d486bpos.htm",
+        "local_path": "data/raw/bcred/486BPOS_2026-05-01_d120436d486bpos.htm"
+      },
+      {
+        "text": "Form 10-K FY2025 (escrow break, adviser history",
+        "form": "10-K",
+        "match": "form_only",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm",
+        "reason": "no date written, the only 10-K filing held for this product"
+      },
+      {
+        "text": "424B3 Supplement No. 2 dated 2026-07-24 (officer changes",
+        "form": "424B3",
+        "match": "exact",
+        "filing_date": "2026-07-24",
+        "accession": "0001193125-26-316168",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000119312526316168/d145798d424b3.htm",
+        "local_path": "data/raw/bcred/424B3_2026-07-24_d145798d424b3.htm"
+      }
+    ],
+    "2.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "2.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "2.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13) Note 10",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      },
+      {
+        "text": "Prospectus dated 2026-05-01 (486BPOS) FEES AND EXPENSES table",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2026-05-01",
+        "accession": "0001193125-26-198102",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000119312526198102/d120436d486bpos.htm",
+        "local_path": "data/raw/bcred/486BPOS_2026-05-01_d120436d486bpos.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026",
+        "form": "10-Q",
+        "match": "form_only",
+        "filing_date": "2026-08-12",
+        "accession": "0001803498-26-000048",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000048/bcred-20260630.htm",
+        "local_path": "data/raw/bcred/10-Q_2026-08-12_bcred-20260630.htm",
+        "reason": "no date written, the only 10-Q filing held for this product"
+      }
+    ],
+    "2.4": [
+      {
+        "text": "Prospectus dated 2026-05-01 (486BPOS",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2026-05-01",
+        "accession": "0001193125-26-198102",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000119312526198102/d120436d486bpos.htm",
+        "local_path": "data/raw/bcred/486BPOS_2026-05-01_d120436d486bpos.htm"
+      }
+    ],
+    "2.5": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "2.6": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "2.7": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "3.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      },
+      {
+        "text": "SC TO-I (filed 2026-08-04",
+        "form": "SC TO-I",
+        "match": "exact",
+        "filing_date": "2026-08-04",
+        "accession": "0001193125-26-331631",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000119312526331631/d58084dsctoi.htm",
+        "local_path": "data/raw/bcred/SC TO-I_2026-08-04_d58084dsctoi.htm"
+      }
+    ],
+    "3.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "3.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13) Note 9",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12) Note 9",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001803498-26-000048",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000048/bcred-20260630.htm",
+        "local_path": "data/raw/bcred/10-Q_2026-08-12_bcred-20260630.htm"
+      },
+      {
+        "text": "SC TO-I (filed 2026-08-04",
+        "form": "SC TO-I",
+        "match": "exact",
+        "filing_date": "2026-08-04",
+        "accession": "0001193125-26-331631",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000119312526331631/d58084dsctoi.htm",
+        "local_path": "data/raw/bcred/SC TO-I_2026-08-04_d58084dsctoi.htm"
+      }
+    ],
+    "3.4": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001803498-26-000048",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000048/bcred-20260630.htm",
+        "local_path": "data/raw/bcred/10-Q_2026-08-12_bcred-20260630.htm"
+      }
+    ],
+    "3.6": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13) Note 7/Note 10 and Item 1",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12) MD&A",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001803498-26-000048",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000048/bcred-20260630.htm",
+        "local_path": "data/raw/bcred/10-Q_2026-08-12_bcred-20260630.htm"
+      }
+    ],
+    "4.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "4.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "4.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "4.4": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "4.5": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "5.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13) and Prospectus dated 2026-05-01",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      },
+      {
+        "text": "486BPOS) - document-wide searches for benchmark/index names run on stripped text 2026-08-14",
+        "form": "486BPOS",
+        "match": "form_only",
+        "filing_date": "2026-05-01",
+        "accession": "0001193125-26-198102",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000119312526198102/d120436d486bpos.htm",
+        "local_path": "data/raw/bcred/486BPOS_2026-05-01_d120436d486bpos.htm",
+        "reason": "no date written, the only 486BPOS filing held for this product"
+      }
+    ],
+    "6.1": [
+      {
+        "text": "Prospectus dated 2026-05-01 (486BPOS) - Prospectus Summary",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2026-05-01",
+        "accession": "0001193125-26-198102",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000119312526198102/d120436d486bpos.htm",
+        "local_path": "data/raw/bcred/486BPOS_2026-05-01_d120436d486bpos.htm"
+      },
+      {
+        "text": "Form 10-K FY2025 - Item 1/Note 1",
+        "form": "10-K",
+        "match": "form_only",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm",
+        "reason": "no date written, the only 10-K filing held for this product"
+      }
+    ],
+    "6.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "6.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-13",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm"
+      }
+    ],
+    "6.4": [
+      {
+        "text": "Prospectus dated 2026-05-01 (486BPOS",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2026-05-01",
+        "accession": "0001193125-26-198102",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000119312526198102/d120436d486bpos.htm",
+        "local_path": "data/raw/bcred/486BPOS_2026-05-01_d120436d486bpos.htm"
+      }
+    ],
+    "6.5": [
+      {
+        "text": "Prospectus dated 2026-05-01 (486BPOS) - Custodian section",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2026-05-01",
+        "accession": "0001193125-26-198102",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000119312526198102/d120436d486bpos.htm",
+        "local_path": "data/raw/bcred/486BPOS_2026-05-01_d120436d486bpos.htm"
+      },
+      {
+        "text": "Form 10-K FY2025 - Note 3 Administration Agreements, auditor signature, exhibit index",
+        "form": "10-K",
+        "match": "form_only",
+        "filing_date": "2026-03-13",
+        "accession": "0001803498-26-000014",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000014/bcred-20251231.htm",
+        "local_path": "data/raw/bcred/10-K_2026-03-13_bcred-20251231.htm",
+        "reason": "no date written, the only 10-K filing held for this product"
+      },
+      {
+        "text": "Form 10-Q (Citi agent",
+        "form": "10-Q",
+        "match": "form_only",
+        "filing_date": "2026-08-12",
+        "accession": "0001803498-26-000048",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803498/000180349826000048/bcred-20260630.htm",
+        "local_path": "data/raw/bcred/10-Q_2026-08-12_bcred-20260630.htm",
+        "reason": "no date written, the only 10-Q filing held for this product"
+      }
+    ]
+  },
+  "counts": {
+    "exact": 39,
+    "form_only": 6
+  }
+}

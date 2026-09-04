@@ -28,6 +28,7 @@ from tark_data import DATA, record_as_of  # noqa: E402
 ARTIFACTS = [
     "analytics/supplement.json",
     "analytics/metrics.json",
+    "citations/*.json",
     "liquidity/*.json",
     "facts/*.json",
     "cohorts/*.json",

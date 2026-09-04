@@ -1,0 +1,465 @@
+{
+  "product": "jll_ipt",
+  "what": "filing references in the evidence CSV resolved against data/manifest.csv, offline. exact: form and filed date (or written accession) match one held filing. range: every held filing of that form between the two written dates. set: every held filing of that form when the citation names them as a plural with no date. form_only: no date written, one such filing held. accession_in_text: the citation carries its own accession, not a held filing, URL is the EDGAR folder. ambiguous and unresolved: stated reason, no accession invented",
+  "cells": {
+    "1.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-11",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-11",
+        "accession": "0001314152-26-000149",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000149/jllipt-20260630.htm",
+        "local_path": "data/raw/jll_ipt/10-Q_2026-08-11_jllipt-20260630.htm"
+      }
+    ],
+    "1.2": [
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-11",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-11",
+        "accession": "0001314152-26-000149",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000149/jllipt-20260630.htm",
+        "local_path": "data/raw/jll_ipt/10-Q_2026-08-11_jllipt-20260630.htm"
+      },
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "1.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "1.4": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-11",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-11",
+        "accession": "0001314152-26-000149",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000149/jllipt-20260630.htm",
+        "local_path": "data/raw/jll_ipt/10-Q_2026-08-11_jllipt-20260630.htm"
+      }
+    ],
+    "1.5": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-11",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-11",
+        "accession": "0001314152-26-000149",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000149/jllipt-20260630.htm",
+        "local_path": "data/raw/jll_ipt/10-Q_2026-08-11_jllipt-20260630.htm"
+      }
+    ],
+    "1.10": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "1.11": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      },
+      {
+        "text": "424B3 Supplement No. 7 (filed 2026-08-12",
+        "form": "424B3",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001314152-26-000153",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000153/supp7august122026.htm",
+        "local_path": "data/raw/jll_ipt/424B3_2026-08-12_supp7august122026.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-11",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-11",
+        "accession": "0001314152-26-000149",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000149/jllipt-20260630.htm",
+        "local_path": "data/raw/jll_ipt/10-Q_2026-08-11_jllipt-20260630.htm"
+      }
+    ],
+    "2.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-11",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-11",
+        "accession": "0001314152-26-000149",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000149/jllipt-20260630.htm",
+        "local_path": "data/raw/jll_ipt/10-Q_2026-08-11_jllipt-20260630.htm"
+      }
+    ],
+    "2.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-11",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-11",
+        "accession": "0001314152-26-000149",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000149/jllipt-20260630.htm",
+        "local_path": "data/raw/jll_ipt/10-Q_2026-08-11_jllipt-20260630.htm"
+      }
+    ],
+    "2.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-11) - mechanical absence search 2026-08-15",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-11",
+        "accession": "0001314152-26-000149",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000149/jllipt-20260630.htm",
+        "local_path": "data/raw/jll_ipt/10-Q_2026-08-11_jllipt-20260630.htm"
+      }
+    ],
+    "2.4": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26) - mechanical absence search 2026-08-15",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "2.5": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "2.6": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "2.7": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "3.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-11",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-11",
+        "accession": "0001314152-26-000149",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000149/jllipt-20260630.htm",
+        "local_path": "data/raw/jll_ipt/10-Q_2026-08-11_jllipt-20260630.htm"
+      }
+    ],
+    "3.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "3.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-11",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-11",
+        "accession": "0001314152-26-000149",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000149/jllipt-20260630.htm",
+        "local_path": "data/raw/jll_ipt/10-Q_2026-08-11_jllipt-20260630.htm"
+      }
+    ],
+    "3.4": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-11",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-11",
+        "accession": "0001314152-26-000149",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000149/jllipt-20260630.htm",
+        "local_path": "data/raw/jll_ipt/10-Q_2026-08-11_jllipt-20260630.htm"
+      }
+    ],
+    "3.6": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-11",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-11",
+        "accession": "0001314152-26-000149",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000149/jllipt-20260630.htm",
+        "local_path": "data/raw/jll_ipt/10-Q_2026-08-11_jllipt-20260630.htm"
+      }
+    ],
+    "4.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      },
+      {
+        "text": "424B3 Supplement No. 7 (filed 2026-08-12",
+        "form": "424B3",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001314152-26-000153",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000153/supp7august122026.htm",
+        "local_path": "data/raw/jll_ipt/424B3_2026-08-12_supp7august122026.htm"
+      }
+    ],
+    "4.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "4.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "4.4": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "4.5": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "5.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "6.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "6.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "6.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "6.4": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26) - mechanical absence search 2026-08-15",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ],
+    "6.5": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-26",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-26",
+        "accession": "0001314152-26-000030",
+        "url": "https://www.sec.gov/Archives/edgar/data/1314152/000131415226000030/jllipt-20251231.htm",
+        "local_path": "data/raw/jll_ipt/10-K_2026-03-26_jllipt-20251231.htm"
+      }
+    ]
+  },
+  "counts": {
+    "exact": 44
+  }
+}

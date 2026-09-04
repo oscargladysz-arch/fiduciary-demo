@@ -80,6 +80,43 @@ check("every non-raw data/ path cited by a cell exists", not dangling, "; ".join
 check("data/analytics/taxonomy.json no longer exists",
       not (DATA / "analytics" / "taxonomy.json").exists())
 
+# offline accession resolution (P1-D prep): a resolved reference points at a
+# manifest row of the same product and form, with the manifest's own URL
+import csv as _csv  # noqa: E402
+import json as _json  # noqa: E402
+_man = list(_csv.DictReader(open(BASE / "data" / "manifest.csv", newline="")))
+_by_acc = {(r["product"], r["accession"]): r for r in _man}
+_bad, _n_res, _n_all = [], 0, 0
+for _p in sorted((BASE / "data" / "citations").glob("*.json")):
+    if _p.name == "summary.json":
+        continue
+    _doc = _json.loads(_p.read_text())
+    for _cid, _refs in _doc["cells"].items():
+        for _r in _refs:
+            _n_all += 1
+            if _r["match"] in ("exact", "form_only"):
+                _n_res += 1
+                _m = _by_acc.get((_doc["product"], _r["accession"]))
+                if not _m or _m["form"] != _r["form"] or _m["url"] != _r["url"]:
+                    _bad.append(f"{_doc['product']} {_cid}: {_r.get('accession')}")
+            elif _r["match"] in ("range", "set"):
+                _n_res += 1
+                for _f in _r["filings"]:
+                    _m = _by_acc.get((_doc["product"], _f["accession"]))
+                    if not _m or _m["form"] != _r["form"] or _m["url"] != _f["url"]:
+                        _bad.append(f"{_doc['product']} {_cid}: range {_f['accession']}")
+            elif _r["match"] == "accession_in_text":
+                _n_res += 1
+                if _r["accession"] not in _r["text"] or _r["accession"].replace("-", "") not in _r["url"]:
+                    _bad.append(f"{_doc['product']} {_cid}: accession_in_text {_r['accession']}")
+            elif not _r.get("reason"):
+                _bad.append(f"{_doc['product']} {_cid}: {_r['match']} without a reason")
+_summary = _json.loads((BASE / "data" / "citations" / "summary.json").read_text())
+check("citations: every resolved reference is the same product's manifest row with its URL, "
+      f"every other one carries a reason ({_n_res} of {_n_all} resolved)", not _bad, "; ".join(_bad[:5]))
+check("citations: the summary counts equal the per-product files",
+      _summary["references"] == _n_all and sum(_summary["counts"].values()) == _n_all)
+
 # data/roster_decisions.md claims to be validator-enforced: every product key
 # in the record must be named in it
 from tark_data import product_keys as _product_keys  # noqa: E402

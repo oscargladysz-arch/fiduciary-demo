@@ -769,3 +769,24 @@ sleeve sentence to the structural reasons. Until they are typed, every
 non-exchange match says the figure is not in this build and that demand
 uses the illustrative sliders only. Oscar fills the values from the bulk
 file on the laptop, citing the row, and the gates will pick them up.
+
+### 6.12 P1-D preparation: accessions resolved offline, never invented
+`src/resolve_citations.py` reads every evidence row's `source_doc`, finds
+the filing references in it (a form token and, usually, a filed date) and
+resolves each against `data/manifest.csv` for the same product: exact
+when form and filed date (or a written accession) match one held filing,
+range or set when the citation names a run of filings of one form (every
+held filing between the two dates, or every held filing of that form),
+form-only when no date is written and exactly one filing of that form is
+held (flagged as such), accession-in-text when the citation carries an
+accession the manifest does not hold (the URL is the EDGAR archive
+folder for that accession), otherwise ambiguous or unresolved with the
+reason written out. A date after a workflow verb ("searched", "run on")
+is a workflow date and never a filing date. It writes
+`data/citations/<product>.json` and a summary, runs inside `produce.py`,
+and the invariants gate checks that every resolved accession is that
+product's manifest row with the manifest's own EDGAR URL. The memo work
+(P1-22) prints these accessions and URLs, and says "accession not on
+record" where the resolver could not. The online half, EDGAR submissions
+JSON for filings the manifest does not hold, runs where sec.gov is
+reachable (P2-10), together with the laptop-path purge.
