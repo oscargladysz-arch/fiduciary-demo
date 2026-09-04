@@ -3,6 +3,7 @@ Unit tests for the M3 benchmark engine.
 Run: python src/test_benchmark.py   (exit 0 = all pass)
 """
 import sys
+from pathlib import Path
 
 from tark_benchmark import (MIN_PRIMARY_SCORE, PRODUCT_PROFILES, STRATEGY_MENU,
                             run_selection, score_candidate)
@@ -84,6 +85,20 @@ for key in PRODUCT_PROFILES:
                        "below primary threshold" in r["rejection"])
 
 check_true("threshold constant sane", 0 < MIN_PRIMARY_SCORE <= 12)
+
+# ---- v1 snapshot is frozen history: every byte pinned by its manifest
+import hashlib  # noqa: E402
+SNAP = Path(__file__).resolve().parents[1] / "data" / "benchmarks" / "v1_snapshot"
+manifest = dict(reversed(line.split()) for line in
+                (SNAP / "MANIFEST.sha256").read_text().splitlines() if line.strip())
+snap_files = sorted(f.name for f in SNAP.glob("*.json"))
+# 15 selections (jll_ipt had no computable v1 selection, see P1-13) plus
+# profiles_input.json
+check_true("v1 snapshot: manifest lists every json file and nothing else",
+           sorted(manifest) == snap_files and len(snap_files) == 16)
+check_true("v1 snapshot: every file matches its recorded sha256",
+           all(hashlib.sha256((SNAP / n).read_bytes()).hexdigest() == h
+               for n, h in manifest.items()))
 
 print(f"\n{len(FAILS)} failure(s)." if FAILS else "\nAll benchmark engine tests pass.")
 sys.exit(1 if FAILS else 0)

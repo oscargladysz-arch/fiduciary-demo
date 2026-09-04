@@ -1,0 +1,109 @@
+{
+ "kkr_kpec": {
+  "profile": {
+   "aatr": 0.1294,
+   "aatr_years": 2.334,
+   "fy_window": [
+    "2023-09-01",
+    "2025-12-31"
+   ],
+   "self_declared": null
+  },
+  "provenance": "Class I Transactional NAV Total Return, inception-to-date annualized 12.94% at 12/31/2025, class inception 2023-09-01 - cell 1.2 (10-K 2026-03-26 MD&A table); 5.1: no self-declared benchmark (documented absence)"
+ },
+ "breit": {
+  "profile": {
+   "fy_returns": [
+    -0.005,
+    0.02,
+    0.081
+   ],
+   "fy_window": [
+    "2022-12-31",
+    "2025-12-31"
+   ],
+   "self_declared": null
+  },
+  "provenance": "Class I Year-to-Date Total Return without upfront selling commissions: 2023 -0.5% (10-K FY2023 filed 2024-03-28, '2023 Highlights'), 2024 2.0% (10-K FY2024 filed 2025-03-07, '2024 Highlights'), 2025 8.1% (10-K FY2025 filed 2026-02-27, '2025 Highlights' - cell 1.2); 5.1: no self-declared benchmark (documented absence)"
+ },
+ "bcred": {
+  "profile": {
+   "fy_returns": [
+    0.126,
+    0.036,
+    0.144,
+    0.11,
+    0.08
+   ],
+   "fy_window": [
+    "2021-01-07",
+    "2025-12-31"
+   ]
+  },
+  "provenance": "Class I 'Total return based on NAV': FY2021 12.6% (from escrow break 2021-01-07), FY2022 3.6%, FY2023 14.4%, FY2024 11.0%, FY2025 8.0% - cell 1.2 (10-K FY2025 Note 10, filed 2026-03-13); 5.1: no self-declared benchmark (documented absence, zero index references)"
+ },
+ "ares_pmf": {
+  "profile": {
+   "fy_returns": [
+    0.09269999999999999,
+    0.171,
+    0.19949999999999998,
+    0.0958
+   ],
+   "fy_window": [
+    "2022-04-01",
+    "2026-03-31"
+   ]
+  },
+  "provenance": "Class I FY total returns from N-CSR FY2026 highlights (cell 1.2); commencement 2022-04-01"
+ },
+ "amg_pantheon": {
+  "profile": {
+   "fy_returns": [
+    0.1427,
+    0.1426,
+    0.1011,
+    0.0415,
+    0.35719999999999996,
+    0.18359999999999999,
+    0.0645,
+    0.1208,
+    0.1007,
+    0.091
+   ],
+   "fy_window": [
+    "2016-03-31",
+    "2026-03-31"
+   ]
+  },
+  "provenance": "FY total returns x10 from N-CSR FY2026 highlights (cell 1.2); Fund inception 2014-09-30"
+ },
+ "sreit": {
+  "profile": {
+   "fy_returns": [
+    -0.024
+   ],
+   "fy_window": [
+    "2024-12-31",
+    "2025-12-31"
+   ]
+  },
+  "provenance": "Class I annual total return(s) as printed (cell 1.2), 1 year(s) - SHORT window, disclosed"
+ },
+ "ocic": {
+  "profile": {
+   "fy_returns": [
+    0.043,
+    0.052,
+    0.135,
+    0.115,
+    0.079
+   ],
+   "fy_window": [
+    "2021-01-01",
+    "2025-12-31"
+   ]
+  },
+  "provenance": "Class I net total returns (change in NAV with distributions reinvested): FY2021 4.3%, FY2022 5.2%, FY2023 13.5%, FY2024 11.5%, FY2025 7.9% - cell 1.2 (10-K FY2025 financial highlights, filed 2026-03-03; operations commenced 2020-11-10, first full calendar year 2021); 5.1: no self-declared benchmark index appears in the 10-K, N-2, or SC TO-I (documented absence)"
+ }
+}
