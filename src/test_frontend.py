@@ -304,6 +304,54 @@ with sync_playwright() as pw:
     t = view_text("evaluation", product="breit")
     check("evaluation breit: 2%/5% repurchase caps on screen",
           "2% of aggregate NAV" in t or "2% of our aggregate NAV" in t)
+    # ---------- P0-3: Fee Matrix is the typed facts layer ----------
+    fees_bad = page.evaluate(
+        """() => {
+             const T = window.TARK, bad = [];
+             window.tarkSetState({view: 'fees', plan: T.plan_order[0], product: 'hl_paf'});
+             const items = JSON.parse(document.querySelector('#feechart').dataset.items);
+             const rects = document.querySelectorAll('#feechart rect').length;
+             for (const it of items) {
+               const f = T.facts[it.product].expense_ratio_pct;
+               const want = f && f.value !== null ? Math.round(f.value * 100) / 100 : null;
+               const got = it.value === null ? null : Math.round(it.value * 100) / 100;
+               if (want !== got) bad.push(`bar ${it.product}: ${got} vs fact ${want}`);
+             }
+             if (rects !== items.filter((i) => i.value !== null).length) bad.push('rect count');
+             const FIELD = {'2.1': 'mgmt_fee_pct', '2.2': 'incentive_fee', '2.3': 'expense_ratio_pct',
+                            '2.4': 'affe', '2.7': 'early_repurchase', '6.4': 'tax_form'};
+             for (const el of document.querySelectorAll('[data-fee-chip]')) {
+               const cid = el.dataset.feeChip, k = el.dataset.product, txt = el.textContent;
+               const cell = T.products[k].cells[cid];
+               const fact = FIELD[cid] ? T.facts[k][FIELD[cid]] : null;
+               const isNA = String(cell.status || '').startsWith('n/a');
+               const nullFact = !fact || fact.value === null;
+               if ((isNA || nullFact) && txt.includes('%')) bad.push(`chip ${k} ${cid} shows a percentage: ${txt}`);
+               if (isNA && txt !== 'n/a') bad.push(`chip ${k} ${cid} n/a cell reads ${txt}`);
+               if (fact && fact.value && fact.value.present === false && txt !== 'none') bad.push(`chip ${k} ${cid} absence reads ${txt}`);
+               if (cid === '2.3' && fact && fact.value !== null && !txt.startsWith(fact.value.toFixed(2) + '%')) bad.push(`chip ${k} 2.3 ${txt}`);
+             }
+             return bad;
+           }""")
+    check("fee matrix: every bar equals facts.expense_ratio_pct to 2 dp or is "
+          "absent, and no chip shows a percentage for a null fact or an n/a cell",
+          not fees_bad, "; ".join(fees_bad[:4]))
+    # cell headlines: typed fact first, never a regex figure
+    hl_bad = page.evaluate(
+        """() => {
+             const T = window.TARK, bad = [];
+             for (const [k, cells] of Object.entries(T.cell_display)) {
+               const cited = {};
+               for (const [f, x] of Object.entries(T.facts[k])) if (x.value !== null) (cited[x.source_cell] ||= []).push(f);
+               for (const [cid, d] of Object.entries(cells)) {
+                 if (cited[cid] && !d.typed && !String(T.products[k].cells[cid].status).startsWith('n/a')) bad.push(`${k} ${cid} has a typed fact but a prose headline`);
+               }
+             }
+             return bad;
+           }""")
+    check("cell headlines are typed-fact-first wherever a fact cites the cell",
+          not hl_bad, "; ".join(hl_bad[:4]))
+
     t = view_text("fees")
     check("fee matrix: leverage-inclusive base flagged",
           "MANAGED ASSETS" in t and "GROSS assets" in t)

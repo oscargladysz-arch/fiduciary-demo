@@ -95,6 +95,12 @@
       "note": "commenced principal operations",
       "status": "extracted-unverified"
     },
+    "affe": {
+      "value": null,
+      "source_cell": "2.4",
+      "reason": "cell 2.4 is partial: no 1940-Act fee table, absence inferred from a full-text search",
+      "status": "partial"
+    },
     "track_record_years": {
       "value": 2.4,
       "source_cell": "1.11",

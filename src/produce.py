@@ -6,13 +6,13 @@ run is reproducible and src/test_artifacts_fresh.py can diff a fresh run
 against the committed files.
 
 Order (each step reads what the earlier ones wrote):
-  1 supplement        run_supplement.py     data/analytics/supplement.json
-  2 liquidity         tark_liquidity.py     data/liquidity/*.json
-  3 facts             build_facts.py        data/facts/*.json (cell-derived)
-  4 cohorts           tark_cohort.py        data/cohorts/*.json
-  5 benchmark         run_benchmark.py      data/benchmarks/*_selection.json
-  6 facts-engine      build_facts.py        engine fields from step 5
-  7 computed-cells    write_computed_cells.py  (skipped until it exists)
+  1 liquidity         tark_liquidity.py     data/liquidity/*.json
+  2 facts             build_facts.py        data/facts/*.json (cell-derived)
+  3 cohorts           tark_cohort.py        data/cohorts/*.json
+  4 benchmark         run_benchmark.py      data/benchmarks/*_selection.json
+  5 facts-engine      build_facts.py        engine fields from step 4
+  6 supplement        run_supplement.py     data/analytics/supplement.json
+  7 computed-cells    write_computed_cells.py
   8 memos             tark_memo.py          data/memos/*.docx
 
 Run:  python src/produce.py [--data-dir DIR] [--as-of YYYY-MM-DD]
@@ -30,12 +30,12 @@ from pathlib import Path
 SRC = Path(__file__).resolve().parent
 
 STEPS = [
-    ("supplement", "run_supplement.py"),
     ("liquidity", "tark_liquidity.py"),
     ("facts", "build_facts.py"),
     ("cohorts", "tark_cohort.py"),
     ("benchmark", "run_benchmark.py"),
     ("facts-engine", "build_facts.py"),
+    ("supplement", "run_supplement.py"),      # fee_percentile reads the facts
     ("computed-cells", "write_computed_cells.py"),
     ("memos", "tark_memo.py"),
 ]

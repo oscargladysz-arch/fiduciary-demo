@@ -560,6 +560,41 @@ MAPPING = {
     },
 }
 
+# Acquired fund fees and expenses, typed from cell 2.4: the printed line where
+# a 1940-Act fee table exists, an explicit absence where the filing says the
+# line does not exist, null with the cell's reason where the cell itself is
+# n/a or partial. Feeds the Fee Matrix chip, which used to be a regex over
+# the cell prose and read the opposite of the finding.
+AFFE = {
+    "amg_pantheon": F({"present": True, "rate_pct": 0.81}, "2.4"),
+    "ares_pmf": F({"present": True, "rate_pct": 1.00}, "2.4"),
+    "arkvx": F({"present": True, "rate_pct": 0.01}, "2.4"),
+    "bcred": F({"present": True, "rate_pct": 0.02}, "2.4"),
+    "breit": F({"present": False}, "2.4",
+               note="10-K REIT, no 1940-Act fee table, so no AFFE line exists"),
+    "cion_ares": null("cell 2.4 is n/a (documented-unavailable): no AFFE line in "
+                      "any class fee table", "2.4"),
+    "cliffwater_cclfx": F({"present": True, "rate_pct": 0.25}, "2.4"),
+    "dxyz": F({"present": True, "rate_pct": 0.03}, "2.4"),
+    "hl_paf": F({"present": True, "rate_pct": 0.49}, "2.4",
+                note="2021 486BPOS fee table"),
+    "jll_ipt": F({"present": False}, "2.4",
+                 note="10-K REIT, no 1940-Act fee table, so no AFFE line exists"),
+    "kkr_kpec": null("cell 2.4 is partial: no 1940-Act fee table, absence "
+                     "inferred from a full-text search", "2.4"),
+    "ocic": F({"present": True, "rate_pct": 0.0}, "2.4",
+              note="line printed as 0% (shown as a dash) for all classes"),
+    "pflex": F({"present": False}, "2.4",
+               note="no AFFE line in the Summary of Fund Expenses"),
+    "sreit": F({"present": False}, "2.4",
+               note="10-K REIT, no 1940-Act fee table, so no AFFE line exists"),
+    "ssss": F({"present": True, "rate_pct": 0.06}, "2.4"),
+    "stepstone_spm": F({"present": True, "rate_pct": 0.59}, "2.4"),
+}
+for _k, _v in AFFE.items():
+    MAPPING[_k]["affe"] = _v
+
+
 # per-product as-of dates for track-record math (latest fiscal period end in
 # the record; used only for the computed track_record_years field)
 AS_OF = {"hl_paf": "2026-03-31", "cliffwater_cclfx": "2026-03-31",
@@ -673,7 +708,10 @@ def main() -> None:
         facts = {}
         for field, f in MAPPING[key].items():
             cell = cells[f["source_cell"]]
-            facts[field] = {**f, "status": cell.get("status", "pending")}
+            # the cell's status is the default; an explicit status on the
+            # mapping (a derived convention such as 252 trading days) wins,
+            # so a computed figure never masquerades as extracted evidence
+            facts[field] = {**f, "status": f.get("status") or cell.get("status", "pending")}
         # computed: track record from inception to the record's as-of date
         inc = facts["inception"]["value"]
         if inc:

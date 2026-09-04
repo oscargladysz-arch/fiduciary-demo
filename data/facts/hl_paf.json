@@ -94,6 +94,15 @@
       "note": "commenced operations",
       "status": "extracted-unverified"
     },
+    "affe": {
+      "value": {
+        "present": true,
+        "rate_pct": 0.49
+      },
+      "source_cell": "2.4",
+      "note": "2021 486BPOS fee table",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 5.2,
       "source_cell": "1.11",

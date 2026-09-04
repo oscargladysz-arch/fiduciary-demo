@@ -93,6 +93,14 @@
       "note": "commencement of operations",
       "status": "extracted-unverified"
     },
+    "affe": {
+      "value": {
+        "present": true,
+        "rate_pct": 0.01
+      },
+      "source_cell": "2.4",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 2.9,
       "source_cell": "1.11",

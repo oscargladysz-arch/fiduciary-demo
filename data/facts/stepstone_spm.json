@@ -89,6 +89,14 @@
       "note": "Class I/D/S inception",
       "status": "extracted-unverified"
     },
+    "affe": {
+      "value": {
+        "present": true,
+        "rate_pct": 0.59
+      },
+      "source_cell": "2.4",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 5.5,
       "source_cell": "1.2",

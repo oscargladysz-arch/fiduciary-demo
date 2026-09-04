@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import csv
 import json
-import re
 from pathlib import Path
 
 from tark_analytics import max_drawdown
@@ -51,34 +50,37 @@ def dxyz_premium() -> dict:
     }
 
 
-TER_PAT = re.compile(r"(\d+\.\d+)\s*%")
-
-
 def fee_percentile() -> dict:
+    """Net expense ratio per product from the TYPED facts layer
+    (facts.expense_ratio_pct, cited to cell 2.3), never a regex over cell
+    prose. Ties share a mid-rank percentile."""
     entries = []
     for k in product_keys():
-        cell = load_product(k)["cells"]["2.3"]
-        val = str(cell.get("value") or "")
-        st = str(cell.get("status", ""))
-        m = TER_PAT.search(val)
-        if st.startswith(("extracted", "verified")) and m:
-            entries.append({"product": k, "ter_pct": float(m.group(1)),
-                            "basis_excerpt": val[:140], "cited_cell": "2.3"})
+        f = json.loads((DATA / "facts" / f"{k}.json").read_text())["facts"]["expense_ratio_pct"]
+        if f.get("value") is not None:
+            entries.append({"product": k, "ter_pct": float(f["value"]),
+                            "cited_cell": f["source_cell"],
+                            "basis_note": f.get("note", "")})
         else:
             entries.append({"product": k, "ter_pct": None,
-                            "reason": "no comparable TER line item (see 2.1/2.2)",
-                            "cited_cell": "2.3"})
+                            "reason": f.get("reason") or "no comparable net "
+                            "expense ratio line (see 2.1/2.2)",
+                            "cited_cell": f["source_cell"]})
     ranked = sorted([e for e in entries if e["ter_pct"] is not None],
                     key=lambda e: e["ter_pct"])
     n = len(ranked)
-    for i, e in enumerate(ranked):
-        e["rank"] = i + 1
+    values = [e["ter_pct"] for e in ranked]
+    for e in ranked:
+        below = sum(1 for v in values if v < e["ter_pct"])
+        ties = sum(1 for v in values if v == e["ter_pct"])
+        e["rank"] = below + 1
         e["of"] = n
-        e["percentile_low_is_cheap"] = round((i + 0.5) / n * 100)
-    return {"universe": "this %d-product evaluation roster (n=%d with a TER "
-                        "line), not a market-wide database. Bases differ per "
-                        "product and are quoted from cell 2.3"
-                        % (len(product_keys()), n),
+        e["percentile_low_is_cheap"] = round((below + 0.5 * ties) / n * 100)
+    return {"universe": "this %d-product evaluation roster (n=%d with a net "
+                        "expense ratio typed from cell 2.3), not a market-wide "
+                        "database. Bases differ per product and are quoted in "
+                        "the facts note" % (len(product_keys()), n),
+            "source": "data/facts/<product>.json expense_ratio_pct",
             "entries": entries}
 
 

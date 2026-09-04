@@ -94,6 +94,14 @@
       "note": "fund and Institutional class inception",
       "status": "extracted-unverified"
     },
+    "affe": {
+      "value": {
+        "present": false
+      },
+      "source_cell": "2.4",
+      "note": "no AFFE line in the Summary of Fund Expenses",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 8.4,
       "source_cell": "1.11",

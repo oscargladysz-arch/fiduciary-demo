@@ -98,6 +98,14 @@
       "note": "continuous public offering commencement (REIT-taxed since 2004 as a private predecessor)",
       "status": "extracted-unverified"
     },
+    "affe": {
+      "value": {
+        "present": false
+      },
+      "source_cell": "2.4",
+      "note": "10-K REIT, no 1940-Act fee table, so no AFFE line exists",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 13.2,
       "source_cell": "1.11",

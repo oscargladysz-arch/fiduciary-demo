@@ -96,6 +96,15 @@
       "note": "commenced operations; renamed from Owl Rock Core Income Corp. 2023-07-06",
       "status": "extracted-unverified"
     },
+    "affe": {
+      "value": {
+        "present": true,
+        "rate_pct": 0.0
+      },
+      "source_cell": "2.4",
+      "note": "line printed as 0% (shown as a dash) for all classes",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 5.1,
       "source_cell": "1.11",

@@ -97,6 +97,14 @@
       "note": "the roster's longest listed record (~15 years)",
       "status": "extracted-unverified"
     },
+    "affe": {
+      "value": {
+        "present": true,
+        "rate_pct": 0.06
+      },
+      "source_cell": "2.4",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 15.0,
       "source_cell": "1.11",

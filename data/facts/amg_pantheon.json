@@ -95,6 +95,14 @@
       "note": "Fund inception (Class 4) - the roster's longest '40-Act evergreen-PE record",
       "status": "extracted-unverified"
     },
+    "affe": {
+      "value": {
+        "present": true,
+        "rate_pct": 0.81
+      },
+      "source_cell": "2.4",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 11.5,
       "source_cell": "1.11",

@@ -8,9 +8,7 @@ the gate. The gate never writes into the repository.
 
 Compared (normalized: keys named "generated" dropped, docx by extracted
 text, CSV by parsed rows): liquidity, facts, cohorts, benchmark selections,
-product JSONs and evidence CSVs (engine-owned cells), memos.
-The supplement joins the set in P0-3, once fee_percentile reads typed facts
-instead of a regex over cell prose.
+product JSONs and evidence CSVs (engine-owned cells), memos, supplement.
 
 Run: python src/test_artifacts_fresh.py   (exit 0 = fresh)
 """
@@ -28,6 +26,7 @@ from tark_anon import docx_text  # noqa: E402
 from tark_data import DATA, record_as_of  # noqa: E402
 
 ARTIFACTS = [
+    "analytics/supplement.json",
     "liquidity/*.json",
     "facts/*.json",
     "cohorts/*.json",
@@ -36,7 +35,7 @@ ARTIFACTS = [
     "evidence/*.csv",       # the same cells in the evidence ledger
     "memos/*.docx",
 ]
-SKIP_STEPS = {"supplement"}   # joins in P0-3 (see module docstring)
+SKIP_STEPS: set[str] = set()
 DROP_KEYS = {"generated"}
 
 

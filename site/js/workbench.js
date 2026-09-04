@@ -3,7 +3,7 @@
  * source_cell provenance and honest nulls. URL state is keys/IDs only —
  * free text (search queries) never enters the hash. */
 
-import { esc, chip, statusKind, money, stat, citeBtn, gloss } from "./views.js";
+import { esc, chip, statusKind, money, stat, citeBtn, gloss , fmtIncentive, fmtEarly } from "./views.js";
 
 const T = window.TARK;
 const PRODUCTS = Object.keys(T.products);
@@ -21,23 +21,6 @@ function shortName(key) {
     .replace("Cliffwater Corporate Lending Fund", "Cliffwater CCLFX")
     .replace("StepStone Private Markets", "StepStone SPRIM")
     .replace("Destiny Tech100 Inc", "Destiny DXYZ");
-}
-
-/* typed-fact formatters: print only the fields the fact carries. A fee
- * whose rate is unknown says so instead of printing "undefined%". */
-export function fmtIncentive(v) {
-  if (!v) return "";
-  if (!v.present) return "none";
-  const parts = [];
-  if (v.rate_pct != null) parts.push(`${v.rate_pct}%`);
-  if (v.hurdle_pct != null) parts.push(`${v.hurdle_pct}% hurdle`);
-  return parts.length ? parts.join(" / ") : "present, rate not typed (see 2.2)";
-}
-export function fmtEarly(v) {
-  if (!v) return "";
-  if (!v.present) return "none";
-  const rate = v.rate_pct != null ? `${v.rate_pct}%` : "fee present, rate not typed (see 2.7)";
-  return v.window ? `${rate} ${v.window}` : rate;
 }
 
 const WRAPPER_LABEL = {

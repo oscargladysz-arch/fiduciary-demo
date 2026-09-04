@@ -89,6 +89,23 @@ export function gloss(s) {
 }
 window.TarkGloss = gloss;   // test seam: textContent(gloss(s)) must equal s
 
+/* typed-fact formatters: print only the fields the fact carries. A fee
+ * whose rate is unknown says so instead of printing "undefined%". */
+export function fmtIncentive(v) {
+  if (!v) return "";
+  if (!v.present) return "none";
+  const parts = [];
+  if (v.rate_pct != null) parts.push(`${v.rate_pct}%`);
+  if (v.hurdle_pct != null) parts.push(`${v.hurdle_pct}% hurdle`);
+  return parts.length ? parts.join(" / ") : "present, rate not typed (see 2.2)";
+}
+export function fmtEarly(v) {
+  if (!v) return "";
+  if (!v.present) return "none";
+  const rate = v.rate_pct != null ? `${v.rate_pct}%` : "fee present, rate not typed (see 2.7)";
+  return v.window ? `${rate} ${v.window}` : rate;
+}
+
 /* citation drawer */
 export function openCite(rec, title) {
   const d = document.getElementById("drawer");
@@ -850,19 +867,42 @@ export function viewFees(root) {
     ["6.4", "Tax reporting (K-1 vs 1099)"],
   ];
   const keys = Object.keys(T.products);
+  const BASES = { net_assets: "net assets", nav: "NAV", aggregate_nav: "aggregate NAV",
+    managed_assets: "MANAGED ASSETS (leverage-inclusive)",
+    gross_incl_borrowings: "GROSS assets incl. borrowings",
+    outstanding_shares: "outstanding shares", lesser_of_dual_base: "the lesser of two bases" };
+  const TRAP_BASES = new Set(["managed_assets", "gross_incl_borrowings"]);
+  const fact = (k, f) => (T.facts[k] || {})[f] || null;
+  const val = (k, f) => fact(k, f)?.value ?? null;
 
-  const baseBadge = (val) => {
-    const v = String(val || "").toLowerCase();
-    if (v.includes("managed assets")) return `<span class="chip trap">base: MANAGED ASSETS (leverage-inclusive)</span>`;
-    if (v.includes("gross assets")) return `<span class="chip trap">base: GROSS assets incl. borrowings</span>`;
-    if (v.includes("net assets") || v.includes("nav")) return `<span class="chip okbase">base: net assets / NAV</span>`;
-    return "";
-  };
-  const taxBadge = (val) => {
-    const v = String(val || "").toLowerCase();
-    if (v.includes("k-1")) return `<span class="chip trap">Schedule K-1</span>`;
-    if (v.includes("1099")) return `<span class="chip extracted">Form 1099</span>`;
-    return "";
+  // the headline chip for each row comes from the TYPED facts layer. An
+  // absence says "none", an n/a cell says "n/a", and a null fact shows the
+  // cell's status word. No number is ever read out of the prose here.
+  const typedChip = (cid, k) => {
+    const kind = statusKind((T.products[k].cells[cid] || {}).status || "pending");
+    if (kind === "n/a") return { text: "n/a", badge: "" };
+    if (cid === "2.1") {
+      const pct = val(k, "mgmt_fee_pct"), base = val(k, "mgmt_fee_base");
+      if (pct === null) return { text: kind, badge: "" };
+      const badge = base ? `<span class="chip ${TRAP_BASES.has(base) ? "trap" : "okbase"}">base: ${esc(BASES[base] || base)}</span>` : "";
+      return { text: `${pct.toFixed(2)}% on ${BASES[base] || base || "a base not typed"}`, badge };
+    }
+    if (cid === "2.2") { const v = val(k, "incentive_fee"); return { text: v === null ? kind : fmtIncentive(v), badge: "" }; }
+    if (cid === "2.3") { const v = val(k, "expense_ratio_pct"); return { text: v === null ? kind : `${v.toFixed(2)}% net expense ratio`, badge: "" }; }
+    if (cid === "2.4") {
+      const v = val(k, "affe");
+      if (v === null) return { text: kind, badge: "" };
+      if (!v.present) return { text: "none", badge: "" };
+      return { text: v.rate_pct != null ? `AFFE ${v.rate_pct.toFixed(2)}%` : "AFFE line present, rate not typed", badge: "" };
+    }
+    if (cid === "2.7") { const v = val(k, "early_repurchase"); return { text: v === null ? kind : fmtEarly(v), badge: "" }; }
+    if (cid === "6.4") {
+      const v = val(k, "tax_form");
+      if (v === null) return { text: kind, badge: "" };
+      return { text: v === "K-1" ? "Schedule K-1" : `Form ${v}`,
+        badge: `<span class="chip ${v === "K-1" ? "trap" : "extracted"}">${v === "K-1" ? "Schedule K-1" : "Form 1099"}</span>` };
+    }
+    return { text: kind, badge: "" };     // 2.6: no typed fact, status word only
   };
 
   const body = rows.map(([cid, label]) => {
@@ -870,49 +910,50 @@ export function viewFees(root) {
       const cell = T.products[k].cells[cid];
       const disp = T.cell_display[k][cid];
       const kind = statusKind(cell.status || "pending");
-      const badge = cid === "2.1" ? baseBadge(cell.value)
-        : cid === "6.4" ? taxBadge(cell.value) : "";
-      const content = cell.value
-        ? `${badge ? badge + "<br>" : ""}
-           <div class="headline" style="font-size:14px;margin:3px 0 1px">${esc(disp.headline)}</div>
-           <span style="font-size:11.5px;color:var(--ink-2)">${short(disp.plain, 120)}</span>`
+      const { text, badge } = typedChip(cid, k);
+      const support = cell.value && kind !== "n/a"
+        ? `<span style="font-size:11.5px;color:var(--ink-2)">${short(disp.plain, 120)}</span>`
         : `<span class="cap">${kind === "n/a" ? esc(disp.plain).slice(0, 110) : "pending"}</span>`;
-      return `<td>${content}<div style="margin-top:5px">${chip(cell.status || "pending")} ${citeBtn(k, cid)}</div></td>`;
+      return `<td>${badge ? badge + "<br>" : ""}
+        <div class="headline" data-fee-chip="${cid}" data-product="${esc(k)}" style="font-size:14px;margin:3px 0 1px">${esc(text)}</div>
+        ${support}<div style="margin-top:5px">${chip(cell.status || "pending")} ${citeBtn(k, cid)}</div></td>`;
     }).join("");
     return `<tr><td style="font-weight:600; white-space:nowrap">${cid}<br>
       <span class="cap">${gloss(label)}</span></td>${tds}</tr>`;
   }).join("");
 
+  // bars: the typed net expense ratio, or an explicit absence with its reason
+  const items = keys.map((k) => {
+    const f = fact(k, "expense_ratio_pct");
+    return { product: k, label: T.products[k].fund_name.split(" (")[0],
+      value: f && f.value !== null ? f.value : null,
+      color: f && f.value !== null ? "#593380" : "#837b8e",
+      note: f && f.value !== null ? "" : `no comparable net expense ratio line: ${f?.reason || "not typed"}` };
+  });
+  const missing = items.filter((i) => i.value === null).map((i) => i.label);
+
   root.innerHTML = `
     <div class="viewhead"><h1>Fee Matrix</h1>
-      <div class="sub">The headline rate is never the story — the BASE is.</div></div>
+      <div class="sub">The headline rate is never the story. The BASE is.</div></div>
     <div class="chartbox" style="margin-bottom:14px">
-      <h3 style="margin-bottom:4px">Own net expense ratio, where one exists</h3>
+      <h3 style="margin-bottom:4px">Net expense ratio, typed from cell 2.3, where one exists</h3>
       <div id="feechart"></div>
-      <div class="chartnote">From each fund's cell 2.3 as extracted (bases differ
-        by wrapper and are quoted per product). No TER line for
-        ${(T.supplement.fee_percentile.entries.filter((e) => e.ter_pct === null)
-            .map((e) => T.products[e.product]?.fund_name.split(" (")[0]).join(", ")) || "none"}:
+      <div class="chartnote">Each bar is the typed fact facts.expense_ratio_pct
+        (bases differ by wrapper and are quoted in the fact's note, click source
+        on row 2.3). No comparable line for ${missing.length ? esc(missing.join(", ")) : "none"}:
         their burden is fee plus performance participation (2.1/2.2), flagged in
-        the matrix below. Universe = this roster
-        (data/analytics/supplement.json fee_percentile).</div></div>
+        the matrix below. Universe = this roster.</div></div>
     <div class="tablewrap"><table class="grid">
       <thead><tr><th style="min-width:120px">Cell</th>
         ${keys.map((k) => `<th style="min-width:210px">${esc(T.products[k].fund_name)}</th>`).join("")}
       </tr></thead><tbody>${body}</tbody></table></div>
-    <p class="cap" style="margin-top:10px">Every figure is the evidence record
-      itself — click source for document · section · verbatim quote. Chips are
-      derived from the cell text, not hand-assigned.</p>`;
+    <p class="cap" style="margin-top:10px">Headline chips are the typed facts
+      layer (data/facts, each field cites its cell). An absence reads "none".
+      Click source for document, section and verbatim quote.</p>`;
 
-  const fp = T.supplement.fee_percentile.entries;
-  barChart(root.querySelector("#feechart"), {
-    items: fp.map((e) => ({
-      label: T.products[e.product].fund_name.split(" (")[0],
-      value: e.ter_pct, color: e.ter_pct === null ? "#837b8e" : "#593380",
-      note: e.ter_pct === null ? "no TER line — '34-Act wrapper (see 2.1/2.2)" : "",
-    })),
-    format: (v) => v.toFixed(1) + "%",
-  });
+  const box = root.querySelector("#feechart");
+  box.dataset.items = JSON.stringify(items.map((i) => ({ product: i.product, value: i.value })));
+  barChart(box, { items, format: (v) => v.toFixed(2) + "%" });
 }
 
 /* ========================================================== DXYZ CHART */

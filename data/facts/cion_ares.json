@@ -96,6 +96,12 @@
       "note": "commencement of operations (Class A); Class I 7/12/2017",
       "status": "extracted-unverified"
     },
+    "affe": {
+      "value": null,
+      "source_cell": "2.4",
+      "reason": "cell 2.4 is n/a (documented-unavailable): no AFFE line in any class fee table",
+      "status": "n/a - documented-unavailable"
+    },
     "track_record_years": {
       "value": 8.9,
       "source_cell": "1.11",

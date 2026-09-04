@@ -90,6 +90,14 @@
       "note": "performance inception as disclosed",
       "status": "extracted-unverified"
     },
+    "affe": {
+      "value": {
+        "present": true,
+        "rate_pct": 0.25
+      },
+      "source_cell": "2.4",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 6.8,
       "source_cell": "1.2",
