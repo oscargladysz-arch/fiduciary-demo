@@ -22,6 +22,7 @@ from __future__ import annotations
 import csv
 import json
 import os
+import re
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parents[1]
@@ -237,6 +238,22 @@ def validate_product(key: str) -> list[str]:
             errs.append(f"{key}:{cid}: status '{st}' but empty extracted_by "
                         f"(provenance is part of the record)")
 
+    # every data/ path a cell cites must resolve. Non-raw paths must exist in
+    # the repo (hard error). data/raw/ is gitignored, so a raw path is checked
+    # against data/manifest.csv local_path (a warning until P2-10 makes the
+    # ledger complete). Paths may contain spaces (SEC primary documents such
+    # as "SC TO-I_...") and may be directories.
+    for cid, cell in cells.items():
+        if cid not in CELLS:
+            continue
+        for field in ("value", "source", "section", "quote"):
+            for pth in data_paths_in(str(cell.get(field) or "")):
+                if pth.startswith("data/raw/"):
+                    continue   # reported by data_path_warnings()
+                if not (BASE / pth).exists():
+                    errs.append(f"{key}:{cid}: {field} cites {pth}, which does "
+                                f"not exist")
+
     # evidence CSV cross-check
     try:
         ev = load_evidence(key)
@@ -268,6 +285,40 @@ def validate_product(key: str) -> list[str]:
             if str(c.get(jf) or "").strip() != str(r.get(cf) or "").strip():
                 errs.append(f"{key}:{cid}: {jf} differs between JSON and CSV")
     return errs
+
+
+DATA_PATH_RE = re.compile(
+    r"data/(?:[A-Za-z0-9_.\-]+/)*"                      # directories
+    r"(?:[A-Za-z0-9_.\- ]*?\.(?:htm|html|csv|json|md|txt|pdf|xml)"  # a file
+    r"|(?=[\s,;:)\]'\"]|$))")                             # or a bare directory
+
+
+def data_paths_in(text: str) -> list[str]:
+    """Every data/... path token in a prose or source string."""
+    out = []
+    for m in DATA_PATH_RE.finditer(text):
+        tok = m.group(0).rstrip(".")
+        if tok and tok != "data/":
+            out.append(tok)
+    return out
+
+
+def data_path_warnings() -> list[str]:
+    """Raw-filing citations that no manifest row covers. Warnings, not
+    errors, until P2-10 completes the accession ledger."""
+    man = {r["local_path"] for r in load_manifest()}
+    dirs = {p.rsplit("/", 1)[0] + "/" for p in man}
+    out = []
+    for key in product_keys():
+        for cid, cell in load_product(key)["cells"].items():
+            for field in ("value", "source", "section", "quote"):
+                for pth in data_paths_in(str(cell.get(field) or "")):
+                    if not pth.startswith("data/raw/"):
+                        continue
+                    if pth in man or pth in dirs or any(pth.startswith(d) for d in dirs):
+                        continue
+                    out.append(f"{key}:{cid}: {field} cites {pth}, not in data/manifest.csv")
+    return out
 
 
 def validate_plan(key: str) -> list[str]:
@@ -455,3 +506,8 @@ def validate_all() -> dict[str, list[str]]:
     report["series"] = validate_series()
     report["facts"] = validate_facts()
     return report
+
+
+def validate_warnings() -> dict[str, list[str]]:
+    """Non-fatal findings the validator prints but does not fail on."""
+    return {"raw paths vs manifest": data_path_warnings()}

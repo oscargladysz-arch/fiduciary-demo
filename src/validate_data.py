@@ -6,7 +6,7 @@ contract. Exit 1 = violations listed below; fix before committing.
 """
 import sys
 
-from tark_data import validate_all
+from tark_data import validate_all, validate_warnings
 
 
 def main() -> int:
@@ -21,6 +21,11 @@ def main() -> int:
             total += len(errs)
         else:
             print(f"[ok]   {scope}")
+    for scope, warns in validate_warnings().items():
+        if warns:
+            print(f"[warn] {scope}: {len(warns)} citation(s) not covered by the manifest")
+            for w in warns[:8]:
+                print(f"       - {w}")
     print(f"\n{total} violation(s)." if total else "\nAll clean — data contract holds.")
     return 1 if total else 0
 

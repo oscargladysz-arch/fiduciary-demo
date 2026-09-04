@@ -64,7 +64,19 @@ for pattern in ("site/js/*.js", "site/index.html", "app.py", "data/products/*.js
                 hits.append(f"{f.relative_to(BASE)}:{i}")
 check("no product-count 'six' string in site/, app.py or data/", not hits, "; ".join(hits[:5]))
 
-# 4. the frozen taxonomy file is gone (the build computes it)
+# 4. every non-raw data/ path a cell cites exists (raw paths are checked
+#    against the manifest by the validator, as warnings until P2-10)
+from tark_data import data_paths_in, load_product  # noqa: E402
+dangling = []
+for key in product_keys():
+    for cid, cell in load_product(key)["cells"].items():
+        for field in ("value", "source", "section", "quote"):
+            for pth in data_paths_in(str(cell.get(field) or "")):
+                if not pth.startswith("data/raw/") and not (BASE / pth).exists():
+                    dangling.append(f"{key}:{cid}:{pth}")
+check("every non-raw data/ path cited by a cell exists", not dangling, "; ".join(dangling[:5]))
+
+# 5. the frozen taxonomy file is gone (the build computes it)
 check("data/analytics/taxonomy.json no longer exists",
       not (DATA / "analytics" / "taxonomy.json").exists())
 

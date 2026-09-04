@@ -203,4 +203,22 @@ fails on any change to a protected row that is not listed here.
 | stepstone_spm | 4.5 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
 | stepstone_spm | 5.1 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
 | stepstone_spm | 6.4 | extracted_by | P0-0: CSV synced to the JSON extracted_by, which carries the extraction pass date the CSV omitted | 2026-09-04 |
+| breit | 3.7 | source_doc | data/plans/anchor_plan.json renamed to data/plans/plan_tech_media.json (P0-6) | 2026-09-04 |
+| breit | 3.9 | source_doc | legacy single-plan liquidity file replaced by the plan-prefixed artifact (P0-6) | 2026-09-04 |
+| breit | 5.2 | value | bare 'data/manifest' completed to data/manifest.csv, the pull ledger (P0-6) | 2026-09-04 |
+| cliffwater_cclfx | 3.7 | source_doc | data/plans/anchor_plan.json renamed to data/plans/plan_tech_media.json (P0-6) | 2026-09-04 |
+| cliffwater_cclfx | 3.9 | source_doc | legacy single-plan liquidity file replaced by the plan-prefixed artifact (P0-6) | 2026-09-04 |
+| cliffwater_cclfx | 5.2 | value | bare 'data/manifest' completed to data/manifest.csv, the pull ledger (P0-6) | 2026-09-04 |
+| dxyz | 3.7 | source_doc | data/plans/anchor_plan.json renamed to data/plans/plan_tech_media.json (P0-6) | 2026-09-04 |
+| dxyz | 3.9 | source_doc | legacy single-plan liquidity file replaced by the plan-prefixed artifact (P0-6) | 2026-09-04 |
+| dxyz | 5.2 | value | bare 'data/manifest' completed to data/manifest.csv, the pull ledger (P0-6) | 2026-09-04 |
+| hl_paf | 3.7 | source_doc | data/plans/anchor_plan.json renamed to data/plans/plan_tech_media.json (P0-6) | 2026-09-04 |
+| hl_paf | 3.9 | source_doc | legacy single-plan liquidity file replaced by the plan-prefixed artifact (P0-6) | 2026-09-04 |
+| hl_paf | 5.2 | value | bare 'data/manifest' completed to data/manifest.csv, the pull ledger (P0-6) | 2026-09-04 |
+| kkr_kpec | 3.7 | source_doc | data/plans/anchor_plan.json renamed to data/plans/plan_tech_media.json (P0-6) | 2026-09-04 |
+| kkr_kpec | 3.9 | source_doc | legacy single-plan liquidity file replaced by the plan-prefixed artifact (P0-6) | 2026-09-04 |
+| kkr_kpec | 5.2 | value | bare 'data/manifest' completed to data/manifest.csv, the pull ledger (P0-6) | 2026-09-04 |
+| stepstone_spm | 3.7 | source_doc | data/plans/anchor_plan.json renamed to data/plans/plan_tech_media.json (P0-6) | 2026-09-04 |
+| stepstone_spm | 3.9 | source_doc | legacy single-plan liquidity file replaced by the plan-prefixed artifact (P0-6) | 2026-09-04 |
+| stepstone_spm | 5.2 | value | bare 'data/manifest' completed to data/manifest.csv, the pull ledger (P0-6) | 2026-09-04 |
 <!-- tark:evidence-allowlist:end -->
