@@ -427,7 +427,7 @@
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort evergreen_pe (n=5: hl_paf, stepstone_spm, kkr_kpec, ares_pmf, amg_pantheon). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2022 (n=3), 2023 (n=5), 2024 (n=5), 2025 (n=5), 2026 (n=4). Wrapper types in the cohort: nontraded_llc, tender_offer. Cross-wrapper differences are disclosed in the cohort caveat block (5 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md.",
+      "value": "Peer cohort evergreen_pe (n=5: hl_paf, stepstone_spm, kkr_kpec, ares_pmf, amg_pantheon). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2022 (n=3), 2023 (n=5), 2024 (n=5), 2025 (n=5), 2026 (n=4). Wrapper types in the cohort: nontraded_llc, tender_offer. Cross-wrapper differences are disclosed in the cohort caveat block (3 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md.",
       "status": "computed",
       "source": "data/cohorts/evergreen_pe.json",
       "section": "members, composite and caveats blocks",

@@ -175,6 +175,24 @@ check("cell 5.7 is partial for every product, never extracted or verified",
 check("cell 5.6 is computed for every product with a selection artifact",
       all(status_kind(p_["cells"]["5.6"]["status"]) == "computed" for p_ in prods.values()))
 
+# P1-24: no memo prints a caveat the typed facts contradict
+_reg = json.loads((BASE / "data" / "registry.json").read_text())["products"]
+_cav_bad = []
+for k, prod in prods.items():
+    fx = json.loads((BASE / "data" / "facts" / f"{k}.json").read_text())
+    cid = fx.get("cohort_id")
+    if not cid:
+        continue
+    members = list(json.loads((BASE / "data" / "cohorts" / f"{cid}.json").read_text())["members"])
+    t = squash(text_of(OUT / memo_name("plan_tech_media", k)))
+    for label, attr in (("pricing-basis mix", "pricing_class"), ("nav-cadence mix", "nav_cadence"),
+                        ("leverage-regime mix", "leverage_regime")):
+        if label in t and len({_reg[m][attr] for m in members}) < 2:
+            _cav_bad.append(f"{k}: {label}")
+check("no memo caveat contradicts the members' typed values", not _cav_bad)
+if _cav_bad:
+    print("   bad:", "; ".join(_cav_bad[:6]))
+
 keys = ["breit","cliffwater_cclfx","dxyz","hl_paf","kkr_kpec","stepstone_spm"]
 texts = {}
 for k in keys:

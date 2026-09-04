@@ -876,3 +876,19 @@ verifier. The views that open the drawer or search quotes (evaluation,
 cohorts, search, packet, verification, fees) wait for the chunk like the
 chart views already did. The screener, compare, plans, roster and
 benchmark views still paint from the core bundle.
+
+### 6.18 P1-24: a caveat fires only when the members' own values differ
+`tark_cohort.member_values` reads one comparability attribute per member
+from the typed registry when every member has it typed, and from the
+wrapper-type matrix only otherwise, never mixing the two vocabularies.
+The pricing rule compares `pricing_class` (NAV or MARKET), not the
+pricing-basis caption. Result: the evergreen PE cohort loses the
+pricing-basis caveat that contradicted five NAV-priced members and the
+NAV-cadence caveat that five monthly-NAV members did not support, and
+keeps the leverage-regime and liquidity-law caveats its members do
+support. The composite refusal reads the same typed pricing class. The
+Compare view applies the identical rule from the shipped per-product
+descriptors. The leverage-regime vocabulary is normalized to four values
+across the registry and the matrix, and the caveat prose carries no
+semicolon. `test_cohort` asserts, for every committed cohort, that each
+caveat is written exactly when the typed values differ.

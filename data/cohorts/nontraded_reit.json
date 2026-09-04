@@ -116,6 +116,8 @@
       }
     ]
   },
-  "caveats": [],
+  "caveats": [
+    "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing. Volatility and drawdown comparisons inherit that difference (see de-smoothing lab). [typed per product: breit: monthly, jll_ipt: daily, sreit: monthly]"
+  ],
   "exclusion_log": "data/roster_decisions.md"
 }

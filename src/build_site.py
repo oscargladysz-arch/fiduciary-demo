@@ -537,6 +537,10 @@ def main() -> None:
     products = {k: {**p, "cells": {cid: {f: c.get(f, "") for f in FIRST_PAINT_FIELDS}
                                    for cid, c in p["cells"].items()}}
                 for k, p in products.items()}
+    _reg = json.loads((DATA / "registry.json").read_text())["products"]
+    descriptors = {k: {a: _reg[k].get(a) for a in ("wrapper_type", "pricing_class",
+                                                    "nav_cadence", "leverage_regime")}
+                   for k in products}
     bundle = {
         "generated": date.today().isoformat(),
         "facts": facts,
@@ -544,6 +548,7 @@ def main() -> None:
         "factors": FACTORS,
         "cell_registry": CELLS,
         "products": products,
+        "descriptors": descriptors,   # typed comparability attributes per product (registry)
         "cell_display": display,
         "factor_rollups": rollups,
         "glossary": GLOSSARY,

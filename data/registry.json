@@ -1,5 +1,5 @@
 {
-  "what": "Typed product descriptors the v2 benchmark rubric reads (P1-7). Each field names its source in `sources`. Identity (fund_name, cik) stays in data/products; return inputs stay in data/benchmarks/profiles_input.json; P2-1 merges the duplicate registries into this file.",
+  "what": "Typed product descriptors the v2 benchmark rubric reads (P1-7). Each field names its source in `sources`. Identity (fund_name, cik) stays in data/products, return inputs stay in data/benchmarks/profiles_input.json, P2-1 merges the duplicate registries into this file.",
   "as_of": "2026-09-04",
   "products": {
     "cliffwater_cclfx": {
@@ -127,7 +127,7 @@
       "wrapper_type": "nontraded_bdc",
       "pricing_class": "NAV",
       "nav_cadence": "monthly",
-      "leverage_regime": "BDC 150% asset-coverage regime - materially MORE leverage headroom than 1940-Act funds",
+      "leverage_regime": "BDC 150% asset-coverage regime",
       "held_returns": {
         "kind": "fy_returns"
       },
@@ -162,7 +162,7 @@
       "wrapper_type": "nontraded_bdc",
       "pricing_class": "NAV",
       "nav_cadence": "quarterly",
-      "leverage_regime": "BDC 150% asset-coverage regime - materially MORE leverage headroom than 1940-Act funds",
+      "leverage_regime": "BDC 150% asset-coverage regime",
       "held_returns": {
         "kind": "fy_returns"
       },
@@ -394,7 +394,7 @@
       "wrapper_type": "nontraded_reit",
       "pricing_class": "NAV",
       "nav_cadence": "monthly",
-      "leverage_regime": "charter-level borrowing limits; no 1940-Act coverage test",
+      "leverage_regime": "charter-level borrowing limits, no 1940-Act coverage test",
       "held_returns": {
         "kind": "fy_returns"
       },
@@ -429,7 +429,7 @@
       "wrapper_type": "nontraded_reit",
       "pricing_class": "NAV",
       "nav_cadence": "monthly",
-      "leverage_regime": "charter-level borrowing limits; no 1940-Act coverage test",
+      "leverage_regime": "charter-level borrowing limits, no 1940-Act coverage test",
       "held_returns": {
         "kind": "fy_returns"
       },
@@ -464,7 +464,7 @@
       "wrapper_type": "nontraded_reit",
       "pricing_class": "NAV",
       "nav_cadence": "daily",
-      "leverage_regime": "charter-level borrowing limits; no 1940-Act coverage test",
+      "leverage_regime": "charter-level borrowing limits, no 1940-Act coverage test",
       "held_returns": {
         "kind": "none",
         "reason": "no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
@@ -506,7 +506,7 @@
       "wrapper_type": "listed_cef",
       "pricing_class": "MARKET",
       "nav_cadence": "quarterly",
-      "leverage_regime": "1940-Act limits",
+      "leverage_regime": "1940-Act asset-coverage limits",
       "held_returns": {
         "kind": "series",
         "series": "dxyz"

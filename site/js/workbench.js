@@ -259,15 +259,22 @@ export function viewCompare(root, state, setState) {
   </div>`;
 
   // cross-wrapper caveats surface automatically when a comparison spans
-  // wrapper types (assembled from the caveat matrix — data, not prose)
+  // wrapper types (assembled from the caveat matrix, data not prose). Same
+  // rule as tark_cohort.member_values: the typed per-product value when
+  // every compared product has it, the wrapper-type attribute otherwise,
+  // never a mix. A caveat the typed facts contradict is not shown.
   const crossCaveats = (() => {
+    const desc = T.descriptors || {};
     if (keys.length < 2) return "";
     const attrs = T.caveat_matrix.wrapper_attributes;
-    const wts = keys.map((k) => fact(k, "wrapper_type").value).filter(Boolean);
     const out = [];
     for (const rule of T.caveat_matrix.pair_caveats) {
       const a = rule.attrs[0];
-      if (new Set(wts.map((w) => attrs[w]?.[a])).size > 1) out.push(rule.caveat);
+      const typed = keys.map((k) => desc[k]?.[a]);
+      const vals = typed.every((v) => v !== null && v !== undefined)
+        ? typed
+        : keys.map((k) => attrs[desc[k]?.wrapper_type || fact(k, "wrapper_type").value]?.[a]);
+      if (new Set(vals).size > 1) out.push(rule.caveat);
     }
     return out.length ? `<div class="banner amber"><b>Cross-wrapper comparison,
       caveats apply:</b><ul style="margin:6px 0 0 18px">${out.map((c) =>

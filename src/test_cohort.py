@@ -96,6 +96,43 @@ check("mixed cohort: pricing-basis caveat fires",
 check("mixed cohort: leverage-regime caveat fires",
       any("LEVERAGE-REGIME MIX" in c for c in cv_mix))
 
+# ---- P1-24: no committed caveat contradicts a typed fact ----
+import json as _json  # noqa: E402
+from pathlib import Path as _Path  # noqa: E402
+_BASE = _Path(__file__).resolve().parents[1]
+_reg = _json.loads((_BASE / "data" / "registry.json").read_text())["products"]
+_RULES = (("PRICING-BASIS MIX", "pricing_class"), ("LEVERAGE-REGIME MIX", "leverage_regime"),
+          ("NAV-CADENCE MIX", "nav_cadence"))
+_bad = []
+for _cp in sorted((_BASE / "data" / "cohorts").glob("*.json")):
+    if _cp.name == "caveat_matrix.json":
+        continue
+    _co = _json.loads(_cp.read_text())
+    _members = list(_co["members"])
+    for _label, _attr in _RULES:
+        _vals = {_reg[m][_attr] for m in _members}
+        _present = any(_label in c for c in _co["caveats"])
+        if _present != (len(_vals) > 1):
+            _bad.append(f"{_cp.stem}: {_label} {'written' if _present else 'absent'} "
+                        f"while typed values are {sorted(_vals)}")
+    if any(";" in c for c in _co["caveats"]):
+        _bad.append(f"{_cp.stem}: semicolon in a caveat")
+check("committed caveats: each fires exactly when the members' typed values differ, no semicolons",
+      not _bad)
+if _bad:
+    print("   ", " | ".join(_bad[:4]))
+_ev = _json.loads((_BASE / "data" / "cohorts" / "evergreen_pe.json").read_text())["caveats"]
+check("evergreen_pe: no pricing-basis caveat over five NAV-priced members",
+      not any("PRICING-BASIS" in c for c in _ev))
+check("evergreen_pe: leverage-regime caveat stays (kkr_kpec has no 1940-Act limit)",
+      any("LEVERAGE-REGIME" in c for c in _ev))
+_vals, _basis = tc.member_values("evergreen_pe", "pricing_class")
+check("member_values reads typed per-product values for a real cohort",
+      _basis == "typed per product" and set(_vals.values()) == {"NAV"})
+_vals, _basis = tc.member_values("_toymix", "pricing_class")
+check("member_values falls back to wrapper attributes for members outside the registry",
+      _basis == "by wrapper type" and set(_vals.values()) == {"NAV", "MARKET"})
+
 # ---- composite: refusal law + arithmetic ----
 comp_mix = tc.composite("_toymix")
 check("heterogeneous pricing basis: composite REFUSED",

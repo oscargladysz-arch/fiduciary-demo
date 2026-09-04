@@ -134,18 +134,37 @@ def percentile_of(product_key: str, cohort_id: str, field: str,
             "n": n, "value": v, "median": med}
 
 
-def caveat_block(cohort_id: str) -> list[str]:
-    matrix = json.loads((DATA / "cohorts" / "caveat_matrix.json").read_text())
-    attrs = matrix["wrapper_attributes"]
+def _registry() -> dict:
+    return json.loads((DATA / "registry.json").read_text())["products"]
+
+
+def member_values(cohort_id: str, attr: str) -> tuple[dict[str, str], str]:
+    """{member: value} for one comparability attribute, and where it came
+    from. Typed per product (data/registry.json) when every member has the
+    attribute typed, otherwise the wrapper-type attribute for every member,
+    never a mix of the two vocabularies."""
     wts = COHORTS[cohort_id]["wrapper_types"]
+    reg = _registry()
+    typed = {k: (reg.get(k) or {}).get(attr) for k in wts}
+    if typed and all(v is not None for v in typed.values()):
+        return typed, "typed per product"
+    attrs = json.loads((DATA / "cohorts" / "caveat_matrix.json").read_text())["wrapper_attributes"]
+    return {k: attrs[w][attr] for k, w in wts.items()}, "by wrapper type"
+
+
+def caveat_block(cohort_id: str) -> list[str]:
+    """Comparability caveats that the members' own values support. A caveat
+    fires only when the values differ across members. A wrapper-generic
+    caveat that the typed facts contradict (five NAV-priced members, one
+    pricing caveat) is not written."""
+    matrix = json.loads((DATA / "cohorts" / "caveat_matrix.json").read_text())
     out = []
     for rule in matrix["pair_caveats"]:
         attr = rule["attrs"][0]
-        distinct = {attrs[w][attr] for w in wts.values()}
-        if len(distinct) > 1:
-            detail = "; ".join(f"{k}: {attrs[w][attr]}"
-                               for k, w in sorted(wts.items()))
-            out.append(f"{rule['caveat']} [{detail}]")
+        values, basis = member_values(cohort_id, attr)
+        if len(set(values.values())) > 1:
+            detail = ", ".join(f"{k}: {v}" for k, v in sorted(values.items()))
+            out.append(f"{rule['caveat']} [{basis}: {detail}]")
     fb = COHORTS[cohort_id].get("fallback_note")
     if fb:
         out.append(fb)
@@ -169,10 +188,9 @@ def composite(cohort_id: str) -> dict:
     """Equal-weight annual composite — or an explicit refusal where members'
     pricing bases are heterogeneous (averaging premiums against appraisals
     would fabricate a series)."""
-    matrix = json.loads((DATA / "cohorts" / "caveat_matrix.json").read_text())
-    attrs = matrix["wrapper_attributes"]
     wts = COHORTS[cohort_id]["wrapper_types"]
-    bases = {attrs[w]["pricing_class"] for w in wts.values()}
+    values, _ = member_values(cohort_id, "pricing_class")
+    bases = set(values.values())
     if len(bases) > 1:
         return {"refused": True,
                 "reason": "members' pricing bases are heterogeneous (market "

@@ -427,7 +427,7 @@
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort nontraded_reit (n=3: breit, sreit, jll_ipt). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2025 (n=2). Wrapper types in the cohort: nontraded_reit. Cross-wrapper differences are disclosed in the cohort caveat block (0 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md.",
+      "value": "Peer cohort nontraded_reit (n=3: breit, sreit, jll_ipt). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2025 (n=2). Wrapper types in the cohort: nontraded_reit. Cross-wrapper differences are disclosed in the cohort caveat block (1 caveat). Membership rationales are in data/facts, exclusions in data/roster_decisions.md.",
       "status": "computed",
       "source": "data/cohorts/nontraded_reit.json",
       "section": "members, composite and caveats blocks",
