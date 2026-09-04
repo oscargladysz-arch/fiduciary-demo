@@ -28,29 +28,23 @@ from docx.shared import Inches, Pt
 
 import csv
 
-from tark_data import (CELLS, DATA, FACTORS, cells_by_factor, coverage_summary,
-                       load_plan, load_products, plan_keys, record_as_of, status_kind)
+from tark_data import (ADVISOR_COMPLETED, CELLS, DATA, FACTOR_PARAS, FACTORS, RULE,
+                       RULE_CITATION, authority, cells_by_factor, coverage_summary,
+                       load_plan, load_products, plan_keys, record_as_of, rule_ref,
+                       status_kind)
 from tark_display import _money as money, facts_by_cell, typed_headline
 
 SITE_MEMOS = Path(__file__).resolve().parents[1] / "site" / "memos"
 
-RULE = ("DOL proposed rule, Fiduciary Duties in Selecting Designated "
-        "Investment Alternatives, 91 FR 16088 (Mar. 31, 2026), RIN 1210-AC38")
-
 RULE_PARAS = [
-    ("This memo documents an evaluation of the product below as a potential "
-     "designated investment alternative (DIA) for the plan, structured on the "
-     "six factors of the proposed rule: performance, fees and expenses, "
-     "liquidity, valuation, performance benchmarks, and complexity. The "
-     "proposed safe harbor attaches to a documented, objective, thorough and "
-     "analytical process. This memo and its underlying evidence files "
-     "constitute that record."),
-    ("On benchmarks, the proposal requires comparison against a meaningful "
-     "benchmark and acknowledges that no single benchmark is meaningful for "
-     "every DIA. Where none exists, the history of a similar type of "
-     "investment may serve. The benchmark section below therefore documents "
-     "the selection AND the rejections: every candidate considered, its "
-     "score, and the true reason it was or was not chosen. Case law is "
+    ("This memo documents an evaluation of the product below as a candidate designated "
+     "investment alternative for the plan named above, structured on the six factors of "
+     "the proposed rule, paragraphs (g) to (l) of proposed 29 CFR 2550.404a-6: performance "
+     "(g), fees and expenses (h), liquidity (i), valuation (j), performance benchmarks (k), "
+     "complexity (l). The regulation is cited, not paraphrased. This memo and its underlying "
+     "evidence files are the record of the evaluation."),
+    ("The benchmark section documents the selection AND the rejections: every candidate "
+     "considered, its score, and the true reason it was or was not chosen. Case law is "
      "addressed in its own section below, from cell 5.7 only."),
 ]
 
@@ -403,9 +397,17 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
                 "verification.")
 
     doc.add_heading("Regulatory basis", level=1)
-    doc.add_paragraph(RULE)
+    auth = authority()
+    doc.add_paragraph(f"{RULE['issuer']}, proposed rule {RULE_CITATION}. Federal Register "
+                      f"document {RULE['fr_document']}, {RULE['fr_url']}. Docket {RULE['docket']}, "
+                      f"{RULE['docket_url']}.")
     for para in RULE_PARAS:
         doc.add_paragraph(para)
+    doc.add_paragraph("Factor mapping basis: " + rule_ref("1.1", auth)["basis"] + ". "
+                      + ("The verbatim paragraphs are quoted in the appendix." if auth["status"] == "fetched"
+                         else "Verbatim text: " + auth["note"] + ".")
+                      + " Cells " + " and ".join(ADVISOR_COMPLETED)
+                      + " are advisor-completed under paragraph (l).")
 
     facts_path = DATA / "facts" / f"{key}.json"
     fdoc = json.loads(facts_path.read_text()) if facts_path.exists() else {}
@@ -424,7 +426,7 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
     hdr[0].text, hdr[1].text = "Factor", "Findings (cell, status, first sentence)"
     for n, label in FACTORS.items():
         row = table.add_row().cells
-        row[0].text = f"{n}. {label}"
+        row[0].text = f"{n}. {label} ({FACTOR_PARAS[n]})"
         _fill(row[1], _findings(p, label, fbc))
     for row in table.rows:
         row.cells[0].width, row.cells[1].width = Inches(1.2), Inches(5.3)
@@ -535,6 +537,14 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
     _case_law_section(doc, p)
 
     _provenance_section(doc, key, p, anchor)
+
+    if auth["status"] == "fetched":
+        doc.add_heading("Appendix: verbatim regulatory text", level=1)
+        doc.add_paragraph(auth["note"] + ". Every paragraph below is the Federal Register text unchanged.")
+        for letter, paras in auth["paragraphs"].items():
+            doc.add_heading(f"Paragraph ({letter})", level=2)
+            for t in paras:
+                doc.add_paragraph(t)
 
     sig = doc.add_paragraph()
     sig.add_run("\nPrepared by: ______________________    "

@@ -23,7 +23,8 @@ from pathlib import Path
 from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
 from tark_display import cell_display, facts_by_cell
 from tark_memo import write_all
-from tark_data import (BASE, DATA, CELLS, FACTORS, coverage_summary,
+from tark_data import (BASE, DATA, CELLS, FACTORS, RULE, authority,
+                       coverage_summary, rule_ref,
                        coverage_totals, load_evidence, load_plan,
                        load_product, load_products, load_series,
                        load_series_manifest, plan_keys, product_keys,
@@ -32,10 +33,6 @@ from tark_anon import docx_text, forbidden_tokens, leaks
 
 SITE = BASE / "site"
 
-RULE_CAPTION = ("Six-factor framework per DOL proposed rule, Fiduciary Duties in "
-                "Selecting Designated Investment Alternatives, 91 FR 16088 "
-                "(Mar 31, 2026), RIN 1210-AC38. Safe harbor attaches to a "
-                "documented, objective, thorough, analytical process.")
 
 # glossary: plain-language primary, term-of-art secondary. Rendered as chips
 # with hover definitions wherever these terms appear in headline lines.
@@ -544,7 +541,11 @@ def main() -> None:
     bundle = {
         "generated": date.today().isoformat(),
         "facts": facts,
-        "rule_caption": RULE_CAPTION,
+        # the rule record once, the mapping basis once, per cell only what differs
+        "rule": {**RULE, "authority": authority(),
+                 "mapping_basis": rule_ref("1.1", authority())["basis"]},
+        "rule_refs": {cid: {k: v for k, v in rule_ref(cid, authority()).items() if k != "basis"}
+                      for cid in CELLS},
         "factors": FACTORS,
         "cell_registry": CELLS,
         "products": products,

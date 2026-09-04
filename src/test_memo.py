@@ -199,6 +199,25 @@ check("no memo caveat contradicts the members' typed values", not _cav_bad)
 if _cav_bad:
     print("   bad:", "; ".join(_cav_bad[:6]))
 
+# P1-26: the regulatory basis cites and maps, never paraphrases
+from tark_data import RULE, authority  # noqa: E402
+_rb_bad = []
+for pl in plan_keys():
+    for k in prods:
+        t = memo_text(pl, k)
+        if not (RULE["fr_url"].lower() in t and RULE["docket"].lower() in t
+                and "paragraphs (g) to (l)" in t and "factor mapping basis:" in t
+                and "1. performance (g)" in t and "6. complexity (l)" in t
+                and "advisor-completed under paragraph (l)" in t):
+            _rb_bad.append(f"{pl} {k}: regulatory basis incomplete")
+        if "safe harbor attaches" in t or "the proposal requires comparison" in t:
+            _rb_bad.append(f"{pl} {k}: paraphrase of the regulation")
+        if authority()["status"] != "fetched" and "not yet fetched into this build" not in t:
+            _rb_bad.append(f"{pl} {k}: verbatim-text status missing")
+check("regulatory basis: citation, links, paragraph mapping and basis in all 64, no paraphrase", not _rb_bad)
+if _rb_bad:
+    print("   bad:", "; ".join(_rb_bad[:4]))
+
 keys = ["breit","cliffwater_cclfx","dxyz","hl_paf","kkr_kpec","stepstone_spm"]
 texts = {}
 for k in keys:

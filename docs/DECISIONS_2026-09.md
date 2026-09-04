@@ -912,3 +912,24 @@ six only where the cell is already computed, so no n/a or evidence row
 changes kind and the coverage totals stand. hl_paf's window judgment
 survives as an analyst note. 89 changed cells are logged. Two invariants
 pin cell 1.8's KS-PME and cell 3.9's opening verdict to their artifacts.
+
+### 6.20 P1-26: the rule is cited and mapped, never paraphrased
+`tark_data.RULE` is the one record of the regulation's identifiers (title,
+issuer, citation, RIN, section, Federal Register document and URL, docket
+and URL), all recorded with their sources in section 0. The site caption,
+the memo and the Streamlit app read it instead of three string constants.
+`rule_ref(cid)` gives every cell its paragraph letter ((g) to (l) by factor,
+per the 2026-09-03 audit's check of the text) and a basis string that
+states whether verbatim text is in the build. `authority()` parses
+`data/authority/*_proposed.md` when `src/fetch_authority.py` has written
+it and otherwise reports "not fetched" with the command to run. The
+authority panel shows the identifiers with links, the scope sentence
+(selection, not monitoring), the six factors with their letters and
+either the verbatim paragraphs or the not-fetched state. The Evaluation
+view shows the paragraph and basis per factor and marks cells 6.6 and
+6.8 advisor-completed under paragraph (l). The memo's two paragraphs
+that paraphrased the safe harbor and the benchmark requirement are gone,
+replaced by statements about the memo itself, and a verbatim appendix
+renders when the authority file exists. Deviation from the plan's
+letter: `CELLS` keeps its id-to-title shape and `rule_ref` is a function
+beside it, because five modules index `CELLS[cid]` as a title.

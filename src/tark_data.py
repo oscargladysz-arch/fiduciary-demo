@@ -67,6 +67,80 @@ FACTORS = {
     "6": "Complexity",
 }
 
+# The one rule record every surface reads. Identifiers are those recorded
+# with their sources in docs/DECISIONS_2026-09.md (section 0). No sentence of
+# the regulation is paraphrased here: verbatim paragraphs come only from
+# data/authority/, written by src/fetch_authority.py from the Federal
+# Register text, and every surface says when that file is absent.
+RULE = {
+    "title": "Fiduciary Duties in Selecting Designated Investment Alternatives",
+    "issuer": "U.S. Department of Labor, Employee Benefits Security Administration",
+    "citation": "91 FR 16088 (Mar. 31, 2026)",
+    "rin": "RIN 1210-AC38",
+    "section": "proposed 29 CFR 2550.404a-6",
+    "paragraphs": "(g) to (l)",
+    "fr_document": "2026-06178",
+    "fr_url": ("https://www.federalregister.gov/documents/2026/03/31/2026-06178/"
+               "fiduciary-duties-in-selecting-designated-investment-alternatives"),
+    "docket": "EBSA-2026-0166",
+    "docket_url": "https://www.regulations.gov/docket/EBSA-2026-0166",
+}
+RULE_CITATION = f"{RULE['title']}, {RULE['citation']}, {RULE['rin']}, {RULE['section']}"
+# factor n maps to paragraph letter per the 2026-09-03 audit's check of the
+# Federal Register text (audit section 3, item on rule mapping)
+FACTOR_PARAS = {"1": "g", "2": "h", "3": "i", "4": "j", "5": "k", "6": "l"}
+# cells the adopting fiduciary completes for its own plan rather than the
+# record extracting them from filings
+ADVISOR_COMPLETED = ("6.6", "6.8")
+MAPPING_BASIS = ("factor order per the 2026-09-03 audit's check of 91 FR 16088, "
+                 "paragraphs (g) to (l) of proposed 29 CFR 2550.404a-6")
+
+
+def parse_authority(text: str) -> dict[str, list[str]]:
+    """{letter: [verbatim paragraphs]} from the markdown src/fetch_authority.py
+    writes: '## (g)' headings followed by '> ' blockquote lines."""
+    out: dict[str, list[str]] = {}
+    letter = None
+    for line in text.splitlines():
+        m = re.match(r"^## \(([a-z])\)\s*$", line)
+        if m:
+            letter = m.group(1)
+            out[letter] = []
+            continue
+        if letter and line.startswith("> ") and line[2:].strip():
+            out[letter].append(line[2:].strip())
+    return out
+
+
+def authority() -> dict:
+    """The verbatim regulatory text when fetched into this build, else the
+    not-fetched state. Never text from memory."""
+    d = DATA / "authority"
+    files = sorted(d.glob("*_proposed.md")) if d.exists() else []
+    if not files:
+        return {"status": "not fetched",
+                "note": ("verbatim regulatory text not yet fetched into this build: run "
+                         "python src/fetch_authority.py on a machine that reaches "
+                         "federalregister.gov"),
+                "file": None, "paragraphs": None}
+    paras = parse_authority(files[0].read_text())
+    return {"status": "fetched", "note": f"verbatim Federal Register text in {files[0].relative_to(BASE)}",
+            "file": str(files[0].relative_to(BASE)), "paragraphs": paras}
+
+
+def rule_ref(cid: str, auth: dict | None = None) -> dict:
+    """Where a cell sits in the rule: paragraph letter, the basis for that
+    mapping, and whether the adopting fiduciary completes the cell."""
+    auth = auth or authority()
+    letter = FACTOR_PARAS[cid.split(".")[0]]
+    verbatim = auth["status"] == "fetched"
+    return {"para": f"({letter})",
+            "basis": MAPPING_BASIS + (", verbatim text in " + auth["file"] if verbatim
+                                      else ", verbatim text not in this build"),
+            "verbatim": verbatim,
+            "advisor_completed": cid in ADVISOR_COMPLETED}
+
+
 CELLS = {
     "1.1": "Net total return series", "1.2": "Trailing & calendar-year returns",
     "1.3": "Gross vs net spread", "1.4": "Distribution history & composition",

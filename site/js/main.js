@@ -133,6 +133,31 @@ function buildNav() {
   }
 }
 
+/* the rule, its identifiers with links, the six factors with their paragraph
+ * letters and, when fetched into the build, the verbatim paragraph text.
+ * Nothing here paraphrases the regulation: absent the fetched file, the panel
+ * says so. */
+function authorityPanel() {
+  const r = T.rule, a = r.authority;
+  const factors = Object.entries(T.factors).map(([n, label]) => {
+    const letter = T.rule_refs[`${n}.1`].para;
+    const paras = a.paragraphs && a.paragraphs[letter.replace(/[()]/g, "")];
+    const body = paras
+      ? paras.map((t) => `<blockquote class="verbatim">${esc(t)}</blockquote>`).join("")
+      : `<div class="cap">paragraph ${esc(letter)}: ${esc(a.note)}</div>`;
+    return `<div class="authfactor"><b>${n} · ${esc(label)}</b> <span class="cap">paragraph ${esc(letter)}</span>${body}</div>`;
+  }).join("");
+  return `<div class="authbody">
+    <div><b>${esc(r.title)}</b>, ${esc(r.issuer)}. ${esc(r.citation)}, ${esc(r.rin)}, ${esc(r.section)}, paragraphs ${esc(r.paragraphs)}.</div>
+    <div class="cap">Federal Register document <a href="${esc(r.fr_url)}" target="_blank" rel="noopener" id="fr_link">${esc(r.fr_document)}</a>
+      · docket <a href="${esc(r.docket_url)}" target="_blank" rel="noopener">${esc(r.docket)}</a>
+      · verbatim text: <span id="auth_status">${esc(a.status)}</span></div>
+    <div class="cap">Scope of this build: the selection of a designated investment alternative, documented per product and per plan. Monitoring is not documented here. Cells 6.6 and 6.8 are advisor-completed under paragraph (l).</div>
+    ${factors}
+    <div class="cap">Factor mapping basis: ${esc(r.mapping_basis)}.</div>
+  </div>`;
+}
+
 function buildTopbar() {
   const bar = document.getElementById("topbar");
   bar.innerHTML = `
@@ -148,8 +173,7 @@ function buildTopbar() {
     <button class="copylink" id="densitybtn">${state.density === "compact" ? "comfortable" : "compact"} density</button>
     <button class="copylink" id="palettebtn"><kbd>⌘K</kbd> palette</button>
     <span class="spacer"></span>
-    <details class="authority"><summary>Authority</summary>
-      ${esc(T.rule_caption)}</details>`;
+    <details class="authority"><summary>Authority</summary>${authorityPanel()}</details>`;
   bar.querySelector("#planpick").addEventListener("change",
     (e) => setState({ plan: e.target.value }));
   bar.querySelector("#prodpick").addEventListener("change",

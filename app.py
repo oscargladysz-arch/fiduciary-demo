@@ -18,17 +18,15 @@ import json                                    # noqa: E402
 
 import streamlit as st                         # noqa: E402
 
-from tark_data import (coverage_summary, DATA, FACTORS, cells_by_factor,  # noqa: E402
-                       load_evidence, load_plan, load_products, plan_keys,
-                       status_kind)
+from tark_data import (coverage_summary, DATA, FACTORS, RULE, RULE_CITATION,  # noqa: E402
+                       authority, cells_by_factor, load_evidence, load_plan,
+                       load_products, plan_keys, status_kind)
 
 st.set_page_config(page_title="Tark: Fiduciary Evaluation Demo",
                    layout="wide")
 
-RULE_CAPTION = ("Six-factor framework per DOL proposed rule, Fiduciary Duties in "
-                "Selecting Designated Investment Alternatives, 91 FR 16088 "
-                "(Mar 31, 2026), RIN 1210-AC38. Safe harbor attaches to a "
-                "documented, objective, thorough, analytical process.")
+RULE_CAPTION = (f"Six factors per DOL proposed rule {RULE_CITATION}, paragraphs "
+                f"{RULE['paragraphs']}. Verbatim text: {authority()['status']}.")
 
 CHIP = {
     "verified": ":green[● verified]",

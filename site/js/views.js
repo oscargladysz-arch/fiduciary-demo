@@ -323,15 +323,20 @@ export function viewEvaluation(root, state) {
             <details class="src"><summary>Full text & provenance</summary>
               <div class="fulltext">${esc(cell.value)}</div></details>`;
         }
+        const ref = T.rule_refs[cid];
         return `<div class="cellrow">
           <div class="head"><span class="cid num">${cid}</span>
             <span class="el">${gloss(cell.element)}</span>
+            ${ref.advisor_completed ? `<span class="chip plain" data-advisor-completed>advisor-completed, paragraph ${esc(ref.para)}</span>` : ""}
             ${chip(cell.status || "pending")} ${citeBtn(key, cid)}
             <button class="pinbtn" data-pin-cell data-key="${key}" data-cid="${cid}"
               title="pin to packet">⌖</button></div>
           ${body}</div>`;
       }).join("");
-    return `<div class="factorblock" id="f${n}"><h2>${n} · ${esc(label)}</h2>${rows}</div>`;
+    const ref = T.rule_refs[`${n}.1`];
+    return `<div class="factorblock" id="f${n}"><h2>${n} · ${esc(label)}
+        <span class="cap" style="font-weight:400">rule paragraph ${esc(ref.para)}</span></h2>
+      <div class="cap" data-rule-basis style="margin:-4px 0 8px">Basis: ${esc(T.rule.mapping_basis)}.</div>${rows}</div>`;
   }).join("");
 
   root.innerHTML = `

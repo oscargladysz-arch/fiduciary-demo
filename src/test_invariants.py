@@ -140,6 +140,17 @@ check("cell 1.8 states the selection artifact's primary KS-PME for every product
       "; ".join(_bad18[:4]))
 check("cell 3.9 opens with the typed structural verdict for every product", not _bad39, "; ".join(_bad39))
 
+# the authority parser reads what fetch_authority.py writes, letter by letter
+from tark_data import parse_authority as _pa, rule_ref as _rr, authority as _auth  # noqa: E402
+_sample = "# head\n\n## (g)\n\n> first para.\n>\n> second para.\n\n## (h)\n\n> third.\n"
+check("parse_authority: paragraphs keyed by letter, blockquote lines only",
+      _pa(_sample) == {"g": ["first para.", "second para."], "h": ["third."]})
+_a = _auth()
+check("rule_ref: paragraph letter follows the factor and the basis names the verbatim state",
+      _rr("3.4", _a)["para"] == "(i)" and _rr("6.6", _a)["advisor_completed"]
+      and not _rr("6.5", _a)["advisor_completed"]
+      and (("verbatim text in " in _rr("1.1", _a)["basis"]) == (_a["status"] == "fetched")))
+
 # data/roster_decisions.md claims to be validator-enforced: every product key
 # in the record must be named in it
 from tark_data import product_keys as _product_keys  # noqa: E402

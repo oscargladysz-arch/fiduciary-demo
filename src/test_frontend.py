@@ -1036,6 +1036,30 @@ with sync_playwright() as pw:
           and href_cons == "memos/plan_consulting_alumni__cliffwater_cclfx_decision_memo.docx",
           f"{href_tech} / {href_cons}")
 
+    # ---------- P1-26: authority panel and rule references ----------
+    page.evaluate("() => { document.querySelector('details.authority').open = true; }")
+    auth_t = page.locator("details.authority").inner_text()
+    check("authority panel: title, citation, RIN, section, six paragraph letters",
+          all(x in auth_t for x in ("Fiduciary Duties in Selecting Designated Investment Alternatives",
+                                    "91 FR 16088", "RIN 1210-AC38", "2550.404a-6"))
+          and all(f"paragraph ({c})" in auth_t for c in "ghijkl"))
+    check("authority panel: Federal Register link and docket",
+          page.locator("#fr_link").get_attribute("href") == bundle["rule"]["fr_url"]
+          and bundle["rule"]["docket"] in auth_t)
+    check("authority panel: verbatim status is the build's, never text from memory",
+          page.locator("#auth_status").inner_text() == bundle["rule"]["authority"]["status"]
+          and (bundle["rule"]["authority"]["status"] == "fetched" or "not yet fetched" in auth_t))
+    check("authority panel: scope sentence (selection, not monitoring) and advisor-completed cells",
+          "Monitoring is not documented here" in auth_t and "6.6 and 6.8" in auth_t)
+    ev_t = view_text("evaluation", product="hl_paf")
+    check("evaluation: every factor shows its rule paragraph and basis",
+          all(f"rule paragraph ({c})" in ev_t for c in "ghijkl")
+          and ev_t.count("Basis: factor order per the 2026-09-03 audit") == 6)
+    check("evaluation: cells 6.6 and 6.8 carry the advisor-completed chip, no other cell does",
+          page.locator("[data-advisor-completed]").count() == 2
+          and all("paragraph (l)" in page.locator("[data-advisor-completed]").nth(i).inner_text()
+                  for i in range(2)))
+
     # ---------- cohort layer (C4) ----------
     t = view_text("cohorts")
     check("cohort page renders with caveats + rationale + exclusion log",
