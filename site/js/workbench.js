@@ -535,13 +535,15 @@ export function viewPacket(root, state, setState) {
   const pins = getPins();
   root.innerHTML = `
     <div class="viewhead"><h1>Packet</h1>
-      <div class="sub">Your pinned figures and views. Reorder, then print to a
-        clean packet. The decision memos (one per plan and product) remain the
-        docx artifacts, and this packet is a browser-side print composition
-        (nothing is uploaded anywhere).</div></div>
-    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <div class="sub">Your pinned figures and views. Reorder, then print the
+        pinned exhibits. The committee packet and the decision memo (one each per
+        plan and product) are the build-side docx documents. This page is a
+        browser-side composition, nothing is uploaded anywhere.</div></div>
+    <div class="packet-actions" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
       <button class="btn ghost" id="pinview">Pin current selections as a view</button>
-      <button class="btn" onclick="window.print()">Print packet</button>
+      <button class="btn" id="printpins" data-print-pins>Print pinned exhibits</button>
+      ${T.packets.includes(`${state.plan}__${state.product}`) ? `<a class="btn ghost" id="packetlink"
+        href="memos/${state.plan}__${state.product}_committee_packet.docx" download>Committee packet (docx) for ${esc(T.plans[state.plan].display_label)} ↓</a>` : ""}
       ${T.memos.includes(`${state.plan}__${state.product}`) ? `<a class="btn ghost"
         href="memos/${state.plan}__${state.product}_decision_memo.docx" download>Decision memo (docx) ↓</a>` : ""}
     </div>
@@ -568,6 +570,16 @@ export function viewPacket(root, state, setState) {
   root.querySelector("#pinview").addEventListener("click", () => {
     pinCurrent(`view · ${state.view} · ${shortName(state.product)} · ${state.plan}`);
     setState({});
+  });
+  // print only the pinned exhibits: the body carries a class for the print
+  // stylesheet while the dialog is open, the build-side documents are the
+  // committee packet and the memo above
+  root.querySelector("#printpins").addEventListener("click", () => {
+    document.body.classList.add("print-pins");
+    const done = () => { document.body.classList.remove("print-pins"); window.removeEventListener("afterprint", done); };
+    window.addEventListener("afterprint", done);
+    window.print();
+    done();
   });
   list.querySelectorAll("[data-open]").forEach((b) => b.addEventListener("click", () => {
     location.hash = pins[+b.dataset.open].hash.replace(/^#/, "");

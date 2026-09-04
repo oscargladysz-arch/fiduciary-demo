@@ -235,6 +235,35 @@ check("advisor-stated section in all 64 memos, honest about what is stated", not
 if _adv_bad:
     print("   bad:", "; ".join(_adv_bad[:4]))
 
+# P2-9: committee packets, one per plan and product, from the same artifacts
+from tark_packet import packet_name, write_all_packets  # noqa: E402
+POUT = Path(tempfile.mkdtemp(prefix="tark_packets_"))
+pk = write_all_packets(POUT)
+check("packets: one per plan x product, deterministic bytes",
+      len(pk) == len(plan_keys()) * len(prods)
+      and all(a.read_bytes() == b.read_bytes() for a, b in zip(pk, write_all_packets(Path(tempfile.mkdtemp(prefix="tark_packets2_"))))))
+_pk_bad = []
+for pl in plan_keys():
+    for k in prods:
+        t = squash(text_of(POUT / packet_name(pl, k)))
+        mm = matches[(pl, k)]
+        if any(tok in t for tok in FORBIDDEN):
+            _pk_bad.append(f"{pl} {k}: sponsor token")
+        if f"plan: {load_plan(pl)['display_label'].lower()}" not in t or "committee packet" not in t:
+            _pk_bad.append(f"{pl} {k}: header")
+        if (f"structural liquidity verdict: {mm['verdict']}" not in t
+                or f"(illustrative, default sliders): {(mm.get('scenario_verdict') or 'not computable')}" not in t):
+            _pk_bad.append(f"{pl} {k}: verdicts")
+        if not all(x in t for x in ("exhibit a. benchmark selection", "exhibit c. fees and terms",
+                                    "exhibit d. peer cohort placement", "verified by a person: 0",
+                                    "this packet does not decide")):
+            _pk_bad.append(f"{pl} {k}: exhibits")
+        if "verified cells have been independently" in t:
+            _pk_bad.append(f"{pl} {k}: verified sentence")
+check("packets: anonymized, own plan, both verdicts from the match file, exhibits, no decision, all 64", not _pk_bad)
+if _pk_bad:
+    print("   bad:", "; ".join(_pk_bad[:5]))
+
 keys = ["breit","cliffwater_cclfx","dxyz","hl_paf","kkr_kpec","stepstone_spm"]
 texts = {}
 for k in keys:

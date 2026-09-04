@@ -1101,3 +1101,20 @@ the required figures and the codes. The new plan gets its liquidity
 matches and memos for every product on the next producer run and build,
 with no code change. Tests: the CLI's refusals and its recomputation in a
 scratch copy, the form's refusals and its output in the browser.
+
+### 6.29 P2-9: the committee packet is build output too
+`src/tark_packet.py` writes one committee packet per plan and product
+into `site/memos/` on every build, next to the memo: a summary (both
+liquidity verdicts, the benchmark state, the flags the record raises,
+coverage and the verified count, advisor-stated inputs for the plan, and
+that the committee decides), Exhibit A the benchmark selection with its
+rejection ledger, Exhibit B the liquidity match for this plan (the
+memo's own section), Exhibit C the typed fee row, Exhibit D the cohort
+placement with its caveats, then the advisor inputs and a provenance
+page. Every figure comes from the artifacts the site and the memo read.
+The Packet view links the packet for the selected plan and product, and
+its print button prints the pinned exhibits only (a body class for the
+print stylesheet while the dialog is open). Bytes are deterministic.
+The memo gate checks all 64 packets, the frontend gate checks that all
+are served, that the link follows the plan and that printing scopes to
+the pins.

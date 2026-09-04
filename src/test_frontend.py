@@ -1037,6 +1037,26 @@ with sync_playwright() as pw:
         except Exception:  # noqa: BLE001
             memo_bad.append(k)
     check("all decision memos served", not memo_bad, "; ".join(memo_bad))
+    packet_bad = []
+    for k in bundle["packets"]:
+        try:
+            with urllib.request.urlopen(f"http://127.0.0.1:{PORT}/memos/{k}_committee_packet.docx") as resp:
+                if resp.status != 200 or int(resp.headers["Content-Length"]) < 5000:
+                    packet_bad.append(k)
+        except Exception:  # noqa: BLE001
+            packet_bad.append(k)
+    check("all committee packets served, one per plan x product",
+          not packet_bad and len(bundle["packets"]) == len(bundle["plan_order"]) * len(bundle["products"]))
+    view_text("packet", product="cliffwater_cclfx", plan="plan_consulting_alumni")
+    check("packet view: the committee packet link follows the selected plan",
+          page.locator("#packetlink").get_attribute("href")
+          == "memos/plan_consulting_alumni__cliffwater_cclfx_committee_packet.docx")
+    printed = page.evaluate("""() => new Promise((res) => {
+        window.print = () => res(document.body.className);
+        document.querySelector('[data-print-pins]').click();
+      })""")
+    check("packet view: printing covers the pinned exhibits only (print class on during the dialog, off after)",
+          "print-pins" in printed and "print-pins" not in page.evaluate("() => document.body.className"))
     check("one memo per plan x product in the bundle",
           len(bundle["memos"]) == len(bundle["plan_order"]) * len(bundle["products"])
           and all(f"{pl}__{pk}" in bundle["memos"]

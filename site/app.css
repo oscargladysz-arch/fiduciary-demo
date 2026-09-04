@@ -562,3 +562,9 @@ body[data-density="compact"] h1 { font-size: 20px; }
 .planform label { display: block; }
 .planform input[type="text"], .planform input[type="number"] { display: block; width: 100%; font: inherit;
   padding: 4px 6px; border: 1px solid var(--line); border-radius: 3px; }
+
+/* print pinned exhibits only (P2-9) */
+@media print {
+  body.print-pins #nav, body.print-pins #topbar, body.print-pins .viewhead,
+  body.print-pins .packet-actions, body.print-pins .mv { display: none !important; }
+}

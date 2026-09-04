@@ -21,7 +21,8 @@ the evidence row). Only a human editing `data/evidence/*.csv` can set
   `benchmarks/`, `liquidity/`, `series*/`, `census/` (the T1 universe),
   `citations/` (offline accession resolution), `manifest.csv` (accessions),
   `as_of.json` (record as-of date). Decision memos are build output, one per
-  plan and product, generated into `site/memos/` by `src/build_site.py`.
+  plan and product, generated into `site/memos/` by `src/build_site.py`, and
+  so are the committee packets (`tark_packet.py`).
 - `src/`: producers (`produce.py` runs them in a fixed order), the engines
   (`tark_analytics.py`, `tark_benchmark.py`, `tark_liquidity.py`,
   `tark_cohort.py`, `tark_memo.py`), the ingestion of a new fund from its CIK

@@ -589,7 +589,7 @@ def write_all(out_dir: Path | None = None) -> list[Path]:
     """Every plan x product memo, stale docx files in out_dir removed first."""
     out = out_dir or SITE_MEMOS
     out.mkdir(parents=True, exist_ok=True)
-    for stale in out.glob("*.docx"):
+    for stale in out.glob("*_decision_memo.docx"):
         stale.unlink()
     return [build_memo(key, plan_key, out)
             for plan_key in plan_keys() for key in load_products()]

@@ -24,6 +24,7 @@ from pathlib import Path
 from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
 from tark_display import BASE_LABEL, WRAPPER_LABEL, cell_display, facts_by_cell
 from tark_memo import write_all
+from tark_packet import write_all_packets
 from tark_data import (ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_CELLS, BASE, DATA, CELLS, FACTORS,
                        RULE, advisor_entries, authority,
                        coverage_summary, rule_ref,
@@ -614,6 +615,10 @@ def main() -> None:
     memo_dir = SITE / "memos"
     memo_paths = write_all(memo_dir)
     bundle["memos"] = sorted(m.stem.replace("_decision_memo", "") for m in memo_paths)
+    # committee packets (P2-9), one per plan and product, same folder, same screen
+    packet_paths = write_all_packets(memo_dir)
+    bundle["packets"] = sorted(m.stem.replace("_committee_packet", "") for m in packet_paths)
+    memo_paths = memo_paths + packet_paths
 
     series_payload = json.dumps({
         "dxyz_daily": [[d, round(v, 4)] for d, v in load_series("dxyz", "close")],
@@ -657,8 +662,8 @@ def main() -> None:
                                          + census_payload + ";\n")
 
     print(f"site/data.js written ({len(payload):,} bytes), census chunk "
-          f"{len(census_payload):,} bytes, {len(bundle['memos'])} memos "
-          f"generated, sponsor tokens screened: {len(sponsor_names)}")
+          f"{len(census_payload):,} bytes, {len(bundle['memos'])} memos and "
+          f"{len(bundle['packets'])} packets generated, sponsor tokens screened: {len(sponsor_names)}")
 
 
 if __name__ == "__main__":
