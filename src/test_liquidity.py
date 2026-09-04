@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 from tark_liquidity import (REQUIRED, VERDICTS, run_match, scenario_verdict,
-                            structural_verdict, wrapper_facts)
+                            schedule_h_lines, structural_verdict, wrapper_facts)
 from tark_data import DATA, load_products, plan_keys
 
 FAILS: list[str] = []
@@ -80,6 +80,26 @@ check("a closed program has 0% capacity and the scenario says so",
 check("every scenario reason block labels itself illustrative",
       all(any("illustrative" in r.lower() for r in m["scenario_reasons"]) or m["wrapper_facts"]["exchange"]
           for m in matches.values()))
+
+# ---- P1-18: Schedule H fields are used when present, named absent otherwise
+present = {"plan_year": "2024", "financials": {"net_assets_boy": 400_000_000.0},
+           "schedule_h": {"benefit_payments_2e": {"value": 32_000_000.0, "source": "line 2e"},
+                          "participant_contributions_2a1b": {"value": 20_000_000.0, "source": "line 2a(1)(B)"},
+                          "qdia_indicator": {"value": "target-date series", "source": "plan document"}}}
+sc_lines, st_lines = schedule_h_lines(present)
+check("schedule H present: filed outflow rate printed with the model named",
+      any("Schedule H based demand (filed, line 2e): benefit payments were 8.0%" in x and "Model:" in x for x in sc_lines))
+check("schedule H present: contributions printed as a plan-level inflow",
+      any("5.0% of beginning net assets" in x and "plan level" in x for x in sc_lines))
+check("schedule H present: QDIA named in the structural reasons",
+      any("Plan QDIA on file: target-date series" in x and "cell 3.5" in x for x in st_lines))
+absent_lines, _ = schedule_h_lines({"financials": {"net_assets_boy": 1.0}, "schedule_h": {
+    "benefit_payments_2e": {"value": None, "reason": "not typed in the test"}}})
+check("schedule H absent: the match says so with the plan file's reason and uses the sliders only",
+      any("not typed in the test" in x and "sliders only" in x for x in absent_lines))
+check("today's four plans carry Schedule H as null-with-reason and every non-exchange match says so",
+      all(any("Schedule H benefit payments (line 2e)" in r and "sliders only" in r for r in m["scenario_reasons"])
+          for m in matches.values() if not m["wrapper_facts"]["exchange"]))
 
 # ---- committed artifacts equal a fresh run's verdicts, and the wrapper facts name cells
 drift = []

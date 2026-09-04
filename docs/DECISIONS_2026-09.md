@@ -749,3 +749,23 @@ product, every committed match equal to a fresh run, and the JS port in
 parity (the frontend gate checks the scenario verdict on all 64 matches).
 `produce.py` now runs the facts pass before the liquidity pass, because
 the verdict reads the typed layer.
+
+### 6.11 P1-18: the plan schema names what the demand model would rather read
+Each reference plan now carries a `schedule_h` block with three records:
+benefit payments (Schedule H line 2e), participant contributions (line
+2a(1)(B)) and a QDIA indicator. All twelve values are null with the
+reason: the DOL bulk file `F_SCH_H_2024_latest.csv` is not in the
+repository and its host is blocked from the build container, and the
+Form 5500 does not code a QDIA election at all (the plan document or the
+404a-5 disclosure does). The validator requires the block, refuses a
+null without a reason and a value without a source. The
+`dictionary_cells` entries say how each feeds the model.
+
+The match uses them when present, with the model named: a filed line 2e
+prints the plan's outflow rate applied to the position as a "Schedule H
+based" estimate beside the slider model, never blended with it,
+contributions print as a plan-level inflow, and a typed QDIA adds the
+sleeve sentence to the structural reasons. Until they are typed, every
+non-exchange match says the figure is not in this build and that demand
+uses the illustrative sliders only. Oscar fills the values from the bulk
+file on the laptop, citing the row, and the gates will pick them up.

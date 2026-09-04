@@ -353,6 +353,21 @@ def validate_plan(key: str) -> list[str]:
         recomputed = round(adm / net * 100, 3)
         if abs(recomputed - (der.get("admin_expense_ratio_pct") or 0)) > 0.001:
             errs.append(f"{key}: admin_expense_ratio drift")
+    # Schedule H fields (P1-18): present as records, null only with a reason,
+    # a value only with a source
+    sh = a.get("schedule_h")
+    if not isinstance(sh, dict):
+        errs.append(f"{key}: missing 'schedule_h' block")
+    else:
+        for fld in ("benefit_payments_2e", "participant_contributions_2a1b", "qdia_indicator"):
+            rec = sh.get(fld)
+            if not isinstance(rec, dict):
+                errs.append(f"{key}: schedule_h.{fld} missing or not a record")
+                continue
+            if rec.get("value") is None and not rec.get("reason"):
+                errs.append(f"{key}: schedule_h.{fld} is null without a reason")
+            if rec.get("value") is not None and not rec.get("source"):
+                errs.append(f"{key}: schedule_h.{fld} has a value without a source")
     return errs
 
 

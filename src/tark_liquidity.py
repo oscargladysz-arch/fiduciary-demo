@@ -117,6 +117,39 @@ def scenario_verdict(demand_pct: float, stressed_pct: float,
     return "conditional"
 
 
+def schedule_h_lines(plan: dict) -> tuple[list[str], list[str]]:
+    """(scenario lines, structural lines) from the plan's Schedule H block
+    (P1-18). Filed figures are used when present, with the model named.
+    Absent figures are said to be absent, with the plan file's reason."""
+    fin = plan.get("financials", {})
+    sh = plan.get("schedule_h") or {}
+    boy = fin.get("net_assets_boy")
+    scenario, structural = [], []
+    bp = sh.get("benefit_payments_2e") or {}
+    if isinstance(bp.get("value"), (int, float)) and boy:
+        pct = bp["value"] / boy * 100
+        scenario.append(f"Schedule H based demand (filed, line 2e): benefit payments were "
+                        f"{pct:.1f}% of beginning net assets in plan year "
+                        f"{plan.get('plan_year', '?')}. Model: the filed plan-level outflow "
+                        f"rate applied to the position, {pct:.1f}% of the position per year, "
+                        "shown beside the slider model above, not blended with it.")
+    else:
+        scenario.append("Schedule H benefit payments (line 2e) "
+                        + (bp.get("reason") or "not typed")
+                        + ". Demand uses the illustrative turnover sliders only.")
+    pc = sh.get("participant_contributions_2a1b") or {}
+    if isinstance(pc.get("value"), (int, float)) and boy:
+        scenario.append(f"Participant contributions (Schedule H line 2a(1)(B)) were "
+                        f"{pc['value'] / boy * 100:.1f}% of beginning net assets, an inflow "
+                        "that offsets outflows at the plan level, not at the position level.")
+    qd = sh.get("qdia_indicator") or {}
+    if qd.get("value"):
+        structural.append(f"Plan QDIA on file: {qd['value']} ({qd.get('source', 'source not recorded')}). "
+                          "A product reaching participants through the QDIA sits inside a TDF "
+                          "or managed-account sleeve (cell 3.5), not as a standalone DIA.")
+    return scenario, structural
+
+
 def plan_direction(plan: dict) -> str:
     codes = plan["plan_characteristics"].get("pension_benefit_codes", "")
     if "2G" in codes or "404(c)" in plan["plan_characteristics"].get("notes", ""):
@@ -235,6 +268,10 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
             f"Scenario verdict (ILLUSTRATIVE, this plan): {scv}. It moves with the sliders "
             "and the plan. Proration assumption: an oversubscribed offer is filled pro rata "
             "and the unfilled remainder waits for the next window.")
+    sh_scenario, sh_structural = schedule_h_lines(a)
+    if not wf["exchange"]:
+        scenario_reasons.extend(sh_scenario)
+    structural.extend(sh_structural)
 
     return {
         "product": key, "plan": plan_key,

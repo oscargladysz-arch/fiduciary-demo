@@ -11,7 +11,8 @@
   "scenario_reasons": [
     "Capacity: repurchases closed (cell 3.1): 12x per year at 0% of aggregate nav. Capacity is 0% until the program reopens.",
     "Scenario demand (illustrative): 13.7% of the position per year vs 0% annual wrapper capacity. EXCEEDS: repurchases are closed, so every request waits for the program to reopen.",
-    "Scenario verdict (ILLUSTRATIVE, this plan): misaligned. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window."
+    "Scenario verdict (ILLUSTRATIVE, this plan): misaligned. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
+    "Schedule H benefit payments (line 2e) not typed: the DOL bulk file F_SCH_H_2024_latest.csv is not in the repository and askebsa.dol.gov is blocked from the build container. Fill from the bulk file on a machine with access, citing the row. Demand uses the illustrative turnover sliders only."
   ],
   "reasons": [
     "STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed). A trustee-directed sleeve could hold this wrapper directly, and the daily-menu constraint (this wrapper deals 12x/year) applies only to the participant-directed portion (cell 3.5).",
@@ -19,7 +20,8 @@
     "Early repurchase economics: 5% if held < 1 year (2.7). Relevant to participant-level churn (2.7).",
     "Capacity: repurchases closed (cell 3.1): 12x per year at 0% of aggregate nav. Capacity is 0% until the program reopens.",
     "Scenario demand (illustrative): 13.7% of the position per year vs 0% annual wrapper capacity. EXCEEDS: repurchases are closed, so every request waits for the program to reopen.",
-    "Scenario verdict (ILLUSTRATIVE, this plan): misaligned. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window."
+    "Scenario verdict (ILLUSTRATIVE, this plan): misaligned. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
+    "Schedule H benefit payments (line 2e) not typed: the DOL bulk file F_SCH_H_2024_latest.csv is not in the repository and askebsa.dol.gov is blocked from the build container. Fill from the bulk file on a machine with access, citing the row. Demand uses the illustrative turnover sliders only."
   ],
   "missing_facts": [],
   "layers": "verdict is structural (typed facts, cells 3.1, 3.3, 2.7, plan-independent). scenario_verdict is ILLUSTRATIVE (demand model against the same capacity, per plan).",
