@@ -892,3 +892,23 @@ descriptors. The leverage-regime vocabulary is normalized to four values
 across the registry and the matrix, and the caveat prose carries no
 semicolon. `test_cohort` asserts, for every committed cohort, that each
 caveat is written exactly when the typed values differ.
+
+### 6.19 P1-D2: the engine restates itself, nothing else does
+Cells 1.8, 1.9, 3.8, 3.9, 5.3 and 5.5 were engine restatements dated
+2026-08-09 that no committed script wrote, and by the memo sweep they
+contradicted the record: cell 1.8 named BKLN as cclfx's primary where the
+v2 selection names the peer composite, cell 3.9 said CONDITIONAL for the
+reference plan where the record says PARTIAL, cell 5.5 described v1
+windows. `src/write_computed_cells.py` now owns all six and writes them
+from the v2 selection, the supplement's stress windows and the four plan
+match files: 1.8 states the primary comparison (and the secondary, the
+ILLUSTRATIVE schedule row and the low-confidence label where present),
+1.9 the stress windows or the fiscal-year stress observation with its
+caveat, 3.8 the ILLUSTRATIVE stress test per reference plan, 3.9 the
+structural verdict with missing facts and the scenario verdict per plan,
+5.3 every candidate with its outcome, 5.5 the PME inputs as the formula
+(KS-PME = fund growth / benchmark growth). The writer regenerates these
+six only where the cell is already computed, so no n/a or evidence row
+changes kind and the coverage totals stand. hl_paf's window judgment
+survives as an analyst note. 89 changed cells are logged. Two invariants
+pin cell 1.8's KS-PME and cell 3.9's opening verdict to their artifacts.

@@ -287,22 +287,22 @@
     },
     "3.8": {
       "element": "Redemption stress test",
-      "value": "ILLUSTRATIVE redemption stress (computed, all four plans): tail turnover x2, active turnover x1.5 vs base scenario. Anchor plan: demand 19.2%/yr vs 20.0 capacity - within wrapper capacity (19.2% vs 20%) IF offers are not prorated",
+      "value": "ILLUSTRATIVE redemption stress test (computed for all four reference plans): tail turnover x2, active turnover x1.5 vs base scenario, default sliders allocation 5% of plan, tail turnover 20%/yr, active turnover 5%/yr. Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): stressed demand 26.4% of the position vs 20% annual wrapper capacity, EXCEEDS annual wrapper capacity. Unmet demand rolls into later windows (gating-equivalent outcome). US industrial manufacturer 401(k) plan (~$0.8B, OH): stressed demand 12.3% of the position vs 20% annual wrapper capacity, within wrapper capacity (12.3% vs 20%) IF offers are not prorated. US casual-dining restaurant group 401(k) plan (~$1.6B, FL): stressed demand 16.7% of the position vs 20% annual wrapper capacity, within wrapper capacity (16.7% vs 20%) IF offers are not prorated. US media/technology company 401(k) plan (~$570M, New York): stressed demand 19.2% of the position vs 20% annual wrapper capacity, within wrapper capacity (19.2% vs 20%) IF offers are not prorated. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
       "status": "computed",
-      "source": "data/liquidity/plan_tech_media__jll_ipt_match.json (+3 plans)",
-      "section": "stressed_scenario (ILLUSTRATIVE)",
+      "source": "data/liquidity/plan_consulting_alumni__jll_ipt_match.json",
+      "section": "stressed_scenario and scenario across the four plan match files",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; DAILY repurchase requests at that day's NAV, capped at 5% of NAV per calendar quarter. Direct DIA use requires a bridging structure — CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of combined NAV of all classes (prior quarter-end) — a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
+      "value": "Structural liquidity verdict CONDITIONAL (typed facts, cells 3.1, 3.3, 2.7, plan-independent). Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): conditional-weak, US industrial manufacturer 401(k) plan (~$0.8B, OH): conditional, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): conditional, US media/technology company 401(k) plan (~$570M, New York): conditional. STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed). A trustee-directed sleeve could hold this wrapper directly, and the daily-menu constraint (this wrapper deals 4x/year) applies only to the participant-directed portion (cell 3.5). Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts and on the Liquidity view.",
       "status": "computed",
-      "source": "data/liquidity/plan_tech_media__jll_ipt_match.json",
-      "section": "verdict + reasons",
+      "source": "data/liquidity/plan_consulting_alumni__jll_ipt_match.json",
+      "section": "verdict, scenario_verdict, missing_facts, structural_reasons across the four plan match files",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "4.1": {

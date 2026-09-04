@@ -119,6 +119,27 @@ check("citations: every resolved reference is the same product's manifest row wi
 check("citations: the summary counts equal the per-product files",
       _summary["references"] == _n_all and sum(_summary["counts"].values()) == _n_all)
 
+# engine-owned cells restate their artifacts, never an older run
+import re as _re  # noqa: E402
+from tark_data import load_products as _lp, status_kind as _sk  # noqa: E402
+_bad18, _bad39 = [], []
+for _k, _p in _lp().items():
+    _c18 = _p["cells"]["1.8"]
+    _sp = BASE / "data" / "benchmarks" / f"{_k}_selection.json"
+    if _sk(_c18["status"]) == "computed" and _sp.exists():
+        _sel = _json.loads(_sp.read_text())
+        _comp = ((_sel.get("primary") or {}).get("comparison") or {})
+        _m = _re.search(r"KS-PME ([0-9.]+)", _c18["value"])
+        if _comp and (not _m or float(_m.group(1)) != _comp["ks_pme"]):
+            _bad18.append(f"{_k}: cell {_m.group(1) if _m else None} vs artifact {_comp['ks_pme']}")
+    _fx = _json.loads((BASE / "data" / "facts" / f"{_k}.json").read_text())["facts"]
+    _sv = (_fx.get("liquidity_structural_verdict") or {}).get("value")
+    if _sv and not _p["cells"]["3.9"]["value"].startswith(f"Structural liquidity verdict {_sv.upper()}"):
+        _bad39.append(_k)
+check("cell 1.8 states the selection artifact's primary KS-PME for every product with one", not _bad18,
+      "; ".join(_bad18[:4]))
+check("cell 3.9 opens with the typed structural verdict for every product", not _bad39, "; ".join(_bad39))
+
 # data/roster_decisions.md claims to be validator-enforced: every product key
 # in the record must be named in it
 from tark_data import product_keys as _product_keys  # noqa: E402

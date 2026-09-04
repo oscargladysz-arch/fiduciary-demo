@@ -77,22 +77,22 @@
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": "KS-PME 1.2532, Direct Alpha +3.22%/yr vs BKLN proxy over full life (2019-06-05 to 2026-07-17). (Refreshed after the 2026-08-09 daily-anchoring correction; prior prose carried 1.2519/3.21.) Window-sensitive per methodology - explorable in the PME lab.",
+      "value": "KS-PME 0.9756 and Direct Alpha -0.61%/yr vs Peer cohort composite: private_credit without cliffwater_cclfx (bcred, cion_ares, ocic, pflex) over FY2021 to FY2025 (composite comparison, 4 overlapping fiscal year(s) of 5 composite years). Fund growth 1.4945x vs benchmark 1.5318x on two-point flows (one contribution at the window start, one valuation at the end). The fund lagged the benchmark over this window. aligned by fiscal year-end year. Members' fiscal years end in month 06 (pflex), 12 (bcred, cion_ares, ocic), the fund's in month 03. Composite year(s) 2022 skipped: the fund has no whole fiscal year with that label (stub or partial period excluded). Secondary Senior loan investable proxy (BKLN, for Morningstar LSTA class): KS-PME 1.2532, Direct Alpha +3.22%/yr over 2019-06-05 to 2026-07-17. ILLUSTRATIVE monthly-schedule KS-PME 1.1224 (86 equal contributions), the two-point figure is primary. Window-sensitive: PME and alpha on appraisal-lagged NAVs move with the window (methodology section 3).",
       "status": "computed",
-      "source": "data/benchmarks/cliffwater_cclfx_selection.json (primary.comparison)",
-      "section": "primary.comparison",
+      "source": "data/benchmarks/cliffwater_cclfx_selection.json",
+      "section": "primary.comparison, secondary.comparison",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-09)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
-      "value": "Computed stress-window performance (adj-close (distributions reinvested)): CY2022 rate shock: total return 2.05%, max drawdown -2.71%; COVID (Feb-Apr 2020): return -1.18%, max drawdown -3.91%; worst full-history peak-to-trough -3.91%. Series data/series/cclfx.csv.",
+      "value": "Computed stress-window performance from data/series/cclfx.csv (adjusted close, distributions reinvested). CY2022 rate shock: total return 2.05%, max drawdown -2.71%. COVID (Feb to Apr 2020): total return -1.18%, max drawdown -3.91%. Worst full-history peak-to-trough -3.91%.",
       "status": "computed",
-      "source": "data/analytics/supplement.json (stress_windows)",
-      "section": "stress_windows",
+      "source": "data/analytics/supplement.json",
+      "section": "stress_windows.cliffwater_cclfx",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-09)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "1.10": {
@@ -267,22 +267,22 @@
     },
     "3.8": {
       "element": "Redemption stress test",
-      "value": "ILLUSTRATIVE redemption stress test (computed, all four reference plans): tail turnover x2, active turnover x1.5 vs base scenario. Anchor plan outcome: demand 19.2%/yr of position vs 20.0% wrapper capacity - within wrapper capacity (19.2% vs 20%) IF offers are not prorated Per-plan stressed outcomes in data/liquidity/<plan>__cliffwater_cclfx_match.json; consulting-alumni plan EXCEEDS quarterly wrapper capacity under stress.",
+      "value": "ILLUSTRATIVE redemption stress test (computed for all four reference plans): tail turnover x2, active turnover x1.5 vs base scenario, default sliders allocation 5% of plan, tail turnover 20%/yr, active turnover 5%/yr. Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): stressed demand 26.4% of the position vs 20% annual wrapper capacity, EXCEEDS annual wrapper capacity. Unmet demand rolls into later windows (gating-equivalent outcome). US industrial manufacturer 401(k) plan (~$0.8B, OH): stressed demand 12.3% of the position vs 20% annual wrapper capacity, within wrapper capacity (12.3% vs 20%) IF offers are not prorated. US casual-dining restaurant group 401(k) plan (~$1.6B, FL): stressed demand 16.7% of the position vs 20% annual wrapper capacity, within wrapper capacity (16.7% vs 20%) IF offers are not prorated. US media/technology company 401(k) plan (~$570M, New York): stressed demand 19.2% of the position vs 20% annual wrapper capacity, within wrapper capacity (19.2% vs 20%) IF offers are not prorated. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
       "status": "computed",
-      "source": "data/liquidity/plan_tech_media__cliffwater_cclfx_match.json (+ 3 other plans)",
-      "section": "stressed_scenario (pipeline artifact, ILLUSTRATIVE)",
+      "source": "data/liquidity/plan_consulting_alumni__cliffwater_cclfx_match.json",
+      "section": "stressed_scenario and scenario across the four plan match files",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-09)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Verdict: CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure — CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of outstanding shares — a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
+      "value": "Structural liquidity verdict PARTIAL (typed facts, cells 3.1, 3.3, 2.7, plan-independent, facts missing: gate_history). Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): conditional-weak, US industrial manufacturer 401(k) plan (~$0.8B, OH): conditional, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): conditional, US media/technology company 401(k) plan (~$570M, New York): conditional. STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed). A trustee-directed sleeve could hold this wrapper directly, and the daily-menu constraint (this wrapper deals 4x/year) applies only to the participant-directed portion (cell 3.5). Facts missing for a structural verdict: gate_history (N-23C3A filings are offer NOTIFICATIONS, not results. Per-offer proration outcomes not yet evidenced). The verdict stays partial until they are typed from the filings. Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts and on the Liquidity view.",
       "status": "computed",
-      "source": "data/liquidity/plan_tech_media__cliffwater_cclfx_match.json",
-      "section": "verdict + reasons",
+      "source": "data/liquidity/plan_consulting_alumni__cliffwater_cclfx_match.json",
+      "section": "verdict, scenario_verdict, missing_facts, structural_reasons across the four plan match files",
       "quote": "",
-      "extracted_by": "Claude (M6 pipeline)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "4.1": {
@@ -392,12 +392,12 @@
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": "Alt asset-class index candidates evaluated by the engine (incl. paid/manual ones deliberately kept in the menu and rejected with reasons): Senior loan investable proxy (BKLN, for Morningstar LSTA class) (9/12) | PME / Direct Alpha vs BKLN (9/12) | Cliffwater Direct Lending Index (CDLI) - REJECTED: score 6/12 below primary threshold 7 | Peer cohort: same-strategy interval credit funds - REJECTED: score 5/12 below primary threshold 7",
+      "value": "Benchmark candidates evaluated by the engine (rubric v2, threshold 7 of 12, strategy gate below 2 of 3 ineligible). PRIMARY Peer cohort composite: private_credit without cliffwater_cclfx (bcred, cion_ares, ocic, pflex) 10/12 (C lane). SECONDARY Senior loan investable proxy (BKLN, for Morningstar LSTA class) 9/12 (B lane). REJECTED Cliffwater Direct Lending Index (CDLI) 5/12 (B lane): score 5/12 below primary threshold 7. Fund-declared benchmark: none (cell 5.1: the fund expressly declares no designated performance benchmark).",
       "status": "computed",
       "source": "data/benchmarks/cliffwater_cclfx_selection.json",
-      "section": "candidates + rejection log",
+      "section": "primary, secondary, rejected, declared_benchmarks",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-09)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.4": {
@@ -412,12 +412,12 @@
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": "PME inputs (computed, primary comparison): window 2019-06-05 to 2026-07-17; fund growth 1.7165x vs index 1.3697x (daily-anchored); flows = [-1 at window start, terminal growth at end]; index = BKLN adj close. KS-PME 1.2532, Direct Alpha 3.22%/yr.",
+      "value": "PME inputs (computed, primary comparison vs Peer cohort composite: private_credit without cliffwater_cclfx (bcred, cion_ares, ocic, pflex)): window FY2021 to FY2025 (composite comparison, 4 overlapping fiscal year(s) of 5 composite years). Fund growth 1.4945x vs benchmark growth 1.5318x, flows = one contribution of 1 at the window start and the terminal growth at the end, benchmark series composite:private_credit. KS-PME 0.9756 = fund growth / benchmark growth. Direct Alpha -0.61%/yr is the annualized form of the same two flows (fund 10.57%/yr vs benchmark 11.25%/yr). aligned by fiscal year-end year. Members' fiscal years end in month 06 (pflex), 12 (bcred, cion_ares, ocic), the fund's in month 03. Composite year(s) 2022 skipped: the fund has no whole fiscal year with that label (stub or partial period excluded).",
       "status": "computed",
       "source": "data/benchmarks/cliffwater_cclfx_selection.json",
       "section": "primary.comparison",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-09)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.6": {
