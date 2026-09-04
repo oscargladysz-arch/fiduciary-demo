@@ -1,0 +1,621 @@
+{
+  "what": "Typed product descriptors the v2 benchmark rubric reads (P1-7). Each field names its source in `sources`. Identity (fund_name, cik) stays in data/products; return inputs stay in data/benchmarks/profiles_input.json; P2-1 merges the duplicate registries into this file.",
+  "as_of": "2026-09-04",
+  "products": {
+    "cliffwater_cclfx": {
+      "cohort": "private_credit",
+      "strategy": "private_credit",
+      "asset_class": "private_credit",
+      "sub_strategy": "direct_lending",
+      "wrapper_type": "interval_23c3",
+      "pricing_class": "NAV",
+      "nav_cadence": "daily",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "series",
+        "series": "cclfx"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Cliffwater"
+      ],
+      "adviser_keys": [
+        "cliffwater"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "5.1",
+        "1.1",
+        "1.2"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/private_credit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      },
+      "declared_none_reason": "cell 5.1: the fund expressly declares no designated performance benchmark"
+    },
+    "pflex": {
+      "cohort": "private_credit",
+      "strategy": "private_credit",
+      "asset_class": "private_credit",
+      "sub_strategy": "multi_sector_credit",
+      "wrapper_type": "interval_23c3",
+      "pricing_class": "NAV",
+      "nav_cadence": "daily",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "series",
+        "series": "pflex"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "PIMCO"
+      ],
+      "adviser_keys": [
+        "pimco"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "5.1",
+        "1.1",
+        "1.2"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/private_credit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      },
+      "declared_none_reason": "cell 5.1: documented absence of a self-declared benchmark"
+    },
+    "cion_ares": {
+      "cohort": "private_credit",
+      "strategy": "private_credit",
+      "asset_class": "private_credit",
+      "sub_strategy": "diversified_credit",
+      "wrapper_type": "interval_23c3",
+      "pricing_class": "NAV",
+      "nav_cadence": "daily",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "series",
+        "series": "cadux"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "CION",
+        "Ares"
+      ],
+      "adviser_keys": [
+        "cion",
+        "ares"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "Credit Suisse Leveraged Loan Index",
+          "candidate": "csll"
+        }
+      ],
+      "source_cells": [
+        "5.1",
+        "1.1",
+        "1.2"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/private_credit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      }
+    },
+    "bcred": {
+      "cohort": "private_credit",
+      "strategy": "private_credit",
+      "asset_class": "private_credit",
+      "sub_strategy": "direct_lending",
+      "wrapper_type": "nontraded_bdc",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "BDC 150% asset-coverage regime - materially MORE leverage headroom than 1940-Act funds",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Blackstone"
+      ],
+      "adviser_keys": [
+        "blackstone"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/private_credit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      },
+      "declared_none_reason": "cell 5.1: documented absence, zero index references"
+    },
+    "ocic": {
+      "cohort": "private_credit",
+      "strategy": "private_credit",
+      "asset_class": "private_credit",
+      "sub_strategy": "direct_lending",
+      "wrapper_type": "nontraded_bdc",
+      "pricing_class": "NAV",
+      "nav_cadence": "quarterly",
+      "leverage_regime": "BDC 150% asset-coverage regime - materially MORE leverage headroom than 1940-Act funds",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Blue Owl"
+      ],
+      "adviser_keys": [
+        "blue owl",
+        "owl rock"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/private_credit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      },
+      "declared_none_reason": "cell 5.1 (partial): no self-declared benchmark index appears in the 10-K or the N-2"
+    },
+    "hl_paf": {
+      "cohort": "evergreen_pe",
+      "strategy": "private_equity_evergreen",
+      "asset_class": "private_equity",
+      "sub_strategy": "evergreen_pe",
+      "wrapper_type": "tender_offer",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Hamilton Lane"
+      ],
+      "adviser_keys": [
+        "hamilton lane"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "S&P 500 Index",
+          "candidate": "spy"
+        },
+        {
+          "name": "MSCI World Index",
+          "candidate": "urth"
+        }
+      ],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/evergreen_pe.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      }
+    },
+    "stepstone_spm": {
+      "cohort": "evergreen_pe",
+      "strategy": "private_equity_evergreen",
+      "asset_class": "private_equity",
+      "sub_strategy": "evergreen_pe",
+      "wrapper_type": "tender_offer",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "aatr_5yr"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "StepStone"
+      ],
+      "adviser_keys": [
+        "stepstone"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "MSCI World Index",
+          "candidate": "urth"
+        }
+      ],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/evergreen_pe.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      }
+    },
+    "ares_pmf": {
+      "cohort": "evergreen_pe",
+      "strategy": "private_equity_evergreen",
+      "asset_class": "private_equity",
+      "sub_strategy": "evergreen_pe",
+      "wrapper_type": "tender_offer",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Ares"
+      ],
+      "adviser_keys": [
+        "ares"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "MSCI World Index",
+          "candidate": "urth"
+        }
+      ],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/evergreen_pe.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      }
+    },
+    "amg_pantheon": {
+      "cohort": "evergreen_pe",
+      "strategy": "private_equity_evergreen",
+      "asset_class": "private_equity",
+      "sub_strategy": "evergreen_pe",
+      "wrapper_type": "tender_offer",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "AMG",
+        "Pantheon"
+      ],
+      "adviser_keys": [
+        "pantheon"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "MSCI World Index",
+          "candidate": "urth"
+        }
+      ],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/evergreen_pe.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      }
+    },
+    "kkr_kpec": {
+      "cohort": "evergreen_pe",
+      "strategy": "pe_conglomerate",
+      "asset_class": "private_equity",
+      "sub_strategy": "pe_conglomerate",
+      "wrapper_type": "nontraded_llc",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "no 1940-Act leverage limits (34-Act conglomerate)",
+      "held_returns": {
+        "kind": "aatr"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "KKR"
+      ],
+      "adviser_keys": [
+        "kkr"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/evergreen_pe.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      },
+      "declared_none_reason": "cell 5.1: documented absence of a self-declared performance benchmark"
+    },
+    "breit": {
+      "cohort": "nontraded_reit",
+      "strategy": "nontraded_reit",
+      "asset_class": "real_estate",
+      "sub_strategy": "core_plus_nontraded_re",
+      "wrapper_type": "nontraded_reit",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "charter-level borrowing limits; no 1940-Act coverage test",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Blackstone"
+      ],
+      "adviser_keys": [
+        "blackstone"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/nontraded_reit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/nontraded_reit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      },
+      "declared_none_reason": "cell 5.1: BREIT declares no benchmark index anywhere in the FY2025 10-K"
+    },
+    "sreit": {
+      "cohort": "nontraded_reit",
+      "strategy": "nontraded_reit",
+      "asset_class": "real_estate",
+      "sub_strategy": "core_plus_nontraded_re",
+      "wrapper_type": "nontraded_reit",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "charter-level borrowing limits; no 1940-Act coverage test",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Starwood"
+      ],
+      "adviser_keys": [
+        "starwood"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/nontraded_reit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/nontraded_reit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      },
+      "declared_none_reason": "cell 5.1: SREIT declares no benchmark index anywhere in the FY2025 10-K"
+    },
+    "jll_ipt": {
+      "cohort": "nontraded_reit",
+      "strategy": "nontraded_reit",
+      "asset_class": "real_estate",
+      "sub_strategy": "core_nontraded_re",
+      "wrapper_type": "nontraded_reit",
+      "pricing_class": "NAV",
+      "nav_cadence": "daily",
+      "leverage_regime": "charter-level borrowing limits; no 1940-Act coverage test",
+      "held_returns": {
+        "kind": "none",
+        "reason": "returns printed only as per-class ranges (P1-13)"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "LaSalle",
+        "JLL"
+      ],
+      "adviser_keys": [
+        "lasalle",
+        "jll"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "NFI-ODCE",
+          "candidate": "odce"
+        }
+      ],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/nontraded_reit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/nontraded_reit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      }
+    },
+    "dxyz": {
+      "cohort": "venture",
+      "strategy": "preipo_venture",
+      "asset_class": "venture",
+      "sub_strategy": "pre_ipo_listed_cef",
+      "wrapper_type": "listed_cef",
+      "pricing_class": "MARKET",
+      "nav_cadence": "quarterly",
+      "leverage_regime": "1940-Act limits",
+      "held_returns": {
+        "kind": "series",
+        "series": "dxyz"
+      },
+      "price_nav_decoupled": true,
+      "advisers": [
+        "Destiny"
+      ],
+      "adviser_keys": [
+        "destiny"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "NASDAQ Composite Index",
+          "candidate": "nasdaq_comp"
+        }
+      ],
+      "source_cells": [
+        "1.10",
+        "4.7",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/venture.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/venture.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      }
+    },
+    "ssss": {
+      "cohort": "venture",
+      "strategy": "preipo_venture",
+      "asset_class": "venture",
+      "sub_strategy": "late_stage_listed_bdc",
+      "wrapper_type": "listed_bdc",
+      "pricing_class": "MARKET",
+      "nav_cadence": "quarterly",
+      "leverage_regime": "BDC 150% asset-coverage regime",
+      "held_returns": {
+        "kind": "series",
+        "series": "nslr"
+      },
+      "price_nav_decoupled": true,
+      "advisers": [
+        "Neostellar",
+        "SuRo"
+      ],
+      "adviser_keys": [
+        "neostellar",
+        "suro"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "S&P 500",
+          "candidate": "spy"
+        }
+      ],
+      "source_cells": [
+        "1.10",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/venture.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/venture.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      }
+    },
+    "arkvx": {
+      "cohort": "venture",
+      "strategy": "preipo_venture",
+      "asset_class": "venture",
+      "sub_strategy": "venture_interval",
+      "wrapper_type": "interval_23c3",
+      "pricing_class": "NAV",
+      "nav_cadence": "daily",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "series",
+        "series": "arkvx"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "ARK"
+      ],
+      "adviser_keys": [
+        "ark "
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/venture.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/venture.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7"
+      },
+      "declared_none_reason": "cell 5.1: no prospectus-declared benchmark (zero occurrences of 'benchmark' in the 486BPOS)"
+    }
+  }
+}

@@ -5,78 +5,84 @@
     "1.2",
     "5.1"
   ],
-  "primary": {
-    "candidate": "Listed private equity proxy (PSP)",
-    "id": "psp_v",
-    "lane": "B",
-    "score": 8,
-    "max": 12,
-    "reasons": [
-      "strategy_match 1/3: nearest liquid cousin to pre-IPO exposure",
-      "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
-      "investability 2/2: investable, priced daily",
-      "data_quality 2/2: daily series",
-      "provider_independence 2/2: provider unaffiliated with the fund"
-    ],
-    "comparison": {
-      "window": "2022-08-31 to 2026-07-17",
-      "window_note": "clipped: proxy series ends 2026-07-17",
-      "fund_window": "2022-08-31 to 2026-08-13",
-      "fund_growth_x": 2.7755,
-      "index_growth_x": 1.4628,
-      "ks_pme": 1.8974,
-      "direct_alpha_pct": 17.96,
-      "fund_ann_pct": 30.12,
-      "index_ann_pct": 10.31,
-      "ks_pme_monthly_schedule": 1.8103,
-      "schedule_contributions": 47,
-      "schedule_note": "ILLUSTRATIVE: 47 equal contributions, at the window start and each month-end inside it, valued at the window end. The two-point figure is primary."
-    }
-  },
-  "secondary": {
-    "candidate": "S&P 500 investable proxy (SPY)",
-    "id": "spy",
-    "lane": "B",
-    "score": 7,
-    "max": 12,
-    "reasons": [
-      "strategy_match 0/3: large-cap public equity - wrong asset class",
-      "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
-      "investability 2/2: investable, priced daily",
-      "data_quality 2/2: daily series",
-      "provider_independence 2/2: provider unaffiliated with the fund"
-    ],
-    "comparison": {
-      "window": "2022-08-31 to 2026-07-17",
-      "window_note": "clipped: proxy series ends 2026-07-17",
-      "fund_window": "2022-08-31 to 2026-08-13",
-      "fund_growth_x": 2.7755,
-      "index_growth_x": 1.9842,
-      "ks_pme": 1.3988,
-      "direct_alpha_pct": 9.04,
-      "fund_ann_pct": 30.12,
-      "index_ann_pct": 19.33,
-      "ks_pme_monthly_schedule": 1.3812,
-      "schedule_contributions": 47,
-      "schedule_note": "ILLUSTRATIVE: 47 equal contributions, at the window start and each month-end inside it, valued at the window end. The two-point figure is primary."
-    }
-  },
+  "rubric_version": "v2",
+  "rubric": "rubric v2: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
+  "max_attainable": null,
+  "declared_benchmarks": [],
+  "declared_none_reason": "cell 5.1: no prospectus-declared benchmark (zero occurrences of 'benchmark' in the 486BPOS)",
+  "primary": null,
+  "secondary": null,
   "rejected": [
     {
-      "candidate": "Peer cohort: venture (dxyz, ssss, arkvx)",
+      "candidate": "S&P 500 investable proxy (SPY)",
+      "id": "spy",
+      "lane": "B",
+      "score": 8,
+      "max": 12,
+      "criteria": {
+        "strategy_match": 1,
+        "risk_liquidity_match": 1,
+        "investability": 2,
+        "data_quality": 2,
+        "provider_independence": 2
+      },
+      "series_id": "spy",
+      "reasons": [
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (us large cap for venture interval)",
+        "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
+        "investability 2/2: computable on held data (daily series)",
+        "data_quality 2/2: daily series held",
+        "provider_independence 2/2: provider unaffiliated with the fund (SPDR / S&P DJI)"
+      ],
+      "rejection": "rejected: strategy gate (score 8/12 but strategy_match 1/3)"
+    },
+    {
+      "candidate": "Listed private equity investable proxy (PSP)",
+      "id": "psp_v",
+      "lane": "B",
+      "score": 8,
+      "max": 12,
+      "criteria": {
+        "strategy_match": 1,
+        "risk_liquidity_match": 1,
+        "investability": 2,
+        "data_quality": 2,
+        "provider_independence": 2
+      },
+      "series_id": "psp",
+      "reasons": [
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (listed private equity for venture interval)",
+        "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
+        "investability 2/2: computable on held data (daily series)",
+        "data_quality 2/2: daily series held",
+        "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks)"
+      ],
+      "rejection": "rejected: strategy gate (score 8/12 but strategy_match 1/3)"
+    },
+    {
+      "candidate": "Peer cohort composite: venture without arkvx (dxyz, ssss)",
       "id": "peer_venture",
       "lane": "C",
-      "score": 5,
+      "score": 2,
       "max": 12,
+      "criteria": {
+        "strategy_match": 2,
+        "risk_liquidity_match": 0,
+        "investability": 0,
+        "data_quality": 0,
+        "provider_independence": 0
+      },
+      "series_id": "composite:venture",
       "reasons": [
-        "strategy_match 3/3: n=3 but composite REFUSED: members' pricing bases are heterogeneous (market price vs NAV) - averaging premiums against appraisals would fabricate a series (data/cohorts/venture.json)",
-        "risk_liquidity_match 0/3: no computable series",
-        "investability 0/2: not investable / not held",
-        "data_quality 0/2: none series",
-        "provider_independence 2/2: provider unaffiliated with the fund"
+        "strategy_match 2/3: same asset class, different sub-strategy (late stage listed bdc vs venture interval)",
+        "risk_liquidity_match 0/3: no computable series: fewer than 3 members remain after leaving arkvx out (2: dxyz, ssss)",
+        "investability 0/2: composite refused, nothing to compute",
+        "data_quality 0/2: cited, not computed",
+        "provider_independence 0/2: index published by the fund's own adviser (ARK). A manufacturer-owned yardstick sits poorly with the rule's conflict-free ethos, so it is usable as secondary color only"
       ],
-      "rejection": "score 5/12 below primary threshold 7"
+      "rejection": "score 2/12 below primary threshold 7"
     }
   ],
-  "escalation": null
+  "secondary_note": null,
+  "escalation": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from held data: no candidate passes the strategy gate at or above 7/12. spy 8/12 (rejected: strategy gate); psp_v 8/12 (rejected: strategy gate); peer_venture 2/12 (score 2/12 below primary threshold 7). Required next: a strategy-exact series (a venture index or a computable peer cohort of at least three NAV-priced members)."
 }

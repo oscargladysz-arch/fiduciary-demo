@@ -393,7 +393,8 @@ export function viewBenchmarks(root, state, setState) {
         ${gloss("KS-PME")} and ${gloss("Direct Alpha")} on
         appraisal-lagged NAVs are window-sensitive, disclosed, and explorable:
         <a href="#" data-goto="pme">move the window yourself →</a>
-        <span class="num">(${esc(comp.window)}${comp.window_note ? `, ${esc(comp.window_note)}` : ""})</span></div>`
+        <span class="num">(${esc(comp.window)}${comp.window_note ? `, ${esc(comp.window_note)}` : ""})</span>
+        ${comp.alignment_note ? ` <span>Lane C composite, ${esc(comp.alignment_note)}.</span>` : ""}</div>`
       : s.comparison_note ? `<div class="cap">Comparison not computable on held data: ${esc(s.comparison_note)}.
         Refetch the proxy series over a longer window (src/fetch_series.py) to compute it.</div>` : ""}
       <details style="margin-top:10px"><summary class="cap" style="cursor:pointer">Scoring rationale</summary>
@@ -412,9 +413,14 @@ export function viewBenchmarks(root, state, setState) {
 
   root.innerHTML = `
     <div class="viewhead"><h1>Benchmark Selection</h1>
-      <div class="sub">${esc(p.fund_name)} · ${esc(sel.strategy)} · four lanes,
-        12-point rubric, threshold ${T.min_primary_score}/12, and every
-        rejection on the record.</div></div>
+      <div class="sub">${esc(p.fund_name)} · ${esc(sel.strategy)} · lanes A, B and C,
+        rubric v2 (12 points, strategy gate below 2), threshold ${T.min_primary_score}/12,
+        max attainable on held data ${sel.max_attainable == null ? "none eligible" : `${sel.max_attainable}/12`},
+        and every rejection on the record.</div></div>
+    <div class="cap" style="margin:6px 0 10px">${sel.declared_benchmarks && sel.declared_benchmarks.length
+      ? `Fund declares (cell 5.1): ${sel.declared_benchmarks.map((d) => `<b>${esc(d.name)}</b>, ${esc(d.status)}`).join(" · ")}.
+         The declaration itself earns no points.`
+      : `Fund declares no benchmark (${esc(sel.declared_none_reason || "cell 5.1")}), so the engine constructs one.`}</div>
     ${sel.escalation ? `<div class="notice">
         <div class="notice-head">Formal escalation: no benchmark assigned</div>
         <div class="notice-body"><b>${esc(sel.escalation.split(".")[0])}.</b>
@@ -422,7 +428,9 @@ export function viewBenchmarks(root, state, setState) {
           ${key === "dxyz" ? `<div style="margin-top:10px">
             <a class="btn" href="#" data-goto="dxyz">See the premium decomposition →</a></div>` : ""}
         </div></div>` : ""}
-    <div class="cardgrid g2">${slotCard("primary", "PRIMARY")}${slotCard("secondary", "SECONDARY")}</div>
+    <div class="cardgrid g2">${slotCard("primary", "PRIMARY")}${slotCard("secondary", "SECONDARY")}${sel.primary && !sel.secondary
+      ? `<div class="card"><div class="cap" style="letter-spacing:.14em;font-weight:600;color:var(--plum-700)">SECONDARY</div>
+         <p class="cap">${esc(sel.secondary_note || "no eligible secondary")}.</p></div>` : ""}</div>
     <h2 style="margin:22px 0 6px">Rejection ledger</h2>
     <div class="cap" style="margin-bottom:8px">Every candidate not selected, with
       its true reason and full rubric rationale: the other half of a defensible

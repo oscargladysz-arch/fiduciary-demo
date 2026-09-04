@@ -112,22 +112,22 @@
       "note": "(as-of 2026-03-31 minus inception) / 365.25"
     },
     "primary_benchmark_id": {
-      "value": "psp",
+      "value": "peer_evergreen",
       "source_cell": "5.3",
       "status": "computed"
     },
     "selection_score": {
-      "value": 9,
+      "value": 10,
       "source_cell": "5.3",
       "status": "computed"
     },
     "pme_primary": {
-      "value": 1.5712,
+      "value": 1.0822,
       "source_cell": "1.8",
       "status": "computed"
     },
     "direct_alpha_primary": {
-      "value": 11.97,
+      "value": 1.99,
       "source_cell": "1.8",
       "status": "computed"
     },

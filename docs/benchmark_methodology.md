@@ -86,6 +86,17 @@ two-point figure stays primary on the card, in the memo and in the rubric.
 Annual-tier products have no such row because no intra-year NAV path is
 on record.
 
+A Lane C comparison (fund against its leave-one-out cohort composite)
+runs on fiscal years, not dates. The overlapping years are those the fund
+and the composite both report as whole fiscal years (stub and partial
+periods excluded on both sides, aligned by fiscal year-end year with the
+members' year-end months printed). The fund's returns and the composite's
+returns compound over exactly those years, the two flows sit that many
+years apart ending on the fund's last fiscal year-end, and annualization
+divides by that span. A composite year the fund cannot match is skipped
+and named. This is the rule's "history of a similar type of investment"
+comparison, and its numbers move when a member's fiscal year is added.
+
 Every figure in this section is window-sensitive on appraisal-lagged NAVs
 and can be smoothing-flattered. The Analysis Lab recomputes all of them
 on any held proxy and any window start, with the same code path as the
@@ -221,9 +232,11 @@ kkr_kpec 2.33 years).
 
 Written before the rubric code changed. The v1 columns are read from
 `data/benchmarks/v1_snapshot/` by `src/test_benchmark.py` and must never
-drift. The v2 columns are the prediction this document commits to. When
-P1-12 lands, the same gate asserts them against the live artifacts, and
-any difference is a finding to explain here, not a number to adjust.
+drift. The v2 columns were the prediction this document committed to.
+The engine landed on 2026-09-04 and reproduced every row as written, and
+the same gate now asserts the v2 columns and the max attainable column
+against the live artifacts (jll_ipt joins when P1-13 gives it a
+selection).
 
 | product | v1 primary | v1 secondary | v2 primary (expected) | v2 secondary (expected) | max attainable v2 |
 |---|---|---|---|---|---|

@@ -620,3 +620,50 @@ calls the table forced, each reversible by Oscar:
   It cannot run here (federalregister.gov is blocked). Until it has run on
   a machine with network, no surface quotes the rule and every rule
   reference carries the basis string.
+
+### 6.6 P1-5 to P1-12: rubric v2 landed as one change, and reproduced the table
+The eight rubric tasks landed in one commit. Each intermediate state (a
+gate on hand-typed integers, a 12-point scale on the old menus, Lane A
+without Lane C) would have regenerated and published selection numbers
+the methodology had already called wrong, and every one of them would
+have needed its own corrections rows and its own memo regeneration. One
+engine, one regeneration, one set of rows. Every criterion is still
+asserted on its own in the gate (synthetic descriptors move one input and
+one criterion moves).
+
+The engine reproduced the expected outcome table in
+`docs/benchmark_methodology.md` section 9 row for row, including the max
+attainable column, and the gate now asserts both against the live
+artifacts. What the surfaces show that they did not before:
+
+- Nine products now carry a Lane C composite as primary with a real
+  comparison. KS-PME against the leave-one-out peer composite: cclfx
+  0.9756, pflex 0.9799, cion_ares 0.9461, bcred 1.0798, ocic 0.9973,
+  hl_paf 1.0693, stepstone_spm 1.0206, ares_pmf 1.0822, amg_pantheon
+  0.8357. The ETF comparison each product carried before is unchanged and
+  sits in the secondary slot. The Fee Matrix and screener PME columns read
+  the primary, so they now show the peer figure.
+- The composite comparison is fiscal-year aligned by year label. cclfx
+  changed its fiscal year-end from December to March in 2022, so its
+  three-month stub is excluded and the composite's 2022 year is skipped
+  and named on the card. Members' fiscal year-end months are printed.
+- kkr_kpec keeps PSP as primary: its held figure spans 2023-09 to 2025-12,
+  so the composite overlaps two fiscal years and earns data_quality 0.
+- arkvx escalates computably. The ledger shows SPY and PSP at 8 failing
+  the strategy gate and the venture composite refused.
+- Declared benchmarks are on every card with their fate: hl_paf's S&P 500
+  and MSCI World, stepstone's, ares_pmf's and amg_pantheon's MSCI World
+  all fail the gate at strategy 1. cion_ares's CSLLI is cited and below
+  the threshold. jll_ipt's NFI-ODCE waits for P1-13. dxyz's NASDAQ
+  Composite sits in the ledger under the price-decoupling flag.
+- CDLI is adviser-owned for cliffwater_cclfx only (independence 0) and an
+  independent cited candidate at 7 for bcred and ocic.
+
+`data/registry.json` is new: the typed descriptors with the cell each
+comes from, checked by the gate against the record (every adviser key and
+declared benchmark name is a substring of the product's own text). The
+two return inputs that lived in engine code (hl_paf's fiscal-year returns,
+stepstone_spm's five-year figure) moved into `profiles_input.json` with
+their provenance. `PRODUCT_PROFILES` and the menus are assembled from
+data at import. P2-1 merges the remaining duplicate registries into this
+file.

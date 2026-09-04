@@ -180,9 +180,9 @@ def render_benchmark():
         return
     sel = json.loads(sel_path.read_text())
     st.caption(f"Strategy: {sel['strategy']} · engine inputs from cells "
-               f"{', '.join(sel['source_cells'])} · rubric: strategy match 3 · "
-               f"risk/liquidity 3 · investability 2 · data quality 2 · "
-               f"provider independence 2 (threshold 7/12)")
+               f"{', '.join(sel['source_cells'])} · {sel.get('rubric', 'rubric not recorded')}"
+               + (f" · max attainable on held data {sel['max_attainable']}/12"
+                  if sel.get("max_attainable") is not None else ""))
 
     if sel["escalation"]:
         st.error(sel["escalation"])

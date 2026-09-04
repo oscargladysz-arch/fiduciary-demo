@@ -342,7 +342,7 @@ def pme_profiles() -> dict:
     profiles_input.json (the same inputs the selection used). The default
     proxy is the series of the engine's own primary selection, so the lab
     opens on the engine's comparison and the user swaps from there."""
-    from tark_benchmark import PRODUCT_PROFILES as PP, STRATEGY_MENU
+    from tark_benchmark import PRODUCT_PROFILES as PP, menu_for
     pi = json.loads((DATA / "benchmarks" / "profiles_input.json").read_text())
     daily = daily_series_map()
     out = {}
@@ -354,7 +354,7 @@ def pme_profiles() -> dict:
         if sel_path.exists():
             sel = json.loads(sel_path.read_text())
             if sel.get("primary"):
-                cand = next((c for c in STRATEGY_MENU[strategy]
+                cand = next((c for c in menu_for(key)
                              if c["id"] == sel["primary"]["id"]), None)
                 if cand and cand.get("series") in PROXY_LIBRARY:
                     proxy = cand["series"]
@@ -386,10 +386,10 @@ def swap_matrix() -> dict:
     user can select in the swap lab. On-menu pairs carry the committed score
     and reasons; off-menu pairs say truthfully that the engine has no rubric
     basis for that proxy under this strategy."""
-    from tark_benchmark import PRODUCT_PROFILES, STRATEGY_MENU, score_candidate
+    from tark_benchmark import PRODUCT_PROFILES, menu_for, score_candidate
     out: dict = {}
     for key, prof in PRODUCT_PROFILES.items():
-        menu = STRATEGY_MENU[prof["strategy"]]
+        menu = menu_for(key)
         by_series: dict = {}
         for proxy in PROXY_LIBRARY:
             cand = next((c for c in menu if c.get("series") == proxy), None)

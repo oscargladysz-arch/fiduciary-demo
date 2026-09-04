@@ -109,7 +109,7 @@
       "note": "(as-of 2025-12-31 minus inception) / 365.25"
     },
     "primary_benchmark_id": {
-      "value": "bkln",
+      "value": "peer_credit",
       "source_cell": "5.3",
       "status": "computed"
     },
@@ -119,12 +119,12 @@
       "status": "computed"
     },
     "pme_primary": {
-      "value": 1.1374,
+      "value": 0.9461,
       "source_cell": "1.8",
       "status": "computed"
     },
     "direct_alpha_primary": {
-      "value": 1.62,
+      "value": -1.1,
       "source_cell": "1.8",
       "status": "computed"
     },

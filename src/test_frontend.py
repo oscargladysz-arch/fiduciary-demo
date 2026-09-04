@@ -162,8 +162,11 @@ check("facts bundle: every field cites a real cell", all(
     for k in PRODUCTS for f in bundle["facts"][k].values()))
 check("facts bundle: pme_primary mirrors selection artifact", all(
     bundle["facts"][k]["pme_primary"]["value"] ==
-    (bundle["benchmarks"][k].get("primary") or {}).get("comparison", {}).get("ks_pme")
+    ((bundle["benchmarks"][k].get("primary") or {}).get("comparison") or {}).get("ks_pme")
     for k in PRODUCTS if bundle["benchmarks"].get(k, {}).get("primary")))
+check("benchmarks bundle: rubric v2 with a ceiling and a declared-benchmark record on every selection", all(
+    sel.get("rubric_version") == "v2" and "max_attainable" in sel
+    and ("declared_benchmarks" in sel) for sel in bundle["benchmarks"].values()))
 
 with sync_playwright() as pw:
     browser = pw.chromium.launch()
@@ -374,7 +377,11 @@ with sync_playwright() as pw:
                if (T.pme_profiles[k]) {
                  if (empty || !sub.includes(p.fund_name)) bad.push(`pme ${k}: profile exists but lab did not open on it`);
                  const sel = T.benchmarks[k];
-                 const comp = sel && sel.primary && sel.primary.comparison;
+                 // the lab opens on its default proxy series; compare with the
+                 // slot (primary or secondary) that carries that series
+                 const slot = sel && [sel.primary, sel.secondary].find((x) => x && x.comparison
+                   && x.comparison.kind === 'series' && x.series_id === T.pme_profiles[k].default_proxy);
+                 const comp = slot && slot.comparison;
                  if (comp) {
                    const shown = parseFloat(document.querySelector('#pme_ks').textContent);
                    if (Math.abs(shown - comp.ks_pme) > 1e-4) bad.push(`pme ${k}: lab KS-PME ${shown} vs artifact ${comp.ks_pme}`);
@@ -497,13 +504,15 @@ with sync_playwright() as pw:
     # ---------- 6. interactive recompute sanity ----------
     view_text("pme", product="cliffwater_cclfx")
     ks0 = page.locator("#pme_ks").inner_text()
-    check("pme default reproduces committed KS-PME",
-          abs(float(ks0) -
-              bundle["benchmarks"]["cliffwater_cclfx"]["primary"]["comparison"]["ks_pme"]) < 1e-4)
+    # the lab opens on BKLN (the secondary since rubric v2; the primary is the
+    # peer composite, which the lab cannot swap against)
+    cclfx_sel = bundle["benchmarks"]["cliffwater_cclfx"]
+    bkln_slot = next(x for x in (cclfx_sel["primary"], cclfx_sel["secondary"]) if x and x["series_id"] == "bkln")
+    check("pme default reproduces committed KS-PME (BKLN slot)",
+          abs(float(ks0) - bkln_slot["comparison"]["ks_pme"]) < 1e-4)
     da0 = page.locator("#pme_da").inner_text()
-    check("pme default reproduces committed Direct Alpha",
-          abs(float(da0.rstrip("%")) -
-              bundle["benchmarks"]["cliffwater_cclfx"]["primary"]["comparison"]["direct_alpha_pct"]) < 0.01)
+    check("pme default reproduces committed Direct Alpha (BKLN slot)",
+          abs(float(da0.rstrip("%")) - bkln_slot["comparison"]["direct_alpha_pct"]) < 0.01)
     page.evaluate("""() => { const s = document.getElementById('winstart');
         s.value = String(Math.floor(+s.max / 2)); s.dispatchEvent(new Event('input')); }""")
     ks1 = page.locator("#pme_ks").inner_text()
