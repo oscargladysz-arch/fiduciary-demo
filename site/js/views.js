@@ -395,8 +395,10 @@ export function viewBenchmarks(root, state, setState) {
         <a href="#" data-goto="pme">move the window yourself →</a>
         <span class="num">(${esc(comp.window)}${comp.window_note ? `, ${esc(comp.window_note)}` : ""})</span>
         ${comp.alignment_note ? ` <span>Lane C composite, ${esc(comp.alignment_note)}.</span>` : ""}</div>`
-      : s.comparison_note ? `<div class="cap">Comparison not computable on held data: ${esc(s.comparison_note)}.
-        Refetch the proxy series over a longer window (src/fetch_series.py) to compute it.</div>` : ""}
+      : s.comparison_note ? `<div class="cap">Comparison not computable on held data: ${esc(s.comparison_note)}.${
+          s.comparison_note.includes("proxy series")
+            ? " Refetch the proxy series over a longer window (src/fetch_series.py) to compute it."
+            : " The candidate is scored on its own descriptors. A comparison needs a fund return series the filings do not print."}</div>` : ""}
       <details style="margin-top:10px"><summary class="cap" style="cursor:pointer">Scoring rationale</summary>
         <ul style="margin:8px 0 0 18px; font-size:12.5px">
           ${s.reasons.map((r) => `<li>${esc(r)}</li>`).join("")}</ul></details>

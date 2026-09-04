@@ -155,6 +155,16 @@ sel_ci = run_selection("cion_ares")
 check_true("cion_ares: declared CSLLI is a cited Lane A candidate below the threshold",
            any(d["candidate_id"] == "csll" and "below the threshold" in d["status"]
                for d in sel_ci["declared_benchmarks"]))
+sel_j = run_selection("jll_ipt")
+check_true("jll_ipt: selected on descriptors (VNQ 9, ODCE 7) with an honest absent comparison",
+           sel_j["primary"]["id"] == "vnq" and sel_j["secondary"]["id"] == "odce"
+           and sel_j["primary"].get("comparison") is None
+           and "per-class" in (sel_j["primary"].get("comparison_note") or "")
+           and "cells 1.1 and 1.2" in sel_j["primary"]["comparison_note"])
+check_true("jll_ipt: declared NFI-ODCE is Lane A and selected as secondary",
+           any(d["candidate_id"] == "odce" and "secondary" in d["status"]
+               for d in sel_j["declared_benchmarks"])
+           and sel_j["secondary"]["lane"] == "A")
 check_true("products that declare none carry the reason from cell 5.1",
            run_selection("bcred")["declared_none_reason"] and "5.1" in run_selection("bcred")["declared_none_reason"])
 

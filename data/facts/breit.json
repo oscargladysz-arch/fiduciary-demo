@@ -112,6 +112,16 @@
       "status": "partial",
       "reason": "explicit Class I inception date not printed in on-disk filings. ITD basis year (2017 REIT election) sits in partial cell 6.4"
     },
+    "liquidity_verdict_by_plan": {
+      "value": {
+        "plan_consulting_alumni": "conditional-weak",
+        "plan_manufacturer_union": "conditional-weak",
+        "plan_restaurant_hourly": "conditional-weak",
+        "plan_tech_media": "conditional-weak"
+      },
+      "source_cell": "3.9",
+      "status": "computed"
+    },
     "primary_benchmark_id": {
       "value": "vnq",
       "source_cell": "5.3",
@@ -130,16 +140,6 @@
     "direct_alpha_primary": {
       "value": -3.22,
       "source_cell": "1.8",
-      "status": "computed"
-    },
-    "liquidity_verdict_by_plan": {
-      "value": {
-        "plan_consulting_alumni": "conditional-weak",
-        "plan_manufacturer_union": "conditional-weak",
-        "plan_restaurant_hourly": "conditional-weak",
-        "plan_tech_media": "conditional-weak"
-      },
-      "source_cell": "3.9",
       "status": "computed"
     }
   }

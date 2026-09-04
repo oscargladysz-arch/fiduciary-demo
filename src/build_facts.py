@@ -727,49 +727,49 @@ def main() -> None:
                 "value": None, "source_cell": facts["inception"]["source_cell"],
                 "status": facts["inception"]["status"],
                 "reason": facts["inception"].get("reason", "inception unmapped")}
-        # engine outputs — pulled from artifacts, never retyped
+        # engine outputs: pulled from artifacts, never retyped. The liquidity
+        # verdicts come from the match files whenever they exist, independent
+        # of whether a benchmark selection exists (P1-13 decoupling).
+        match_paths = {pk: DATA / "liquidity" / f"{pk}__{key}_match.json" for pk in plans}
+        if all(mp.exists() for mp in match_paths.values()):
+            facts["liquidity_verdict_by_plan"] = {
+                "value": {pk: json.loads(mp.read_text())["verdict"]
+                          for pk, mp in match_paths.items()},
+                "source_cell": "3.9", "status": "computed"}
+        else:
+            facts["liquidity_verdict_by_plan"] = {
+                "value": None, "source_cell": "3.9", "status": "pending",
+                "reason": "liquidity profile lands with cell 3.1 extraction"}
         sel_path = DATA / "benchmarks" / f"{key}_selection.json"
-        if not sel_path.exists():
+        sel = json.loads(sel_path.read_text()) if sel_path.exists() else None
+        if sel is None:
             for fld in ("primary_benchmark_id", "selection_score",
                         "pme_primary", "direct_alpha_primary"):
                 facts[fld] = {"value": None, "source_cell": "1.8",
                               "status": "pending",
-                              "reason": "engine selection not yet run for this "
-                                        "cohort-tier product"}
-            facts["liquidity_verdict_by_plan"] = {
-                "value": None, "source_cell": "3.9", "status": "pending",
-                "reason": "liquidity profile lands with cell 3.1 extraction"}
-            doc = {"product_key": key, "cohort_id": cohort_id, "depth": depth,
-                   "membership_rationale": rationale,
-                   "what": "typed projections of evidenced cells - zero new facts",
-                   "generated_by": "src/build_facts.py (hand-mapping machine-"
-                                   "checked by validate_data.py)",
-                   "facts": facts}
-            (out_dir / f"{key}.json").write_text(json.dumps(doc, indent=2))
-            print(f"{key}: {len(facts)} fields (engine artifacts pending)")
-            continue
-        sel = json.loads(sel_path.read_text())
-        if sel.get("primary"):
+                              "reason": "engine selection not yet run for this product"}
+        elif sel.get("primary"):
             comp = sel["primary"].get("comparison") or {}
             facts["primary_benchmark_id"] = F(sel["primary"]["id"], "5.3",
                                               status="computed")
             facts["selection_score"] = F(sel["primary"]["score"], "5.3",
                                          status="computed")
-            facts["pme_primary"] = F(comp.get("ks_pme"), "1.8", status="computed")
-            facts["direct_alpha_primary"] = F(comp.get("direct_alpha_pct"),
-                                              "1.8", status="computed")
+            if comp:
+                facts["pme_primary"] = F(comp.get("ks_pme"), "1.8", status="computed")
+                facts["direct_alpha_primary"] = F(comp.get("direct_alpha_pct"),
+                                                  "1.8", status="computed")
+            else:
+                why = sel["primary"].get("comparison_note") or "comparison not computable"
+                for fld in ("pme_primary", "direct_alpha_primary"):
+                    facts[fld] = {"value": None, "source_cell": "1.8",
+                                  "status": "computed", "reason": why}
         else:
             esc = ("engine escalation: no meaningful benchmark constructible "
-                   "(premium-driven price)")
+                   "(see the selection artifact)")
             for fld in ("primary_benchmark_id", "selection_score",
                         "pme_primary", "direct_alpha_primary"):
                 facts[fld] = {"value": None, "source_cell": "1.8",
                               "status": "computed", "reason": esc}
-        facts["liquidity_verdict_by_plan"] = {
-            "value": {pk: json.loads((DATA / "liquidity" /
-                                      f"{pk}__{key}_match.json").read_text())["verdict"]
-                      for pk in plans},
-            "source_cell": "3.9", "status": "computed"}
         doc = {"product_key": key, "cohort_id": cohort_id, "depth": depth,
                "membership_rationale": rationale,
                "what": "typed projections of evidenced cells, zero new facts. "

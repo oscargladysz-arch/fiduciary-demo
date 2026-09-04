@@ -467,7 +467,7 @@
       "leverage_regime": "charter-level borrowing limits; no 1940-Act coverage test",
       "held_returns": {
         "kind": "none",
-        "reason": "returns printed only as per-class ranges (P1-13)"
+        "reason": "no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
       },
       "price_nav_decoupled": false,
       "advisers": [

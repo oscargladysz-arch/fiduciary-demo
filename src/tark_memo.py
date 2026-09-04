@@ -124,6 +124,10 @@ def build_memo(key: str) -> Path:
             doc.add_heading(f"{badge}: {s['candidate']} (score "
                             f"{s['score']}/{s['max']})", level=2)
             comp = s.get("comparison")
+            if not comp and s.get("comparison_note"):
+                doc.add_paragraph("Comparison not computable on held data: "
+                                  f"{s['comparison_note']}. The candidate is scored on "
+                                  "its own descriptors.")
             if comp:
                 doc.add_paragraph(
                     f"Window {comp['window']}"

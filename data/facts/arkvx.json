@@ -107,30 +107,6 @@
       "status": "computed",
       "note": "(as-of 2025-07-31 minus inception) / 365.25"
     },
-    "primary_benchmark_id": {
-      "value": null,
-      "source_cell": "1.8",
-      "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
-    },
-    "selection_score": {
-      "value": null,
-      "source_cell": "1.8",
-      "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
-    },
-    "pme_primary": {
-      "value": null,
-      "source_cell": "1.8",
-      "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
-    },
-    "direct_alpha_primary": {
-      "value": null,
-      "source_cell": "1.8",
-      "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
-    },
     "liquidity_verdict_by_plan": {
       "value": {
         "plan_consulting_alumni": "conditional",
@@ -140,6 +116,30 @@
       },
       "source_cell": "3.9",
       "status": "computed"
+    },
+    "primary_benchmark_id": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "selection_score": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "pme_primary": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "direct_alpha_primary": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
     }
   }
 }

@@ -111,6 +111,16 @@
       "status": "computed",
       "note": "(as-of 2026-03-31 minus inception) / 365.25"
     },
+    "liquidity_verdict_by_plan": {
+      "value": {
+        "plan_consulting_alumni": "conditional",
+        "plan_manufacturer_union": "conditional",
+        "plan_restaurant_hourly": "conditional",
+        "plan_tech_media": "conditional"
+      },
+      "source_cell": "3.9",
+      "status": "computed"
+    },
     "primary_benchmark_id": {
       "value": "peer_evergreen",
       "source_cell": "5.3",
@@ -129,16 +139,6 @@
     "direct_alpha_primary": {
       "value": 1.99,
       "source_cell": "1.8",
-      "status": "computed"
-    },
-    "liquidity_verdict_by_plan": {
-      "value": {
-        "plan_consulting_alumni": "conditional",
-        "plan_manufacturer_union": "conditional",
-        "plan_restaurant_hourly": "conditional",
-        "plan_tech_media": "conditional"
-      },
-      "source_cell": "3.9",
       "status": "computed"
     }
   }

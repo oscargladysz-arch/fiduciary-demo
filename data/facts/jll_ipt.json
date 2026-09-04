@@ -3,7 +3,7 @@
   "cohort_id": "nontraded_reit",
   "depth": "cohort",
   "membership_rationale": "Perpetual NAV REIT of older vintage in the same wrapper class. NAV cadence and scale differences disclosed.",
-  "what": "typed projections of evidenced cells - zero new facts",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -112,35 +112,37 @@
       "status": "computed",
       "note": "(as-of 2025-12-31 minus inception) / 365.25"
     },
+    "liquidity_verdict_by_plan": {
+      "value": {
+        "plan_consulting_alumni": "conditional",
+        "plan_manufacturer_union": "conditional",
+        "plan_restaurant_hourly": "conditional",
+        "plan_tech_media": "conditional"
+      },
+      "source_cell": "3.9",
+      "status": "computed"
+    },
     "primary_benchmark_id": {
-      "value": null,
-      "source_cell": "1.8",
-      "status": "pending",
-      "reason": "engine selection not yet run for this cohort-tier product"
+      "value": "vnq",
+      "source_cell": "5.3",
+      "status": "computed"
     },
     "selection_score": {
-      "value": null,
-      "source_cell": "1.8",
-      "status": "pending",
-      "reason": "engine selection not yet run for this cohort-tier product"
+      "value": 9,
+      "source_cell": "5.3",
+      "status": "computed"
     },
     "pme_primary": {
       "value": null,
       "source_cell": "1.8",
-      "status": "pending",
-      "reason": "engine selection not yet run for this cohort-tier product"
+      "status": "computed",
+      "reason": "no computable fund return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
     },
     "direct_alpha_primary": {
       "value": null,
       "source_cell": "1.8",
-      "status": "pending",
-      "reason": "engine selection not yet run for this cohort-tier product"
-    },
-    "liquidity_verdict_by_plan": {
-      "value": null,
-      "source_cell": "3.9",
-      "status": "pending",
-      "reason": "liquidity profile lands with cell 3.1 extraction"
+      "status": "computed",
+      "reason": "no computable fund return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
     }
   }
 }

@@ -54,6 +54,7 @@ def _profile(key: str, reg: dict) -> dict:
     prof.update(inp)
     if held["kind"] == "none":
         prof["held_kind"] = "none"
+        prof["no_returns_reason"] = held.get("reason", "no return input on record")
     elif held["kind"] == "series":
         prof["held_kind"] = "series"
     else:
@@ -61,12 +62,11 @@ def _profile(key: str, reg: dict) -> dict:
     return prof
 
 
-# every product with a return input the engine can compare on
-PRODUCT_PROFILES: dict[str, dict] = {
-    key: _profile(key, reg) for key, reg in REGISTRY.items()
-    if reg["held_returns"]["kind"] != "none"}
-# descriptors for every product, including those without a return input
+# every product is selected for, including one with no computable return
+# input (jll_ipt, P1-13): its candidates are scored on their descriptors
+# and its comparison is absent with the reason from the record
 ALL_PRODUCTS: dict[str, dict] = {key: _profile(key, reg) for key, reg in REGISTRY.items()}
+PRODUCT_PROFILES: dict[str, dict] = ALL_PRODUCTS
 
 
 # ----------------------------------------------------------- candidates
@@ -634,6 +634,11 @@ def run_selection(product_key: str) -> dict:
     for slot in ("primary", "secondary"):
         if result[slot]:
             cand = next(c for c in menu if c["id"] == result[slot]["id"])
+            if profile.get("held_kind") == "none":
+                result[slot]["comparison"] = None
+                result[slot]["comparison_note"] = ("no computable fund return series on record: "
+                                                   + profile["no_returns_reason"])
+                continue
             try:
                 result[slot]["comparison"] = comparison_stats(profile, cand)
             except WindowNotComputable as e:
