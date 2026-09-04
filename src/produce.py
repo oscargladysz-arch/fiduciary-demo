@@ -35,6 +35,7 @@ STEPS = [
     ("cohorts", "tark_cohort.py"),
     ("benchmark", "run_benchmark.py"),
     ("facts-engine", "build_facts.py"),
+    ("analytics", "run_analytics.py"),      # cclfx de-smoothing diagnostic
     ("supplement", "run_supplement.py"),      # fee_percentile reads the facts
     ("computed-cells", "write_computed_cells.py"),
     ("memos", "tark_memo.py"),

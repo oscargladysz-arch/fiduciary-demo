@@ -563,3 +563,25 @@ the same code path and the frontend gate asserts parity with the
 artifact. `docs/benchmark_methodology.md` starts here with sections 1 to
 3 (windows, annualization, flows) and joins the copy gate's owned
 documents. The rubric sections follow in the P1-B preparation.
+
+### 6.4 P1-4: one label per series, from the manifest
+`series_sources` is back in the bundle, this time with its readers: every
+chart that draws a held series prints the label from that map ("Yahoo
+adjusted close (approximates NAV total return)" for a fund or proxy class
+ticker, "Yahoo daily close (market price)" for an exchange-traded price)
+in the lab legend, the evaluation mini-chart, the De-smoothing Lab's basis
+line and the lab's workbench tables. The map is built from
+`data/series/series_manifest.json` and nothing in the JS types a series
+label any more.
+
+`src/run_analytics.py` kept three things the site never read and the
+record already held elsewhere: a since-inception return and standard
+deviation for CCLFX typed into the script (9.34% and 1.71%, which live in
+cells 1.2 and 4.8), the HL PAF fiscal-year returns and NAVs typed as
+literals (held in `data/series_annual/hl_paf.csv`), and a DXYZ price block
+superseded by the supplement's premium series. It now writes only the
+CCLFX monthly de-smoothing diagnostic the lab prints, from the held
+series, and runs inside `produce.py` under the freshness gate. Cells 1.6
+and 1.7 (computed, not yet owned by the cell writer) still carry the
+earlier "TR-gap vs disclosed" sentence. They join the writer's owned set
+with the memo work (P1-D) and are regenerated from this artifact then.

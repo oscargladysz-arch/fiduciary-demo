@@ -38,6 +38,15 @@ observation before it, on both sides. The identity
 `KS-PME = fund growth / index growth` holds on every two-point comparison
 and is asserted.
 
+Every held proxy series is an investable ETF's Yahoo adjusted close, a
+total-return proxy for its index family (SPY, URTH, BKLN, PSP, VNQ).
+Fund series are the fund's own Yahoo adjusted close where a class ticker
+exists (approximates NAV total return with distributions reinvested) or
+the raw daily close where the fund is exchange-traded (a market price,
+labeled as such and never benchmarked as a portfolio). Every chart that
+draws one of these series prints that label beside it, from one map in
+the bundle built from `data/series/series_manifest.json`.
+
 The card, the lab, the memo and the Streamlit view print the effective
 window and, when it differs from the fund's own, the clip note ("proxy
 series begins 2018-07-18"). Every held proxy series runs 2018-07-18 to

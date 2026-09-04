@@ -608,6 +608,24 @@ with sync_playwright() as pw:
           "and computes a KS-PME on cclfx", not proxy_bad, "; ".join(proxy_bad))
     page.evaluate("() => window.tarkSetState({proxy: '', win: ''})")
 
+    # ---------- P1-4: every Yahoo series is labeled from series_sources ----------
+    label_bad = []
+    for k, d in bundle["daily_series"].items():
+        want = bundle["series_sources"][d["series"]]["label"]
+        for view in ("pme", "desmooth"):
+            page.evaluate("(a) => window.tarkSetState({view: a[0], product: a[1], proxy: '', win: '', rho: ''})", [view, k])
+            txt = page.evaluate("() => document.getElementById('view').textContent")
+            if want not in txt:
+                label_bad.append(f"{view}/{k}: missing '{want}'")
+    page.evaluate("() => window.tarkSetState({view: 'evaluation', product: 'cliffwater_cclfx'})")
+    if bundle["series_sources"]["cclfx"]["label"] not in page.evaluate("() => document.getElementById('view').textContent"):
+        label_bad.append("evaluation/cliffwater_cclfx: mini-chart label missing")
+    check("every chart of a held Yahoo series prints its series_sources label "
+          "(lab, de-smoothing, evaluation)", not label_bad, "; ".join(label_bad[:4]))
+    check("market-price series are labeled as market price, never as NAV",
+          all(bundle["series_sources"][d["series"]]["label"] == "Yahoo daily close (market price)"
+              for d in bundle["daily_series"].values() if d["price_series"]))
+
     # ---------- 7b. design-pass additions ----------
     t = view_text("benchmarks", product="kkr_kpec")
     check("kkr_kpec selection exists with PSP primary",

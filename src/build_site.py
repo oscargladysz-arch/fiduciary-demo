@@ -25,7 +25,7 @@ from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
 from tark_data import (BASE, DATA, CELLS, FACTORS, coverage_summary,
                        coverage_totals, load_evidence, load_plan,
                        load_product, load_products, load_series,
-                       plan_keys, product_keys,
+                       load_series_manifest, plan_keys, product_keys,
                        status_kind)
 from tark_anon import docx_text, forbidden_tokens, leaks
 
@@ -257,6 +257,25 @@ def crosscheck_summary() -> dict:
 
 
 
+ADJ_LABEL = "Yahoo adjusted close (approximates NAV total return)"
+CLOSE_LABEL = "Yahoo daily close (market price)"
+
+
+def series_sources() -> dict:
+    """Per held series: provider, role, coverage and the label every chart
+    prints beside it, from data/series/series_manifest.json (one source).
+    `<ticker>` is the adjusted close, `<ticker>_daily` the raw close."""
+    man = load_series_manifest()
+    out: dict = {}
+    for m in man.get("series", []):
+        t = m["ticker"].lower()
+        base = {"ticker": m["ticker"], "source": m["source"], "role": m["role"],
+                "first": m["first"], "last": m["last"], "pulled": m.get("pulled")}
+        out[t] = {**base, "column": "adj_close", "label": ADJ_LABEL}
+        out[f"{t}_daily"] = {**base, "column": "close", "label": CLOSE_LABEL}
+    return out
+
+
 def daily_series(ticker: str, column: str = "adj_close") -> list:
     return [[d, round(v, 6)] for d, v in load_series(ticker, column)]
 
@@ -312,9 +331,7 @@ def daily_series_map() -> dict:
                     "ticker": t.upper(),
                     "column": "close" if price else "adj_close",
                     "price_series": price,
-                    "label": (f"{t.upper()} daily market price (close)" if price
-                              else f"{t.upper()} Yahoo adjusted close (approximates "
-                                   "NAV total return)")}
+                    "label": f"{t.upper()} {series_sources()[f'{t}_daily' if price else t]['label']}"}
     return out
 
 
@@ -670,6 +687,7 @@ def main() -> None:
         # only the parts a view reads ship (the rest stays on disk for the
         # cell writer); a runtime check in test_frontend fails on unread keys
         "metrics": {"cclfx": {"full_history": metrics["cclfx"]["full_history"]}},
+        "series_sources": series_sources(),
         "dxyz_nav": _with_period_ends(json.loads(
             (DATA / "analytics" / "dxyz_nav_quarterly.json").read_text())),
         # series payload is SPLIT into site/series.js (lazy-loaded by the

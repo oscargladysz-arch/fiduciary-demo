@@ -179,8 +179,10 @@ const short = (s, n = 170) => {
 };
 
 /* --------------------------------------------------- tier-driven charts */
-const DAILY = { cliffwater_cclfx: { series: "cclfx", col: "adj", label: "Daily NAV (adj, distributions reinvested)" },
-                dxyz: { series: "dxyz_daily", label: "Daily market price (close)" } };
+// series labels come from the bundle's series_sources (one source, from
+// data/series/series_manifest.json), never typed here
+const DAILY = { cliffwater_cclfx: { series: "cclfx", col: "adj", label: `CCLFX ${T.series_sources.cclfx.label}` },
+                dxyz: { series: "dxyz_daily", label: `DXYZ ${T.series_sources.dxyz_daily.label}` } };
 
 export function productChart(container, key) {
   // pick the finest tier the data supports; label the cadence honestly
@@ -662,9 +664,11 @@ export function viewPme(root, state, setState) {
     root.querySelector("#winout").textContent = d0;
     lineChart(root.querySelector("#pmechart"), {
       series: [
-        { points: fundPts, label: `${T.products[key].fund_name.split(" (")[0]} (growth of 1.0)`,
+        { points: fundPts, label: `${T.products[key].fund_name.split(" (")[0]}, ${fundDaily
+            ? T.series_sources[prof.fund_series].label
+            : hasFy ? "disclosed fiscal-year returns" : "single disclosed ITD figure"} (growth of 1.0)`,
           color: "#593380", width: 2 },
-        { points: idxPts, label: `${proxyId.toUpperCase()} (growth of 1.0)`,
+        { points: idxPts, label: `${proxyId.toUpperCase()}, ${T.series_sources[proxyId].label} (growth of 1.0)`,
           color: "#92600d", width: 1.6, dash: "5,4" },
       ],
       height: 280, yFormat: (v) => v.toFixed(2) + "×",
@@ -689,7 +693,7 @@ export function viewPme(root, state, setState) {
     if (fundDaily) {
       const me = monthEndPoints(fundDaily);
       fundCal = calendarYearReturns(me);
-      fundLabel = prof.price_series_warning ? "market price (premium-driven!)" : "Yahoo adjusted close (approximates NAV total return)";
+      fundLabel = T.series_sources[prof.fund_series].label + (prof.price_series_warning ? " (premium-driven!)" : "");
       const eps = drawdownEpisodes(me, 3);
       ddHtml = `<div class="card"><h3>Drawdowns: top ${eps.length} episodes</h3>
         <table class="grid" style="margin-top:6px"><thead><tr><th>Peak</th><th>Trough</th>
