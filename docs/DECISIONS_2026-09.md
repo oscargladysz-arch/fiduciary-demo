@@ -790,3 +790,15 @@ product's manifest row with the manifest's own EDGAR URL. The memo work
 record" where the resolver could not. The online half, EDGAR submissions
 JSON for filings the manifest does not hold, runs where sec.gov is
 reachable (P2-10), together with the laptop-path purge.
+
+### 6.13 P1-19: memos are build output, one per plan and product
+`tark_memo.build_memo(key, plan_key)` writes
+`<plan>__<product>_decision_memo.docx`, and `src/build_site.py` generates
+all of them (4 plans x 16 products) into `site/memos/` on every build, so a
+memo can never be stale against the record and `data/memos/` is gone from
+the repository. The memo carries its own plan's label and that plan's
+product-to-plan liquidity match (structural verdict and ILLUSTRATIVE
+scenario verdict). Every memo link on the site and the pin hash follow the
+selected plan. The docx bytes are deterministic (fixed zip timestamps), so
+the same record yields the same file. `test_memo` runs the writer into a
+scratch directory rather than reading committed files.

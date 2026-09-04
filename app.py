@@ -217,10 +217,12 @@ def render_benchmark():
          for r in sel["rejected"]],
         width="stretch", hide_index=True)
 
-    memo = DATA / "memos" / f"{product_key}_decision_memo.docx"
+    memo = ROOT / "site" / "memos" / f"{plan_key}__{product_key}_decision_memo.docx"
     if memo.exists():
         st.download_button("Download decision memo (.docx)", memo.read_bytes(),
                            file_name=memo.name, key="memo_dl")
+    else:
+        st.caption("Decision memo not built yet: run python src/build_site.py.")
 
 
 def render_liquidity():

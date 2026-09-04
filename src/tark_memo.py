@@ -1,25 +1,34 @@
 """
 Tark decision memo generator (M5)
 =================================
-Renders a per-product Word decision memo from the evaluated data: regulatory
-basis, six-factor findings, benchmark selection with the FULL rejection log
-(or the escalation, for the fail case), and a provenance appendix. The memo is
-the artifact a fiduciary files; the rejection log is half its legal value.
+Renders one Word decision memo per plan and product from the evaluated data:
+regulatory basis, six-factor findings, benchmark selection with the FULL
+rejection log (or the escalation, for the fail case), the product-to-plan
+liquidity match for that plan, and a provenance appendix. The memo is the
+artifact a fiduciary files; the rejection log is half its legal value.
 
-Run:  python src/tark_memo.py            -> data/memos/<key>_decision_memo.docx
+The build (src/build_site.py) generates every memo into site/memos/, so a
+memo can never be stale against the record. The docx bytes are
+deterministic (fixed zip timestamps): the same record yields the same file.
+
+Run:  python src/tark_memo.py [--out DIR]   -> DIR/<plan>__<product>_decision_memo.docx
 Anonymization: only the plan's display label ever appears (test-enforced).
 """
 from __future__ import annotations
 
+import io
 import json
+import zipfile
 from pathlib import Path
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt
 
-from tark_data import (DATA, FACTORS, cells_by_factor, load_anchor_plan,
-                       load_products, record_as_of, status_kind)
+from tark_data import (DATA, FACTORS, cells_by_factor, load_plan, load_products,
+                       plan_keys, record_as_of, status_kind)
+
+SITE_MEMOS = Path(__file__).resolve().parents[1] / "site" / "memos"
 
 RULE = ("DOL proposed rule, Fiduciary Duties in Selecting Designated "
         "Investment Alternatives, 91 FR 16088 (Mar. 31, 2026), RIN 1210-AC38")
@@ -65,10 +74,30 @@ def _set_letter(doc: Document) -> None:
         setattr(s, m, Inches(1))
 
 
-def build_memo(key: str) -> Path:
+def _save(doc: Document, path: Path) -> None:
+    """Save with fixed zip entry timestamps so identical content gives
+    identical bytes (python-docx stamps the wall clock on every entry)."""
+    buf = io.BytesIO()
+    doc.save(buf)
+    src = zipfile.ZipFile(io.BytesIO(buf.getvalue()))
+    out = io.BytesIO()
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as dst:
+        for info in src.infolist():
+            zi = zipfile.ZipInfo(info.filename, date_time=(1980, 1, 1, 0, 0, 0))
+            zi.compress_type = zipfile.ZIP_DEFLATED
+            zi.external_attr = info.external_attr
+            dst.writestr(zi, src.read(info.filename))
+    path.write_bytes(out.getvalue())
+
+
+def memo_name(plan_key: str, key: str) -> str:
+    return f"{plan_key}__{key}_decision_memo.docx"
+
+
+def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
     products = load_products()
     p = products[key]
-    anchor = load_anchor_plan()
+    anchor = load_plan(plan_key)
     sel_path = DATA / "benchmarks" / f"{key}_selection.json"
     sel = json.loads(sel_path.read_text()) if sel_path.exists() else None
 
@@ -172,6 +201,19 @@ def build_memo(key: str) -> Path:
             row.cells[1].width = Inches(0.8)
             row.cells[2].width = Inches(3.3)
 
+    # ---- product-to-plan liquidity match for THIS plan ----
+    mp = DATA / "liquidity" / f"{plan_key}__{key}_match.json"
+    if mp.exists():
+        m = json.loads(mp.read_text())
+        doc.add_heading("Product-to-plan liquidity match", level=1)
+        doc.add_paragraph(
+            f"Plan: {anchor['display_label']}. Structural verdict (typed facts, "
+            f"cells 3.1, 3.3, 2.7, plan-independent): {m['verdict'].upper()}. "
+            "Scenario verdict (ILLUSTRATIVE, this plan): "
+            f"{(m.get('scenario_verdict') or 'not computable').upper()}.")
+        for r in m["reasons"]:
+            doc.add_paragraph(r, style="List Bullet")
+
     # ---- cohort placement + exclusion log (peer-comparison layer) ----
     facts_path = DATA / "facts" / f"{key}.json"
     if facts_path.exists():
@@ -225,13 +267,27 @@ def build_memo(key: str) -> Path:
                 "Date: ____________")
     sig.alignment = WD_ALIGN_PARAGRAPH.LEFT
 
-    out = DATA / "memos"
-    out.mkdir(exist_ok=True)
-    path = out / f"{key}_decision_memo.docx"
-    doc.save(path)
+    out = out_dir or SITE_MEMOS
+    out.mkdir(parents=True, exist_ok=True)
+    path = out / memo_name(plan_key, key)
+    _save(doc, path)
     return path
 
 
+def write_all(out_dir: Path | None = None) -> list[Path]:
+    """Every plan x product memo, stale docx files in out_dir removed first."""
+    out = out_dir or SITE_MEMOS
+    out.mkdir(parents=True, exist_ok=True)
+    for stale in out.glob("*.docx"):
+        stale.unlink()
+    return [build_memo(key, plan_key, out)
+            for plan_key in plan_keys() for key in load_products()]
+
+
 if __name__ == "__main__":
-    for key in load_products():
-        print("wrote", build_memo(key))
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default=None)
+    a = ap.parse_args()
+    paths = write_all(Path(a.out) if a.out else None)
+    print(f"wrote {len(paths)} memos to {paths[0].parent}")

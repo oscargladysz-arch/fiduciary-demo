@@ -488,8 +488,10 @@ window.addEventListener("click", (e) => {
   if (b) {
     const { key, cid } = b.dataset;
     const pins = getPins();
+    const plan = new URLSearchParams(location.hash.replace(/^#\??/, "")).get("plan")
+      || T.plan_order[0];
     pins.push({ label: `${shortName(key)} · ${cid} ${T.products[key].cells[cid].element}`,
-      hash: `#view=evaluation&plan=plan_tech_media&product=${key}`,
+      hash: `#view=evaluation&plan=${plan}&product=${key}`,
       cell: { key, cid } });
     setPins(pins);
     b.classList.add("on");
@@ -501,14 +503,14 @@ export function viewPacket(root, state, setState) {
   root.innerHTML = `
     <div class="viewhead"><h1>Packet</h1>
       <div class="sub">Your pinned figures and views. Reorder, then print to a
-        clean packet. The per-product decision memos remain the docx artifacts,
-        and this packet is a browser-side print composition (nothing is uploaded
-        anywhere).</div></div>
+        clean packet. The decision memos (one per plan and product) remain the
+        docx artifacts, and this packet is a browser-side print composition
+        (nothing is uploaded anywhere).</div></div>
     <div style="display:flex;gap:8px;margin-bottom:12px">
       <button class="btn ghost" id="pinview">Pin current selections as a view</button>
       <button class="btn" onclick="window.print()">Print packet</button>
-      ${T.memos.includes(state.product) ? `<a class="btn ghost"
-        href="memos/${state.product}_decision_memo.docx" download>Decision memo (docx) ↓</a>` : ""}
+      ${T.memos.includes(`${state.plan}__${state.product}`) ? `<a class="btn ghost"
+        href="memos/${state.plan}__${state.product}_decision_memo.docx" download>Decision memo (docx) ↓</a>` : ""}
     </div>
     <div id="pinlist">${pins.length ? "" : `<p class="cap">Nothing pinned yet. Use the ⌖ buttons on evaluation cells, or 'Pin current selections'.</p>`}</div>`;
   const list = root.querySelector("#pinlist");

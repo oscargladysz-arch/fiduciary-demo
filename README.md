@@ -19,7 +19,9 @@ the evidence row). Only a human editing `data/evidence/*.csv` can set
   product, both stores kept equal by the validator), `facts/` (typed
   projections), `plans/` (four anonymized reference plans), `cohorts/`,
   `benchmarks/`, `liquidity/`, `series*/`, `census/` (the T1 universe),
-  `memos/`, `manifest.csv` (accessions), `as_of.json` (record as-of date).
+  `citations/` (offline accession resolution), `manifest.csv` (accessions),
+  `as_of.json` (record as-of date). Decision memos are build output, one per
+  plan and product, generated into `site/memos/` by `src/build_site.py`.
 - `src/`: producers (`produce.py` runs them in a fixed order), the engines
   (`tark_analytics.py`, `tark_benchmark.py`, `tark_liquidity.py`,
   `tark_cohort.py`, `tark_memo.py`), the site build (`build_site.py`), the

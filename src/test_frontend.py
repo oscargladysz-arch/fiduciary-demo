@@ -1022,6 +1022,18 @@ with sync_playwright() as pw:
         except Exception:  # noqa: BLE001
             memo_bad.append(k)
     check("all decision memos served", not memo_bad, "; ".join(memo_bad))
+    check("one memo per plan x product in the bundle",
+          len(bundle["memos"]) == len(bundle["plan_order"]) * len(bundle["products"])
+          and all(f"{pl}__{pk}" in bundle["memos"]
+                  for pl in bundle["plan_order"] for pk in bundle["products"]))
+    view_text("benchmarks", product="cliffwater_cclfx", plan="plan_tech_media")
+    href_tech = page.locator("#memolink").get_attribute("href")
+    view_text("benchmarks", product="cliffwater_cclfx", plan="plan_consulting_alumni")
+    href_cons = page.locator("#memolink").get_attribute("href")
+    check("benchmark memo link follows the selected plan",
+          href_tech == "memos/plan_tech_media__cliffwater_cclfx_decision_memo.docx"
+          and href_cons == "memos/plan_consulting_alumni__cliffwater_cclfx_decision_memo.docx",
+          f"{href_tech} / {href_cons}")
 
     # ---------- cohort layer (C4) ----------
     t = view_text("cohorts")
