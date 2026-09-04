@@ -1,13 +1,13 @@
 {
   "what": "offline accession resolution over every evidence row that names a filing",
-  "references": 725,
+  "references": 729,
   "counts": {
     "exact": 683,
     "form_only": 28,
+    "set": 5,
     "range": 2,
     "ambiguous": 2,
-    "accession_in_text": 9,
-    "set": 1
+    "accession_in_text": 9
   },
   "unresolved": [
     {

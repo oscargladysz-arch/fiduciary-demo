@@ -1118,3 +1118,27 @@ print stylesheet while the dialog is open). Bytes are deterministic.
 The memo gate checks all 64 packets, the frontend gate checks that all
 are served, that the link follows the plan and that printing scopes to
 the pins.
+
+### 6.30 P2-10: the ledger names its filings and nothing on a laptop
+The evidence CSVs gain an `accession` column, filled by
+`src/purge_paths.py` from the offline resolver: the one resolved
+accession, "multiple (N), data/citations/<key>.json" for a set or a
+range, or empty when no filing reference resolves. The resolver now also
+reads "all on-disk filings" as the set of every filing held for the
+product. Every `local_file` that pointed at a laptop path is the
+manifest's own local path when exactly one filing resolves and empty
+otherwise, and the series manifest notes lost their laptop paths. The
+validate gate now refuses a raw-filing citation the manifest does not
+cover (a warning until now), an accession that is neither a manifest row
+for the product nor written in the citation, and any laptop path in the
+ledger, and the invariants gate refuses a laptop path anywhere under
+`data/`. The citation drawer shows the resolved EDGAR filings as links
+(the manifest URL) or says the accession is not on record. Hundreds of
+protected rows changed in two columns, so the evidence allowlist accepts
+wildcard rows (`* * local_file`, `* * accession`) that carry a reason,
+and the immutability gate prints how many changed cells each covered.
+The online half (EDGAR submissions JSON for filings the manifest does
+not hold) still needs a machine that reaches sec.gov. No extracted row
+changed status: the three "all on-disk filings" citations moved from
+unresolved to a set, and the two ambiguous breit references stay
+ambiguous with their candidates listed.

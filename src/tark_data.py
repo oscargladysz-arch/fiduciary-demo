@@ -234,7 +234,7 @@ SERIES_COLUMNS = ["date", "close", "adj_close"]
 
 EVIDENCE_COLUMNS = [
     "cell_id", "element", "value", "source_doc", "source_section", "quote",
-    "local_file", "date_pulled", "extracted_by", "verified_by", "status",
+    "local_file", "accession", "date_pulled", "extracted_by", "verified_by", "status",
 ]
 
 
@@ -444,8 +444,8 @@ def data_paths_in(text: str) -> list[str]:
 
 
 def data_path_warnings() -> list[str]:
-    """Raw-filing citations that no manifest row covers. Warnings, not
-    errors, until P2-10 completes the accession ledger."""
+    """Raw-filing citations that no manifest row covers. Errors since P2-10:
+    the manifest is the ledger of every filing on disk."""
     man = {r["local_path"] for r in load_manifest()}
     dirs = {p.rsplit("/", 1)[0] + "/" for p in man}
     out = []
@@ -728,10 +728,39 @@ def validate_registry() -> list[str]:
     return errs
 
 
+ACCESSION_RE = re.compile(r"\d{10}-\d{2}-\d{6}")
+LAPTOP_RE = re.compile(r"/private/tmp/|/Users/|/tmp/claude")
+
+
+def validate_accessions() -> list[str]:
+    """The accession column of every evidence row: empty, one accession the
+    manifest holds for that product (or one written in the citation itself),
+    or a pointer to the citations file for a set. No laptop path anywhere."""
+    errs: list[str] = []
+    by_prod: dict[str, set[str]] = {}
+    for r in load_manifest():
+        by_prod.setdefault(r["product"], set()).add(r["accession"])
+    for key in product_keys():
+        for r in load_evidence(key):
+            acc = (r.get("accession") or "").strip()
+            if acc and not acc.startswith("multiple ("):
+                if not ACCESSION_RE.fullmatch(acc):
+                    errs.append(f"{key}:{r['cell_id']}: accession {acc!r} is not an accession number")
+                elif acc not in by_prod.get(key, set()) and acc not in (r.get("source_doc") or ""):
+                    errs.append(f"{key}:{r['cell_id']}: accession {acc} is neither a manifest row for this "
+                                "product nor written in its citation")
+            for col in EVIDENCE_COLUMNS:
+                if LAPTOP_RE.search(r.get(col) or ""):
+                    errs.append(f"{key}:{r['cell_id']}: {col} carries a laptop path")
+    return errs
+
+
 def validate_all() -> dict[str, list[str]]:
     report = {k: validate_product(k) for k in product_keys()}
     report["registry"] = validate_registry()
     report["advisor"] = validate_advisor()
+    report["raw_paths"] = data_path_warnings()
+    report["accessions"] = validate_accessions()
     for pk in plan_keys():
         report[f"plan:{pk}"] = validate_plan(pk)
     report["series"] = validate_series()
@@ -741,4 +770,7 @@ def validate_all() -> dict[str, list[str]]:
 
 def validate_warnings() -> dict[str, list[str]]:
     """Non-fatal findings the validator prints but does not fail on."""
-    return {"raw paths vs manifest": data_path_warnings()}
+    # raw-path citations became errors in P2-10 (validate_all raw_paths)
+    return {}
+
+

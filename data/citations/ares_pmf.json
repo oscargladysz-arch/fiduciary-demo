@@ -359,6 +359,38 @@
         "accession": "0001104659-26-088219",
         "url": "https://www.sec.gov/Archives/edgar/data/1876006/000110465926088219/tm2621209d1_486bpos.htm",
         "local_path": "data/raw/ares_pmf/486BPOS_2026-07-29_tm2621209d1_486bpos.htm"
+      },
+      {
+        "text": "name-absence search across all on-disk ares_pmf filings",
+        "form": "*",
+        "match": "set",
+        "filings": [
+          {
+            "filing_date": "2026-06-01",
+            "accession": "0001104659-26-068976",
+            "url": "https://www.sec.gov/Archives/edgar/data/1876006/000110465926068976/tm2616081d1_sctoi.htm",
+            "local_path": "data/raw/ares_pmf/SC TO-I_2026-06-01_tm2616081d1_sctoi.htm"
+          },
+          {
+            "filing_date": "2026-06-04",
+            "accession": "0001104659-26-070502",
+            "url": "https://www.sec.gov/Archives/edgar/data/1876006/000110465926070502/tm2616743d1_424b3.htm",
+            "local_path": "data/raw/ares_pmf/424B3_2026-06-04_tm2616743d1_424b3.htm"
+          },
+          {
+            "filing_date": "2026-06-04",
+            "accession": "0001104659-26-070470",
+            "url": "https://www.sec.gov/Archives/edgar/data/1876006/000110465926070470/tm2616630d1_ncsr.htm",
+            "local_path": "data/raw/ares_pmf/N-CSR_2026-06-04_tm2616630d1_ncsr.htm"
+          },
+          {
+            "filing_date": "2026-07-29",
+            "accession": "0001104659-26-088219",
+            "url": "https://www.sec.gov/Archives/edgar/data/1876006/000110465926088219/tm2621209d1_486bpos.htm",
+            "local_path": "data/raw/ares_pmf/486BPOS_2026-07-29_tm2621209d1_486bpos.htm"
+          }
+        ],
+        "reason": "cited as all filings held for the product, 4 held"
       }
     ],
     "4.4": [
@@ -534,6 +566,7 @@
     ]
   },
   "counts": {
-    "exact": 52
+    "exact": 52,
+    "set": 1
   }
 }

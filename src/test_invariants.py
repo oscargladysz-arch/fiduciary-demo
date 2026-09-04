@@ -105,7 +105,7 @@ for _p in sorted((BASE / "data" / "citations").glob("*.json")):
                 _n_res += 1
                 for _f in _r["filings"]:
                     _m = _by_acc.get((_doc["product"], _f["accession"]))
-                    if not _m or _m["form"] != _r["form"] or _m["url"] != _f["url"]:
+                    if not _m or (_r["form"] != "*" and _m["form"] != _r["form"]) or _m["url"] != _f["url"]:
                         _bad.append(f"{_doc['product']} {_cid}: range {_f['accession']}")
             elif _r["match"] == "accession_in_text":
                 _n_res += 1
@@ -150,6 +150,12 @@ check("rule_ref: paragraph letter follows the factor and the basis names the ver
       _rr("3.4", _a)["para"] == "(i)" and _rr("6.6", _a)["advisor_completed"]
       and not _rr("6.5", _a)["advisor_completed"]
       and (("verbatim text in " in _rr("1.1", _a)["basis"]) == (_a["status"] == "fetched")))
+
+# P2-10: no laptop path anywhere under data/ (evidence, facts, notes, manifests)
+_lap = _re.compile(r"/private/tmp/|/Users/|/tmp/claude")
+_lap_hits = [str(_f.relative_to(BASE)) for _f in (BASE / "data").rglob("*")
+             if _f.is_file() and _f.suffix in (".csv", ".json", ".md") and _lap.search(_f.read_text(errors="ignore"))]
+check("no laptop path anywhere under data/", not _lap_hits, "; ".join(_lap_hits[:5]))
 
 # data/roster_decisions.md claims to be validator-enforced: every product key
 # in the record must be named in it

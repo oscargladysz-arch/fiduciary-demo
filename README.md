@@ -19,7 +19,8 @@ the evidence row). Only a human editing `data/evidence/*.csv` can set
   product, both stores kept equal by the validator), `facts/` (typed
   projections), `plans/` (four anonymized reference plans), `cohorts/`,
   `benchmarks/`, `liquidity/`, `series*/`, `census/` (the T1 universe),
-  `citations/` (offline accession resolution), `manifest.csv` (accessions),
+  `citations/` (offline accession resolution, the evidence CSVs carry the
+  resolved accession in their `accession` column), `manifest.csv` (accessions),
   `as_of.json` (record as-of date). Decision memos are build output, one per
   plan and product, generated into `site/memos/` by `src/build_site.py`, and
   so are the committee packets (`tark_packet.py`).

@@ -33,6 +33,16 @@ def rows_of(text: str) -> dict[str, dict]:
 def main() -> int:
     base = os.environ.get("TARK_BASE_REF", "origin/main")
     allowed = {(r["product"], r["cell"], r["column"]) for r in allow_rows()}
+    covered: dict[tuple, int] = {}
+
+    def is_allowed(key: str, cid: str, col: str) -> bool:
+        # an exact row, a product-wide row, or a record-wide row for one
+        # column: every one carries a reason in the report (P0-6, P2-10)
+        for probe in ((key, cid, col), (key, "*", col), ("*", "*", col)):
+            if probe in allowed:
+                covered[probe] = covered.get(probe, 0) + 1
+                return True
+        return False
     fails = 0
     checked = 0
     for key in product_keys():
@@ -54,12 +64,15 @@ def main() -> int:
                 continue
             for col in EVIDENCE_COLUMNS:
                 if brow.get(col, "") != hrow.get(col, ""):
-                    if (key, cid, col) in allowed:
+                    if is_allowed(key, cid, col):
                         continue
                     print(f"[FAIL] {key} {cid} {col}: T2 evidence changed without "
                           f"an allowlist entry: {brow.get(col,'')[:60]!r} -> "
                           f"{hrow.get(col,'')[:60]!r}")
                     fails += 1
+    for probe, n in sorted(covered.items()):
+        if "*" in probe:
+            print(f"[ok]   allowlist {probe[0]} {probe[1]} {probe[2]}: covered {n} changed cells")
     print(f"\n{fails} violation(s)." if fails else
           f"\nEvidence immutable: {checked} protected rows unchanged or allowlisted vs {base}.")
     return 1 if fails else 0

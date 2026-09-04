@@ -533,6 +533,22 @@ def main() -> None:
     evidence_detail = {k: {cid: {f: c.get(f, "") for f in DETAIL_FIELDS}
                            for cid, c in p["cells"].items()}
                        for k, p in products.items()}
+    # the accession column and the resolved EDGAR filings per cell (P2-10)
+    for k in products:
+        acc_by_cell = {r["cell_id"]: r.get("accession", "") for r in load_evidence(k)}
+        cp = DATA / "citations" / f"{k}.json"
+        cits = json.loads(cp.read_text())["cells"] if cp.exists() else {}
+        for cid, cell in evidence_detail[k].items():
+            cell["accession"] = acc_by_cell.get(cid, "")
+            edgar = []
+            for ref in cits.get(cid, []):
+                if ref["match"] in ("exact", "form_only", "accession_in_text"):
+                    edgar.append({"form": ref.get("form", ""), "filing_date": ref.get("filing_date", ""),
+                                  "accession": ref["accession"], "url": ref["url"]})
+                elif ref["match"] in ("range", "set"):
+                    edgar.extend({"form": ref.get("form", ""), "filing_date": f["filing_date"],
+                                  "accession": f["accession"], "url": f["url"]} for f in ref["filings"])
+            cell["edgar"] = edgar
     products = {k: {**p, "cells": {cid: {f: c.get(f, "") for f in FIRST_PAINT_FIELDS}
                                    for cid, c in p["cells"].items()}}
                 for k, p in products.items()}

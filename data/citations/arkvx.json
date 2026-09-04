@@ -117,6 +117,80 @@
         "accession": "0001213900-25-097285",
         "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
         "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+      },
+      {
+        "text": "full-text search of all on-disk arkvx filings (searched 2026-08-15), CIK 1905088",
+        "form": "*",
+        "match": "set",
+        "filings": [
+          {
+            "filing_date": "2024-09-06",
+            "accession": "0001213900-24-076289",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390024076289/ea0212891-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2024-09-06_ea0212891-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2024-12-02",
+            "accession": "0001213900-24-104278",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390024104278/ea0223085-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2024-12-02_ea0223085-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2025-03-07",
+            "accession": "0001213900-25-021670",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025021670/ea0233183-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2025-03-07_ea0233183-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2025-06-02",
+            "accession": "0001213900-25-049697",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025049697/ea0243221-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2025-06-02_ea0243221-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2025-09-02",
+            "accession": "0001213900-25-082968",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025082968/ea0254097-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2025-09-02_ea0254097-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2025-10-08",
+            "accession": "0001213900-25-097285",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
+            "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
+          },
+          {
+            "filing_date": "2025-10-27",
+            "accession": "0001213900-25-102648",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
+            "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
+          },
+          {
+            "filing_date": "2025-12-02",
+            "accession": "0001213900-25-116961",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025116961/ea0266731-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2025-12-02_ea0266731-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2026-01-23",
+            "accession": "0001213900-26-007261",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390026007261/ea0273949-01_424b3.htm",
+            "local_path": "data/raw/arkvx/424B3_2026-01-23_ea0273949-01_424b3.htm"
+          },
+          {
+            "filing_date": "2026-03-02",
+            "accession": "0001213900-26-022007",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390026022007/ea0279013-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2026-03-02_ea0279013-01_n23c3a.htm"
+          },
+          {
+            "filing_date": "2026-05-28",
+            "accession": "0001213900-26-061764",
+            "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390026061764/ea0291278-01_n23c3a.htm",
+            "local_path": "data/raw/arkvx/N-23C3A_2026-05-28_ea0291278-01_n23c3a.htm"
+          }
+        ],
+        "reason": "cited as all filings held for the product, 11 held"
       }
     ],
     "2.3": [
@@ -643,6 +717,7 @@
   },
   "counts": {
     "exact": 46,
+    "set": 1,
     "form_only": 9,
     "range": 1
   }

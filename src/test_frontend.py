@@ -1025,6 +1025,15 @@ with sync_playwright() as pw:
     check("citation drawer opens with verbatim quote",
           page.locator("#drawer").get_attribute("class").find("open") >= 0
           and len(page.locator("#drawer .dbody").inner_text()) > 60)
+    # P2-10: the drawer links the resolved EDGAR filing for cclfx 2.3 (an exact match)
+    page.evaluate("() => { document.getElementById('drawer').classList.remove('open'); }")
+    view_text("evaluation", product="cliffwater_cclfx")
+    page.locator('[data-cite][data-cid="2.3"]').first.click()
+    edgar_href = page.locator("#drawer [data-edgar] a").first.get_attribute("href")
+    cit23 = json.loads((BASE / "data" / "citations" / "cliffwater_cclfx.json").read_text())["cells"]["2.3"][0]
+    check("citation drawer: EDGAR link is the manifest URL of the resolved filing, accession shown",
+          edgar_href == cit23["url"] and cit23["accession"] in page.locator("#drawer [data-edgar]").inner_text())
+    page.evaluate("() => { document.getElementById('drawer').classList.remove('open'); }")
 
     import urllib.request
     memo_bad = []

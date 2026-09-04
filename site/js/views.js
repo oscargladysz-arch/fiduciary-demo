@@ -151,6 +151,10 @@ export function openCite(rec, title) {
       <div class="v">${esc(rec.section || "—")}</div></div>
     ${rec.quote ? `<div class="f"><div class="k">Verbatim quote</div>
       <div class="quote">“${esc(rec.quote)}”</div></div>` : ""}
+    <div class="f"><div class="k">EDGAR</div>
+      <div class="v" data-edgar>${(rec.edgar || []).length
+        ? (rec.edgar || []).map((f) => `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.form)} ${esc(f.filing_date)} ${esc(f.accession)}</a>`).join("<br>")
+        : `accession not on record${rec.accession ? ` (${esc(rec.accession)})` : ""}`}</div></div>
     <div class="f"><div class="k">Extracted by</div>
       <div class="v">${esc(rec.extracted_by || "—")}</div></div>
     <div class="f"><div class="k">Human verification</div>

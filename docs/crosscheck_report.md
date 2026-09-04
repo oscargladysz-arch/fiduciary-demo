@@ -859,4 +859,6 @@ fails on any change to a protected row that is not listed here.
 | stepstone_spm | 3.7 | source_doc | data/plans/anchor_plan.json renamed to data/plans/plan_tech_media.json (P0-6) | 2026-09-04 |
 | stepstone_spm | 3.9 | source_doc | legacy single-plan liquidity file replaced by the plan-prefixed artifact (P0-6) | 2026-09-04 |
 | stepstone_spm | 5.2 | value | bare 'data/manifest' completed to data/manifest.csv, the pull ledger (P0-6) | 2026-09-04 |
+| * | * | local_file | P2-10 laptop-path purge: local_file is the manifest local_path of the one resolved filing, or empty | 2026-09-04 |
+| * | * | accession | P2-10 accession column written from the offline resolver (data/citations) | 2026-09-04 |
 <!-- tark:evidence-allowlist:end -->

@@ -424,6 +424,80 @@
         "accession": "0001193125-25-196888",
         "url": "https://www.sec.gov/Archives/edgar/data/1688554/000119312525196888/d96151dncsr.htm",
         "local_path": "data/raw/pflex/N-CSR_2025-09-05_d96151dncsr.htm"
+      },
+      {
+        "text": "all on-disk PFLEX filings, CIK 1688554",
+        "form": "*",
+        "match": "set",
+        "filings": [
+          {
+            "filing_date": "2024-10-07",
+            "accession": "0001193125-24-233507",
+            "url": "https://www.sec.gov/Archives/edgar/data/1688554/000119312524233507/d793301dn23c3a.htm",
+            "local_path": "data/raw/pflex/N-23C3A_2024-10-07_d793301dn23c3a.htm"
+          },
+          {
+            "filing_date": "2025-01-06",
+            "accession": "0001193125-25-002003",
+            "url": "https://www.sec.gov/Archives/edgar/data/1688554/000119312525002003/d904096dn23c3a.htm",
+            "local_path": "data/raw/pflex/N-23C3A_2025-01-06_d904096dn23c3a.htm"
+          },
+          {
+            "filing_date": "2025-04-04",
+            "accession": "0001193125-25-073516",
+            "url": "https://www.sec.gov/Archives/edgar/data/1688554/000119312525073516/d943731d424b3.htm",
+            "local_path": "data/raw/pflex/424B3_2025-04-04_d943731d424b3.htm"
+          },
+          {
+            "filing_date": "2025-04-07",
+            "accession": "0001193125-25-074359",
+            "url": "https://www.sec.gov/Archives/edgar/data/1688554/000119312525074359/d946382dn23c3a.htm",
+            "local_path": "data/raw/pflex/N-23C3A_2025-04-07_d946382dn23c3a.htm"
+          },
+          {
+            "filing_date": "2025-07-07",
+            "accession": "0001193125-25-156047",
+            "url": "https://www.sec.gov/Archives/edgar/data/1688554/000119312525156047/d51930dn23c3a.htm",
+            "local_path": "data/raw/pflex/N-23C3A_2025-07-07_d51930dn23c3a.htm"
+          },
+          {
+            "filing_date": "2025-09-05",
+            "accession": "0001193125-25-196888",
+            "url": "https://www.sec.gov/Archives/edgar/data/1688554/000119312525196888/d96151dncsr.htm",
+            "local_path": "data/raw/pflex/N-CSR_2025-09-05_d96151dncsr.htm"
+          },
+          {
+            "filing_date": "2025-10-06",
+            "accession": "0001193125-25-231398",
+            "url": "https://www.sec.gov/Archives/edgar/data/1688554/000119312525231398/d22052dn23c3a.htm",
+            "local_path": "data/raw/pflex/N-23C3A_2025-10-06_d22052dn23c3a.htm"
+          },
+          {
+            "filing_date": "2025-10-24",
+            "accession": "0001193125-25-249009",
+            "url": "https://www.sec.gov/Archives/edgar/data/1688554/000119312525249009/d61964d486bpos.htm",
+            "local_path": "data/raw/pflex/486BPOS_2025-10-24_d61964d486bpos.htm"
+          },
+          {
+            "filing_date": "2026-01-02",
+            "accession": "0001193125-26-000731",
+            "url": "https://www.sec.gov/Archives/edgar/data/1688554/000119312526000731/d31868dn23c3a.htm",
+            "local_path": "data/raw/pflex/N-23C3A_2026-01-02_d31868dn23c3a.htm"
+          },
+          {
+            "filing_date": "2026-04-01",
+            "accession": "0001193125-26-136758",
+            "url": "https://www.sec.gov/Archives/edgar/data/1688554/000119312526136758/d144175dn23c3a.htm",
+            "local_path": "data/raw/pflex/N-23C3A_2026-04-01_d144175dn23c3a.htm"
+          },
+          {
+            "filing_date": "2026-07-02",
+            "accession": "0001193125-26-293846",
+            "url": "https://www.sec.gov/Archives/edgar/data/1688554/000119312526293846/d82304dn23c3a.htm",
+            "local_path": "data/raw/pflex/N-23C3A_2026-07-02_d82304dn23c3a.htm"
+          }
+        ],
+        "reason": "cited as all filings held for the product, 11 held"
       }
     ],
     "4.9": [
@@ -540,6 +614,7 @@
   "counts": {
     "exact": 40,
     "form_only": 4,
-    "range": 1
+    "range": 1,
+    "set": 1
   }
 }

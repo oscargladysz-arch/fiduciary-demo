@@ -44,6 +44,9 @@ def manifest() -> list[dict]:
         return list(csv.DictReader(fh))
 
 
+ALL_HELD_RE = re.compile(r"\ball\b[^.;]{0,40}\bfilings\b", re.I)
+
+
 def references(source_doc: str) -> list[dict]:
     """The filing references written in one source_doc string. Each form
     token owns the text up to the next form token, so a compound citation
@@ -53,6 +56,10 @@ def references(source_doc: str) -> list[dict]:
     for frag in SPLIT_RE.split(source_doc or ""):
         toks = list(FORM_RE.finditer(frag))
         if not toks:
+            if ALL_HELD_RE.search(frag) and not DATE_RE.search(WORKFLOW_RE.split(frag)[0]):
+                # "all four on-disk filings": the set of every filing held for the product
+                refs.append({"text": frag.strip(" ,;()"), "form": "*", "filed": [], "dates": [],
+                             "range": None, "set": True, "accessions": []})
             continue
         prev = 0
         for i, m in enumerate(toks):
@@ -80,7 +87,7 @@ def _row(r: dict) -> dict:
 def resolve(product: str, cik: str, ref: dict, rows: list[dict]) -> dict:
     form = ref["form"]
     out = {"text": ref["text"], "form": form}
-    held = [r for r in rows if r["product"] == product and r["form"] == form]
+    held = [r for r in rows if r["product"] == product and (form == "*" or r["form"] == form)]
     if ref["accessions"]:
         acc = ref["accessions"][0]
         same = [r for r in held if r["accession"] == acc]
@@ -104,7 +111,8 @@ def resolve(product: str, cik: str, ref: dict, rows: list[dict]) -> dict:
                 "reason": f"no {form} filing held between {lo} and {hi}"}
     if ref["set"]:
         return {**out, "match": "set", "filings": [_row(r) for r in sorted(held, key=lambda r: r["filing_date"])],
-                "reason": f"cited as the set of {form} filings, {len(held)} held"}
+                "reason": (f"cited as all filings held for the product, {len(held)} held" if form == "*"
+                           else f"cited as the set of {form} filings, {len(held)} held")}
     dates = ref["filed"] or ref["dates"]
     hit = [r for r in held if r["filing_date"] in dates]
     if len(hit) == 1:

@@ -423,6 +423,40 @@
         "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
       }
     ],
+    "4.6": [
+      {
+        "text": "All four on-disk filings (searched 2026-08-15",
+        "form": "*",
+        "match": "set",
+        "filings": [
+          {
+            "filing_date": "2025-08-01",
+            "accession": "0001193125-25-170996",
+            "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312525170996/d36907d424b3.htm",
+            "local_path": "data/raw/amg_pantheon/424B3_2025-08-01_d36907d424b3.htm"
+          },
+          {
+            "filing_date": "2026-06-09",
+            "accession": "0001193125-26-264017",
+            "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+            "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+          },
+          {
+            "filing_date": "2026-07-30",
+            "accession": "0000950130-26-000196",
+            "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+            "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+          },
+          {
+            "filing_date": "2026-08-03",
+            "accession": "0001193125-26-329591",
+            "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526329591/d129441dsctoi.htm",
+            "local_path": "data/raw/amg_pantheon/SC TO-I_2026-08-03_d129441dsctoi.htm"
+          }
+        ],
+        "reason": "cited as all filings held for the product, 4 held"
+      }
+    ],
     "5.1": [
       {
         "text": "N-CSR FY2026 (filed 2026-06-09), Portfolio Manager's Comments",
@@ -537,6 +571,7 @@
   },
   "counts": {
     "exact": 50,
-    "form_only": 2
+    "form_only": 2,
+    "set": 1
   }
 }
