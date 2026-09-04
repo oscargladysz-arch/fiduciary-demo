@@ -140,6 +140,40 @@ check_true("two-point identity: KS-PME equals fund growth over index growth on "
            "every committed comparison" + (": " + "; ".join(broken_identity)
                                             if broken_identity else ""),
            not broken_identity)
+# ---- P1-2: annualization is the day count of the effective window
+from tark_analytics import year_frac  # noqa: E402
+DISCLOSED_ANNUALIZED = {"kkr_kpec": 12.94, "stepstone_spm": 12.92}   # cell 1.2 figures
+ann_bad = []
+for sp in sorted(bench_dir.glob("*_selection.json")):
+    sel = json.loads(sp.read_text())
+    for slot in ("primary", "secondary"):
+        s_ = sel.get(slot)
+        comp = (s_ or {}).get("comparison")
+        if not comp:
+            continue
+        d0, d1 = comp["window"].split(" to ")
+        if sp.stem.replace("_selection", "") in DISCLOSED_ANNUALIZED:
+            want = DISCLOSED_ANNUALIZED[sp.stem.replace("_selection", "")]
+            if abs(comp["fund_ann_pct"] - want) > 0.005:
+                ann_bad.append(f"{sp.stem}/{slot}: disclosed {want} printed as {comp['fund_ann_pct']}")
+            continue
+        yf = year_frac(d0, d1)
+        for side in ("fund", "index"):
+            want = (comp[f"{side}_growth_x"] ** (1 / yf) - 1) * 100
+            if abs(comp[f"{side}_ann_pct"] - want) > 0.02:
+                ann_bad.append(f"{sp.stem}/{slot}/{side}: {comp[f'{side}_ann_pct']} vs day-count {want:.2f}")
+check_true("annualized figures are the day count of the effective window "
+           "(disclosed figures print as disclosed)" + (": " + "; ".join(ann_bad) if ann_bad else ""),
+           not ann_bad)
+def _ann(key):
+    return json.loads((bench_dir / f"{key}_selection.json").read_text())["primary"]["comparison"]["fund_ann_pct"]
+# hand values on the effective windows: cclfx 2019-06-05 to 2026-07-17
+# (7.116 years), pflex 2018-07-18 to 2026-07-17 (7.997), arkvx 2022-08-31 to
+# 2026-07-17 (3.877)
+check_true("cclfx annualized 7.89% by day count", abs(_ann("cliffwater_cclfx") - 7.89) < 0.005)
+check_true("pflex annualized 5.74% by day count", abs(_ann("pflex") - 5.74) < 0.005)
+check_true("arkvx annualized 30.12% by day count", abs(_ann("arkvx") - 30.12) < 0.005)
+
 amg = json.loads((bench_dir / "amg_pantheon_selection.json").read_text())
 comp = amg["primary"]["comparison"]
 psp = load_series("psp", "adj_close")

@@ -60,7 +60,9 @@ def git_show(ref: str, rel: str) -> str | None:
 
 
 def git_ls(ref: str, prefix: str) -> list[str]:
-    r = subprocess.run(["git", "ls-tree", "-r", "--name-only", ref, prefix],
+    """Direct children of prefix at ref (not recursive: the frozen
+    data/benchmarks/v1_snapshot/ must never shadow the live artifacts)."""
+    r = subprocess.run(["git", "ls-tree", "--name-only", ref, prefix.rstrip("/") + "/"],
                        cwd=BASE, capture_output=True, text=True)
     return [l for l in r.stdout.splitlines() if l]
 
@@ -73,7 +75,7 @@ class Tree:
     def files(self, prefix: str, suffix: str) -> list[str]:
         if self.ref is None:
             base = BASE / prefix
-            return sorted(str(p.relative_to(BASE)) for p in base.rglob(f"*{suffix}"))
+            return sorted(str(p.relative_to(BASE)) for p in base.glob(f"*{suffix}"))
         return sorted(f for f in git_ls(self.ref, prefix) if f.endswith(suffix))
 
     def text(self, rel: str) -> str | None:
@@ -135,8 +137,10 @@ def collect(tree: Tree) -> dict[tuple[str, str], str]:
     return out
 
 
-def diffs(base_ref: str) -> list[tuple[str, str, str, str]]:
-    old, new = collect(Tree(base_ref)), collect(Tree(None))
+def diffs(base_ref: str, head_ref: str | None = None) -> list[tuple[str, str, str, str]]:
+    """Changed watched values between base_ref and head_ref (the working
+    tree when head_ref is None)."""
+    old, new = collect(Tree(base_ref)), collect(Tree(head_ref))
     rows = []
     for k in sorted(set(old) | set(new)):
         o, n = old.get(k, "<absent>"), new.get(k, "<absent>")
@@ -191,7 +195,7 @@ def surfaces_for(field: str) -> str:
 
 
 def cmd_diff(a) -> int:
-    rows = diffs(a.base)
+    rows = diffs(a.base, a.head)
     for p, f, o, n in rows:
         print(f"{p:<18} {f:<40} {short(o, 40):<42} -> {short(n, 40)}")
     print(f"\n{len(rows)} changed value(s) vs {a.base}")
@@ -202,7 +206,7 @@ def cmd_write(a) -> int:
     text = REPORT.read_text()
     have = {(r["product"], r["field"], r["new_sha"]) for r in corr_rows(text)}
     added = []
-    for p, f, o, n in diffs(a.base):
+    for p, f, o, n in diffs(a.base, a.head):
         if (p, f, sha8(n)) in have:
             continue
         added.append(f"| {p} | {f} | {short(o)} | {short(n)} | {sha8(n)} | "
@@ -254,6 +258,10 @@ def main() -> int:
     for name in ("diff", "write", "check"):
         s = sub.add_parser(name)
         s.add_argument("--base", default="origin/main")
+        if name in ("diff", "write"):
+            # --head logs the state at a past commit, so a change a later
+            # commit built on can still be attributed to the task that made it
+            s.add_argument("--head", default=None)
         if name == "write":
             s.add_argument("--cause", required=True)
     s = sub.add_parser("allow")

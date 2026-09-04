@@ -26,7 +26,7 @@
       "index_growth_x": 1.0705,
       "ks_pme": 1.5712,
       "direct_alpha_pct": 11.97,
-      "fund_ann_pct": 13.88,
+      "fund_ann_pct": 13.89,
       "index_ann_pct": 1.72
     }
   },
@@ -51,8 +51,8 @@
       "index_growth_x": 1.4906,
       "ks_pme": 1.1283,
       "direct_alpha_pct": 3.07,
-      "fund_ann_pct": 13.88,
-      "index_ann_pct": 10.49
+      "fund_ann_pct": 13.89,
+      "index_ann_pct": 10.5
     }
   },
   "rejected": [

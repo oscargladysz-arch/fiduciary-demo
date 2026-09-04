@@ -519,3 +519,29 @@ series were fetched later and run into August 2026. Refetching the five
 proxies from 2014 on a machine with network restores amg_pantheon's full
 ten years and the August tails, and the gates will recompute and relog
 the numbers. Until then the clip note says so on the card.
+
+### 6.2 P1-2: one clock for every annualized figure
+`fund_ann_pct` and `index_ann_pct` in a comparison are annualized over the
+actual/365.25 day count of the effective window, the clock Direct Alpha
+and the JS lab already used. v1 divided by the difference of the calendar
+years in the window's end dates, so a window of 7.116 years annualized as
+7 and a window of 3.877 years as 4. A disclosed annualized figure keeps
+its disclosed span: kkr_kpec prints 12.94% and stepstone_spm 12.92%, the
+numbers in cell 1.2, and the index side is annualized over the same span.
+
+The plan's provisional pins (pflex 6.29%, cclfx 7.89%, arkvx 31.10%) were
+computed at orientation on the unclipped windows. On the effective windows
+P1-1 established, the gate pins cclfx 7.89% (window unchanged), pflex 5.74%
+(2018-07-18 to 2026-07-17) and arkvx 30.12% (2022-08-31 to 2026-07-17),
+each checked by hand against growth ** (1 / years) - 1, and asserts the
+identity on every committed comparison.
+
+Found while logging: the corrections collector listed `data/benchmarks`
+recursively, so from the moment the v1 snapshot landed the frozen files
+shadowed the live ones (same product key, later path) and the log saw no
+selection change at all. P1-1's twelve facts rows were logged, its
+selection rows were not. The listing is now direct children only, the
+tool gained `--head` so a past commit's state can be logged under its own
+task, and the P1-1 selection rows are backfilled under the P1-1 cause with
+that note. The gate `check` still compares the working tree with
+`origin/main`, so nothing published can now change without a row.

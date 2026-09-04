@@ -26,7 +26,7 @@ increment; prose-parsing evidence strings would be brittle now.
 from __future__ import annotations
 
 from tark_analytics import (_level_on, cumulative_growth, direct_alpha,
-                            effective_window, ks_pme)
+                            effective_window, ks_pme, year_frac)
 from tark_data import load_series
 
 MIN_PRIMARY_SCORE = 7
@@ -357,7 +357,11 @@ def comparison_stats(profile: dict, cand: dict) -> dict | None:
     raises WindowNotComputable with the reason instead of interpolating.
     One anchor: fund growth, index growth and the PME flows all read the
     level on or before each window date from the full series, so a window
-    that starts on a non-trading day cannot shift the anchor."""
+    that starts on a non-trading day cannot shift the anchor. Annualized
+    figures use the actual/365.25 day count of the effective window, the
+    same clock as Direct Alpha and the JS lab. A disclosed annualized figure
+    keeps its disclosed year count, so the fund side prints the filing's
+    number and the index side is annualized over the same span."""
     if not cand["series"]:
         return None
     index = load_series(cand["series"], "adj_close")
@@ -379,7 +383,6 @@ def comparison_stats(profile: dict, cand: dict) -> dict | None:
                 f"lies inside the proxy series ({i0} to {i1})")
         d0, d1 = kept[0][1][0], kept[-1][1][1]
         f_growth = cumulative_growth([r for r, _ in kept])
-        years = len(kept)
         note = ""
         dropped = len(bounds) - len(kept)
         if dropped:
@@ -410,7 +413,7 @@ def comparison_stats(profile: dict, cand: dict) -> dict | None:
         return None
     i_growth = _level_on(index, d1) / _level_on(index, d0)
     if years is None:
-        years = max(int(d1[:4]) - int(d0[:4]), 1)
+        years = year_frac(d0, d1)
     flows = [(d0, -1.0), (d1, f_growth)]
     return {
         "window": f"{d0} to {d1}",
