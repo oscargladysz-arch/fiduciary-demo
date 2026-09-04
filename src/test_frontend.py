@@ -15,11 +15,13 @@ What it enforces:
      numbers (KS-PME/Direct Alpha) and all 24 bundled liquidity scenarios
 """
 import json
+import re
 import subprocess
 import sys
 import threading
 import time
 from functools import partial
+from html.parser import HTMLParser
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -33,6 +35,48 @@ from tark_anon import forbidden_tokens  # noqa: E402
 FORBIDDEN = forbidden_tokens()
 
 FAILS = []
+
+
+class TextNodes(HTMLParser):
+    """Collects the visible text nodes of a rendered page. inner_text cannot
+    see markup that leaked into a text node (the gloss() defect), a real HTML
+    parse can: a text node must never contain a stray '">' or an attribute
+    name such as data-def."""
+    SKIP = {"script", "style"}
+
+    def __init__(self):
+        super().__init__()
+        self.nodes = []
+        self._skip = 0
+
+    def handle_starttag(self, tag, attrs):
+        if tag in self.SKIP:
+            self._skip += 1
+
+    def handle_endtag(self, tag):
+        if tag in self.SKIP and self._skip:
+            self._skip -= 1
+
+    def handle_data(self, data):
+        if not self._skip and data.strip():
+            self.nodes.append(data)
+
+
+def stray_markup(html: str) -> list[str]:
+    tp = TextNodes()
+    tp.feed(html)
+    bad = []
+    for n in tp.nodes:
+        if '">' in n or "data-def" in n or "<span" in n or "</span" in n:
+            bad.append(n.strip()[:80])
+        # a JS `undefined` leaks next to a unit, punctuation or a node edge
+        # ("undefined%", ": undefined", "$undefined"); English usage in filing
+        # prose ("is undefined by construction") is preceded and followed by
+        # a space and is not a leak
+        if (re.search(r"(?<![A-Za-z ])undefined|undefined(?=[%×x/,)\]])|^\s*undefined\s*$", n)
+                or re.search(r"\bNaN\b", n)):
+            bad.append("undefined/NaN: " + n.strip()[:80])
+    return bad
 
 
 def check(name: str, cond: bool, extra: str = ""):
@@ -63,8 +107,8 @@ bundle = json.loads((SITE / "data.js").read_text()[len("window.TARK = "):-2])
 PLANS = bundle["plan_order"]
 PRODUCTS = list(bundle["products"].keys())
 VIEWS = ["screener", "compare", "search", "packet", "plans", "roster",
-         "evaluation", "benchmarks", "fees", "liquidity", "pme", "dxyz",
-         "desmooth", "coverage", "verification"]
+         "evaluation", "benchmarks", "cohorts", "fees", "liquidity", "pme",
+         "dxyz", "desmooth", "coverage", "verification"]
 # census views ignore plan/product context — swept once each (renders +
 # anonymization), not across the full combo grid
 CENSUS_VIEWS = ["census", "funnel"]
@@ -141,6 +185,7 @@ with sync_playwright() as pw:
     # ---------- 2+3. every view x plan x product renders, anonymized ----------
     combos_bad = []
     leak_bad = []
+    markup_bad = []
     for view in VIEWS:
         for plan in PLANS:
             for product in PRODUCTS:
@@ -157,10 +202,18 @@ with sync_playwright() as pw:
                 low = text.lower()
                 if any(t in low for t in FORBIDDEN):
                     leak_bad.append(f"{view}/{plan}/{product}")
+                # a real HTML parse of the whole page: no text node may carry
+                # leaked markup, undefined or NaN (inner_text cannot see this)
+                stray = stray_markup(page.content())
+                if stray:
+                    markup_bad.append(f"{view}/{plan}/{product}: {stray[0]}")
     check(f"all {len(VIEWS) * len(PLANS) * len(PRODUCTS)} view x plan x product "
           f"combos render", not combos_bad, "; ".join(combos_bad[:5]))
     check("anonymization holds across every rendered combo", not leak_bad,
           "; ".join(leak_bad[:5]))
+    check("no text node carries leaked markup, undefined or NaN across every "
+          "rendered combo (HTML parse of page.content())", not markup_bad,
+          "; ".join(markup_bad[:3]))
     for view in CENSUS_VIEWS:
         n_err = len(errors)
         text = page.evaluate(
@@ -171,6 +224,54 @@ with sync_playwright() as pw:
               len(errors) == n_err and len(text.strip()) > 200)
         check(f"census view '{view}' anonymization sweep",
               not any(tok in low for tok in FORBIDDEN))
+        check(f"census view '{view}' has no leaked markup in text nodes",
+              not stray_markup(page.content()))
+
+    # ---------- gloss(): text is preserved, definitions are exact ----------
+    # textContent(gloss(s)) must equal s for every glossary entry, every
+    # definition, every wrapper string, every cell title and every headline;
+    # each data-def must be a glossary definition verbatim.
+    gloss_bad = page.evaluate(
+        """() => {
+             const T = window.TARK, out = [];
+             const defs = new Set(Object.values(T.glossary));
+             const inputs = [...Object.keys(T.glossary), ...Object.values(T.glossary)];
+             for (const p of Object.values(T.products)) {
+               inputs.push(p.wrapper);
+               for (const c of Object.values(p.cells)) inputs.push(c.element);
+             }
+             for (const d of Object.values(T.cell_display))
+               for (const x of Object.values(d)) inputs.push(x.headline);
+             const div = document.createElement('div');
+             for (const s of inputs) {
+               div.innerHTML = window.TarkGloss(s);
+               if (div.textContent !== s) out.push('text changed: ' + s);
+               for (const el of div.querySelectorAll('[data-def]'))
+                 if (!defs.has(el.dataset.def)) out.push('bad def on: ' + s);
+               if (div.querySelector('[data-def] [data-def]')) out.push('nested: ' + s);
+             }
+             return {n: inputs.length, bad: out.slice(0, 5)};
+           }""")
+    check(f"gloss preserves text and emits exact definitions over "
+          f"{gloss_bad['n']} strings", not gloss_bad["bad"],
+          "; ".join(gloss_bad["bad"]))
+    chips_bad = page.evaluate(
+        """() => {
+             const T = window.TARK, bad = [];
+             window.tarkSetState({view: 'roster', plan: T.plan_order[0], product: 'hl_paf'});
+             const chips = [...document.querySelectorAll('#rostercards .chip.wrapper')]
+               .map((c) => c.textContent);
+             const want = Object.values(T.products).map((p) => p.wrapper);
+             want.forEach((w, i) => { if (chips[i] !== w) bad.push('roster: ' + w); });
+             for (const [k, p] of Object.entries(T.products)) {
+               window.tarkSetState({view: 'evaluation', plan: T.plan_order[0], product: k});
+               const sub = document.querySelector('#view .viewhead .sub').textContent;
+               if (!sub.includes(p.wrapper)) bad.push('evaluation: ' + k);
+             }
+             return bad;
+           }""")
+    check("wrapper chip text equals the product's wrapper string on Roster "
+          "and Evaluation for all products", not chips_bad, "; ".join(chips_bad[:3]))
 
     def view_text(view, plan="plan_tech_media", product="hl_paf"):
         # open every disclosure so hidden prose is included in the sweep —

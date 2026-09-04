@@ -51,20 +51,43 @@ export function stat(k, v, small = "") {
     <div class="v">${v}${small ? ` <small>${esc(small)}</small>` : ""}</div></div>`;
 }
 
-/* glossary chips: wrap known terms (longest first) in short display strings —
- * plain-language definition on hover; never applied to long prose */
+/* glossary chips: wrap known terms (longest first) in short display strings.
+ * Plain-language definition on hover; never applied to long prose.
+ * Terms are matched on the PLAIN string and the output is assembled from
+ * escaped text segments, so emitted markup is never re-scanned. Before this,
+ * a term occurring inside another term's definition was re-glossed inside
+ * the data-def attribute, which broke the attribute and printed raw markup
+ * on the Roster and Evaluation wrapper chips. */
 const TERMS = Object.keys(T.glossary).sort((a, b) => b.length - a.length);
+const escRe = (t) => t.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
 export function gloss(s) {
-  let out = esc(s);
+  const src = String(s ?? "");
+  const taken = new Array(src.length).fill(false);
+  const hits = [];
   for (const t of TERMS) {
-    const re = new RegExp(`(?<![\\w>])(${t.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&")})(?![\\w<])`, "");
-    if (re.test(out)) {
-      out = out.replace(re,
-        `<span class="term" tabindex="0" data-def="${esc(T.glossary[t])}">$1</span>`);
+    const re = new RegExp(`(?<!\\w)(${escRe(t)})(?!\\w)`, "g");
+    let m;
+    while ((m = re.exec(src))) {
+      const a = m.index, b = a + m[0].length;
+      let free = true;
+      for (let i = a; i < b; i++) if (taken[i]) { free = false; break; }
+      if (!free) continue;
+      for (let i = a; i < b; i++) taken[i] = true;
+      hits.push([a, b, t]);
+      break;                       // first free occurrence of each term only
     }
   }
-  return out;
+  hits.sort((x, y) => x[0] - y[0]);
+  let out = "", pos = 0;
+  for (const [a, b, t] of hits) {
+    out += esc(src.slice(pos, a));
+    out += `<span class="term" tabindex="0" data-def="${esc(T.glossary[t])}">`
+         + `${esc(src.slice(a, b))}</span>`;
+    pos = b;
+  }
+  return out + esc(src.slice(pos));
 }
+window.TarkGloss = gloss;   // test seam: textContent(gloss(s)) must equal s
 
 /* citation drawer */
 export function openCite(rec, title) {

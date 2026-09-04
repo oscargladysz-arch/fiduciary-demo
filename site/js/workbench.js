@@ -23,6 +23,23 @@ function shortName(key) {
     .replace("Destiny Tech100 Inc", "Destiny DXYZ");
 }
 
+/* typed-fact formatters: print only the fields the fact carries. A fee
+ * whose rate is unknown says so instead of printing "undefined%". */
+export function fmtIncentive(v) {
+  if (!v) return "";
+  if (!v.present) return "none";
+  const parts = [];
+  if (v.rate_pct != null) parts.push(`${v.rate_pct}%`);
+  if (v.hurdle_pct != null) parts.push(`${v.hurdle_pct}% hurdle`);
+  return parts.length ? parts.join(" / ") : "present, rate not typed (see 2.2)";
+}
+export function fmtEarly(v) {
+  if (!v) return "";
+  if (!v.present) return "none";
+  const rate = v.rate_pct != null ? `${v.rate_pct}%` : "fee present, rate not typed (see 2.7)";
+  return v.window ? `${rate} ${v.window}` : rate;
+}
+
 const WRAPPER_LABEL = {
   tender_offer: "tender-offer", interval_23c3: "interval (23c-3)",
   listed_cef: "listed CEF", nontraded_reit: "non-traded REIT",
@@ -60,17 +77,14 @@ const COLS = [
   ["incentive", "Incentive", (k) => {
     const f = fact(k, "incentive_fee");
     if (f.value === null) return factCell(k, f);
-    return factCell(k, { ...f, value: f.value.present
-      ? `${f.value.rate_pct}%${f.value.hurdle_pct ? ` / ${f.value.hurdle_pct}% hurdle` : ""}`
-      : "none" });
+    return factCell(k, { ...f, value: fmtIncentive(f.value) });
   }],
   ["ter", "Expense ratio", (k) => factCell(k, fact(k, "expense_ratio_pct"),
       (v) => v.toFixed(2) + "%")],
   ["early", "Early fee", (k) => {
     const f = fact(k, "early_repurchase");
     if (f.value === null) return factCell(k, f);
-    return factCell(k, { ...f, value: f.value.present
-      ? `${f.value.rate_pct}% ${f.value.window}` : "none" });
+    return factCell(k, { ...f, value: fmtEarly(f.value) });
   }],
   ["cadence", "Dealing/yr", (k) => factCell(k, fact(k, "repurchase_cadence_per_year"))],
   ["cap", "Cap", (k) => factCell(k, fact(k, "repurchase_cap_pct"),
@@ -233,10 +247,10 @@ const CMP_ROWS = [
   ["Fee base", "mgmt_fee_base", (v) => BASE_LABEL[v] || v,
     (v) => v === "managed_assets" || v === "gross_incl_borrowings"],
   ["Incentive fee", "incentive_fee",
-    (v) => v.present ? `${v.rate_pct}%${v.hurdle_pct ? ` / ${v.hurdle_pct}% hurdle` : ""}` : "none", null],
+    (v) => fmtIncentive(v), null],
   ["Expense ratio", "expense_ratio_pct", (v) => v.toFixed(2) + "%", null],
   ["Early repurchase", "early_repurchase",
-    (v) => v.present ? `${v.rate_pct}% if ${v.window}` : "none", null],
+    (v) => fmtEarly({ ...v, window: v.window ? `if ${v.window}` : "" }), null],
   ["Dealing cadence", "repurchase_cadence_per_year", (v) => v + "×/yr", null],
   ["Repurchase cap", "repurchase_cap_pct", (v) => v + "%", null],
   ["Gate history", "gate_history", (v) => v ? "YES — prorated under stress" : "none identified",
