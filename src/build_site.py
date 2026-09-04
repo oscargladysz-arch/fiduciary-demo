@@ -25,10 +25,9 @@ from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
 from tark_data import (BASE, DATA, CELLS, FACTORS, coverage_summary,
                        coverage_totals, load_evidence, load_plan,
                        load_product, load_products, load_series,
-                       load_series_manifest, plan_keys, product_keys,
+                       plan_keys, product_keys,
                        status_kind)
 from tark_anon import docx_text, forbidden_tokens, leaks
-from tark_liquidity import LIQUIDITY_PROFILES, SCENARIO
 
 SITE = BASE / "site"
 
@@ -255,6 +254,7 @@ def crosscheck_summary() -> dict:
                      f"{ints['confirmed']} confirmed, {ints['corrected']} corrected. "
                      f"Human verification: {verified}."),
             "source": "docs/crosscheck_report.md"}
+
 
 
 def daily_series(ticker: str, column: str = "adj_close") -> list:
@@ -538,8 +538,9 @@ def census_chunk() -> str:
     (SITE / "census" / "search.json").write_text(
         json.dumps(search, separators=(",", ":")))
 
+    # "what" and "tiers" stay in data/census/census.json as file-level
+    # documentation; no view reads them, so they do not ship
     doc = {
-        "what": census["what"], "tiers": census["tiers"],
         "as_of": census["as_of"],
         "counts_by_class": census["counts_by_class"],
         "total": census["total"],
@@ -620,8 +621,9 @@ def main() -> None:
         with open(mpath, newline="") as fh:
             monthly["breit_nav"] = [[r["date"], float(r["nav_per_share"])]
                                     for r in _csv.DictReader(fh)]
-        monthly["breit_nav_manifest"] = json.loads(
-            (DATA / "series_monthly" / "manifest.json").read_text())
+
+    metrics = json.loads((DATA / "analytics" / "metrics.json").read_text())
+    supplement = json.loads((DATA / "analytics" / "supplement.json").read_text())
 
     bundle = {
         "generated": date.today().isoformat(),
@@ -634,7 +636,9 @@ def main() -> None:
         "factor_rollups": rollups,
         "glossary": GLOSSARY,
         "taxonomy": coverage_totals(),   # live, per kind, never a frozen file
-        "supplement": json.loads((DATA / "analytics" / "supplement.json").read_text()),
+        "supplement": {k: supplement[k] for k in ("dxyz_premium",
+                                                  "ssss_premium",
+                                                  "breit_monthly_diagnostics")},
         "series_annual": series_annual,
         "series_monthly": monthly,
         "evidence_counts": {k: evidence_counts(k) for k in load_products()},
@@ -646,12 +650,11 @@ def main() -> None:
         # per-plan liquidity match artifacts ride the lazy series chunk —
         # only the Liquidity view reads them; merged by ensureSeries()
         "liquidity": None,
-        "liquidity_profiles": LIQUIDITY_PROFILES,
-        "scenario_defaults": SCENARIO,
-        "metrics": json.loads((DATA / "analytics" / "metrics.json").read_text()),
+        # only the parts a view reads ship (the rest stays on disk for the
+        # cell writer); a runtime check in test_frontend fails on unread keys
+        "metrics": {"cclfx": {"full_history": metrics["cclfx"]["full_history"]}},
         "dxyz_nav": _with_period_ends(json.loads(
             (DATA / "analytics" / "dxyz_nav_quarterly.json").read_text())),
-        "series_manifest": load_series_manifest(),
         # series payload is SPLIT into site/series.js (lazy-loaded by the
         # chart/lab views) to keep the first-paint bundle inside the perf
         # budget; window.TARK.series is merged in by ensureSeries()
@@ -666,7 +669,8 @@ def main() -> None:
         "series_quarterly": {p.stem.replace("_nav", ""): [
             [r["date"], float(r["nav_per_share"])]
             for r in __import__("csv").DictReader(open(p, newline=""))]
-            for p in sorted((DATA / "series_quarterly").glob("*_nav.csv"))},
+            for p in sorted((DATA / "series_quarterly").glob("*_nav.csv"))
+            if p.stem == "ssss_nav"},   # the premium-pattern panel reads ssss only
         "caveat_matrix": json.loads(
             (DATA / "cohorts" / "caveat_matrix.json").read_text()),
         "roster_decisions_md": (DATA / "roster_decisions.md").read_text(),
@@ -687,7 +691,6 @@ def main() -> None:
         "arkvx": daily_series("arkvx"),
         "cadux": daily_series("cadux"),
         "nslr_daily": [[d, round(v, 4)] for d, v in load_series("nslr", "close")],
-        "nslr": daily_series("nslr"),
         "bkln": daily_series("bkln"),
         "psp": daily_series("psp"),
         "urth": daily_series("urth"),

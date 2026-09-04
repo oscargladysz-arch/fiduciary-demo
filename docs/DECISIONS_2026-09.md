@@ -346,3 +346,45 @@ record as-of). `data/analytics/supplement.json` joins the set in P0-3, once
 Added: `test_evidence_immutable`, `corrections_log check`,
 `test_artifacts_fresh`. `docs/INVESTOR_DEMO.md` is updated in P0-10 and a
 test derives the count from `hooks/pre-commit`.
+
+### 5.5 P0-8: a bundle key ships only with its reader
+The dead-key check is a runtime one: the Playwright sweep wraps
+`window.TARK`, `TARK_SERIES`, `TARK_LIQ` and `TARK_CENSUS` in a recording
+Proxy the moment the bundle scripts assign them, keeps the read set across
+the share-link reloads through `sessionStorage`, and diffs every emitted
+key against every read key at the end of the run. It found the eight keys
+the plan named and four more. Consequences:
+
+- `series_sources` (the small map that replaces `series_manifest`) does not
+  ship yet. No view reads it until P1-4 labels every Yahoo chart from it,
+  so the map and its reader land together in P1-4. Emitting it early would
+  fail the gate the plan itself requires.
+- `supplement.fee_percentile` stays in `data/analytics/supplement.json`
+  (the corrections log tracks its bars and P1 owned cells read it) but no
+  longer ships: since P0-3 the Fee Matrix bars come from typed facts.
+- The `nslr` adjusted-close series is dropped from the series chunk. The
+  ssss profile is market-priced, so every surface reads `nslr_daily`
+  (close) with the market-price warning, and the engine reads the file.
+- The census chunk no longer carries `what` and `tiers`. Both stay in
+  `data/census/census.json` as file-level documentation. The chunk's
+  `row_fields` is now the one source for the compact row format: the
+  screener decodes rows from it instead of hand-typed indices, and the
+  census surface prints the census as-of date it always shipped.
+- Two keys are read only on interaction (`census.shards` behind an entity
+  click, the `urth` and `spy` proxy series behind the lab's proxy radio),
+  so the sweep now exercises both paths: it opens the cclfx census entity
+  from its detail shard and selects every offered proxy in the lab. Those
+  are real checks (the shard fetch path and every proxy computing a
+  KS-PME), not only bookkeeping for the dead-key rule.
+- The 16 legacy `data/liquidity/<product>_match.json` files, their writer,
+  the `liquidity_profiles`, `scenario_defaults`, `metrics.dxyz`,
+  `metrics.hl_paf_annual`, `series_monthly.breit_nav_manifest`,
+  `supplement.stress_windows` and unread `series_quarterly` keys, the
+  drawer's "Local file (repo)" field, `charts.ring`, and the unused imports
+  are gone. The stress-window parity checkpoint in the frontend gate now
+  reads the committed supplement file, so the assertion survives without
+  shipping the key.
+- `src/census/build_census.py` no longer forces adviser regeneration
+  (`or True`). The N-CEN checkpoint is not in this environment, so the
+  adviser lists were not regenerated here. The rebuild command sits in the
+  comment that replaced the override.

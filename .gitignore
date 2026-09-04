@@ -6,6 +6,8 @@ __pycache__/
 site/data.js
 site/memos/
 site/series.js
+site/census.data.js
+site/census/
 data/census/raw/
 
 # local virtualenv

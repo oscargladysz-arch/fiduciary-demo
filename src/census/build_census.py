@@ -74,7 +74,12 @@ def load_ncen() -> dict[str, dict]:
         funds: dict[str, list] = {}
         advisers: dict[str, list] = {}
         for r in tsv_rows(qdir / "ADVISER.tsv"):
-            if r.get("ADVISER_TYPE", "").lower().startswith("adviser") or True:
+            # advisers only: sub-adviser rows carry their own ADVISER_TYPE. An
+            # "or True" here once folded every row into the adviser list; the
+            # shipped census.json was built with it. To regenerate:
+            #   rm data/census/raw/ncen_extract.json && python src/census/build_census.py
+            # (network and TARK_SEC_CONTACT required; adviser lists may move).
+            if r.get("ADVISER_TYPE", "").lower().startswith("adviser"):
                 advisers.setdefault(r["FUND_ID"], []).append(
                     {"name": r["ADVISER_NAME"], "type": r["ADVISER_TYPE"],
                      "affiliated": r.get("IS_AFFILIATED", "")})

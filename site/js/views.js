@@ -7,11 +7,11 @@
  * documented reason renders in its place. */
 
 import { annVol, beta, calendarYearReturns, desmoothGeltner, directAlpha,
-         drawdownEpisodes, ksPme, lag1Autocorr, levelOn, maxDrawdown,
+         drawdownEpisodes, ksPme, lag1Autocorr, levelOn,
          monthEndPoints, periodReturns, rollingReturns,
          rollingVol } from "./analytics.js";
 import { computeScenario, scenarioReason } from "./liquidity.js";
-import { lineChart, barChart, donut, ring } from "./charts.js";
+import { lineChart, barChart, donut } from "./charts.js";
 
 const T = window.TARK;
 
@@ -150,8 +150,6 @@ export function openCite(rec, title) {
       <div class="v">${esc(rec.section || "—")}</div></div>
     ${rec.quote ? `<div class="f"><div class="k">Verbatim quote</div>
       <div class="quote">“${esc(rec.quote)}”</div></div>` : ""}
-    ${rec.local_file ? `<div class="f"><div class="k">Local file (repo)</div>
-      <div class="v num" style="font-size:11.5px">${esc(rec.local_file)}</div></div>` : ""}
     <div class="f"><div class="k">Extracted by</div>
       <div class="v">${esc(rec.extracted_by || "—")}</div></div>
     <div class="f"><div class="k">Human verification</div>
@@ -445,17 +443,6 @@ export function viewBenchmarks(root, state, setState) {
 }
 
 /* ============================================================== PME LAB */
-function windowGrowthDaily(series, d0, d1) {
-  const win = series.filter(([d]) => d >= d0 && d <= d1);
-  const me = monthEndPoints(win);
-  return { growth: win[win.length - 1][1] / win[0][1], me };
-}
-
-export function pmeCompute(fundFlows, indexDaily, d0, d1) {
-  const idx = indexDaily.filter(([d]) => d >= d0 && d <= d1);
-  return { ks: ksPme(fundFlows, idx), da: directAlpha(fundFlows, idx) };
-}
-
 function labEmptyState(root, title, selected, available, what, setState, view, attr) {
   const p = T.products[selected];
   root.innerHTML = `

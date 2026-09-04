@@ -14,8 +14,6 @@ Three layers, honestly separated:
 
 Run:  python src/tark_liquidity.py
       -> data/liquidity/<plan_key>__<product_key>_match.json  (all plans)
-      -> data/liquidity/<product_key>_match.json              (legacy copy,
-         anchor plan, kept while the v9 Streamlit app is alive)
 """
 from __future__ import annotations
 
@@ -302,8 +300,5 @@ if __name__ == "__main__":
                 continue  # cohort-tier product whose 3.1 has not landed yet
             m = run_match(key, pk)
             (out / f"{pk}__{key}_match.json").write_text(json.dumps(m, indent=2))
-            if pk == ANCHOR_PLAN_KEY:
-                # legacy filename kept while the v9 app remains deployed
-                (out / f"{key}_match.json").write_text(json.dumps(m, indent=2))
             print(f"{pk:<26} {key:<18} {m['verdict']:<18} "
                   f"demand {m['scenario']['demand_pct_of_position']}%/yr")

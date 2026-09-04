@@ -25,9 +25,7 @@ increment; prose-parsing evidence strings would be brittle now.
 """
 from __future__ import annotations
 
-from tark_analytics import (_level_on, ann_return, cumulative_growth,
-                            direct_alpha, ks_pme, month_end_points,
-                            period_returns)
+from tark_analytics import _level_on, cumulative_growth, direct_alpha, ks_pme
 from tark_data import load_series
 
 MIN_PRIMARY_SCORE = 7

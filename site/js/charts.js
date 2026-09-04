@@ -1,5 +1,5 @@
 /* Hand-rolled SVG charts — no external libraries (self-contained deploy).
- * Line charts (with hover tooltips), horizontal bars, donuts, rings.
+ * Line charts (with hover tooltips), horizontal bars, donuts.
  * Every chart is DATA-DRIVEN from the bundle; nothing here invents values. */
 
 import { parseDate } from "./analytics.js";
@@ -281,24 +281,3 @@ export function donut(container, cfg) {
   container.append(svg);
 }
 
-/** small coverage ring (returns an element) */
-export function ring(pct, color = "#593380", size = 84) {
-  const wrap = document.createElement("div");
-  wrap.className = "ring";
-  wrap.style.width = wrap.style.height = `${size}px`;
-  const r = size / 2 - 6;
-  const c = 2 * Math.PI * r;
-  const svg = el("svg", { viewBox: `0 0 ${size} ${size}`,
-    width: size, height: size });
-  svg.append(el("circle", { cx: size / 2, cy: size / 2, r, fill: "none",
-    stroke: "#eeeae4", "stroke-width": 8 }));
-  svg.append(el("circle", { cx: size / 2, cy: size / 2, r, fill: "none",
-    stroke: color, "stroke-width": 8,
-    "stroke-dasharray": `${(pct / 100 * c).toFixed(1)} ${c.toFixed(1)}`,
-    "stroke-linecap": "butt" }));
-  const label = document.createElement("div");
-  label.className = "pct";
-  label.textContent = `${pct}%`;
-  wrap.append(svg, label);
-  return wrap;
-}

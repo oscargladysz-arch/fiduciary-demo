@@ -24,7 +24,9 @@ export const CLASS_ORDER = ["interval_23c3", "tender_cef", "bdc",
   "nontraded_reit", "listed_cef", "unlisted_cef_other",
   "nontraded_34act_other"];
 
-/* index row: [nm, clsCode, flags, assets, laDate, tc, tl, hintMask, promo] */
+/* index rows are compact arrays; their field order ships in the chunk as
+ * row_fields (written by build_site.py) and is decoded here, so the wire
+ * format has one source */
 const FL = { listed: 1, ncen: 2, intervalSelf: 4, crossAgree: 8,
   evaluated: 16, structured: 32 };
 let _rows = null;
@@ -32,11 +34,14 @@ function rows() {
   if (_rows) return _rows;
   const cc = C().cls_codes;
   const hints = C().hints;
+  const ix = Object.fromEntries(
+    C().row_fields.map((f, i) => [f.split("(")[0], i]));
   _rows = Object.entries(C().entities).map(([cik, r]) => ({
-    cik, nm: r[0], cls: cc[r[1]], flags: r[2], ta: r[3] || null,
-    la: r[4] || null, tc: r[5], tl: r[6] || null, hm: r[7],
-    promo: r[8] || null,
-    hints: hints.filter((_, i) => r[7] & (1 << i)),
+    cik, nm: r[ix.nm], cls: cc[r[ix.cls_code]], flags: r[ix.flags],
+    ta: r[ix.assets_usd] || null, la: r[ix.latest_annual_date] || null,
+    tc: r[ix.tender_count], tl: r[ix.tender_last] || null,
+    hm: r[ix.hint_mask], promo: r[ix.promo_key] || null,
+    hints: hints.filter((_, i) => r[ix.hint_mask] & (1 << i)),
   }));
   return _rows;
 }
@@ -133,7 +138,8 @@ export function viewCensus(root, state, setState) {
     <h1>Universe <span class="cap">— every registered alt wrapper the census can see</span></h1>
     ${tierLegend()}
     <p class="cap">${C().total.toLocaleString()} entities enumerated from filing
-      behavior (EFTS form streams, SIC search, submissions listing check).
+      behavior (EFTS form streams, SIC search, submissions listing check),
+      census as of ${esc(C().as_of)}.
       This layer is <b>T1: structured filing data only</b> — wrapper classes
       come from what each entity filed, never from what its name suggests.
       The ${Object.keys(T.products).length} evaluated products are the tiny

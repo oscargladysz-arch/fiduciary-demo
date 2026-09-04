@@ -104,6 +104,10 @@ threading.Thread(target=httpd.serve_forever, daemon=True).start()
 time.sleep(0.3)
 
 bundle = json.loads((SITE / "data.js").read_text()[len("window.TARK = "):-2])
+# the full supplement (stress windows etc.) stays on disk for the cell writer;
+# only the parts a view reads ship in the bundle, so parity checkpoints
+# against committed analytics read the file
+supplement_disk = json.loads((BASE / "data" / "analytics" / "supplement.json").read_text())
 PLANS = bundle["plan_order"]
 PRODUCTS = list(bundle["products"].keys())
 VIEWS = ["screener", "compare", "search", "packet", "plans", "roster",
@@ -158,6 +162,45 @@ with sync_playwright() as pw:
     page = browser.new_page()
     errors = []
     page.on("pageerror", lambda e: errors.append(str(e)))
+    # record every bundle key a view actually reads: window.TARK and the
+    # lazy chunks are wrapped in a Proxy the moment the bundle scripts assign
+    # them (before any module captures a reference). A key is dead only if
+    # the whole sweep never reads it.
+    page.add_init_script("""
+      // the set survives the share-link reloads later in the sweep: it is
+      // parked in sessionStorage on pagehide and reloaded on init
+      let prior = [];
+      try { prior = JSON.parse(sessionStorage.getItem('__tarkReads') || '[]'); } catch (e) {}
+      window.__tarkReads = new Set(prior);
+      window.addEventListener('pagehide', () => {
+        try { sessionStorage.setItem('__tarkReads', JSON.stringify([...window.__tarkReads])); } catch (e) {}
+      });
+      const NESTED = new Set(['supplement', 'metrics', 'series_monthly', 'series_quarterly',
+                              'series', 'liquidity', 'daily_series']);
+      const wrap = (obj, prefix) => new Proxy(obj, {
+        get(t, k, r) {
+          const v = Reflect.get(t, k, r);
+          if (typeof k === 'string') {
+            window.__tarkReads.add(prefix + k);
+            if (!prefix && NESTED.has(k) && v && typeof v === 'object') return wrap(v, k + '.');
+          }
+          return v;
+        },
+        has(t, k) { if (typeof k === 'string') window.__tarkReads.add(prefix + k); return Reflect.has(t, k); },
+        ownKeys(t) { for (const k of Object.keys(t)) window.__tarkReads.add(prefix + k); return Reflect.ownKeys(t); },
+      });
+      for (const name of ['TARK', 'TARK_SERIES', 'TARK_LIQ', 'TARK_CENSUS']) {
+        let store;
+        Object.defineProperty(window, name, {
+          configurable: true,
+          get() { return store; },
+          set(v) { store = (v && typeof v === 'object')
+            ? wrap(v, name === 'TARK' ? '' : name === 'TARK_SERIES' ? 'series.'
+                                        : name === 'TARK_LIQ' ? 'liquidity.' : 'census.')
+            : v; },
+        });
+      }
+    """)
     page.goto(f"http://127.0.0.1:{PORT}/", wait_until="networkidle")
 
     check("app boots without exception", not errors, "; ".join(errors[:2]))
@@ -532,6 +575,23 @@ with sync_playwright() as pw:
     check(f"parity: JS scenario matches all {len(bundle_liq)} bundled liquidity scenarios",
           not mism, "; ".join(mism[:4]))
 
+    # every proxy the lab offers selects and computes (cclfx has the longest
+    # daily NAV series); this is also what marks each proxy series as read
+    proxy_bad = []
+    for pid in bundle["proxy_library"]:
+        n_err = len(errors)
+        page.evaluate("(p) => window.tarkSetState({view: 'pme', "
+                      "product: 'cliffwater_cclfx', proxy: p, win: ''})", pid)
+        sel = page.evaluate("() => (document.querySelector("
+                            "'#view input[type=radio]:checked') || {}).value")
+        t = page.locator("#view").inner_text()
+        if (sel != pid or "KS-PME" not in t or len(errors) != n_err
+                or stray_markup(page.content())):
+            proxy_bad.append(f"{pid}: selected={sel}")
+    check(f"lab: every offered proxy ({len(bundle['proxy_library'])}) selects "
+          "and computes a KS-PME on cclfx", not proxy_bad, "; ".join(proxy_bad))
+    page.evaluate("() => window.tarkSetState({proxy: '', win: ''})")
+
     # ---------- 7b. design-pass additions ----------
     t = view_text("benchmarks", product="kkr_kpec")
     check("kkr_kpec selection exists with PSP primary",
@@ -689,12 +749,33 @@ with sync_playwright() as pw:
     t = page.locator("#view").inner_text()
     check("census: interval filter shows the real class count",
           f"{n_int:,} of" in t or f"{n_int} of" in t)
-    # index row: [nm, clsCode, flags, assets, laDate, tc, tl, hintMask, promo]
+    check("census: the surface states the census as-of date",
+          census_bundle["as_of"] in t)
+    # entity detail: the on-interaction shard fetch path (cclfx, CIK 1735964)
+    n_err = len(errors)
+    page.evaluate("() => window.tarkSetState({view: 'census', c_cik: '1735964'})")
+    page.wait_for_selector("#view [data-back]", timeout=15000)
+    t = page.locator("#view").inner_text()
+    check("census entity: detail shard renders the entity with its CIK",
+          "CIK 1735964" in t and len(errors) == n_err)
+    check("census entity: per-field provenance rows are on screen",
+          page.locator("#view table.grid td.cap").count() > 0)
+    check("census entity: no leaked markup in text nodes",
+          not stray_markup(page.content()))
+    check("census entity: anonymization sweep",
+          not any(tok in t.lower() for tok in FORBIDDEN))
+    page.evaluate("() => window.tarkSetState({view: 'census', c_cik: ''})")
+    # index rows are compact arrays; the field order ships in the chunk as
+    # row_fields and the screener decodes with it (one source)
+    RF = [f.split("(")[0] for f in census_bundle["row_fields"]]
+    check("census: row_fields names every index column",
+          RF == ["nm", "cls_code", "flags", "assets_usd", "latest_annual_date",
+                 "tender_count", "tender_last", "hint_mask", "promo_key"])
     CODE = {v: k for k, v in census_bundle["cls_codes"].items()}
     def crow(cik):
-        r = census_bundle["entities"][cik]
-        return {"nm": r[0], "cls": census_bundle["cls_codes"][r[1]],
-                "flags": r[2], "ta": r[3], "promo": r[8]}
+        r = dict(zip(RF, census_bundle["entities"][cik]))
+        return {"nm": r["nm"], "cls": census_bundle["cls_codes"][r["cls_code"]],
+                "flags": r["flags"], "ta": r["assets_usd"], "promo": r["promo_key"]}
     # cclfx: present, interval-flagged (self+behavior agree), promoted —
     # and the link round-trips
     cclfx = crow("1735964")
@@ -818,7 +899,7 @@ with sync_playwright() as pw:
           str(wb["breitDD"]))
     check("checkpoint: cclfx CY2022 return matches committed supplement value",
           abs(wb["cclfx22"] -
-              bundle["supplement"]["stress_windows"]["cliffwater_cclfx"]["cy2022_rate_shock"]["return_pct"]) < 0.01,
+              supplement_disk["stress_windows"]["cliffwater_cclfx"]["cy2022_rate_shock"]["return_pct"]) < 0.01,
           str(wb["cclfx22"]))
 
     # ---------- 8. citation drawer + memo artifacts ----------
@@ -897,6 +978,24 @@ with sync_playwright() as pw:
     t = page.locator("#view").inner_text()
     check("cross-wrapper comparison surfaces caveats automatically",
           "Cross-wrapper comparison" in t and "LEVERAGE-REGIME MIX" in t)
+
+    # ---------- dead bundle keys: emitted but never read by any view ----------
+    reads = set(page.evaluate("() => [...window.__tarkReads]"))
+    series_bundle = json.loads((SITE / "series.js").read_text().split("\n")[0]
+                               [len("window.TARK_SERIES = "):-1])
+    emitted = set()
+    for k in bundle:
+        if k in ("series", "liquidity"):
+            continue          # placeholders merged from the lazy chunk
+        emitted.add(k)
+        if isinstance(bundle[k], dict) and k in ("supplement", "metrics", "series_monthly",
+                                                  "series_quarterly"):
+            emitted |= {f"{k}.{kk}" for kk in bundle[k]}
+    emitted |= {f"series.{k}" for k in series_bundle}
+    emitted |= {f"census.{k}" for k in census_bundle}
+    dead = sorted(emitted - reads)
+    check("bundle has no key that no view reads (runtime Proxy over the whole sweep)",
+          not dead, "; ".join(dead[:8]))
 
     check("no page errors across the whole run", not errors,
           "; ".join(errors[:3]))
