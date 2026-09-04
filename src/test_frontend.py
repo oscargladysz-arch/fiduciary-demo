@@ -304,6 +304,42 @@ with sync_playwright() as pw:
     t = view_text("evaluation", product="breit")
     check("evaluation breit: 2%/5% repurchase caps on screen",
           "2% of aggregate NAV" in t or "2% of our aggregate NAV" in t)
+    # ---------- P0-4: the labs never substitute another product ----------
+    labs_bad = page.evaluate(
+        """() => {
+             const T = window.TARK, bad = [];
+             const menu = {};
+             for (const sel of Object.values(T.benchmarks)) {
+               for (const c of [sel.primary, sel.secondary, ...(sel.rejected || [])].filter(Boolean)) menu[c.id] = c;
+             }
+             for (const [k, p] of Object.entries(T.products)) {
+               window.tarkSetState({view: 'pme', plan: T.plan_order[0], product: k, proxy: '', win: ''});
+               const sub = document.querySelector('#view .viewhead .sub')?.textContent || '';
+               const empty = document.querySelector('[data-lab-empty]');
+               if (T.pme_profiles[k]) {
+                 if (empty || !sub.includes(p.fund_name)) bad.push(`pme ${k}: profile exists but lab did not open on it`);
+                 const sel = T.benchmarks[k];
+                 const comp = sel && sel.primary && sel.primary.comparison;
+                 if (comp) {
+                   const shown = parseFloat(document.querySelector('#pme_ks').textContent);
+                   if (Math.abs(shown - comp.ks_pme) > 1e-4) bad.push(`pme ${k}: lab KS-PME ${shown} vs artifact ${comp.ks_pme}`);
+                 }
+               } else if (!empty || empty.dataset.labEmpty !== k || !empty.textContent.includes(p.fund_name)) {
+                 bad.push(`pme ${k}: no profile and no empty state naming it`);
+               }
+               window.tarkSetState({view: 'desmooth', plan: T.plan_order[0], product: k, rho: ''});
+               const e2 = document.querySelector('[data-lab-empty]');
+               const sub2 = document.querySelector('#view .viewhead .sub')?.textContent || '';
+               const has = (T.daily_series && T.daily_series[k]) || k === 'breit';
+               if (has && (e2 || !document.querySelector('#dschart'))) bad.push(`desmooth ${k}: series exists but lab did not open`);
+               if (!has && (!e2 || e2.dataset.labEmpty !== k)) bad.push(`desmooth ${k}: no series and no empty state naming it`);
+             }
+             return bad;
+           }""")
+    check("labs: every product either opens on its own data (KS-PME equals the "
+          "selection artifact) or shows an empty state naming it",
+          not labs_bad, "; ".join(labs_bad[:4]))
+
     # ---------- P0-3: Fee Matrix is the typed facts layer ----------
     fees_bad = page.evaluate(
         """() => {

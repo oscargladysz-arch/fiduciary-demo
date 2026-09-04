@@ -426,9 +426,29 @@ export function pmeCompute(fundFlows, indexDaily, d0, d1) {
   return { ks: ksPme(fundFlows, idx), da: directAlpha(fundFlows, idx) };
 }
 
+function labEmptyState(root, title, selected, available, what, setState, view, attr) {
+  const p = T.products[selected];
+  root.innerHTML = `
+    <div class="viewhead"><h1>${title}</h1>
+      <div class="sub">${esc(p.fund_name)}</div></div>
+    <div class="banner amber" data-lab-empty="${esc(selected)}">
+      <b>No ${what} on record for ${esc(p.fund_name)}.</b>
+      The lab never substitutes another product. It is available for:
+      ${available.map((k) => `<a href="#" ${attr}="${k}" style="margin-left:8px">${esc(T.products[k].fund_name.split(" (")[0])}</a>`).join("")}
+    </div>
+    <div class="cap">Why: ${esc(T.cell_display[selected]["5.2"]?.plain || T.cell_display[selected]["1.1"]?.plain || "no series cell on record")}</div>`;
+  root.querySelectorAll(`[${attr}]`).forEach((a) => a.addEventListener("click",
+    (e) => { e.preventDefault(); setState({ view, product: a.getAttribute(attr), proxy: "", rho: "" }); }));
+}
+
 export function viewPme(root, state, setState) {
   const prods = Object.keys(T.pme_profiles);
-  const key = prods.includes(state.product) ? state.product : "cliffwater_cclfx";
+  if (!prods.includes(state.product)) {
+    labEmptyState(root, "Analysis Lab — benchmark swap", state.product, prods,
+      "return series the lab can recompute", setState, "pme", "data-labprod");
+    return;
+  }
+  const key = state.product;
   const prof = T.pme_profiles[key];
   const p = T.products[key];
   const proxyId = T.proxy_library[state.proxy] ? state.proxy : prof.default_proxy;
@@ -605,7 +625,7 @@ export function viewPme(root, state, setState) {
     if (fundDaily) {
       const me = monthEndPoints(fundDaily);
       fundCal = calendarYearReturns(me);
-      fundLabel = key === "dxyz" ? "market price (premium-driven!)" : "NAV (adj)";
+      fundLabel = prof.price_series_warning ? "market price (premium-driven!)" : "Yahoo adjusted close (approximates NAV total return)";
       const eps = drawdownEpisodes(me, 3);
       ddHtml = `<div class="card"><h3>Drawdowns — top ${eps.length} episodes</h3>
         <table class="grid" style="margin-top:6px"><thead><tr><th>Peak</th><th>Trough</th>
@@ -615,7 +635,7 @@ export function viewPme(root, state, setState) {
           <td class="num" style="color:var(--alarm)">${pct(e.depth)}</td>
           <td class="num">${e.recovery_date || "not yet"}</td></tr>`).join("")}
         </tbody></table>
-        <div class="cap" style="margin-top:6px">${key === "dxyz"
+        <div class="cap" style="margin-top:6px">${prof.price_series_warning
           ? "Price series — episodes are PREMIUM collapses, not portfolio losses."
           : "Month-end sampled; appraisal smoothing understates true depth (see De-smoothing Lab)."}</div></div>`;
       const rets = periodReturns(me.map(([, v]) => v));
@@ -1054,28 +1074,43 @@ export function viewDxyz(root) {
 
 /* ======================================================== DE-SMOOTHING */
 export function viewDesmooth(root, state) {
-  // data-driven roster: any product with a monthly-or-finer series qualifies
-  const AVAILABLE = {
-    cliffwater_cclfx: () => {
-      const me = monthEndPoints(T.series.cclfx);
+  // data-driven roster: every daily series in the bundle (from the engine
+  // profiles) plus the printed monthly NAV path where one exists
+  const AVAILABLE = {};
+  for (const [k, d] of Object.entries(T.daily_series || {})) {
+    if (!T.series[d.series]) continue;
+    AVAILABLE[k] = () => {
+      const me = monthEndPoints(T.series[d.series]);
+      const m = k === "cliffwater_cclfx" && T.metrics?.cclfx?.full_history;
       return { rets: periodReturns(me.map(([, v]) => v)),
                dates: me.map(([d]) => d),
-               basis: "monthly returns from daily adj close (distributions reinvested)",
-               committed: `pipeline: rho ${T.metrics.cclfx.full_history.lag1_autocorr_rho}, observed ${T.metrics.cclfx.full_history.ann_vol_observed_pct}% → de-smoothed ${T.metrics.cclfx.full_history.ann_vol_desmoothed_pct}% (data/analytics/metrics.json)` };
-    },
-    breit: () => {
+               basis: `monthly returns from ${d.label}`,
+               price: d.price_series,
+               committed: m
+                 ? `pipeline: rho ${m.lag1_autocorr_rho}, observed ${m.ann_vol_observed_pct}% → de-smoothed ${m.ann_vol_desmoothed_pct}% (data/analytics/metrics.json)`
+                 : "no committed pipeline diagnostic for this series yet (live recompute only)" };
+    };
+  }
+  if (T.series_monthly?.breit_nav) {
+    AVAILABLE.breit = () => {
       const pts = T.series_monthly.breit_nav.filter(([d]) => d <= "2025-12-31");
       const bd = T.supplement.breit_monthly_diagnostics;
       return { rets: periodReturns(pts.map(([, v]) => v)),
                dates: pts.map(([d]) => d),
                basis: "monthly NAV path as PRINTED in the 10-K (distributions excluded — appraisal-process diagnostic)",
+               price: false,
                committed: `pipeline: rho ${bd.lag1_autocorr_rho}, observed ${bd.nav_path_ann_vol_pct}% → de-smoothed ${bd.desmoothed_ann_vol_pct}% (data/analytics/supplement.json)` };
-    },
-  };
+    };
+  }
   const UNAVAILABLE_REASON = (k) =>
     T.cell_display[k]["4.8"]?.plain || "no monthly-or-finer public series";
 
-  const key = AVAILABLE[state.product] ? state.product : "cliffwater_cclfx";
+  if (!AVAILABLE[state.product]) {
+    labEmptyState(root, "De-smoothing Lab", state.product, Object.keys(AVAILABLE),
+      "monthly-or-finer series", (st) => window.tarkSetState(st), "desmooth", "data-dsprod");
+    return;
+  }
+  const key = state.product;
   const data = AVAILABLE[key]();
   const rhoEst = lag1Autocorr(data.rets);
   const rhoOverride = state.rho !== "" && state.rho !== undefined
@@ -1095,6 +1130,9 @@ export function viewDesmooth(root, state) {
       ${esc(UNAVAILABLE_REASON(k))}</div>`).join("");
 
   root.innerHTML = `
+    ${data.price ? `<div class="banner red"><b>Market-price series.</b> De-smoothing
+      corrects appraisal lag. Exchange prices carry no appraisal lag, so the
+      correction below is shown for contrast only, not as a risk estimate.</div>` : ""}
     <div class="viewhead"><h1>De-smoothing Lab</h1>
       <div class="sub">Appraisal NAVs autocorrelate; ${gloss("de-smoothing")}
         restores the volatility the pricing process hides. Available wherever a

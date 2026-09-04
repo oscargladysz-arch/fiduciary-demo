@@ -282,35 +282,79 @@ PROXY_LIBRARY = {
 }
 
 
-def pme_profiles() -> dict:
-    """Window-explorer profiles at honest granularity (extended to every
-    product with a series in P1-15)."""
+STRATEGY_DEFAULT_PROXY = {
+    "private_credit": "bkln", "private_equity_evergreen": "psp",
+    "pe_conglomerate": "psp", "nontraded_reit": "vnq", "preipo_venture": "psp",
+}
+PRICE_SERIES_WARNING = ("MARKET-PRICE series. Any PME here benchmarks the premium, "
+                        "not the portfolio. The engine formally escalated instead "
+                        "of selecting (5.6)")
+
+
+def daily_series_map() -> dict:
+    """product -> the daily series the labs may recompute on, derived from the
+    engine profiles (never a second hand-typed roster). Market-priced
+    products point at their close series and carry the warning."""
     from tark_benchmark import PRODUCT_PROFILES as PP
-    import json as _json
-    pi = _json.loads((DATA / "benchmarks" / "profiles_input.json").read_text())
-    out = {
-        "cliffwater_cclfx": {"fund_series": "cclfx", "granularity": "monthly",
-                             "default_proxy": "bkln"},
-        "dxyz": {"fund_series": "dxyz_daily", "granularity": "monthly",
-                 "default_proxy": "psp", "price_series_warning":
-                     "MARKET-PRICE series — any PME here benchmarks the "
-                     "premium, not the portfolio; the engine formally "
-                     "escalated instead of selecting (5.6)"},
-        "hl_paf": {"fy_returns": PP["hl_paf"]["fy_returns"],
-                   "fy_window": list(PP["hl_paf"]["fy_window"]),
-                   "granularity": "annual", "default_proxy": "psp"},
-        "stepstone_spm": {"aatr": PP["stepstone_spm"]["aatr_5yr"],
-                          "aatr_years": 5,
-                          "fy_window": list(PP["stepstone_spm"]["fy_window"]),
-                          "granularity": "annual", "default_proxy": "psp"},
-        "kkr_kpec": {"aatr": pi["kkr_kpec"]["profile"]["aatr"],
-                     "aatr_years": pi["kkr_kpec"]["profile"]["aatr_years"],
-                     "fy_window": pi["kkr_kpec"]["profile"]["fy_window"],
-                     "granularity": "annual", "default_proxy": "psp"},
-        "breit": {"fy_returns": pi["breit"]["profile"]["fy_returns"],
-                  "fy_window": pi["breit"]["profile"]["fy_window"],
-                  "granularity": "annual", "default_proxy": "vnq"},
-    }
+    out = {}
+    for key, prof in PP.items():
+        t = prof.get("series")
+        if not t:
+            continue
+        price = bool(prof.get("price_nav_decoupled"))
+        out[key] = {"series": f"{t}_daily" if price else t,
+                    "ticker": t.upper(),
+                    "column": "close" if price else "adj_close",
+                    "price_series": price,
+                    "label": (f"{t.upper()} daily market price (close)" if price
+                              else f"{t.upper()} Yahoo adjusted close (approximates "
+                                   "NAV total return)")}
+    return out
+
+
+def pme_profiles() -> dict:
+    """Analysis Lab profiles for EVERY product with a recomputable return
+    input: a daily series, a fiscal-year return list, or a disclosed
+    annualized figure. Inputs come from the engine profiles and
+    profiles_input.json (the same inputs the selection used). The default
+    proxy is the series of the engine's own primary selection, so the lab
+    opens on the engine's comparison and the user swaps from there."""
+    from tark_benchmark import PRODUCT_PROFILES as PP, STRATEGY_MENU
+    pi = json.loads((DATA / "benchmarks" / "profiles_input.json").read_text())
+    daily = daily_series_map()
+    out = {}
+    for key, prof in PP.items():
+        merged = {**prof, **pi.get(key, {}).get("profile", {})}
+        strategy = merged["strategy"]
+        proxy = STRATEGY_DEFAULT_PROXY[strategy]
+        sel_path = DATA / "benchmarks" / f"{key}_selection.json"
+        if sel_path.exists():
+            sel = json.loads(sel_path.read_text())
+            if sel.get("primary"):
+                cand = next((c for c in STRATEGY_MENU[strategy]
+                             if c["id"] == sel["primary"]["id"]), None)
+                if cand and cand.get("series") in PROXY_LIBRARY:
+                    proxy = cand["series"]
+        entry: dict = {"default_proxy": proxy}
+        if key in daily:
+            entry.update({"fund_series": daily[key]["series"], "granularity": "monthly"})
+            if daily[key]["price_series"]:
+                entry["price_series_warning"] = PRICE_SERIES_WARNING
+        elif merged.get("fy_returns"):
+            entry.update({"fy_returns": list(merged["fy_returns"]),
+                          "fy_window": list(merged["fy_window"]),
+                          "granularity": "annual"})
+        elif merged.get("aatr_5yr"):
+            entry.update({"aatr": merged["aatr_5yr"], "aatr_years": 5,
+                          "fy_window": list(merged["fy_window"]),
+                          "granularity": "annual"})
+        elif merged.get("aatr"):
+            entry.update({"aatr": merged["aatr"], "aatr_years": merged["aatr_years"],
+                          "fy_window": list(merged["fy_window"]),
+                          "granularity": "annual"})
+        else:
+            continue   # no recomputable input on record: the lab shows why
+        out[key] = entry
     return out
 
 
@@ -621,6 +665,7 @@ def main() -> None:
             (DATA / "cohorts" / "caveat_matrix.json").read_text()),
         "roster_decisions_md": (DATA / "roster_decisions.md").read_text(),
         "pme_profiles": pme_profiles(),
+        "daily_series": daily_series_map(),
         "proxy_library": PROXY_LIBRARY,
         "swap_matrix": swap_matrix(),
         "verification_queue": parse_verification_queue(),
