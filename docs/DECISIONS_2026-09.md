@@ -585,3 +585,38 @@ series, and runs inside `produce.py` under the freshness gate. Cells 1.6
 and 1.7 (computed, not yet owned by the cell writer) still carry the
 earlier "TR-gap vs disclosed" sentence. They join the writer's owned set
 with the memo work (P1-D) and are regenerated from this artifact then.
+
+### 6.5 P1-B preparation: the outcome is committed before the code
+`docs/benchmark_methodology.md` sections 4 to 10 now hold the typed
+descriptors per product and candidate (each with the cell it comes from),
+the strategy matrix and gate, the v2 rubric, the lanes, the tie-breaks,
+the expected v1 to v2 outcome for all sixteen products and the rule
+mapping as basis strings. The gate reads the v1 columns from the frozen
+snapshot and fails on drift. The v2 columns are the prediction. Design
+calls the table forced, each reversible by Oscar:
+
+- A computable cohort composite can be primary. The rule's own fallback
+  is "the history of a similar type of investment", and v1's structure,
+  where any unaffiliated daily ETF cleared the threshold and outscored an
+  exact-strategy comparison, is what the audit called the opposite of a
+  meaningful benchmark. Under v2 the leave-one-out composite wins private
+  credit and evergreen PE (10 against BKLN's or PSP's 9), the ETF becomes
+  the secondary, and the card shows both.
+- Listed private equity (PSP) is strategy 1 for venture, not 2: buyout
+  managers and listed PE vehicles are not venture, so arkvx escalates
+  computably instead of carrying PSP 8. That is what the plan expected.
+- `investability` means computable on held data. A composite built from
+  filings is computable. A licensed or cited index is not, whatever its
+  fit, and it says so.
+- `risk_liquidity_match` 3 is reachable in the rubric and unreached on
+  held data, because every cohort mixes leverage regimes. The card prints
+  the ceiling per product rather than hiding it.
+- ODCE stays a cited secondary for the non-traded REITs at 7 (v1 gave it
+  8 with a data_quality point for data it does not hold).
+- Lane D is removed. A PME against a proxy is that proxy's comparison.
+- `src/fetch_authority.py` verifies the citation and the RIN, extracts
+  paragraphs (g) to (l) of proposed 2550.404a-6 verbatim from the Federal
+  Register XML, and writes nothing if any paragraph cannot be located.
+  It cannot run here (federalregister.gov is blocked). Until it has run on
+  a machine with network, no surface quotes the rule and every rule
+  reference carries the basis string.

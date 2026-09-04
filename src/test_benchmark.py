@@ -210,6 +210,38 @@ check_true("monthly-schedule KS-PME: daily products only, labeled ILLUSTRATIVE, 
            "two-point primary" + (": " + "; ".join(sched_bad) if sched_bad else ""),
            not sched_bad)
 
+# ---- the methodology's expected-outcome table: the v1 columns equal the
+# frozen snapshot (never typed, never drift). The v2 columns are asserted
+# against the live artifacts once P1-12 lands.
+import re  # noqa: E402
+METHOD = Path(__file__).resolve().parents[1] / "docs" / "benchmark_methodology.md"
+sect = METHOD.read_text().split("## 9. Expected outcome")[1].split("\n## ")[0]
+table = {}
+for line in sect.splitlines():
+    cells = [c.strip() for c in line.strip().strip("|").split("|")]
+    if len(cells) == 6 and cells[0] in PRODUCT_PROFILES or (len(cells) == 6 and cells[0] == "jll_ipt"):
+        table[cells[0]] = cells[1:]
+SNAP = Path(__file__).resolve().parents[1] / "data" / "benchmarks" / "v1_snapshot"
+def snapshot_slots(key):
+    p = SNAP / f"{key}_selection.json"
+    if not p.exists():
+        return "none", "none"
+    d = json.loads(p.read_text())
+    if d.get("primary") is None:
+        return ("escalation" if d.get("escalation") else "none"), "none"
+    fmt = lambda s: f"{s['id']} {s['score']}/12" if s else "none"
+    return fmt(d["primary"]), fmt(d.get("secondary"))
+expected_keys = set(PRODUCT_PROFILES) | {"jll_ipt"}
+check_true("methodology: expected-outcome table names every product once",
+           set(table) == expected_keys and len(table) == 16)
+drift = [f"{k}: doc {table[k][0]} / {table[k][1]} vs snapshot {snapshot_slots(k)}"
+         for k in table if tuple(table[k][:2]) != snapshot_slots(k)]
+check_true("methodology: v1 columns equal the frozen snapshot"
+           + (": " + "; ".join(drift) if drift else ""), not drift)
+SLOT = re.compile(r"^(?:[a-z_]+ \d+/12|escalation|none)$")
+check_true("methodology: v2 columns are well-formed slots",
+           all(SLOT.match(table[k][2]) and SLOT.match(table[k][3]) for k in table))
+
 # ---- v1 snapshot is frozen history: every byte pinned by its manifest
 import hashlib  # noqa: E402
 SNAP = Path(__file__).resolve().parents[1] / "data" / "benchmarks" / "v1_snapshot"
