@@ -539,3 +539,11 @@ body[data-density="compact"] h1 { font-size: 20px; }
 
 /* T1 structured filing data — its own badge (teal-blue, off the brand axis) */
 .chip.structured { background: #e2ecf7; color: #1d4f8f; }
+
+/* advisor-stated inputs (P2-6): the fiduciary's own cells, not evidence */
+.chip.advisor { background: #efe6fb; color: #5b2ca0; }
+.advisor { margin-top: 8px; padding: 8px 10px; border-left: 3px solid #5b2ca0; background: var(--paper); }
+.advisorform { margin-top: 6px; }
+.advisorform label { display: block; margin: 6px 0; }
+.advisorform textarea, .advisorform input { display: block; width: 100%; max-width: 640px; font: inherit;
+  padding: 4px 6px; border: 1px solid var(--line); border-radius: 3px; }

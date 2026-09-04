@@ -28,10 +28,10 @@ from docx.shared import Inches, Pt
 
 import csv
 
-from tark_data import (ADVISOR_COMPLETED, CELLS, DATA, FACTOR_PARAS, FACTORS, RULE,
-                       RULE_CITATION, authority, cells_by_factor, coverage_summary,
-                       load_plan, load_products, plan_keys, record_as_of, rule_ref,
-                       status_kind)
+from tark_data import (ADVISOR_COMPLETED, ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_CELLS, CELLS,
+                       DATA, FACTOR_PARAS, FACTORS, RULE, RULE_CITATION, authority,
+                       cells_by_factor, coverage_summary, load_advisor, load_plan,
+                       load_products, plan_keys, record_as_of, rule_ref, status_kind)
 from tark_display import _money as money, facts_by_cell, typed_headline
 
 SITE_MEMOS = Path(__file__).resolve().parents[1] / "site" / "memos"
@@ -200,8 +200,31 @@ def _flags(sel: dict | None, m: dict | None, fdoc: dict) -> list[str]:
     return out
 
 
+def _advisor_section(doc: Document, key: str, plan_key: str, plan: dict) -> dict:
+    """The fiduciary's own stated cells for this plan, or none. Returns the entries."""
+    adv = load_advisor(plan_key, key) or {}
+    entries = adv.get("cells") or {}
+    doc.add_heading("Advisor-stated inputs (this plan)", level=1)
+    doc.add_paragraph(ADVISOR_NOT_EVIDENCE)
+    if not entries:
+        doc.add_paragraph(f"None stated for {plan['display_label']}. The six committee cells "
+                          "(" + ", ".join(f"{c} {cell_title(c)}" for c in ADVISOR_STATED_CELLS)
+                          + ") remain open.")
+        return entries
+    t = doc.add_table(rows=1, cols=4)
+    t.style = "Table Grid"
+    h = t.rows[0].cells
+    h[0].text, h[1].text, h[2].text, h[3].text = "Cell", "Statement", "Signer", "Date"
+    for cid in ADVISOR_STATED_CELLS:
+        e = entries.get(cid)
+        if e:
+            r = t.add_row().cells
+            r[0].text, r[1].text, r[2].text, r[3].text = f"{cid} {cell_title(cid)}", e["value"], e["signer"], e["date"]
+    return entries
+
+
 def _recommendation_section(doc: Document, sel: dict | None, m: dict | None,
-                            fdoc: dict, plan: dict) -> None:
+                            fdoc: dict, plan: dict, stated: dict | None = None) -> None:
     doc.add_heading("Recommendation", level=1)
     if m:
         doc.add_paragraph(
@@ -226,10 +249,12 @@ def _recommendation_section(doc: Document, sel: dict | None, m: dict | None,
             doc.add_paragraph(f, style="List Bullet")
     else:
         doc.add_paragraph("none", style="List Bullet")
+    stated = stated or {}
     doc.add_paragraph(
         "This memo does not decide. The fiduciary makes the decision on this record. "
         "The committee-completed cells stay the committee's to complete for its own plan "
-        "before it does: " + ", ".join(f"{c} {cell_title(c)}" for c in COMMITTEE_CELLS) + ".")
+        "before it does: " + ", ".join(f"{c} {cell_title(c)} ({'stated' if c in stated else 'open'})"
+                                       for c in COMMITTEE_CELLS) + ".")
 
 
 def _scope_section(doc: Document) -> None:
@@ -532,7 +557,8 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
                 "data/roster_decisions.md (rendered on the site's Cohorts "
                 "view). Membership is an argued judgment, not a tag.")
 
-    _recommendation_section(doc, sel, m, fdoc, anchor)
+    stated = _advisor_section(doc, key, plan_key, anchor)
+    _recommendation_section(doc, sel, m, fdoc, anchor, stated)
     _scope_section(doc)
     _case_law_section(doc, p)
 

@@ -224,6 +224,39 @@ summ = summarize(rows)
 check("calibration: the summary counts cells, located, partial and pending",
       summ["cells"] == 3 and summ["located"] == 1 and summ["partial"] == 1 and summ["pending"] == 1)
 
+# ---------------- advisor-stated files (P2-6): validator and the not-evidence rule
+from tark_data import validate_advisor, validate_product, ADVISOR_STATED_CELLS  # noqa: E402
+adv_dir = DATA / "advisor"
+adv_dir.mkdir(exist_ok=True)
+good = {"plan": "plan_tech_media", "product": KEY, "not_evidence": "input, not evidence",
+        "cells": {"6.6": {"value": "Recordkeeper confirmed NSCC order handling for quarterly windows.",
+                          "signer": "A. Person, plan committee chair", "date": "2026-09-04",
+                          "status": "advisor-stated - A. Person, plan committee chair, 2026-09-04"}}}
+(adv_dir / f"plan_tech_media__{KEY}.json").write_text(json.dumps(good))
+check("advisor: a signed, dated statement on an advisor cell validates", validate_advisor() == [])
+bad = json.loads(json.dumps(good))
+bad["cells"]["6.6"]["signer"] = ""
+bad["cells"]["2.1"] = dict(good["cells"]["6.6"])
+bad["cells"]["2.1"]["date"] = "Sept 4"
+(adv_dir / f"plan_tech_media__{KEY}.json").write_text(json.dumps(bad))
+errs = validate_advisor()
+check("advisor: missing signer, a non-advisor cell and a non-ISO date are each refused",
+      any("no signer" in e for e in errs) and any("2.1 is not an advisor-stated cell" in e for e in errs)
+      and any("date is not ISO" in e for e in errs))
+(adv_dir / f"plan_tech_media__{KEY}.json").write_text(json.dumps(good))
+(adv_dir / f"plan_nowhere__{KEY}.json").write_text(json.dumps({**good, "plan": "plan_nowhere"}))
+check("advisor: an unknown plan is refused", any("unknown plan or product" in e for e in validate_advisor()))
+(adv_dir / f"plan_nowhere__{KEY}.json").unlink()
+# the not-evidence rule: the status may never enter an evidence cell
+prod_adv = load_product(KEY)
+prod_adv["cells"]["6.6"] = {**prod_adv["cells"]["6.6"], "status": "advisor-stated - someone, 2026-09-04",
+                            "value": "x", "source": "s", "extracted_by": "e"}
+(DATA / "products" / f"{KEY}.json").write_text(json.dumps(prod_adv))
+check("advisor: an advisor-stated status inside an evidence cell is refused by validate_product",
+      any("advisor-stated is not an evidence status" in e for e in validate_product(KEY)))
+check("advisor: the six cells are exactly the committee cells",
+      set(ADVISOR_STATED_CELLS) == {"6.6", "6.8", "3.7", "2.8", "3.5", "4.9"})
+
 # ---------------- the service: one endpoint, honest refusals, no job state
 (SCRATCH / "data" / "census").mkdir(exist_ok=True)
 shutil.copy(BASE / "data" / "census" / "census.json", SCRATCH / "data" / "census" / "census.json")

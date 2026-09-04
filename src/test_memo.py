@@ -218,6 +218,23 @@ check("regulatory basis: citation, links, paragraph mapping and basis in all 64,
 if _rb_bad:
     print("   bad:", "; ".join(_rb_bad[:4]))
 
+# P2-6: advisor-stated inputs are a section of their own, never evidence
+from tark_data import advisor_entries  # noqa: E402
+_adv_bad = []
+for pl in plan_keys():
+    for k in prods:
+        t = memo_text(pl, k)
+        stated = bool((advisor_entries().get(f"{pl}__{k}") or {}).get("cells"))
+        if "advisor-stated inputs (this plan)" not in t or "it is not evidence" not in t:
+            _adv_bad.append(f"{pl} {k}: section missing")
+        if not stated and "none stated for" not in t:
+            _adv_bad.append(f"{pl} {k}: no advisor file yet the memo does not say none stated")
+        if not stated and "(stated)" in t:
+            _adv_bad.append(f"{pl} {k}: a committee cell marked stated without an advisor file")
+check("advisor-stated section in all 64 memos, honest about what is stated", not _adv_bad)
+if _adv_bad:
+    print("   bad:", "; ".join(_adv_bad[:4]))
+
 keys = ["breit","cliffwater_cclfx","dxyz","hl_paf","kkr_kpec","stepstone_spm"]
 texts = {}
 for k in keys:

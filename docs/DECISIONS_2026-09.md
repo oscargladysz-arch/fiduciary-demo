@@ -1045,3 +1045,22 @@ outside-census, no-registry, already-evaluated and malformed-key
 refusals, one route, no job fields. The frontend gate opens an
 unevaluated entity and checks the command and the honest no-service
 state. fastapi, uvicorn and httpx join the requirements.
+
+### 6.26 P2-6: advisor-stated cells are inputs, not evidence
+The six committee cells (6.6, 6.8, 3.7, 2.8, 3.5, 4.9) can be stated by
+the adopting fiduciary for its own plan in
+`data/advisor/<plan>__<product>.json`, each entry with a value, a signer
+and an ISO date and the status prefix `advisor-stated`. `validate_advisor`
+(in the validate gate) refuses an unknown plan or product, any other
+cell, a missing value or signer, a non-ISO date, and `validate_product`
+refuses the status inside an evidence cell: an advisor statement never
+enters `data/evidence/` and the record's cell stays as it is. The
+Evaluation view shows a stated cell with its own badge, signer, date and
+the not-evidence sentence, and otherwise a form that emits the exact
+file to save (a static site writes nothing), refusing to produce
+anything without value, signer and date. The header counts stated cells
+for the selected plan. The memo gains an "Advisor-stated inputs (this
+plan)" section and marks each committee cell stated or open in the
+recommendation. No advisor file is committed: inventing a signer would
+be fabrication. The offline gates exercise the validator, the
+not-evidence rule, the form and the memo section.

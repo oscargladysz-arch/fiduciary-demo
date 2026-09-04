@@ -176,7 +176,59 @@ CELLS = {
 # status vocabulary is prefix-based: the wild data legitimately contains
 # refinements like "pending-verify" and "fetched-series, extraction pending"
 STATUS_PREFIXES = ("pending", "partial", "extracted", "verified",
-                   "structured", "computed", "fetched", "n/a")
+                   "structured", "computed", "fetched", "n/a", "advisor-stated")
+
+# the six cells the adopting fiduciary states for its own plan (P2-6). They
+# live in data/advisor/<plan>__<product>.json with a signer and a date, never
+# in the evidence CSVs: an advisor statement is an input, not evidence.
+ADVISOR_STATED_CELLS = ("6.6", "6.8", "3.7", "2.8", "3.5", "4.9")
+ADVISOR_NOT_EVIDENCE = ("An advisor-stated cell is the adopting fiduciary's own input for its plan, "
+                        "signed and dated. It is not evidence, it is never extracted or verified, "
+                        "and the product record's cell stays as it is.")
+
+
+def advisor_path(plan_key: str, product_key: str) -> Path:
+    return DATA / "advisor" / f"{plan_key}__{product_key}.json"
+
+
+def load_advisor(plan_key: str, product_key: str) -> dict | None:
+    p = advisor_path(plan_key, product_key)
+    return json.loads(p.read_text()) if p.exists() else None
+
+
+def advisor_entries() -> dict[str, dict]:
+    """{"<plan>__<product>": file} for every advisor file on disk."""
+    d = DATA / "advisor"
+    if not d.exists():
+        return {}
+    return {p.stem: json.loads(p.read_text()) for p in sorted(d.glob("*__*.json"))}
+
+
+def validate_advisor() -> list[str]:
+    """Every advisor file: a known plan and product, only the six cells, each
+    entry with value, signer, ISO date and the advisor-stated status."""
+    errs: list[str] = []
+    plans, products = set(plan_keys()), set(product_keys())
+    for stem, doc in advisor_entries().items():
+        plan, _, prod = stem.partition("__")
+        if plan not in plans or prod not in products:
+            errs.append(f"advisor {stem}: unknown plan or product")
+        if doc.get("plan") != plan or doc.get("product") != prod:
+            errs.append(f"advisor {stem}: plan or product inside the file differs from its name")
+        for cid, e in (doc.get("cells") or {}).items():
+            if cid not in ADVISOR_STATED_CELLS:
+                errs.append(f"advisor {stem}: cell {cid} is not an advisor-stated cell")
+            if not str(e.get("value") or "").strip():
+                errs.append(f"advisor {stem}: cell {cid} has no value")
+            if not str(e.get("signer") or "").strip():
+                errs.append(f"advisor {stem}: cell {cid} has no signer")
+            if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(e.get("date") or "")):
+                errs.append(f"advisor {stem}: cell {cid} date is not ISO")
+            if not str(e.get("status") or "").startswith("advisor-stated"):
+                errs.append(f"advisor {stem}: cell {cid} status must start with advisor-stated")
+        if not (doc.get("cells") or {}):
+            errs.append(f"advisor {stem}: no cells stated")
+    return errs
 
 SERIES_COLUMNS = ["date", "close", "adj_close"]
 
@@ -307,6 +359,8 @@ def validate_product(key: str) -> list[str]:
         st = cell.get("status", "")
         if status_kind(st) == "unknown":
             errs.append(f"{key}:{cid}: unknown status '{st}'")
+        if status_kind(st) == "advisor-stated":
+            errs.append(f"{key}:{cid}: advisor-stated is not an evidence status, it lives in data/advisor/")
         if status_kind(st) in ("extracted", "verified", "computed",
                               "structured") and not cell.get("value"):
             errs.append(f"{key}:{cid}: status '{st}' but no value")
@@ -326,6 +380,7 @@ def validate_product(key: str) -> list[str]:
     for cid, cell in cells.items():
         if cid not in CELLS:
             continue
+        st = cell.get("status", "")      # this cell's status, not the previous loop's
         if status_kind(st) == "partial" and str(cell.get("value") or "").strip():
             if not str(cell.get("source") or "").strip():
                 errs.append(f"{key}:{cid}: partial with a value but no source")
@@ -664,6 +719,7 @@ def validate_registry() -> list[str]:
 def validate_all() -> dict[str, list[str]]:
     report = {k: validate_product(k) for k in product_keys()}
     report["registry"] = validate_registry()
+    report["advisor"] = validate_advisor()
     for pk in plan_keys():
         report[f"plan:{pk}"] = validate_plan(pk)
     report["series"] = validate_series()

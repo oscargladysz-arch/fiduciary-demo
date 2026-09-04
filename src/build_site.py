@@ -24,7 +24,8 @@ from pathlib import Path
 from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
 from tark_display import BASE_LABEL, WRAPPER_LABEL, cell_display, facts_by_cell
 from tark_memo import write_all
-from tark_data import (BASE, DATA, CELLS, FACTORS, RULE, authority,
+from tark_data import (ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_CELLS, BASE, DATA, CELLS, FACTORS,
+                       RULE, advisor_entries, authority,
                        coverage_summary, rule_ref,
                        coverage_totals, load_evidence, load_plan,
                        load_product, load_products, load_series,
@@ -542,6 +543,10 @@ def main() -> None:
         "generated": date.today().isoformat(),
         "facts": facts,
         # the rule record once, the mapping basis once, per cell only what differs
+        # advisor-stated inputs per plan and product (P2-6), inputs not evidence
+        "advisor": advisor_entries(),
+        "advisor_cells": list(ADVISOR_STATED_CELLS),
+        "advisor_not_evidence": ADVISOR_NOT_EVIDENCE,
         # an evaluation service, when one is connected at build time (P2-5)
         "service_url": (os.environ.get("TARK_SERVICE_URL") or "").rstrip("/") or None,
         "rule": {**RULE, "authority": authority(),

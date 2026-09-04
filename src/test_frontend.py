@@ -1067,6 +1067,35 @@ with sync_playwright() as pw:
     check("evaluation: every factor shows its rule paragraph and basis",
           all(f"rule paragraph ({c})" in ev_t for c in "ghijkl")
           and ev_t.count("Basis: factor order per the 2026-09-03 audit") == 6)
+    # ---------- P2-6: advisor-stated cells, form emits a patch, nothing is faked
+    n_forms = page.locator("[data-advisor-form]").count()
+    n_stated = page.locator("[data-advisor-stated]").count()
+    check("evaluation: every committee cell shows either a statement or a form, six in all",
+          n_forms + n_stated == 6 and page.locator("[data-advisor-count]").inner_text()
+          == f"advisor-stated for this plan: {n_stated} of 6")
+    if n_forms:
+        form = page.locator("[data-advisor-form]").first
+        form.evaluate("(d) => { d.open = true; }")     # view_text may have toggled it already
+        form.locator("[data-advisor-make]").click()
+        check("advisor form: an empty form produces nothing and says why",
+              "all required" in form.locator("[data-advisor-msg]").inner_text()
+              and form.locator("[data-advisor-patch]").is_hidden())
+        form.locator('[data-f="value"]').fill("Recordkeeper confirmed quarterly window handling.")
+        form.locator('[data-f="signer"]').fill("A. Person, committee chair")
+        form.locator('[data-f="date"]').fill("2026-09-04")
+        form.locator("[data-advisor-make]").click()
+        patch_text = form.locator("[data-advisor-patch]").inner_text()
+        cid = form.get_attribute("data-advisor-form")
+        try:
+            patch = json.loads(patch_text.split("\n", 1)[1])
+        except Exception:  # noqa: BLE001
+            patch = {}
+        check("advisor form: the patch is the exact file for this plan and product, signed and dated",
+              patch_text.startswith("# save as data/advisor/plan_tech_media__hl_paf.json")
+              and patch.get("plan") == "plan_tech_media" and patch.get("product") == "hl_paf"
+              and patch.get("cells", {}).get(cid, {}).get("signer") == "A. Person, committee chair"
+              and patch["cells"][cid]["status"].startswith("advisor-stated - A. Person")
+              and "not evidence" in patch.get("not_evidence", ""))
     check("evaluation: cells 6.6 and 6.8 carry the advisor-completed chip, no other cell does",
           page.locator("[data-advisor-completed]").count() == 2
           and all("paragraph (l)" in page.locator("[data-advisor-completed]").nth(i).inner_text()

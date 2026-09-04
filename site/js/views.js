@@ -23,7 +23,7 @@ export function esc(s) {
 }
 
 const STATUS_PREFIXES = ["pending", "partial", "extracted", "verified",
-  "structured", "computed", "fetched", "n/a"];
+  "structured", "computed", "fetched", "n/a", "advisor-stated"];
 export function statusKind(status) {
   for (const p of STATUS_PREFIXES) if (String(status).startsWith(p)) return p;
   return "unknown";
@@ -33,11 +33,11 @@ const CHIP_LABEL = {
   structured: "structured filing data (T1)",
   verified: "verified", extracted: "extracted · unverified",
   computed: "computed", partial: "partial", fetched: "series fetched",
-  pending: "pending", "n/a": "n/a",
+  pending: "pending", "n/a": "n/a", "advisor-stated": "advisor-stated (this plan, not evidence)",
 };
 export function chip(status) {
   const k = statusKind(status);
-  const cls = k === "n/a" ? "na" : k;
+  const cls = k === "n/a" ? "na" : k === "advisor-stated" ? "advisor" : k;
   return `<span class="chip ${cls}">${CHIP_LABEL[k] || esc(status)}</span>`;
 }
 
@@ -324,6 +324,7 @@ export function viewEvaluation(root, state) {
               <div class="fulltext">${esc(cell.value)}</div></details>`;
         }
         const ref = T.rule_refs[cid];
+        const advisorBlock = T.advisor_cells.includes(cid) ? advisorCell(key, cid, state.plan) : "";
         return `<div class="cellrow">
           <div class="head"><span class="cid num">${cid}</span>
             <span class="el">${gloss(cell.element)}</span>
@@ -331,7 +332,7 @@ export function viewEvaluation(root, state) {
             ${chip(cell.status || "pending")} ${citeBtn(key, cid)}
             <button class="pinbtn" data-pin-cell data-key="${key}" data-cid="${cid}"
               title="pin to packet">⌖</button></div>
-          ${body}</div>`;
+          ${body}${advisorBlock}</div>`;
       }).join("");
     const ref = T.rule_refs[`${n}.1`];
     return `<div class="factorblock" id="f${n}"><h2>${n} · ${esc(label)}
@@ -343,6 +344,7 @@ export function viewEvaluation(root, state) {
     <div class="viewhead"><h1>Six-Factor Evaluation</h1>
       <div class="sub">${esc(p.fund_name)}, ${gloss(p.wrapper)} · coverage
         <b class="num">${esc(c.headline)}</b>
+        · <span data-advisor-count>advisor-stated for this plan: ${advisorStated(key, state.plan)} of ${T.advisor_cells.length}</span>
         ${T.facts_meta && T.facts_meta[key] ? `
           · <span class="chip ${T.facts_meta[key].depth === "full" ? "extracted" : "wrapper"}">${T.facts_meta[key].depth} depth</span>
           · <a href="#" onclick="window.tarkSetState({view:'cohorts',cohort:'${esc(T.facts_meta[key].cohort_id)}'});return false">view cohort: ${esc(T.facts_meta[key].cohort_id)}</a>` : ""}
@@ -359,6 +361,60 @@ export function viewEvaluation(root, state) {
       document.getElementById(a.dataset.anchor)?.scrollIntoView(
         { behavior: "smooth", block: "start" });
     }));
+  wireAdvisorForms(root, key, state.plan);
+}
+
+/* ---------------- advisor-stated cells (P2-6): the fiduciary's own inputs
+ * for its plan, signed and dated, stored in data/advisor/<plan>__<product>.json
+ * and never in the evidence. A static site cannot write a file, so the form
+ * emits the exact JSON to save at that path. */
+function advisorEntry(key, plan, cid) {
+  return T.advisor[`${plan}__${key}`]?.cells?.[cid] || null;
+}
+function advisorStated(key, plan) {
+  return T.advisor_cells.filter((cid) => advisorEntry(key, plan, cid)).length;
+}
+function advisorCell(key, cid, plan) {
+  const e = advisorEntry(key, plan, cid);
+  const planLabel = T.plans[plan].display_label;
+  if (e) {
+    return `<div class="advisor" data-advisor-stated="${cid}">${chip(e.status)}
+      <div class="plain">${esc(e.value)}</div>
+      <div class="cap">Stated by ${esc(e.signer)} on ${esc(e.date)} for ${esc(planLabel)}.
+        ${esc(T.advisor_not_evidence)}</div></div>`;
+  }
+  return `<details class="advisorform" data-advisor-form="${cid}">
+    <summary class="cap">State this cell for ${esc(planLabel)} (advisor input, not evidence)</summary>
+    <label class="cap">Statement<textarea data-f="value" rows="3"></textarea></label>
+    <label class="cap">Signer (name and role)<input data-f="signer" type="text"></label>
+    <label class="cap">Date<input data-f="date" type="date"></label>
+    <button class="btn ghost" data-advisor-make>make the patch file</button>
+    <span class="cap" data-advisor-msg></span>
+    <pre class="cmd" data-advisor-patch hidden></pre></details>`;
+}
+function wireAdvisorForms(root, key, plan) {
+  root.querySelectorAll("[data-advisor-form]").forEach((form) => {
+    const cid = form.dataset.advisorForm;
+    form.querySelector("[data-advisor-make]").addEventListener("click", () => {
+      const get = (f) => form.querySelector(`[data-f="${f}"]`).value.trim();
+      const value = get("value"), signer = get("signer"), date = get("date");
+      const msg = form.querySelector("[data-advisor-msg]");
+      const out = form.querySelector("[data-advisor-patch]");
+      if (!value || !signer || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        msg.textContent = "value, signer and an ISO date are all required, nothing was produced";
+        out.hidden = true;
+        return;
+      }
+      const existing = T.advisor[`${plan}__${key}`] || { plan, product: key, cells: {} };
+      const doc = { ...existing, plan, product: key, not_evidence: T.advisor_not_evidence,
+        cells: { ...existing.cells, [cid]: { value, signer, date,
+          status: `advisor-stated - ${signer}, ${date}` } } };
+      out.textContent = `# save as data/advisor/${plan}__${key}.json, then python src/validate_data.py\n`
+        + JSON.stringify(doc, null, 2);
+      out.hidden = false;
+      msg.textContent = "patch ready, copy it into the repository (the site itself writes nothing)";
+    });
+  });
 }
 
 /* ========================================================== BENCHMARKS */
