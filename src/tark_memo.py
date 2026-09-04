@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import io
 import json
+import re
 import zipfile
 from pathlib import Path
 
@@ -27,6 +28,7 @@ from docx.shared import Inches, Pt
 
 from tark_data import (DATA, FACTORS, cells_by_factor, load_plan, load_products,
                        plan_keys, record_as_of, status_kind)
+from tark_display import facts_by_cell, typed_headline
 
 SITE_MEMOS = Path(__file__).resolve().parents[1] / "site" / "memos"
 
@@ -53,18 +55,47 @@ RULE_PARAS = [
 ]
 
 
-def _cell_lines(product: dict, factor_label: str, limit: int = 4) -> str:
-    picks = []
+KIND_LABEL = {"extracted": "extracted-unverified", "verified": "verified",
+              "computed": "computed", "partial": "partial", "structured": "structured"}
+EVIDENCED = tuple(KIND_LABEL)
+
+
+def first_sentence(value: str) -> str:
+    """The complete first sentence of a cell value, never cut mid-word."""
+    return re.split(r"(?<=[.!?])\s+", value.strip(), maxsplit=1)[0]
+
+
+def _findings(product: dict, factor_label: str, fbc: dict) -> list[str]:
+    """One paragraph per line: the typed facts for the factor's cells, then
+    the complete first sentence of every evidenced cell, then the cells
+    marked not applicable with their reasons. Nothing is truncated."""
+    typed, lines, na = [], [], []
     for cid, cell in cells_by_factor(product)[factor_label]:
-        if status_kind(cell.get("status", "")) in ("extracted", "verified",
-                                                   "computed", "partial",
-                                                   "structured"):
-            v = (cell.get("value") or "").strip()
-            if v:
-                picks.append(f"{cid}: {v[:220]}")
-        if len(picks) >= limit:
-            break
-    return "\n".join(picks) if picks else "No cells evaluated yet. Pending extraction."
+        st = str(cell.get("status", "pending"))
+        kind = status_kind(st)
+        v = (cell.get("value") or "").strip()
+        if kind in EVIDENCED and v:
+            th = typed_headline(cid, fbc.get(cid, {}))
+            if th:
+                typed.append(f"{cid} {th}")
+            lines.append(f"{cid} {cell['element']} ({KIND_LABEL[kind]}): {first_sentence(v)}")
+        elif kind == "n/a":
+            reason = st.split(":", 1)[1].strip() if ":" in st else st[3:].strip(" -")
+            na.append(f"{cid} {reason}")
+    out = []
+    if typed:
+        out.append("Typed facts: " + ". ".join(typed) + ".")
+    out.extend(lines)
+    if na:
+        out.append("Not applicable: " + ". ".join(na) + ".")
+    return out or ["No cell evaluated for this factor."]
+
+
+def _fill(cell, lines: list[str]) -> None:
+    """One paragraph per line inside a table cell (no newline joins)."""
+    cell.paragraphs[0].text = lines[0]
+    for line in lines[1:]:
+        cell.add_paragraph(line)
 
 
 def _set_letter(doc: Document) -> None:
@@ -119,17 +150,27 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
     for para in RULE_PARAS:
         doc.add_paragraph(para)
 
-    doc.add_heading("Six-factor findings (summary)", level=1)
+    facts_path = DATA / "facts" / f"{key}.json"
+    fdoc = json.loads(facts_path.read_text()) if facts_path.exists() else {}
+    fbc = facts_by_cell(fdoc.get("facts", {}))
+
+    doc.add_heading("Six-factor findings", level=1)
+    doc.add_paragraph(
+        "Per factor: the typed facts the engines read (each cites its cell), "
+        "then the complete first sentence of every evidenced cell with its "
+        "status, then the cells marked not applicable with the reason. The "
+        "full sourced text, quote and document of every cell is in "
+        "data/evidence/ and on the site's Evaluation view.")
     table = doc.add_table(rows=1, cols=2)
     table.style = "Table Grid"
     hdr = table.rows[0].cells
-    hdr[0].text, hdr[1].text = "Factor", "Key findings (cell: value)"
+    hdr[0].text, hdr[1].text = "Factor", "Findings (cell, status, first sentence)"
     for n, label in FACTORS.items():
         row = table.add_row().cells
         row[0].text = f"{n}. {label}"
-        row[1].text = _cell_lines(p, label)
+        _fill(row[1], _findings(p, label, fbc))
     for row in table.rows:
-        row.cells[0].width, row.cells[1].width = Inches(1.4), Inches(5.1)
+        row.cells[0].width, row.cells[1].width = Inches(1.2), Inches(5.3)
 
     doc.add_heading("Benchmark selection and justification", level=1)
     if sel is None:
@@ -215,9 +256,7 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
             doc.add_paragraph(r, style="List Bullet")
 
     # ---- cohort placement + exclusion log (peer-comparison layer) ----
-    facts_path = DATA / "facts" / f"{key}.json"
-    if facts_path.exists():
-        fdoc = json.loads(facts_path.read_text())
+    if fdoc:
         cid = fdoc.get("cohort_id")
         cpath = DATA / "cohorts" / f"{cid}.json"
         if cid and cpath.exists():

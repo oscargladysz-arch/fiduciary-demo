@@ -46,6 +46,42 @@ check("memo carries its own plan label (consulting plan)",
 check("liquidity match section is plan-specific (consulting memo carries the thin-headroom flag)",
       "thin headroom" in _pc and "product-to-plan liquidity match" in _pt)
 
+import re  # noqa: E402
+from tark_data import status_kind  # noqa: E402
+from tark_display import facts_by_cell, typed_headline  # noqa: E402
+from tark_memo import EVIDENCED, first_sentence  # noqa: E402
+import json  # noqa: E402
+
+def squash(t):
+    return re.sub(r"\s+", " ", t).strip().lower()
+
+# P1-20: the findings table carries the COMPLETE first sentence of every
+# evidenced cell (no 220-character cut, no mid-word ending) and the typed
+# facts the engines read, per factor
+prods = load_products()
+missing, typed_missing, cut = [], [], []
+for k, prod in prods.items():
+    t = squash(text_of(OUT / memo_name("plan_tech_media", k)))
+    if "…" in t:
+        cut.append(k)
+    fbc = facts_by_cell(json.loads((BASE / "data" / "facts" / f"{k}.json").read_text()).get("facts", {}))
+    for cid, cell in prod["cells"].items():
+        v = (cell.get("value") or "").strip()
+        if status_kind(cell.get("status", "")) in EVIDENCED and v:
+            if squash(first_sentence(v)) not in t:
+                missing.append(f"{k} {cid}")
+            th = typed_headline(cid, fbc.get(cid, {}))
+            if th and squash(th) not in t:
+                typed_missing.append(f"{k} {cid}")
+check("findings: complete first sentence of every evidenced cell, all 16 products",
+      not missing)
+if missing:
+    print("   missing:", "; ".join(missing[:8]))
+check("findings: every typed-fact headline the site shows is in the memo", not typed_missing)
+if typed_missing:
+    print("   missing:", "; ".join(typed_missing[:8]))
+check("findings: no ellipsis cut anywhere in the memos", not cut)
+
 keys = ["breit","cliffwater_cclfx","dxyz","hl_paf","kkr_kpec","stepstone_spm"]
 texts = {}
 for k in keys:

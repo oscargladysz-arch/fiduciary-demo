@@ -802,3 +802,15 @@ scenario verdict). Every memo link on the site and the pin hash follow the
 selected plan. The docx bytes are deterministic (fixed zip timestamps), so
 the same record yields the same file. `test_memo` runs the writer into a
 scratch directory rather than reading committed files.
+
+### 6.14 P1-20: the findings table is complete, not a 220-character cut
+Per factor the memo now lists the typed facts the engines read (each with
+its cell id), then the complete first sentence of every evidenced cell
+with its status word, then the cells marked not applicable with their
+reasons, one paragraph per line. Nothing is truncated and no cell ends
+mid-word. The headline logic moved from the site build into
+`src/tark_display.py`, shared by the build and the memo writer, so the
+site's Evaluation headline and the memo's typed-fact line come from the
+same function. `test_memo` asserts, for all 16 products, that every
+evidenced cell's full first sentence and every typed headline appear in
+the memo verbatim.
