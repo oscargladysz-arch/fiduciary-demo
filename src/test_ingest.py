@@ -204,6 +204,26 @@ prod2 = load_product(KEY)
 check("second run: an extracted cell is kept, not re-extracted or overwritten",
       second_ok and prod2["cells"]["2.1"] == prod["cells"]["2.1"])
 
+# ---------------- calibration harness: committed cells vs the mock's outcomes
+from calibrate_ingest import compare, figures, form_and_date, summarize  # noqa: E402
+check("calibration: figures are read from both sides the same way",
+      figures("1.25% of Managed Assets, $5,000 minimum, 2026-05-01") == {"1.25%", "$5000", "2026-05-01"})
+check("calibration: form and filed date parse from a source string",
+      form_and_date("486BPOS filed 2026-05-01 (accession 0009999999-26-000001), fee table, page 1") == ("486BPOS", "2026-05-01"))
+truth = {"2.1": {"value": "Management fee 1.25% on Managed Assets.", "source": "486BPOS filed 2026-05-01", "status": "extracted-unverified"},
+         "3.1": {"value": "Quarterly offers for 5% of outstanding Shares.", "source": "486BPOS filed 2026-05-01", "status": "extracted-unverified"},
+         "1.1": {"value": "Net total return 7.1% FY2025.", "source": "N-CSR filed 2026-06-01", "status": "extracted-unverified"}}
+rows = {c: compare(truth[c], by[c].record, by[c].status, by[c].reason) for c in truth}
+check("calibration: a located cell with the committed figure scores recall 1 and same document",
+      rows["2.1"]["located"] and rows["2.1"]["figure_recall"] == 1.0 and rows["2.1"]["same_document"] is True)
+check("calibration: the lie scores as not located with figure recall 0",
+      not rows["3.1"]["located"] and rows["3.1"]["figure_recall"] == 0.0)
+check("calibration: a pending cell scores as not located with no document comparison",
+      not rows["1.1"]["located"] and rows["1.1"]["same_document"] is None)
+summ = summarize(rows)
+check("calibration: the summary counts cells, located, partial and pending",
+      summ["cells"] == 3 and summ["located"] == 1 and summ["partial"] == 1 and summ["pending"] == 1)
+
 shutil.rmtree(SCRATCH, ignore_errors=True)
 print(f"\n{len(FAILS)} failure(s)." if FAILS else "\nAll ingest checks pass.")
 sys.exit(1 if FAILS else 0)

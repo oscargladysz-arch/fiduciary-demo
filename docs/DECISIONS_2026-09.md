@@ -996,3 +996,35 @@ gate `test_ingest.py` (17th, before the memo gate) drives all of it with
 a mock client and a synthetic three-page filing, including a deliberate
 wrong figure that must land as partial. No live extraction ran here: no
 key, no filings on disk, EDGAR blocked (P2-3 and P2-4).
+
+### 6.24 P2-3 and P2-4: calibration and the 17th product cannot run here
+Neither run is possible in this container: no Anthropic key, no filing text
+on disk (`data/raw/` is not in git) and sec.gov is blocked. Nothing was
+faked. What exists: `src/calibrate_ingest.py` runs the extraction
+contract on an already-evaluated product in a scratch copy with the
+target cells reset to pending, then compares each outcome with the
+committed cell (quote located, same form and filing date cited, share of
+the committed cell's figures reproduced, status) and writes
+`data/ingest/calibration_<key>.json`. Its comparison arithmetic is
+covered by the offline ingest gate. The 17th product, ACAP Strategic
+Fund (XCAPX), CIK 1467631, is in the census as an unlisted Rule 23c-3
+interval fund with promotion status none and an N-CEN reference
+0001193125-25-317592 as of 30-SEP-2025, so the promote step will accept
+it. On a machine that reaches sec.gov, with a key in the environment:
+
+```
+python src/promote.py 1467631 --key acap_strategic
+# write the data/registry.json entry for acap_strategic (cohort, strategy,
+# wrapper_type, pricing_class, nav_cadence, leverage_regime, held_returns,
+# advisers, declared_benchmarks, as_of, depth, membership_rationale,
+# filings, each with its source) and add it to that cohort's members list,
+# then an admission entry in data/roster_decisions.md
+python src/fetch_edgar.py acap_strategic
+python src/ingest.py 1467631 --key acap_strategic --skip-fetch
+python src/calibrate_ingest.py cliffwater_cclfx
+python src/produce.py && python src/build_site.py && bash hooks/pre-commit
+```
+
+The validate gate refuses a product in `data/products` without a registry
+entry, so a half-added product cannot pass. No cost or time estimate is
+given for either run.
