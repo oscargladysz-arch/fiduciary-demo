@@ -28,6 +28,12 @@ from tark_data import load_plan, load_products, plan_keys  # noqa: E402
 # a committed docx and never writes into the repository
 OUT = Path(tempfile.mkdtemp(prefix="tark_memos_"))
 written = write_all(OUT)
+_TEXTS = {}
+def memo_text(pl, k):
+    """docx text parsed once per memo and cached (64 memos, many checks)."""
+    if (pl, k) not in _TEXTS:
+        _TEXTS[(pl, k)] = text_of(OUT / memo_name(pl, k))
+    return _TEXTS[(pl, k)]
 check(f"writer produced one memo per plan x product ({len(plan_keys())} x {len(load_products())})",
       len(written) == len(plan_keys()) * len(load_products())
       and all(p.exists() and p.stat().st_size > 5000 for p in written))
@@ -36,8 +42,8 @@ again = write_all(Path(tempfile.mkdtemp(prefix="tark_memos2_")))
 check("memo bytes are deterministic across two runs",
       all(a.read_bytes() == b.read_bytes() for a, b in zip(written, again)))
 # the plan shapes the memo: same product, two plans, both labels present and different
-_pt = text_of(OUT / memo_name("plan_tech_media", "cliffwater_cclfx"))
-_pc = text_of(OUT / memo_name("plan_consulting_alumni", "cliffwater_cclfx"))
+_pt = memo_text("plan_tech_media", "cliffwater_cclfx")
+_pc = memo_text("plan_consulting_alumni", "cliffwater_cclfx")
 check("memo carries its own plan label (tech plan)",
       load_plan("plan_tech_media")["display_label"].lower() in _pt)
 check("memo carries its own plan label (consulting plan)",
@@ -61,7 +67,7 @@ def squash(t):
 prods = load_products()
 missing, typed_missing, cut = [], [], []
 for k, prod in prods.items():
-    t = squash(text_of(OUT / memo_name("plan_tech_media", k)))
+    t = squash(memo_text("plan_tech_media", k))
     if "…" in t:
         cut.append(k)
     fbc = facts_by_cell(json.loads((BASE / "data" / "facts" / f"{k}.json").read_text()).get("facts", {}))
@@ -90,7 +96,7 @@ sec_missing, verdict_missing = [], []
 matches = {}
 for pl in plan_keys():
     for k in prods:
-        t = squash(text_of(OUT / memo_name(pl, k)))
+        t = squash(memo_text(pl, k))
         for sname in SECTIONS:
             if sname not in t:
                 sec_missing.append(f"{pl} {k}: {sname}")
@@ -113,19 +119,19 @@ diff = [k for k in prods if matches[("plan_tech_media", k)]["scenario_verdict"]
 check("scenario verdict differs between plans for at least one product", bool(diff))
 if diff:
     k = diff[0]
-    tt = squash(text_of(OUT / memo_name("plan_tech_media", k)))
-    tc = squash(text_of(OUT / memo_name("plan_consulting_alumni", k)))
+    tt = squash(memo_text("plan_tech_media", k))
+    tc = squash(memo_text("plan_consulting_alumni", k))
     check(f"{k}: each plan's memo carries its own scenario verdict",
           f"(illustrative): {matches[('plan_tech_media', k)]['scenario_verdict']}" in tt
           and f"(illustrative): {matches[('plan_consulting_alumni', k)]['scenario_verdict']}" in tc)
-_sre = squash(text_of(OUT / memo_name("plan_tech_media", "sreit")))
+_sre = squash(memo_text("plan_tech_media", "sreit"))
 check("sreit: suspended program is a flag and the structural verdict is MISALIGNED",
       "repurchase program suspended" in _sre and "structural liquidity verdict: misaligned" in _sre)
-_dx = squash(text_of(OUT / memo_name("plan_tech_media", "dxyz")))
+_dx = squash(memo_text("plan_tech_media", "dxyz"))
 check("dxyz: recommendation carries the benchmark escalation",
       "benchmark: escalated" in _dx)
 check("no memo carries the unsourced case-law sentence",
-      all("argument expected october term" not in squash(text_of(OUT / memo_name(pl, k)))
+      all("argument expected october term" not in squash(memo_text(pl, k))
           for pl in plan_keys() for k in prods))
 
 # P1-22: provenance with true counts, the verified sentence only when true,
@@ -134,7 +140,7 @@ from tark_data import coverage_summary  # noqa: E402
 acc_missing, cov_missing, false_verified = [], [], []
 not_on_record = 0
 for k in prods:
-    t = squash(text_of(OUT / memo_name("plan_tech_media", k)))
+    t = squash(memo_text("plan_tech_media", k))
     cov = coverage_summary(k)
     if squash(cov["headline"]) not in t:
         cov_missing.append(k)
@@ -163,7 +169,7 @@ check("provenance: cells without a resolvable filing say accession not on record
 cl_bad = []
 for pl in plan_keys():
     for k in prods:
-        t = squash(text_of(OUT / memo_name(pl, k)))
+        t = squash(memo_text(pl, k))
         if not ("cell 5.7 (partial)" in t and "no holding exists yet" in t
                 and "search snippets" in t and "no. 25-498" in t):
             cl_bad.append(f"{pl} {k}")
@@ -184,7 +190,7 @@ for k, prod in prods.items():
     if not cid:
         continue
     members = list(json.loads((BASE / "data" / "cohorts" / f"{cid}.json").read_text())["members"])
-    t = squash(text_of(OUT / memo_name("plan_tech_media", k)))
+    t = squash(memo_text("plan_tech_media", k))
     for label, attr in (("pricing-basis mix", "pricing_class"), ("nav-cadence mix", "nav_cadence"),
                         ("leverage-regime mix", "leverage_regime")):
         if label in t and len({_reg[m][attr] for m in members}) < 2:
@@ -199,10 +205,37 @@ for k in keys:
     p = OUT / memo_name("plan_tech_media", k)
     check(f"{k}: memo exists", p.exists())
     if p.exists():
-        texts[k] = text_of(p)
-        check(f"{k}: anonymization holds",
-              not any(t in texts[k] for t in FORBIDDEN))
-        check(f"{k}: rule cited", "91 fr 16088" in texts[k])
+        texts[k] = memo_text("plan_tech_media", k)
+
+# P1-25: the record-wide invariants hold in every one of the 64 memos
+from tark_data import record_as_of  # noqa: E402
+_labels = {pl: load_plan(pl)["display_label"].lower() for pl in plan_keys()}
+_inv_bad = []
+for pl in plan_keys():
+    for k in prods:
+        t = memo_text(pl, k)
+        leak = next((tok for tok in FORBIDDEN if tok in t), None)
+        if leak:
+            _inv_bad.append(f"{pl} {k}: sponsor token")
+        if "91 fr 16088" not in t or "rin 1210-ac38" not in t:
+            _inv_bad.append(f"{pl} {k}: rule citation missing")
+        # the header and the recommendation name this memo's own plan (other
+        # plans may appear inside cell 3.9, which states verdicts per plan)
+        if f"plan: {_labels[pl]}" not in t or f"scenario verdict under {_labels[pl]}" not in t:
+            _inv_bad.append(f"{pl} {k}: own plan label missing from header or recommendation")
+        if f"date: {record_as_of()}" not in t:
+            _inv_bad.append(f"{pl} {k}: memo date is not the record as-of")
+        if "verified cells have been independently re-checked" in t:
+            _inv_bad.append(f"{pl} {k}: verified sentence while verified is 0")
+        if "\u2026" in t:      # the writer's former cut marker, never a quoted ellipsis
+            _inv_bad.append(f"{pl} {k}: ellipsis cut")
+        if "illustrative" not in t or "the fiduciary makes the decision on this record" not in t:
+            _inv_bad.append(f"{pl} {k}: scenario label or decision sentence missing")
+check("all 64 memos: anonymized, rule cited with RIN, own plan label only, record as-of date, "
+      "no verified sentence, no ellipsis cut, ILLUSTRATIVE label and decision sentence", not _inv_bad)
+if _inv_bad:
+    print("   bad:", "; ".join(_inv_bad[:8]))
+check("memo count equals plans x products", len(_TEXTS) == len(plan_keys()) * len(prods))
 check("cclfx: PME + CDLI rejection in memo",
       "ks-pme 1.2532" in texts["cliffwater_cclfx"] and "cliffwater direct lending index" in texts["cliffwater_cclfx"])
 check("dxyz: escalation variant", "escalation" in texts["dxyz"] and "no meaningful benchmark" in texts["dxyz"])
