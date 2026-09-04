@@ -3,10 +3,10 @@
   "plan": "plan_tech_media",
   "verdict": "conditional",
   "reasons": [
-    "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
-    "Capacity: 4x per year at 5.0% of net assets \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
-    "Scenario demand (illustrative): 10.4% of the position per year vs 20% annual wrapper capacity \u2014 adequate headroom at this allocation if offers are not prorated.",
-    "Early repurchase economics: 2.00% if held < 1 year \u2014 relevant to participant-level churn (2.7)."
+    "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity, whereas this wrapper deals 4x/year. Direct DIA use requires a bridging structure: CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
+    "Capacity: 4x per year at 5.0% of net assets. This is a FUND-level cap, and at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
+    "Scenario demand (illustrative): 10.4% of the position per year vs 20% annual wrapper capacity. Adequate headroom at this allocation if offers are not prorated.",
+    "Early repurchase economics: 2.00% if held < 1 year. Relevant to participant-level churn (2.7)."
   ],
   "stressed_scenario": {
     "illustrative": true,

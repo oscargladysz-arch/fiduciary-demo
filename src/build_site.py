@@ -32,7 +32,7 @@ from tark_anon import docx_text, forbidden_tokens, leaks
 SITE = BASE / "site"
 
 RULE_CAPTION = ("Six-factor framework per DOL proposed rule, Fiduciary Duties in "
-                "Selecting Designated Investment Alternatives — 91 FR 16088 "
+                "Selecting Designated Investment Alternatives, 91 FR 16088 "
                 "(Mar 31, 2026), RIN 1210-AC38. Safe harbor attaches to a "
                 "documented, objective, thorough, analytical process.")
 
@@ -49,17 +49,17 @@ GLOSSARY = {
     "tender offer": "The fund's board CHOOSES each buyback window - nothing legally requires the next one.",
     "DIA": "An investment option on a 401(k) menu that participants pick themselves. (Designated Investment Alternative)",
     "404(c)": "The ERISA section that shields plan sponsors when participants direct their own accounts - assumes daily menus.",
-    "de-smoothing": "Un-flattering correction: appraisal prices understate risk; this statistically restores the hidden volatility. (Geltner AR(1) unsmoothing)",
+    "de-smoothing": "Un-flattering correction: appraisal prices understate risk. This statistically restores the hidden volatility. (Geltner AR(1) unsmoothing)",
     "high-water mark": "The manager earns performance fees only above the previous peak - no double-charging for recovered losses.",
     "hurdle": "Minimum return the fund must clear before performance fees start.",
     "catch-up": "After the hurdle, the manager temporarily takes ALL profit until they hold their full share.",
     "NAV": "What one share is worth by the fund's own books. (Net Asset Value)",
     "Transactional NAV": "The NAV at which the fund actually sells and buys back shares (can differ from GAAP NAV).",
     "premium/discount": "The gap between what the market pays and what the fund says a share is worth.",
-    "K-1": "The partnership tax form - arrives late, complicates filing; retirement recordkeepers hate it. (Schedule K-1)",
+    "K-1": "The partnership tax form: arrives late, complicates filing. Retirement recordkeepers hate it. (Schedule K-1)",
     "1099": "The ordinary dividend tax form retirement plans handle automatically. (Form 1099-DIV/-B)",
     "RIC": "A fund taxed like a mutual fund: no fund-level tax, 1099s to investors. (Regulated Investment Company)",
-    "REIT": "A tax structure for property funds: must pay out 90% of income; investors get 1099s. (Real Estate Investment Trust)",
+    "REIT": "A tax structure for property funds: must pay out 90% of income. Investors get 1099s. (Real Estate Investment Trust)",
     "QDIA": "The menu option your money lands in when you never choose. (Qualified Default Investment Alternative)",
     "DRIP": "Distributions automatically buy more shares unless you opt out. (Distribution Reinvestment Plan)",
     "proration": "When buyback requests exceed the cap, everyone gets only a slice - the rest waits for the next window.",
@@ -73,7 +73,7 @@ GLOSSARY = {
     "ROC": "Distributions that are your own money coming back, not earnings. (Return of Capital)",
     "smoothing": "Appraisal-based prices react late and move little - reported volatility understates real risk.",
     "expense limitation": "The adviser's promise to absorb costs above a cap - often reclaimable for 3 years.",
-    "PCAOB": "The audit regulator; registration means the auditor is inspected. (Public Company Accounting Oversight Board)",
+    "PCAOB": "The audit regulator. Registration means the auditor is inspected. (Public Company Accounting Oversight Board)",
     "N-23C3A": "The SEC form an interval fund files for EVERY buyback window - a public paper trail of kept promises.",
 }
 
@@ -280,11 +280,11 @@ def _with_period_ends(nav: dict) -> dict:
 # the investable proxy library the swap lab can recompute against — every
 # entry has a committed daily series on disk
 PROXY_LIBRARY = {
-    "bkln": "BKLN — senior loans (Invesco / Morningstar LSTA class)",
-    "psp": "PSP — listed private equity (Invesco / Red Rocks)",
-    "urth": "URTH — MSCI World (iShares)",
-    "spy": "SPY — S&P 500 (SPDR)",
-    "vnq": "VNQ — listed REITs (Vanguard / MSCI US REIT)",
+    "bkln": "BKLN: senior loans (Invesco / Morningstar LSTA class)",
+    "psp": "PSP: listed private equity (Invesco / Red Rocks)",
+    "urth": "URTH: MSCI World (iShares)",
+    "spy": "SPY: S&P 500 (SPDR)",
+    "vnq": "VNQ: listed REITs (Vanguard / MSCI US REIT)",
 }
 
 
@@ -386,7 +386,7 @@ def swap_matrix() -> dict:
                                     "verdict": "off-menu: the engine has not "
                                                "scored this proxy for the "
                                                f"'{prof['strategy']}' strategy "
-                                               "— no rubric basis; treat any "
+                                               "(no rubric basis). Treat any "
                                                "recomputation as "
                                                "user-configured analysis only"}
         out[key] = by_series
@@ -576,7 +576,7 @@ def census_chunk() -> str:
     payload = json.dumps(doc, separators=(",", ":"))
     if len(payload) > 500_000:
         raise SystemExit(f"census chunk {len(payload):,}B exceeds the 500KB "
-                         "lazy-chunk budget — trim the transform, do not "
+                         "lazy-chunk budget. Trim the transform, do not "
                          "ship a bloated first-class page.")
     return payload
 

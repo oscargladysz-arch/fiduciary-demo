@@ -176,9 +176,9 @@ def composite(cohort_id: str) -> dict:
     if len(bases) > 1:
         return {"refused": True,
                 "reason": "members' pricing bases are heterogeneous (market "
-                          "price vs NAV); an equal-weight composite would "
+                          "price vs NAV). An equal-weight composite would "
                           "average premium/discount dynamics against "
-                          "appraisal NAVs - refused, not fudged"}
+                          "appraisal NAVs, so it is refused, not fudged"}
     members = cohort_members(cohort_id)
     per = {k: _annual_returns(k) for k in members}
     years = sorted({y for m in per.values() for y in m})
@@ -190,8 +190,8 @@ def composite(cohort_id: str) -> dict:
                          "composite_return_pct": round(
                              sum(have.values()) / len(have) * 100, 2),
                          "n": len(have), "members": sorted(have)})
-    return {"refused": False, "granularity": "annual (fiscal years as filed; "
-            "year-end months differ across members and are disclosed per row)",
+    return {"refused": False, "granularity": "annual (fiscal years as filed, with "
+            "year-end months that differ across members and are disclosed per row)",
             "weighting": "equal-weight across members reporting that year",
             "rows": rows}
 

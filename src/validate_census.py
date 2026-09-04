@@ -4,7 +4,9 @@ Census validator — run in the pre-commit gate.
 Enforces: schema shape, C3 provenance completeness (every shipped field has
 source/ref/as_of or an explicit unavailable reason), C2 (name_hint always
 non-authoritative), classification evidence presence, CIK dedupe by
-construction, roster-link resolution (every product CIK links), count sanity.
+construction, roster-link resolution (every product CIK links), count sanity,
+and documentation strings equal to the constants in the census modules
+(src/census/sync_notes.py is the script that rewrites them, this only checks).
 Exit 0 = clean.
 """
 from __future__ import annotations
@@ -14,6 +16,10 @@ import sys
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(BASE / "src" / "census"))
+import build_census  # noqa: E402
+import enumerate as census_enum  # noqa: E402  (the module, not the builtin)
+
 CENSUS = BASE / "data" / "census" / "census.json"
 UNIVERSE = BASE / "data" / "census" / "universe.json"
 
@@ -99,6 +105,28 @@ def main() -> int:
     # universe/census class counts must agree
     if doc.get("counts_by_class") != uni.get("counts_by_class"):
         errs.append("counts_by_class drift between universe and census")
+
+    # documentation strings in the data must equal the constants in code.
+    # This only reports drift: src/census/sync_notes.py rewrites the fields
+    if doc.get("what") != build_census.CENSUS_WHAT:
+        errs.append("census.json what: differs from build_census.CENSUS_WHAT")
+    if uni.get("what") != census_enum.UNIVERSE_WHAT:
+        errs.append("universe.json what: differs from enumerate.UNIVERSE_WHAT")
+    if uni.get("method_notes") != census_enum.METHOD_NOTES:
+        errs.append("universe.json method_notes: differs from "
+                    "enumerate.METHOD_NOTES")
+    for cik, rec in ents.items():
+        nh = rec.get("name_hint")
+        if nh and nh.get("note") != build_census.NAME_HINT_NOTE:
+            errs.append(f"{cik}: name_hint.note differs from "
+                        "build_census.NAME_HINT_NOTE")
+    for label, entities in (("census", ents),
+                            ("universe", uni.get("entities", {}))):
+        for cik, rec in entities.items():
+            exp = census_enum.constant_evidence(rec)
+            if exp is not None and rec.get("detection_evidence") != exp:
+                errs.append(f"{label} {cik}: detection_evidence differs from "
+                            "the enumerate.py constants")
 
     if errs:
         print(f"[FAIL] census: {len(errs)} violation(s)")

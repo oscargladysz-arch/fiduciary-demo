@@ -5,17 +5,17 @@
     "dxyz": {
       "wrapper_type": "listed_cef",
       "depth": "full",
-      "membership_rationale": "Listed CEF holding pre-IPO tech - the premium-pricing fail case; the cohort exists to show premium vs NAV pricing as a PATTERN."
+      "membership_rationale": "Listed CEF holding pre-IPO tech, the premium-pricing fail case. The cohort exists to show premium vs NAV pricing as a PATTERN."
     },
     "ssss": {
       "wrapper_type": "listed_bdc",
       "depth": "cohort",
-      "membership_rationale": "Listed BDC (fka SuRo Capital) holding late-stage growth equity - the second market-priced venture vehicle; gives dxyz a premium/discount comparable. Membership CONDITIONAL on strategy continuity through the Neostellar rename (verification queue)."
+      "membership_rationale": "Listed BDC (fka SuRo Capital) holding late-stage growth equity, the second market-priced venture vehicle. Gives dxyz a premium/discount comparable. Membership CONDITIONAL on strategy continuity through the Neostellar rename (verification queue)."
     },
     "arkvx": {
       "wrapper_type": "interval_23c3",
       "depth": "cohort",
-      "membership_rationale": "Interval fund holding venture/growth - the NAV-priced contrast to the two market-priced members; pricing-basis mix is the cohort's disclosed core caveat (composite refused)."
+      "membership_rationale": "Interval fund holding venture/growth, the NAV-priced contrast to the two market-priced members. Pricing-basis mix is the cohort's disclosed core caveat (composite refused)."
     }
   },
   "n": 3,
@@ -56,8 +56,8 @@
         "arkvx": 5.0
       },
       "missing": {
-        "dxyz": "on-exchange liquidity; no fund-level cap",
-        "ssss": "on-exchange liquidity; no fund-level cap"
+        "dxyz": "on-exchange liquidity with no fund-level cap",
+        "ssss": "on-exchange liquidity with no fund-level cap"
       }
     },
     "repurchase_cadence_per_year": {
@@ -96,14 +96,14 @@
         "dxyz": 438000000
       },
       "missing": {
-        "ssss": "aggregate net assets not yet carried into a typed cell; verification-queue item",
-        "arkvx": "aggregate net assets not yet carried into a typed cell; verification-queue item"
+        "ssss": "aggregate net assets not yet carried into a typed cell. Verification-queue item",
+        "arkvx": "aggregate net assets not yet carried into a typed cell. Verification-queue item"
       }
     }
   },
   "composite": {
     "refused": true,
-    "reason": "members' pricing bases are heterogeneous (market price vs NAV); an equal-weight composite would average premium/discount dynamics against appraisal NAVs - refused, not fudged"
+    "reason": "members' pricing bases are heterogeneous (market price vs NAV). An equal-weight composite would average premium/discount dynamics against appraisal NAVs, so it is refused, not fudged"
   },
   "caveats": [
     "PRICING-BASIS MIX: some members transact at NAV, others at exchange market price - return comparisons mix appraisal dynamics with premium/discount dynamics; composites across this line are refused, not averaged. [arkvx: NAV; dxyz: MARKET PRICE - premium/discount to NAV is the investor's actual basis; ssss: MARKET PRICE - premium/discount to NAV is the investor's actual basis]",

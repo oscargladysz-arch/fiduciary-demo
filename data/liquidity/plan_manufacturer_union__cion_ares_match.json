@@ -3,11 +3,11 @@
   "plan": "plan_manufacturer_union",
   "verdict": "conditional",
   "reasons": [
-    "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
-    "Capacity: 4x per year at 5.0% of outstanding shares (fundamental 5-25% policy; Fund states it expects only the 5% minimum; optional +2% then pro rata) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
-    "Scenario demand (illustrative): 7.2% of the position per year vs 20% annual wrapper capacity \u2014 adequate headroom at this allocation if offers are not prorated.",
-    "Cadence reliability evidence: all four FY2025 offers at 5.00% and undersubscribed (2.09-2.88% actually repurchased, $480.0M total); MRPS 225% asset-coverage trigger can cap repurchases at 5% (3.3/3.6).",
-    "Early repurchase economics: none - 'The Fund will not charge a repurchase fee'; 1.00% CDSC on Class C < 365 days only (2.7) \u2014 relevant to participant-level churn (2.7)."
+    "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity, whereas this wrapper deals 4x/year. Direct DIA use requires a bridging structure: CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
+    "Capacity: 4x per year at 5.0% of outstanding shares (fundamental 5-25% policy, though the Fund states it expects only the 5% minimum, with an optional +2% then pro rata). This is a FUND-level cap, and at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
+    "Scenario demand (illustrative): 7.2% of the position per year vs 20% annual wrapper capacity. Adequate headroom at this allocation if offers are not prorated.",
+    "Cadence reliability evidence: all four FY2025 offers at 5.00% and undersubscribed (2.09-2.88% actually repurchased, $480.0M total). MRPS 225% asset-coverage trigger can cap repurchases at 5% (3.3/3.6).",
+    "Early repurchase economics: none ('The Fund will not charge a repurchase fee'), with a 1.00% CDSC on Class C < 365 days only (2.7). Relevant to participant-level churn (2.7)."
   ],
   "stressed_scenario": {
     "illustrative": true,
@@ -23,12 +23,12 @@
     "kind": "interval_23c3",
     "cadence_per_year": 4,
     "cap_pct": 5.0,
-    "cap_base": "outstanding shares (fundamental 5-25% policy; Fund states it expects only the 5% minimum; optional +2% then pro rata)",
+    "cap_base": "outstanding shares (fundamental 5-25% policy, though the Fund states it expects only the 5% minimum, with an optional +2% then pro rata)",
     "exchange": false,
     "gate_history": false,
-    "early_fee": "none - 'The Fund will not charge a repurchase fee'; 1.00% CDSC on Class C < 365 days only (2.7)",
+    "early_fee": "none ('The Fund will not charge a repurchase fee'), with a 1.00% CDSC on Class C < 365 days only (2.7)",
     "source_cell": "3.1 + 3.3",
-    "history": "all four FY2025 offers at 5.00% and undersubscribed (2.09-2.88% actually repurchased, $480.0M total); MRPS 225% asset-coverage trigger can cap repurchases at 5% (3.3/3.6)"
+    "history": "all four FY2025 offers at 5.00% and undersubscribed (2.09-2.88% actually repurchased, $480.0M total). MRPS 225% asset-coverage trigger can cap repurchases at 5% (3.3/3.6)"
   },
   "scenario": {
     "allocation_pct_of_plan": 5.0,

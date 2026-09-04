@@ -3,7 +3,7 @@
   "cohort_id": "evergreen_pe",
   "depth": "full",
   "membership_rationale": "Evergreen PE multi-strategy (secondaries-led) tender-offer fund - founding cohort member.",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -25,13 +25,13 @@
     "incentive_fee": {
       "value": null,
       "source_cell": "2.2",
-      "reason": "cell 2.2 is partial: no fund-level incentive fee identified; underlying funds charge performance fees (AFFE layer)",
+      "reason": "cell 2.2 is partial: no fund-level incentive fee identified. Underlying funds charge performance fees (AFFE layer)",
       "status": "partial"
     },
     "early_repurchase": {
       "value": null,
       "source_cell": "2.7",
-      "reason": "cell 2.7 is partial: no early-repurchase-fee language matched; confirmation pending",
+      "reason": "cell 2.7 is partial: no early-repurchase-fee language matched. Confirmation pending",
       "status": "partial"
     },
     "repurchase_cadence_per_year": {
@@ -52,7 +52,7 @@
     "gate_history": {
       "value": null,
       "source_cell": "3.3",
-      "reason": "per-offer tendered-vs-purchased counts not printed in on-disk filings; Sept 2025 offer was Board-UPSIZED (demand signal) - proration incidence unevidenced",
+      "reason": "per-offer tendered-vs-purchased counts not printed in on-disk filings. Sept 2025 offer was Board-UPSIZED (demand signal). Proration incidence unevidenced",
       "status": "extracted-unverified"
     },
     "tax_form": {
@@ -73,7 +73,7 @@
     "expense_ratio_pct": {
       "value": 1.91,
       "source_cell": "2.3",
-      "note": "FY2026 Class I; AFFE excluded",
+      "note": "FY2026 Class I, AFFE excluded",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

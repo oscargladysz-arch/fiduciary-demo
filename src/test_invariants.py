@@ -80,5 +80,13 @@ check("every non-raw data/ path cited by a cell exists", not dangling, "; ".join
 check("data/analytics/taxonomy.json no longer exists",
       not (DATA / "analytics" / "taxonomy.json").exists())
 
+# data/roster_decisions.md claims to be validator-enforced: every product key
+# in the record must be named in it
+from tark_data import product_keys as _product_keys  # noqa: E402
+_roster_md = (BASE / "data" / "roster_decisions.md").read_text()
+_missing = [k for k in _product_keys() if k not in _roster_md]
+check("data/roster_decisions.md names every product key in the record",
+      not _missing, ", ".join(_missing))
+
 print(f"\n{len(FAILS)} failure(s)." if FAILS else "\nAll invariants hold.")
 sys.exit(1 if FAILS else 0)

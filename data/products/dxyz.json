@@ -397,7 +397,7 @@
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort venture (n=3: dxyz, ssss, arkvx). Composite REFUSED: members' pricing bases are heterogeneous (market price vs NAV); an equal-weight composite would average premium/discount dynamics against appraisal NAVs - refused, not fudged. Wrapper types in the cohort: interval_23c3, listed_bdc, listed_cef. Cross-wrapper differences are disclosed in the cohort caveat block (4 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md. Analyst note: A market-wide venture peer database is licensed data not held, so the peer universe is this roster (documented in the rejection log).",
+      "value": "Peer cohort venture (n=3: dxyz, ssss, arkvx). Composite REFUSED: members' pricing bases are heterogeneous (market price vs NAV). An equal-weight composite would average premium/discount dynamics against appraisal NAVs, so it is refused, not fudged. Wrapper types in the cohort: interval_23c3, listed_bdc, listed_cef. Cross-wrapper differences are disclosed in the cohort caveat block (4 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md. Analyst note: A market-wide venture peer database is licensed data not held, so the peer universe is this roster (documented in the rejection log).",
       "status": "computed",
       "source": "data/cohorts/venture.json",
       "section": "members, composite and caveats blocks",

@@ -3,7 +3,7 @@
   "cohort_id": "evergreen_pe",
   "depth": "cohort",
   "membership_rationale": "Secondaries-led evergreen PE tender-offer fund - wrapper and strategy twin of hl_paf/stepstone_spm.",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -26,7 +26,7 @@
       "value": {
         "present": true,
         "rate_pct": 12.5,
-        "structure": "12.5% of quarterly net profits above the Loss Recovery Account balance (no fixed hurdle; LRA carries losses forward)"
+        "structure": "12.5% of quarterly net profits above the Loss Recovery Account balance (no fixed hurdle, the LRA carries losses forward)"
       },
       "source_cell": "2.2",
       "status": "extracted-unverified"
@@ -49,7 +49,7 @@
     "repurchase_cap_pct": {
       "value": null,
       "source_cell": "3.1",
-      "reason": "offer sizes are board-set per quarter (Rule 13e-4 tenders); no standing percentage cap is printed",
+      "reason": "offer sizes are board-set per quarter (Rule 13e-4 tenders). No standing percentage cap is printed",
       "status": "extracted-unverified"
     },
     "repurchase_cap_base": {
@@ -82,13 +82,13 @@
     "expense_ratio_pct": {
       "value": 5.02,
       "source_cell": "2.3",
-      "note": "FY2026 Class I gross (net 4.99% after 0.03% waiver); includes 1.60% incentive-fee drag; AFFE excluded",
+      "note": "FY2026 Class I gross (net 4.99% after 0.03% waiver). Includes 1.60% incentive-fee drag. AFFE excluded",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {
       "value": null,
       "source_cell": "3.6",
-      "reason": "aggregate net assets not yet carried into a typed cell; verification-queue item",
+      "reason": "aggregate net assets not yet carried into a typed cell. Verification-queue item",
       "status": "extracted-unverified"
     },
     "inception": {

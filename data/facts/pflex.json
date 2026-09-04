@@ -2,8 +2,8 @@
   "product_key": "pflex",
   "cohort_id": "private_credit",
   "depth": "cohort",
-  "membership_rationale": "Flexible multi-sector credit in the SAME wrapper as cclfx (interval, quarterly 5%) - wrapper twin, broader credit mandate (loans, structured, EM); mandate breadth is the disclosed mismatch.",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "membership_rationale": "Flexible multi-sector credit in the SAME wrapper as cclfx (interval, quarterly 5%). A wrapper twin with a broader credit mandate (loans, structured, EM). Mandate breadth is the disclosed mismatch.",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -19,7 +19,7 @@
     "mgmt_fee_base": {
       "value": "lesser_of_dual_base",
       "source_cell": "2.1",
-      "note": "LESSER of 1.30% of average daily total managed assets (leverage-inclusive) and the net-assets formulation - a hybrid base; effective 4/1/2025",
+      "note": "LESSER of 1.30% of average daily total managed assets (leverage-inclusive) and the net-assets formulation, a hybrid base. Effective 4/1/2025",
       "status": "extracted-unverified"
     },
     "incentive_fee": {
@@ -27,7 +27,7 @@
         "present": false
       },
       "source_cell": "2.2",
-      "note": "unified management fee; no incentive-fee line in the fee table",
+      "note": "unified management fee. No incentive-fee line in the fee table",
       "status": "extracted-unverified"
     },
     "early_repurchase": {
@@ -35,7 +35,7 @@
         "present": false
       },
       "source_cell": "2.7",
-      "note": "no Rule 23c-3 early repurchase fee; 1.00% contingent load on A-2/A-4 classes only",
+      "note": "no Rule 23c-3 early repurchase fee. 1.00% contingent load on A-2/A-4 classes only",
       "status": "extracted-unverified"
     },
     "repurchase_cadence_per_year": {
@@ -46,7 +46,7 @@
     "repurchase_cap_pct": {
       "value": 5.0,
       "source_cell": "3.1",
-      "note": "fundamental 5-25% policy; currently 5%",
+      "note": "fundamental 5-25% policy, currently 5%",
       "status": "extracted-unverified"
     },
     "repurchase_cap_base": {
@@ -78,7 +78,7 @@
     "expense_ratio_pct": {
       "value": 1.97,
       "source_cell": "2.3",
-      "note": "FY2025 Institutional, EXCLUDING interest expense (5.12% including reverse-repo interest); gross=net, no waivers",
+      "note": "FY2025 Institutional, EXCLUDING interest expense (5.12% including reverse-repo interest). Gross=net, no waivers",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

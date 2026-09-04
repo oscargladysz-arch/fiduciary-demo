@@ -2,8 +2,8 @@
   "product_key": "ocic",
   "cohort_id": "private_credit",
   "depth": "cohort",
-  "membership_rationale": "Perpetual non-traded BDC running quarterly 13e-4 tenders - bcred's closest structural twin, admitted via the census promotion pipeline (46 SC TO-I filings as T1 cadence evidence; Owl Rock -> Blue Owl rename verified in the SEC record).",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "membership_rationale": "Perpetual non-traded BDC running quarterly 13e-4 tenders, bcred's closest structural twin. Admitted via the census promotion pipeline (46 SC TO-I filings as T1 cadence evidence, Owl Rock -> Blue Owl rename verified in the SEC record).",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -19,7 +19,7 @@
     "mgmt_fee_base": {
       "value": "net_assets",
       "source_cell": "2.1",
-      "note": "average net assets at the two most recently completed month-ends; payable monthly in arrears (advisory-agreement language governs over contradictory risk-factor boilerplate)",
+      "note": "average net assets at the two most recently completed month-ends, payable monthly in arrears (advisory-agreement language governs over contradictory risk-factor boilerplate)",
       "status": "extracted-unverified"
     },
     "incentive_fee": {
@@ -53,7 +53,7 @@
     "repurchase_cap_base": {
       "value": "outstanding_shares",
       "source_cell": "3.1",
-      "note": "board-discretionary 13e-4 tenders; may suspend or terminate at any time",
+      "note": "board-discretionary 13e-4 tenders that may be suspended or terminated at any time",
       "status": "extracted-unverified"
     },
     "gate_history": {
@@ -93,7 +93,7 @@
     "inception": {
       "value": "2020-11-10",
       "source_cell": "1.11",
-      "note": "commenced operations; renamed from Owl Rock Core Income Corp. 2023-07-06",
+      "note": "commenced operations. Renamed from Owl Rock Core Income Corp. 2023-07-06",
       "status": "extracted-unverified"
     },
     "affe": {

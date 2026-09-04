@@ -144,7 +144,7 @@ function buildTopbar() {
       <select id="prodpick">${Object.keys(T.products).map((k) =>
         `<option value="${k}" ${k === state.product ? "selected" : ""}>${esc(T.products[k].fund_name)}</option>`).join("")}
       </select></span>
-    <button class="copylink" data-copylink title="Copy a shareable link (IDs only — no free text can enter the URL)">copy link</button>
+    <button class="copylink" data-copylink title="Copy a shareable link (IDs only, no free text can enter the URL)">copy link</button>
     <button class="copylink" id="densitybtn">${state.density === "compact" ? "comfortable" : "compact"} density</button>
     <button class="copylink" id="palettebtn"><kbd>⌘K</kbd> palette</button>
     <span class="spacer"></span>
@@ -168,7 +168,7 @@ let seriesLoading = false;
 function ensureSeries() {
   const root = document.getElementById("view");
   root.innerHTML = `<div class="nochart"><div class="k">Loading series</div>
-    Loading the price/NAV series chunk — split from the core bundle so the
+    Loading the price/NAV series chunk, split from the core bundle so the
     screener and comparison views paint instantly.</div>`;
   if (!seriesLoading) {
     seriesLoading = true;
@@ -190,7 +190,7 @@ let censusLoading = false;
 function ensureCensus() {
   const root = document.getElementById("view");
   root.innerHTML = `<div class="nochart"><div class="k">Loading the universe</div>
-    Loading the census chunk — the full T1 universe is split from the core
+    Loading the census chunk. The full T1 universe is split from the core
     bundle so the evaluated-roster views paint instantly.</div>`;
   if (!censusLoading) {
     censusLoading = true;

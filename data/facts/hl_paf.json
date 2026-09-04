@@ -3,7 +3,7 @@
   "cohort_id": "evergreen_pe",
   "depth": "full",
   "membership_rationale": "Evergreen PE fund-of-funds/secondaries in a tender-offer wrapper - founding cohort member.",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -27,7 +27,7 @@
         "present": true,
         "rate_pct": 10.0,
         "hurdle_pct": null,
-        "structure": "10% of quarterly net profits over the Loss Recovery Account (loss-carryforward HWM; terms approved 2025-03-14; 2021 12.5% deal-by-deal terms superseded)"
+        "structure": "10% of quarterly net profits over the Loss Recovery Account (loss-carryforward HWM). Terms approved 2025-03-14. The 2021 12.5% deal-by-deal terms are superseded"
       },
       "source_cell": "2.2",
       "status": "extracted-unverified"
@@ -59,7 +59,7 @@
     "gate_history": {
       "value": null,
       "source_cell": "3.3",
-      "reason": "offer continuity since Q2-2021 evidenced; per-offer proration incidence not printed in on-disk filings",
+      "reason": "offer continuity since Q2-2021 evidenced. Per-offer proration incidence not printed in on-disk filings",
       "status": "extracted-unverified"
     },
     "tax_form": {
@@ -80,7 +80,7 @@
     "expense_ratio_pct": {
       "value": 3.4,
       "source_cell": "2.3",
-      "note": "FY2026 net, incl. incentive-fee drag; AFFE excluded",
+      "note": "FY2026 net, incl. incentive-fee drag, AFFE excluded",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

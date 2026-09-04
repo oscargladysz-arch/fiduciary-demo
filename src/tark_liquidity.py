@@ -43,7 +43,7 @@ LIQUIDITY_PROFILES = {
                  "early_fee": "5.0% of NAV if repurchased within 24 months (2.7)",
                  "source_cell": "3.1"},
     "breit": {"kind": "share_repurchase_plan", "cadence_per_year": 12,
-              "cap_pct": 2.0, "cap_base": "aggregate NAV (monthly; 5% quarterly)",
+              "cap_pct": 2.0, "cap_base": "aggregate NAV (monthly, 5% quarterly)",
               "exchange": False, "gate_history": True,
               "early_fee": "Early Repurchase Deduction: repurchased at 98% of "
                            "transaction price if held < 1 year (2.7)",
@@ -62,12 +62,12 @@ LIQUIDITY_PROFILES = {
               "history": "completed quarterly tenders printed for every "
                          "quarter 2023-2026H1, all requests satisfied (3.3)"},
     "pflex": {"kind": "interval_23c3", "cadence_per_year": 4, "cap_pct": 5.0,
-              "cap_base": "outstanding shares (fundamental 5-25% policy; "
+              "cap_base": "outstanding shares (fundamental 5-25% policy, "
               "currently 5%)", "exchange": False, "gate_history": False,
-              "early_fee": "none at fund level; 1.00% contingent load on "
+              "early_fee": "none at fund level, with a 1.00% contingent load on "
                            "A-2/A-4 classes only (2.7)",
               "source_cell": "3.1",
-              "history": "8 N-23C3A filings on disk; FY2025 offers "
+              "history": "8 N-23C3A filings on disk. FY2025 offers "
                          "undersubscribed (max 4.32% tendered vs 5% cap) (3.3)"},
     "ocic": {"kind": "share_repurchase_plan", "cadence_per_year": 4,
              "cap_pct": 5.0, "cap_base": "outstanding shares per quarter "
@@ -78,23 +78,23 @@ LIQUIDITY_PROFILES = {
                           "charge for any class (2.7)",
              "source_cell": "3.1 + 3.3",
              "history": "12 consecutive quarterly tenders completed "
-                        "FY2023-FY2025, no disclosed suspension; demand "
+                        "FY2023-FY2025, no disclosed suspension. Demand "
                         "accelerating (FY2025 repurchases ~$2.00B vs $639M "
-                        "FY2024; May 2026 offer sized at the full 5% cap); "
-                        "shares TENDERED vs repurchased not disclosed - "
+                        "FY2024, May 2026 offer sized at the full 5% cap). "
+                        "Shares TENDERED vs repurchased not disclosed, so "
                         "proration cannot be ruled out from filings (3.3)"},
     "cion_ares": {"kind": "interval_23c3", "cadence_per_year": 4,
                   "cap_pct": 5.0, "cap_base": "outstanding shares "
-                  "(fundamental 5-25% policy; Fund states it expects only "
-                  "the 5% minimum; optional +2% then pro rata)",
+                  "(fundamental 5-25% policy, though the Fund states it expects only "
+                  "the 5% minimum, with an optional +2% then pro rata)",
                   "exchange": False, "gate_history": False,
-                  "early_fee": "none - 'The Fund will not charge a "
-                               "repurchase fee'; 1.00% CDSC on Class C "
+                  "early_fee": "none ('The Fund will not charge a "
+                               "repurchase fee'), with a 1.00% CDSC on Class C "
                                "< 365 days only (2.7)",
                   "source_cell": "3.1 + 3.3",
                   "history": "all four FY2025 offers at 5.00% and "
                              "undersubscribed (2.09-2.88% actually "
-                             "repurchased, $480.0M total); MRPS 225% "
+                             "repurchased, $480.0M total). MRPS 225% "
                              "asset-coverage trigger can cap repurchases "
                              "at 5% (3.3/3.6)"},
     "ares_pmf": {"kind": "tender_offer", "cadence_per_year": 4, "cap_pct": 5.0,
@@ -127,23 +127,23 @@ LIQUIDITY_PROFILES = {
                 "dealing": "DAILY repurchase requests at that day's NAV, "
                            "capped at 5% of NAV per calendar quarter",
                 "gate_history": False,
-                "early_fee": "no fee; one-year holding period with "
+                "early_fee": "no fee, one-year holding period with "
                              "death/disability exceptions (2.7)",
                 "source_cell": "3.1 + 3.3",
                 "history": "never deferred nor rejected a repurchase request "
-                           "through 2025-12-31; 100% honored in later printed "
+                           "through 2025-12-31, and 100% honored in later printed "
                            "periods (3.3)"},
     "ssss": {"kind": "listed_bdc", "cadence_per_year": 252, "cap_pct": None,
              "cap_base": "on-exchange (Nasdaq: NSLR, fka SSSS)",
              "exchange": True, "gate_history": False, "early_fee": "n/a",
              "source_cell": "3.1"},
     "arkvx": {"kind": "interval_23c3", "cadence_per_year": 4, "cap_pct": 5.0,
-              "cap_base": "outstanding shares (fundamental 5-25% policy; "
+              "cap_base": "outstanding shares (fundamental 5-25% policy, "
               "every completed offer at 5%)", "exchange": False,
               "gate_history": False, "early_fee": "none - repurchases at NAV, "
               "no early repurchase fee (2.7)",
               "source_cell": "3.1 + 3.3",
-              "history": "8 N-23C3A filings on disk; no gating or "
+              "history": "8 N-23C3A filings on disk, no gating or "
                          "postponement disclosed (3.3)"},
 }
 
@@ -184,13 +184,13 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
     demand_pct_of_position = demand / alloc * 100
 
     if prof["exchange"]:
-        capacity_note = "daily on-exchange liquidity; capacity is market depth, not a fund cap"
+        capacity_note = "daily on-exchange liquidity. Capacity is market depth, not a fund cap"
         annual_capacity_pct = None
     else:
         annual_capacity_pct = prof["cadence_per_year"] * prof["cap_pct"]
         capacity_note = (f"{prof['cadence_per_year']}x per year at "
-                         f"{prof['cap_pct']}% of {prof['cap_base']} — a FUND-level "
-                         f"cap; at a {sc_in['allocation_pct_of_plan']:.0f}% plan "
+                         f"{prof['cap_pct']}% of {prof['cap_base']}. This is a FUND-level "
+                         f"cap, and at a {sc_in['allocation_pct_of_plan']:.0f}% plan "
                          f"allocation the plan's position is far inside it unless "
                          f"offers are oversubscribed")
 
@@ -200,7 +200,7 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
         reasons.append("Daily exchange liquidity mechanically satisfies daily "
                        "participant dealing (3.1).")
         reasons.append("BUT price-vs-NAV decoupling means participants transact "
-                       "at the premium/discount, not at portfolio value — the "
+                       "at the premium/discount, not at portfolio value. The "
                        "liquidity is real, the price basis is not (1.10, 4.7).")
     else:
         verdict = "conditional"
@@ -208,43 +208,43 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
                            f"this wrapper deals {prof['cadence_per_year']}x/year")
         if direction == "total":
             reasons.append("STRUCTURAL GAP: a participant-directed 404(c) menu "
-                           "assumes daily pricing and daily participant liquidity; "
-                           f"{dealing}. "
-                           "Direct DIA use requires a bridging structure — CIT "
+                           "assumes daily pricing and daily participant liquidity, "
+                           f"whereas {dealing}. "
+                           "Direct DIA use requires a bridging structure: CIT "
                            "sleeve, managed account, or TDF sleeve (cell 3.5).")
         elif direction == "partial":
             reasons.append("STRUCTURAL GAP (narrowed): this plan is PARTIALLY "
                            "participant-directed per its own Form 5500 codes (2H, "
-                           "no 2G/404(c) code filed) — a trustee-directed sleeve "
-                           "could hold this wrapper directly; the daily-menu "
+                           "no 2G/404(c) code filed). A trustee-directed sleeve "
+                           "could hold this wrapper directly, and the daily-menu "
                            f"constraint ({dealing}) "
                            "applies only to the participant-directed portion "
                            "(cell 3.5).")
         else:
             reasons.append("STRUCTURAL: plan direction codes do not show full "
-                           "participant direction; DIA daily-menu framing may "
+                           "participant direction, so DIA daily-menu framing may "
                            f"not bind. Wrapper deals {prof['cadence_per_year']}x/"
                            "year (cell 3.5).")
         reasons.append(f"Capacity: {capacity_note}.")
         reasons.append(f"Scenario demand (illustrative): "
                        f"{demand_pct_of_position:.1f}% of the position per year "
-                       f"vs {annual_capacity_pct:.0f}% annual wrapper capacity — "
-                       + ("adequate headroom at this allocation if offers are "
+                       f"vs {annual_capacity_pct:.0f}% annual wrapper capacity. "
+                       + ("Adequate headroom at this allocation if offers are "
                           "not prorated."
                           if demand_pct_of_position <= 0.6 * annual_capacity_pct
                           else "THIN HEADROOM: demand consumes over 60% of wrapper "
-                               "capacity; proration in any oversubscribed quarter "
+                               "capacity, so proration in any oversubscribed quarter "
                                "would push the shortfall into the next window."))
         if prof["gate_history"]:
             verdict = "conditional-weak"
             reasons.append("Gating precedent: this issuer has prorated "
-                           "repurchases when requests exceeded caps (3.3) — "
-                           "capacity on paper has failed in stress before.")
+                           "repurchases when requests exceeded caps (3.3). "
+                           "Capacity on paper has failed in stress before.")
         if prof.get("history"):
             reasons.append(f"Cadence reliability evidence: {prof['history']}.")
         if prof["early_fee"] not in ("n/a",):
-            reasons.append(f"Early repurchase economics: {prof['early_fee']} — "
-                           "relevant to participant-level churn (2.7).")
+            reasons.append(f"Early repurchase economics: {prof['early_fee']}. "
+                           "Relevant to participant-level churn (2.7).")
 
     # stressed scenario (cell 3.8) — same demand model, stressed turnover
     s_tail = alloc * tail_share * (sc_in["tail_annual_turnover_pct"]
@@ -260,14 +260,14 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
         "annual_demand_usd": round(s_demand),
         "demand_pct_of_position": round(s_pct, 1),
         "annual_wrapper_capacity_pct": annual_capacity_pct,
-        "outcome": ("daily exchange liquidity; stress transmits to price, "
+        "outcome": ("daily exchange liquidity, so stress transmits to price, "
                     "not to a fund gate" if prof["exchange"] else
-                    ("EXCEEDS annual wrapper capacity — unmet demand rolls "
+                    ("EXCEEDS annual wrapper capacity. Unmet demand rolls "
                      "into later windows (gating-equivalent outcome)"
                      if s_pct > annual_capacity_pct else
                      f"within wrapper capacity ({s_pct:.1f}% vs "
                      f"{annual_capacity_pct:.0f}%) IF offers are not prorated"
-                     + (" — but this issuer HAS prorated under stress (3.3)"
+                     + (", but this issuer HAS prorated under stress (3.3)"
                         if prof["gate_history"] else ""))),
     }
 

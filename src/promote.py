@@ -126,7 +126,7 @@ def main() -> int:
                 "extraction from the annual report.",
                 f"N-CEN {ref} (structured dataset)",
                 "PUBLIC_ACCOUNTANT + REGISTRANT.IS_ACCT_OPINION_QUALIFIED",
-                f"PUB_ACCOUNTANT_NAME={auditor}; "
+                f"PUB_ACCOUNTANT_NAME={auditor}; "  # copy-exempt: field=value separator string in the structured-cell quote, not prose
                 f"IS_ACCT_OPINION_QUALIFIED={oq or 'N'}")
         nav_err = nc["nav_error_corrected"]["value"]
         cells["4.6"] = structured_cell(
@@ -185,7 +185,7 @@ def main() -> int:
   - fetch primary filings into data/raw/<key>/ + data/manifest.csv
   - extract the worklist cells (status extracted-unverified, cite everything)
   - cohort decision: member of an existing cohort, or uncohorted with
-    rationale (R3); depth stays 'cohort' unless argued otherwise
+    rationale (R3). Depth stays 'cohort' unless argued otherwise
   - src/build_facts.py MAPPING + COHORT_META entry
   - src/tark_liquidity.py LIQUIDITY_PROFILES + src/tark_benchmark.py
     PRODUCT_PROFILES entries

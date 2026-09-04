@@ -15,7 +15,7 @@
     "jll_ipt": {
       "wrapper_type": "nontraded_reit",
       "depth": "cohort",
-      "membership_rationale": "Perpetual NAV REIT of older vintage - same wrapper class; NAV cadence and scale differences disclosed."
+      "membership_rationale": "Perpetual NAV REIT of older vintage in the same wrapper class. NAV cadence and scale differences disclosed."
     }
   },
   "n": 3,
@@ -41,9 +41,9 @@
       "max": null,
       "values": {},
       "missing": {
-        "breit": "no TER line item exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
-        "sreit": "no TER line exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
-        "jll_ipt": "no TER line exists for this '34-Act wrapper; components in 2.1/2.2/2.6"
+        "breit": "no TER line item exists for this '34-Act wrapper. Components in 2.1/2.2/2.6",
+        "sreit": "no TER line exists for this '34-Act wrapper. Components in 2.1/2.2/2.6",
+        "jll_ipt": "no TER line exists for this '34-Act wrapper. Components in 2.1/2.2/2.6"
       }
     },
     "repurchase_cap_pct": {
@@ -57,7 +57,7 @@
         "jll_ipt": 5.0
       },
       "missing": {
-        "sreit": "plan SUSPENDED April 2026; cap history 2%/mo (2017) -> 0.33% (2024) -> 0.5% (2025) -> closed (2026)"
+        "sreit": "plan SUSPENDED April 2026. Cap history 2%/mo (2017) -> 0.33% (2024) -> 0.5% (2025) -> closed (2026)"
       }
     },
     "repurchase_cadence_per_year": {
@@ -85,7 +85,7 @@
         "jll_ipt": 13.2
       },
       "missing": {
-        "breit": "explicit Class I inception date not printed in on-disk filings; ITD basis year (2017 REIT election) sits in partial cell 6.4"
+        "breit": "explicit Class I inception date not printed in on-disk filings. ITD basis year (2017 REIT election) sits in partial cell 6.4"
       }
     },
     "net_assets_usd": {
@@ -96,15 +96,15 @@
       "max": null,
       "values": {},
       "missing": {
-        "breit": "aggregate NAV printed in the MD&A NAV-by-class table but not yet carried into a typed cell; verification-queue item",
-        "sreit": "aggregate NAV not yet carried into a typed cell; verification-queue item",
-        "jll_ipt": "aggregate NAV not yet carried into a typed cell; verification-queue item"
+        "breit": "aggregate NAV printed in the MD&A NAV-by-class table but not yet carried into a typed cell. Verification-queue item",
+        "sreit": "aggregate NAV not yet carried into a typed cell. Verification-queue item",
+        "jll_ipt": "aggregate NAV not yet carried into a typed cell. Verification-queue item"
       }
     }
   },
   "composite": {
     "refused": false,
-    "granularity": "annual (fiscal years as filed; year-end months differ across members and are disclosed per row)",
+    "granularity": "annual (fiscal years as filed, with year-end months that differ across members and are disclosed per row)",
     "weighting": "equal-weight across members reporting that year",
     "rows": [
       {

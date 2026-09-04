@@ -65,7 +65,7 @@
         "data_quality 1/2: annual-window series",
         "provider_independence 2/2: provider unaffiliated with the fund"
       ],
-      "rejection": "outranked: score 8/12 vs primary 9/12 and secondary 8/12 - only two slots; retained in log as viable alternate"
+      "rejection": "outranked: score 8/12 vs primary 9/12 and secondary 8/12 (only two slots). Retained in log as viable alternate"
     },
     {
       "candidate": "Cambridge Associates US PE benchmark",
@@ -80,7 +80,7 @@
         "data_quality 0/2: licensed data not held (no Preqin/Cambridge subscription) - candidate cannot be computed, only cited",
         "provider_independence 2/2: provider unaffiliated with the fund"
       ],
-      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 8/12 - only two slots; retained in log as viable alternate"
+      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 8/12 (only two slots). Retained in log as viable alternate"
     },
     {
       "candidate": "Peer cohort: evergreen PE funds in universe",

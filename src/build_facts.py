@@ -41,22 +41,22 @@ MAPPING = {
                             "hurdle_pct": None,
                             "structure": "10% of quarterly net profits over the "
                                          "Loss Recovery Account (loss-carryforward "
-                                         "HWM; terms approved 2025-03-14; 2021 "
-                                         "12.5% deal-by-deal terms superseded)"},
+                                         "HWM). Terms approved 2025-03-14. The 2021 "
+                                         "12.5% deal-by-deal terms are superseded"},
                            "2.2"),
         "early_repurchase": F({"present": True, "rate_pct": 2.00,
                                "window": "< 1 year"}, "2.7"),
         "repurchase_cadence_per_year": F(4, "3.1"),
         "repurchase_cap_pct": F(5.0, "3.1"),
         "repurchase_cap_base": F("net_assets", "3.1"),
-        "gate_history": null("offer continuity since Q2-2021 evidenced; "
-                             "per-offer proration incidence not printed in "
+        "gate_history": null("offer continuity since Q2-2021 evidenced. "
+                             "Per-offer proration incidence not printed in "
                              "on-disk filings", "3.3"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("Cohen & Company, Ltd.", "4.5"),
         "big4": F(False, "4.5"),
         "expense_ratio_pct": F(3.40, "2.3",
-                               note="FY2026 net, incl. incentive-fee drag; AFFE excluded"),
+                               note="FY2026 net, incl. incentive-fee drag, AFFE excluded"),
         "net_assets_usd": F(5785749989, "3.4"),
         "inception": F("2021-01-04", "1.11", note="commenced operations"),
     },
@@ -65,7 +65,7 @@ MAPPING = {
         "mgmt_fee_pct": F(1.00, "2.1"),
         "mgmt_fee_base": F("net_assets", "2.1"),
         "incentive_fee": null("cell 2.2 is partial: no incentive fee identified "
-                              "in the fee note; prospectus confirmation pending "
+                              "in the fee note. Prospectus confirmation pending "
                               "(verification queue)", "2.2"),
         "early_repurchase": F({"present": False}, "2.7",
                               note="'The Fund will not charge a repurchase fee' (N-23C3A)"),
@@ -73,15 +73,15 @@ MAPPING = {
         "repurchase_cap_pct": F(5.0, "3.1"),
         "repurchase_cap_base": F("outstanding_shares", "3.1"),
         "gate_history": null("N-23C3A filings are offer NOTIFICATIONS, not "
-                             "results; per-offer proration outcomes not yet "
+                             "results. Per-offer proration outcomes not yet "
                              "evidenced", "3.3"),
-        "tax_form": null("form number not printed in any on-disk filing; RIC "
+        "tax_form": null("form number not printed in any on-disk filing. RIC "
                          "status implies 1099 but the cell is partial", "6.4"),
         "auditor": F("Cohen & Company, Ltd.", "4.5"),
         "big4": F(False, "4.5"),
         "expense_ratio_pct": F(1.36, "2.3",
                                note="FY2026 before waivers, EXCLUDING interest "
-                                    "expense; 3.31% including interest"),
+                                    "expense. 3.31% including interest"),
         "net_assets_usd": null("net assets ~$31.26B printed, but the carrying "
                                "cells (1.1/3.6) are partial - verification "
                                "unlocks this fact", "3.4"),
@@ -94,19 +94,19 @@ MAPPING = {
                            note="average GROSS assets incl. assets bought with borrowings"),
         "incentive_fee": F({"present": False}, "2.2",
                            note="absence documented three ways in the record"),
-        "early_repurchase": null("exchange-listed; no repurchase program — "
-                                 "fee inapplicable", "2.7"),
+        "early_repurchase": null("exchange-listed with no repurchase program, "
+                                 "so the fee is inapplicable", "2.7"),
         "repurchase_cadence_per_year": F(252, "3.1", status="computed",
                                          note="trading-days convention for daily "
                                               "on-exchange dealing - a derived "
                                               "figure, not a fund program"),
-        "repurchase_cap_pct": null("on-exchange liquidity; no fund-level cap", "3.1"),
-        "repurchase_cap_base": null("on-exchange liquidity; no fund-level cap", "3.1"),
+        "repurchase_cap_pct": null("on-exchange liquidity with no fund-level cap", "3.1"),
+        "repurchase_cap_base": null("on-exchange liquidity with no fund-level cap", "3.1"),
         "gate_history": F(False, "3.1",
-                          note="exchange wrapper has no gating mechanism; "
-                               "'no fund-level repurchase program' is itself "
-                               "an absence-inference flagged in the cell"),
-        "tax_form": null("form number not printed in any on-disk filing; RIC "
+                          note="exchange wrapper has no gating mechanism. The "
+                               "'no fund-level repurchase program' finding is "
+                               "itself an absence-inference flagged in the cell"),
+        "tax_form": null("form number not printed in any on-disk filing. RIC "
                          "status implies 1099 but the cell is partial", "6.4"),
         "auditor": F("KPMG LLP", "4.5"),
         "big4": F(True, "4.5"),
@@ -114,7 +114,7 @@ MAPPING = {
         "net_assets_usd": F(438000000, "2.3", approx=True,
                             note="$438.0M at 12/31/2025 as printed"),
         "inception": F("2022-05-12", "1.11",
-                       note="commenced operations as printed; NYSE listing "
+                       note="commenced operations as printed. NYSE listing "
                             "2024-03-26 (3.1) is the trading-history start"),
     },
     "kkr_kpec": {
@@ -123,8 +123,9 @@ MAPPING = {
         "mgmt_fee_base": F("nav", "2.1", note="month-end NAV, Investor Shares"),
         "incentive_fee": F({"present": True, "rate_pct": 15.0,
                             "hurdle_pct": 5.0,
-                            "structure": "Performance Participation Allocation; "
-                                         "high-water mark; 100% catch-up"}, "2.2"),
+                            "structure": "Performance Participation Allocation "
+                                         "with a high-water mark and 100% catch-up"},
+                           "2.2"),
         "early_repurchase": F({"present": True, "rate_pct": 5.0,
                                "window": "< 24 months"}, "2.7"),
         "repurchase_cadence_per_year": F(4, "3.1"),
@@ -137,8 +138,8 @@ MAPPING = {
         "expense_ratio_pct": F(3.19, "1.3",
                                note="GAAP financial-highlights total operating "
                                     "expenses FY2025 Class I, INCL. 2.75% "
-                                    "performance participation - NOT a "
-                                    "1940-Act TER; class range 2.74-3.59%"),
+                                    "performance participation. NOT a "
+                                    "1940-Act TER. Class range 2.74-3.59%"),
         "net_assets_usd": F(9500000000, "3.3", approx=True,
                             note="net assets $9.5bn at 12/31/2025 as printed"),
         "inception": F("2023-08-01", "1.11", note="commenced principal operations"),
@@ -150,37 +151,37 @@ MAPPING = {
         "incentive_fee": F({"present": True, "rate_pct": 12.5,
                             "hurdle_pct": 5.0,
                             "structure": "performance participation, 100% "
-                                         "catch-up; FY2024 hurdle MISS produced "
+                                         "catch-up. FY2024 hurdle MISS produced "
                                          "a $105.0M shortfall obligation (2.2)"},
                            "2.4",
                            note="rate/hurdle printed in cell 2.4's fee-structure "
-                                "discussion; mechanics + shortfall in 2.2 (partial)"),
+                                "discussion. Mechanics and shortfall in 2.2 (partial)"),
         "early_repurchase": F({"present": True, "rate_pct": 2.0,
                                "window": "< 1 year"}, "2.7",
                               note="repurchased at 98% of transaction price"),
         "repurchase_cadence_per_year": F(12, "3.1"),
-        "repurchase_cap_pct": F(2.0, "3.1", note="monthly; 5% quarterly"),
+        "repurchase_cap_pct": F(2.0, "3.1", note="monthly, with 5% quarterly"),
         "repurchase_cap_base": F("aggregate_nav", "3.1"),
         "gate_history": F(True, "3.3",
-                          note="prorated repurchases 2022-24; FY2025 fulfilled 100%"),
-        "tax_form": null("form number not printed in on-disk 10-K/10-Q; REIT "
+                          note="prorated repurchases 2022-24. FY2025 fulfilled 100%"),
+        "tax_form": null("form number not printed in on-disk 10-K/10-Q. REIT "
                          "status implies 1099-DIV but the cell is partial", "6.4"),
         "auditor": F("Deloitte & Touche LLP", "4.5"),
         "big4": F(True, "4.5"),
         "expense_ratio_pct": null("no TER line item exists for this '34-Act "
-                                  "wrapper; components in 2.1/2.2/2.6", "2.9"),
+                                  "wrapper. Components in 2.1/2.2/2.6", "2.9"),
         "net_assets_usd": null("aggregate NAV printed in the MD&A NAV-by-class "
-                               "table but not yet carried into a typed cell; "
-                               "verification-queue item", "1.1"),
+                               "table but not yet carried into a typed cell. "
+                               "Verification-queue item", "1.1"),
         "inception": null("explicit Class I inception date not printed in "
-                          "on-disk filings; ITD basis year (2017 REIT "
+                          "on-disk filings. ITD basis year (2017 REIT "
                           "election) sits in partial cell 6.4", "6.4"),
     },
     "bcred": {
         "wrapper_type": F("nontraded_bdc", "6.1"),
         "mgmt_fee_pct": F(1.25, "2.1"),
         "mgmt_fee_base": F("net_assets", "2.1",
-                           note="month-start net assets; payable monthly, "
+                           note="month-start net assets, payable monthly and "
                                 "settled quarterly"),
         "incentive_fee": F({"present": True, "rate_pct": 12.5,
                             "hurdle_pct": 5.0,
@@ -206,7 +207,7 @@ MAPPING = {
                                     "cost of BDC leverage - not like-for-like "
                                     "with unlevered '40-Act ratios"),
         "net_assets_usd": null("aggregate net assets not yet carried into a "
-                               "typed cell; verification-queue item", "3.6"),
+                               "typed cell. Verification-queue item", "3.6"),
         "inception": F("2021-01-07", "1.11", note="escrow break / operations start"),
     },
     "pflex": {
@@ -215,16 +216,16 @@ MAPPING = {
         "mgmt_fee_base": F("lesser_of_dual_base", "2.1",
                            note="LESSER of 1.30% of average daily total managed "
                                 "assets (leverage-inclusive) and the net-assets "
-                                "formulation - a hybrid base; effective 4/1/2025"),
+                                "formulation, a hybrid base. Effective 4/1/2025"),
         "incentive_fee": F({"present": False}, "2.2",
-                           note="unified management fee; no incentive-fee line "
+                           note="unified management fee. No incentive-fee line "
                                 "in the fee table"),
         "early_repurchase": F({"present": False}, "2.7",
-                              note="no Rule 23c-3 early repurchase fee; 1.00% "
+                              note="no Rule 23c-3 early repurchase fee. 1.00% "
                                    "contingent load on A-2/A-4 classes only"),
         "repurchase_cadence_per_year": F(4, "3.1"),
         "repurchase_cap_pct": F(5.0, "3.1",
-                                note="fundamental 5-25% policy; currently 5%"),
+                                note="fundamental 5-25% policy, currently 5%"),
         "repurchase_cap_base": F("outstanding_shares", "3.1"),
         "gate_history": F(False, "3.3",
                           note="FY2025 offers undersubscribed (max 4.32% "
@@ -235,7 +236,7 @@ MAPPING = {
         "expense_ratio_pct": F(1.97, "2.3",
                                note="FY2025 Institutional, EXCLUDING interest "
                                     "expense (5.12% including reverse-repo "
-                                    "interest); gross=net, no waivers"),
+                                    "interest). Gross=net, no waivers"),
         "net_assets_usd": F(3596873000, "3.6", approx=True,
                             note="$3,596,873k net assets as printed"),
         "inception": F("2017-02-22", "1.11",
@@ -246,7 +247,7 @@ MAPPING = {
         "mgmt_fee_pct": F(1.25, "2.1"),
         "mgmt_fee_base": F("net_assets", "2.1",
                            note="average net assets at the two most recently "
-                                "completed month-ends; payable monthly in "
+                                "completed month-ends, payable monthly in "
                                 "arrears (advisory-agreement language "
                                 "governs over contradictory risk-factor "
                                 "boilerplate)"),
@@ -265,9 +266,9 @@ MAPPING = {
         "repurchase_cadence_per_year": F(4, "3.1"),
         "repurchase_cap_pct": F(5.0, "3.1"),
         "repurchase_cap_base": F("outstanding_shares", "3.1",
-                                 note="board-discretionary 13e-4 tenders; "
-                                      "may suspend or terminate at any "
-                                      "time"),
+                                 note="board-discretionary 13e-4 tenders "
+                                      "that may be suspended or terminated "
+                                      "at any time"),
         "gate_history": null("12 consecutive quarterly tenders completed "
                              "FY2023-FY2025 with no disclosed suspension, "
                              "BUT tendered-vs-repurchased counts are never "
@@ -287,7 +288,7 @@ MAPPING = {
         "net_assets_usd": F(19760273000, "3.6", approx=True,
                             note="FY2025 net assets as printed"),
         "inception": F("2020-11-10", "1.11",
-                       note="commenced operations; renamed from Owl Rock "
+                       note="commenced operations. Renamed from Owl Rock "
                             "Core Income Corp. 2023-07-06"),
     },
     "cion_ares": {
@@ -296,24 +297,25 @@ MAPPING = {
         "mgmt_fee_base": F("managed_assets", "2.1",
                            note="leverage-inclusive: total assets (incl. "
                                 "assets attributable to Preferred Shares or "
-                                "indebtedness) minus non-debt liabilities; "
-                                "equals 1.89% of net assets at FY2025 actual "
+                                "indebtedness) minus non-debt liabilities. "
+                                "Equals 1.89% of net assets at FY2025 actual "
                                 "leverage per the prospectus's own "
                                 "restatement"),
         "incentive_fee": F({"present": True, "rate_pct": 15.0,
                             "hurdle_pct": 6.0,
                             "structure": "15% of income-only pre-incentive-fee "
                                          "net investment income per class, "
-                                         "quarterly; 1.50%/quarter hurdle on "
+                                         "quarterly. 1.50%/quarter hurdle on "
                                          "average daily class NAV, full "
                                          "catch-up at 1.765%"}, "2.2"),
         "early_repurchase": F({"present": False}, "2.7",
                               note="'The Fund will not charge a repurchase "
-                                   "fee'; 1.00% Class C CDSC < 365 days "
-                                   "only"),
+                                   "fee' as printed. The only charge is a "
+                                   "1.00% Class C CDSC on shares held < 365 "
+                                   "days"),
         "repurchase_cadence_per_year": F(4, "3.1"),
         "repurchase_cap_pct": F(5.0, "3.1",
-                                note="fundamental 5-25% policy; Fund states "
+                                note="fundamental 5-25% policy. Fund states "
                                      "it expects only the 5% minimum"),
         "repurchase_cap_base": F("outstanding_shares", "3.1"),
         "gate_history": F(False, "3.3",
@@ -324,15 +326,15 @@ MAPPING = {
         "big4": F(True, "4.5"),
         "expense_ratio_pct": F(3.76, "2.3",
                                note="FY2025 actual Class I EXCLUDING interest "
-                                    "expense; prospectus fee-table totals "
+                                    "expense. Prospectus fee-table totals "
                                     "6.90% (I) to 7.74% (C) including 3.14% "
-                                    "interest; no contractual cap - "
+                                    "interest. No contractual cap: "
                                     "discretionary expense support only, $0 "
                                     "paid FY2025"),
         "net_assets_usd": F(5160261000, "3.6", approx=True,
                             note="FY2025 net assets as printed"),
         "inception": F("2017-01-26", "1.11",
-                       note="commencement of operations (Class A); Class I "
+                       note="commencement of operations (Class A). Class I "
                             "7/12/2017"),
     },
     "ares_pmf": {
@@ -344,13 +346,13 @@ MAPPING = {
         "incentive_fee": F({"present": True, "rate_pct": 12.5,
                             "structure": "12.5% of quarterly net profits above "
                                          "the Loss Recovery Account balance "
-                                         "(no fixed hurdle; LRA carries losses "
-                                         "forward)"}, "2.2"),
+                                         "(no fixed hurdle, the LRA carries "
+                                         "losses forward)"}, "2.2"),
         "early_repurchase": F({"present": True, "rate_pct": 2.00,
                                "window": "< 1 year"}, "2.7", note="FIFO"),
         "repurchase_cadence_per_year": F(4, "3.1"),
         "repurchase_cap_pct": null("offer sizes are board-set per quarter "
-                                   "(Rule 13e-4 tenders); no standing "
+                                   "(Rule 13e-4 tenders). No standing "
                                    "percentage cap is printed", "3.1"),
         "repurchase_cap_base": F("nav", "3.1",
                                  note="board-discretionary quarterly tenders"),
@@ -361,10 +363,10 @@ MAPPING = {
         "big4": F(True, "4.5"),
         "expense_ratio_pct": F(5.02, "2.3",
                                note="FY2026 Class I gross (net 4.99% after "
-                                    "0.03% waiver); includes 1.60% incentive-"
-                                    "fee drag; AFFE excluded"),
+                                    "0.03% waiver). Includes 1.60% incentive-"
+                                    "fee drag. AFFE excluded"),
         "net_assets_usd": null("aggregate net assets not yet carried into a "
-                               "typed cell; verification-queue item", "3.6"),
+                               "typed cell. Verification-queue item", "3.6"),
         "inception": F("2022-04-01", "1.11", note="commenced operations"),
     },
     "amg_pantheon": {
@@ -386,10 +388,10 @@ MAPPING = {
         "big4": F(True, "4.5"),
         "expense_ratio_pct": F(2.38, "2.3",
                                note="Class 4 (inception class) Total Annual "
-                                    "Expenses; classes range 2.38-3.38% "
+                                    "Expenses. Classes range 2.38-3.38% "
                                     "(differ only by distribution/servicing)"),
         "net_assets_usd": null("aggregate net assets not yet carried into a "
-                               "typed cell; verification-queue item", "3.6"),
+                               "typed cell. Verification-queue item", "3.6"),
         "inception": F("2014-09-30", "1.11",
                        note="Fund inception (Class 4) - the roster's longest "
                             "'40-Act evergreen-PE record"),
@@ -410,23 +412,23 @@ MAPPING = {
                                             "ordinary requests no longer "
                                             "accepted (death/disability and "
                                             "sub-$5,000 accounts only)", "3.1"),
-        "repurchase_cap_pct": null("plan SUSPENDED April 2026; cap history "
+        "repurchase_cap_pct": null("plan SUSPENDED April 2026. Cap history "
                                    "2%/mo (2017) -> 0.33% (2024) -> 0.5% "
                                    "(2025) -> closed (2026)", "3.1"),
         "repurchase_cap_base": null("plan SUSPENDED April 2026", "3.1"),
         "gate_history": F(True, "3.3",
                           note="requests exceeded plan limits continuously "
-                               "since October 2022; caps shrank three times, "
+                               "since October 2022. Caps shrank three times, "
                                "then the plan closed"),
-        "tax_form": null("form number not printed in on-disk filings; REIT "
+        "tax_form": null("form number not printed in on-disk filings. REIT "
                          "status implies 1099-DIV but the cell is partial",
                          "6.4"),
         "auditor": F("Deloitte & Touche LLP", "4.5"),
         "big4": F(True, "4.5"),
         "expense_ratio_pct": null("no TER line exists for this '34-Act "
-                                  "wrapper; components in 2.1/2.2/2.6", "2.3"),
+                                  "wrapper. Components in 2.1/2.2/2.6", "2.3"),
         "net_assets_usd": null("aggregate NAV not yet carried into a typed "
-                               "cell; verification-queue item", "1.1"),
+                               "cell. Verification-queue item", "1.1"),
         "inception": F("2017-12-27", "1.11", note="IPO commencement"),
     },
     "jll_ipt": {
@@ -438,10 +440,10 @@ MAPPING = {
         "incentive_fee": F({"present": True, "rate_pct": 10.0,
                             "hurdle_pct": 7.0,
                             "structure": "10% of each class's total return "
-                                         "above 7%/yr, per calendar year; no "
+                                         "above 7%/yr, per calendar year. No "
                                          "fees earned FY2023-FY2025"}, "2.2"),
         "early_repurchase": F({"present": False}, "2.7",
-                              note="no fee; one-year holding period with "
+                              note="no fee. One-year holding period with "
                                    "death/disability exceptions"),
         "repurchase_cadence_per_year": F(4, "3.1",
                                          note="DAILY repurchase requests at "
@@ -455,15 +457,15 @@ MAPPING = {
         "gate_history": F(False, "3.3",
                           note="never deferred nor rejected a request "
                                "through 2025-12-31, as disclosed"),
-        "tax_form": null("tax-form name not literally printed; REIT status "
+        "tax_form": null("tax-form name not literally printed. REIT status "
                          "and possible return-of-capital character are "
                          "printed (cell 6.4)", "6.4"),
         "auditor": F("KPMG LLP", "4.5"),
         "big4": F(True, "4.5"),
         "expense_ratio_pct": null("no TER line exists for this '34-Act "
-                                  "wrapper; components in 2.1/2.2/2.6", "2.3"),
+                                  "wrapper. Components in 2.1/2.2/2.6", "2.3"),
         "net_assets_usd": null("aggregate NAV not yet carried into a typed "
-                               "cell; verification-queue item", "3.6"),
+                               "cell. Verification-queue item", "3.6"),
         "inception": F("2012-10-01", "1.11",
                        note="continuous public offering commencement (REIT-"
                             "taxed since 2004 as a private predecessor)"),
@@ -480,32 +482,32 @@ MAPPING = {
         "incentive_fee": F({"present": True, "hurdle_pct": 7.0,
                             "structure": "two-part BDC fee (income + capital "
                                          "gains) per the 2026-07-15 "
-                                         "externalization; hurdle 7.00% "
-                                         "annualized - full terms in cell 2.2"},
+                                         "externalization. Hurdle 7.00% "
+                                         "annualized. Full terms in cell 2.2"},
                            "2.2"),
-        "early_repurchase": null("exchange-listed; exit is on-market - no "
+        "early_repurchase": null("exchange-listed. Exit is on-market, so no "
                                  "repurchase program fee applies", "2.7"),
         "repurchase_cadence_per_year": F(252, "3.1",
                                          note="daily on-exchange dealing "
                                               "(Nasdaq: NSLR)"),
-        "repurchase_cap_pct": null("on-exchange liquidity; no fund-level cap",
+        "repurchase_cap_pct": null("on-exchange liquidity with no fund-level cap",
                                    "3.1"),
-        "repurchase_cap_base": null("on-exchange liquidity; no fund-level cap",
+        "repurchase_cap_base": null("on-exchange liquidity with no fund-level cap",
                                     "3.1"),
         "gate_history": F(False, "3.3",
                           note="no redemption right exists to gate"),
-        "tax_form": null("form number not printed in on-disk filings; RIC "
+        "tax_form": null("form number not printed in on-disk filings. RIC "
                          "status implies 1099 but the cell is partial", "6.4"),
         "auditor": F("CBIZ CPAs P.C.", "4.5"),
         "big4": F(False, "4.5",
                   note="the venture cohort's only non-Big-4 audit"),
         "expense_ratio_pct": F(9.46, "2.3",
                                note="FY2025 net operating expenses/avg net "
-                                    "assets UNDER INTERNAL MANAGEMENT; the "
-                                    "fee regime changed 2026-07-15 - forward "
+                                    "assets UNDER INTERNAL MANAGEMENT. The "
+                                    "fee regime changed 2026-07-15, so forward "
                                     "ratios will differ (see 2.1/2.2)"),
         "net_assets_usd": null("aggregate net assets not yet carried into a "
-                               "typed cell; verification-queue item", "3.6"),
+                               "typed cell. Verification-queue item", "3.6"),
         "inception": F("2011-01-06", "1.11",
                        note="the roster's longest listed record (~15 years)"),
     },
@@ -516,10 +518,10 @@ MAPPING = {
         "incentive_fee": F({"present": False}, "2.2",
                            note="flat management fee only - absence documented"),
         "early_repurchase": F({"present": False}, "2.7",
-                              note="all repurchases at NAV; no early fee"),
+                              note="all repurchases at NAV, no early fee"),
         "repurchase_cadence_per_year": F(4, "3.1"),
         "repurchase_cap_pct": F(5.0, "3.1",
-                                note="fundamental 5-25% policy; every "
+                                note="fundamental 5-25% policy. Every "
                                      "completed offer at 5%"),
         "repurchase_cap_base": F("outstanding_shares", "3.1"),
         "gate_history": F(False, "3.3",
@@ -528,10 +530,10 @@ MAPPING = {
         "auditor": F("Ernst & Young LLP", "4.5"),
         "big4": F(True, "4.5"),
         "expense_ratio_pct": F(2.90, "2.3",
-                               note="FY2025 net of waivers (gross 4.39%); "
+                               note="FY2025 net of waivers (gross 4.39%), "
                                     "single class"),
         "net_assets_usd": null("aggregate net assets not yet carried into a "
-                               "typed cell; verification-queue item", "3.6"),
+                               "typed cell. Verification-queue item", "3.6"),
         "inception": F("2022-09-01", "1.11", note="commencement of operations"),
     },
     "stepstone_spm": {
@@ -539,21 +541,21 @@ MAPPING = {
         "mgmt_fee_pct": F(1.40, "2.1"),
         "mgmt_fee_base": F("net_assets", "2.1", note="daily net assets"),
         "incentive_fee": null("cell 2.2 is partial: no fund-level incentive fee "
-                              "identified; underlying funds charge performance "
+                              "identified. Underlying funds charge performance "
                               "fees (AFFE layer)", "2.2"),
         "early_repurchase": null("cell 2.7 is partial: no early-repurchase-fee "
-                                 "language matched; confirmation pending", "2.7"),
+                                 "language matched. Confirmation pending", "2.7"),
         "repurchase_cadence_per_year": F(4, "3.1"),
         "repurchase_cap_pct": F(5.0, "3.1"),
         "repurchase_cap_base": F("outstanding_shares", "3.1"),
         "gate_history": null("per-offer tendered-vs-purchased counts not "
-                             "printed in on-disk filings; Sept 2025 offer was "
-                             "Board-UPSIZED (demand signal) - proration "
+                             "printed in on-disk filings. Sept 2025 offer was "
+                             "Board-UPSIZED (demand signal). Proration "
                              "incidence unevidenced", "3.3"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("Ernst & Young LLP", "4.5"),
         "big4": F(True, "4.5"),
-        "expense_ratio_pct": F(1.91, "2.3", note="FY2026 Class I; AFFE excluded"),
+        "expense_ratio_pct": F(1.91, "2.3", note="FY2026 Class I, AFFE excluded"),
         "net_assets_usd": F(5828900000, "3.6", approx=True,
                             note="$5,828.9M at 3/31/2026 as printed"),
         "inception": F("2020-10-01", "1.2", note="Class I/D/S inception"),
@@ -610,27 +612,27 @@ AS_OF = {"hl_paf": "2026-03-31", "cliffwater_cclfx": "2026-03-31",
 # data/roster_decisions.md). depth per R2.
 COHORT_META = {
     "cliffwater_cclfx": ("private_credit", "full",
-        "Direct corporate lending in a Rule 23c-3 interval wrapper - the "
-        "cohort's reference member; daily NAV, quarterly obligated liquidity."),
+        "Direct corporate lending in a Rule 23c-3 interval wrapper, the "
+        "cohort's reference member. Daily NAV, quarterly obligated liquidity."),
     "bcred": ("private_credit", "cohort",
-        "Direct-lending private credit in a non-traded BDC chassis - same "
+        "Direct-lending private credit in a non-traded BDC chassis: the same "
         "strategy as cclfx on different plumbing (150% asset-coverage "
-        "leverage, discretionary quarterly tenders, monthly NAV); admitted "
+        "leverage, discretionary quarterly tenders, monthly NAV). Admitted "
         "deliberately cross-wrapper so the caveat machinery has real work."),
     "pflex": ("private_credit", "cohort",
         "Flexible multi-sector credit in the SAME wrapper as cclfx (interval, "
-        "quarterly 5%) - wrapper twin, broader credit mandate (loans, "
-        "structured, EM); mandate breadth is the disclosed mismatch."),
+        "quarterly 5%). A wrapper twin with a broader credit mandate (loans, "
+        "structured, EM). Mandate breadth is the disclosed mismatch."),
     "cion_ares": ("private_credit", "cohort",
         "Diversified credit in the cclfx/pflex wrapper (interval, quarterly "
-        "5%) - joins via the census promotion pipeline; dual-adviser "
+        "5%). Joins via the census promotion pipeline. The dual-adviser "
         "CION+Ares structure and a leverage-inclusive Managed Assets fee "
         "base (1.89% of net assets at FY2025 leverage) widen the cohort's "
-        "fee-base axis; daily Class I NAV (CADUX)."),
+        "fee-base axis. Daily Class I NAV (CADUX)."),
     "ocic": ("private_credit", "cohort",
-        "Perpetual non-traded BDC running quarterly 13e-4 tenders - bcred's "
-        "closest structural twin, admitted via the census promotion "
-        "pipeline (46 SC TO-I filings as T1 cadence evidence; Owl Rock -> "
+        "Perpetual non-traded BDC running quarterly 13e-4 tenders, bcred's "
+        "closest structural twin. Admitted via the census promotion "
+        "pipeline (46 SC TO-I filings as T1 cadence evidence, Owl Rock -> "
         "Blue Owl rename verified in the SEC record)."),
     "hl_paf": ("evergreen_pe", "full",
         "Evergreen PE fund-of-funds/secondaries in a tender-offer wrapper - "
@@ -639,9 +641,9 @@ COHORT_META = {
         "Evergreen PE multi-strategy (secondaries-led) tender-offer fund - "
         "founding cohort member."),
     "kkr_kpec": ("evergreen_pe", "full",
-        "'34-Act conglomerate of controlled PE businesses - joins under the "
-        "authorized fallback (its Reg D twins have no public filings); "
-        "cross-wrapper caveats carried by the cohort caveat block."),
+        "'34-Act conglomerate of controlled PE businesses. Joins under the "
+        "authorized fallback (its Reg D twins have no public filings). "
+        "Cross-wrapper caveats carried by the cohort caveat block."),
     "ares_pmf": ("evergreen_pe", "cohort",
         "Secondaries-led evergreen PE tender-offer fund - wrapper and "
         "strategy twin of hl_paf/stepstone_spm."),
@@ -655,19 +657,19 @@ COHORT_META = {
         "Non-traded monthly-NAV REIT - breit's closest structural twin "
         "(class structure, repurchase plan, 2022-24 stress history)."),
     "jll_ipt": ("nontraded_reit", "cohort",
-        "Perpetual NAV REIT of older vintage - same wrapper class; NAV "
+        "Perpetual NAV REIT of older vintage in the same wrapper class. NAV "
         "cadence and scale differences disclosed."),
     "dxyz": ("venture", "full",
-        "Listed CEF holding pre-IPO tech - the premium-pricing fail case; "
-        "the cohort exists to show premium vs NAV pricing as a PATTERN."),
+        "Listed CEF holding pre-IPO tech, the premium-pricing fail case. "
+        "The cohort exists to show premium vs NAV pricing as a PATTERN."),
     "ssss": ("venture", "cohort",
-        "Listed BDC (fka SuRo Capital) holding late-stage growth equity - "
-        "the second market-priced venture vehicle; gives dxyz a "
+        "Listed BDC (fka SuRo Capital) holding late-stage growth equity, "
+        "the second market-priced venture vehicle. Gives dxyz a "
         "premium/discount comparable. Membership CONDITIONAL on strategy "
         "continuity through the Neostellar rename (verification queue)."),
     "arkvx": ("venture", "cohort",
-        "Interval fund holding venture/growth - the NAV-priced contrast to "
-        "the two market-priced members; pricing-basis mix is the cohort's "
+        "Interval fund holding venture/growth, the NAV-priced contrast to "
+        "the two market-priced members. Pricing-basis mix is the cohort's "
         "disclosed core caveat (composite refused)."),
 }
 
@@ -770,8 +772,8 @@ def main() -> None:
             "source_cell": "3.9", "status": "computed"}
         doc = {"product_key": key, "cohort_id": cohort_id, "depth": depth,
                "membership_rationale": rationale,
-               "what": "typed projections of evidenced cells - zero new facts; "
-                       "every field carries its source_cell and mirrors its status",
+               "what": "typed projections of evidenced cells, zero new facts. "
+                       "Every field carries its source_cell and mirrors its status",
                "generated_by": "src/build_facts.py (hand-mapping machine-checked "
                                "by validate_data.py)",
                "facts": facts}

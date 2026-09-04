@@ -43,6 +43,15 @@ HINT_TOKENS = {
     "municipal": "municipal?", "tax": "tax-managed?", "energy": "energy?",
     "royalt": "royalties?", "reinsurance": "reinsurance?",
 }
+# Documentation strings written into data/census/census.json: the note every
+# name_hint carries (C2) and the file's 'what' line. sync_notes.py rewrites
+# the data from these constants and validate_census.py checks that the two
+# agree, so edit the text here only.
+NAME_HINT_NOTE = ("derived from the fund NAME only, never a strategy claim "
+                  "(C2). Excluded from filters by default")
+CENSUS_WHAT = ("Tark T1 census: structured facts with per-field provenance "
+               "{source, ref, as_of} (C3). Wrapper classes from filing "
+               "behavior with detection evidence (C2: no strategy claims)")
 
 
 def tsv_rows(path: Path):
@@ -198,9 +207,7 @@ def main() -> None:
                          "SEC company_tickers.json", today),
             "name_hint": {"value": name_hint(ent["name"]),
                           "authoritative": False,
-                          "note": "derived from the fund NAME only - never a "
-                                  "strategy claim (C2); excluded from filters "
-                                  "by default"},
+                          "note": NAME_HINT_NOTE},
             "promotion": {"status": "evaluated", "product_key": roster[cik]}
                          if cik in roster else {"status": "none"},
         }
@@ -310,9 +317,7 @@ def main() -> None:
         census[cik] = rec
 
     doc = {
-        "what": "Tark T1 census - structured facts with per-field provenance "
-                "{source, ref, as_of} (C3); wrapper classes from filing "
-                "behavior with detection evidence (C2: no strategy claims)",
+        "what": CENSUS_WHAT,
         "tiers": {"T1": "structured filing data (this file)",
                   "T2": "AI-extracted, unverified (evaluated roster)",
                   "T3": "human-verified (evidence CSVs signed)"},

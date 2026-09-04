@@ -3,7 +3,7 @@
   "cohort_id": "evergreen_pe",
   "depth": "cohort",
   "membership_rationale": "Evergreen PE (Pantheon) tender-offer LLC - wrapper and strategy twin of hl_paf/stepstone_spm.",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -80,13 +80,13 @@
     "expense_ratio_pct": {
       "value": 2.38,
       "source_cell": "2.3",
-      "note": "Class 4 (inception class) Total Annual Expenses; classes range 2.38-3.38% (differ only by distribution/servicing)",
+      "note": "Class 4 (inception class) Total Annual Expenses. Classes range 2.38-3.38% (differ only by distribution/servicing)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {
       "value": null,
       "source_cell": "3.6",
-      "reason": "aggregate net assets not yet carried into a typed cell; verification-queue item",
+      "reason": "aggregate net assets not yet carried into a typed cell. Verification-queue item",
       "status": "extracted-unverified"
     },
     "inception": {

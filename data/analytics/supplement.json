@@ -10,7 +10,7 @@
       -3.1,
       1837.6
     ],
-    "note": "premium computed vs the most recent FILED quarterly NAV - the live NAV is unobservable between filings; filed range from the fund's own prospectus table",
+    "note": "premium computed vs the most recent FILED quarterly NAV (the live NAV is unobservable between filings). Filed range from the fund's own prospectus table",
     "inputs": [
       "data/series/dxyz.csv",
       "data/analytics/dxyz_nav_quarterly.json"
@@ -40,7 +40,7 @@
       -24.8,
       -6.7
     ],
-    "note": "price at-or-before each printed quarter-end NAV; a persistent DISCOUNT is this fund's premium/discount signature - the mirror image of dxyz's premium",
+    "note": "price at-or-before each printed quarter-end NAV. A persistent DISCOUNT is this fund's premium/discount signature, the mirror image of dxyz's premium",
     "inputs": [
       "data/series/nslr.csv",
       "data/series_quarterly/ssss_nav.csv"
@@ -54,7 +54,7 @@
         "product": "amg_pantheon",
         "ter_pct": 2.38,
         "cited_cell": "2.3",
-        "basis_note": "Class 4 (inception class) Total Annual Expenses; classes range 2.38-3.38% (differ only by distribution/servicing)",
+        "basis_note": "Class 4 (inception class) Total Annual Expenses. Classes range 2.38-3.38% (differ only by distribution/servicing)",
         "rank": 4,
         "of": 13,
         "percentile_low_is_cheap": 27
@@ -63,7 +63,7 @@
         "product": "ares_pmf",
         "ter_pct": 5.02,
         "cited_cell": "2.3",
-        "basis_note": "FY2026 Class I gross (net 4.99% after 0.03% waiver); includes 1.60% incentive-fee drag; AFFE excluded",
+        "basis_note": "FY2026 Class I gross (net 4.99% after 0.03% waiver). Includes 1.60% incentive-fee drag. AFFE excluded",
         "rank": 10,
         "of": 13,
         "percentile_low_is_cheap": 73
@@ -72,7 +72,7 @@
         "product": "arkvx",
         "ter_pct": 2.9,
         "cited_cell": "2.3",
-        "basis_note": "FY2025 net of waivers (gross 4.39%); single class",
+        "basis_note": "FY2025 net of waivers (gross 4.39%), single class",
         "rank": 5,
         "of": 13,
         "percentile_low_is_cheap": 35
@@ -89,14 +89,14 @@
       {
         "product": "breit",
         "ter_pct": null,
-        "reason": "no TER line item exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
+        "reason": "no TER line item exists for this '34-Act wrapper. Components in 2.1/2.2/2.6",
         "cited_cell": "2.9"
       },
       {
         "product": "cion_ares",
         "ter_pct": 3.76,
         "cited_cell": "2.3",
-        "basis_note": "FY2025 actual Class I EXCLUDING interest expense; prospectus fee-table totals 6.90% (I) to 7.74% (C) including 3.14% interest; no contractual cap - discretionary expense support only, $0 paid FY2025",
+        "basis_note": "FY2025 actual Class I EXCLUDING interest expense. Prospectus fee-table totals 6.90% (I) to 7.74% (C) including 3.14% interest. No contractual cap: discretionary expense support only, $0 paid FY2025",
         "rank": 8,
         "of": 13,
         "percentile_low_is_cheap": 58
@@ -105,7 +105,7 @@
         "product": "cliffwater_cclfx",
         "ter_pct": 1.36,
         "cited_cell": "2.3",
-        "basis_note": "FY2026 before waivers, EXCLUDING interest expense; 3.31% including interest",
+        "basis_note": "FY2026 before waivers, EXCLUDING interest expense. 3.31% including interest",
         "rank": 1,
         "of": 13,
         "percentile_low_is_cheap": 4
@@ -123,7 +123,7 @@
         "product": "hl_paf",
         "ter_pct": 3.4,
         "cited_cell": "2.3",
-        "basis_note": "FY2026 net, incl. incentive-fee drag; AFFE excluded",
+        "basis_note": "FY2026 net, incl. incentive-fee drag, AFFE excluded",
         "rank": 7,
         "of": 13,
         "percentile_low_is_cheap": 50
@@ -131,14 +131,14 @@
       {
         "product": "jll_ipt",
         "ter_pct": null,
-        "reason": "no TER line exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
+        "reason": "no TER line exists for this '34-Act wrapper. Components in 2.1/2.2/2.6",
         "cited_cell": "2.3"
       },
       {
         "product": "kkr_kpec",
         "ter_pct": 3.19,
         "cited_cell": "1.3",
-        "basis_note": "GAAP financial-highlights total operating expenses FY2025 Class I, INCL. 2.75% performance participation - NOT a 1940-Act TER; class range 2.74-3.59%",
+        "basis_note": "GAAP financial-highlights total operating expenses FY2025 Class I, INCL. 2.75% performance participation. NOT a 1940-Act TER. Class range 2.74-3.59%",
         "rank": 6,
         "of": 13,
         "percentile_low_is_cheap": 42
@@ -156,7 +156,7 @@
         "product": "pflex",
         "ter_pct": 1.97,
         "cited_cell": "2.3",
-        "basis_note": "FY2025 Institutional, EXCLUDING interest expense (5.12% including reverse-repo interest); gross=net, no waivers",
+        "basis_note": "FY2025 Institutional, EXCLUDING interest expense (5.12% including reverse-repo interest). Gross=net, no waivers",
         "rank": 3,
         "of": 13,
         "percentile_low_is_cheap": 19
@@ -164,14 +164,14 @@
       {
         "product": "sreit",
         "ter_pct": null,
-        "reason": "no TER line exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
+        "reason": "no TER line exists for this '34-Act wrapper. Components in 2.1/2.2/2.6",
         "cited_cell": "2.3"
       },
       {
         "product": "ssss",
         "ter_pct": 9.46,
         "cited_cell": "2.3",
-        "basis_note": "FY2025 net operating expenses/avg net assets UNDER INTERNAL MANAGEMENT; the fee regime changed 2026-07-15 - forward ratios will differ (see 2.1/2.2)",
+        "basis_note": "FY2025 net operating expenses/avg net assets UNDER INTERNAL MANAGEMENT. The fee regime changed 2026-07-15, so forward ratios will differ (see 2.1/2.2)",
         "rank": 13,
         "of": 13,
         "percentile_low_is_cheap": 96
@@ -180,7 +180,7 @@
         "product": "stepstone_spm",
         "ter_pct": 1.91,
         "cited_cell": "2.3",
-        "basis_note": "FY2026 Class I; AFFE excluded",
+        "basis_note": "FY2026 Class I, AFFE excluded",
         "rank": 2,
         "of": 13,
         "percentile_low_is_cheap": 12

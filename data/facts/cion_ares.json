@@ -2,8 +2,8 @@
   "product_key": "cion_ares",
   "cohort_id": "private_credit",
   "depth": "cohort",
-  "membership_rationale": "Diversified credit in the cclfx/pflex wrapper (interval, quarterly 5%) - joins via the census promotion pipeline; dual-adviser CION+Ares structure and a leverage-inclusive Managed Assets fee base (1.89% of net assets at FY2025 leverage) widen the cohort's fee-base axis; daily Class I NAV (CADUX).",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "membership_rationale": "Diversified credit in the cclfx/pflex wrapper (interval, quarterly 5%). Joins via the census promotion pipeline. The dual-adviser CION+Ares structure and a leverage-inclusive Managed Assets fee base (1.89% of net assets at FY2025 leverage) widen the cohort's fee-base axis. Daily Class I NAV (CADUX).",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -19,7 +19,7 @@
     "mgmt_fee_base": {
       "value": "managed_assets",
       "source_cell": "2.1",
-      "note": "leverage-inclusive: total assets (incl. assets attributable to Preferred Shares or indebtedness) minus non-debt liabilities; equals 1.89% of net assets at FY2025 actual leverage per the prospectus's own restatement",
+      "note": "leverage-inclusive: total assets (incl. assets attributable to Preferred Shares or indebtedness) minus non-debt liabilities. Equals 1.89% of net assets at FY2025 actual leverage per the prospectus's own restatement",
       "status": "extracted-unverified"
     },
     "incentive_fee": {
@@ -27,7 +27,7 @@
         "present": true,
         "rate_pct": 15.0,
         "hurdle_pct": 6.0,
-        "structure": "15% of income-only pre-incentive-fee net investment income per class, quarterly; 1.50%/quarter hurdle on average daily class NAV, full catch-up at 1.765%"
+        "structure": "15% of income-only pre-incentive-fee net investment income per class, quarterly. 1.50%/quarter hurdle on average daily class NAV, full catch-up at 1.765%"
       },
       "source_cell": "2.2",
       "status": "extracted-unverified"
@@ -37,7 +37,7 @@
         "present": false
       },
       "source_cell": "2.7",
-      "note": "'The Fund will not charge a repurchase fee'; 1.00% Class C CDSC < 365 days only",
+      "note": "'The Fund will not charge a repurchase fee' as printed. The only charge is a 1.00% Class C CDSC on shares held < 365 days",
       "status": "extracted-unverified"
     },
     "repurchase_cadence_per_year": {
@@ -48,7 +48,7 @@
     "repurchase_cap_pct": {
       "value": 5.0,
       "source_cell": "3.1",
-      "note": "fundamental 5-25% policy; Fund states it expects only the 5% minimum",
+      "note": "fundamental 5-25% policy. Fund states it expects only the 5% minimum",
       "status": "extracted-unverified"
     },
     "repurchase_cap_base": {
@@ -80,7 +80,7 @@
     "expense_ratio_pct": {
       "value": 3.76,
       "source_cell": "2.3",
-      "note": "FY2025 actual Class I EXCLUDING interest expense; prospectus fee-table totals 6.90% (I) to 7.74% (C) including 3.14% interest; no contractual cap - discretionary expense support only, $0 paid FY2025",
+      "note": "FY2025 actual Class I EXCLUDING interest expense. Prospectus fee-table totals 6.90% (I) to 7.74% (C) including 3.14% interest. No contractual cap: discretionary expense support only, $0 paid FY2025",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {
@@ -93,7 +93,7 @@
     "inception": {
       "value": "2017-01-26",
       "source_cell": "1.11",
-      "note": "commencement of operations (Class A); Class I 7/12/2017",
+      "note": "commencement of operations (Class A). Class I 7/12/2017",
       "status": "extracted-unverified"
     },
     "affe": {

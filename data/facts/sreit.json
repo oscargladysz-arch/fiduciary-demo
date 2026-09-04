@@ -3,7 +3,7 @@
   "cohort_id": "nontraded_reit",
   "depth": "cohort",
   "membership_rationale": "Non-traded monthly-NAV REIT - breit's closest structural twin (class structure, repurchase plan, 2022-24 stress history).",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -49,7 +49,7 @@
     "repurchase_cap_pct": {
       "value": null,
       "source_cell": "3.1",
-      "reason": "plan SUSPENDED April 2026; cap history 2%/mo (2017) -> 0.33% (2024) -> 0.5% (2025) -> closed (2026)",
+      "reason": "plan SUSPENDED April 2026. Cap history 2%/mo (2017) -> 0.33% (2024) -> 0.5% (2025) -> closed (2026)",
       "status": "extracted-unverified"
     },
     "repurchase_cap_base": {
@@ -61,13 +61,13 @@
     "gate_history": {
       "value": true,
       "source_cell": "3.3",
-      "note": "requests exceeded plan limits continuously since October 2022; caps shrank three times, then the plan closed",
+      "note": "requests exceeded plan limits continuously since October 2022. Caps shrank three times, then the plan closed",
       "status": "extracted-unverified"
     },
     "tax_form": {
       "value": null,
       "source_cell": "6.4",
-      "reason": "form number not printed in on-disk filings; REIT status implies 1099-DIV but the cell is partial",
+      "reason": "form number not printed in on-disk filings. REIT status implies 1099-DIV but the cell is partial",
       "status": "partial"
     },
     "auditor": {
@@ -83,13 +83,13 @@
     "expense_ratio_pct": {
       "value": null,
       "source_cell": "2.3",
-      "reason": "no TER line exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
+      "reason": "no TER line exists for this '34-Act wrapper. Components in 2.1/2.2/2.6",
       "status": "n/a - not publicly available: no TER disclosure exists for a '34-Act non-traded REIT - zero hits for 'expense ratio' in the stripped FY2025 10-K and Q2-2026 10-Q; fee-burden components evidenced in 2.1/2.2/2.6/2.7"
     },
     "net_assets_usd": {
       "value": null,
       "source_cell": "1.1",
-      "reason": "aggregate NAV not yet carried into a typed cell; verification-queue item",
+      "reason": "aggregate NAV not yet carried into a typed cell. Verification-queue item",
       "status": "extracted-unverified"
     },
     "inception": {

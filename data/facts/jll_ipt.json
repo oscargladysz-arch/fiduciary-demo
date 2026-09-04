@@ -2,7 +2,7 @@
   "product_key": "jll_ipt",
   "cohort_id": "nontraded_reit",
   "depth": "cohort",
-  "membership_rationale": "Perpetual NAV REIT of older vintage - same wrapper class; NAV cadence and scale differences disclosed.",
+  "membership_rationale": "Perpetual NAV REIT of older vintage in the same wrapper class. NAV cadence and scale differences disclosed.",
   "what": "typed projections of evidenced cells - zero new facts",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
@@ -28,7 +28,7 @@
         "present": true,
         "rate_pct": 10.0,
         "hurdle_pct": 7.0,
-        "structure": "10% of each class's total return above 7%/yr, per calendar year; no fees earned FY2023-FY2025"
+        "structure": "10% of each class's total return above 7%/yr, per calendar year. No fees earned FY2023-FY2025"
       },
       "source_cell": "2.2",
       "status": "extracted-unverified"
@@ -38,7 +38,7 @@
         "present": false
       },
       "source_cell": "2.7",
-      "note": "no fee; one-year holding period with death/disability exceptions",
+      "note": "no fee. One-year holding period with death/disability exceptions",
       "status": "extracted-unverified"
     },
     "repurchase_cadence_per_year": {
@@ -67,7 +67,7 @@
     "tax_form": {
       "value": null,
       "source_cell": "6.4",
-      "reason": "tax-form name not literally printed; REIT status and possible return-of-capital character are printed (cell 6.4)",
+      "reason": "tax-form name not literally printed. REIT status and possible return-of-capital character are printed (cell 6.4)",
       "status": "n/a - tax form not literally printed: zero hits for '1099' and 'K-1' across stripped 10-K, 10-Q and 424B3 (searched 2026-08-15)"
     },
     "auditor": {
@@ -83,13 +83,13 @@
     "expense_ratio_pct": {
       "value": null,
       "source_cell": "2.3",
-      "reason": "no TER line exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
+      "reason": "no TER line exists for this '34-Act wrapper. Components in 2.1/2.2/2.6",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {
       "value": null,
       "source_cell": "3.6",
-      "reason": "aggregate NAV not yet carried into a typed cell; verification-queue item",
+      "reason": "aggregate NAV not yet carried into a typed cell. Verification-queue item",
       "status": "extracted-unverified"
     },
     "inception": {

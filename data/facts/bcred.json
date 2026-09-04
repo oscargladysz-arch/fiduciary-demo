@@ -2,8 +2,8 @@
   "product_key": "bcred",
   "cohort_id": "private_credit",
   "depth": "cohort",
-  "membership_rationale": "Direct-lending private credit in a non-traded BDC chassis - same strategy as cclfx on different plumbing (150% asset-coverage leverage, discretionary quarterly tenders, monthly NAV); admitted deliberately cross-wrapper so the caveat machinery has real work.",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "membership_rationale": "Direct-lending private credit in a non-traded BDC chassis: the same strategy as cclfx on different plumbing (150% asset-coverage leverage, discretionary quarterly tenders, monthly NAV). Admitted deliberately cross-wrapper so the caveat machinery has real work.",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -19,7 +19,7 @@
     "mgmt_fee_base": {
       "value": "net_assets",
       "source_cell": "2.1",
-      "note": "month-start net assets; payable monthly, settled quarterly",
+      "note": "month-start net assets, payable monthly and settled quarterly",
       "status": "extracted-unverified"
     },
     "incentive_fee": {
@@ -88,7 +88,7 @@
     "net_assets_usd": {
       "value": null,
       "source_cell": "3.6",
-      "reason": "aggregate net assets not yet carried into a typed cell; verification-queue item",
+      "reason": "aggregate net assets not yet carried into a typed cell. Verification-queue item",
       "status": "extracted-unverified"
     },
     "inception": {

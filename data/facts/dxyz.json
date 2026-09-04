@@ -2,8 +2,8 @@
   "product_key": "dxyz",
   "cohort_id": "venture",
   "depth": "full",
-  "membership_rationale": "Listed CEF holding pre-IPO tech - the premium-pricing fail case; the cohort exists to show premium vs NAV pricing as a PATTERN.",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "membership_rationale": "Listed CEF holding pre-IPO tech, the premium-pricing fail case. The cohort exists to show premium vs NAV pricing as a PATTERN.",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -33,7 +33,7 @@
     "early_repurchase": {
       "value": null,
       "source_cell": "2.7",
-      "reason": "exchange-listed; no repurchase program \u2014 fee inapplicable",
+      "reason": "exchange-listed with no repurchase program, so the fee is inapplicable",
       "status": "n/a - no early-repurchase fee (exchange-traded)"
     },
     "repurchase_cadence_per_year": {
@@ -45,25 +45,25 @@
     "repurchase_cap_pct": {
       "value": null,
       "source_cell": "3.1",
-      "reason": "on-exchange liquidity; no fund-level cap",
+      "reason": "on-exchange liquidity with no fund-level cap",
       "status": "extracted-unverified"
     },
     "repurchase_cap_base": {
       "value": null,
       "source_cell": "3.1",
-      "reason": "on-exchange liquidity; no fund-level cap",
+      "reason": "on-exchange liquidity with no fund-level cap",
       "status": "extracted-unverified"
     },
     "gate_history": {
       "value": false,
       "source_cell": "3.1",
-      "note": "exchange wrapper has no gating mechanism; 'no fund-level repurchase program' is itself an absence-inference flagged in the cell",
+      "note": "exchange wrapper has no gating mechanism. The 'no fund-level repurchase program' finding is itself an absence-inference flagged in the cell",
       "status": "extracted-unverified"
     },
     "tax_form": {
       "value": null,
       "source_cell": "6.4",
-      "reason": "form number not printed in any on-disk filing; RIC status implies 1099 but the cell is partial",
+      "reason": "form number not printed in any on-disk filing. RIC status implies 1099 but the cell is partial",
       "status": "partial"
     },
     "auditor": {
@@ -92,7 +92,7 @@
     "inception": {
       "value": "2022-05-12",
       "source_cell": "1.11",
-      "note": "commenced operations as printed; NYSE listing 2024-03-26 (3.1) is the trading-history start",
+      "note": "commenced operations as printed. NYSE listing 2024-03-26 (3.1) is the trading-history start",
       "status": "extracted-unverified"
     },
     "affe": {

@@ -22,17 +22,17 @@ from tark_data import (coverage_summary, DATA, FACTORS, cells_by_factor,  # noqa
                        load_evidence, load_plan, load_products, plan_keys,
                        status_kind)
 
-st.set_page_config(page_title="Tark — Fiduciary Evaluation Demo",
+st.set_page_config(page_title="Tark: Fiduciary Evaluation Demo",
                    layout="wide")
 
 RULE_CAPTION = ("Six-factor framework per DOL proposed rule, Fiduciary Duties in "
-                "Selecting Designated Investment Alternatives — 91 FR 16088 "
+                "Selecting Designated Investment Alternatives, 91 FR 16088 "
                 "(Mar 31, 2026), RIN 1210-AC38. Safe harbor attaches to a "
                 "documented, objective, thorough, analytical process.")
 
 CHIP = {
     "verified": ":green[● verified]",
-    "extracted": ":green[● extracted — unverified]",
+    "extracted": ":green[● extracted-unverified]",
     "partial": ":orange[● partial]",
     "fetched": ":blue[● series fetched]",
     "computed": ":violet[● computed (pipeline)]",
@@ -55,7 +55,7 @@ def coverage_line(key: str) -> str:
 
 # ------------------------------------------------------------------ sidebar
 st.sidebar.title("Tark")
-st.sidebar.caption("Benchmark selection & six-factor evaluation — demo build")
+st.sidebar.caption("Benchmark selection & six-factor evaluation (demo build)")
 view = st.sidebar.radio(
     "View",
     ["Reference Plan", "Candidate Roster", "Six-Factor Evaluation",
@@ -100,7 +100,7 @@ def render_anchor():
 
     tail_pct = part["separated_deferred_vested"] / part["with_account_balances"] * 100
     st.info(f"**Liquidity tail:** {int(part['separated_deferred_vested']):,} "
-            f"separated participants still hold balances — "
+            f"separated participants still hold balances, "
             f"{tail_pct:.0f}% of all accounts. This cohort, not the active base, "
             f"is the plan's near-term liquidity demand and drives the "
             f"product-to-plan match (cell 3.9).")
@@ -149,7 +149,7 @@ def render_evaluation():
             for cid, cell in grouped[label]:
                 kind = status_kind(cell.get("status", "pending"))
                 chip = CHIP.get(kind, cell.get("status", ""))
-                st.markdown(f"**{cid} · {cell['element']}** — {chip}")
+                st.markdown(f"**{cid} · {cell['element']}** {chip}")
                 if cell.get("value"):
                     st.markdown(cell["value"])
                     if cell.get("source"):
@@ -161,9 +161,9 @@ def render_evaluation():
                                 f"**Extracted:** {cell.get('extracted_by', '')} · "
                                 f"**Verified:** {cell.get('verified_by', '') or 'pending'}")
                 elif kind == "n/a":
-                    st.caption(f"Not applicable — {cell['status'][6:]}")
+                    st.caption(f"Not applicable: {cell['status'][6:]}")
                 else:
-                    st.caption("Pending extraction — pointer in "
+                    st.caption("Pending extraction. Pointer in "
                                f"data/evidence/{product_key}_evidence.csv")
                 st.divider()
 
@@ -175,7 +175,7 @@ def render_benchmark():
     st.subheader(p["fund_name"])
     sel_path = DATA / "benchmarks" / f"{product_key}_selection.json"
     if not sel_path.exists():
-        st.warning("Engine profile pending for this product — extraction depth "
+        st.warning("Engine profile pending for this product: extraction depth "
                    "first (see Increment 1 pointers in the evidence CSV).")
         return
     sel = json.loads(sel_path.read_text())
@@ -191,7 +191,7 @@ def render_benchmark():
         s = sel.get(slot)
         if not s:
             continue
-        st.markdown(f"### {badge}: {s['candidate']}  —  {s['score']}/{s['max']}")
+        st.markdown(f"### {badge}: {s['candidate']} ({s['score']}/{s['max']})")
         comp = s.get("comparison")
         if comp:
             c1, c2, c3, c4 = st.columns(4)
@@ -201,13 +201,13 @@ def render_benchmark():
             c4.metric("Direct Alpha", f"{comp['direct_alpha_pct']}%/yr")
             st.caption(f"Window {comp['window']}. PME and alpha on "
                        f"appraisal-lagged NAVs are window-sensitive and can be "
-                       f"smoothing-flattered — disclosed per methodology §3.")
+                       f"smoothing-flattered (disclosed per methodology §3).")
         with st.expander("Scoring rationale"):
             for r in s["reasons"]:
                 st.markdown(f"- {r}")
 
     st.markdown("### Rejection log")
-    st.caption("Every candidate not selected, with its true reason — the other "
+    st.caption("Every candidate not selected, with its true reason: the other "
                "half of a defensible record.")
     st.dataframe(
         [{"candidate": r["candidate"], "lane": r["lane"],

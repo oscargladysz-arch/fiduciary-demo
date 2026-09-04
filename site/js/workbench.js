@@ -164,8 +164,8 @@ export function viewScreener(root, state, setState) {
 
   root.innerHTML = `
     <div class="viewhead"><h1>Screener</h1>
-      <div class="sub">Typed projections of evidenced cells — every value click-through
-        to its citation; gaps are honest, not blank.</div></div>
+      <div class="sub">Typed projections of evidenced cells. Every value clicks through
+        to its citation, and gaps are honest, not blank.</div></div>
     <div class="filterbar">
       ${sel("f_cohort", "cohort", Object.keys(T.cohorts))}
       ${sel("f_depth", "depth", ["full", "cohort"])}
@@ -187,7 +187,7 @@ export function viewScreener(root, state, setState) {
     ${F.f_vonly === "1" ? `<div class="banner amber vonly-banner">
       Independent human verification in progress: <b>${vc.verified} of ${vc.total}</b>
       typed facts verified. This filter will fill up as the verification pass
-      (docs/verification_queue.md) lands in the evidence CSVs — showing
+      (docs/verification_queue.md) lands in the evidence CSVs. Showing
       ${rows.length} product(s) with any verified fact today is the honest state.</div>` : ""}
     <div class="tablewrap"><table class="grid screener">
       <thead><tr><th>Product</th>
@@ -235,7 +235,7 @@ const CMP_ROWS = [
     (v) => fmtEarly({ ...v, window: v.window ? `if ${v.window}` : "" }), null],
   ["Dealing cadence", "repurchase_cadence_per_year", (v) => v + "×/yr", null],
   ["Repurchase cap", "repurchase_cap_pct", (v) => v + "%", null],
-  ["Gate history", "gate_history", (v) => v ? "YES — prorated under stress" : "none identified",
+  ["Gate history", "gate_history", (v) => v ? "YES: prorated under stress" : "none identified",
     (v) => v === true],
   ["Tax form", "tax_form", (v) => v, (v) => v === "K-1"],
   ["Auditor", "auditor", (v) => v, null],
@@ -273,14 +273,14 @@ export function viewCompare(root, state, setState) {
       const a = rule.attrs[0];
       if (new Set(wts.map((w) => attrs[w]?.[a])).size > 1) out.push(rule.caveat);
     }
-    return out.length ? `<div class="banner amber"><b>Cross-wrapper comparison —
+    return out.length ? `<div class="banner amber"><b>Cross-wrapper comparison,
       caveats apply:</b><ul style="margin:6px 0 0 18px">${out.map((c) =>
       `<li style="margin-bottom:3px">${esc(c)}</li>`).join("")}</ul></div>` : "";
   })();
 
   if (!keys.length) {
     root.innerHTML = `<div class="viewhead"><h1>Comparison</h1>
-      <div class="sub">Pick 2–4 products — synchronized side-by-side with
+      <div class="sub">Pick 2–4 products: synchronized side-by-side with
         material differences highlighted and every value one click from its
         citation.</div></div>${picker}`;
     wireCompare(root, picked, setState);
@@ -326,7 +326,7 @@ export function viewCompare(root, state, setState) {
 
   root.innerHTML = `
     <div class="viewhead"><h1>Comparison</h1>
-      <div class="sub">Material differences highlighted amber; fee-base traps,
+      <div class="sub">Material differences highlighted amber. Fee-base traps,
         K-1, gating and sub-1.0 PME flagged red. Every value cites its cell.</div></div>
     ${picker}
     ${crossCaveats}
@@ -336,7 +336,7 @@ export function viewCompare(root, state, setState) {
       <tbody>${body}${verdictRow}${benchRow}</tbody></table></div>
     <p class="cap" style="margin-top:8px">Facts: typed projections with
       source-cell provenance (data/facts). Status chips mirror the evidence
-      record — nothing here is human-verified yet.</p>`;
+      record. Nothing here is human-verified yet.</p>`;
   wireCompare(root, picked, setState);
   root.querySelectorAll("[data-goto-liq]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault(); setState({ view: "liquidity", product: a.dataset.gotoLiq }); }));
@@ -383,7 +383,7 @@ export function viewVerification(root, state, setState) {
   root.innerHTML = `
     <div class="viewhead"><h1>Verification</h1>
       <div class="sub">The human pass, made product-native: the evidence CSVs are
-        the interface; this surface tracks progress live from the statuses.</div></div>
+        the interface. This surface tracks progress live from the statuses.</div></div>
     <div class="statrow">
       ${stat("Cells verified", `${totV}`, `of ${totA} at extracted-unverified/verified`)}
       ${stat("Progress", `${totA ? Math.round(totV / totA * 100) : 0}%`)}
@@ -421,8 +421,8 @@ export function viewVerification(root, state, setState) {
         }).join("")}
       </tbody></table></div>`).join("")}
     <p class="cap footer-rule">Verification flips a row to 'verified' + signs
-      verified_by in data/evidence/*.csv AND the product JSON — humans only;
-      the build can never do this.</p>`;
+      verified_by in data/evidence/*.csv AND the product JSON (humans only).
+      The build can never do this.</p>`;
   root.querySelectorAll("[data-goto-cell]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault(); setState({ view: "evaluation", product: a.dataset.gotoCell }); }));
 }
@@ -434,7 +434,7 @@ export function viewSearch(root, state, setState) {
   root.innerHTML = `
     <div class="viewhead"><h1>Evidence Search</h1>
       <div class="sub">Full-text over every cell value and verbatim quote.
-        Queries stay local — never in the URL (leak-proof links by construction).</div></div>
+        Queries stay local, never in the URL (leak-proof links by construction).</div></div>
     <input id="searchbox" type="search" placeholder="e.g. 'managed assets', 'prorated', 'Loss Recovery'"
       style="width:100%;max-width:620px;padding:11px 14px;font:500 14px var(--text);
              border:1px solid var(--line);border-radius:3px" value="${esc(searchQuery)}">
@@ -504,9 +504,9 @@ export function viewPacket(root, state, setState) {
   const pins = getPins();
   root.innerHTML = `
     <div class="viewhead"><h1>Packet</h1>
-      <div class="sub">Your pinned figures and views — reorder, then print to a
-        clean packet (the per-product decision memos remain the docx artifacts;
-        this packet is a browser-side print composition, nothing is uploaded
+      <div class="sub">Your pinned figures and views. Reorder, then print to a
+        clean packet. The per-product decision memos remain the docx artifacts,
+        and this packet is a browser-side print composition (nothing is uploaded
         anywhere).</div></div>
     <div style="display:flex;gap:8px;margin-bottom:12px">
       <button class="btn ghost" id="pinview">Pin current selections as a view</button>
@@ -514,8 +514,7 @@ export function viewPacket(root, state, setState) {
       ${T.memos.includes(state.product) ? `<a class="btn ghost"
         href="memos/${state.product}_decision_memo.docx" download>Decision memo (docx) ↓</a>` : ""}
     </div>
-    <div id="pinlist">${pins.length ? "" : `<p class="cap">Nothing pinned yet —
-      use the ⌖ buttons on evaluation cells, or 'Pin current selections'.</p>`}</div>`;
+    <div id="pinlist">${pins.length ? "" : `<p class="cap">Nothing pinned yet. Use the ⌖ buttons on evaluation cells, or 'Pin current selections'.</p>`}</div>`;
   const list = root.querySelector("#pinlist");
   pins.forEach((p, i) => {
     const row = document.createElement("div");
@@ -606,7 +605,7 @@ export function initPalette(setState, VIEWS) {
       }
     }
     if ("funnel".includes(ql) && ql.length >= 3) {
-      out.push({ kind: "command", label: "The Funnel — universe → evaluated → verified",
+      out.push({ kind: "command", label: "The Funnel: universe → evaluated → verified",
         run: () => setState({ view: "funnel" }) });
     }
     // cell id + product ("2.1 hl_paf" or "hl 2.1")
@@ -615,7 +614,7 @@ export function initPalette(setState, VIEWS) {
       const cid = cellM[1];
       for (const k of PRODUCTS) {
         if (T.cell_registry[cid] && (ql.includes(k.split("_")[0]) || ql.includes(k))) {
-          out.push({ kind: "cell", label: `${cid} ${T.cell_registry[cid]} — ${shortName(k)}`,
+          out.push({ kind: "cell", label: `${cid} ${T.cell_registry[cid]} (${shortName(k)})`,
             run: () => { setState({ view: "evaluation", product: k });
               setTimeout(() => document.getElementById(`f${cid.split(".")[0]}`)
                 ?.scrollIntoView({ block: "start" }), 60); } });
@@ -690,7 +689,7 @@ export function viewCohorts(root, state, setState) {
     if (!f) return `<td class="cap">—</td>`;
     if (f.value === null || f.value === undefined) {
       const rsn = String(f.reason || "no value");
-      return `<td><span class="cap" title="${esc(rsn)}">n/a — ${esc(rsn.length > 46 ? rsn.slice(0, 46) + "…" : rsn)}</span></td>`;
+      return `<td><span class="cap" title="${esc(rsn)}">n/a: ${esc(rsn.length > 46 ? rsn.slice(0, 46) + "…" : rsn)}</span></td>`;
     }
     let v = f.value;
     if (typeof v === "object") {
@@ -722,7 +721,7 @@ export function viewCohorts(root, state, setState) {
 
   root.innerHTML = `
     <div class="viewhead"><h1>Cohort: ${esc(C.label)}</h1>
-      <div class="sub">n=${C.n} · membership is an argued judgment — every
+      <div class="sub">n=${C.n} · membership is an argued judgment: every
         rationale below, every exclusion logged. Cohorts:
         ${Object.keys(T.cohorts).map((c) =>
           `<a href="#" data-cohort="${c}" style="margin-right:9px;${c === cid ? "font-weight:700" : ""}">${esc(c)}</a>`).join("")}</div></div>
@@ -747,7 +746,7 @@ export function viewCohorts(root, state, setState) {
         ${esc(comp.reason)}</div>`
       : `<div class="chartbox"><div id="compchart"></div>
          <div class="chartnote">${esc(comp.granularity)} · ${esc(comp.weighting)}.
-           Per-row membership shown in the tooltip; rows require ≥2 reporting members.</div></div>`}
+           Per-row membership is shown in the tooltip. Rows require ≥2 reporting members.</div></div>`}
     <h2 style="margin:18px 0 6px">Membership rationales</h2>
     ${members.map((k) => `<div class="cellrow"><div class="head">
         <span class="el">${esc(T.products[k].fund_name)}</span>

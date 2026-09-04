@@ -15,7 +15,7 @@ out = {"method_notes": {
     "monthly_resample": "last observation per calendar month",
     "returns": "simple period returns on adj_close (total-return proxy incl. distributions)",
     "desmoothing": "Geltner AR(1): r_true_t = (r_obs_t - rho * r_obs_t-1) / (1 - rho), rho = lag-1 autocorrelation",
-    "caveat": "Yahoo adj_close approximates distribution reinvestment; official fund TR calcs may differ modestly - flagged for CF2 cross-check vs fund fact sheets",
+    "caveat": "Yahoo adj_close approximates distribution reinvestment. Official fund TR calcs may differ modestly (flagged for CF2 cross-check vs fund fact sheets)",
 }}
 
 # ---------------- CCLFX ----------------
@@ -65,8 +65,8 @@ out["dxyz"] = {
     "cumulative_since_listing_pct": round((cumulative_growth(period_returns(vals)) - 1) * 100, 1),
 }
 print("\n=== DXYZ (close, daily) ===")
-print(f"  listed {d[0][0]} at {vals[0]}; peak {vals[peak_i]} on {d[peak_i][0]}; "
-      f"trough {vals[trough_i]} on {d[trough_i][0]}; last {vals[-1]}")
+print(f"  listed {d[0][0]} at {vals[0]}, peak {vals[peak_i]} on {d[peak_i][0]}, "
+      f"trough {vals[trough_i]} on {d[trough_i][0]}, last {vals[-1]}")
 print(f"  MAX DRAWDOWN {out['dxyz']['max_drawdown_pct']}% | ann vol {out['dxyz']['ann_vol_daily_pct']}% | "
       f"cumulative since listing {out['dxyz']['cumulative_since_listing_pct']}%")
 

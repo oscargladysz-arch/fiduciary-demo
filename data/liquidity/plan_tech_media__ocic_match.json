@@ -3,11 +3,11 @@
   "plan": "plan_tech_media",
   "verdict": "conditional",
   "reasons": [
-    "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
-    "Capacity: 4x per year at 5.0% of outstanding shares per quarter (Rule 13e-4 issuer tenders, board-discretionary, may suspend or terminate at any time) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
-    "Scenario demand (illustrative): 10.4% of the position per year vs 20% annual wrapper capacity \u2014 adequate headroom at this allocation if offers are not prorated.",
-    "Cadence reliability evidence: 12 consecutive quarterly tenders completed FY2023-FY2025, no disclosed suspension; demand accelerating (FY2025 repurchases ~$2.00B vs $639M FY2024; May 2026 offer sized at the full 5% cap); shares TENDERED vs repurchased not disclosed - proration cannot be ruled out from filings (3.3).",
-    "Early repurchase economics: none - N-2 fee table shows no early withdrawal charge for any class (2.7) \u2014 relevant to participant-level churn (2.7)."
+    "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity, whereas this wrapper deals 4x/year. Direct DIA use requires a bridging structure: CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
+    "Capacity: 4x per year at 5.0% of outstanding shares per quarter (Rule 13e-4 issuer tenders, board-discretionary, may suspend or terminate at any time). This is a FUND-level cap, and at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
+    "Scenario demand (illustrative): 10.4% of the position per year vs 20% annual wrapper capacity. Adequate headroom at this allocation if offers are not prorated.",
+    "Cadence reliability evidence: 12 consecutive quarterly tenders completed FY2023-FY2025, no disclosed suspension. Demand accelerating (FY2025 repurchases ~$2.00B vs $639M FY2024, May 2026 offer sized at the full 5% cap). Shares TENDERED vs repurchased not disclosed, so proration cannot be ruled out from filings (3.3).",
+    "Early repurchase economics: none - N-2 fee table shows no early withdrawal charge for any class (2.7). Relevant to participant-level churn (2.7)."
   ],
   "stressed_scenario": {
     "illustrative": true,
@@ -28,7 +28,7 @@
     "gate_history": false,
     "early_fee": "none - N-2 fee table shows no early withdrawal charge for any class (2.7)",
     "source_cell": "3.1 + 3.3",
-    "history": "12 consecutive quarterly tenders completed FY2023-FY2025, no disclosed suspension; demand accelerating (FY2025 repurchases ~$2.00B vs $639M FY2024; May 2026 offer sized at the full 5% cap); shares TENDERED vs repurchased not disclosed - proration cannot be ruled out from filings (3.3)"
+    "history": "12 consecutive quarterly tenders completed FY2023-FY2025, no disclosed suspension. Demand accelerating (FY2025 repurchases ~$2.00B vs $639M FY2024, May 2026 offer sized at the full 5% cap). Shares TENDERED vs repurchased not disclosed, so proration cannot be ruled out from filings (3.3)"
   },
   "scenario": {
     "allocation_pct_of_plan": 5.0,

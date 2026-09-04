@@ -5,27 +5,27 @@
     "cliffwater_cclfx": {
       "wrapper_type": "interval_23c3",
       "depth": "full",
-      "membership_rationale": "Direct corporate lending in a Rule 23c-3 interval wrapper - the cohort's reference member; daily NAV, quarterly obligated liquidity."
+      "membership_rationale": "Direct corporate lending in a Rule 23c-3 interval wrapper, the cohort's reference member. Daily NAV, quarterly obligated liquidity."
     },
     "bcred": {
       "wrapper_type": "nontraded_bdc",
       "depth": "cohort",
-      "membership_rationale": "Direct-lending private credit in a non-traded BDC chassis - same strategy as cclfx on different plumbing (150% asset-coverage leverage, discretionary quarterly tenders, monthly NAV); admitted deliberately cross-wrapper so the caveat machinery has real work."
+      "membership_rationale": "Direct-lending private credit in a non-traded BDC chassis: the same strategy as cclfx on different plumbing (150% asset-coverage leverage, discretionary quarterly tenders, monthly NAV). Admitted deliberately cross-wrapper so the caveat machinery has real work."
     },
     "pflex": {
       "wrapper_type": "interval_23c3",
       "depth": "cohort",
-      "membership_rationale": "Flexible multi-sector credit in the SAME wrapper as cclfx (interval, quarterly 5%) - wrapper twin, broader credit mandate (loans, structured, EM); mandate breadth is the disclosed mismatch."
+      "membership_rationale": "Flexible multi-sector credit in the SAME wrapper as cclfx (interval, quarterly 5%). A wrapper twin with a broader credit mandate (loans, structured, EM). Mandate breadth is the disclosed mismatch."
     },
     "cion_ares": {
       "wrapper_type": "interval_23c3",
       "depth": "cohort",
-      "membership_rationale": "Diversified credit in the cclfx/pflex wrapper (interval, quarterly 5%) - joins via the census promotion pipeline; dual-adviser CION+Ares structure and a leverage-inclusive Managed Assets fee base (1.89% of net assets at FY2025 leverage) widen the cohort's fee-base axis; daily Class I NAV (CADUX)."
+      "membership_rationale": "Diversified credit in the cclfx/pflex wrapper (interval, quarterly 5%). Joins via the census promotion pipeline. The dual-adviser CION+Ares structure and a leverage-inclusive Managed Assets fee base (1.89% of net assets at FY2025 leverage) widen the cohort's fee-base axis. Daily Class I NAV (CADUX)."
     },
     "ocic": {
       "wrapper_type": "nontraded_bdc",
       "depth": "cohort",
-      "membership_rationale": "Perpetual non-traded BDC running quarterly 13e-4 tenders - bcred's closest structural twin, admitted via the census promotion pipeline (46 SC TO-I filings as T1 cadence evidence; Owl Rock -> Blue Owl rename verified in the SEC record)."
+      "membership_rationale": "Perpetual non-traded BDC running quarterly 13e-4 tenders, bcred's closest structural twin. Admitted via the census promotion pipeline (46 SC TO-I filings as T1 cadence evidence, Owl Rock -> Blue Owl rename verified in the SEC record)."
     }
   },
   "n": 5,
@@ -118,13 +118,13 @@
       },
       "missing": {
         "cliffwater_cclfx": "net assets ~$31.26B printed, but the carrying cells (1.1/3.6) are partial - verification unlocks this fact",
-        "bcred": "aggregate net assets not yet carried into a typed cell; verification-queue item"
+        "bcred": "aggregate net assets not yet carried into a typed cell. Verification-queue item"
       }
     }
   },
   "composite": {
     "refused": false,
-    "granularity": "annual (fiscal years as filed; year-end months differ across members and are disclosed per row)",
+    "granularity": "annual (fiscal years as filed, with year-end months that differ across members and are disclosed per row)",
     "weighting": "equal-weight across members reporting that year",
     "rows": [
       {

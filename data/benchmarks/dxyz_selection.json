@@ -21,7 +21,7 @@
         "data_quality 2/2: daily series",
         "provider_independence 2/2: provider unaffiliated with the fund"
       ],
-      "rejection": "fund price is premium/discount-driven and decoupled from NAV; benchmarking the price benchmarks the premium, not the portfolio"
+      "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     },
     {
       "candidate": "S&P 500 investable proxy (SPY)",
@@ -36,7 +36,7 @@
         "data_quality 2/2: daily series",
         "provider_independence 2/2: provider unaffiliated with the fund"
       ],
-      "rejection": "fund price is premium/discount-driven and decoupled from NAV; benchmarking the price benchmarks the premium, not the portfolio"
+      "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     },
     {
       "candidate": "Peer cohort: venture (dxyz, ssss, arkvx)",
@@ -51,7 +51,7 @@
         "data_quality 0/2: none series",
         "provider_independence 2/2: provider unaffiliated with the fund"
       ],
-      "rejection": "fund price is premium/discount-driven and decoupled from NAV; benchmarking the price benchmarks the premium, not the portfolio"
+      "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     }
   ],
   "escalation": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from available data. Required next: public NAV series (quarterly filings) plus a premium/NAV decomposition before any comparator is defensible."

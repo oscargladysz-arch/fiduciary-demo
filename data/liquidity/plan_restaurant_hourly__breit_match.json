@@ -3,11 +3,11 @@
   "plan": "plan_restaurant_hourly",
   "verdict": "conditional-weak",
   "reasons": [
-    "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 12x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
-    "Capacity: 12x per year at 2.0% of aggregate NAV (monthly; 5% quarterly) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
-    "Scenario demand (illustrative): 9.2% of the position per year vs 24% annual wrapper capacity \u2014 adequate headroom at this allocation if offers are not prorated.",
-    "Gating precedent: this issuer has prorated repurchases when requests exceeded caps (3.3) \u2014 capacity on paper has failed in stress before.",
-    "Early repurchase economics: Early Repurchase Deduction: repurchased at 98% of transaction price if held < 1 year (2.7) \u2014 relevant to participant-level churn (2.7)."
+    "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity, whereas this wrapper deals 12x/year. Direct DIA use requires a bridging structure: CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
+    "Capacity: 12x per year at 2.0% of aggregate NAV (monthly, 5% quarterly). This is a FUND-level cap, and at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
+    "Scenario demand (illustrative): 9.2% of the position per year vs 24% annual wrapper capacity. Adequate headroom at this allocation if offers are not prorated.",
+    "Gating precedent: this issuer has prorated repurchases when requests exceeded caps (3.3). Capacity on paper has failed in stress before.",
+    "Early repurchase economics: Early Repurchase Deduction: repurchased at 98% of transaction price if held < 1 year (2.7). Relevant to participant-level churn (2.7)."
   ],
   "stressed_scenario": {
     "illustrative": true,
@@ -15,7 +15,7 @@
     "annual_demand_usd": 13216612,
     "demand_pct_of_position": 16.7,
     "annual_wrapper_capacity_pct": 24.0,
-    "outcome": "within wrapper capacity (16.7% vs 24%) IF offers are not prorated \u2014 but this issuer HAS prorated under stress (3.3)"
+    "outcome": "within wrapper capacity (16.7% vs 24%) IF offers are not prorated, but this issuer HAS prorated under stress (3.3)"
   },
   "plan_display_label": "US casual-dining restaurant group 401(k) plan (~$1.6B, FL)",
   "plan_direction": "total",
@@ -23,7 +23,7 @@
     "kind": "share_repurchase_plan",
     "cadence_per_year": 12,
     "cap_pct": 2.0,
-    "cap_base": "aggregate NAV (monthly; 5% quarterly)",
+    "cap_base": "aggregate NAV (monthly, 5% quarterly)",
     "exchange": false,
     "gate_history": true,
     "early_fee": "Early Repurchase Deduction: repurchased at 98% of transaction price if held < 1 year (2.7)",

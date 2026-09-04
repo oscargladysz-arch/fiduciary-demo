@@ -42,8 +42,8 @@ def dxyz_premium() -> dict:
         "latest_nav_period_end": latest.get("period_end"),
         "premium_pct_vs_latest_filed_nav": round(prem, 1),
         "filed_premium_range_pct": [min(lows), max(highs)],
-        "note": "premium computed vs the most recent FILED quarterly NAV - the "
-                "live NAV is unobservable between filings; filed range from the "
+        "note": "premium computed vs the most recent FILED quarterly NAV (the "
+                "live NAV is unobservable between filings). Filed range from the "
                 "fund's own prospectus table",
         "inputs": ["data/series/dxyz.csv",
                    "data/analytics/dxyz_nav_quarterly.json"],
@@ -188,8 +188,8 @@ def ssss_premium() -> dict | None:
         "latest_printed_nav": nav_v, "latest_nav_date": nav_d,
         "premium_pct_vs_latest_printed_nav": round((last_close / nav_v - 1) * 100, 1),
         "premium_pct_at_each_printed_quarter": hist,
-        "note": "price at-or-before each printed quarter-end NAV; a persistent "
-                "DISCOUNT is this fund's premium/discount signature - the "
+        "note": "price at-or-before each printed quarter-end NAV. A persistent "
+                "DISCOUNT is this fund's premium/discount signature, the "
                 "mirror image of dxyz's premium",
         "inputs": ["data/series/nslr.csv", "data/series_quarterly/ssss_nav.csv"],
     }

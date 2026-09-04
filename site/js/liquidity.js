@@ -34,12 +34,12 @@ export function scenarioReason(sc) {
   if (sc.annual_wrapper_capacity_pct === null) return null;
   const head = `Scenario demand (illustrative): ${sc.demand_pct_of_position.toFixed(1)}% ` +
     `of the position per year vs ${sc.annual_wrapper_capacity_pct.toFixed(0)}% ` +
-    `annual wrapper capacity — `;
+    `annual wrapper capacity. `;
   return head + (sc.thin_headroom
-    ? "THIN HEADROOM: demand consumes over 60% of wrapper capacity; " +
-      "proration in any oversubscribed quarter would push the shortfall " +
+    ? "THIN HEADROOM: demand consumes over 60% of wrapper capacity. " +
+      "Proration in any oversubscribed quarter would push the shortfall " +
       "into the next window."
-    : "adequate headroom at this allocation if offers are not prorated.");
+    : "Adequate headroom at this allocation if offers are not prorated.");
 }
 
 window.TarkLiquidity = { computeScenario, scenarioReason };

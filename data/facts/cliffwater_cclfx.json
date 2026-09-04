@@ -2,8 +2,8 @@
   "product_key": "cliffwater_cclfx",
   "cohort_id": "private_credit",
   "depth": "full",
-  "membership_rationale": "Direct corporate lending in a Rule 23c-3 interval wrapper - the cohort's reference member; daily NAV, quarterly obligated liquidity.",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "membership_rationale": "Direct corporate lending in a Rule 23c-3 interval wrapper, the cohort's reference member. Daily NAV, quarterly obligated liquidity.",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -24,7 +24,7 @@
     "incentive_fee": {
       "value": null,
       "source_cell": "2.2",
-      "reason": "cell 2.2 is partial: no incentive fee identified in the fee note; prospectus confirmation pending (verification queue)",
+      "reason": "cell 2.2 is partial: no incentive fee identified in the fee note. Prospectus confirmation pending (verification queue)",
       "status": "partial"
     },
     "early_repurchase": {
@@ -53,13 +53,13 @@
     "gate_history": {
       "value": null,
       "source_cell": "3.3",
-      "reason": "N-23C3A filings are offer NOTIFICATIONS, not results; per-offer proration outcomes not yet evidenced",
+      "reason": "N-23C3A filings are offer NOTIFICATIONS, not results. Per-offer proration outcomes not yet evidenced",
       "status": "fetched-series, extraction pending"
     },
     "tax_form": {
       "value": null,
       "source_cell": "6.4",
-      "reason": "form number not printed in any on-disk filing; RIC status implies 1099 but the cell is partial",
+      "reason": "form number not printed in any on-disk filing. RIC status implies 1099 but the cell is partial",
       "status": "partial"
     },
     "auditor": {
@@ -75,7 +75,7 @@
     "expense_ratio_pct": {
       "value": 1.36,
       "source_cell": "2.3",
-      "note": "FY2026 before waivers, EXCLUDING interest expense; 3.31% including interest",
+      "note": "FY2026 before waivers, EXCLUDING interest expense. 3.31% including interest",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

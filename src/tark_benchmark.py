@@ -165,8 +165,8 @@ STRATEGY_MENU = {
         {"id": "bkln", "name": "Senior loan investable proxy (BKLN, for Morningstar LSTA class)",
          "lane": "B", "series": "bkln", "provider": "Invesco / Morningstar LSTA class",
          "independent": True, "data": "daily", "strategy_match": 2,
-         "match_note": "broadly syndicated loans vs direct lending - close cousin, not twin; "
-                       "fund itself declares NO benchmark (5.1) - engine constructs"},
+         "match_note": "broadly syndicated loans vs direct lending (close cousin, not twin). "
+                       "Fund itself declares NO benchmark (5.1), so the engine constructs one"},
         {"id": "cdli", "name": "Cliffwater Direct Lending Index (CDLI)",
          "lane": "B", "series": None, "provider": "Cliffwater (the Fund's own adviser)",
          "independent": False, "data": "quarterly-manual", "strategy_match": 3,
@@ -176,8 +176,8 @@ STRATEGY_MENU = {
          "lane": "C", "series": None, "provider": "constructed (Tark cohort engine)",
          "independent": True, "data": "annual", "strategy_match": 3,
          "match_note": "n=5 equal-weight annual composite on printed FY "
-                       "returns (data/cohorts/private_credit.json); "
-                       "cross-wrapper mix (interval + BDC) disclosed in the "
+                       "returns (data/cohorts/private_credit.json). "
+                       "Cross-wrapper mix (interval + BDC) disclosed in the "
                        "cohort caveat block"},
         {"id": "pme_bkln", "name": "PME / Direct Alpha vs BKLN",
          "lane": "D", "series": "bkln", "provider": "constructed (Tark)",
@@ -203,9 +203,9 @@ STRATEGY_MENU = {
          "lane": "C", "series": None, "provider": "constructed (Tark cohort engine)",
          "independent": True, "data": "annual", "strategy_match": 3,
          "match_note": "n=5 equal-weight annual composite on printed FY returns "
-                       "(data/cohorts/evergreen_pe.json); fiscal year-ends "
+                       "(data/cohorts/evergreen_pe.json). Fiscal year-ends "
                        "differ and kkr_kpec joins cross-wrapper under the "
-                       "documented fallback - both disclosed in the caveat block"},
+                       "documented fallback, both disclosed in the caveat block"},
         {"id": "pme_psp", "name": "PME / Direct Alpha vs PSP",
          "lane": "D", "series": "psp", "provider": "constructed (Tark)",
          "independent": True, "data": "annual-window", "strategy_match": 2,
@@ -263,8 +263,8 @@ STRATEGY_MENU = {
         {"id": "odce", "name": "NCREIF Fund Index - ODCE (private core RE)",
          "lane": "B", "series": None, "provider": "NCREIF",
          "independent": True, "data": "quarterly-manual", "strategy_match": 3,
-         "match_note": "private open-end core RE funds - the strategy-exact "
-                       "yardstick; index data is member/subscription "
+         "match_note": "private open-end core RE funds, the strategy-exact "
+                       "yardstick. Index data is member/subscription "
                        "distribution, series not held"},
         {"id": "cambridge_re", "name": "Cambridge Associates Real Estate benchmark",
          "lane": "B", "series": None, "provider": "Cambridge Associates",
@@ -274,9 +274,9 @@ STRATEGY_MENU = {
                                     "sreit, jll_ipt)",
          "lane": "C", "series": None, "provider": "constructed (Tark cohort engine)",
          "independent": True, "data": "annual", "strategy_match": 3,
-         "match_note": "n=3; equal-weight annual composite overlap currently "
-                       "one year (2025: breit + sreit; jll_ipt prints returns "
-                       "only as per-class ranges) - THIN, disclosed "
+         "match_note": "n=3. Equal-weight annual composite overlap currently "
+                       "one year (2025: breit + sreit, while jll_ipt prints returns "
+                       "only as per-class ranges). THIN, disclosed "
                        "(data/cohorts/nontraded_reit.json)"},
         {"id": "pme_vnq", "name": "PME / Direct Alpha vs VNQ",
          "lane": "D", "series": "vnq", "provider": "constructed (Tark)",
@@ -321,8 +321,8 @@ def score_candidate(profile: dict, cand: dict) -> dict:
     indep = 2 if cand["independent"] else 0
     if not cand["independent"]:
         reasons.append("provider_independence 0/2: index published by the fund's own "
-                       "adviser - a manufacturer-owned yardstick sits poorly with the "
-                       "rule's conflict-free ethos; usable as secondary color only")
+                       "adviser. A manufacturer-owned yardstick sits poorly with the "
+                       "rule's conflict-free ethos, so it is usable as secondary color only")
     else:
         reasons.append("provider_independence 2/2: provider unaffiliated with the fund")
 
@@ -396,14 +396,14 @@ def run_selection(product_key: str) -> dict:
         if s is primary or s is secondary:
             continue
         if decoupled:
-            why = ("fund price is premium/discount-driven and decoupled from NAV; "
-                   "benchmarking the price benchmarks the premium, not the portfolio")
+            why = ("fund price is premium/discount-driven and decoupled from NAV. "
+                   "Benchmarking the price benchmarks the premium, not the portfolio")
         elif s["score"] >= MIN_PRIMARY_SCORE:
             why = (f"outranked: score {s['score']}/{s['max']} vs primary "
                    f"{primary['score']}/{primary['max']}"
                    + (f" and secondary {secondary['score']}/{secondary['max']}"
                       if secondary else "")
-                   + " - only two slots; retained in log as viable alternate")
+                   + " (only two slots). Retained in log as viable alternate")
         else:
             why = (f"score {s['score']}/{s['max']} below primary threshold "
                    f"{MIN_PRIMARY_SCORE}")
@@ -422,7 +422,7 @@ def run_selection(product_key: str) -> dict:
             + ("Required next: public NAV series (quarterly filings) plus a "
                "premium/NAV decomposition before any comparator is defensible."
                if decoupled else
-               "All candidates scored below threshold; expand the candidate "
+               "All candidates scored below threshold. Expand the candidate "
                "menu or obtain licensed data before selection."))
     for slot in ("primary", "secondary"):
         if result[slot]:

@@ -154,7 +154,7 @@ export function openCite(rec, title) {
       <div class="v">${esc(rec.extracted_by || "—")}</div></div>
     <div class="f"><div class="k">Human verification</div>
       <div class="v">${rec.verified_by ? esc(rec.verified_by)
-        : "pending — a human verifies rows in data/evidence/*.csv and flips status to verified"}</div></div>`;
+        : "pending: a human verifies rows in data/evidence/*.csv and flips status to verified"}</div></div>`;
   d.classList.add("open");
 }
 window.addEventListener("click", (e) => {
@@ -162,7 +162,7 @@ window.addEventListener("click", (e) => {
   if (b) {
     const { key, cid } = b.dataset;
     const cell = T.products[key].cells[cid];
-    openCite(cell, `${cid} · ${cell.element} — ${T.products[key].fund_name}`);
+    openCite(cell, `${cid} · ${cell.element} (${T.products[key].fund_name})`);
   }
 });
 
@@ -195,11 +195,11 @@ export function productChart(container, key) {
   if (key === "breit" && T.series_monthly.breit_nav) {
     const pts = T.series_monthly.breit_nav;
     lineChart(container, {
-      series: [{ points: pts, label: "Monthly NAV per share, Class I — as PRINTED in the 10-K/10-Q",
+      series: [{ points: pts, label: "Monthly NAV per share, Class I, as PRINTED in the 10-K/10-Q",
         color: "#593380", width: 1.8, markers: true }],
       height: 260, yFormat: (v) => "$" + v.toFixed(1),
     });
-    return "monthly disclosure cadence — the fund's own printed NAV table (NAV path; distributions excluded)";
+    return "monthly disclosure cadence: the fund's own printed NAV table (NAV path, distributions excluded)";
   }
   const ann = T.series_annual[key];
   if (ann && ann.length) {
@@ -210,7 +210,7 @@ export function productChart(container, key) {
         color: "#593380", width: 1.8, markers: true }],
       height: 240, yFormat: (v) => "$" + v.toFixed(0),
     });
-    return "annual disclosure cadence — non-traded wrapper, no public daily series; fiscal-year figures as filed";
+    return "annual disclosure cadence: non-traded wrapper with no public daily series, fiscal-year figures as filed";
   }
   container.innerHTML = `<div class="nochart"><div class="k">No chartable public series</div>
     This wrapper publishes no public return series at any charted cadence.</div>`;
@@ -242,7 +242,7 @@ export function viewPlans(root, state, setState) {
   }).join("");
   root.innerHTML = `
     <div class="viewhead"><h1>Reference Plans</h1>
-      <div class="sub">Four real 401(k) plans from public Form 5500 filings — the
+      <div class="sub">Four real 401(k) plans from public Form 5500 filings. The
         selected plan drives every liquidity verdict.</div></div>
     <div class="cardgrid g2">${cards}</div>
     <p class="cap footer-rule">${esc(T.plans[state.plan].anonymization_rule)}</p>`;
@@ -310,10 +310,10 @@ export function viewEvaluation(root, state) {
         const k = statusKind(cell.status || "pending");
         let body;
         if (k === "n/a") {
-          body = `<div class="muted">not applicable / not public-sourceable —
+          body = `<div class="muted">not applicable / not public-sourceable:
             ${esc(disp.plain)}</div>`;
         } else if (!cell.value) {
-          body = `<div class="muted">pending — pointer in data/evidence/${esc(key)}_evidence.csv</div>`;
+          body = `<div class="muted">pending: pointer in data/evidence/${esc(key)}_evidence.csv</div>`;
         } else {
           body = `<div class="headline">${gloss(disp.headline)}</div>
             <div class="plain">${esc(disp.plain)}</div>
@@ -333,7 +333,7 @@ export function viewEvaluation(root, state) {
 
   root.innerHTML = `
     <div class="viewhead"><h1>Six-Factor Evaluation</h1>
-      <div class="sub">${esc(p.fund_name)} — ${gloss(p.wrapper)} · coverage
+      <div class="sub">${esc(p.fund_name)}, ${gloss(p.wrapper)} · coverage
         <b class="num">${esc(c.headline)}</b>
         ${T.facts_meta && T.facts_meta[key] ? `
           · <span class="chip ${T.facts_meta[key].depth === "full" ? "extracted" : "wrapper"}">${T.facts_meta[key].depth} depth</span>
@@ -381,7 +381,7 @@ export function viewBenchmarks(root, state, setState) {
         ${stat("Benchmark", `${comp.index_ann_pct}%<small>/yr</small>`)}
       </div>
       <div class="cap">${gloss("KS-PME")} and ${gloss("Direct Alpha")} on
-        appraisal-lagged NAVs are window-sensitive — disclosed, and explorable:
+        appraisal-lagged NAVs are window-sensitive, disclosed, and explorable:
         <a href="#" data-goto="pme">move the window yourself →</a>
         <span class="num">(${esc(comp.window)})</span></div>` : ""}
       <details style="margin-top:10px"><summary class="cap" style="cursor:pointer">Scoring rationale</summary>
@@ -401,10 +401,10 @@ export function viewBenchmarks(root, state, setState) {
   root.innerHTML = `
     <div class="viewhead"><h1>Benchmark Selection</h1>
       <div class="sub">${esc(p.fund_name)} · ${esc(sel.strategy)} · four lanes,
-        12-point rubric, threshold ${T.min_primary_score}/12 — and every
+        12-point rubric, threshold ${T.min_primary_score}/12, and every
         rejection on the record.</div></div>
     ${sel.escalation ? `<div class="notice">
-        <div class="notice-head">Formal escalation — no benchmark assigned</div>
+        <div class="notice-head">Formal escalation: no benchmark assigned</div>
         <div class="notice-body"><b>${esc(sel.escalation.split(".")[0])}.</b>
           ${esc(sel.escalation.split(".").slice(1).join(".").trim())}
           ${key === "dxyz" ? `<div style="margin-top:10px">
@@ -413,7 +413,7 @@ export function viewBenchmarks(root, state, setState) {
     <div class="cardgrid g2">${slotCard("primary", "PRIMARY")}${slotCard("secondary", "SECONDARY")}</div>
     <h2 style="margin:22px 0 6px">Rejection ledger</h2>
     <div class="cap" style="margin-bottom:8px">Every candidate not selected, with
-      its true reason and full rubric rationale — the other half of a defensible
+      its true reason and full rubric rationale: the other half of a defensible
       record.</div>
     <div class="tablewrap"><table class="grid ledger" id="rejtable">
       <thead><tr><th>#</th><th class="sortable" data-col="1">Candidate</th>
@@ -461,7 +461,7 @@ function labEmptyState(root, title, selected, available, what, setState, view, a
 export function viewPme(root, state, setState) {
   const prods = Object.keys(T.pme_profiles);
   if (!prods.includes(state.product)) {
-    labEmptyState(root, "Analysis Lab — benchmark swap", state.product, prods,
+    labEmptyState(root, "Analysis Lab: benchmark swap", state.product, prods,
       "return series the lab can recompute", setState, "pme", "data-labprod");
     return;
   }
@@ -476,15 +476,15 @@ export function viewPme(root, state, setState) {
   const fundDaily = prof.fund_series ? T.series[prof.fund_series] : null;
 
   root.innerHTML = `
-    <div class="viewhead"><h1>Analysis Lab — benchmark swap</h1>
+    <div class="viewhead"><h1>Analysis Lab: benchmark swap</h1>
       <div class="sub">${esc(p.fund_name)}: recompute PME / Direct Alpha against ANY
-        proxy and window — and the engine grades your choice beside the result.
+        proxy and window, and the engine grades your choice beside the result.
         Customization plus judgment, never instead of it.</div></div>
     ${prof.price_series_warning ? `<div class="banner red"><b>Price-series warning:</b>
       ${esc(prof.price_series_warning)}.</div>` : ""}
     <div class="banner amber"><span class="chip illustrative">USER-CONFIGURED ANALYSIS</span>
       Results below reflect YOUR proxy/window choice, not the engine's selection.
-      Appraisal-lagged NAVs are window-sensitive — the standing methodology
+      Appraisal-lagged NAVs are window-sensitive. The standing methodology
       disclosure applies to every recomputation on this screen.</div>
     <div class="cardgrid g2">
       <div class="card">
@@ -494,17 +494,17 @@ export function viewPme(root, state, setState) {
         <div class="cap">Proxy:
           ${Object.entries(T.proxy_library).map(([id, label]) =>
             `<label style="margin-right:10px"><input type="radio" name="proxy" value="${id}"
-              ${id === proxyId ? "checked" : ""}> ${esc(label.split(" — ")[0])}</label>`).join("")}
+              ${id === proxyId ? "checked" : ""}> ${esc(id.toUpperCase())}</label>`).join("")}
           <button class="copylink" data-copylink style="float:right">copy link</button></div>
         <div class="sliderrow"><label id="winlabel">Window start</label>
           <input type="range" id="winstart" min="0" max="1" value="0" step="1">
           <span class="out num" id="winout"></span></div>
         <div class="statrow">
-          ${stat("KS-PME", `<span id="pme_ks">—</span>`)}
-          ${stat("Direct Alpha", `<span id="pme_da">—</span><small>/yr</small>`)}
-          ${stat("Fund growth", `<span id="pme_fg">—</span>×`)}
-          ${stat("Proxy growth", `<span id="pme_ig">—</span>×`)}
-          ${stat("Window", `<span id="pme_win" style="font-size:12px">—</span>`)}
+          ${stat("KS-PME", `<span id="pme_ks"></span>`)}
+          ${stat("Direct Alpha", `<span id="pme_da"></span><small>/yr</small>`)}
+          ${stat("Fund growth", `<span id="pme_fg"></span>×`)}
+          ${stat("Proxy growth", `<span id="pme_ig"></span>×`)}
+          ${stat("Window", `<span id="pme_win" style="font-size:12px"></span>`)}
         </div>
         <div class="chartbox" style="border:0;padding:6px 0 0"><div id="pmechart"></div></div>
         <div class="chartnote" id="pmenote"></div>
@@ -514,7 +514,7 @@ export function viewPme(root, state, setState) {
         <div id="verdictbody"></div>
       </div>
     </div>
-    <h2 style="margin:18px 0 6px">Analysis tables <span class="cap">(vs selected proxy; Python-first math, parity-tested)</span></h2>
+    <h2 style="margin:18px 0 6px">Analysis tables <span class="cap">(vs selected proxy, Python-first math, parity-tested)</span></h2>
     <div class="cardgrid g2" id="tables"></div>`;
 
   root.querySelectorAll("[data-labprod]").forEach((a) => a.addEventListener("click",
@@ -535,14 +535,14 @@ export function viewPme(root, state, setState) {
       <div class="cap" style="margin-top:10px">${sel && sel.primary
         ? `Engine's actual selection for this product: <b>${esc(sel.primary.candidate)}</b>
            (${sel.primary.score}/12). Rejection ledger: <a href="#" data-goto-bench>view →</a>`
-        : `Engine outcome for this product: FORMAL ESCALATION — no benchmark assigned.
+        : `Engine outcome for this product: FORMAL ESCALATION, no benchmark assigned.
            <a href="#" data-goto-bench>see the notice →</a>`}</div>`;
   } else {
     vb.innerHTML = `<div class="banner amber" style="margin:0">
       <b>Off the engine's menu.</b> ${esc(verdict.verdict)}</div>
       <div class="cap" style="margin-top:8px">${sel && sel.primary
         ? `Engine's actual selection: <b>${esc(sel.primary.candidate)}</b> (${sel.primary.score}/12).`
-        : "Engine outcome: FORMAL ESCALATION — no benchmark assigned."}
+        : "Engine outcome: FORMAL ESCALATION, no benchmark assigned."}
         <a href="#" data-goto-bench>rubric & ledger →</a></div>`;
   }
   root.querySelectorAll("[data-goto-bench]").forEach((a) => a.addEventListener("click",
@@ -559,7 +559,7 @@ export function viewPme(root, state, setState) {
     starts = [prof.fy_window[0]];
     slider.disabled = true;
     root.querySelector("#winlabel").textContent =
-      "Window fixed — single disclosed ITD figure";
+      "Window fixed: single disclosed ITD figure";
   } else {
     const me = monthEndPoints(fundDaily).map(([d]) => d);
     starts = [fundDaily[0][0], ...me.slice(0, me.length - 13)];
@@ -623,9 +623,9 @@ export function viewPme(root, state, setState) {
       height: 280, yFormat: (v) => v.toFixed(2) + "×",
     });
     root.querySelector("#pmenote").textContent =
-      (hasFy ? "Fund line compounds disclosed fiscal-year returns (fiscal-step windows — annual is the honest granularity). "
-        : isAnnual ? "Single disclosed ITD figure — window fixed to the disclosure period. "
-        : "Fund growth daily-anchored; lines month-end sampled for drawing. ")
+      (hasFy ? "Fund line compounds disclosed fiscal-year returns (fiscal-step windows: annual is the honest granularity). "
+        : isAnnual ? "Single disclosed ITD figure: window fixed to the disclosure period. "
+        : "Fund growth daily-anchored. Lines month-end sampled for drawing. ")
       + "Same code path as the Python engine (parity-tested).";
     renderTables();
   }
@@ -644,7 +644,7 @@ export function viewPme(root, state, setState) {
       fundCal = calendarYearReturns(me);
       fundLabel = prof.price_series_warning ? "market price (premium-driven!)" : "Yahoo adjusted close (approximates NAV total return)";
       const eps = drawdownEpisodes(me, 3);
-      ddHtml = `<div class="card"><h3>Drawdowns — top ${eps.length} episodes</h3>
+      ddHtml = `<div class="card"><h3>Drawdowns: top ${eps.length} episodes</h3>
         <table class="grid" style="margin-top:6px"><thead><tr><th>Peak</th><th>Trough</th>
           <th>Depth</th><th>Recovered</th></tr></thead><tbody>
         ${eps.map((e) => `<tr><td class="num">${e.peak_date}</td>
@@ -653,8 +653,8 @@ export function viewPme(root, state, setState) {
           <td class="num">${e.recovery_date || "not yet"}</td></tr>`).join("")}
         </tbody></table>
         <div class="cap" style="margin-top:6px">${prof.price_series_warning
-          ? "Price series — episodes are PREMIUM collapses, not portfolio losses."
-          : "Month-end sampled; appraisal smoothing understates true depth (see De-smoothing Lab)."}</div></div>`;
+          ? "Price series: episodes are PREMIUM collapses, not portfolio losses."
+          : "Month-end sampled. Appraisal smoothing understates true depth (see De-smoothing Lab)."}</div></div>`;
       const rets = periodReturns(me.map(([, v]) => v));
       if (rets.length >= 13) {
         const rr = rollingReturns(rets, 12);
@@ -662,7 +662,7 @@ export function viewPme(root, state, setState) {
         const dates = me.slice(13).map(([d]) => d);
         rollHtml = `<div class="card"><h3>Rolling 12-month</h3>
           <div id="rollchart"></div>
-          <div class="cap">Latest: return ${pct(rr[rr.length - 1])}, vol ${pct(rv[rv.length - 1])};
+          <div class="cap">Latest: return ${pct(rr[rr.length - 1])}, vol ${pct(rv[rv.length - 1])}.
             β vs ${proxyId.toUpperCase()} over common months:
             <b class="num">${beta(rets, periodReturns(idxMe.filter(([d]) => d >= me[0][0]).map(([, v]) => v))).toFixed(2)}</b></div></div>`;
         setTimeout(() => {
@@ -676,7 +676,7 @@ export function viewPme(root, state, setState) {
     } else if (key === "breit" && T.series_monthly.breit_nav) {
       const pts = T.series_monthly.breit_nav.filter(([d]) => d <= "2025-12-31");
       fundCal = calendarYearReturns(pts);
-      fundLabel = "NAV path (distributions EXCLUDED — understates total return)";
+      fundLabel = "NAV path (distributions EXCLUDED, understates total return)";
       const eps = drawdownEpisodes(pts, 3);
       ddHtml = `<div class="card"><h3>NAV-path drawdowns</h3>
         <table class="grid" style="margin-top:6px"><thead><tr><th>Peak</th><th>Trough</th>
@@ -686,15 +686,15 @@ export function viewPme(root, state, setState) {
           <td class="num" style="color:var(--alarm)">${pct(e.depth)}</td>
           <td class="num">${e.recovery_date || "not yet"}</td></tr>`).join("")}
         </tbody></table>
-        <div class="cap" style="margin-top:6px">Printed monthly NAV path, Class I —
-          distributions excluded; total-return drawdowns are smaller.</div></div>`;
+        <div class="cap" style="margin-top:6px">Printed monthly NAV path, Class I,
+          distributions excluded. Total-return drawdowns are smaller.</div></div>`;
     } else {
       const ann = T.series_annual[key] || [];
       const withTr = ann.filter((r) => r.total_return_pct);
       fundCal = withTr.map((r) => [r.fy_end.slice(0, 4) + " (FY)", +r.total_return_pct / 100]);
       fundLabel = "fiscal-year total returns as filed";
       ddHtml = `<div class="nochart"><div class="k">Drawdown / rolling tables unavailable</div>
-        Annual disclosure cadence — intra-year drawdowns and rolling 12-month
+        Annual disclosure cadence: intra-year drawdowns and rolling 12-month
         stats require a monthly-or-finer public series, which this wrapper does
         not publish (see cells 1.6/1.7).</div>`;
     }
@@ -739,7 +739,7 @@ export function viewLiquidity(root, state) {
 
   root.innerHTML = `
     <div class="viewhead"><h1>Liquidity Match</h1>
-      <div class="sub">${esc(p.fund_name)} × ${esc(m.plan_display_label)} — tail
+      <div class="sub">${esc(p.fund_name)} × ${esc(m.plan_display_label)}. Tail
         ${m.plan_inputs.tail_share_pct}% of accounts
         (${Math.round(m.plan_inputs.separated_with_balances).toLocaleString()}
         separated), plan direction: ${esc(m.plan_direction)}.</div></div>
@@ -749,8 +749,8 @@ export function viewLiquidity(root, state) {
     <div class="cardgrid g2">
       <div class="card">
         <h3>Capacity vs demand <span class="chip illustrative">ILLUSTRATIVE</span></h3>
-        <div class="cap">Wrapper capacity is a filed fact (cells ${esc(String(profile.source_cell))});
-          the demand model is an adjustable scenario, never presented as fact.</div>
+        <div class="cap">Wrapper capacity is a filed fact (cells ${esc(String(profile.source_cell))}).
+          The demand model is an adjustable scenario, never presented as fact.</div>
         <div class="sliderrow"><label>Plan allocation to product</label>
           <input type="range" id="s_alloc" min="1" max="10" step="0.5"
             value="${sc.allocation_pct_of_plan}"><span class="out" id="o_alloc"></span></div>
@@ -799,8 +799,8 @@ export function viewLiquidity(root, state) {
     };
     scnPanel.innerHTML = `<h3>Saved scenarios
         <span class="chip illustrative">ILLUSTRATIVE</span></h3>
-      <div class="cap">Named parameter sets live in YOUR browser (localStorage) —
-        compare up to three against the current sliders, per the selected
+      <div class="cap">Named parameter sets live in YOUR browser (localStorage).
+        Compare up to three against the current sliders, per the selected
         plan × product.</div>
       <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
         <input id="scnname" placeholder="scenario name" maxlength="24"
@@ -849,8 +849,8 @@ export function viewLiquidity(root, state) {
       <tr><td>Annual demand</td>
         ${cols.map(([, prm]) => `<td class="num">${money(computeScenario(m.plan_inputs, profile, prm).annual_demand_usd)}</td>`).join("")}</tr>
     </tbody></table></div>
-    <div class="cap" style="margin-top:4px">All columns ILLUSTRATIVE — parameter
-      choices, not facts; wrapper capacity ${profile.exchange ? "is market depth (listed)" :
+    <div class="cap" style="margin-top:4px">All columns ILLUSTRATIVE: parameter
+      choices, not facts. Wrapper capacity ${profile.exchange ? "is market depth (listed)" :
       (profile.cadence_per_year * profile.cap_pct).toFixed(0) + "%/yr (filed)"}.</div>`;
   }
 
@@ -874,7 +874,7 @@ export function viewLiquidity(root, state) {
     barChart(root.querySelector("#capchart"), {
       items: [
         { label: "Wrapper capacity (filed)", value: cap,
-          color: "#593380", note: "daily — exchange-listed" },
+          color: "#593380", note: "daily (exchange-listed)" },
         { label: "Scenario demand (illustrative)",
           value: out.demand_pct_of_position, color: "#92600d" },
         { label: "Stressed demand (illustrative)",
@@ -886,7 +886,7 @@ export function viewLiquidity(root, state) {
     const r = scenarioReason(out);
     root.querySelector("#o_reason").innerHTML =
       `<span class="num">${money(out.plan_allocation_usd)}</span> position ·
-       <span class="num">${money(out.annual_demand_usd)}</span>/yr demand — ` +
+       <span class="num">${money(out.annual_demand_usd)}</span>/yr demand. ` +
       esc(r ? r : "Exchange-listed: capacity is market depth, not a fund cap.") +
       ` <b>[ILLUSTRATIVE]</b>`;
   }
@@ -1013,11 +1013,11 @@ function nslrPanel(root) {
              `${Math.min(...sp.premium_pct_at_each_printed_quarter)}% – ${Math.max(...sp.premium_pct_at_each_printed_quarter)}%`)}
     </div>
     <div class="chartbox"><div id="nslrchart"></div>
-      <div class="chartnote">DXYZ trades at a PREMIUM to NAV; NSLR at a
-        persistent DISCOUNT — two listed venture vehicles, two opposite gaps,
+      <div class="chartnote">DXYZ trades at a PREMIUM to NAV, NSLR at a
+        persistent DISCOUNT. Two listed venture vehicles, two opposite gaps,
         one conclusion: the market price is not the portfolio. This is why the
         engine escalates BOTH rather than benchmarking either price
-        (data/analytics/supplement.json ssss_premium; both selection
+        (data/analytics/supplement.json ssss_premium and both selection
         artifacts).</div></div>`;
   lineChart(box.querySelector("#nslrchart"), {
     series: [
@@ -1044,9 +1044,9 @@ export function viewDxyz(root) {
   const dp = T.supplement.dxyz_premium;
 
   root.innerHTML = `
-    <div class="viewhead"><h1>DXYZ — Price vs NAV</h1>
+    <div class="viewhead"><h1>DXYZ: Price vs NAV</h1>
       <div class="sub">The market price is a premium series, not a portfolio
-        series — which is WHY the engine refused a benchmark.</div></div>
+        series, which is WHY the engine refused a benchmark.</div></div>
     <div class="statrow">
       ${stat("Peak close", "$" + peak.toFixed(2), peakDate)}
       ${stat("Drawdown from peak", dd.toFixed(1) + "%", "computed from price series")}
@@ -1058,7 +1058,7 @@ export function viewDxyz(root) {
     </div>
     <div class="chartbox"><div id="dxyzchart"></div>
       <div class="chartnote">Price: daily close (${px.length} obs). Red points:
-        the fund's own quarterly filed NAV per share. Log scale — the vertical
+        the fund's own quarterly filed NAV per share. Log scale: the vertical
         gap IS the ${gloss("premium/discount")}.</div></div>
     <h2 style="margin:18px 0 8px">Quarterly premium/(discount), as filed</h2>
     <div class="tablewrap"><table class="grid"><thead><tr>
@@ -1114,7 +1114,7 @@ export function viewDesmooth(root, state) {
       const bd = T.supplement.breit_monthly_diagnostics;
       return { rets: periodReturns(pts.map(([, v]) => v)),
                dates: pts.map(([d]) => d),
-               basis: "monthly NAV path as PRINTED in the 10-K (distributions excluded — appraisal-process diagnostic)",
+               basis: "monthly NAV path as PRINTED in the 10-K (distributions excluded, appraisal-process diagnostic)",
                price: false,
                committed: `pipeline: rho ${bd.lag1_autocorr_rho}, observed ${bd.nav_path_ann_vol_pct}% → de-smoothed ${bd.desmoothed_ann_vol_pct}% (data/analytics/supplement.json)` };
     };
@@ -1151,14 +1151,14 @@ export function viewDesmooth(root, state) {
       corrects appraisal lag. Exchange prices carry no appraisal lag, so the
       correction below is shown for contrast only, not as a risk estimate.</div>` : ""}
     <div class="viewhead"><h1>De-smoothing Lab</h1>
-      <div class="sub">Appraisal NAVs autocorrelate; ${gloss("de-smoothing")}
+      <div class="sub">Appraisal NAVs autocorrelate, and ${gloss("de-smoothing")}
         restores the volatility the pricing process hides. Available wherever a
-        monthly-or-finer public series exists — currently
+        monthly-or-finer public series exists, currently
         ${Object.keys(AVAILABLE).map((k) =>
           `<a href="#" data-dsprod="${k}" style="${k === key ? "font-weight:700" : ""}">${esc(T.products[k].fund_name)}</a>`).join(" · ")}.</div></div>
     <div class="statrow">
       ${stat("ρ in use", rho.toFixed(3), rhoOverride !== null
-        ? `USER OVERRIDE — estimated ρ is ${rhoEst.toFixed(3)}`
+        ? `USER OVERRIDE (estimated ρ is ${rhoEst.toFixed(3)})`
         : `estimated from n=${data.rets.length} monthly returns`)}
       ${stat("Observed ann. vol", volObs.toFixed(2) + "%")}
       ${stat("De-smoothed ann. vol", volDes.toFixed(2) + "%")}
@@ -1172,16 +1172,16 @@ export function viewDesmooth(root, state) {
         <span class="out num">${rhoUsed.toFixed(2)}</span></div>
       <datalist id="rhoticks"><option value="${rhoEst.toFixed(2)}" label="estimated"></option></datalist>
       <div class="cap">Estimated ρ (${rhoEst.toFixed(3)}) is marked on the track.
-        Dragging recomputes the correction under YOUR assumption — labeled
-        user-configured, never the record.
+        Dragging recomputes the correction under YOUR assumption (labeled
+        user-configured, never the record).
         ${rhoOverride !== null ? '<a href="#" id="rhoreset">reset to estimated</a>' : ""}
         <b>What de-smoothing can and cannot detect:</b> it corrects serial
-        correlation from appraisal lag; it cannot reveal risks the appraisals
-        never mark — stale-pricing bias, gating, or premium collapse.</div>
+        correlation from appraisal lag. It cannot reveal risks the appraisals
+        never mark: stale-pricing bias, gating, or premium collapse.</div>
     </div>
     <div class="chartbox"><div id="dschart"></div>
       <div class="chartnote">${esc(data.basis)}. r*_t = (r_t − ρ·r_{t−1}) / (1 − ρ),
-        recomputed live with the parity-tested port; committed record —
+        recomputed live with the parity-tested port. Committed record:
         ${esc(data.committed)}.</div></div>
     <h2 style="margin:18px 0 4px">Where this diagnostic cannot run</h2>
     <div class="cap">Availability honesty: the reason renders where the chart

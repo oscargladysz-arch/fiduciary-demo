@@ -72,7 +72,12 @@ dataset row cited — no model judgment was involved, so mis-transcription
 risk is the only failure mode. They rank BELOW every extracted-unverified
 cell: verify them last, by spot-checking the cited dataset row.
 
-- promoted products' `structured` prefills (4.5 auditor flag, 4.6 NAV-error
-  flag, 1.10 unlisted n/a) — spot-check against the cited N-CEN accession
+- As of 2026-09-04 the record carries 1 `structured` cell: cion_ares 4.6
+  (N-CEN NAV-error flag, IS_NAV_ERROR_CORRECTED=N for the period ended
+  31-DEC-2025). Spot-check it against the cited N-CEN dataset row. The
+  other census prefills were superseded: ocic 4.5, ocic 4.6 and cion_ares
+  4.5 were re-extracted from the filings on 2026-08-25 and sit in the
+  extracted-unverified queue above, and 1.10 for both products is `n/a`
+  (documented unavailable, unlisted), which is not a verification item.
 - census.json itself is validated mechanically (src/validate_census.py);
   it is T1 by construction and does not enter this queue cell-by-cell

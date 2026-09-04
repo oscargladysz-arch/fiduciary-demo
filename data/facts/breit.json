@@ -3,7 +3,7 @@
   "cohort_id": "nontraded_reit",
   "depth": "full",
   "membership_rationale": "Non-traded monthly-NAV REIT with 2%/5% repurchase plan - the cohort's reference member.",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -26,10 +26,10 @@
         "present": true,
         "rate_pct": 12.5,
         "hurdle_pct": 5.0,
-        "structure": "performance participation, 100% catch-up; FY2024 hurdle MISS produced a $105.0M shortfall obligation (2.2)"
+        "structure": "performance participation, 100% catch-up. FY2024 hurdle MISS produced a $105.0M shortfall obligation (2.2)"
       },
       "source_cell": "2.4",
-      "note": "rate/hurdle printed in cell 2.4's fee-structure discussion; mechanics + shortfall in 2.2 (partial)",
+      "note": "rate/hurdle printed in cell 2.4's fee-structure discussion. Mechanics and shortfall in 2.2 (partial)",
       "status": "extracted-unverified"
     },
     "early_repurchase": {
@@ -50,7 +50,7 @@
     "repurchase_cap_pct": {
       "value": 2.0,
       "source_cell": "3.1",
-      "note": "monthly; 5% quarterly",
+      "note": "monthly, with 5% quarterly",
       "status": "extracted-unverified"
     },
     "repurchase_cap_base": {
@@ -61,13 +61,13 @@
     "gate_history": {
       "value": true,
       "source_cell": "3.3",
-      "note": "prorated repurchases 2022-24; FY2025 fulfilled 100%",
+      "note": "prorated repurchases 2022-24. FY2025 fulfilled 100%",
       "status": "extracted-unverified"
     },
     "tax_form": {
       "value": null,
       "source_cell": "6.4",
-      "reason": "form number not printed in on-disk 10-K/10-Q; REIT status implies 1099-DIV but the cell is partial",
+      "reason": "form number not printed in on-disk 10-K/10-Q. REIT status implies 1099-DIV but the cell is partial",
       "status": "partial"
     },
     "auditor": {
@@ -83,19 +83,19 @@
     "expense_ratio_pct": {
       "value": null,
       "source_cell": "2.9",
-      "reason": "no TER line item exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
+      "reason": "no TER line item exists for this '34-Act wrapper. Components in 2.1/2.2/2.6",
       "status": "computed"
     },
     "net_assets_usd": {
       "value": null,
       "source_cell": "1.1",
-      "reason": "aggregate NAV printed in the MD&A NAV-by-class table but not yet carried into a typed cell; verification-queue item",
+      "reason": "aggregate NAV printed in the MD&A NAV-by-class table but not yet carried into a typed cell. Verification-queue item",
       "status": "extracted-unverified"
     },
     "inception": {
       "value": null,
       "source_cell": "6.4",
-      "reason": "explicit Class I inception date not printed in on-disk filings; ITD basis year (2017 REIT election) sits in partial cell 6.4",
+      "reason": "explicit Class I inception date not printed in on-disk filings. ITD basis year (2017 REIT election) sits in partial cell 6.4",
       "status": "partial"
     },
     "affe": {
@@ -110,7 +110,7 @@
       "value": null,
       "source_cell": "6.4",
       "status": "partial",
-      "reason": "explicit Class I inception date not printed in on-disk filings; ITD basis year (2017 REIT election) sits in partial cell 6.4"
+      "reason": "explicit Class I inception date not printed in on-disk filings. ITD basis year (2017 REIT election) sits in partial cell 6.4"
     },
     "primary_benchmark_id": {
       "value": "vnq",

@@ -15,7 +15,7 @@
     "kkr_kpec": {
       "wrapper_type": "nontraded_llc",
       "depth": "full",
-      "membership_rationale": "'34-Act conglomerate of controlled PE businesses - joins under the authorized fallback (its Reg D twins have no public filings); cross-wrapper caveats carried by the cohort caveat block."
+      "membership_rationale": "'34-Act conglomerate of controlled PE businesses. Joins under the authorized fallback (its Reg D twins have no public filings). Cross-wrapper caveats carried by the cohort caveat block."
     },
     "ares_pmf": {
       "wrapper_type": "tender_offer",
@@ -73,7 +73,7 @@
         "amg_pantheon": 5.0
       },
       "missing": {
-        "ares_pmf": "offer sizes are board-set per quarter (Rule 13e-4 tenders); no standing percentage cap is printed"
+        "ares_pmf": "offer sizes are board-set per quarter (Rule 13e-4 tenders). No standing percentage cap is printed"
       }
     },
     "repurchase_cadence_per_year": {
@@ -118,14 +118,14 @@
         "kkr_kpec": 9500000000
       },
       "missing": {
-        "ares_pmf": "aggregate net assets not yet carried into a typed cell; verification-queue item",
-        "amg_pantheon": "aggregate net assets not yet carried into a typed cell; verification-queue item"
+        "ares_pmf": "aggregate net assets not yet carried into a typed cell. Verification-queue item",
+        "amg_pantheon": "aggregate net assets not yet carried into a typed cell. Verification-queue item"
       }
     }
   },
   "composite": {
     "refused": false,
-    "granularity": "annual (fiscal years as filed; year-end months differ across members and are disclosed per row)",
+    "granularity": "annual (fiscal years as filed, with year-end months that differ across members and are disclosed per row)",
     "weighting": "equal-weight across members reporting that year",
     "rows": [
       {
