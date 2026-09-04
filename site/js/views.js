@@ -394,6 +394,7 @@ export function viewBenchmarks(root, state, setState) {
         appraisal-lagged NAVs are window-sensitive, disclosed, and explorable:
         <a href="#" data-goto="pme">move the window yourself →</a>
         <span class="num">(${esc(comp.window)}${comp.window_note ? `, ${esc(comp.window_note)}` : ""})</span>
+        ${comp.low_confidence ? ` <span class="chip illustrative">${esc(comp.low_confidence)}</span>` : ""}
         ${comp.alignment_note ? ` <span>Lane C composite, ${esc(comp.alignment_note)}.</span>` : ""}</div>`
       : s.comparison_note ? `<div class="cap">Comparison not computable on held data: ${esc(s.comparison_note)}.${
           s.comparison_note.includes("proxy series")

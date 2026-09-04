@@ -645,6 +645,11 @@ with sync_playwright() as pw:
     # not the first trading day after it, the same anchor the PME uses
     check("breit selection exists with VNQ primary",
           "Listed REIT investable proxy" in t and "0.9064" in t)
+    t_s = view_text("benchmarks", product="sreit")
+    check("sreit: one-year comparison window labeled low confidence on the card",
+          "low confidence" in t_s.lower() and "shorter than 3 years" in t_s)
+    t_c = view_text("benchmarks", product="cliffwater_cclfx")
+    check("cclfx: no low-confidence label on its windows", "low confidence" not in t_c.lower())
     check("breit ODCE secondary with honest data caveat",
           "ODCE" in t)
     t = view_text("desmooth", product="breit")

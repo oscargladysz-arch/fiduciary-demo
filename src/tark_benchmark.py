@@ -31,6 +31,17 @@ from tark_data import DATA, load_series
 
 MIN_PRIMARY_SCORE = 7
 RUBRIC_MAX = 12
+LOW_CONFIDENCE_YEARS = 3.0   # a comparison window shorter than this is labeled
+
+
+def low_confidence(window_years: float, unit: str = "year") -> str | None:
+    """The label a short window carries on the card and in the memo (P1-14),
+    or None at or above LOW_CONFIDENCE_YEARS."""
+    if window_years >= LOW_CONFIDENCE_YEARS:
+        return None
+    n = round(window_years, 2)
+    shown = f"{int(n)}" if float(n).is_integer() else f"{n}"
+    return f"low confidence: {shown}-{unit} window, shorter than {int(LOW_CONFIDENCE_YEARS)} years"
 RUBRIC_CAPTION = ("rubric v2: strategy match 3 (gate below 2), risk/liquidity match 3, "
                   "investability 2, data quality 2, provider independence 2, "
                   f"threshold {MIN_PRIMARY_SCORE}/{RUBRIC_MAX}")
@@ -481,6 +492,7 @@ def comparison_stats(profile: dict, cand: dict) -> dict | None:
         "direct_alpha_pct": round((direct_alpha(flows, index) or 0) * 100, 2),
         "fund_ann_pct": round((f_growth ** (1 / years) - 1) * 100, 2),
         "index_ann_pct": round((i_growth ** (1 / years) - 1) * 100, 2),
+        "low_confidence": low_confidence(year_frac(d0, d1)),
         **schedule,
     }
 
@@ -538,6 +550,7 @@ def composite_comparison(profile: dict, cand: dict) -> dict | None:
         "direct_alpha_pct": round((direct_alpha(flows, levels) or 0) * 100, 2),
         "fund_ann_pct": round((f_growth ** (1 / yrs) - 1) * 100, 2),
         "index_ann_pct": round((i_growth ** (1 / yrs) - 1) * 100, 2),
+        "low_confidence": low_confidence(len(years), "fiscal-year"),
     }
 
 

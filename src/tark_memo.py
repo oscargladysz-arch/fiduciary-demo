@@ -139,7 +139,9 @@ def build_memo(key: str) -> Path:
                     "alpha computed on appraisal-lagged NAVs are "
                     "window-sensitive and can be smoothing-flattered. "
                     "Conclusions should be read with the methodology's "
-                    "window-sensitivity analysis.")
+                    "window-sensitivity analysis."
+                    + (f" {comp['low_confidence'][0].upper()}{comp['low_confidence'][1:]}."
+                       if comp.get("low_confidence") else ""))
                 doc.add_paragraph(
                     "Two-point comparison: one contribution at the window start "
                     "and one valuation at the end. Direct Alpha is the "

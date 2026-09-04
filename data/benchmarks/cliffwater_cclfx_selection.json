@@ -90,7 +90,8 @@
       "ks_pme": 0.9756,
       "direct_alpha_pct": -0.61,
       "fund_ann_pct": 10.57,
-      "index_ann_pct": 11.25
+      "index_ann_pct": 11.25,
+      "low_confidence": null
     },
     "composite": {
       "cohort": "private_credit",
@@ -199,6 +200,7 @@
       "direct_alpha_pct": 3.22,
       "fund_ann_pct": 7.89,
       "index_ann_pct": 4.52,
+      "low_confidence": null,
       "ks_pme_monthly_schedule": 1.1224,
       "schedule_contributions": 86,
       "schedule_note": "ILLUSTRATIVE: 86 equal contributions, at the window start and each month-end inside it, valued at the window end. The two-point figure is primary."

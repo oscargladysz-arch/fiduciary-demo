@@ -42,7 +42,8 @@
       "ks_pme": 0.9453,
       "direct_alpha_pct": -5.47,
       "fund_ann_pct": -2.4,
-      "index_ann_pct": 3.25
+      "index_ann_pct": 3.25,
+      "low_confidence": "low confidence: 1-year window, shorter than 3 years"
     }
   },
   "secondary": {

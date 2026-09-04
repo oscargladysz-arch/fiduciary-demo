@@ -42,7 +42,8 @@
       "ks_pme": 0.8964,
       "direct_alpha_pct": -4.58,
       "fund_ann_pct": 12.94,
-      "index_ann_pct": 18.36
+      "index_ann_pct": 18.36,
+      "low_confidence": "low confidence: 2.33-year window, shorter than 3 years"
     }
   },
   "secondary": {
@@ -102,7 +103,8 @@
       "ks_pme": 1.0059,
       "direct_alpha_pct": 0.29,
       "fund_ann_pct": 13.95,
-      "index_ann_pct": 13.61
+      "index_ann_pct": 13.61,
+      "low_confidence": "low confidence: 2-fiscal-year window, shorter than 3 years"
     },
     "composite": {
       "cohort": "evergreen_pe",

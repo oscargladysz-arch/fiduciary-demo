@@ -99,7 +99,8 @@
       "ks_pme": 0.9973,
       "direct_alpha_pct": -0.05,
       "fund_ann_pct": 8.42,
-      "index_ann_pct": 8.48
+      "index_ann_pct": 8.48,
+      "low_confidence": null
     },
     "composite": {
       "cohort": "private_credit",
@@ -206,7 +207,8 @@
       "ks_pme": 1.1541,
       "direct_alpha_pct": 2.91,
       "fund_ann_pct": 8.43,
-      "index_ann_pct": 5.36
+      "index_ann_pct": 5.36,
+      "low_confidence": null
     }
   },
   "rejected": [

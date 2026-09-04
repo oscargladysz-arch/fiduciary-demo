@@ -667,3 +667,30 @@ stepstone_spm's five-year figure) moved into `profiles_input.json` with
 their provenance. `PRODUCT_PROFILES` and the menus are assembled from
 data at import. P2-1 merges the remaining duplicate registries into this
 file.
+
+### 6.7 P1-13: a product with no return series still gets a selection
+jll_ipt prints no multi-year per-class return series (the FY2025 10-K
+gives a 3.0% to 3.8% range across classes and an eight-quarter NAV path
+without distributions, cells 1.1 and 1.2), so no comparison can be
+computed without inventing one. The engine now runs for it anyway:
+candidates are scored on their own descriptors (VNQ 9/12, the declared
+NFI-ODCE 7/12 as Lane A secondary), and each slot carries the reason the
+comparison is absent, on the card, in the memo and in the facts mirror.
+An unlisted NAV REIT's declared benchmark selected on its merits and a
+listed-REIT proxy in the primary slot is exactly the state the audit
+asked to see stated rather than hidden behind a missing artifact.
+
+The five pending facts resolve without a new number: benchmark id and
+score are computed, PME and Direct Alpha are null with the reason, and
+the liquidity verdicts come from the match files, which always existed.
+`build_facts` had tied the liquidity fact to the presence of a benchmark
+selection. It now reads the match files on their own.
+
+### 6.8 P1-14: a short window says so wherever the number appears
+Every comparison shorter than three years carries "low confidence:
+N-year window, shorter than 3 years" beside the window on the card and as
+a sentence in the memo. Today that is sreit (one calendar year, the only
+annual return the filings print) and kkr_kpec (2.33 years since class
+inception, and two fiscal years against its cohort). The threshold is a
+constant in the engine, not a judgment made per product, and the gate
+asserts both the labeled and the unlabeled cases.

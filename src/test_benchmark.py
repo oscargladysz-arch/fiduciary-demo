@@ -165,6 +165,16 @@ check_true("jll_ipt: declared NFI-ODCE is Lane A and selected as secondary",
            any(d["candidate_id"] == "odce" and "secondary" in d["status"]
                for d in sel_j["declared_benchmarks"])
            and sel_j["secondary"]["lane"] == "A")
+# ---- P1-14: windows shorter than three years are labeled, longer ones are not
+def _lc(key, slot="primary"):
+    return (run_selection(key)[slot]["comparison"] or {}).get("low_confidence")
+check_true("sreit: one-year window labeled low confidence",
+           (_lc("sreit") or "").startswith("low confidence: 1-fiscal-year window")
+           or (_lc("sreit") or "").startswith("low confidence: 1"))
+check_true("kkr_kpec: 2.33-year window labeled low confidence",
+           (_lc("kkr_kpec") or "").startswith("low confidence: 2.33-year window"))
+check_true("cliffwater_cclfx: no low-confidence label on a seven-year window",
+           _lc("cliffwater_cclfx") is None and _lc("cliffwater_cclfx", "secondary") is None)
 check_true("products that declare none carry the reason from cell 5.1",
            run_selection("bcred")["declared_none_reason"] and "5.1" in run_selection("bcred")["declared_none_reason"])
 

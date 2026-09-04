@@ -103,7 +103,8 @@
       "ks_pme": 0.8357,
       "direct_alpha_pct": -3.53,
       "fund_ann_pct": 11.14,
-      "index_ann_pct": 15.21
+      "index_ann_pct": 15.21,
+      "low_confidence": null
     },
     "composite": {
       "cohort": "evergreen_pe",
@@ -207,7 +208,8 @@
       "ks_pme": 1.5919,
       "direct_alpha_pct": 6.87,
       "fund_ann_pct": 13.3,
-      "index_ann_pct": 6.02
+      "index_ann_pct": 6.02,
+      "low_confidence": null
     }
   },
   "rejected": [

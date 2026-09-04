@@ -42,7 +42,8 @@
       "ks_pme": 0.9064,
       "direct_alpha_pct": -3.22,
       "fund_ann_pct": 3.14,
-      "index_ann_pct": 6.57
+      "index_ann_pct": 6.57,
+      "low_confidence": null
     }
   },
   "secondary": {
