@@ -705,3 +705,47 @@ pair would be eligible (passes the strategy gate and the 7/12 threshold)
 and whether the proxy sits on the engine's menu for that product. The
 lab covers every product with a return input (fifteen). jll_ipt keeps the
 empty state that names it, because there is nothing to recompute.
+
+### 6.10 P1-16 and P1-17: two liquidity layers, both from the record
+The liquidity match now has two verdicts that never blur. The structural
+verdict reads typed facts only (cells 3.1, 3.3, 2.7 and the registry's
+pricing class) and is the same under every plan: exchange-listed is
+aligned-mechanical, a suspended program or a 0% cap is misaligned, a
+gating history is conditional-weak, a required fact left null is partial
+(suspension wins over a null), and everything else is conditional. The
+scenario verdict is ILLUSTRATIVE and per plan: base demand above the
+typed annual capacity is misaligned, stressed demand above it is
+conditional-weak, otherwise conditional. The proration assumption is
+printed beside it and the lab recomputes it live with the sliders. The
+screener's liquidity column and filter read the structural fact. The
+hand-typed `LIQUIDITY_PROFILES` dict is gone, and both tasks landed in one
+commit because the v2 ladder cannot run on the old inputs.
+
+What the typed layer changed, honestly:
+
+- Four products are structurally partial, not conditional: the record
+  does not establish whether cliffwater_cclfx, hl_paf, ocic or
+  stepstone_spm has ever prorated. Cell 3.3 holds offer notifications, an
+  unbroken offer record, or the filing's own statement that shares
+  tendered are not disclosed. The old profile typed `gate_history: False`
+  for all four without that evidence. The card names the missing fact and
+  its reason.
+- sreit is misaligned, not conditional-weak. Cell 3.1 carries the April
+  29, 2026 closure ("no repurchase requests will be accepted" except death,
+  disability and sub-$5,000 accounts), so `repurchase_program_status` is
+  typed `suspended`, the cap is 0% and capacity is 0% under every plan.
+  No other product carries a status: the field is null with "no
+  suspension language in 3.1 or 3.3 as of <as-of>", never "active".
+- ares_pmf's cap is typed 5% of net assets from cell 3.1's own words
+  ("no more than 5% of the Fund's NET ASSETS"), where the facts layer had
+  a null and the old profile a hand-typed 5.
+- No capacity text says a position is "far inside" a cap. A closed
+  program says its capacity is 0% until it reopens.
+
+`src/test_liquidity.py` is the sixteenth gate: the ladders on synthetic
+facts, sreit misaligned under all four plans, the structural verdict
+plan-independent, the scenario verdict plan-dependent for at least one
+product, every committed match equal to a fresh run, and the JS port in
+parity (the frontend gate checks the scenario verdict on all 64 matches).
+`produce.py` now runs the facts pass before the liquidity pass, because
+the verdict reads the typed layer.

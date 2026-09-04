@@ -103,21 +103,34 @@
       "note": "2021 486BPOS fee table",
       "status": "extracted-unverified"
     },
+    "repurchase_program_status": {
+      "value": null,
+      "source_cell": "3.1",
+      "reason": "no suspension language in 3.1 or 3.3 as of 2026-03-31",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 5.2,
       "source_cell": "1.11",
       "status": "computed",
       "note": "(as-of 2026-03-31 minus inception) / 365.25"
     },
+    "liquidity_structural_verdict": {
+      "value": "partial",
+      "source_cell": "3.9",
+      "status": "computed",
+      "note": "from typed facts only (cells 3.1, 3.3, 2.7), plan-independent"
+    },
     "liquidity_verdict_by_plan": {
       "value": {
-        "plan_consulting_alumni": "conditional",
+        "plan_consulting_alumni": "conditional-weak",
         "plan_manufacturer_union": "conditional",
         "plan_restaurant_hourly": "conditional",
         "plan_tech_media": "conditional"
       },
       "source_cell": "3.9",
-      "status": "computed"
+      "status": "computed",
+      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
     },
     "primary_benchmark_id": {
       "value": "peer_evergreen",

@@ -232,12 +232,16 @@ def render_liquidity():
         st.warning("Match pending for this plan x product.")
         return
     m = json.loads(mp.read_text())
-    st.caption(f"Plan: {ANCHOR['display_label']} - liquidity tail "
+    st.caption(f"Plan: {m['plan_display_label']} - liquidity tail "
                f"{m['plan_inputs']['tail_share_pct']}% of accounts "
                f"({int(m['plan_inputs']['separated_with_balances']):,} separated "
                f"participants with balances).")
     v = m["verdict"]
-    (st.success if v.startswith("aligned") else st.warning)(f"Verdict: {v.upper()}")
+    box = (st.success if v.startswith("aligned")
+           else st.error if v in ("misaligned", "conditional-weak") else st.warning)
+    box(f"Structural verdict (typed facts, cells 3.1, 3.3, 2.7): {v.upper()}")
+    if m.get("scenario_verdict"):
+        st.info(f"Scenario verdict (ILLUSTRATIVE, this plan): {m['scenario_verdict'].upper()}")
     for r in m["reasons"]:
         st.markdown(f"- {r}")
     st.markdown("#### Scenario (ILLUSTRATIVE - adjustable parameters, not facts)")

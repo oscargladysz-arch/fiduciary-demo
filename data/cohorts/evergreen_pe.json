@@ -62,7 +62,7 @@
     },
     "repurchase_cap_pct": {
       "field": "repurchase_cap_pct",
-      "n": 4,
+      "n": 5,
       "median": 5.0,
       "min": 5.0,
       "max": 5.0,
@@ -70,11 +70,10 @@
         "hl_paf": 5.0,
         "stepstone_spm": 5.0,
         "kkr_kpec": 5.0,
+        "ares_pmf": 5.0,
         "amg_pantheon": 5.0
       },
-      "missing": {
-        "ares_pmf": "offer sizes are board-set per quarter (Rule 13e-4 tenders). No standing percentage cap is printed"
-      }
+      "missing": {}
     },
     "repurchase_cadence_per_year": {
       "field": "repurchase_cadence_per_year",

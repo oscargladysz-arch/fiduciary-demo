@@ -1,17 +1,35 @@
 {
   "product": "sreit",
   "plan": "plan_restaurant_hourly",
-  "verdict": "conditional-weak",
+  "verdict": "misaligned",
+  "scenario_verdict": "misaligned",
+  "structural_reasons": [
+    "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity, whereas this wrapper deals 12x/year. Direct DIA use requires a bridging structure: CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
+    "Repurchase program suspended (cell 3.1): ordinary repurchase requests are not accepted, so participant liquidity depends on the program reopening. Capacity is 0%. Gating precedent on top (3.3).",
+    "Early repurchase economics: 5% if held < 1 year (2.7). Relevant to participant-level churn (2.7)."
+  ],
+  "scenario_reasons": [
+    "Capacity: repurchases closed (cell 3.1): 12x per year at 0% of aggregate nav. Capacity is 0% until the program reopens.",
+    "Scenario demand (illustrative): 9.2% of the position per year vs 0% annual wrapper capacity. EXCEEDS: repurchases are closed, so every request waits for the program to reopen.",
+    "Scenario verdict (ILLUSTRATIVE, this plan): misaligned. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window."
+  ],
   "reasons": [
     "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity, whereas this wrapper deals 12x/year. Direct DIA use requires a bridging structure: CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
-    "Capacity: 12x per year at 0.0% of SUSPENDED (April 2026): ordinary repurchases no longer accepted - death/qualifying-disability and sub-$5,000 accounts only (up to $5.0M/month each). Cap history: 2%/month + 5%/quarter (2017) -> 0.33%/1% (May 2024) -> 0.5%/1.5% (June 2025) -> closed (April 2026). This is a FUND-level cap, and at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
-    "Scenario demand (illustrative): 9.2% of the position per year vs 0% annual wrapper capacity. THIN HEADROOM: demand consumes over 60% of wrapper capacity, so proration in any oversubscribed quarter would push the shortfall into the next window.",
-    "Gating precedent: this issuer has prorated repurchases when requests exceeded caps (3.3). Capacity on paper has failed in stress before.",
-    "Early repurchase economics: 5% Early Repurchase Deduction: 95% of transaction price if held < 1 year (2.7). Relevant to participant-level churn (2.7)."
+    "Repurchase program suspended (cell 3.1): ordinary repurchase requests are not accepted, so participant liquidity depends on the program reopening. Capacity is 0%. Gating precedent on top (3.3).",
+    "Early repurchase economics: 5% if held < 1 year (2.7). Relevant to participant-level churn (2.7).",
+    "Capacity: repurchases closed (cell 3.1): 12x per year at 0% of aggregate nav. Capacity is 0% until the program reopens.",
+    "Scenario demand (illustrative): 9.2% of the position per year vs 0% annual wrapper capacity. EXCEEDS: repurchases are closed, so every request waits for the program to reopen.",
+    "Scenario verdict (ILLUSTRATIVE, this plan): misaligned. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window."
   ],
+  "missing_facts": [],
+  "layers": "verdict is structural (typed facts, cells 3.1, 3.3, 2.7, plan-independent). scenario_verdict is ILLUSTRATIVE (demand model against the same capacity, per plan).",
   "stressed_scenario": {
     "illustrative": true,
     "assumptions": "tail turnover x2, active turnover x1.5 vs base scenario",
+    "multiples": {
+      "tail_multiple": 2.0,
+      "active_multiple": 1.5
+    },
     "annual_demand_usd": 13216612,
     "demand_pct_of_position": 16.7,
     "annual_wrapper_capacity_pct": 0.0,
@@ -20,14 +38,16 @@
   "plan_display_label": "US casual-dining restaurant group 401(k) plan (~$1.6B, FL)",
   "plan_direction": "total",
   "wrapper_facts": {
-    "kind": "share_repurchase_plan",
+    "kind": "nontraded_reit",
     "cadence_per_year": 12,
     "cap_pct": 0.0,
-    "cap_base": "SUSPENDED (April 2026): ordinary repurchases no longer accepted - death/qualifying-disability and sub-$5,000 accounts only (up to $5.0M/month each). Cap history: 2%/month + 5%/quarter (2017) -> 0.33%/1% (May 2024) -> 0.5%/1.5% (June 2025) -> closed (April 2026)",
+    "cap_base": "aggregate nav",
     "exchange": false,
     "gate_history": true,
-    "early_fee": "5% Early Repurchase Deduction: 95% of transaction price if held < 1 year (2.7)",
-    "source_cell": "3.1 + 3.3"
+    "program_status": "suspended",
+    "early_fee": "5% if held < 1 year (2.7)",
+    "null_reasons": {},
+    "source_cell": "2.7, 3.1, 3.3, 6.1"
   },
   "scenario": {
     "allocation_pct_of_plan": 5.0,
@@ -50,6 +70,7 @@
     "3.5",
     "3.7",
     "3.9",
+    "2.7",
     "plan: plan_restaurant_hourly.json (Form 5500, plan year 2024-05-01 to 2025-04-30)"
   ]
 }

@@ -84,12 +84,9 @@ const COLS = [
       (v) => v.toFixed(2) + "%/yr")],
   ["score", "Engine score", (k) => factCell(k, fact(k, "selection_score"),
       (v) => v + "/12")],
-  ["verdict", "Liquidity verdict", (k, state) => {
-    const f = fact(k, "liquidity_verdict_by_plan");
-    if (!f.value) return factCell(k, f);
-    const v = f.value[state.plan];
-    return factCell(k, { ...f, value: v }, esc,
-      (x) => x === "conditional-weak");
+  ["verdict", "Liquidity (structural)", (k) => {
+    const f = fact(k, "liquidity_structural_verdict");
+    return factCell(k, f, esc, (x) => x === "conditional-weak" || x === "misaligned");
   }],
   ["track", "Track record", (k) => factCell(k, fact(k, "track_record_years"),
       (v) => v + " yrs")],
@@ -137,8 +134,7 @@ export function viewScreener(root, state, setState) {
     if (F.f_gate === "no" && fact(k, "gate_history").value !== false) return false;
     if (F.f_big4 === "yes" && fact(k, "big4").value !== true) return false;
     if (F.f_big4 === "no" && fact(k, "big4").value !== false) return false;
-    if (F.f_verdict && fact(k, "liquidity_verdict_by_plan").value?.[state.plan]
-        !== F.f_verdict) return false;
+    if (F.f_verdict && fact(k, "liquidity_structural_verdict").value !== F.f_verdict) return false;
     if (F.pme_min && !(fact(k, "pme_primary").value >= +F.pme_min)) return false;
     if (F.pme_max && !(fact(k, "pme_primary").value <= +F.pme_max)) return false;
     return true;
@@ -174,7 +170,7 @@ export function viewScreener(root, state, setState) {
       ${sel("f_tax", "tax", ["1099", "K-1"])}
       ${sel("f_gate", "gate hist", ["yes", "no"])}
       ${sel("f_big4", "big-4", ["yes", "no"])}
-      ${sel("f_verdict", "verdict", ["aligned-mechanical", "conditional", "conditional-weak"])}
+      ${sel("f_verdict", "liquidity (structural)", ["aligned-mechanical", "conditional", "conditional-weak", "misaligned", "partial"])}
       <span class="lbl">PME ≥</span><input type="number" step="0.05" style="width:70px" data-f="pme_min" value="${esc(F.pme_min || "")}">
       <span class="lbl">≤</span><input type="number" step="0.05" style="width:70px" data-f="pme_max" value="${esc(F.pme_max || "")}">
       <label class="lbl" style="cursor:pointer"><input type="checkbox" data-f="f_vonly" ${F.f_vonly === "1" ? "checked" : ""}> verified only</label>
@@ -314,8 +310,8 @@ export function viewCompare(root, state, setState) {
   const verdictRow = `<tr><td style="font-weight:600">Liquidity verdict
       <div class="cap">${esc(T.plans[state.plan].display_label)}</div></td>
     ${keys.map((k) => {
-      const v = fact(k, "liquidity_verdict_by_plan").value?.[state.plan];
-      return `<td class="${v === "conditional-weak" ? "trap" : ""}">
+      const v = fact(k, "liquidity_structural_verdict").value;
+      return `<td class="${v === "conditional-weak" || v === "misaligned" ? "trap" : ""}">
         <span class="cellval">${esc((v || "—").toUpperCase())}</span>
         <a href="#" class="cap" data-goto-liq="${k}">full match →</a></td>`;
     }).join("")}</tr>`;

@@ -134,7 +134,10 @@ check_true("evaluation breit: 2%/5% repurchase caps on screen",
 
 # 6. liquidity match view: verdicts, structural gap, illustrative labeling
 _, lc = run_view("Liquidity Match", "cliffwater_cclfx")
-check_true("liquidity cclfx: CONDITIONAL verdict", "CONDITIONAL" in lc)
+check_true("liquidity cclfx: PARTIAL structural verdict (gate_history not typed) plus a scenario verdict",
+           "PARTIAL" in lc and "Structural verdict" in lc and "Scenario verdict" in lc)
+_, ls = run_view("Liquidity Match", "sreit")
+check_true("liquidity sreit: MISALIGNED on the suspended program", "MISALIGNED" in ls)
 check_true("liquidity cclfx: structural gap named", "STRUCTURAL GAP" in lc)
 check_true("liquidity cclfx: scenario labeled ILLUSTRATIVE", "ILLUSTRATIVE" in lc)
 _, lb = run_view("Liquidity Match", "breit")

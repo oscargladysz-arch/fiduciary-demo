@@ -48,31 +48,29 @@
     },
     "repurchase_cap_pct": {
       "field": "repurchase_cap_pct",
-      "n": 2,
-      "median": 3.5,
-      "min": 2.0,
+      "n": 3,
+      "median": 2.0,
+      "min": 0.0,
       "max": 5.0,
       "values": {
         "breit": 2.0,
+        "sreit": 0.0,
         "jll_ipt": 5.0
       },
-      "missing": {
-        "sreit": "plan SUSPENDED April 2026. Cap history 2%/mo (2017) -> 0.33% (2024) -> 0.5% (2025) -> closed (2026)"
-      }
+      "missing": {}
     },
     "repurchase_cadence_per_year": {
       "field": "repurchase_cadence_per_year",
-      "n": 2,
-      "median": 8.0,
+      "n": 3,
+      "median": 12,
       "min": 4,
       "max": 12,
       "values": {
         "breit": 12,
+        "sreit": 12,
         "jll_ipt": 4
       },
-      "missing": {
-        "sreit": "plan SUSPENDED April 2026 - ordinary requests no longer accepted (death/disability and sub-$5,000 accounts only)"
-      }
+      "missing": {}
     },
     "track_record_years": {
       "field": "track_record_years",

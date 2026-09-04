@@ -124,7 +124,9 @@ def collect(tree: Tree) -> dict[tuple[str, str], str]:
         if "__" not in name:
             continue
         plan, key = name.split("__", 1)
-        out[(key, f"liquidity.{plan}.verdict")] = canon((tree.json(rel) or {}).get("verdict"))
+        doc = tree.json(rel) or {}
+        out[(key, f"liquidity.{plan}.verdict")] = canon(doc.get("verdict"))
+        out[(key, f"liquidity.{plan}.scenario_verdict")] = canon(doc.get("scenario_verdict"))
     sup = tree.json("data/analytics/supplement.json") or {}
     for e in (sup.get("fee_percentile") or {}).get("entries", []):
         out[(e["product"], "fee_percentile.ter_pct")] = canon(e.get("ter_pct"))

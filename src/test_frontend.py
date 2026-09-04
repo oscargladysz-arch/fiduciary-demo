@@ -472,8 +472,17 @@ with sync_playwright() as pw:
 
     # ---------- 5. liquidity verdicts + ILLUSTRATIVE labels everywhere ----------
     t = view_text("liquidity", product="cliffwater_cclfx")
-    check("liquidity cclfx: CONDITIONAL verdict", "CONDITIONAL" in t)
+    # CONDITIONAL -> PARTIAL (P1-16/17): the record does not establish whether
+    # CCLFX has ever prorated (cell 3.3 holds N-23C3A notifications, not
+    # results), so gate_history is null and the structural verdict says so
+    check("liquidity cclfx: PARTIAL structural verdict, the missing fact named",
+          "STRUCTURAL VERDICT: PARTIAL" in t.upper() and "Facts missing" in t and "gate_history" in t)
     check("liquidity cclfx: structural gap named", "STRUCTURAL GAP" in t)
+    check("liquidity cclfx: scenario verdict banner labeled ILLUSTRATIVE",
+          "SCENARIO VERDICT" in t.upper() and "ILLUSTRATIVE" in t)
+    t = view_text("liquidity", product="sreit")
+    check("liquidity sreit: MISALIGNED on the suspended program, capacity 0%",
+          "MISALIGNED" in t and "suspended" in t and "0%" in t and "far inside" not in t)
     t = view_text("liquidity", product="breit")
     check("liquidity breit: CONDITIONAL-WEAK on gating precedent",
           "CONDITIONAL-WEAK" in t and "prorated" in t)
@@ -609,6 +618,21 @@ with sync_playwright() as pw:
     }""")
     check(f"parity: JS scenario matches all {len(bundle_liq)} bundled liquidity scenarios",
           not mism, "; ".join(mism[:4]))
+    vmism = page.evaluate("""() => {
+      const T = window.TARK, L = window.TarkLiquidity, out = [];
+      for (const [k, m] of Object.entries(T.liquidity)) {
+        const sc = L.computeScenario(m.plan_inputs, m.wrapper_facts, m.scenario);
+        const sp = L.stressedDemandPct(m.plan_inputs, m.scenario, m.stressed_scenario.multiples);
+        const v = L.scenarioVerdict(sc, sp, m.wrapper_facts.exchange);
+        if (v !== m.scenario_verdict) out.push(`${k}: js ${v} vs ${m.scenario_verdict}`);
+      }
+      return out;
+    }""")
+    check(f"parity: JS scenario verdict matches all {len(bundle_liq)} bundled matches",
+          not vmism, "; ".join(vmism[:4]))
+    check("scenario verdict varies with the plan for at least one product (bundled)",
+          any(bundle_liq[f"plan_tech_media__{pr}"]["scenario_verdict"]
+              != bundle_liq[f"plan_consulting_alumni__{pr}"]["scenario_verdict"] for pr in PRODUCTS))
 
     # every proxy the lab offers selects and computes (cclfx has the longest
     # daily NAV series); this is also what marks each proxy series as read

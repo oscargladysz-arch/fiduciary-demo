@@ -66,7 +66,7 @@ const VALID = {
   f_gate: (v) => !v || ["yes", "no"].includes(v),
   f_big4: (v) => !v || ["yes", "no"].includes(v),
   f_verdict: (v) => !v || ["aligned-mechanical", "conditional",
-    "conditional-weak"].includes(v),
+    "conditional-weak", "misaligned", "partial"].includes(v),
   f_vonly: (v) => !v || v === "1",
   pme_min: (v) => !v || /^\d{0,2}(\.\d{1,4})?$/.test(v),
   pme_max: (v) => !v || /^\d{0,2}(\.\d{1,4})?$/.test(v),

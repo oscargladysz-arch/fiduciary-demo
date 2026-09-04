@@ -30,8 +30,8 @@ from pathlib import Path
 SRC = Path(__file__).resolve().parent
 
 STEPS = [
+    ("facts", "build_facts.py"),              # typed facts first: liquidity reads them
     ("liquidity", "tark_liquidity.py"),
-    ("facts", "build_facts.py"),
     ("cohorts", "tark_cohort.py"),
     ("benchmark", "run_benchmark.py"),
     ("facts-engine", "build_facts.py"),

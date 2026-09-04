@@ -187,7 +187,7 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Cohort placement (nontraded_reit, R4 phrasing): mgmt fee: at the cohort median of 1.25 (n=3, too small for percentile language) | expense ratio (bases differ, see notes): fact unavailable for this member | repurchase cap: below the cohort median of 3.5 (n=2, too small for percentile language). Stats and per-member values in data/cohorts/nontraded_reit.json, membership rationales in data/facts.",
+      "value": "Cohort placement (nontraded_reit, R4 phrasing): mgmt fee: at the cohort median of 1.25 (n=3, too small for percentile language) | expense ratio (bases differ, see notes): fact unavailable for this member | repurchase cap: at the cohort median of 2 (n=3, too small for percentile language). Stats and per-member values in data/cohorts/nontraded_reit.json, membership rationales in data/facts.",
       "status": "computed",
       "source": "data/cohorts/nontraded_reit.json",
       "section": "stats block (R4 phrasing by tark_cohort.percentile_of)",

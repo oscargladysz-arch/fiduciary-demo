@@ -351,10 +351,11 @@ MAPPING = {
         "early_repurchase": F({"present": True, "rate_pct": 2.00,
                                "window": "< 1 year"}, "2.7", note="FIFO"),
         "repurchase_cadence_per_year": F(4, "3.1"),
-        "repurchase_cap_pct": null("offer sizes are board-set per quarter "
-                                   "(Rule 13e-4 tenders). No standing "
-                                   "percentage cap is printed", "3.1"),
-        "repurchase_cap_base": F("nav", "3.1",
+        "repurchase_cap_pct": F(5.0, "3.1",
+                                note="intended cap: 'quarterly repurchase offers of no "
+                                     "more than 5% of the Fund's NET ASSETS', "
+                                     "board-discretionary (Rule 13e-4 tenders)"),
+        "repurchase_cap_base": F("net_assets", "3.1",
                                  note="board-discretionary quarterly tenders"),
         "gate_history": F(False, "3.3",
                           note="four offers conducted in each of FY2025/FY2026"),
@@ -408,14 +409,18 @@ MAPPING = {
                                "window": "< 1 year"}, "2.7",
                               note="repurchased at 95% of transaction price - "
                                    "the cohort's steepest early deduction"),
-        "repurchase_cadence_per_year": null("plan SUSPENDED April 2026 - "
-                                            "ordinary requests no longer "
-                                            "accepted (death/disability and "
-                                            "sub-$5,000 accounts only)", "3.1"),
-        "repurchase_cap_pct": null("plan SUSPENDED April 2026. Cap history "
-                                   "2%/mo (2017) -> 0.33% (2024) -> 0.5% "
-                                   "(2025) -> closed (2026)", "3.1"),
-        "repurchase_cap_base": null("plan SUSPENDED April 2026", "3.1"),
+        "repurchase_cadence_per_year": F(12, "3.1",
+                                         note="monthly share repurchase plan. Ordinary "
+                                              "requests closed by the April 29, 2026 "
+                                              "amendment"),
+        "repurchase_cap_pct": F(0.0, "3.1",
+                                note="0% for ordinary requests since April 29, 2026 "
+                                     "(death, qualifying disability and sub-$5,000 "
+                                     "accounts only). Cap history: 2%/month and 5%/quarter "
+                                     "(2017), 0.33%/1% (May 2024), 0.5%/1.5% (June 2025)"),
+        "repurchase_cap_base": F("aggregate_nav", "3.1",
+                                 note="measured on prior month and quarter NAV before "
+                                      "the closure"),
         "gate_history": F(True, "3.3",
                           note="requests exceeded plan limits continuously "
                                "since October 2022. Caps shrank three times, "
@@ -610,6 +615,23 @@ AS_OF = {"hl_paf": "2026-03-31", "cliffwater_cclfx": "2026-03-31",
 
 # cohort metadata (R3: membership is an argued judgment; exclusions live in
 # data/roster_decisions.md). depth per R2.
+
+# repurchase_program_status (P1-17): "suspended" only where cell 3.1 or 3.3
+# carries suspension language. Everything else is null with the reason, so
+# nothing is ever "active" by default.
+for _key, _m in MAPPING.items():
+    if _key == "sreit":
+        _m["repurchase_program_status"] = F(
+            "suspended", "3.1",
+            note="April 29, 2026 amendment: 'no repurchase requests will be accepted' "
+                 "except death, qualifying disability and accounts below $5,000")
+    elif _m["wrapper_type"]["value"] in ("listed_cef", "listed_bdc"):
+        _m["repurchase_program_status"] = null("exchange-listed, no repurchase program", "3.1")
+    else:
+        _m["repurchase_program_status"] = null(
+            f"no suspension language in 3.1 or 3.3 as of {AS_OF[_key]}", "3.1")
+
+
 COHORT_META = {
     "cliffwater_cclfx": ("private_credit", "full",
         "Direct corporate lending in a Rule 23c-3 interval wrapper, the "
@@ -732,14 +754,27 @@ def main() -> None:
         # of whether a benchmark selection exists (P1-13 decoupling).
         match_paths = {pk: DATA / "liquidity" / f"{pk}__{key}_match.json" for pk in plans}
         if all(mp.exists() for mp in match_paths.values()):
+            matches = {pk: json.loads(mp.read_text()) for pk, mp in match_paths.items()}
+            # the first facts pass of produce.py runs before the liquidity
+            # pass, so the match files it sees may predate this build: read
+            # tolerantly, the engine pass fills the final values
+            structural = {m.get("verdict") for m in matches.values()}
+            assert len(structural) == 1, f"{key}: structural verdict differs across plans"
+            facts["liquidity_structural_verdict"] = {
+                "value": structural.pop(), "source_cell": "3.9", "status": "computed",
+                "note": "from typed facts only (cells 3.1, 3.3, 2.7), plan-independent"}
             facts["liquidity_verdict_by_plan"] = {
-                "value": {pk: json.loads(mp.read_text())["verdict"]
-                          for pk, mp in match_paths.items()},
-                "source_cell": "3.9", "status": "computed"}
+                "value": {pk: m.get("scenario_verdict") for pk, m in matches.items()},
+                "source_cell": "3.9", "status": "computed",
+                "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the "
+                        "default sliders against the typed capacity)"}
         else:
+            facts["liquidity_structural_verdict"] = {
+                "value": None, "source_cell": "3.9", "status": "pending",
+                "reason": "liquidity match not yet run"}
             facts["liquidity_verdict_by_plan"] = {
                 "value": None, "source_cell": "3.9", "status": "pending",
-                "reason": "liquidity profile lands with cell 3.1 extraction"}
+                "reason": "liquidity match not yet run"}
         sel_path = DATA / "benchmarks" / f"{key}_selection.json"
         sel = json.loads(sel_path.read_text()) if sel_path.exists() else None
         if sel is None:

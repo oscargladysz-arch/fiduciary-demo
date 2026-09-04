@@ -90,14 +90,15 @@ re-check is never presented as human verification.
    live. It is the human-verification interface and reads like a ledger.
 
 ## What is enforced by machines (say this in the meeting)
-- Pre-commit runs 15 gates, in this order: `validate_data` (data contract),
+- Pre-commit runs 16 gates, in this order: `validate_data` (data contract),
   `validate_census` (T1 census), `test_evidence_immutable` (T2 rows change
   only through an allowlisted correction), `corrections_log` (every changed
   published number is logged), `test_invariants` (verified count is 0, no
   stale product-count copy, every cited path exists), `test_copy` (no em
   dash or semicolon in user-facing copy), `test_docs` (this runbook agrees
   with the hook, the record and the app), `test_analytics`, `test_cohort`,
-  `test_benchmark`, `test_memo`, `test_app` (Streamlit suite),
+  `test_benchmark`, `test_liquidity` (two verdict layers, never
+  blurred), `test_memo`, `test_app` (Streamlit suite),
   `test_artifacts_fresh` (committed artifacts reproduce from a clean
   producer run), `build_site` (anonymization gate), `test_frontend` (render
   sweep across every view, product and plan with the HTML parsed,

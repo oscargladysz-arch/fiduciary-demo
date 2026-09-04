@@ -11,7 +11,7 @@ import { annVol, beta, calendarYearReturns, desmoothGeltner, directAlpha,
          lag1Autocorr, levelOn, monthlyScheduleFlows,
          monthEndPoints, periodReturns, rollingReturns,
          rollingVol } from "./analytics.js";
-import { computeScenario, scenarioReason } from "./liquidity.js";
+import { computeScenario, scenarioReason, scenarioVerdict, stressedDemandPct } from "./liquidity.js";
 import { lineChart, barChart, donut } from "./charts.js";
 
 const T = window.TARK;
@@ -791,8 +791,9 @@ export function viewLiquidity(root, state) {
       Match pending for this plan × product.</div>`;
     return;
   }
-  const bannerCls = m.verdict.startsWith("aligned") ? "green"
-    : m.verdict === "conditional-weak" ? "red" : "amber";
+  const cls = (v) => !v ? "amber" : v.startsWith("aligned") ? "green"
+    : (v === "conditional-weak" || v === "misaligned") ? "red" : "amber";
+  const bannerCls = cls(m.verdict);
   const sc = m.scenario;
   const profile = m.wrapper_facts;
   const stress = m.stressed_scenario;
@@ -803,9 +804,18 @@ export function viewLiquidity(root, state) {
         ${m.plan_inputs.tail_share_pct}% of accounts
         (${Math.round(m.plan_inputs.separated_with_balances).toLocaleString()}
         separated), plan direction: ${esc(m.plan_direction)}.</div></div>
-    <div class="banner ${bannerCls}"><h3>Verdict: ${esc(m.verdict.toUpperCase())}</h3></div>
-    <ul style="margin:0 0 16px 18px; font-size:13.5px" id="reasons">
-      ${m.reasons.map((r) => `<li style="margin-bottom:6px">${esc(r)}</li>`).join("")}</ul>
+    <div class="banner ${bannerCls}"><h3>Structural verdict: ${esc(m.verdict.toUpperCase())}</h3>
+      <div class="cap">From typed facts only (cells 3.1, 3.3, 2.7). The same under every plan.</div></div>
+    <ul style="margin:0 0 10px 18px; font-size:13.5px" id="reasons">
+      ${m.structural_reasons.map((r) => `<li style="margin-bottom:6px">${esc(r)}</li>`).join("")}</ul>
+    <div class="banner ${cls(m.scenario_verdict)}" id="scenario_banner">
+      <h3>Scenario verdict: <span id="o_verdict">${esc((m.scenario_verdict || "not computable").toUpperCase())}</span>
+        <span class="chip illustrative">ILLUSTRATIVE</span></h3>
+      <div class="cap">The demand model against the typed capacity, for this plan and these
+        sliders. It moves when either moves. Proration assumption: an oversubscribed offer is
+        filled pro rata and the unfilled remainder waits for the next window.</div></div>
+    <ul style="margin:0 0 16px 18px; font-size:13.5px" id="screasons">
+      ${m.scenario_reasons.map((r) => `<li style="margin-bottom:6px">${esc(r)}</li>`).join("")}</ul>
     <div class="cardgrid g2">
       <div class="card">
         <h3>Capacity vs demand <span class="chip illustrative">ILLUSTRATIVE</span></h3>
@@ -829,8 +839,12 @@ export function viewLiquidity(root, state) {
           <tr><td>Dealing cadence</td><td class="num">${profile.cadence_per_year}×/year</td></tr>
           <tr><td>Cap</td><td class="num">${profile.cap_pct === null ? "—" : profile.cap_pct + "%"} of ${esc(profile.cap_base)}</td></tr>
           <tr><td>Exchange-listed</td><td class="num">${profile.exchange ? "yes" : "no"}</td></tr>
-          <tr><td>Gating history</td><td class="num">${profile.gate_history ? "YES (3.3)" : "none identified"}</td></tr>
+          <tr><td>Gating history</td><td class="num">${profile.gate_history === true ? "YES (3.3)"
+            : profile.gate_history === false ? "none identified (3.3)" : `not typed: ${esc(profile.null_reasons.gate_history || "no reason recorded")}`}</td></tr>
+          <tr><td>Program status</td><td>${profile.program_status ? esc(profile.program_status) + " (3.1)"
+            : esc(profile.null_reasons.repurchase_program_status || "not typed")}</td></tr>
           <tr><td>Early repurchase</td><td>${esc(profile.early_fee)}</td></tr>
+          ${m.missing_facts.length ? `<tr><td>Missing for a verdict</td><td>${m.missing_facts.map(esc).join(", ")}</td></tr>` : ""}
         </table>
         <h3 style="margin-top:14px">Stress test <span class="chip illustrative">ILLUSTRATIVE</span></h3>
         <div class="cap">${esc(stress.assumptions)}</div>
@@ -925,6 +939,13 @@ export function viewLiquidity(root, state) {
     root.querySelector("#o_tail").textContent = params.tail_annual_turnover_pct.toFixed(0) + "%";
     root.querySelector("#o_act").textContent = params.active_annual_turnover_pct.toFixed(1) + "%";
     const out = computeScenario(m.plan_inputs, profile, params);
+    const liveVerdict = scenarioVerdict(out,
+      stressedDemandPct(m.plan_inputs, params, stress.multiples), profile.exchange);
+    const ov = root.querySelector("#o_verdict");
+    if (ov) {
+      ov.textContent = (liveVerdict || "not computable").toUpperCase();
+      root.querySelector("#scenario_banner").className = `banner ${cls(liveVerdict)}`;
+    }
     const stressOut = computeScenario(m.plan_inputs, profile, {
       ...params,
       tail_annual_turnover_pct: params.tail_annual_turnover_pct * 2,

@@ -41,21 +41,21 @@
       "status": "extracted-unverified"
     },
     "repurchase_cadence_per_year": {
-      "value": null,
+      "value": 12,
       "source_cell": "3.1",
-      "reason": "plan SUSPENDED April 2026 - ordinary requests no longer accepted (death/disability and sub-$5,000 accounts only)",
+      "note": "monthly share repurchase plan. Ordinary requests closed by the April 29, 2026 amendment",
       "status": "extracted-unverified"
     },
     "repurchase_cap_pct": {
-      "value": null,
+      "value": 0.0,
       "source_cell": "3.1",
-      "reason": "plan SUSPENDED April 2026. Cap history 2%/mo (2017) -> 0.33% (2024) -> 0.5% (2025) -> closed (2026)",
+      "note": "0% for ordinary requests since April 29, 2026 (death, qualifying disability and sub-$5,000 accounts only). Cap history: 2%/month and 5%/quarter (2017), 0.33%/1% (May 2024), 0.5%/1.5% (June 2025)",
       "status": "extracted-unverified"
     },
     "repurchase_cap_base": {
-      "value": null,
+      "value": "aggregate_nav",
       "source_cell": "3.1",
-      "reason": "plan SUSPENDED April 2026",
+      "note": "measured on prior month and quarter NAV before the closure",
       "status": "extracted-unverified"
     },
     "gate_history": {
@@ -106,21 +106,34 @@
       "note": "10-K REIT, no 1940-Act fee table, so no AFFE line exists",
       "status": "extracted-unverified"
     },
+    "repurchase_program_status": {
+      "value": "suspended",
+      "source_cell": "3.1",
+      "note": "April 29, 2026 amendment: 'no repurchase requests will be accepted' except death, qualifying disability and accounts below $5,000",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 8.0,
       "source_cell": "1.11",
       "status": "computed",
       "note": "(as-of 2025-12-31 minus inception) / 365.25"
     },
+    "liquidity_structural_verdict": {
+      "value": "misaligned",
+      "source_cell": "3.9",
+      "status": "computed",
+      "note": "from typed facts only (cells 3.1, 3.3, 2.7), plan-independent"
+    },
     "liquidity_verdict_by_plan": {
       "value": {
-        "plan_consulting_alumni": "conditional-weak",
-        "plan_manufacturer_union": "conditional-weak",
-        "plan_restaurant_hourly": "conditional-weak",
-        "plan_tech_media": "conditional-weak"
+        "plan_consulting_alumni": "misaligned",
+        "plan_manufacturer_union": "misaligned",
+        "plan_restaurant_hourly": "misaligned",
+        "plan_tech_media": "misaligned"
       },
       "source_cell": "3.9",
-      "status": "computed"
+      "status": "computed",
+      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
     },
     "primary_benchmark_id": {
       "value": "vnq",

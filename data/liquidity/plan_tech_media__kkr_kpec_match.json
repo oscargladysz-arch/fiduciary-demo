@@ -2,15 +2,32 @@
   "product": "kkr_kpec",
   "plan": "plan_tech_media",
   "verdict": "conditional",
+  "scenario_verdict": "conditional",
+  "structural_reasons": [
+    "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity, whereas this wrapper deals 4x/year. Direct DIA use requires a bridging structure: CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
+    "Early repurchase economics: 5% if held < 24 months (2.7). Relevant to participant-level churn (2.7)."
+  ],
+  "scenario_reasons": [
+    "Capacity: 4x per year at 5% of aggregate nav: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed.",
+    "Scenario demand (illustrative): 10.4% of the position per year vs 20% annual wrapper capacity. Adequate headroom at this allocation if offers are not prorated.",
+    "Scenario verdict (ILLUSTRATIVE, this plan): conditional. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window."
+  ],
   "reasons": [
     "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity, whereas this wrapper deals 4x/year. Direct DIA use requires a bridging structure: CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
-    "Capacity: 4x per year at 5.0% of aggregate NAV (Investor Shares). This is a FUND-level cap, and at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed.",
+    "Early repurchase economics: 5% if held < 24 months (2.7). Relevant to participant-level churn (2.7).",
+    "Capacity: 4x per year at 5% of aggregate nav: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed.",
     "Scenario demand (illustrative): 10.4% of the position per year vs 20% annual wrapper capacity. Adequate headroom at this allocation if offers are not prorated.",
-    "Early repurchase economics: 5.0% of NAV if repurchased within 24 months (2.7). Relevant to participant-level churn (2.7)."
+    "Scenario verdict (ILLUSTRATIVE, this plan): conditional. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window."
   ],
+  "missing_facts": [],
+  "layers": "verdict is structural (typed facts, cells 3.1, 3.3, 2.7, plan-independent). scenario_verdict is ILLUSTRATIVE (demand model against the same capacity, per plan).",
   "stressed_scenario": {
     "illustrative": true,
     "assumptions": "tail turnover x2, active turnover x1.5 vs base scenario",
+    "multiples": {
+      "tail_multiple": 2.0,
+      "active_multiple": 1.5
+    },
     "annual_demand_usd": 5438874,
     "demand_pct_of_position": 19.2,
     "annual_wrapper_capacity_pct": 20.0,
@@ -19,14 +36,18 @@
   "plan_display_label": "US media/technology company 401(k) plan (~$570M, New York)",
   "plan_direction": "total",
   "wrapper_facts": {
-    "kind": "share_repurchase_plan",
+    "kind": "nontraded_llc",
     "cadence_per_year": 4,
     "cap_pct": 5.0,
-    "cap_base": "aggregate NAV (Investor Shares)",
+    "cap_base": "aggregate nav",
     "exchange": false,
     "gate_history": false,
-    "early_fee": "5.0% of NAV if repurchased within 24 months (2.7)",
-    "source_cell": "3.1"
+    "program_status": null,
+    "early_fee": "5% if held < 24 months (2.7)",
+    "null_reasons": {
+      "repurchase_program_status": "no suspension language in 3.1 or 3.3 as of 2025-12-31"
+    },
+    "source_cell": "2.7, 3.1, 3.3, 6.1"
   },
   "scenario": {
     "allocation_pct_of_plan": 5.0,
@@ -49,6 +70,7 @@
     "3.5",
     "3.7",
     "3.9",
+    "2.7",
     "plan: plan_tech_media.json (Form 5500, plan year 2024-01-01 to 2024-12-31)"
   ]
 }
