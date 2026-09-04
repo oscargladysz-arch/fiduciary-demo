@@ -159,6 +159,22 @@ if acc_missing:
     print("   missing:", "; ".join(acc_missing[:6]))
 check("provenance: cells without a resolvable filing say accession not on record", not_on_record > 0)
 
+# P1-23: case law from cell 5.7 (partial, snippets only), never a holding
+cl_bad = []
+for pl in plan_keys():
+    for k in prods:
+        t = squash(text_of(OUT / memo_name(pl, k)))
+        if not ("cell 5.7 (partial)" in t and "no holding exists yet" in t
+                and "search snippets" in t and "no. 25-498" in t):
+            cl_bad.append(f"{pl} {k}")
+check("case law: every memo carries cell 5.7 as partial with no holding claimed", not cl_bad)
+if cl_bad:
+    print("   bad:", "; ".join(cl_bad[:4]))
+check("cell 5.7 is partial for every product, never extracted or verified",
+      all(status_kind(p_["cells"]["5.7"]["status"]) == "partial" for p_ in prods.values()))
+check("cell 5.6 is computed for every product with a selection artifact",
+      all(status_kind(p_["cells"]["5.6"]["status"]) == "computed" for p_ in prods.values()))
+
 keys = ["breit","cliffwater_cclfx","dxyz","hl_paf","kkr_kpec","stepstone_spm"]
 texts = {}
 for k in keys:

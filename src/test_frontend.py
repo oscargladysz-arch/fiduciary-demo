@@ -209,7 +209,7 @@ with sync_playwright() as pw:
         has(t, k) { if (typeof k === 'string') window.__tarkReads.add(prefix + k); return Reflect.has(t, k); },
         ownKeys(t) { for (const k of Object.keys(t)) window.__tarkReads.add(prefix + k); return Reflect.ownKeys(t); },
       });
-      for (const name of ['TARK', 'TARK_SERIES', 'TARK_LIQ', 'TARK_LAB', 'TARK_CENSUS']) {
+      for (const name of ['TARK', 'TARK_SERIES', 'TARK_LIQ', 'TARK_LAB', 'TARK_EVIDENCE', 'TARK_CENSUS']) {
         let store;
         Object.defineProperty(window, name, {
           configurable: true,
@@ -217,7 +217,8 @@ with sync_playwright() as pw:
           set(v) { store = (v && typeof v === 'object')
             ? wrap(v, name === 'TARK' ? '' : name === 'TARK_SERIES' ? 'series.'
                                         : name === 'TARK_LIQ' ? 'liquidity.'
-                                        : name === 'TARK_LAB' ? 'lab.' : 'census.')
+                                        : name === 'TARK_LAB' ? 'lab.'
+                                        : name === 'TARK_EVIDENCE' ? 'evidence.' : 'census.')
             : v; },
         });
       }
@@ -236,7 +237,7 @@ with sync_playwright() as pw:
     page.evaluate("""() => new Promise((res) => {
         const s = document.createElement('script');
         s.src = 'series.js';
-        s.onload = () => { window.TARK.series = window.TARK_SERIES; window.TARK.liquidity = window.TARK_LIQ; window.TARK.swap_matrix = window.TARK_LAB; res(true); };
+        s.onload = () => { window.tarkMergeLazy(); res(true); };
         document.head.append(s);
       })""")
     page.evaluate("""() => new Promise((res) => {
@@ -923,7 +924,7 @@ with sync_playwright() as pw:
     page.evaluate("""() => new Promise((res) => {
         const s = document.createElement('script');
         s.src = 'series.js';
-        s.onload = () => { window.TARK.series = window.TARK_SERIES; window.TARK.liquidity = window.TARK_LIQ; window.TARK.swap_matrix = window.TARK_LAB; res(true); };
+        s.onload = () => { window.tarkMergeLazy(); res(true); };
         document.head.append(s);
       })""")
     page.evaluate("""() => new Promise((res) => {
@@ -1099,6 +1100,8 @@ with sync_playwright() as pw:
                                [len("window.TARK_SERIES = "):-1])
     lab_bundle = json.loads((SITE / "series.js").read_text().split("\n")[2]
                             [len("window.TARK_LAB = "):-1])
+    evidence_bundle = json.loads((SITE / "series.js").read_text().split("\n")[3]
+                                 [len("window.TARK_EVIDENCE = "):-1])
     emitted = set()
     for k in bundle:
         if k in ("series", "liquidity", "swap_matrix"):
@@ -1109,6 +1112,7 @@ with sync_playwright() as pw:
             emitted |= {f"{k}.{kk}" for kk in bundle[k]}
     emitted |= {f"series.{k}" for k in series_bundle}
     emitted |= {f"lab.{k}" for k in lab_bundle}
+    emitted |= {f"evidence.{k}" for k in evidence_bundle}
     emitted |= {f"census.{k}" for k in census_bundle}
     dead = sorted(emitted - reads)
     check("bundle has no key that no view reads (runtime Proxy over the whole sweep)",

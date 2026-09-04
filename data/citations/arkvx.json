@@ -504,17 +504,6 @@
         "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
       }
     ],
-    "5.6": [
-      {
-        "text": "N-CSR FY2025 (filed 2025-10-08), Note 10 segment disclosure, CIK 1905088",
-        "form": "N-CSR",
-        "match": "exact",
-        "filing_date": "2025-10-08",
-        "accession": "0001213900-25-097285",
-        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025097285/ea0254858-01_ncsr.htm",
-        "local_path": "data/raw/arkvx/N-CSR_2025-10-08_ea0254858-01_ncsr.htm"
-      }
-    ],
     "6.1": [
       {
         "text": "N-CSR FY2025 (filed 2025-10-08), Notes 1-4",
@@ -653,7 +642,7 @@
     ]
   },
   "counts": {
-    "exact": 47,
+    "exact": 46,
     "form_only": 9,
     "range": 1
   }

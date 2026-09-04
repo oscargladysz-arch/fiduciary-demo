@@ -160,10 +160,23 @@ function buildTopbar() {
     () => window.tarkPalette.open());
 }
 
-/* the price/NAV series chunk is lazy-loaded (perf budget): chart/lab views
- * wait for series.js; screener/compare/plans first-paint stays light */
+/* the lazy chunk (series.js) carries the price/NAV series, the liquidity
+ * matches, the lab matrix and the citation-drawer detail of every cell
+ * (source, section, quote, extractor). Chart, lab and evidence views wait
+ * for it; the screener, compare, plans, roster and benchmark first paint
+ * stays light. */
 const SERIES_VIEWS = new Set(["evaluation", "pme", "dxyz", "desmooth",
-                              "liquidity"]);
+                              "liquidity", "cohorts", "search", "packet",
+                              "verification", "fees"]);
+window.tarkMergeLazy = function () {
+  window.TARK.series = window.TARK_SERIES;
+  window.TARK.liquidity = window.TARK_LIQ;
+  window.TARK.swap_matrix = window.TARK_LAB;   // lab verdict matrix
+  const ev = window.TARK_EVIDENCE || {};
+  for (const k of Object.keys(ev)) {
+    for (const cid of Object.keys(ev[k])) Object.assign(window.TARK.products[k].cells[cid], ev[k][cid]);
+  }
+};
 let seriesLoading = false;
 function ensureSeries() {
   const root = document.getElementById("view");
@@ -174,12 +187,7 @@ function ensureSeries() {
     seriesLoading = true;
     const s = document.createElement("script");
     s.src = "series.js";
-    s.onload = () => {
-      window.TARK.series = window.TARK_SERIES;
-      window.TARK.liquidity = window.TARK_LIQ;
-      window.TARK.swap_matrix = window.TARK_LAB;   // lab verdict matrix
-      render();
-    };
+    s.onload = () => { window.tarkMergeLazy(); render(); };
     document.head.append(s);
   }
 }

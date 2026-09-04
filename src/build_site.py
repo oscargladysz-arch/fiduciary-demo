@@ -526,6 +526,17 @@ def main() -> None:
     metrics = json.loads((DATA / "analytics" / "metrics.json").read_text())
     supplement = json.loads((DATA / "analytics" / "supplement.json").read_text())
 
+    # first paint ships element, value, status and verifier per cell. The
+    # citation-drawer detail (source, section, quote, extractor) rides in the
+    # lazy chunk as TARK_EVIDENCE and is merged into products on load.
+    FIRST_PAINT_FIELDS = ("element", "value", "status", "verified_by")
+    DETAIL_FIELDS = ("source", "section", "quote", "extracted_by")
+    evidence_detail = {k: {cid: {f: c.get(f, "") for f in DETAIL_FIELDS}
+                           for cid, c in p["cells"].items()}
+                       for k, p in products.items()}
+    products = {k: {**p, "cells": {cid: {f: c.get(f, "") for f in FIRST_PAINT_FIELDS}
+                                   for cid, c in p["cells"].items()}}
+                for k, p in products.items()}
     bundle = {
         "generated": date.today().isoformat(),
         "facts": facts,
@@ -606,7 +617,8 @@ def main() -> None:
     census_payload = census_chunk()
     payload = json.dumps(bundle, separators=(",", ":"))
     lab_payload = json.dumps(swap_matrix(), separators=(",", ":"))
-    low = (payload + series_payload + census_payload + lab_payload).lower()
+    evidence_payload = json.dumps(evidence_detail, separators=(",", ":"))
+    low = (payload + series_payload + census_payload + lab_payload + evidence_payload).lower()
     leaked = sorted(n for n in sponsor_names if n in low)
     if leaked:
         raise SystemExit(f"ANONYMIZATION FAILURE: sponsor token(s) {leaked} "
@@ -624,7 +636,8 @@ def main() -> None:
         "window.TARK_SERIES = " + series_payload + ";\n"
         + "window.TARK_LIQ = "
         + json.dumps(liquidity, separators=(",", ":")) + ";\n"
-        + "window.TARK_LAB = " + lab_payload + ";\n")
+        + "window.TARK_LAB = " + lab_payload + ";\n"
+        + "window.TARK_EVIDENCE = " + evidence_payload + ";\n")
     (SITE / "census.data.js").write_text("window.TARK_CENSUS = "
                                          + census_payload + ";\n")
 

@@ -111,9 +111,57 @@ def cell_2_9(key: str) -> dict | None:
             "quote": ""}
 
 
+def cell_5_6(key: str) -> dict | None:
+    """Benchmark suitability: the selection artifact restated as one cell.
+    Every figure is the engine's own output, nothing is extracted here."""
+    sp = DATA / "benchmarks" / f"{key}_selection.json"
+    if not sp.exists():
+        return None
+    sel = json.loads(sp.read_text())
+    ma = sel.get("max_attainable")
+    ma_txt = (f"Max attainable on held data {ma}/12." if ma is not None
+              else "No candidate is eligible, so no maximum is attainable on held data.")
+    parts = [f"Benchmark suitability (rubric {sel.get('rubric_version', 'v2')}, engine output)."]
+    if sel.get("escalation"):
+        parts.append(f"ESCALATED: {sel['escalation'].rstrip('.')}.")
+    else:
+        pr = sel["primary"]
+        comp = pr.get("comparison") or {}
+        line = f"Primary {pr['candidate']} ({pr['lane']} lane) scored {pr['score']}/{pr['max']}"
+        if comp:
+            line += (f" with a {comp['kind']} comparison over {comp['window']}: "
+                     f"KS-PME {comp['ks_pme']}, Direct Alpha {comp['direct_alpha_pct']}%/yr")
+            if comp.get("low_confidence"):
+                line += f" ({comp['low_confidence']})"
+        else:
+            note = pr.get("comparison_note") or sel.get("comparison_note") or "not computable on held data"
+            line += f", comparison not computable ({note.rstrip('.')})"
+        parts.append(line + ".")
+        sec = sel.get("secondary")
+        parts.append(f"Secondary {sec['candidate']} scored {sec['score']}/{sec['max']}." if sec
+                     else f"No eligible secondary ({sel.get('secondary_note') or 'none'}).")
+    parts.append(ma_txt)
+    decl = sel.get("declared_benchmarks") or []
+    if decl:
+        parts.append("Fund-declared benchmark(s) (cell 5.1): "
+                     + ", ".join(f"{d['name']}: {d['status']}" for d in decl) + ".")
+    elif sel.get("declared_none_reason"):
+        parts.append(f"Declared benchmark: none ({sel['declared_none_reason']}).")
+    parts.append(f"Rejected: {len(sel.get('rejected', []))} candidates, each with its reason in "
+                 "the ledger. Methodology: docs/benchmark_methodology.md.")
+    text = " ".join(parts)
+    note = analyst_note(key, "5.6")
+    if note:
+        text += f" Analyst note: {note}"
+    return {"value": text, "source": f"data/benchmarks/{key}_selection.json",
+            "section": "primary, secondary, escalation, max_attainable, declared_benchmarks, rejected",
+            "quote": ""}
+
+
 OWNED = {
     "2.9": cell_2_9,
     "5.4": cell_5_4,
+    "5.6": cell_5_6,
 }
 
 

@@ -422,13 +422,23 @@
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": null,
-      "status": "n/a - constructed (L3)"
+      "value": "Benchmark suitability (rubric v2, engine output). Primary Listed private equity investable proxy (PSP) (B lane) scored 9/12 with a series comparison over 2023-09-01 to 2025-12-31: KS-PME 0.8964, Direct Alpha -4.58%/yr (low confidence: 2.33-year window, shorter than 3 years). Secondary Peer cohort composite: evergreen_pe without kkr_kpec (amg_pantheon, ares_pmf, hl_paf, stepstone_spm) scored 8/12. Max attainable on held data 9/12. Declared benchmark: none (cell 5.1: documented absence of a self-declared performance benchmark). Rejected: 2 candidates, each with its reason in the ledger. Methodology: docs/benchmark_methodology.md.",
+      "status": "computed",
+      "source": "data/benchmarks/kkr_kpec_selection.json",
+      "section": "primary, secondary, escalation, max_attainable, declared_benchmarks, rejected",
+      "quote": "",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
+      "verified_by": ""
     },
     "5.7": {
       "element": "Case-law tracker",
-      "value": null,
-      "status": "n/a - cross-product tracker"
+      "value": "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498 (U.S.). Certiorari granted 2026-01-16 per the Supreme Court docket listing. Question presented, per the docket as relayed in search-result snippets: whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary breached the duty of prudence requires alleging a meaningful benchmark. The Ninth Circuit had required plaintiffs to identify a comparable alternative giving a sound basis for comparison, a meaningful benchmark. Argument is listed for the October 2026 term and had not been held as of 2026-09-04. No holding exists yet, and this cell draws no consequence for the evaluation. Status partial: assembled from the docket listing and search snippets, not from the source documents, which this build could not fetch.",
+      "status": "partial - search snippets and docket listing only, source documents not fetched in this build",
+      "source": "Supreme Court docket 25-498, https://www.supremecourt.gov/docket/docketfiles/html/public/25-498.html (grant date). SCOTUSblog case page, https://www.scotusblog.com/cases/anderson-v-intel-corp-investment-policy-comm/ and CRS Legal Sidebar LSB11396, https://www.congress.gov/crs-product/LSB11396 (question presented, argument term). Accessed 2026-09-04 through web-search snippets only.",
+      "section": "docket listing and search-result snippets (question presented, argument scheduling)",
+      "quote": "search snippet, not the source document: \"whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary failed to use the requisite 'care, skill, prudence, or diligence' under the circumstances and thus breached ERISA's duty of prudence when investing plan assets requires alleging a 'meaningful benchmark'\" and \"The case is scheduled for argument before the Supreme Court of the United States during the court's October 2026-2027 term.\"",
+      "extracted_by": "Claude Code (WebSearch snippet, 2026-09-04)",
+      "verified_by": ""
     },
     "6.1": {
       "element": "Structure map",

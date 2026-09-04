@@ -252,6 +252,11 @@ def validate_product(key: str) -> list[str]:
     for cid, cell in cells.items():
         if cid not in CELLS:
             continue
+        if status_kind(st) == "partial" and str(cell.get("value") or "").strip():
+            if not str(cell.get("source") or "").strip():
+                errs.append(f"{key}:{cid}: partial with a value but no source")
+            if not str(cell.get("extracted_by") or "").strip():
+                errs.append(f"{key}:{cid}: partial with a value but empty extracted_by")
         for field in ("value", "source", "section", "quote"):
             for pth in data_paths_in(str(cell.get(field) or "")):
                 if pth.startswith("data/raw/"):

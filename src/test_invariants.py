@@ -44,10 +44,12 @@ check("build_site.evidence_counts delegates to coverage_summary",
 check("app.py uses coverage_summary and has no local coverage formula",
       "coverage_summary(" in ap and "def coverage_pct" not in ap)
 tot = coverage_totals()["counts"]
-check("record totals per kind (recomputed): extracted 406, n/a 237, computed 145, "
-      "partial 59, fetched 16, structured 1, verified 0, pending 0",
+# P1-23 moved 16 cells 5.6 from n/a to computed and 16 cells 5.7 from n/a to
+# partial (32 fewer n/a). The pin is a snapshot of the record, not a target.
+check("record totals per kind (recomputed): extracted 406, n/a 205, computed 161, "
+      "partial 75, fetched 16, structured 1, verified 0, pending 0",
       (tot["extracted"], tot["na"], tot["computed"], tot["partial"], tot["fetched"],
-       tot["structured"], tot["verified"], tot["pending"]) == (406, 237, 145, 59, 16, 1, 0, 0),
+       tot["structured"], tot["verified"], tot["pending"]) == (406, 205, 161, 75, 16, 1, 0, 0),
       str(tot))
 c = coverage_summary("cion_ares")
 check("cion_ares: structured counts as resolved (structured 1, pending 0)",

@@ -848,3 +848,31 @@ carry no quote, no cell has a verifier) and is gone. A "Sources cited"
 table lists every evidenced cell's source as written with the accession
 and EDGAR URL from the offline resolver (6.12), or "accession not on
 record" with the reason.
+
+### 6.17 P1-23: cells 5.6 and 5.7 hold what the record supports
+Cell 5.6 (benchmark suitability) is now an owned computed cell written by
+`src/write_computed_cells.py` from the selection artifact: primary and
+secondary with scores, the comparison figures or why none is computable,
+the escalation, the maximum attainable on held data, the fund-declared
+benchmarks with their status, the rejected count. The product-side
+fragments in the former placeholder prose (arkvx, pflex, amg_pantheon)
+survive as analyst notes in `data/notes/`. Cell 5.7 (case-law tracker) is
+one `partial` row on all sixteen products, written by
+`src/seed_case_law_cell.py`: Anderson v. Intel, No. 25-498, certiorari
+granted 2026-01-16 per the docket listing, the question presented and the
+argument term as relayed by search snippets accessed 2026-09-04, no
+holding, no consequence drawn. The quote column is labeled a search
+snippet, the extractor names the snippet source, and the status says the
+source documents were not fetched. It is never `extracted`: a person with
+access to supremecourt.gov replaces the snippet with the document quote.
+The validator now rejects any partial cell that has a value but no source
+or no extractor (the existing 59 partial rows already satisfy it).
+The two cells added about 32 KB to every product and pushed the first-paint
+bundle past its 1.2 MB budget. The budget stays. The citation-drawer detail
+of every cell (source, section, quote, extractor, about 210 KB across the
+record) now rides in the lazy chunk as `TARK_EVIDENCE` and is merged into
+the products on load. First paint keeps element, value, status and
+verifier. The views that open the drawer or search quotes (evaluation,
+cohorts, search, packet, verification, fees) wait for the chunk like the
+chart views already did. The screener, compare, plans, roster and
+benchmark views still paint from the core bundle.
