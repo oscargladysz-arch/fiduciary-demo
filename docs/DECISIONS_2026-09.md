@@ -1165,3 +1165,73 @@ and flag read the common-share field, the entity view shows the raw
 signal with its reason when it is null, and promote never prefills
 cell 1.10 on a null. Counts moved: interval_23c3 245 to 241, listed_cef
 213 to 217, and the runbook and script say the new numbers.
+
+### 6.32 P3 plan (plan only, no P3 code in this engagement)
+P3 code lands only when P0 through P2 are green in full. P2-3
+(calibration) and P2-4 (the 17th product) cannot run in this container
+(no key, no filing text, sec.gov blocked, decision 6.24), so P2 is not
+green here and P3 stays a plan. Order and acceptance, each item a
+gated commit with a task id, none weakening a gate:
+
+1. P3-2 CI first. `.github/workflows/gates.yml` on every push and pull
+   request: Python 3.11, `pip install -r requirements.txt`, the
+   preinstalled Chromium or `playwright install chromium`,
+   `TARK_SEC_CONTACT` from a repository secret (the fetchers refuse to
+   run without it and CI never fetches), then `bash hooks/pre-commit`
+   as the one job. A second job deploys `site/` to `gh-pages` only from
+   a green run on `main`, with `git push --force-with-lease` to that
+   branch alone. Branch protection on `main` requires the gates job.
+   Acceptance: a pull request with a failing gate cannot merge, and a
+   green `main` publishes within the run. `docs/INVESTOR_DEMO.md`
+   replaces its manual redeploy recipe with the workflow's name.
+2. P3-3 anonymization at rest. The four reference plans keep their
+   figures and lose `identity_private` from the public repository. The
+   intake path from P2-8 already lets `validate_plan` accept a plan with
+   an `anonymization_label` and no identity block, so each reference
+   plan gains the label first. The sponsor tokens the build screens
+   move to a private file named by `TARK_PRIVATE_PLANS`, read by
+   `tark_anon.forbidden_tokens` when present, and held by CI as a
+   secret. Fail closed: with no private source the build refuses to
+   emit the bundle and the memos, because an unscreened surface is
+   worse than no surface. Acceptance: `git grep` of any sponsor name,
+   EIN or ack id over the repository returns nothing, the build with
+   the private source screens as before, the build without it refuses.
+3. P3-4 retire or thin `app.py`. After the static site has carried a
+   demo end to end, the Streamlit app is reduced to a launcher that
+   opens the static site, or removed. The `test_app.py` gate is
+   replaced by a gate over whatever remains (a smoke check of the
+   launcher), never deleted without replacement, and the gate count in
+   the runbook moves with the hook. Acceptance: no surface number lives
+   only in `app.py`.
+4. P3-5 `make refresh` with per-layer as-of dates. `data/as_of.json`
+   grows one date per layer (filings, price series, census, plans,
+   authority text) written by the fetcher of that layer, `record_as_of`
+   becomes the latest of them, and the freshness gate refuses a layer
+   whose artifacts are newer than its own as-of. Targets: `make
+   refresh-filings`, `refresh-series` (the proxies from 2014, decision
+   on the truncated proxy history), `refresh-census`, `refresh-plans`
+   (Schedule H lines from the DOL bulk file), `refresh-authority`
+   (`fetch_authority.py`). Acceptance: each target is idempotent and
+   every surface shows the layer's own date.
+5. P3-1 the vehicle model. A `data/vehicles/` schema for the wrapper an
+   adopting plan would actually hold (CIT sleeve, managed account, TDF
+   sleeve), one worked example labeled ILLUSTRATIVE end to end, a memo
+   and packet section that renders only when a vehicle file exists, and
+   the liquidity structural verdict extended with the vehicle's own
+   dealing terms. Acceptance: no vehicle number is presented as a fact,
+   and the record's verdicts are unchanged when no vehicle is attached.
+
+### 6.33 P2 exit record (2026-09-04)
+Commits d4324eb to d716701, eleven task-tagged commits P2-1 to P2-11,
+every one through the hook. Per gate, run alone: validate_data 26 (now
+with registry, advisor, raw-path and accession checks), validate_census
+1, evidence immutability 482 protected rows with two wildcard rows
+covering 464 and 263 changed cells, corrections log complete, invariants
+16, copy 39, docs 27, analytics 35, cohort 27, benchmark 164, liquidity
+29, ingest 57 (new gate, offline), memo 39 (64 memos and 64 packets),
+app 196, artifacts fresh 9 groups, frontend 213. First paint 1,035,536
+bytes (budget 1,200,000), lazy chunk 1,247,495 bytes (the evidence
+detail with EDGAR links rides there, total payload 2,283,031 against
+the 2,400,000 cap), census chunk 303,113 bytes, 128 build-side
+documents. Record totals unchanged since P1 exit. Not green here and
+therefore P3 stays a plan: P2-3 and P2-4 (decision 6.24).
