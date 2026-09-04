@@ -602,19 +602,10 @@ for _k, _v in AFFE.items():
     MAPPING[_k]["affe"] = _v
 
 
-# per-product as-of dates for track-record math (latest fiscal period end in
-# the record; used only for the computed track_record_years field)
-AS_OF = {"hl_paf": "2026-03-31", "cliffwater_cclfx": "2026-03-31",
-         "dxyz": "2025-12-31", "kkr_kpec": "2025-12-31",
-         "breit": "2025-12-31", "stepstone_spm": "2026-03-31",
-         "bcred": "2025-12-31", "pflex": "2025-06-30",
-         "cion_ares": "2025-12-31", "ocic": "2025-12-31",
-         "ares_pmf": "2026-03-31", "amg_pantheon": "2026-03-31",
-         "sreit": "2025-12-31", "jll_ipt": "2025-12-31",
-         "ssss": "2025-12-31", "arkvx": "2025-07-31"}
-
-# cohort metadata (R3: membership is an argued judgment; exclusions live in
-# data/roster_decisions.md). depth per R2.
+# per-product as-of dates and cohort metadata come from the one registry
+_REG = json.loads((DATA / "registry.json").read_text())["products"]
+AS_OF = {k: v["as_of"] for k, v in _REG.items()}
+COHORT_META = {k: (v["cohort"], v["depth"], v["membership_rationale"]) for k, v in _REG.items()}
 
 # repurchase_program_status (P1-17): "suspended" only where cell 3.1 or 3.3
 # carries suspension language. Everything else is null with the reason, so
@@ -630,70 +621,6 @@ for _key, _m in MAPPING.items():
     else:
         _m["repurchase_program_status"] = null(
             f"no suspension language in 3.1 or 3.3 as of {AS_OF[_key]}", "3.1")
-
-
-COHORT_META = {
-    "cliffwater_cclfx": ("private_credit", "full",
-        "Direct corporate lending in a Rule 23c-3 interval wrapper, the "
-        "cohort's reference member. Daily NAV, quarterly obligated liquidity."),
-    "bcred": ("private_credit", "cohort",
-        "Direct-lending private credit in a non-traded BDC chassis: the same "
-        "strategy as cclfx on different plumbing (150% asset-coverage "
-        "leverage, discretionary quarterly tenders, monthly NAV). Admitted "
-        "deliberately cross-wrapper so the caveat machinery has real work."),
-    "pflex": ("private_credit", "cohort",
-        "Flexible multi-sector credit in the SAME wrapper as cclfx (interval, "
-        "quarterly 5%). A wrapper twin with a broader credit mandate (loans, "
-        "structured, EM). Mandate breadth is the disclosed mismatch."),
-    "cion_ares": ("private_credit", "cohort",
-        "Diversified credit in the cclfx/pflex wrapper (interval, quarterly "
-        "5%). Joins via the census promotion pipeline. The dual-adviser "
-        "CION+Ares structure and a leverage-inclusive Managed Assets fee "
-        "base (1.89% of net assets at FY2025 leverage) widen the cohort's "
-        "fee-base axis. Daily Class I NAV (CADUX)."),
-    "ocic": ("private_credit", "cohort",
-        "Perpetual non-traded BDC running quarterly 13e-4 tenders, bcred's "
-        "closest structural twin. Admitted via the census promotion "
-        "pipeline (46 SC TO-I filings as T1 cadence evidence, Owl Rock -> "
-        "Blue Owl rename verified in the SEC record)."),
-    "hl_paf": ("evergreen_pe", "full",
-        "Evergreen PE fund-of-funds/secondaries in a tender-offer wrapper - "
-        "founding cohort member."),
-    "stepstone_spm": ("evergreen_pe", "full",
-        "Evergreen PE multi-strategy (secondaries-led) tender-offer fund - "
-        "founding cohort member."),
-    "kkr_kpec": ("evergreen_pe", "full",
-        "'34-Act conglomerate of controlled PE businesses. Joins under the "
-        "authorized fallback (its Reg D twins have no public filings). "
-        "Cross-wrapper caveats carried by the cohort caveat block."),
-    "ares_pmf": ("evergreen_pe", "cohort",
-        "Secondaries-led evergreen PE tender-offer fund - wrapper and "
-        "strategy twin of hl_paf/stepstone_spm."),
-    "amg_pantheon": ("evergreen_pe", "cohort",
-        "Evergreen PE (Pantheon) tender-offer LLC - wrapper and strategy "
-        "twin of hl_paf/stepstone_spm."),
-    "breit": ("nontraded_reit", "full",
-        "Non-traded monthly-NAV REIT with 2%/5% repurchase plan - the "
-        "cohort's reference member."),
-    "sreit": ("nontraded_reit", "cohort",
-        "Non-traded monthly-NAV REIT - breit's closest structural twin "
-        "(class structure, repurchase plan, 2022-24 stress history)."),
-    "jll_ipt": ("nontraded_reit", "cohort",
-        "Perpetual NAV REIT of older vintage in the same wrapper class. NAV "
-        "cadence and scale differences disclosed."),
-    "dxyz": ("venture", "full",
-        "Listed CEF holding pre-IPO tech, the premium-pricing fail case. "
-        "The cohort exists to show premium vs NAV pricing as a PATTERN."),
-    "ssss": ("venture", "cohort",
-        "Listed BDC (fka SuRo Capital) holding late-stage growth equity, "
-        "the second market-priced venture vehicle. Gives dxyz a "
-        "premium/discount comparable. Membership CONDITIONAL on strategy "
-        "continuity through the Neostellar rename (verification queue)."),
-    "arkvx": ("venture", "cohort",
-        "Interval fund holding venture/growth, the NAV-priced contrast to "
-        "the two market-priced members. Pricing-basis mix is the cohort's "
-        "disclosed core caveat (composite refused)."),
-}
 
 
 def years_between(d0: str, d1: str) -> float:

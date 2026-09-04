@@ -16,7 +16,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from tark_analytics import _level_on, cumulative_growth, effective_window, year_frac
-from tark_benchmark import (ALL_PRODUCTS, CANDIDATES, MIN_PRIMARY_SCORE, PRODUCT_PROFILES,
+from tark_benchmark import (ALL_PRODUCTS, CANDIDATES, MIN_PRIMARY_SCORE, PRODUCT_PROFILES, RETURN_INPUTS,
                             REGISTRY, RUBRIC_MAX, WindowNotComputable, annual_returns,
                             comparison_stats, fiscal_year_bounds, menu_for, peer_candidate,
                             run_selection, score_candidate)
@@ -293,7 +293,7 @@ check_true("monthly-schedule KS-PME: daily series comparisons only, labeled ILLU
 amg = json.loads((bench_dir / "amg_pantheon_selection.json").read_text())
 comp = amg["secondary"]["comparison"]
 psp = load_series("psp", "adj_close")
-fy = json.loads((bench_dir / "profiles_input.json").read_text())["amg_pantheon"]["profile"]["fy_returns"]
+fy = RETURN_INPUTS["amg_pantheon"]["profile"]["fy_returns"]
 hand_fund = cumulative_growth(fy[3:])        # FY2020 to FY2026, seven whole years
 hand_index = _level_on(psp, "2026-03-31") / _level_on(psp, "2019-03-31")
 check_true("amg_pantheon vs PSP: window clipped to the seven whole fiscal years inside PSP coverage",

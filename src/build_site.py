@@ -21,7 +21,7 @@ from datetime import date
 from pathlib import Path
 
 from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
-from tark_display import cell_display, facts_by_cell
+from tark_display import BASE_LABEL, WRAPPER_LABEL, cell_display, facts_by_cell
 from tark_memo import write_all
 from tark_data import (BASE, DATA, CELLS, FACTORS, RULE, authority,
                        coverage_summary, rule_ref,
@@ -187,12 +187,11 @@ def daily_series_map() -> dict:
 def pme_profiles() -> dict:
     """Analysis Lab profiles for EVERY product with a recomputable return
     input: a daily series, a fiscal-year return list, or a disclosed
-    annualized figure. Inputs come from the engine profiles and
-    profiles_input.json (the same inputs the selection used). The default
+    annualized figure. Inputs come from the engine profiles and the
+    registry's return inputs (the same inputs the selection used). The default
     proxy is the series of the engine's own primary selection, so the lab
     opens on the engine's comparison and the user swaps from there."""
-    from tark_benchmark import PRODUCT_PROFILES as PP, menu_for
-    pi = json.loads((DATA / "benchmarks" / "profiles_input.json").read_text())
+    from tark_benchmark import PRODUCT_PROFILES as PP, RETURN_INPUTS as pi, menu_for
     daily = daily_series_map()
     out = {}
     for key, prof in PP.items():
@@ -550,6 +549,8 @@ def main() -> None:
         "cell_registry": CELLS,
         "products": products,
         "descriptors": descriptors,   # typed comparability attributes per product (registry)
+        "wrapper_labels": WRAPPER_LABEL,   # one vocabulary, shared with the memo (tark_display)
+        "base_labels": BASE_LABEL,
         "cell_display": display,
         "factor_rollups": rollups,
         "glossary": GLOSSARY,

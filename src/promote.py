@@ -186,9 +186,13 @@ def main() -> int:
   - extract the worklist cells (status extracted-unverified, cite everything)
   - cohort decision: member of an existing cohort, or uncohorted with
     rationale (R3). Depth stays 'cohort' unless argued otherwise
-  - src/build_facts.py MAPPING + COHORT_META entry
-  - src/tark_liquidity.py LIQUIDITY_PROFILES + src/tark_benchmark.py
-    PRODUCT_PROFILES entries
+  - data/registry.json entry: cohort (and the cohort's members list), depth,
+    membership_rationale, as_of, wrapper_type, pricing_class, nav_cadence,
+    leverage_regime, held_returns, advisers, adviser_keys,
+    declared_benchmarks, source_cells, filings (every field with its
+    source). validate_data refuses a product that is in data/products but
+    not in the registry
+  - src/build_facts.py MAPPING entry (cell to typed fact, machine-checked)
   - python src/build_census.py (refresh promotion links)
   - full gate chain before commit""")
     return 0

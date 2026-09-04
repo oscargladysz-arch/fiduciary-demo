@@ -47,7 +47,8 @@ RUBRIC_CAPTION = ("rubric v2: strategy match 3 (gate below 2), risk/liquidity ma
                   f"threshold {MIN_PRIMARY_SCORE}/{RUBRIC_MAX}")
 
 REGISTRY = json.loads((DATA / "registry.json").read_text())["products"]
-_PROFILES_INPUT = json.loads((DATA / "benchmarks" / "profiles_input.json").read_text())
+# return inputs live in the registry (P2-1). Exposed for the site build and tests.
+RETURN_INPUTS = {k: r["return_inputs"] for k, r in REGISTRY.items() if r.get("return_inputs")}
 
 
 def _profile(key: str, reg: dict) -> dict:
@@ -61,7 +62,7 @@ def _profile(key: str, reg: dict) -> dict:
                                    "leverage_regime", "adviser_keys", "advisers",
                                    "declared_benchmarks", "cohort", "wrapper_type")}}
     prof["declared_none_reason"] = reg.get("declared_none_reason")
-    inp = _PROFILES_INPUT.get(key, {}).get("profile", {})
+    inp = (reg.get("return_inputs") or {}).get("profile", {})
     prof.update(inp)
     if held["kind"] == "none":
         prof["held_kind"] = "none"

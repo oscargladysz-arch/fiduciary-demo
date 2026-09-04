@@ -599,8 +599,71 @@ def validate_facts() -> list[str]:
     return errs
 
 
+# return-input kinds the benchmark engine reads: a daily or monthly series, a
+# printed fiscal-year return list, a disclosed annualized figure (aatr, or
+# aatr_5yr when the disclosure is a five-year figure), or none
+HELD_RETURN_KINDS = ("series", "fy_returns", "aatr", "aatr_5yr", "none")
+REGISTRY_FIELDS = ("cohort", "strategy", "asset_class", "sub_strategy", "wrapper_type",
+                   "pricing_class", "nav_cadence", "leverage_regime", "held_returns",
+                   "advisers", "adviser_keys", "declared_benchmarks", "source_cells",
+                   "as_of", "depth", "membership_rationale", "filings")
+
+
+def validate_registry() -> list[str]:
+    """The one product registry: same product set as data/products, every
+    typed field present with its source named, cohorts consistent."""
+    from tark_display import WRAPPER_LABEL
+    errs: list[str] = []
+    path = DATA / "registry.json"
+    if not path.exists():
+        return ["data/registry.json missing"]
+    reg = json.loads(path.read_text())
+    prods = reg.get("products", {})
+    keys = set(product_keys())
+    if set(prods) != keys:
+        errs.append(f"registry product set differs from data/products: only in registry "
+                    f"{sorted(set(prods) - keys)}, only in products {sorted(keys - set(prods))}")
+    cohorts = reg.get("cohorts", {})
+    for k, d in prods.items():
+        for f in REGISTRY_FIELDS:
+            if f not in d:
+                errs.append(f"registry {k}: field {f} missing")
+            elif d[f] in (None, "", [], {}) and f != "declared_benchmarks":
+                errs.append(f"registry {k}: field {f} empty")
+        if not d.get("declared_benchmarks") and not d.get("declared_none_reason"):
+            errs.append(f"registry {k}: no declared benchmark and no declared_none_reason")
+        if d.get("wrapper_type") not in WRAPPER_LABEL:
+            errs.append(f"registry {k}: wrapper_type {d.get('wrapper_type')!r} not in the vocabulary")
+        if d.get("pricing_class") not in ("NAV", "MARKET"):
+            errs.append(f"registry {k}: pricing_class must be NAV or MARKET")
+        if d.get("depth") not in ("full", "cohort"):
+            errs.append(f"registry {k}: depth must be full or cohort")
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(d.get("as_of", ""))):
+            errs.append(f"registry {k}: as_of is not an ISO date")
+        c = cohorts.get(d.get("cohort"))
+        if c is None:
+            errs.append(f"registry {k}: cohort {d.get('cohort')!r} has no entry in registry cohorts")
+        elif k not in c.get("members", []):
+            errs.append(f"registry {k}: not listed among the members of cohort {d['cohort']}")
+        if (d.get("held_returns") or {}).get("kind") not in HELD_RETURN_KINDS:
+            errs.append(f"registry {k}: held_returns.kind {(d.get('held_returns') or {}).get('kind')!r} "
+                        f"not one of {HELD_RETURN_KINDS}")
+        for f in ("asset_class", "sub_strategy", "pricing_class", "leverage_regime", "nav_cadence",
+                  "as_of", "depth", "membership_rationale", "filings"):
+            if f not in (d.get("sources") or {}):
+                errs.append(f"registry {k}: no source named for {f}")
+    for cid, c in cohorts.items():
+        for m in c.get("members", []):
+            if prods.get(m, {}).get("cohort") != cid:
+                errs.append(f"registry cohort {cid}: member {m} does not name this cohort")
+        if not c.get("members"):
+            errs.append(f"registry cohort {cid}: no member")
+    return errs
+
+
 def validate_all() -> dict[str, list[str]]:
     report = {k: validate_product(k) for k in product_keys()}
+    report["registry"] = validate_registry()
     for pk in plan_keys():
         report[f"plan:{pk}"] = validate_plan(pk)
     report["series"] = validate_series()

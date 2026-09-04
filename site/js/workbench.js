@@ -23,18 +23,10 @@ function shortName(key) {
     .replace("Destiny Tech100 Inc", "Destiny DXYZ");
 }
 
-const WRAPPER_LABEL = {
-  tender_offer: "tender-offer", interval_23c3: "interval (23c-3)",
-  listed_cef: "listed CEF", nontraded_reit: "non-traded REIT",
-  nontraded_llc: "non-traded LLC", nontraded_bdc: "non-traded BDC",
-  listed_bdc: "listed BDC",
-};
-const BASE_LABEL = {
-  net_assets: "net assets", managed_assets: "MANAGED assets",
-  gross_incl_borrowings: "GROSS incl. borrowings", nav: "NAV",
-  outstanding_shares: "outstanding shares", aggregate_nav: "aggregate NAV",
-  lesser_of_dual_base: "LESSER-OF dual base",
-};
+// wrapper and fee-base vocabularies come from the bundle (tark_display), the
+// same maps the memo and the Evaluation headlines use
+const WRAPPER_LABEL = T.wrapper_labels;
+const BASE_LABEL = T.base_labels;
 
 /* render a fact into a table cell: value or honest gap; provenance click */
 function factCell(key, f, fmt = (v) => esc(String(v)), trapWhen = null) {

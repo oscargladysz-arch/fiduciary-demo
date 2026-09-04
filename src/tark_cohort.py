@@ -26,41 +26,21 @@ from statistics import median
 from tark_data import DATA
 
 # membership lives here (rationales in facts; exclusions in roster_decisions)
-COHORTS = {
-    "private_credit": {
-        "label": "Private credit (interval fund + non-traded BDC)",
-        "members": ["cliffwater_cclfx", "bcred", "pflex", "cion_ares",
-                    "ocic"],
-        "wrapper_types": {"cliffwater_cclfx": "interval_23c3",
-                          "bcred": "nontraded_bdc", "pflex": "interval_23c3",
-                          "cion_ares": "interval_23c3",
-                          "ocic": "nontraded_bdc"},
-    },
-    "evergreen_pe": {
-        "label": "Evergreen private equity ('40-Act funds + '34-Act conglomerate)",
-        "members": ["hl_paf", "stepstone_spm", "kkr_kpec", "ares_pmf",
-                    "amg_pantheon"],
-        "wrapper_types": {"hl_paf": "tender_offer", "stepstone_spm": "tender_offer",
-                          "kkr_kpec": "nontraded_llc", "ares_pmf": "tender_offer",
-                          "amg_pantheon": "tender_offer"},
-        "fallback_note": "kkr_kpec joins under the authorized fallback: its "
-                         "structural twins are Reg D vehicles with no public "
-                         "filings (data/roster_decisions.md - 'The kkr_kpec "
-                         "ruling'). Cross-wrapper caveats apply.",
-    },
-    "nontraded_reit": {
-        "label": "Non-traded NAV REITs",
-        "members": ["breit", "sreit", "jll_ipt"],
-        "wrapper_types": {"breit": "nontraded_reit", "sreit": "nontraded_reit",
-                          "jll_ipt": "nontraded_reit"},
-    },
-    "venture": {
-        "label": "Pre-IPO / venture growth (listed CEF + listed BDC + interval fund)",
-        "members": ["dxyz", "ssss", "arkvx"],
-        "wrapper_types": {"dxyz": "listed_cef", "ssss": "listed_bdc",
-                          "arkvx": "interval_23c3"},
-    },
-}
+# cohorts from the one registry: label, ordered members and fallback note per
+# cohort. Every member's own `cohort` field agrees (validate_registry).
+def _cohorts_from_registry() -> dict:
+    reg = json.loads((DATA / "registry.json").read_text())
+    out = {}
+    for cid, meta in reg["cohorts"].items():
+        members = list(meta["members"])
+        out[cid] = {"label": meta["label"], "members": members,
+                    "wrapper_types": {k: reg["products"][k]["wrapper_type"] for k in members}}
+        if meta.get("fallback_note"):
+            out[cid]["fallback_note"] = meta["fallback_note"]
+    return out
+
+
+COHORTS = _cohorts_from_registry()
 
 # fields the cohort stats layer summarizes (from structured facts)
 STAT_FIELDS = ["mgmt_fee_pct", "expense_ratio_pct", "repurchase_cap_pct",

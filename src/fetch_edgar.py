@@ -50,169 +50,22 @@ MANIFEST_COLS = [
 ]
 SLEEP = 0.3  # seconds between requests (SEC allows 10/sec; we stay well under)
 
-PRODUCTS = {
-    "hl_paf": {
-        "name": "Hamilton Lane Private Assets Fund",
-        "cik": "1803491",
-        "wrapper": "tender-offer fund ('40 Act)",
-        "doc_sets": {
-            "prospectus": ["486BPOS", "486BXT", "424B3"],
-            "annual_report": ["N-CSR"],
-            "holdings": ["NPORT-P"],
-            "tender_offer": ["SC TO-I"],
-        },
-    },
-    "stepstone_spm": {
-        "name": "StepStone Private Markets",
-        "cik": "1789470",
-        "wrapper": "tender-offer fund ('40 Act)",
-        "doc_sets": {
-            "prospectus": ["486BPOS", "424B3"],
-            "annual_report": ["N-CSR"],
-            "holdings": ["NPORT-P"],
-            "tender_offer": ["SC TO-I"],
-        },
-    },
-    "kkr_kpec": {
-        "name": "KKR Private Equity Conglomerate LLC",
-        "cik": "1957845",
-        "wrapper": "non-traded '34 Act reporting company",
-        "doc_sets": {
-            "annual_report": ["10-K"],
-            "quarterly_report": ["10-Q"],
-        },
-    },
-    "breit": {
-        "name": "Blackstone Real Estate Income Trust Inc",
-        "cik": "1662972",
-        "wrapper": "non-traded REIT ('34 Act reporting)",
-        "doc_sets": {
-            "annual_report": ["10-K"],
-            "quarterly_report": ["10-Q"],
-        },
-    },
-    "dxyz": {
-        "name": "Destiny Tech100 Inc",
-        "cik": "1843974",
-        "wrapper": "listed closed-end fund (NYSE: DXYZ)",
-        "doc_sets": {
-            "prospectus": ["N-2/A", "424B3", "424B5"],
-            "annual_report": ["N-CSR"],
-            "holdings": ["NPORT-P"],
-        },
-    },
-    "cliffwater_cclfx": {
-        "name": "Cliffwater Corporate Lending Fund",
-        "cik": "1735964",
-        "wrapper": "TRUE interval fund (Rule 23c-3), private credit (CCLFX)",
-        "doc_sets": {
-            "prospectus": ["486BPOS", "424B3"],
-            "annual_report": ["N-CSR"],
-            "holdings": ["NPORT-P"],
-        },
-        "history_sets": {
-            "repurchase_history": {"form": "N-23C3A", "count": 8},
-        },
-    },
-    "ares_pmf": {
-        "name": "Ares Private Markets Fund",
-        "cik": "1876006",
-        "wrapper": "tender-offer fund ('40 Act)",
-        "depth": "cohort",
-        "doc_sets": {
-            "prospectus": ["486BPOS", "424B3"],
-            "annual_report": ["N-CSR"],
-            "tender": ["SC TO-I"],
-        },
-    },
-    # ---- cohort-tier roster (verified live on EDGAR 2026-08-14; every
-    # acceptance and rejection reasoned in data/roster_decisions.md) ----
-    "bcred": {
-        "name": "Blackstone Private Credit Fund",
-        "cik": "1803498",
-        "wrapper": "non-traded BDC ('34 Act reporting; continuous offering)",
-        "depth": "cohort",
-        "doc_sets": {
-            "prospectus": ["486BPOS", "424B3"],
-            "annual_report": ["10-K"],
-            "quarterly_report": ["10-Q"],
-            "tender": ["SC TO-I"],
-        },
-    },
-    "pflex": {
-        "name": "PIMCO Flexible Credit Income Fund",
-        "cik": "1688554",
-        "wrapper": "TRUE interval fund (Rule 23c-3), flexible credit",
-        "depth": "cohort",
-        "doc_sets": {
-            "prospectus": ["486BPOS", "424B3"],
-            "annual_report": ["N-CSR"],
-        },
-        "history_sets": {
-            "repurchase_history": {"form": "N-23C3A", "count": 8},
-        },
-    },
-    "amg_pantheon": {
-        "name": "AMG Pantheon Fund, LLC",
-        "cik": "1609211",
-        "wrapper": "tender-offer fund ('40 Act), evergreen PE",
-        "depth": "cohort",
-        "doc_sets": {
-            "prospectus": ["N-2", "424B3"],
-            "annual_report": ["N-CSR"],
-            "tender": ["SC TO-I"],
-        },
-    },
-    "sreit": {
-        "name": "Starwood Real Estate Income Trust, Inc.",
-        "cik": "1711929",
-        "wrapper": "non-traded REIT ('34 Act reporting)",
-        "depth": "cohort",
-        "doc_sets": {
-            "prospectus": ["424B3"],
-            "annual_report": ["10-K"],
-            "quarterly_report": ["10-Q"],
-        },
-    },
-    "jll_ipt": {
-        "name": "JLL Income Property Trust, Inc.",
-        "cik": "1314152",
-        "wrapper": "non-traded REIT ('34 Act reporting, perpetual NAV REIT)",
-        "depth": "cohort",
-        "doc_sets": {
-            "prospectus": ["424B3"],
-            "annual_report": ["10-K"],
-            "quarterly_report": ["10-Q"],
-        },
-    },
-    "ssss": {
-        "name": "Neostellar Capital Corp. (fka SuRo Capital Corp., SSSS)",
-        "cik": "1509470",
-        "wrapper": "LISTED BDC (exchange-traded; pre-IPO growth holdings)",
-        "depth": "cohort",
-        "note": "renamed from SuRo Capital Corp. - caught by R1 live verification; "
-                "strategy continuity MUST be confirmed from the current 10-K "
-                "during extraction before cohort membership is final",
-        "doc_sets": {
-            "prospectus": ["N-2"],
-            "annual_report": ["10-K"],
-            "quarterly_report": ["10-Q"],
-        },
-    },
-    "arkvx": {
-        "name": "ARK Venture Fund",
-        "cik": "1905088",
-        "wrapper": "TRUE interval fund (Rule 23c-3), venture/growth (ARKVX)",
-        "depth": "cohort",
-        "doc_sets": {
-            "prospectus": ["486BPOS", "424B3"],
-            "annual_report": ["N-CSR"],
-        },
-        "history_sets": {
-            "repurchase_history": {"form": "N-23C3A", "count": 8},
-        },
-    },
-}
+# identity from data/products, document sets from the one registry: every
+# product in the record is fetchable, none is hand-listed here
+def _products_from_record() -> dict:
+    import json as _json
+    from pathlib import Path as _Path
+    base = _Path(__file__).resolve().parents[1] / "data"
+    reg = _json.loads((base / "registry.json").read_text())["products"]
+    out = {}
+    for key, r in reg.items():
+        prod = _json.loads((base / "products" / f"{key}.json").read_text())
+        out[key] = {"name": prod["fund_name"], "cik": prod["cik"], "wrapper": prod.get("wrapper", ""),
+                    "doc_sets": r["filings"]}
+    return out
+
+
+PRODUCTS = _products_from_record()
 
 
 def polite_get(url, as_json=False):

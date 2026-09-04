@@ -2,9 +2,8 @@
 Run the benchmark engine (rubric v2) for every product with a return input.
     python src/run_benchmark.py
 Writes data/benchmarks/<product>_selection.json and prints the decisions.
-Profiles are assembled at import from data/registry.json and
-data/benchmarks/profiles_input.json (facts live in the data layer, not in
-engine code).
+Profiles are assembled at import from data/registry.json, return inputs
+included (facts live in the data layer, not in engine code).
 """
 import json
 
