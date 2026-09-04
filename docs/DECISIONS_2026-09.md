@@ -971,3 +971,28 @@ fee-base vocabularies from the bundle, the same maps the memo uses,
 instead of two JavaScript copies. The census class taxonomy is a
 different enumeration and stays in `census.js`. Moved prose lost its
 semicolons. The promote checklist names the registry entry.
+
+### 6.23 P2-2: ingestion with a per-cell contract, tested offline
+`src/ingest.py <cik> --key <key>` runs in stages a test can drive one by
+one: registry check (the cohort, strategy and wrapper are a person's
+judgments, so the registry entry comes first), scaffold through the
+promote helpers, fetch through the EDGAR fetcher, filing text with page
+anchors (split on the filings' own page-break styles), one structured
+call per extractable cell with the held filings as a cached prefix, and
+the contract: the returned quote must appear verbatim (whitespace and
+quote marks normalized) in the cited document. Located: status
+extracted-unverified with the page in the source string. Not located, or
+a document not on record: status partial with the reason and the value
+kept for a person. Not found: the cell stays pending and the reason goes
+to `data/ingest/<key>_report.json`. Engine-owned, advisor-completed and
+census-prefilled cells are not in the contract, and an extracted,
+verified or structured cell is never overwritten. The extractor string
+names the script, the model and the date. Model `claude-opus-5` by
+default (the Anthropic API skill's default), `TARK_INGEST_MODEL`
+overrides, the key comes from the environment. A refusal is recorded as
+not found, not rerouted to another model. The source string is written
+as "FORM filed DATE (accession N)" so the offline resolver reads it. The
+gate `test_ingest.py` (17th, before the memo gate) drives all of it with
+a mock client and a synthetic three-page filing, including a deliberate
+wrong figure that must land as partial. No live extraction ran here: no
+key, no filings on disk, EDGAR blocked (P2-3 and P2-4).

@@ -13,6 +13,7 @@ python src/test_analytics.py && \
 python src/test_cohort.py && \
 python src/test_benchmark.py && \
 python src/test_liquidity.py && \
+python src/test_ingest.py && \
 python src/test_memo.py && \
 python src/test_app.py && \
 python src/test_artifacts_fresh.py && \

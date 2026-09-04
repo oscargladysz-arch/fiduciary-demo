@@ -24,7 +24,9 @@ the evidence row). Only a human editing `data/evidence/*.csv` can set
   plan and product, generated into `site/memos/` by `src/build_site.py`.
 - `src/`: producers (`produce.py` runs them in a fixed order), the engines
   (`tark_analytics.py`, `tark_benchmark.py`, `tark_liquidity.py`,
-  `tark_cohort.py`, `tark_memo.py`), the site build (`build_site.py`), the
+  `tark_cohort.py`, `tark_memo.py`), the ingestion of a new fund from its CIK
+  (`ingest.py`, structured extraction with a verbatim-quote contract, offline
+  gate `test_ingest.py`), the site build (`build_site.py`), the
   validators and gates (`validate_*.py`, `test_*.py`, `corrections_log.py`).
 - `site/`: the static frontend. Vanilla JS, hash-routed, reads only the
   bundles the build writes (`data.js`, `series.js`, `census.data.js`,

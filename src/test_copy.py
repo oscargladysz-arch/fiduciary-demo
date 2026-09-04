@@ -29,7 +29,7 @@ SURFACE_MODULES = [
     "tark_analytics.py", "tark_data.py", "build_site.py", "build_facts.py",
     "write_computed_cells.py", "run_supplement.py", "run_analytics.py",
     "run_benchmark.py", "coverage.py", "corrections_log.py", "promote.py",
-    "resolve_citations.py", "tark_display.py", "seed_case_law_cell.py",
+    "resolve_citations.py", "tark_display.py", "seed_case_law_cell.py", "ingest.py",
     "census/build_census.py", "census/enumerate.py", "census/classify.py",
 ]
 # console-only scripts (validators, tests, fetchers, shots, produce) print to
