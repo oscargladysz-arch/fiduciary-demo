@@ -834,3 +834,17 @@ date, not monitoring, verbatim regulatory text present or not. Case law:
 cell 5.7 only, which is n/a for every product until P1-23. The unsourced
 "argument expected October Term 2026" sentence left the regulatory
 paragraph with this change.
+
+### 6.16 P1-22: provenance says what the record holds
+The memo's provenance paragraph reads the record's one coverage formula
+(`coverage_summary`) for every status kind, then counts live how many
+evidenced cells carry a source, a section, a verbatim quote and an
+extractor, and writes "Verified cells have been independently re-checked
+by a person" only when the verified count is above zero. Until then it
+says no cell is verified and verified_by is empty on every row. The
+former "every populated cell carries its source document, section,
+quote, extractor and verifier" was false on two counts (computed cells
+carry no quote, no cell has a verifier) and is gone. A "Sources cited"
+table lists every evidenced cell's source as written with the accession
+and EDGAR URL from the offline resolver (6.12), or "accession not on
+record" with the reason.

@@ -128,6 +128,37 @@ check("no memo carries the unsourced case-law sentence",
       all("argument expected october term" not in squash(text_of(OUT / memo_name(pl, k)))
           for pl in plan_keys() for k in prods))
 
+# P1-22: provenance with true counts, the verified sentence only when true,
+# every resolved accession in the memo, unresolved rows say so
+from tark_data import coverage_summary  # noqa: E402
+acc_missing, cov_missing, false_verified = [], [], []
+not_on_record = 0
+for k in prods:
+    t = squash(text_of(OUT / memo_name("plan_tech_media", k)))
+    cov = coverage_summary(k)
+    if squash(cov["headline"]) not in t:
+        cov_missing.append(k)
+    if cov["verified"] == 0 and ("verified cells have been independently re-checked" in t
+                                 or "no cell is verified" not in t):
+        false_verified.append(k)
+    cit = json.loads((BASE / "data" / "citations" / f"{k}.json").read_text())["cells"]
+    for cid, refs in cit.items():
+        if status_kind(prods[k]["cells"][cid].get("status", "")) not in EVIDENCED:
+            continue
+        for r in refs:
+            accs = [r["accession"]] if r["match"] in ("exact", "form_only", "accession_in_text") \
+                else [f["accession"] for f in r.get("filings", [])]
+            for a in accs:
+                if a.lower() not in t or r.get("url", r.get("filings", [{}])[0].get("url", "")).lower() not in t:
+                    acc_missing.append(f"{k} {cid} {a}")
+    not_on_record += t.count("accession not on record")
+check("provenance: the coverage headline from the one formula is in every memo", not cov_missing)
+check("provenance: the verified sentence is never written while verified is 0", not false_verified)
+check("provenance: every resolved accession and URL for an evidenced cell is in the memo", not acc_missing)
+if acc_missing:
+    print("   missing:", "; ".join(acc_missing[:6]))
+check("provenance: cells without a resolvable filing say accession not on record", not_on_record > 0)
+
 keys = ["breit","cliffwater_cclfx","dxyz","hl_paf","kkr_kpec","stepstone_spm"]
 texts = {}
 for k in keys:

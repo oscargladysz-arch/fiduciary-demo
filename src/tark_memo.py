@@ -26,8 +26,10 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt
 
-from tark_data import (CELLS, DATA, FACTORS, cells_by_factor, load_plan,
-                       load_products, plan_keys, record_as_of, status_kind)
+import csv
+
+from tark_data import (CELLS, DATA, FACTORS, cells_by_factor, coverage_summary,
+                       load_plan, load_products, plan_keys, record_as_of, status_kind)
 from tark_display import _money as money, facts_by_cell, typed_headline
 
 SITE_MEMOS = Path(__file__).resolve().parents[1] / "site" / "memos"
@@ -273,6 +275,86 @@ def _case_law_section(doc: Document, product: dict) -> None:
                           + " This memo makes no case-law statement beyond that cell.")
 
 
+KIND_ORDER = (("structured", "structured"), ("extracted", "extracted-unverified"),
+              ("verified", "verified"), ("computed", "computed"), ("partial", "partial"),
+              ("fetched", "fetched"), ("na", "n/a"), ("pending", "pending"))
+RESOLVED_ONE = ("exact", "form_only", "accession_in_text")
+
+
+def _citation_lines(refs: list[dict]) -> list[str]:
+    """One paragraph per resolved filing, or the reason it is not on record."""
+    lines = []
+    for r in refs:
+        if r["match"] in RESOLVED_ONE:
+            tag = {"form_only": " (matched by form only: the single such filing held)",
+                   "accession_in_text": " (accession written in the citation, EDGAR folder URL)"
+                   }.get(r["match"], "")
+            lines.append(f"{r['form']} {r.get('filing_date', '')} accession {r['accession']} "
+                         f"{r['url']}{tag}".replace("  ", " "))
+        elif r["match"] in ("range", "set"):
+            lines.append(f"{r['form']}, {r['reason']}:")
+            lines.extend(f"{f['filing_date']} accession {f['accession']} {f['url']}"
+                         for f in r["filings"])
+        else:
+            lines.append(f"{r.get('form', '')} accession not on record: {r['reason']}".strip())
+    return lines
+
+
+def _provenance_section(doc: Document, key: str, product: dict, plan: dict) -> None:
+    doc.add_heading("Provenance", level=1)
+    cov = coverage_summary(key)
+    doc.add_paragraph(
+        "Cell status for this product, from the record's one coverage formula: "
+        + ", ".join(f"{label} {cov[k]}" for k, label in KIND_ORDER)
+        + f". {cov['headline']}.")
+    ev = [(cid, c) for cid, c in product["cells"].items()
+          if status_kind(c.get("status", "")) in EVIDENCED and (c.get("value") or "").strip()]
+    n = len(ev)
+    have = {f: sum(1 for _, c in ev if (c.get(f) or "").strip())
+            for f in ("source", "section", "quote", "extracted_by")}
+    doc.add_paragraph(
+        f"Of the {n} evidenced cells, {have['source']} carry a source document, "
+        f"{have['section']} a section, {have['quote']} a verbatim quote (computed cells "
+        f"carry their computation and inputs instead of a quote) and {have['extracted_by']} "
+        "an extractor. "
+        + ("Verified cells have been independently re-checked by a person."
+           if cov["verified"] > 0 else
+           "No cell is verified: no cell has been independently re-checked by a person, "
+           "and verified_by is empty on every row.")
+        + " Cells marked extracted-unverified were extracted by an agent from the cited "
+        "document. Cells marked structured come directly from machine-readable regulatory "
+        "datasets with the dataset cited.")
+
+    doc.add_heading("Sources cited", level=2)
+    cpath = DATA / "citations" / f"{key}.json"
+    cit = json.loads(cpath.read_text())["cells"] if cpath.exists() else {}
+    doc.add_paragraph(
+        "Each evidenced cell's source document as written in the evidence ledger, with "
+        "the SEC accession and EDGAR URL resolved offline against data/manifest.csv. "
+        "Where no filing reference resolves, the row says accession not on record.")
+    t = doc.add_table(rows=1, cols=3)
+    t.style = "Table Grid"
+    h = t.rows[0].cells
+    h[0].text, h[1].text, h[2].text = "Cell", "Source as written", "Accession and EDGAR URL"
+    for cid, c in ev:
+        lines = _citation_lines(cit.get(cid, []))
+        if not lines:
+            lines = ["accession not on record: no filing reference in the source field"]
+        row = t.add_row().cells
+        row[0].text = cid
+        row[1].text = c.get("source") or ""
+        _fill(row[2], lines)
+    for row in t.rows:
+        row.cells[0].width, row.cells[1].width, row.cells[2].width = Inches(0.5), Inches(2.4), Inches(3.6)
+
+    with open(DATA / "manifest.csv", newline="") as fh:
+        held = sum(1 for r in csv.DictReader(fh) if r["product"] == key)
+    doc.add_paragraph(
+        f"Data sources: SEC EDGAR filings ({held} held for this product in data/manifest.csv, "
+        "every row with its accession) and DOL EBSA Form 5500 data for the plan. "
+        f"{plan['anonymization_rule']}")
+
+
 def _set_letter(doc: Document) -> None:
     s = doc.sections[0]
     s.page_width, s.page_height = Inches(8.5), Inches(11)
@@ -452,24 +534,7 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
     _scope_section(doc)
     _case_law_section(doc, p)
 
-    doc.add_heading("Provenance", level=1)
-    counts: dict[str, int] = {}
-    for cell in p["cells"].values():
-        counts[status_kind(cell.get("status", ""))] = \
-            counts.get(status_kind(cell.get("status", "")), 0) + 1
-    doc.add_paragraph(
-        "Every populated cell carries its source document, section, quote, "
-        "extractor and verifier in data/evidence/. Current cell status for "
-        "this product: "
-        + ", ".join(f"{k}: {v}" for k, v in sorted(counts.items())) + ". "
-        "Cells marked extracted-unverified or computed await independent "
-        "verification. Verified cells have been independently re-checked. "
-        "Cells marked structured come directly from machine-readable "
-        "regulatory data (N-CEN structured datasets, XBRL company facts) "
-        "with the source dataset cited. No model judgment is involved.")
-    doc.add_paragraph(f"Data sources include SEC EDGAR filings (see "
-                      f"data/manifest.csv) and DOL EBSA Form 5500 bulk data. "
-                      f"{anchor['anonymization_rule']}")
+    _provenance_section(doc, key, p, anchor)
 
     sig = doc.add_paragraph()
     sig.add_run("\nPrepared by: ______________________    "
