@@ -358,6 +358,24 @@ function wireCompare(root, picked, setState) {
 }
 
 /* =========================================================== VERIFICATION */
+/* queue rows grouped by tier, Tier 1 first, document order kept inside a
+ * tier; the row number is the position in the tiered order */
+function tierGroups(q) {
+  const order = [...q.queue].sort((a, b) => {
+    const ta = a.tier === null ? Infinity : a.tier;
+    const tb = b.tier === null ? Infinity : b.tier;
+    return ta - tb;
+  });
+  const groups = [];
+  order.forEach((it, i) => {
+    const row = { ...it, n: i + 1 };
+    const last = groups[groups.length - 1];
+    if (last && last[0] === it.tier) last[1].push(row);
+    else groups.push([it.tier, [row]]);
+  });
+  return groups;
+}
+
 export function viewVerification(root, state, setState) {
   const q = T.verification_queue;
   const totV = Object.values(q.verified).reduce((a, b) => a + b, 0);
@@ -381,20 +399,27 @@ export function viewVerification(root, state, setState) {
       }).join("")}
     </div>
     <h2 style="margin-bottom:6px">Queue (demo-load-bearing first)</h2>
-    <div class="tablewrap"><table class="grid"><thead><tr>
-      <th>#</th><th>Product</th><th>Cell</th><th>Element</th><th>Status</th><th></th>
-    </tr></thead><tbody>
-      ${q.queue.map((it, i) => {
-        const cell = T.products[it.product].cells[it.cell];
-        return `<tr><td class="num">${i + 1}</td>
-          <td>${esc(shortName(it.product))}</td>
-          <td class="num">${esc(it.cell)}</td>
-          <td>${esc(cell.element)}</td>
-          <td>${chip(cell.status)}</td>
-          <td>${citeBtn(it.product, it.cell)}
-            <a href="#" data-goto-cell="${it.product}">open →</a></td></tr>`;
-      }).join("")}
-    </tbody></table></div>
+    ${tierGroups(q).map(([tier, items]) => `
+      <h3 style="margin:12px 0 4px">${tier === null ? "Later" : `Tier ${tier}`}
+        <span class="cap">${tier === null
+          ? "everything else at extracted-unverified, per product, in cell order"
+          : esc(q.tiers[String(tier)] || "")}</span></h3>
+      <div class="tablewrap"><table class="grid"><thead><tr>
+        <th>#</th><th>Product</th><th>Cell</th><th>Element</th><th>Status</th><th></th>
+      </tr></thead><tbody>
+        ${items.map((it) => {
+          const cell = T.products[it.product].cells[it.cell];
+          return `<tr data-q="${it.product}:${it.cell}" data-tier="${it.tier === null ? "" : it.tier}">
+            <td class="num">${it.n}</td>
+            <td>${esc(shortName(it.product))}
+              ${it.tier === 1 ? `<span class="chip plain" data-tier1-badge>${esc(q.tiers["1"] || "Tier 1")}</span>` : ""}</td>
+            <td class="num">${esc(it.cell)}</td>
+            <td>${esc(cell.element)}</td>
+            <td>${chip(cell.status)}</td>
+            <td>${citeBtn(it.product, it.cell)}
+              <a href="#" data-goto-cell="${it.product}">open →</a></td></tr>`;
+        }).join("")}
+      </tbody></table></div>`).join("")}
     <p class="cap footer-rule">Verification flips a row to 'verified' + signs
       verified_by in data/evidence/*.csv AND the product JSON — humans only;
       the build can never do this.</p>`;

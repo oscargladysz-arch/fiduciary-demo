@@ -395,22 +395,39 @@ def swap_matrix() -> dict:
 
 def parse_verification_queue() -> dict:
     """Parse docs/verification_queue.md into an ordered queue of (product,
-    cell) refs plus live verified counts from the record itself."""
+    cell) refs plus live verified counts from the record itself. Each ref
+    carries the tier it sits under ("### Tier N <title>" headings; rows
+    outside a tier heading carry tier null) and the tier titles ship
+    verbatim so the surface repeats the document's words."""
     qp = BASE / "docs" / "verification_queue.md"
-    queue = []
+    queue: list[dict] = []
+    tiers: dict[str, str] = {}
+    tier = None
+    seen = set()
+
+    def add(product: str, cell: str) -> None:
+        if product in product_keys() and (product, cell) not in seen:
+            seen.add((product, cell))
+            queue.append({"product": product, "cell": cell, "tier": tier})
+
     if qp.exists():
         for line in qp.read_text().splitlines():
-            m = re.match(r"-\s+([a-z_]+)\s+(\d+\.\d+)\s+—", line.strip())
-            if m and m.group(1) in product_keys():
-                queue.append({"product": m.group(1), "cell": m.group(2)})
+            s = line.strip()
+            th = re.match(r"#{2,3}\s+Tier\s+(\d+)\s*[—:-]\s*(.+)$", s)
+            if th:
+                tier = int(th.group(1))
+                tiers[str(tier)] = th.group(2).strip()
+                continue
+            if s.startswith("#"):
+                tier = None
+                continue
+            m = re.match(r"-\s+([a-z_]+)\s+(\d+\.\d+)\s+—", s)
+            if m:
+                add(m.group(1), m.group(2))
             else:
                 for mm in re.finditer(
-                        r"([a-z_]+)\s+(\d+\.\d+)(?=\s*[/—-])", line.strip()):
-                    if (mm.group(1) in product_keys()
-                            and {"product": mm.group(1),
-                                 "cell": mm.group(2)} not in queue):
-                        queue.append({"product": mm.group(1),
-                                      "cell": mm.group(2)})
+                        r"([a-z_]+)\s+(\d+\.\d+)(?=\s*[/—-])", s):
+                    add(mm.group(1), mm.group(2))
     verified = {k: sum(1 for c in load_product(k)["cells"].values()
                        if str(c.get("status", "")).startswith("verified"))
                 for k in product_keys()}
@@ -418,8 +435,8 @@ def parse_verification_queue() -> dict:
                          if status_kind(str(c.get("status", ""))) in
                          ("extracted", "verified"))
                   for k in product_keys()}
-    return {"queue": queue, "verified": verified, "verifiable": verifiable,
-            "source": "docs/verification_queue.md"}
+    return {"queue": queue, "tiers": tiers, "verified": verified,
+            "verifiable": verifiable, "source": "docs/verification_queue.md"}
 
 
 def census_chunk() -> str:

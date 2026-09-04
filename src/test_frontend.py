@@ -863,6 +863,21 @@ with sync_playwright() as pw:
       document.querySelectorAll('table.grid tbody tr').length""")
     check("verification view renders the full queue",
           qrows == len(bundle["verification_queue"]["queue"]))
+    vq = bundle["verification_queue"]
+    tier1 = [f"{it['product']}:{it['cell']}" for it in vq["queue"] if it["tier"] == 1]
+    check("verification queue: the parser found Tier 1 rows and their heading",
+          len(tier1) >= 5 and "spoken aloud" in vq["tiers"].get("1", ""))
+    shown = page.evaluate("""() => [...document.querySelectorAll('table.grid tbody tr[data-q]')]
+      .map(r => r.dataset.q)""")
+    check("verification view: Tier 1 rows come first, in document order",
+          shown[:len(tier1)] == tier1, f"{shown[:3]} vs {tier1[:3]}")
+    nbadge = page.evaluate("() => document.querySelectorAll('[data-tier1-badge]').length")
+    check("verification view: every Tier 1 row carries the spoken-aloud badge, no other row does",
+          nbadge == len(tier1), f"{nbadge} vs {len(tier1)}")
+    vt = page.locator("#view").inner_text()
+    check("verification view: tier headings repeat the queue document's words",
+          all(vq["tiers"][k] in vt for k in vq["tiers"])
+          and vt.index("Tier 1") < vt.index("Tier 2") < vt.index("Tier 3"))
 
     # ---------- 7d. parity: new math toys + committed real-data checkpoints ----------
     wb = page.evaluate("""() => {
