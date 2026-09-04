@@ -1,7 +1,7 @@
 {
   "product_key": "cion_ares",
   "fund_name": "CION Ares Diversified Credit Fund",
-  "cik": 1678124,
+  "cik": "1678124",
   "wrapper": "interval fund (Rule 23c-3, quarterly repurchases)",
   "depth": "cohort",
   "cells": {

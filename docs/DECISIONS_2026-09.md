@@ -453,3 +453,22 @@ not round-trip byte for byte), and `src/validate_census.py` now asserts
 that the fields equal the constants. No count, CIK, date, form type or
 class changed. `git diff --stat` on the two files equals the leaf count
 exactly.
+
+### 5.7 P0 exit: the gates enumerate the record, not a hand-typed subset
+- `src/test_app.py` runs every product in the record across its five
+  views and asserts the product picker offers exactly that set. It ran six
+  products before, chosen by hand in 2026-08.
+- `src/test_frontend.py` asserts that its two view lists together equal
+  the views `site/js/main.js` registers, so a view cannot be added without
+  entering the sweep.
+- The two census-promoted products (`cion_ares`, `ocic`) carried integer
+  CIKs while the other fourteen carried digit strings. The Streamlit roster
+  table logged an Arrow conversion failure on every render because of the
+  mixed column (visible in the gate output, asserted by nothing). Both files
+  now carry strings, `promote.py` writes strings, and `validate_product`
+  requires a digit string.
+- P0 exit criteria met on 2026-09-04: fifteen gates green through the hook,
+  the frontend sweep parses every rendered page with zero stray markup,
+  `undefined` or `NaN`, zero product-count "six" strings in `site/`,
+  `app.py` and `data/`, and every surface change in P0 logged in the
+  corrections log. `docs/BUILD_REPORT_6.md` carries the assertion counts.

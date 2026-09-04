@@ -116,6 +116,14 @@ VIEWS = ["screener", "compare", "search", "packet", "plans", "roster",
 # census views ignore plan/product context — swept once each (renders +
 # anonymization), not across the full combo grid
 CENSUS_VIEWS = ["census", "funnel"]
+# the two lists together must be every view main.js registers, so a new
+# view cannot ship unswept
+APP_VIEW_IDS = re.findall(r'^\s*\["(\w+)", "[^"]+", view\w+, "\w+"\]',
+                          (SITE / "js" / "main.js").read_text(), re.M)
+check("sweep covers every view registered in main.js",
+      bool(APP_VIEW_IDS) and set(VIEWS) | set(CENSUS_VIEWS) == set(APP_VIEW_IDS),
+      f"registered {len(APP_VIEW_IDS)}, missing "
+      f"{sorted(set(APP_VIEW_IDS) - set(VIEWS) - set(CENSUS_VIEWS))}")
 
 # perf budget: first-paint bundle <= 1.2MB; the series chunk is split out and
 # lazy-loaded by chart/lab views, and the TOTAL payload is capped too so the

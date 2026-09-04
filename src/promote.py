@@ -151,7 +151,7 @@ def main() -> int:
             f"exchanges={rec.get('exchanges', {}).get('value') or []}",
             status="n/a - documented-unavailable (structured: unlisted)")
 
-    product = {"product_key": args.key, "fund_name": live_name, "cik": int(cik),
+    product = {"product_key": args.key, "fund_name": live_name, "cik": cik,
                "wrapper": args.wrapper or rec["wrapper_class"],
                "depth": "cohort", "cells": cells}
     pj.write_text(json.dumps(product, indent=1))

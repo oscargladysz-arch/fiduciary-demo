@@ -210,6 +210,12 @@ def validate_product(key: str) -> list[str]:
             errs.append(f"{key}: missing top-level key '{req}'")
     if p.get("product_key") != key:
         errs.append(f"{key}: product_key mismatch ('{p.get('product_key')}')")
+    # one type for the CIK everywhere: a digit string (the census keys its
+    # entities by the same string, and a mixed int/str column breaks the
+    # Streamlit roster table's Arrow conversion)
+    cik = p.get("cik")
+    if not (isinstance(cik, str) and cik.isdigit() and 1 <= len(cik) <= 10):
+        errs.append(f"{key}: cik must be a string of digits, got {cik!r}")
 
     cells = p.get("cells", {})
     missing = sorted(set(CELLS) - set(cells))

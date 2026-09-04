@@ -9,16 +9,18 @@ from pathlib import Path
 from streamlit.testing.v1 import AppTest
 
 APP = str(Path(__file__).resolve().parents[1] / "app.py")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from tark_anon import forbidden_tokens  # noqa: E402
+from tark_data import product_keys  # noqa: E402
+
 VIEWS = ["Reference Plan", "Candidate Roster", "Six-Factor Evaluation",
          "Benchmark Selection", "Liquidity Match"]
-PRODUCTS = ["breit", "cliffwater_cclfx", "dxyz", "hl_paf", "kkr_kpec",
-            "stepstone_spm"]
+# every product in the record, never a hand-typed subset
+PRODUCTS = product_keys()
 PLANS = ["plan_tech_media", "plan_restaurant_hourly", "plan_consulting_alumni",
          "plan_manufacturer_union"]
 # the anonymization rule: NO reference-plan sponsor token, ever. The list
 # (sponsor, plan name, EIN, ack id) comes from the one shared module.
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from tark_anon import forbidden_tokens  # noqa: E402
 FORBIDDEN = forbidden_tokens()
 
 FAILS = []
@@ -76,6 +78,8 @@ def run_view(view: str, product: str, plan: str = "plan_tech_media"
 at0 = AppTest.from_file(APP, default_timeout=30)
 at0.run()
 check_true("app boots without exception", not at0.exception)
+check_true(f"product picker offers exactly the record's {len(PRODUCTS)} products",
+           len(widget(at0, "selectbox", "product").options) == len(PRODUCTS))
 
 # 2. every view x product combination renders without exception,
 #    and NEVER leaks any sponsor name (anchor plan)
