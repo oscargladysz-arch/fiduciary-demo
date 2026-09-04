@@ -177,6 +177,7 @@ function ensureSeries() {
     s.onload = () => {
       window.TARK.series = window.TARK_SERIES;
       window.TARK.liquidity = window.TARK_LIQ;
+      window.TARK.swap_matrix = window.TARK_LAB;   // lab verdict matrix
       render();
     };
     document.head.append(s);

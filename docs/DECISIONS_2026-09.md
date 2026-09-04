@@ -694,3 +694,14 @@ annual return the filings print) and kkr_kpec (2.33 years since class
 inception, and two fiscal years against its cohort). The threshold is a
 constant in the engine, not a judgment made per product, and the gate
 asserts both the labeled and the unlabeled cases.
+
+### 6.9 P1-15: the lab grades any choice with the real scorer
+The Analysis Lab's "engine's judgment of your choice" was a lookup that
+answered "off the engine's menu, no rubric basis" for any proxy not on
+the strategy's menu. Rubric v2 scores from descriptors, so every product
+and proxy pair is scored by the same `score_candidate` at build time,
+and the panel now prints the score, each criterion's reason, whether the
+pair would be eligible (passes the strategy gate and the 7/12 threshold)
+and whether the proxy sits on the engine's menu for that product. The
+lab covers every product with a return input (fifteen). jll_ipt keeps the
+empty state that names it, because there is nothing to recompute.

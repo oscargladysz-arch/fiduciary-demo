@@ -382,30 +382,45 @@ def pme_profiles() -> dict:
 
 
 def swap_matrix() -> dict:
-    """Engine rubric verdict for every (product x proxy-library) pair the
-    user can select in the swap lab. On-menu pairs carry the committed score
-    and reasons; off-menu pairs say truthfully that the engine has no rubric
-    basis for that proxy under this strategy."""
-    from tark_benchmark import PRODUCT_PROFILES, menu_for, score_candidate
+    """Rubric v2 verdict for every (product x proxy-library) pair the lab
+    can select, on the engine's menu or not. Every pair goes through the
+    same scorer from typed descriptors. The verdict says whether the pair
+    would be eligible (passes the strategy gate and the threshold) and
+    whether it sits on the engine's menu for the product, so the lab grades
+    any choice instead of declaring some choices ungradeable."""
+    from tark_benchmark import (CANDIDATES, MIN_PRIMARY_SCORE, PRODUCT_PROFILES,
+                                menu_for, score_candidate)
     out: dict = {}
     for key, prof in PRODUCT_PROFILES.items():
+        if prof.get("held_kind") == "none":
+            continue          # no return input, no lab, nothing to grade
         menu = menu_for(key)
         by_series: dict = {}
         for proxy in PROXY_LIBRARY:
-            cand = next((c for c in menu if c.get("series") == proxy), None)
-            if cand:
-                s = score_candidate(prof, cand)
-                by_series[proxy] = {"score": s["score"], "max": s["max"],
-                                    "reasons": s["reasons"],
-                                    "candidate": cand["name"]}
+            on_menu = next((c for c in menu if c.get("series") == proxy), None)
+            cand = {**CANDIDATES[proxy], "id": proxy}
+            if on_menu:
+                cand["lane"] = on_menu["lane"]
+            s = score_candidate(prof, cand)
+            sm = s["criteria"]["strategy_match"]
+            decoupled = bool(prof.get("price_nav_decoupled"))
+            gate = sm >= 2
+            eligible = gate and s["score"] >= MIN_PRIMARY_SCORE and not decoupled
+            if decoupled:
+                verdict = ("not eligible: the fund's price is decoupled from its NAV, so no "
+                           "proxy benchmarks the portfolio")
+            elif not gate:
+                verdict = f"not eligible: fails the strategy gate (strategy_match {sm}/3)"
+            elif s["score"] < MIN_PRIMARY_SCORE:
+                verdict = (f"not eligible: {s['score']}/{s['max']} is below the "
+                           f"{MIN_PRIMARY_SCORE}/{s['max']} threshold")
             else:
-                by_series[proxy] = {"score": None,
-                                    "verdict": "off-menu: the engine has not "
-                                               "scored this proxy for the "
-                                               f"'{prof['strategy']}' strategy "
-                                               "(no rubric basis). Treat any "
-                                               "recomputation as "
-                                               "user-configured analysis only"}
+                verdict = (f"eligible under rubric v2: {s['score']}/{s['max']} passes the "
+                           "strategy gate and the threshold")
+            by_series[proxy] = {"score": s["score"], "max": s["max"],
+                                "criteria": s["criteria"], "reasons": s["reasons"],
+                                "candidate": cand["name"], "on_menu": bool(on_menu),
+                                "eligible": eligible, "verdict": verdict}
         out[key] = by_series
     return out
 
@@ -712,7 +727,7 @@ def main() -> None:
         "pme_profiles": pme_profiles(),
         "daily_series": daily_series_map(),
         "proxy_library": PROXY_LIBRARY,
-        "swap_matrix": swap_matrix(),
+        "swap_matrix": None,      # lab matrix, merged from the lazy chunk (TARK_LAB)
         "verification_queue": parse_verification_queue(),
         "crosscheck": crosscheck_summary(),
         "memos": sorted(p.stem.replace("_decision_memo", "")
@@ -735,7 +750,8 @@ def main() -> None:
 
     census_payload = census_chunk()
     payload = json.dumps(bundle, separators=(",", ":"))
-    low = (payload + series_payload + census_payload).lower()
+    lab_payload = json.dumps(swap_matrix(), separators=(",", ":"))
+    low = (payload + series_payload + census_payload + lab_payload).lower()
     leaked = sorted(n for n in sponsor_names if n in low)
     if leaked:
         raise SystemExit(f"ANONYMIZATION FAILURE: sponsor token(s) {leaked} "
@@ -752,7 +768,8 @@ def main() -> None:
     (SITE / "series.js").write_text(
         "window.TARK_SERIES = " + series_payload + ";\n"
         + "window.TARK_LIQ = "
-        + json.dumps(liquidity, separators=(",", ":")) + ";\n")
+        + json.dumps(liquidity, separators=(",", ":")) + ";\n"
+        + "window.TARK_LAB = " + lab_payload + ";\n")
     (SITE / "census.data.js").write_text("window.TARK_CENSUS = "
                                          + census_payload + ";\n")
 

@@ -164,6 +164,15 @@ check("facts bundle: pme_primary mirrors selection artifact", all(
     bundle["facts"][k]["pme_primary"]["value"] ==
     ((bundle["benchmarks"][k].get("primary") or {}).get("comparison") or {}).get("ks_pme")
     for k in PRODUCTS if bundle["benchmarks"].get(k, {}).get("primary")))
+sm = json.loads((SITE / "series.js").read_text().split("\n")[2][len("window.TARK_LAB = "):-1])
+check("lab matrix: every product x proxy pair carries a real v2 score, criteria and eligibility",
+      all(isinstance(v["score"], int) and set(v["criteria"]) == {"strategy_match", "risk_liquidity_match",
+          "investability", "data_quality", "provider_independence"} and isinstance(v["eligible"], bool)
+          and v["reasons"] for prod in sm.values() for v in prod.values())
+      and all(set(prod) == set(bundle["proxy_library"]) for prod in sm.values()))
+check("lab matrix: cclfx x BKLN eligible and on the menu, cclfx x SPY not eligible and off the menu",
+      sm["cliffwater_cclfx"]["bkln"]["eligible"] and sm["cliffwater_cclfx"]["bkln"]["on_menu"]
+      and not sm["cliffwater_cclfx"]["spy"]["eligible"] and not sm["cliffwater_cclfx"]["spy"]["on_menu"])
 check("benchmarks bundle: rubric v2 with a ceiling and a declared-benchmark record on every selection", all(
     sel.get("rubric_version") == "v2" and "max_attainable" in sel
     and ("declared_benchmarks" in sel) for sel in bundle["benchmarks"].values()))
@@ -200,14 +209,15 @@ with sync_playwright() as pw:
         has(t, k) { if (typeof k === 'string') window.__tarkReads.add(prefix + k); return Reflect.has(t, k); },
         ownKeys(t) { for (const k of Object.keys(t)) window.__tarkReads.add(prefix + k); return Reflect.ownKeys(t); },
       });
-      for (const name of ['TARK', 'TARK_SERIES', 'TARK_LIQ', 'TARK_CENSUS']) {
+      for (const name of ['TARK', 'TARK_SERIES', 'TARK_LIQ', 'TARK_LAB', 'TARK_CENSUS']) {
         let store;
         Object.defineProperty(window, name, {
           configurable: true,
           get() { return store; },
           set(v) { store = (v && typeof v === 'object')
             ? wrap(v, name === 'TARK' ? '' : name === 'TARK_SERIES' ? 'series.'
-                                        : name === 'TARK_LIQ' ? 'liquidity.' : 'census.')
+                                        : name === 'TARK_LIQ' ? 'liquidity.'
+                                        : name === 'TARK_LAB' ? 'lab.' : 'census.')
             : v; },
         });
       }
@@ -226,7 +236,7 @@ with sync_playwright() as pw:
     page.evaluate("""() => new Promise((res) => {
         const s = document.createElement('script');
         s.src = 'series.js';
-        s.onload = () => { window.TARK.series = window.TARK_SERIES; window.TARK.liquidity = window.TARK_LIQ; res(true); };
+        s.onload = () => { window.TARK.series = window.TARK_SERIES; window.TARK.liquidity = window.TARK_LIQ; window.TARK.swap_matrix = window.TARK_LAB; res(true); };
         document.head.append(s);
       })""")
     page.evaluate("""() => new Promise((res) => {
@@ -733,8 +743,10 @@ with sync_playwright() as pw:
           "Comparison" in rt and "HL PAF" in rt and "BREIT" in rt)
     page.goto(f"http://127.0.0.1:{PORT}/#view=pme&product=cliffwater_cclfx"
               f"&proxy=spy", wait_until="networkidle")
-    check("URL round-trip: lab proxy restored; off-menu verdict shown",
-          "Off the engine's menu" in page.locator("#verdictcard").inner_text())
+    vtext = page.locator("#verdictcard").inner_text()
+    check("URL round-trip: lab proxy restored; off-menu proxy graded by the real scorer",
+          "not on the engine's menu" in vtext and "Not eligible" in vtext
+          and "strategy gate" in vtext)
     # sponsor sweep over generated URLs
     url_now = page.evaluate("() => location.href").lower()
     check("URL contains no sponsor token",
@@ -887,7 +899,7 @@ with sync_playwright() as pw:
     page.evaluate("""() => new Promise((res) => {
         const s = document.createElement('script');
         s.src = 'series.js';
-        s.onload = () => { window.TARK.series = window.TARK_SERIES; window.TARK.liquidity = window.TARK_LIQ; res(true); };
+        s.onload = () => { window.TARK.series = window.TARK_SERIES; window.TARK.liquidity = window.TARK_LIQ; window.TARK.swap_matrix = window.TARK_LAB; res(true); };
         document.head.append(s);
       })""")
     page.evaluate("""() => new Promise((res) => {
@@ -1049,15 +1061,18 @@ with sync_playwright() as pw:
     reads = set(page.evaluate("() => [...window.__tarkReads]"))
     series_bundle = json.loads((SITE / "series.js").read_text().split("\n")[0]
                                [len("window.TARK_SERIES = "):-1])
+    lab_bundle = json.loads((SITE / "series.js").read_text().split("\n")[2]
+                            [len("window.TARK_LAB = "):-1])
     emitted = set()
     for k in bundle:
-        if k in ("series", "liquidity"):
+        if k in ("series", "liquidity", "swap_matrix"):
             continue          # placeholders merged from the lazy chunk
         emitted.add(k)
         if isinstance(bundle[k], dict) and k in ("supplement", "metrics", "series_monthly",
                                                   "series_quarterly"):
             emitted |= {f"{k}.{kk}" for kk in bundle[k]}
     emitted |= {f"series.{k}" for k in series_bundle}
+    emitted |= {f"lab.{k}" for k in lab_bundle}
     emitted |= {f"census.{k}" for k in census_bundle}
     dead = sorted(emitted - reads)
     check("bundle has no key that no view reads (runtime Proxy over the whole sweep)",

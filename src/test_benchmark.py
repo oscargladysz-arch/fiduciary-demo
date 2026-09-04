@@ -86,6 +86,13 @@ check_true("property: independence is per product (cdli 0 for cliffwater_cclfx, 
            score_candidate(cclfx, cdli)["criteria"]["provider_independence"] == 0
            and score_candidate(PRODUCT_PROFILES["bcred"], cdli)["criteria"]["provider_independence"] == 2)
 
+# --- an off-menu pair scores through the same scorer (the lab's matrix) ---
+off = score_candidate(cclfx, {**CANDIDATES["spy"], "id": "spy"})
+# the audit's point exactly: an unaffiliated daily ETF of the wrong asset
+# class still reaches 7 (0 + 1 + 2 + 2 + 2). Only the gate keeps it out.
+check_true("off-menu pair (cclfx x SPY): strategy 0 yet score 7, so the gate alone excludes it",
+           off["criteria"]["strategy_match"] == 0 and off["score"] == MIN_PRIMARY_SCORE)
+
 # --- Lane C mechanics ---
 pc = peer_candidate("peer_credit", "bcred")
 check_true("peer composite is leave-one-out (bcred absent from its own composite)",

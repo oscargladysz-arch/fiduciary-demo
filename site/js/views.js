@@ -549,11 +549,17 @@ export function viewPme(root, state, setState) {
   // --- engine verdict panel (always beside the user's choice) ---
   const sel = T.benchmarks[key];
   const vb = root.querySelector("#verdictbody");
-  if (verdict.score !== null && verdict.score !== undefined) {
-    vb.innerHTML = `
+  // every pair is scored by the real rubric v2 scorer at build time: the
+  // panel grades the user's choice and says whether it sits on the menu
+  vb.innerHTML = `
       <div class="num" style="font-size:22px;font-weight:600;color:var(--plum-900)">
         ${verdict.score}/${verdict.max}</div>
       <div class="scorebar"><div class="fill" style="width:${verdict.score / verdict.max * 100}%"></div></div>
+      <div class="banner${verdict.eligible ? "" : " amber"}" style="margin:8px 0 0">
+        <b>${verdict.eligible ? "Eligible" : "Not eligible"}.</b> ${esc(verdict.verdict)}.
+        ${verdict.on_menu
+          ? "This proxy is on the engine's menu for this product."
+          : "This proxy is not on the engine's menu for this product. It is scored on its descriptors alone."}</div>
       <ul style="margin:10px 0 0 18px;font-size:12px">
         ${verdict.reasons.map((r) => `<li>${esc(r)}</li>`).join("")}</ul>
       <div class="cap" style="margin-top:10px">${sel && sel.primary
@@ -561,14 +567,6 @@ export function viewPme(root, state, setState) {
            (${sel.primary.score}/12). Rejection ledger: <a href="#" data-goto-bench>view →</a>`
         : `Engine outcome for this product: FORMAL ESCALATION, no benchmark assigned.
            <a href="#" data-goto-bench>see the notice →</a>`}</div>`;
-  } else {
-    vb.innerHTML = `<div class="banner amber" style="margin:0">
-      <b>Off the engine's menu.</b> ${esc(verdict.verdict)}</div>
-      <div class="cap" style="margin-top:8px">${sel && sel.primary
-        ? `Engine's actual selection: <b>${esc(sel.primary.candidate)}</b> (${sel.primary.score}/12).`
-        : "Engine outcome: FORMAL ESCALATION, no benchmark assigned."}
-        <a href="#" data-goto-bench>rubric & ledger →</a></div>`;
-  }
   root.querySelectorAll("[data-goto-bench]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault(); setState({ view: "benchmarks" }); }));
 
