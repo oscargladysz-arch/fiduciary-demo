@@ -197,12 +197,12 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Cohort placement (nontraded_reit, R4 phrasing): mgmt fee: at the cohort median of 1.25 (n=3 — too small for percentile language) | expense ratio (bases differ - see notes): fact unavailable for this member | repurchase cap: above the cohort median of 3.5 (n=2 — too small for percentile language). Stats + caveats in the cohort artifact.",
+      "value": "Cohort placement (nontraded_reit, R4 phrasing): mgmt fee: at the cohort median of 1.25 (n=3, too small for percentile language) | expense ratio (bases differ, see notes): fact unavailable for this member | repurchase cap: above the cohort median of 3.5 (n=2, too small for percentile language). Stats and per-member values in data/cohorts/nontraded_reit.json, membership rationales in data/facts.",
       "status": "computed",
       "source": "data/cohorts/nontraded_reit.json",
-      "section": "stats (R4 phrasing by tark_cohort)",
+      "section": "stats block (R4 phrasing by tark_cohort.percentile_of)",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "2.10": {

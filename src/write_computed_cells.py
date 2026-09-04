@@ -83,7 +83,36 @@ def cell_5_4(key: str) -> dict | None:
             "section": "members, composite and caveats blocks", "quote": ""}
 
 
+def cell_2_9(key: str) -> dict | None:
+    """Fee peer percentile: cohort placement on three typed facts, phrased by
+    tark_cohort.percentile_of (the R4 phrasing law lives there and only
+    there)."""
+    import tark_cohort
+    cid, co = _cohort_for(key)
+    if not co:
+        return None
+    members = list(co["members"].keys())
+    facts_by_key = {m: tark_cohort.load_facts(m) for m in members
+                    if (DATA / "facts" / f"{m}.json").exists()}
+    parts = []
+    for label, field in (("mgmt fee", "mgmt_fee_pct"),
+                         ("expense ratio (bases differ, see notes)", "expense_ratio_pct"),
+                         ("repurchase cap", "repurchase_cap_pct")):
+        pl = tark_cohort.percentile_of(key, cid, field, facts_by_key)
+        parts.append(f"{label}: {pl['phrase'] if pl else 'fact unavailable for this member'}")
+    text = (f"Cohort placement ({cid}, R4 phrasing): " + " | ".join(parts)
+            + f". Stats and per-member values in data/cohorts/{cid}.json, "
+              f"membership rationales in data/facts.")
+    note = analyst_note(key, "2.9")
+    if note:
+        text += f" Analyst note: {note}"
+    return {"value": text, "source": f"data/cohorts/{cid}.json",
+            "section": "stats block (R4 phrasing by tark_cohort.percentile_of)",
+            "quote": ""}
+
+
 OWNED = {
+    "2.9": cell_2_9,
     "5.4": cell_5_4,
 }
 

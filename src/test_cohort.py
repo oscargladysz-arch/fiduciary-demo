@@ -53,6 +53,31 @@ check("n=5: percentile allowed", "percentile" in p5["phrase"])
 check("n=5: top value = 90th percentile ((4+0.5)/5)", p5["percentile"] == 90)
 p5m = tc.percentile_of("c", "_toy5", "fee", FACTS5)
 check("n=5: median member at 50th", p5m["percentile"] == 50)
+# ---- ties share one rank; "at the median" is always the 50th ----
+FACTS_TIE = {k: {"cap": {"value": 5.0}} for k in "abcde"}
+tc.COHORTS["_tie5"] = {"label": "tie", "members": list("abcde"),
+                       "wrapper_types": {k: "interval_23c3" for k in "abcde"}}
+tie = [tc.percentile_of(k, "_tie5", "cap", FACTS_TIE) for k in "abcde"]
+check("five-way tie: every member is the 50th percentile",
+      all(t["percentile"] == 50 for t in tie))
+check("five-way tie: every member reads 'at the median'",
+      all("at the median" in t["phrase"] for t in tie))
+check("no member is both a non-50th percentile and 'at the median'",
+      not any(("at the median" in t["phrase"]) and t["percentile"] != 50 for t in tie))
+FACTS_ASYM = {"a": {"fee": {"value": 1.0}}, "b": {"fee": {"value": 1.25}},
+              "c": {"fee": {"value": 1.25}}, "d": {"fee": {"value": 1.5}},
+              "e": {"fee": {"value": 1.75}}}
+tc.COHORTS["_asym5"] = {"label": "asym", "members": list("abcde"),
+                        "wrapper_types": {k: "interval_23c3" for k in "abcde"}}
+pb = tc.percentile_of("b", "_asym5", "fee", FACTS_ASYM)
+pd = tc.percentile_of("d", "_asym5", "fee", FACTS_ASYM)
+check("asymmetric tie at the median reads 50th, at the median",
+      pb["percentile"] == 50 and "at the median" in pb["phrase"])
+check("member above a tied median: mid-rank (3 below + 0.5) / 5 = 70th, above",
+      pd["percentile"] == 70 and "above the median" in pd["phrase"])
+check("phrases carry no em dash or semicolon",
+      all(("\u2014" not in t["phrase"]) and (";" not in t["phrase"]) for t in tie + [pb, pd, p3]))
+
 pn = tc.percentile_of("b", "_toy3", "fee", FACTS_GAP)
 check("null-fact member gets None placement",
       tc.percentile_of("b", "_toy3", "fee", FACTS_GAP) is None

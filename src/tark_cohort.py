@@ -105,29 +105,33 @@ def cohort_stats(cohort_id: str, field: str,
 def percentile_of(product_key: str, cohort_id: str, field: str,
                   facts_by_key: dict[str, dict]) -> dict | None:
     """R4: percentile language only at n >= 4; below that, median-relative
-    phrasing. Returns {'phrase', 'n', ...} or None if the product lacks the
-    fact."""
+    phrasing. Ties share one mid-rank percentile ((below + 0.5 * ties) / n),
+    and a value equal to the median is the 50th percentile by definition, so
+    no member can read as both "10th percentile" and "at the median" (the
+    2026-08 record printed that contradiction in 10 cells). Returns
+    {'phrase', 'n', ...} or None if the product lacks the fact."""
     st = cohort_stats(cohort_id, field, facts_by_key)
     if product_key not in st["values"]:
         return None
     v = st["values"][product_key]
     n = st["n"]
+    med = st["median"]
+    rel = "at" if v == med else "above" if v > med else "below"
     if n < 2:
         return {"phrase": f"only member with this fact (n={n})", "n": n,
-                "value": v, "median": st["median"]}
+                "value": v, "median": med}
     if n >= 4:
-        below = sum(1 for x in st["values"].values() if x < v)
-        pct = round((below + 0.5) / n * 100)
-        rel = ("at" if v == st["median"] else
-               "above" if v > st["median"] else "below")
+        values = list(st["values"].values())
+        below = sum(1 for x in values if x < v)
+        ties = sum(1 for x in values if x == v)
+        pct = 50 if v == med else int((below + 0.5 * ties) / n * 100 + 0.5)
         return {"phrase": f"{pct}th percentile of cohort (n={n}), {rel} the "
-                          f"median of {st['median']:g}",
-                "n": n, "percentile": pct, "value": v, "median": st["median"]}
-    rel = ("at" if v == st["median"] else
-           "above" if v > st["median"] else "below")
-    return {"phrase": f"{rel} the cohort median of {st['median']:g} (n={n} — "
-                      f"too small for percentile language)",
-            "n": n, "value": v, "median": st["median"]}
+                          f"median of {med:g}",
+                "n": n, "percentile": pct, "value": v, "median": med,
+                "ties": ties}
+    return {"phrase": f"{rel} the cohort median of {med:g} (n={n}, too small "
+                      f"for percentile language)",
+            "n": n, "value": v, "median": med}
 
 
 def caveat_block(cohort_id: str) -> list[str]:

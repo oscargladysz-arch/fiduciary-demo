@@ -197,12 +197,12 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Cohort placement (evergreen_pe, R4 phrasing): mgmt fee: 10th percentile of cohort (n=5), below the median of 1.4 | expense ratio (bases differ - see notes): 30th percentile of cohort (n=5), below the median of 3.19 | repurchase cap: 12th percentile of cohort (n=4), at the median of 5. Stats + caveats in the cohort artifact.",
+      "value": "Cohort placement (evergreen_pe, R4 phrasing): mgmt fee: 10th percentile of cohort (n=5), below the median of 1.4 | expense ratio (bases differ, see notes): 30th percentile of cohort (n=5), below the median of 3.19 | repurchase cap: 50th percentile of cohort (n=4), at the median of 5. Stats and per-member values in data/cohorts/evergreen_pe.json, membership rationales in data/facts.",
       "status": "computed",
       "source": "data/cohorts/evergreen_pe.json",
-      "section": "stats (R4 phrasing by tark_cohort)",
+      "section": "stats block (R4 phrasing by tark_cohort.percentile_of)",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "2.10": {

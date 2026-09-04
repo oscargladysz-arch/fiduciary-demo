@@ -197,12 +197,12 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Cohort placement (venture, R4 phrasing): mgmt fee: above the cohort median of 2.5 (n=3 — too small for percentile language) | expense ratio (bases differ - see notes): below the cohort median of 4.53 (n=3 — too small for percentile language) | repurchase cap: only member with this fact (n=1). Stats + caveats in the cohort artifact.",
+      "value": "Cohort placement (venture, R4 phrasing): mgmt fee: above the cohort median of 2.5 (n=3, too small for percentile language) | expense ratio (bases differ, see notes): below the cohort median of 4.53 (n=3, too small for percentile language) | repurchase cap: only member with this fact (n=1). Stats and per-member values in data/cohorts/venture.json, membership rationales in data/facts.",
       "status": "computed",
       "source": "data/cohorts/venture.json",
-      "section": "stats (R4 phrasing by tark_cohort)",
+      "section": "stats block (R4 phrasing by tark_cohort.percentile_of)",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "2.10": {

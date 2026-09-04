@@ -187,12 +187,12 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Cohort placement (private_credit, R4 phrasing): mgmt fee: 10th percentile of cohort (n=5), below the median of 1.25 | expense ratio (bases differ - see notes): 10th percentile of cohort (n=5), below the median of 3.76 | repurchase cap: 10th percentile of cohort (n=5), at the median of 5. Stats and per-member values in data/cohorts/private_credit.json; membership rationales in data/facts.",
+      "value": "Cohort placement (private_credit, R4 phrasing): mgmt fee: 10th percentile of cohort (n=5), below the median of 1.25 | expense ratio (bases differ, see notes): 10th percentile of cohort (n=5), below the median of 3.76 | repurchase cap: 50th percentile of cohort (n=5), at the median of 5. Stats and per-member values in data/cohorts/private_credit.json, membership rationales in data/facts.",
       "status": "computed",
       "source": "data/cohorts/private_credit.json",
-      "section": "cohort stats block (n=5)",
+      "section": "stats block (R4 phrasing by tark_cohort.percentile_of)",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-25)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "2.10": {
