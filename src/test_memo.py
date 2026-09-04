@@ -82,6 +82,52 @@ if typed_missing:
     print("   missing:", "; ".join(typed_missing[:8]))
 check("findings: no ellipsis cut anywhere in the memos", not cut)
 
+# P1-21: the four sections, in every plan x product memo
+SECTIONS = ("product-to-plan liquidity match", "structural verdict (typed facts, plan-independent)",
+            "scenario (illustrative, this plan)", "recommendation", "scope", "case law",
+            "the fiduciary makes the decision on this record", "flags raised by the record")
+sec_missing, verdict_missing = [], []
+matches = {}
+for pl in plan_keys():
+    for k in prods:
+        t = squash(text_of(OUT / memo_name(pl, k)))
+        for sname in SECTIONS:
+            if sname not in t:
+                sec_missing.append(f"{pl} {k}: {sname}")
+        mm = json.loads((BASE / "data" / "liquidity" / f"{pl}__{k}_match.json").read_text())
+        matches[(pl, k)] = mm
+        want = (f"structural liquidity verdict: {mm['verdict']}".lower(),
+                f"(illustrative): {(mm.get('scenario_verdict') or 'not computable')}".lower())
+        if not all(w in t for w in want):
+            verdict_missing.append(f"{pl} {k}")
+check("sections: liquidity match, recommendation, scope, case law in all 64 memos", not sec_missing)
+if sec_missing:
+    print("   missing:", "; ".join(sec_missing[:6]))
+check("recommendation states the match file's structural and scenario verdicts, all 64", not verdict_missing)
+if verdict_missing:
+    print("   missing:", "; ".join(verdict_missing[:6]))
+# the scenario layer is plan-specific: some product's scenario verdict differs
+# between two plans and each memo carries its own
+diff = [k for k in prods if matches[("plan_tech_media", k)]["scenario_verdict"]
+        != matches[("plan_consulting_alumni", k)]["scenario_verdict"]]
+check("scenario verdict differs between plans for at least one product", bool(diff))
+if diff:
+    k = diff[0]
+    tt = squash(text_of(OUT / memo_name("plan_tech_media", k)))
+    tc = squash(text_of(OUT / memo_name("plan_consulting_alumni", k)))
+    check(f"{k}: each plan's memo carries its own scenario verdict",
+          f"(illustrative): {matches[('plan_tech_media', k)]['scenario_verdict']}" in tt
+          and f"(illustrative): {matches[('plan_consulting_alumni', k)]['scenario_verdict']}" in tc)
+_sre = squash(text_of(OUT / memo_name("plan_tech_media", "sreit")))
+check("sreit: suspended program is a flag and the structural verdict is MISALIGNED",
+      "repurchase program suspended" in _sre and "structural liquidity verdict: misaligned" in _sre)
+_dx = squash(text_of(OUT / memo_name("plan_tech_media", "dxyz")))
+check("dxyz: recommendation carries the benchmark escalation",
+      "benchmark: escalated" in _dx)
+check("no memo carries the unsourced case-law sentence",
+      all("argument expected october term" not in squash(text_of(OUT / memo_name(pl, k)))
+          for pl in plan_keys() for k in prods))
+
 keys = ["breit","cliffwater_cclfx","dxyz","hl_paf","kkr_kpec","stepstone_spm"]
 texts = {}
 for k in keys:

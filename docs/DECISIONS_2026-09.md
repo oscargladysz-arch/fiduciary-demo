@@ -814,3 +814,23 @@ site's Evaluation headline and the memo's typed-fact line come from the
 same function. `test_memo` asserts, for all 16 products, that every
 evidenced cell's full first sentence and every typed headline appear in
 the memo verbatim.
+
+### 6.15 P1-21: memo sections, and what "red flags" means here
+The memo gains four sections. Product-to-plan liquidity match: the
+structural verdict with its reasons, the wrapper facts in a table with
+their cells (null facts print their reason), then the ILLUSTRATIVE
+scenario with the plan's Form 5500 inputs, the adjustable parameters, base
+and stressed demand against wrapper capacity, the scenario verdict and
+the citations. Recommendation: both verdicts, the benchmark state
+(selected or escalated), then "flags raised by the record". No red-flag
+layer exists in the record and none is invented: a flag is a restatement
+of a typed value or a verdict already in the artifacts (benchmark
+escalation, no eligible secondary, low-confidence window, program
+suspended, gating precedent, missing structural facts, an ILLUSTRATIVE
+scenario verdict of misaligned or conditional-weak, Schedule K-1), each
+with its source. The memo says it does not decide and lists the
+committee-completed cells. Scope: selection record as of the record
+date, not monitoring, verbatim regulatory text present or not. Case law:
+cell 5.7 only, which is n/a for every product until P1-23. The unsourced
+"argument expected October Term 2026" sentence left the regulatory
+paragraph with this change.
