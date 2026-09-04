@@ -122,12 +122,12 @@
       "status": "computed"
     },
     "pme_primary": {
-      "value": 1.152,
+      "value": 1.1541,
       "source_cell": "1.8",
       "status": "computed"
     },
     "direct_alpha_primary": {
-      "value": 2.87,
+      "value": 2.91,
       "source_cell": "1.8",
       "status": "computed"
     },

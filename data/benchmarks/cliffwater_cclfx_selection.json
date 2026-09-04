@@ -21,6 +21,8 @@
     ],
     "comparison": {
       "window": "2019-06-05 to 2026-07-17",
+      "window_note": "",
+      "fund_window": "2019-06-05 to 2026-07-17",
       "fund_growth_x": 1.7165,
       "index_growth_x": 1.3697,
       "ks_pme": 1.2532,
@@ -44,6 +46,8 @@
     ],
     "comparison": {
       "window": "2019-06-05 to 2026-07-17",
+      "window_note": "",
+      "fund_window": "2019-06-05 to 2026-07-17",
       "fund_growth_x": 1.7165,
       "index_growth_x": 1.3697,
       "ks_pme": 1.2532,

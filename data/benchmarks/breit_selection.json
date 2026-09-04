@@ -20,10 +20,12 @@
     ],
     "comparison": {
       "window": "2022-12-31 to 2025-12-31",
+      "window_note": "",
+      "fund_window": "2022-12-31 to 2025-12-31",
       "fund_growth_x": 1.0971,
       "index_growth_x": 1.2104,
-      "ks_pme": 0.9073,
-      "direct_alpha_pct": -3.19,
+      "ks_pme": 0.9064,
+      "direct_alpha_pct": -3.22,
       "fund_ann_pct": 3.14,
       "index_ann_pct": 6.57
     }

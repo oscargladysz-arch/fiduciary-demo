@@ -7,7 +7,8 @@
  * documented reason renders in its place. */
 
 import { annVol, beta, calendarYearReturns, desmoothGeltner, directAlpha,
-         drawdownEpisodes, ksPme, lag1Autocorr, levelOn,
+         drawdownEpisodes, effectiveWindow, fiscalYearBounds, ksPme,
+         lag1Autocorr, levelOn,
          monthEndPoints, periodReturns, rollingReturns,
          rollingVol } from "./analytics.js";
 import { computeScenario, scenarioReason } from "./liquidity.js";
@@ -383,7 +384,9 @@ export function viewBenchmarks(root, state, setState) {
       <div class="cap">${gloss("KS-PME")} and ${gloss("Direct Alpha")} on
         appraisal-lagged NAVs are window-sensitive, disclosed, and explorable:
         <a href="#" data-goto="pme">move the window yourself →</a>
-        <span class="num">(${esc(comp.window)})</span></div>` : ""}
+        <span class="num">(${esc(comp.window)}${comp.window_note ? `, ${esc(comp.window_note)}` : ""})</span></div>`
+      : s.comparison_note ? `<div class="cap">Comparison not computable on held data: ${esc(s.comparison_note)}.
+        Refetch the proxy series over a longer window (src/fetch_series.py) to compute it.</div>` : ""}
       <details style="margin-top:10px"><summary class="cap" style="cursor:pointer">Scoring rationale</summary>
         <ul style="margin:8px 0 0 18px; font-size:12.5px">
           ${s.reasons.map((r) => `<li>${esc(r)}</li>`).join("")}</ul></details>
@@ -548,21 +551,49 @@ export function viewPme(root, state, setState) {
   root.querySelectorAll("[data-goto-bench]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault(); setState({ view: "benchmarks" }); }));
 
-  // --- window machinery per tier ---
+  // --- window machinery per tier: every window lives inside the selected
+  // proxy's coverage (same clipping rule as tark_benchmark.comparison_stats)
   const slider = root.querySelector("#winstart");
-  let starts;
+  const idxAll = T.series[proxyId];
+  const idx0 = idxAll[0][0];
+  const idx1 = idxAll[idxAll.length - 1][0];
+  let starts; let fyFirst = 0; let fyLast = -1; let fyEnd = null; let clipNote = "";
+  let notComputable = "";
   if (hasFy) {
-    const [w0] = prof.fy_window;
-    const y0 = +w0.slice(0, 4);
-    starts = prof.fy_returns.map((_, i) => `${y0 + i}${w0.slice(4)}`);
+    const bounds = fiscalYearBounds(prof.fy_window, prof.fy_returns.length);
+    const kept = bounds.map((b, i) => [b, i]).filter(([b]) => b[0] >= idx0 && b[1] <= idx1);
+    if (!kept.length) {
+      notComputable = `no whole fiscal year of ${prof.fy_window[0]} to ${prof.fy_window[1]} lies inside the proxy series (${idx0} to ${idx1})`;
+    } else {
+      fyFirst = kept[0][1]; fyLast = kept[kept.length - 1][1]; fyEnd = kept[kept.length - 1][0][1];
+      starts = kept.map(([b]) => b[0]);
+      if (kept.length < bounds.length) {
+        clipNote = `clipped: proxy series begins ${idx0}, ${bounds.length - kept.length} fiscal year(s) outside it dropped`;
+      }
+    }
   } else if (isAnnual) {
     starts = [prof.fy_window[0]];
+    if (prof.fy_window[0] < idx0 || prof.fy_window[1] > idx1) {
+      notComputable = `the single disclosed figure covers ${prof.fy_window[0]} to ${prof.fy_window[1]} and cannot be clipped to the proxy series (${idx0} to ${idx1})`;
+    }
     slider.disabled = true;
     root.querySelector("#winlabel").textContent =
       "Window fixed: single disclosed ITD figure";
   } else {
     const me = monthEndPoints(fundDaily).map(([d]) => d);
-    starts = [fundDaily[0][0], ...me.slice(0, me.length - 13)];
+    const all = [fundDaily[0][0], ...me.slice(0, me.length - 13)];
+    starts = all.filter((d) => d >= idx0);
+    if (starts.length !== all.length) {
+      const firstIn = fundDaily.find(([d]) => d >= idx0)[0];
+      if (!starts.includes(firstIn)) starts.unshift(firstIn);
+      clipNote = `clipped: proxy series begins ${idx0}`;
+    }
+  }
+  if (notComputable) {
+    root.querySelector("#pmenote").textContent =
+      `Comparison not computable on held data: ${notComputable}. Refetch the proxy series over a longer window (src/fetch_series.py) to compute it.`;
+    slider.disabled = true;
+    return;
   }
   slider.max = String(starts.length - 1);
   const wi = Math.min(parseInt(state.win || "0", 10) || 0, starts.length - 1);
@@ -574,8 +605,8 @@ export function viewPme(root, state, setState) {
     const idxDaily = T.series[proxyId];
     let d1; let fGrowth; let fundPts;
     if (hasFy) {
-      d1 = prof.fy_window[1];
-      const rets = prof.fy_returns.slice(i);
+      d1 = fyEnd;
+      const rets = prof.fy_returns.slice(fyFirst + i, fyLast + 1);
       fGrowth = rets.reduce((g, r) => g * (1 + r), 1);
       let acc = 1;
       fundPts = [[d0, 1]];
@@ -586,7 +617,9 @@ export function viewPme(root, state, setState) {
       fGrowth = (1 + prof.aatr) ** prof.aatr_years;
       fundPts = [[d0, 1], [d1, fGrowth]];
     } else {
-      d1 = fundDaily[fundDaily.length - 1][0];
+      const fundLast = fundDaily[fundDaily.length - 1][0];
+      d1 = fundLast <= idx1 ? fundLast : idx1;
+      if (fundLast > idx1 && !clipNote.includes("ends")) clipNote += `${clipNote ? ", " : "clipped: "}proxy series ends ${idx1}`;
       const win = fundDaily.filter(([d]) => d >= d0 && d <= d1);
       const me = monthEndPoints(win);
       fGrowth = win[win.length - 1][1] / win[0][1];
@@ -596,9 +629,12 @@ export function viewPme(root, state, setState) {
         acc *= 1 + r; fundPts.push([me[j + 1][0], acc]); });
     }
     const flows = [[d0, -1.0], [d1, fGrowth]];
+    // one anchor: PME, alpha and the displayed growth all read the proxy
+    // level on or before each flow date from the full series (a window
+    // that starts on a non-trading day must not shift the anchor)
     const idx = idxDaily.filter(([d]) => d >= d0 && d <= d1);
-    const ks = ksPme(flows, idx);
-    const da = directAlpha(flows, idx);
+    const ks = ksPme(flows, idxDaily);
+    const da = directAlpha(flows, idxDaily);
     const iGrowth = levelOn(idxDaily, d1) / levelOn(idxDaily, d0);
     const idxMe = monthEndPoints(idx);
     let acc = 1;
@@ -611,7 +647,7 @@ export function viewPme(root, state, setState) {
       da === null ? "n/a" : `${(da * 100).toFixed(2)}%`;
     root.querySelector("#pme_fg").textContent = fGrowth.toFixed(4);
     root.querySelector("#pme_ig").textContent = iGrowth.toFixed(4);
-    root.querySelector("#pme_win").textContent = `${d0} → ${d1}`;
+    root.querySelector("#pme_win").textContent = `${d0} → ${d1}${clipNote ? ` (${clipNote})` : ""}`;
     root.querySelector("#winout").textContent = d0;
     lineChart(root.querySelector("#pmechart"), {
       series: [

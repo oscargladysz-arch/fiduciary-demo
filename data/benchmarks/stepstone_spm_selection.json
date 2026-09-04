@@ -20,6 +20,8 @@
     ],
     "comparison": {
       "window": "2021-03-31 to 2026-03-31",
+      "window_note": "",
+      "fund_window": "2021-03-31 to 2026-03-31",
       "fund_growth_x": 1.8359,
       "index_growth_x": 1.0419,
       "ks_pme": 1.762,
@@ -43,6 +45,8 @@
     ],
     "comparison": {
       "window": "2021-03-31 to 2026-03-31",
+      "window_note": "",
+      "fund_window": "2021-03-31 to 2026-03-31",
       "fund_growth_x": 1.8359,
       "index_growth_x": 1.6459,
       "ks_pme": 1.1155,

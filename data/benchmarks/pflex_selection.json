@@ -20,13 +20,15 @@
       "provider_independence 2/2: provider unaffiliated with the fund"
     ],
     "comparison": {
-      "window": "2017-02-23 to 2026-08-13",
-      "fund_growth_x": 1.7811,
+      "window": "2018-07-18 to 2026-07-17",
+      "window_note": "clipped: proxy series begins 2018-07-18, proxy series ends 2026-07-17",
+      "fund_window": "2017-02-23 to 2026-08-13",
+      "fund_growth_x": 1.5627,
       "index_growth_x": 1.4092,
-      "ks_pme": 1.2639,
-      "direct_alpha_pct": 2.5,
-      "fund_ann_pct": 6.62,
-      "index_ann_pct": 3.89
+      "ks_pme": 1.1089,
+      "direct_alpha_pct": 1.3,
+      "fund_ann_pct": 5.74,
+      "index_ann_pct": 4.38
     }
   },
   "secondary": {
@@ -43,13 +45,15 @@
       "provider_independence 2/2: provider unaffiliated with the fund"
     ],
     "comparison": {
-      "window": "2017-02-23 to 2026-08-13",
-      "fund_growth_x": 1.7811,
+      "window": "2018-07-18 to 2026-07-17",
+      "window_note": "clipped: proxy series begins 2018-07-18, proxy series ends 2026-07-17",
+      "fund_window": "2017-02-23 to 2026-08-13",
+      "fund_growth_x": 1.5627,
       "index_growth_x": 1.4092,
-      "ks_pme": 1.2639,
-      "direct_alpha_pct": 2.5,
-      "fund_ann_pct": 6.62,
-      "index_ann_pct": 3.89
+      "ks_pme": 1.1089,
+      "direct_alpha_pct": 1.3,
+      "fund_ann_pct": 5.74,
+      "index_ann_pct": 4.38
     }
   },
   "rejected": [

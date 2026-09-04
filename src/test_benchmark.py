@@ -86,6 +86,74 @@ for key in PRODUCT_PROFILES:
 
 check_true("threshold constant sane", 0 < MIN_PRIMARY_SCORE <= 12)
 
+# ---- P1-1: every comparison window lives inside proxy coverage and one
+# anchor serves the displayed growth and the PME (two-point identity)
+import json  # noqa: E402
+from tark_analytics import _level_on, effective_window, cumulative_growth  # noqa: E402
+from tark_benchmark import (STRATEGY_MENU, WindowNotComputable,  # noqa: E402
+                            comparison_stats, fiscal_year_bounds)
+from tark_data import load_series  # noqa: E402
+try:
+    _level_on([("2020-01-02", 1.0)], "2019-12-31")
+    raised = False
+except ValueError:
+    raised = True
+check_true("_level_on refuses a date before the series starts", raised)
+e0, e1, note = effective_window("2016-03-31", "2026-03-31",
+                                [("2018-07-18", 1.0), ("2026-07-17", 2.0)])
+check_true("effective_window clips to the proxy start and says so",
+           (e0, e1) == ("2018-07-18", "2026-03-31")
+           and note == "clipped: proxy series begins 2018-07-18")
+check_true("fiscal_year_bounds: consecutive whole years ending on the window end",
+           fiscal_year_bounds(("2016-03-31", "2019-03-31"), 3)
+           == [("2016-03-31", "2017-03-31"), ("2017-03-31", "2018-03-31"),
+               ("2018-03-31", "2019-03-31")])
+try:
+    comparison_stats({"aatr": 0.10, "aatr_years": 3.0,
+                      "fy_window": ("2017-01-01", "2019-12-31")}, {"series": "vnq"})
+    single_ok = False
+except WindowNotComputable as e:
+    single_ok = "proxy series begins 2018-07-18" in str(e)
+check_true("a single disclosed figure outside proxy coverage is not computable, "
+           "with the reason", single_ok)
+
+series_of = {c["id"]: c["series"] for menu in STRATEGY_MENU.values() for c in menu}
+bench_dir = Path(__file__).resolve().parents[1] / "data" / "benchmarks"
+outside, broken_identity = [], []
+for sp in sorted(bench_dir.glob("*_selection.json")):
+    sel = json.loads(sp.read_text())
+    for slot in ("primary", "secondary"):
+        s_ = sel.get(slot)
+        comp = (s_ or {}).get("comparison")
+        if not comp:
+            continue
+        ser = load_series(series_of[s_["id"]], "adj_close")
+        d0, d1 = comp["window"].split(" to ")
+        if not (ser[0][0] <= d0 < d1 <= ser[-1][0]):
+            outside.append(f"{sp.stem}/{slot}: {comp['window']} vs {ser[0][0]}..{ser[-1][0]}")
+        if abs(comp["ks_pme"] - comp["fund_growth_x"] / comp["index_growth_x"]) > 2e-3:
+            broken_identity.append(f"{sp.stem}/{slot}: {comp['ks_pme']} vs "
+                                   f"{comp['fund_growth_x']}/{comp['index_growth_x']}")
+check_true("every committed comparison window lies inside its proxy's coverage"
+           + (": " + "; ".join(outside) if outside else ""), not outside)
+check_true("two-point identity: KS-PME equals fund growth over index growth on "
+           "every committed comparison" + (": " + "; ".join(broken_identity)
+                                            if broken_identity else ""),
+           not broken_identity)
+amg = json.loads((bench_dir / "amg_pantheon_selection.json").read_text())
+comp = amg["primary"]["comparison"]
+psp = load_series("psp", "adj_close")
+fy = json.loads((bench_dir / "profiles_input.json").read_text())["amg_pantheon"]["profile"]["fy_returns"]
+hand_fund = cumulative_growth(fy[3:])        # FY2020 to FY2026, seven whole years
+hand_index = _level_on(psp, "2026-03-31") / _level_on(psp, "2019-03-31")
+check_true("amg_pantheon: window clipped to the seven whole fiscal years inside PSP coverage",
+           comp["window"] == "2019-03-31 to 2026-03-31"
+           and comp["window_note"].startswith("clipped: proxy series begins 2018-07-18"))
+check_true("amg_pantheon: fund growth is the hand product of FY2020 to FY2026 (2.3970)",
+           abs(comp["fund_growth_x"] - hand_fund) < 1e-3 and abs(hand_fund - 2.397042) < 1e-5)
+check_true("amg_pantheon: KS-PME equals the hand ratio on the clipped window",
+           abs(comp["ks_pme"] - hand_fund / hand_index) < 1e-3)
+
 # ---- v1 snapshot is frozen history: every byte pinned by its manifest
 import hashlib  # noqa: E402
 SNAP = Path(__file__).resolve().parents[1] / "data" / "benchmarks" / "v1_snapshot"

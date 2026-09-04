@@ -25,7 +25,8 @@ increment; prose-parsing evidence strings would be brittle now.
 """
 from __future__ import annotations
 
-from tark_analytics import _level_on, cumulative_growth, direct_alpha, ks_pme
+from tark_analytics import (_level_on, cumulative_growth, direct_alpha,
+                            effective_window, ks_pme)
 from tark_data import load_series
 
 MIN_PRIMARY_SCORE = 7
@@ -332,49 +333,93 @@ def score_candidate(profile: dict, cand: dict) -> dict:
 
 
 # ------------------------------------------------------------ comparison
-def _window_growth(ticker: str, d0: str, d1: str) -> float:
-    """Daily-anchored growth: level on/just-before d1 over level on/just-before
-    d0 (adj close). Month-end sampling here previously DROPPED the first
-    partial month when d0 fell on a non-trading day, so the displayed index
-    growth disagreed with the index growth inside KS-PME (which always
-    anchored daily). Corrected 2026-08-09; both sides now use these levels."""
-    s = load_series(ticker, "adj_close")
-    return _level_on(s, d1) / _level_on(s, d0)
+
+
+class WindowNotComputable(ValueError):
+    """The fund's return input cannot be compared on the held proxy data."""
+
+
+def fiscal_year_bounds(fy_window, n: int) -> list[tuple[str, str]]:
+    """[(start, end)] for n consecutive fiscal years: each start steps the
+    year of the window start, the last end is the window end. Same rule as
+    fiscalYearBounds in site/js/analytics.js."""
+    w0, w1 = fy_window
+    y0 = int(w0[:4])
+    starts = [f"{y0 + i}{w0[4:]}" for i in range(n)]
+    return [(st, starts[i + 1] if i + 1 < n else w1) for i, st in enumerate(starts)]
 
 
 def comparison_stats(profile: dict, cand: dict) -> dict | None:
-    """Fund-vs-candidate growth, PME, Direct Alpha over a common window."""
+    """Fund-vs-candidate growth, PME and Direct Alpha over the EFFECTIVE
+    window: the fund's window clipped to the proxy's coverage (both sides
+    for a daily series, whole fiscal years for an annual list). A single
+    disclosed annualized figure cannot be clipped: outside coverage it
+    raises WindowNotComputable with the reason instead of interpolating.
+    One anchor: fund growth, index growth and the PME flows all read the
+    level on or before each window date from the full series, so a window
+    that starts on a non-trading day cannot shift the anchor."""
     if not cand["series"]:
         return None
+    index = load_series(cand["series"], "adj_close")
+    i0, i1 = index[0][0], index[-1][0]
+    years = None
     if profile.get("series"):
         fund = load_series(profile["series"], "adj_close")
-        d0, d1 = fund[0][0], fund[-1][0]
-        f_growth = fund[-1][1] / fund[0][1]
+        fund_window = (fund[0][0], fund[-1][0])
+        d0, d1, note = effective_window(fund_window[0], fund_window[1], index)
+        f_growth = _level_on(fund, d1) / _level_on(fund, d0)
     elif profile.get("fy_returns"):
+        bounds = fiscal_year_bounds(profile["fy_window"], len(profile["fy_returns"]))
+        fund_window = (profile["fy_window"][0], profile["fy_window"][1])
+        kept = [(r, b) for r, b in zip(profile["fy_returns"], bounds)
+                if i0 <= b[0] and b[1] <= i1]
+        if not kept:
+            raise WindowNotComputable(
+                f"no whole fiscal year of {fund_window[0]} to {fund_window[1]} "
+                f"lies inside the proxy series ({i0} to {i1})")
+        d0, d1 = kept[0][1][0], kept[-1][1][1]
+        f_growth = cumulative_growth([r for r, _ in kept])
+        years = len(kept)
+        note = ""
+        dropped = len(bounds) - len(kept)
+        if dropped:
+            parts = []
+            if d0 != bounds[0][0]:
+                parts.append(f"proxy series begins {i0}")
+            if d1 != bounds[-1][1]:
+                parts.append(f"proxy series ends {i1}")
+            note = (f"clipped: {', '.join(parts)}, {dropped} fiscal year(s) "
+                    f"outside it dropped")
+    elif profile.get("aatr_5yr") or profile.get("aatr"):
         d0, d1 = profile["fy_window"]
-        f_growth = cumulative_growth(profile["fy_returns"])
-    elif profile.get("aatr_5yr"):
-        d0, d1 = profile["fy_window"]
-        f_growth = (1 + profile["aatr_5yr"]) ** 5
-    elif profile.get("aatr"):
-        # generic annualized-since-inception profile (kkr_kpec, breit):
-        # aatr + exact year count, filled from extracted cell 1.2 evidence
-        d0, d1 = profile["fy_window"]
-        f_growth = (1 + profile["aatr"]) ** profile["aatr_years"]
+        fund_window = (d0, d1)
+        if d0 < i0 or d1 > i1:
+            raise WindowNotComputable(
+                f"the single disclosed figure covers {d0} to {d1} and cannot be "
+                f"clipped to the proxy series (proxy series begins {i0}, ends {i1})")
+        note = ""
+        if profile.get("aatr_5yr"):
+            f_growth = (1 + profile["aatr_5yr"]) ** 5
+            years = 5
+        else:
+            # generic annualized-since-inception profile (kkr_kpec): aatr plus
+            # the exact year count, filled from extracted cell 1.2 evidence
+            f_growth = (1 + profile["aatr"]) ** profile["aatr_years"]
+            years = profile["aatr_years"]
     else:
         return None
-    i_growth = _window_growth(cand["series"], d0, d1)
-    years = (profile.get("aatr_years")
-             or max((int(d1[:4]) - int(d0[:4])), 1))
+    i_growth = _level_on(index, d1) / _level_on(index, d0)
+    if years is None:
+        years = max(int(d1[:4]) - int(d0[:4]), 1)
     flows = [(d0, -1.0), (d1, f_growth)]
-    idx = [(d, v) for d, v in load_series(cand["series"], "adj_close")
-           if d0 <= d <= d1]
     return {
         "window": f"{d0} to {d1}",
+        "window_note": note,
+        "fund_window": f"{fund_window[0]} to {fund_window[1]}",
         "fund_growth_x": round(f_growth, 4),
         "index_growth_x": round(i_growth, 4),
-        "ks_pme": round(ks_pme(flows, idx), 4),
-        "direct_alpha_pct": round((direct_alpha(flows, idx) or 0) * 100, 2),
+        "ks_pme": round(ks_pme(flows, index), 4),
+        "direct_alpha_pct": round((direct_alpha(flows, index) or 0) * 100, 2),
         "fund_ann_pct": round((f_growth ** (1 / years) - 1) * 100, 2),
         "index_ann_pct": round((i_growth ** (1 / years) - 1) * 100, 2),
     }
@@ -428,5 +473,11 @@ def run_selection(product_key: str) -> dict:
         if result[slot]:
             cand = next(c for c in STRATEGY_MENU[profile["strategy"]]
                         if c["id"] == result[slot]["id"])
-            result[slot]["comparison"] = comparison_stats(profile, cand)
+            try:
+                result[slot]["comparison"] = comparison_stats(profile, cand)
+            except WindowNotComputable as e:
+                # no number is interpolated: the slot keeps its score and
+                # says why the comparison is absent on held data
+                result[slot]["comparison"] = None
+                result[slot]["comparison_note"] = str(e)
     return result

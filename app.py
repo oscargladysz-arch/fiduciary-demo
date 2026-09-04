@@ -199,7 +199,9 @@ def render_benchmark():
             c2.metric("Benchmark (ann.)", f"{comp['index_ann_pct']}%/yr")
             c3.metric("KS-PME", f"{comp['ks_pme']}")
             c4.metric("Direct Alpha", f"{comp['direct_alpha_pct']}%/yr")
-            st.caption(f"Window {comp['window']}. PME and alpha on "
+            st.caption(f"Window {comp['window']}"
+                       f"{(' (' + comp['window_note'] + ')') if comp.get('window_note') else ''}"
+                       f". PME and alpha on "
                        f"appraisal-lagged NAVs are window-sensitive and can be "
                        f"smoothing-flattered (disclosed per methodology §3).")
         with st.expander("Scoring rationale"):

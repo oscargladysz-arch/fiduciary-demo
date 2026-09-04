@@ -19,12 +19,14 @@
       "provider_independence 2/2: provider unaffiliated with the fund"
     ],
     "comparison": {
-      "window": "2022-08-31 to 2026-08-13",
-      "fund_growth_x": 2.915,
+      "window": "2022-08-31 to 2026-07-17",
+      "window_note": "clipped: proxy series ends 2026-07-17",
+      "fund_window": "2022-08-31 to 2026-08-13",
+      "fund_growth_x": 2.7755,
       "index_growth_x": 1.4628,
-      "ks_pme": 1.9927,
-      "direct_alpha_pct": 19.07,
-      "fund_ann_pct": 30.67,
+      "ks_pme": 1.8974,
+      "direct_alpha_pct": 17.96,
+      "fund_ann_pct": 29.07,
       "index_ann_pct": 9.98
     }
   },
@@ -42,12 +44,14 @@
       "provider_independence 2/2: provider unaffiliated with the fund"
     ],
     "comparison": {
-      "window": "2022-08-31 to 2026-08-13",
-      "fund_growth_x": 2.915,
+      "window": "2022-08-31 to 2026-07-17",
+      "window_note": "clipped: proxy series ends 2026-07-17",
+      "fund_window": "2022-08-31 to 2026-08-13",
+      "fund_growth_x": 2.7755,
       "index_growth_x": 1.9842,
-      "ks_pme": 1.4691,
-      "direct_alpha_pct": 10.23,
-      "fund_ann_pct": 30.67,
+      "ks_pme": 1.3988,
+      "direct_alpha_pct": 9.04,
+      "fund_ann_pct": 29.07,
       "index_ann_pct": 18.69
     }
   },

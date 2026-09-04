@@ -20,12 +20,14 @@
     ],
     "comparison": {
       "window": "2021-01-01 to 2025-12-31",
+      "window_note": "",
+      "fund_window": "2021-01-01 to 2025-12-31",
       "fund_growth_x": 1.4983,
       "index_growth_x": 1.2982,
-      "ks_pme": 1.152,
-      "direct_alpha_pct": 2.87,
-      "fund_ann_pct": 10.64,
-      "index_ann_pct": 6.74
+      "ks_pme": 1.1541,
+      "direct_alpha_pct": 2.91,
+      "fund_ann_pct": 8.42,
+      "index_ann_pct": 5.36
     }
   },
   "secondary": {
@@ -43,12 +45,14 @@
     ],
     "comparison": {
       "window": "2021-01-01 to 2025-12-31",
+      "window_note": "",
+      "fund_window": "2021-01-01 to 2025-12-31",
       "fund_growth_x": 1.4983,
       "index_growth_x": 1.2982,
-      "ks_pme": 1.152,
-      "direct_alpha_pct": 2.87,
-      "fund_ann_pct": 10.64,
-      "index_ann_pct": 6.74
+      "ks_pme": 1.1541,
+      "direct_alpha_pct": 2.91,
+      "fund_ann_pct": 8.42,
+      "index_ann_pct": 5.36
     }
   },
   "rejected": [

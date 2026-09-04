@@ -605,8 +605,11 @@ with sync_playwright() as pw:
     check("kkr_kpec selection exists with PSP primary",
           "Listed private equity investable proxy" in t and "0.8964" in t)
     t = view_text("benchmarks", product="breit")
+    # 0.9073 -> 0.9064 (P1-1): the window starts 2022-12-31, a Saturday; the
+    # index anchor is now the level on or before that date (2022-12-30),
+    # not the first trading day after it, the same anchor the PME uses
     check("breit selection exists with VNQ primary",
-          "Listed REIT investable proxy" in t and "0.9073" in t)
+          "Listed REIT investable proxy" in t and "0.9064" in t)
     check("breit ODCE secondary with honest data caveat",
           "ODCE" in t)
     t = view_text("desmooth", product="breit")
@@ -709,8 +712,8 @@ with sync_playwright() as pw:
           "USER-CONFIGURED" in page.locator("#view").inner_text())
     page.evaluate("""() => window.tarkSetState({proxy: ''})""")
     view_text("pme", product="breit")
-    check("breit lab: annual-tier PME vs VNQ reproduces engine 0.9073",
-          abs(float(page.locator("#pme_ks").inner_text()) - 0.9073) < 1e-4)
+    check("breit lab: annual-tier PME vs VNQ reproduces engine 0.9064",
+          abs(float(page.locator("#pme_ks").inner_text()) - 0.9064) < 1e-4)
     check("breit lab: annual granularity honestly labeled",
           "fiscal" in page.locator("#pmenote").inner_text().lower())
     view_text("pme", product="dxyz")

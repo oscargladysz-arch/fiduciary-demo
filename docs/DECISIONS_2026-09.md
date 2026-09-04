@@ -472,3 +472,50 @@ exactly.
   `undefined` or `NaN`, zero product-count "six" strings in `site/`,
   `app.py` and `data/`, and every surface change in P0 logged in the
   corrections log. `docs/BUILD_REPORT_6.md` carries the assertion counts.
+
+## 6. P1 decisions (appended as the work lands)
+
+### 6.1 P1-1: a comparison window is the intersection, anchored once
+The rule, in `tark_benchmark.comparison_stats` and mirrored in the lab
+(`site/js/analytics.js`, `views.js`): the fund's window is clipped to the
+proxy's coverage on both sides for a daily series, and to whole fiscal
+years inside the coverage for an annual return list. `_level_on` now
+refuses a date before its series starts instead of silently returning the
+first observation, and the fund growth, the index growth and the PME flows
+all read the level on or before each window date from the full series, so
+a window that starts on a Saturday or a holiday cannot shift the anchor.
+The card, the lab, the memo and the Streamlit view print the effective
+window and the clip note.
+
+A single disclosed annualized figure (kkr_kpec's ITD return, stepstone's
+five-year figure) cannot be clipped. Interpolating it over a shorter
+window would assume a constant-rate path the filing never disclosed, so
+outside coverage the slot keeps its score and carries "comparison not
+computable on held data" with the reason and the fix. No product hits
+that case today (both windows lie inside coverage). It is asserted on a
+synthetic profile.
+
+What moved, KS-PME v1 to v2 (Direct Alpha moved with it, all twelve
+fields in the corrections log):
+
+| product | v1 | v2 | why |
+|---|---:|---:|---|
+| amg_pantheon | 2.4551 | 1.5919 | ten fiscal years from 2016 against a proxy that begins 2018-07-18: the seven whole years FY2020 to FY2026 remain (hand product 2.3970 over PSP 1.5058) |
+| pflex | 1.2639 | 1.1089 | daily series from 2017-02-23 clipped to 2018-07-18, and to the proxy's last date 2026-07-17 |
+| cion_ares | 1.2376 | 1.1374 | daily series from 2017-07-11 clipped the same way at both ends |
+| arkvx | 1.9927 | 1.8974 | inside coverage at the start, but the fund series runs to 2026-08-13 while PSP ends 2026-07-17: v1 compared fund growth through August with an index that stopped in July |
+| ocic | 1.1520 | 1.1541 | window starts 2021-01-01, a holiday: anchor moved from the first trading day after to the level on or before |
+| breit | 0.9073 | 0.9064 | window starts 2022-12-31, a Saturday: same anchor correction |
+
+Unchanged: cliffwater_cclfx, hl_paf, stepstone_spm, kkr_kpec, sreit,
+bcred, ares_pmf (windows inside coverage, trading-day starts). The
+two-point identity KS-PME = fund growth / index growth now holds on every
+committed comparison and is asserted.
+
+Two facts about the held data, not the engine, sit behind the largest
+moves. Every proxy series begins 2018-07-18 and ends 2026-07-17 because
+`src/fetch_series.py` pulled eight years as of that day, while three fund
+series were fetched later and run into August 2026. Refetching the five
+proxies from 2014 on a machine with network restores amg_pantheon's full
+ten years and the August tails, and the gates will recompute and relog
+the numbers. Until then the clip note says so on the card.

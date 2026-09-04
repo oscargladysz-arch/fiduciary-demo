@@ -20,6 +20,8 @@
     ],
     "comparison": {
       "window": "2023-09-01 to 2025-12-31",
+      "window_note": "",
+      "fund_window": "2023-09-01 to 2025-12-31",
       "fund_growth_x": 1.3285,
       "index_growth_x": 1.4819,
       "ks_pme": 0.8964,
@@ -43,6 +45,8 @@
     ],
     "comparison": {
       "window": "2023-09-01 to 2025-12-31",
+      "window_note": "",
+      "fund_window": "2023-09-01 to 2025-12-31",
       "fund_growth_x": 1.3285,
       "index_growth_x": 1.5339,
       "ks_pme": 0.8661,

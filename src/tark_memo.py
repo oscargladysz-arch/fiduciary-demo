@@ -126,7 +126,9 @@ def build_memo(key: str) -> Path:
             comp = s.get("comparison")
             if comp:
                 doc.add_paragraph(
-                    f"Window {comp['window']}: fund {comp['fund_ann_pct']}%/yr "
+                    f"Window {comp['window']}"
+                    f"{(' (' + comp['window_note'] + ')') if comp.get('window_note') else ''}"
+                    f": fund {comp['fund_ann_pct']}%/yr "
                     f"vs benchmark {comp['index_ann_pct']}%/yr, "
                     f"KS-PME {comp['ks_pme']}, Direct Alpha "
                     f"{comp['direct_alpha_pct']}%/yr. Disclosure: PME and "
