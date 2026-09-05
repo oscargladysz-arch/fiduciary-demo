@@ -83,6 +83,7 @@
       "value": 9.46,
       "source_cell": "2.3",
       "note": "FY2025 net operating expenses/avg net assets UNDER INTERNAL MANAGEMENT. The fee regime changed 2026-07-15, so forward ratios will differ (see 2.1/2.2)",
+      "basis": "net operating expenses under internal management, the fee regime changed 2026-07-15 (FY2025)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

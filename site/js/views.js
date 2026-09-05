@@ -1131,7 +1131,7 @@ export function viewFees(root) {
       return { text: `${pct.toFixed(2)}% on ${BASES[base] || base || "a base not typed"}`, badge };
     }
     if (cid === "2.2") { const v = val(k, "incentive_fee"); return { text: v === null ? kind : fmtIncentive(v), badge: "" }; }
-    if (cid === "2.3") { const v = val(k, "expense_ratio_pct"); return { text: v === null ? kind : `${v.toFixed(2)}% net expense ratio`, badge: "" }; }
+    if (cid === "2.3") { const v = val(k, "expense_ratio_pct"); return { text: v === null ? kind : (T.cell_display[k]["2.3"]?.typed ? T.cell_display[k]["2.3"].headline : `${v.toFixed(2)}% expense ratio`), badge: "" }; }
     if (cid === "2.4") {
       const v = val(k, "affe");
       if (v === null) return { text: kind, badge: "" };
@@ -1165,13 +1165,13 @@ export function viewFees(root) {
       <span class="cap">${gloss(label)}</span></td>${tds}</tr>`;
   }).join("");
 
-  // bars: the typed net expense ratio, or an explicit absence with its reason
+  // bars: the typed expense ratio (each with its own basis), or an explicit absence with its reason
   const items = keys.map((k) => {
     const f = fact(k, "expense_ratio_pct");
     return { product: k, label: T.products[k].fund_name.split(" (")[0],
       value: f && f.value !== null ? f.value : null,
       color: f && f.value !== null ? "#593380" : "#837b8e",
-      note: f && f.value !== null ? "" : `no comparable net expense ratio line: ${f?.reason || "not typed"}` };
+      note: f && f.value !== null ? "" : `no comparable expense ratio line: ${f?.reason || "not typed"}` };
   });
   const missing = items.filter((i) => i.value === null).map((i) => i.label);
 

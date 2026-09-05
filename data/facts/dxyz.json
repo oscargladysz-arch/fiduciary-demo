@@ -80,6 +80,7 @@
       "value": 4.53,
       "source_cell": "2.3",
       "note": "FY2025, of average net assets",
+      "basis": "of average net assets (FY2025)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

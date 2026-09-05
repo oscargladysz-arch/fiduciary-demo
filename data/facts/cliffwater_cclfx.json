@@ -76,6 +76,7 @@
       "value": 1.36,
       "source_cell": "2.3",
       "note": "FY2026 before waivers, EXCLUDING interest expense. 3.31% including interest",
+      "basis": "before waivers, excluding interest expense (3.31% including interest, FY2026)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

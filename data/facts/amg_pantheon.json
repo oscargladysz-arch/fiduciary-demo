@@ -81,6 +81,7 @@
       "value": 2.38,
       "source_cell": "2.3",
       "note": "Class 4 (inception class) Total Annual Expenses. Classes range 2.38-3.38% (differ only by distribution/servicing)",
+      "basis": "total annual expenses of the inception class, classes range 2.38% to 3.38%",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

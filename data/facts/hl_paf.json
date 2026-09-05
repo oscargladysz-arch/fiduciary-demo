@@ -81,6 +81,7 @@
       "value": 3.4,
       "source_cell": "2.3",
       "note": "FY2026 net, incl. incentive-fee drag, AFFE excluded",
+      "basis": "net, including the incentive fee, AFFE excluded (FY2026, Class I)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

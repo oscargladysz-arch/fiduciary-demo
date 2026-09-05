@@ -81,6 +81,7 @@
       "value": 3.76,
       "source_cell": "2.3",
       "note": "FY2025 actual Class I EXCLUDING interest expense. Prospectus fee-table totals 6.90% (I) to 7.74% (C) including 3.14% interest. No contractual cap: discretionary expense support only, $0 paid FY2025",
+      "basis": "excluding interest expense (6.90% including interest per the fee table), no contractual cap (FY2025, Class I)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

@@ -74,6 +74,7 @@
       "value": 1.91,
       "source_cell": "2.3",
       "note": "FY2026 Class I, AFFE excluded",
+      "basis": "AFFE excluded (FY2026, Class I)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

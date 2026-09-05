@@ -606,6 +606,28 @@ _REG = json.loads((DATA / "registry.json").read_text())["products"]
 AS_OF = {k: v["as_of"] for k, v in _REG.items()}
 COHORT_META = {k: (v["cohort"], v["depth"], v["membership_rationale"]) for k, v in _REG.items()}
 
+# expense_ratio_pct basis (R2-P0-8, audit round 2 item 10): the headline
+# prints what the record holds, never "net" unless the note says net. Each
+# clause restates the fact's own note in reader words.
+EXPENSE_BASIS = {
+    "hl_paf": "net, including the incentive fee, AFFE excluded (FY2026, Class I)",
+    "cliffwater_cclfx": "before waivers, excluding interest expense (3.31% including interest, FY2026)",
+    "dxyz": "of average net assets (FY2025)",
+    "kkr_kpec": "GAAP total operating expenses including the 2.75% performance participation, not a 1940-Act ratio (FY2025, Class I)",
+    "bcred": "including the interest and financing cost of BDC leverage (FY2025, Class I)",
+    "pflex": "excluding interest expense (5.12% including reverse-repo interest), gross equals net, no waivers (FY2025, Institutional)",
+    "ocic": "net, including the interest and financing cost of BDC leverage (FY2025, Class I)",
+    "cion_ares": "excluding interest expense (6.90% including interest per the fee table), no contractual cap (FY2025, Class I)",
+    "ares_pmf": "gross, before a 0.03% waiver, including the 1.60% incentive-fee drag, AFFE excluded (FY2026, Class I)",
+    "amg_pantheon": "total annual expenses of the inception class, classes range 2.38% to 3.38%",
+    "ssss": "net operating expenses under internal management, the fee regime changed 2026-07-15 (FY2025)",
+    "arkvx": "net of waivers, 4.39% gross (FY2025)",
+    "stepstone_spm": "AFFE excluded (FY2026, Class I)",
+}
+for _k, _b in EXPENSE_BASIS.items():
+    assert MAPPING[_k]["expense_ratio_pct"]["value"] is not None, _k
+    MAPPING[_k]["expense_ratio_pct"]["basis"] = _b
+
 # repurchase_program_status (P1-17): "suspended" only where cell 3.1 or 3.3
 # carries suspension language. Everything else is null with the reason, so
 # nothing is ever "active" by default.

@@ -79,6 +79,7 @@
       "value": 2.9,
       "source_cell": "2.3",
       "note": "FY2025 net of waivers (gross 4.39%), single class",
+      "basis": "net of waivers, 4.39% gross (FY2025)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

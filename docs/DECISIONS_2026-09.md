@@ -1524,3 +1524,20 @@ sreit, jll_ipt under the tech/media plan, product-independent views once),
   headline, the four match files and every memo, and the scenario verdict
   per plan across facts, match file, bundle, the 3.9 cell text and that
   plan's own memo, always under the ILLUSTRATIVE label.
+
+### 7.16 R2-P0-8: the expense ratio is labeled by its basis
+- Every typed `expense_ratio_pct` fact carries a `basis` clause (in
+  `build_facts.EXPENSE_BASIS`) that restates the fact's own note in reader
+  words: cliffwater_cclfx "before waivers, excluding interest expense
+  (3.31% including interest, FY2026)", cion_ares and pflex "excluding
+  interest expense", bcred and ocic "including the interest and financing
+  cost of BDC leverage", ares_pmf "gross, before a 0.03% waiver", hl_paf
+  "net, including the incentive fee, AFFE excluded", kkr_kpec "GAAP total
+  operating expenses including the 2.75% performance participation, not a
+  1940-Act ratio".
+- The 2.3 headline, the Fee Matrix chip and the memo's typed line print
+  "<x>% expense ratio, <basis>". The word "net" appears only where the
+  basis says net (audit round 2 item 10). The Fee Matrix bar chart's
+  absence note no longer calls the missing line "net".
+- Demo script v8 speaks Cliffwater's 1.36% as an expense ratio before
+  waivers and excluding interest, never as a net expense ratio.

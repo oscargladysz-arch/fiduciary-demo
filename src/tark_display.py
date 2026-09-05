@@ -86,13 +86,13 @@ def typed_headline(cid: str, fx: dict) -> str | None:
     if cid == "2.2" and "incentive_fee" in fx:
         return "incentive fee: " + fmt_incentive(g("incentive_fee"))
     if g("expense_ratio_pct") is not None:
-        # cell 2.3 is the net total expense ratio. Where the fact cites another
-        # cell (a GAAP financial-highlights ratio typed from 1.3), the headline
-        # carries the fact's own basis clause instead of calling it net.
-        if cid == "2.3":
-            return f"{g('expense_ratio_pct'):.2f}% net expense ratio"
-        note = (fx.get("expense_ratio_pct", {}).get("note") or "").split(". ")[0].split(", ")[0].strip()
-        return f"{g('expense_ratio_pct'):.2f}% expense ratio" + (f", {note[:80]}" if note else "")
+        # the headline says what the record holds (R2-P0-8): the fact's typed
+        # basis clause. "net" appears only when the basis says net.
+        basis = (fx.get("expense_ratio_pct", {}).get("basis") or "").strip()
+        if not basis:
+            note = (fx.get("expense_ratio_pct", {}).get("note") or "").split(". ")[0].split(", ")[0].strip()
+            basis = note[:80] if note else "basis not typed"
+        return f"{g('expense_ratio_pct'):.2f}% expense ratio, {basis}"
     if cid == "2.4" and "affe" in fx:
         v = g("affe")
         if not v.get("present"):

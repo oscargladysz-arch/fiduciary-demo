@@ -83,6 +83,7 @@
       "value": 7.0,
       "source_cell": "2.3",
       "note": "FY2025 Class I, INCLUDES interest/financing cost of BDC leverage - not like-for-like with unlevered '40-Act ratios",
+      "basis": "including the interest and financing cost of BDC leverage (FY2025, Class I)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

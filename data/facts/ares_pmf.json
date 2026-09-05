@@ -83,6 +83,7 @@
       "value": 5.02,
       "source_cell": "2.3",
       "note": "FY2026 Class I gross (net 4.99% after 0.03% waiver). Includes 1.60% incentive-fee drag. AFFE excluded",
+      "basis": "gross, before a 0.03% waiver, including the 1.60% incentive-fee drag, AFFE excluded (FY2026, Class I)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

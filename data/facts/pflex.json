@@ -79,6 +79,7 @@
       "value": 1.97,
       "source_cell": "2.3",
       "note": "FY2025 Institutional, EXCLUDING interest expense (5.12% including reverse-repo interest). Gross=net, no waivers",
+      "basis": "excluding interest expense (5.12% including reverse-repo interest), gross equals net, no waivers (FY2025, Institutional)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

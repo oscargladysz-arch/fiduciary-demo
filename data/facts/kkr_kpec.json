@@ -80,6 +80,7 @@
       "value": 3.19,
       "source_cell": "1.3",
       "note": "GAAP financial-highlights total operating expenses FY2025 Class I, INCL. 2.75% performance participation. NOT a 1940-Act TER. Class range 2.74-3.59%",
+      "basis": "GAAP total operating expenses including the 2.75% performance participation, not a 1940-Act ratio (FY2025, Class I)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {

@@ -81,6 +81,7 @@
       "value": 8.4,
       "source_cell": "2.3",
       "note": "FY2025 actual net expense ratio, Class I, INCLUDES interest/financing cost of BDC leverage (N-2 fee-table totals 9.94/9.34/9.09 S/D/I incl. 7.59% interest) - not like-for-like with unlevered '40-Act ratios",
+      "basis": "net, including the interest and financing cost of BDC leverage (FY2025, Class I)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {
