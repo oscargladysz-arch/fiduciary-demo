@@ -126,7 +126,7 @@ def main() -> int:
                 "extraction from the annual report.",
                 f"N-CEN {ref} (structured dataset)",
                 "PUBLIC_ACCOUNTANT + REGISTRANT.IS_ACCT_OPINION_QUALIFIED",
-                f"PUB_ACCOUNTANT_NAME={auditor}; "
+                f"PUB_ACCOUNTANT_NAME={auditor}; "  # copy-exempt: field=value separator string in the structured-cell quote, not prose
                 f"IS_ACCT_OPINION_QUALIFIED={oq or 'N'}")
         nav_err = nc["nav_error_corrected"]["value"]
         cells["4.6"] = structured_cell(
@@ -138,7 +138,10 @@ def main() -> int:
             f"N-CEN {ref} (structured dataset)",
             "REGISTRANT.IS_NAV_ERROR_CORRECTED",
             f"IS_NAV_ERROR_CORRECTED={nav_err or 'N'}")
-    listed = (rec.get("listed", {}) or {}).get("value")
+    listed = (rec.get("listed_common", rec.get("listed", {})) or {}).get("value")
+    if listed is None:
+        print("  1.10 left pending: the census cannot tell whether the common shares are "
+              "listed (listed_common is null with its reason), nothing prefilled")
     if listed is False:
         cells["1.10"] = structured_cell(
             CELLS["1.10"],
@@ -151,7 +154,7 @@ def main() -> int:
             f"exchanges={rec.get('exchanges', {}).get('value') or []}",
             status="n/a - documented-unavailable (structured: unlisted)")
 
-    product = {"product_key": args.key, "fund_name": live_name, "cik": int(cik),
+    product = {"product_key": args.key, "fund_name": live_name, "cik": cik,
                "wrapper": args.wrapper or rec["wrapper_class"],
                "depth": "cohort", "cells": cells}
     pj.write_text(json.dumps(product, indent=1))
@@ -185,10 +188,14 @@ def main() -> int:
   - fetch primary filings into data/raw/<key>/ + data/manifest.csv
   - extract the worklist cells (status extracted-unverified, cite everything)
   - cohort decision: member of an existing cohort, or uncohorted with
-    rationale (R3); depth stays 'cohort' unless argued otherwise
-  - src/build_facts.py MAPPING + COHORT_META entry
-  - src/tark_liquidity.py LIQUIDITY_PROFILES + src/tark_benchmark.py
-    PRODUCT_PROFILES entries
+    rationale (R3). Depth stays 'cohort' unless argued otherwise
+  - data/registry.json entry: cohort (and the cohort's members list), depth,
+    membership_rationale, as_of, wrapper_type, pricing_class, nav_cadence,
+    leverage_regime, held_returns, advisers, adviser_keys,
+    declared_benchmarks, source_cells, filings (every field with its
+    source). validate_data refuses a product that is in data/products but
+    not in the registry
+  - src/build_facts.py MAPPING entry (cell to typed fact, machine-checked)
   - python src/build_census.py (refresh promotion links)
   - full gate chain before commit""")
     return 0

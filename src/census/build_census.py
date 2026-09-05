@@ -43,6 +43,15 @@ HINT_TOKENS = {
     "municipal": "municipal?", "tax": "tax-managed?", "energy": "energy?",
     "royalt": "royalties?", "reinsurance": "reinsurance?",
 }
+# Documentation strings written into data/census/census.json: the note every
+# name_hint carries (C2) and the file's 'what' line. sync_notes.py rewrites
+# the data from these constants and validate_census.py checks that the two
+# agree, so edit the text here only.
+NAME_HINT_NOTE = ("derived from the fund NAME only, never a strategy claim "
+                  "(C2). Excluded from filters by default")
+CENSUS_WHAT = ("Tark T1 census: structured facts with per-field provenance "
+               "{source, ref, as_of} (C3). Wrapper classes from filing "
+               "behavior with detection evidence (C2: no strategy claims)")
 
 
 def tsv_rows(path: Path):
@@ -74,7 +83,12 @@ def load_ncen() -> dict[str, dict]:
         funds: dict[str, list] = {}
         advisers: dict[str, list] = {}
         for r in tsv_rows(qdir / "ADVISER.tsv"):
-            if r.get("ADVISER_TYPE", "").lower().startswith("adviser") or True:
+            # advisers only: sub-adviser rows carry their own ADVISER_TYPE. An
+            # "or True" here once folded every row into the adviser list; the
+            # shipped census.json was built with it. To regenerate:
+            #   rm data/census/raw/ncen_extract.json && python src/census/build_census.py
+            # (network and TARK_SEC_CONTACT required; adviser lists may move).
+            if r.get("ADVISER_TYPE", "").lower().startswith("adviser"):
                 advisers.setdefault(r["FUND_ID"], []).append(
                     {"name": r["ADVISER_NAME"], "type": r["ADVISER_TYPE"],
                      "affiliated": r.get("IS_AFFILIATED", "")})
@@ -186,16 +200,16 @@ def main() -> None:
             "wrapper_class": ent["wrapper_class"],
             "all_signals": ent["all_signals"],
             "detection_evidence": ent["detection_evidence"],
-            "listed": F(ent["listed"], "submissions",
-                        "company_tickers.json + submissions exchanges "
-                        "(OTC quotation excluded)", today),
+            "listed": {**F(ent["listed"], "submissions",
+                           "company_tickers.json + submissions exchanges "
+                           "(OTC quotation excluded)", today),
+                       **({"reason": "submissions unreachable at enumeration, listing unknown"}
+                          if ent["listed"] is None else {})},
             "tickers": F(ent["tickers"], "submissions",
                          "SEC company_tickers.json", today),
             "name_hint": {"value": name_hint(ent["name"]),
                           "authoritative": False,
-                          "note": "derived from the fund NAME only - never a "
-                                  "strategy claim (C2); excluded from filters "
-                                  "by default"},
+                          "note": NAME_HINT_NOTE},
             "promotion": {"status": "evaluated", "product_key": roster[cik]}
                          if cik in roster else {"status": "none"},
         }
@@ -305,9 +319,7 @@ def main() -> None:
         census[cik] = rec
 
     doc = {
-        "what": "Tark T1 census - structured facts with per-field provenance "
-                "{source, ref, as_of} (C3); wrapper classes from filing "
-                "behavior with detection evidence (C2: no strategy claims)",
+        "what": CENSUS_WHAT,
         "tiers": {"T1": "structured filing data (this file)",
                   "T2": "AI-extracted, unverified (evaluated roster)",
                   "T3": "human-verified (evidence CSVs signed)"},
@@ -316,6 +328,10 @@ def main() -> None:
         "total": len(census),
         "entities": census,
     }
+    # P2-11: share-class aware listing and the N-23C3A recency rule, applied
+    # here so a rebuild reproduces the committed classification
+    from reclassify_listed import apply as _reclassify
+    _reclassify(doc, uni)
     (OUT / "census.json").write_text(json.dumps(doc, indent=1))
     promoted = sum(1 for r in census.values()
                    if r["promotion"]["status"] != "none")

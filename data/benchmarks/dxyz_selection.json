@@ -3,56 +3,117 @@
   "strategy": "preipo_venture",
   "source_cells": [
     "1.10",
-    "4.7"
+    "4.7",
+    "5.1"
   ],
+  "rubric_version": "v2",
+  "rubric": "rubric v2: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
+  "max_attainable": null,
+  "declared_benchmarks": [
+    {
+      "name": "NASDAQ Composite Index",
+      "candidate_id": "nasdaq_comp",
+      "cell": "5.1",
+      "status": "cited, not held, scored 3/12, fails the strategy gate (strategy_match 1/3)"
+    }
+  ],
+  "declared_none_reason": null,
   "primary": null,
   "secondary": null,
   "rejected": [
     {
-      "candidate": "Listed private equity proxy (PSP)",
+      "candidate": "S&P 500 investable proxy (SPY)",
+      "id": "spy",
+      "lane": "B",
+      "score": 7,
+      "max": 12,
+      "criteria": {
+        "strategy_match": 1,
+        "risk_liquidity_match": 0,
+        "investability": 2,
+        "data_quality": 2,
+        "provider_independence": 2
+      },
+      "series_id": "spy",
+      "reasons": [
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (us large cap for pre ipo listed cef)",
+        "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
+        "investability 2/2: computable on held data (daily series)",
+        "data_quality 2/2: daily series held",
+        "provider_independence 2/2: provider unaffiliated with the fund (SPDR / S&P DJI)"
+      ],
+      "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
+    },
+    {
+      "candidate": "Listed private equity investable proxy (PSP)",
       "id": "psp_v",
       "lane": "B",
       "score": 7,
       "max": 12,
+      "criteria": {
+        "strategy_match": 1,
+        "risk_liquidity_match": 0,
+        "investability": 2,
+        "data_quality": 2,
+        "provider_independence": 2
+      },
+      "series_id": "psp",
       "reasons": [
-        "strategy_match 1/3: nearest liquid cousin to pre-IPO exposure",
-        "risk_liquidity_match 0/3: fund price is premium-driven, no candidate matches that risk process",
-        "investability 2/2: investable, priced daily",
-        "data_quality 2/2: daily series",
-        "provider_independence 2/2: provider unaffiliated with the fund"
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (listed private equity for pre ipo listed cef)",
+        "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
+        "investability 2/2: computable on held data (daily series)",
+        "data_quality 2/2: daily series held",
+        "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks)"
       ],
-      "rejection": "fund price is premium/discount-driven and decoupled from NAV; benchmarking the price benchmarks the premium, not the portfolio"
+      "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     },
     {
-      "candidate": "S&P 500 investable proxy (SPY)",
-      "id": "spy",
-      "lane": "B",
-      "score": 6,
-      "max": 12,
-      "reasons": [
-        "strategy_match 0/3: large-cap public equity - wrong asset class",
-        "risk_liquidity_match 0/3: fund price is premium-driven, no candidate matches that risk process",
-        "investability 2/2: investable, priced daily",
-        "data_quality 2/2: daily series",
-        "provider_independence 2/2: provider unaffiliated with the fund"
-      ],
-      "rejection": "fund price is premium/discount-driven and decoupled from NAV; benchmarking the price benchmarks the premium, not the portfolio"
-    },
-    {
-      "candidate": "Peer cohort: venture (dxyz, ssss, arkvx)",
+      "candidate": "Peer cohort composite: venture without dxyz (arkvx, ssss)",
       "id": "peer_venture",
       "lane": "C",
-      "score": 5,
+      "score": 4,
       "max": 12,
+      "criteria": {
+        "strategy_match": 2,
+        "risk_liquidity_match": 0,
+        "investability": 0,
+        "data_quality": 0,
+        "provider_independence": 2
+      },
+      "series_id": "composite:venture",
       "reasons": [
-        "strategy_match 3/3: n=3 but composite REFUSED: members' pricing bases are heterogeneous (market price vs NAV) - averaging premiums against appraisals would fabricate a series (data/cohorts/venture.json)",
-        "risk_liquidity_match 0/3: no computable series",
-        "investability 0/2: not investable / not held",
-        "data_quality 0/2: none series",
-        "provider_independence 2/2: provider unaffiliated with the fund"
+        "strategy_match 2/3: same asset class, different sub-strategy (late stage listed bdc vs pre ipo listed cef)",
+        "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
+        "investability 0/2: composite refused, nothing to compute",
+        "data_quality 0/2: cited, not computed",
+        "provider_independence 2/2: provider unaffiliated with the fund (constructed (Tark cohort engine, leave-one-out))"
       ],
-      "rejection": "fund price is premium/discount-driven and decoupled from NAV; benchmarking the price benchmarks the premium, not the portfolio"
+      "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
+    },
+    {
+      "candidate": "NASDAQ Composite Index",
+      "id": "nasdaq_comp",
+      "lane": "A",
+      "score": 3,
+      "max": 12,
+      "criteria": {
+        "strategy_match": 1,
+        "risk_liquidity_match": 0,
+        "investability": 0,
+        "data_quality": 0,
+        "provider_independence": 2
+      },
+      "series_id": "cited:nasdaq_comp",
+      "reasons": [
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (nasdaq composite for pre ipo listed cef)",
+        "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
+        "investability 0/2: index cited, series not held, not computable",
+        "data_quality 0/2: cited, not computed",
+        "provider_independence 2/2: provider unaffiliated with the fund (Nasdaq)"
+      ],
+      "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     }
   ],
+  "secondary_note": null,
   "escalation": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from available data. Required next: public NAV series (quarterly filings) plus a premium/NAV decomposition before any comparator is defensible."
 }

@@ -2,8 +2,8 @@
   "product_key": "ssss",
   "cohort_id": "venture",
   "depth": "cohort",
-  "membership_rationale": "Listed BDC (fka SuRo Capital) holding late-stage growth equity - the second market-priced venture vehicle; gives dxyz a premium/discount comparable. Membership CONDITIONAL on strategy continuity through the Neostellar rename (verification queue).",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "membership_rationale": "Listed BDC (fka SuRo Capital) holding late-stage growth equity, the second market-priced venture vehicle. Gives dxyz a premium/discount comparable. Membership CONDITIONAL on strategy continuity through the Neostellar rename (verification queue).",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -27,7 +27,7 @@
       "value": {
         "present": true,
         "hurdle_pct": 7.0,
-        "structure": "two-part BDC fee (income + capital gains) per the 2026-07-15 externalization; hurdle 7.00% annualized - full terms in cell 2.2"
+        "structure": "two-part BDC fee (income + capital gains) per the 2026-07-15 externalization. Hurdle 7.00% annualized. Full terms in cell 2.2"
       },
       "source_cell": "2.2",
       "status": "extracted-unverified"
@@ -35,7 +35,7 @@
     "early_repurchase": {
       "value": null,
       "source_cell": "2.7",
-      "reason": "exchange-listed; exit is on-market - no repurchase program fee applies",
+      "reason": "exchange-listed. Exit is on-market, so no repurchase program fee applies",
       "status": "n/a - exchange-traded: no investor-level repurchase/redemption exists, so no early-repurchase fee is possible; exit is on-exchange sale at market price"
     },
     "repurchase_cadence_per_year": {
@@ -47,13 +47,13 @@
     "repurchase_cap_pct": {
       "value": null,
       "source_cell": "3.1",
-      "reason": "on-exchange liquidity; no fund-level cap",
+      "reason": "on-exchange liquidity with no fund-level cap",
       "status": "extracted-unverified"
     },
     "repurchase_cap_base": {
       "value": null,
       "source_cell": "3.1",
-      "reason": "on-exchange liquidity; no fund-level cap",
+      "reason": "on-exchange liquidity with no fund-level cap",
       "status": "extracted-unverified"
     },
     "gate_history": {
@@ -65,7 +65,7 @@
     "tax_form": {
       "value": null,
       "source_cell": "6.4",
-      "reason": "form number not printed in on-disk filings; RIC status implies 1099 but the cell is partial",
+      "reason": "form number not printed in on-disk filings. RIC status implies 1099 but the cell is partial",
       "status": "partial"
     },
     "auditor": {
@@ -82,13 +82,13 @@
     "expense_ratio_pct": {
       "value": 9.46,
       "source_cell": "2.3",
-      "note": "FY2025 net operating expenses/avg net assets UNDER INTERNAL MANAGEMENT; the fee regime changed 2026-07-15 - forward ratios will differ (see 2.1/2.2)",
+      "note": "FY2025 net operating expenses/avg net assets UNDER INTERNAL MANAGEMENT. The fee regime changed 2026-07-15, so forward ratios will differ (see 2.1/2.2)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {
       "value": null,
       "source_cell": "3.6",
-      "reason": "aggregate net assets not yet carried into a typed cell; verification-queue item",
+      "reason": "aggregate net assets not yet carried into a typed cell. Verification-queue item",
       "status": "extracted-unverified"
     },
     "inception": {
@@ -97,35 +97,31 @@
       "note": "the roster's longest listed record (~15 years)",
       "status": "extracted-unverified"
     },
+    "affe": {
+      "value": {
+        "present": true,
+        "rate_pct": 0.06
+      },
+      "source_cell": "2.4",
+      "status": "extracted-unverified"
+    },
+    "repurchase_program_status": {
+      "value": null,
+      "source_cell": "3.1",
+      "reason": "exchange-listed, no repurchase program",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 15.0,
       "source_cell": "1.11",
       "status": "computed",
       "note": "(as-of 2025-12-31 minus inception) / 365.25"
     },
-    "primary_benchmark_id": {
-      "value": null,
-      "source_cell": "1.8",
+    "liquidity_structural_verdict": {
+      "value": "aligned-mechanical",
+      "source_cell": "3.9",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
-    },
-    "selection_score": {
-      "value": null,
-      "source_cell": "1.8",
-      "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
-    },
-    "pme_primary": {
-      "value": null,
-      "source_cell": "1.8",
-      "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
-    },
-    "direct_alpha_primary": {
-      "value": null,
-      "source_cell": "1.8",
-      "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
+      "note": "from typed facts only (cells 3.1, 3.3, 2.7), plan-independent"
     },
     "liquidity_verdict_by_plan": {
       "value": {
@@ -135,7 +131,32 @@
         "plan_tech_media": "aligned-mechanical"
       },
       "source_cell": "3.9",
-      "status": "computed"
+      "status": "computed",
+      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
+    },
+    "primary_benchmark_id": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "selection_score": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "pme_primary": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "direct_alpha_primary": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
     }
   }
 }

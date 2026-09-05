@@ -15,7 +15,7 @@
     "kkr_kpec": {
       "wrapper_type": "nontraded_llc",
       "depth": "full",
-      "membership_rationale": "'34-Act conglomerate of controlled PE businesses - joins under the authorized fallback (its Reg D twins have no public filings); cross-wrapper caveats carried by the cohort caveat block."
+      "membership_rationale": "'34-Act conglomerate of controlled PE businesses. Joins under the authorized fallback (its Reg D twins have no public filings). Cross-wrapper caveats carried by the cohort caveat block."
     },
     "ares_pmf": {
       "wrapper_type": "tender_offer",
@@ -62,7 +62,7 @@
     },
     "repurchase_cap_pct": {
       "field": "repurchase_cap_pct",
-      "n": 4,
+      "n": 5,
       "median": 5.0,
       "min": 5.0,
       "max": 5.0,
@@ -70,11 +70,10 @@
         "hl_paf": 5.0,
         "stepstone_spm": 5.0,
         "kkr_kpec": 5.0,
+        "ares_pmf": 5.0,
         "amg_pantheon": 5.0
       },
-      "missing": {
-        "ares_pmf": "offer sizes are board-set per quarter (Rule 13e-4 tenders); no standing percentage cap is printed"
-      }
+      "missing": {}
     },
     "repurchase_cadence_per_year": {
       "field": "repurchase_cadence_per_year",
@@ -118,14 +117,14 @@
         "kkr_kpec": 9500000000
       },
       "missing": {
-        "ares_pmf": "aggregate net assets not yet carried into a typed cell; verification-queue item",
-        "amg_pantheon": "aggregate net assets not yet carried into a typed cell; verification-queue item"
+        "ares_pmf": "aggregate net assets not yet carried into a typed cell. Verification-queue item",
+        "amg_pantheon": "aggregate net assets not yet carried into a typed cell. Verification-queue item"
       }
     }
   },
   "composite": {
     "refused": false,
-    "granularity": "annual (fiscal years as filed; year-end months differ across members and are disclosed per row)",
+    "granularity": "annual (fiscal years as filed, with year-end months that differ across members and are disclosed per row)",
     "weighting": "equal-weight across members reporting that year",
     "rows": [
       {
@@ -188,10 +187,8 @@
     ]
   },
   "caveats": [
-    "PRICING-BASIS MIX: some members transact at NAV, others at exchange market price - return comparisons mix appraisal dynamics with premium/discount dynamics; composites across this line are refused, not averaged. [amg_pantheon: NAV; ares_pmf: NAV; hl_paf: NAV; kkr_kpec: transactional NAV; stepstone_spm: NAV]",
-    "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds - fee bases and return volatility are not like-for-like. [amg_pantheon: 1940-Act asset-coverage limits; ares_pmf: 1940-Act asset-coverage limits; hl_paf: 1940-Act asset-coverage limits; kkr_kpec: no 1940-Act leverage limits (34-Act conglomerate); stepstone_spm: 1940-Act asset-coverage limits]",
-    "LIQUIDITY-LAW MIX: Rule 23c-3 obligations, discretionary tenders, and repurchase plans give different worst-case exit rights; cadence numbers alone overstate comparability. [amg_pantheon: board-DISCRETIONARY tender offers (nothing compels the next one); ares_pmf: board-DISCRETIONARY tender offers (nothing compels the next one); hl_paf: board-DISCRETIONARY tender offers (nothing compels the next one); kkr_kpec: board-discretionary share repurchases; stepstone_spm: board-DISCRETIONARY tender offers (nothing compels the next one)]",
-    "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing; volatility and drawdown comparisons inherit that difference (see de-smoothing lab). [amg_pantheon: daily-to-monthly NAV; ares_pmf: daily-to-monthly NAV; hl_paf: daily-to-monthly NAV; kkr_kpec: monthly transactional NAV; stepstone_spm: daily-to-monthly NAV]",
+    "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds. Fee bases and return volatility are not like-for-like. [typed per product: amg_pantheon: 1940-Act asset-coverage limits, ares_pmf: 1940-Act asset-coverage limits, hl_paf: 1940-Act asset-coverage limits, kkr_kpec: no 1940-Act leverage limits (34-Act conglomerate), stepstone_spm: 1940-Act asset-coverage limits]",
+    "LIQUIDITY-LAW MIX: Rule 23c-3 obligations, discretionary tenders, and repurchase plans give different worst-case exit rights. Cadence numbers alone overstate comparability. [by wrapper type: amg_pantheon: board-DISCRETIONARY tender offers (nothing compels the next one), ares_pmf: board-DISCRETIONARY tender offers (nothing compels the next one), hl_paf: board-DISCRETIONARY tender offers (nothing compels the next one), kkr_kpec: board-discretionary share repurchases, stepstone_spm: board-DISCRETIONARY tender offers (nothing compels the next one)]",
     "kkr_kpec joins under the authorized fallback: its structural twins are Reg D vehicles with no public filings (data/roster_decisions.md - 'The kkr_kpec ruling'). Cross-wrapper caveats apply."
   ],
   "exclusion_log": "data/roster_decisions.md"

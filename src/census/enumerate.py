@@ -32,6 +32,77 @@ from edgar_api import (BASE, RAW, companies_by_query, company_tickers, get,
 OUT = BASE / "data" / "census"
 THIS_YEAR = date.today().year
 
+# Documentation strings written into data/census/universe.json (and copied
+# into census.json with each record). sync_notes.py rewrites the data from
+# these constants and validate_census.py checks that the two agree, so edit
+# the text here only.
+UNIVERSE_WHAT = ("T1 census candidate universe: wrapper classification from "
+                 "filing behavior only (C2: no strategy claims). Each record "
+                 "carries detection_evidence")
+METHOD_NOTES = [
+    "form filers enumerated via EFTS full-text search, empty query + "
+    "forms filter, year-split 2001-present, checkpointed",
+    "REIT candidates via browse-edgar company search SIC=6798 + "
+    "type=10-K",
+    "listing oracle: SEC company_tickers.json",
+    "precedence on overlapping signals: bdc > interval_23c3 > "
+    "tender_cef > nontraded_reit > listed_cef > unlisted_cef_other",
+    "'listed' means a real exchange listing confirmed in SEC "
+    "submissions. An OTC quotation alone does not count (non-traded "
+    "vehicles can carry OTC tickers)",
+    "unlisted_cef_other: N-2-family registrants that are neither "
+    "exchange-listed nor show tender/interval filing behavior - the "
+    "wrapper is real but its liquidity mechanism (if any) is not "
+    "detectable from filing behavior",
+    "EFTS coverage is 2001+. Funds whose only relevant filings "
+    "predate 2001 are not seen",
+    "listing is tri-state (True, False, null with a reason) and "
+    "share-class aware: listed_common is the exchange status taken for "
+    "the common shares, listed_other_classes is null because the census "
+    "does not enumerate share classes. An interval_23c3 record that is "
+    "exchange-listed and whose last N-23C3A is more than 24 months before "
+    "the census as-of is reclassified to listed_cef by the N-23C3A "
+    "recency rule (src/census/reclassify_listed.py, reversible on a fresh "
+    "N-23C3A). One that still files N-23C3A keeps its class with listing "
+    "null: offline, the census cannot tell which share class is listed",
+    "roster reconciliation: an evaluated roster product whose "
+    "wrapper has no distinguishing form signature (non-traded "
+    "'34-Act reporting company) is added individually with its "
+    "filing facts as evidence. That class CANNOT be enumerated "
+    "universe-wide and its census count covers roster entries only",
+]
+# detection_evidence text composed from constants (the rest of each record's
+# evidence list is built from its own filing facts)
+N23C3A_EVIDENCE_NOTE = ("(form exists only for Rule 23c-3 funds. EFTS "
+                        "coverage 2001+)")
+UNLISTED_CEF_EVIDENCE = ("no exchange listing, no SC TO-I or N-23C3A "
+                         "activity observed (EFTS coverage 2001+). Liquidity "
+                         "mechanism, if any, not detectable from filing "
+                         "behavior")
+
+
+def n23c3a_evidence(count: int, first: str, last: str) -> str:
+    """The single detection_evidence entry of an interval_23c3 record."""
+    return (f"{count} Form N-23C3A filings, {first} to {last} "
+            f"{N23C3A_EVIDENCE_NOTE}")
+
+
+def constant_evidence(rec: dict) -> list[str] | None:
+    """The detection_evidence a universe or census record must carry where
+    part of it is composed from the constants above, or None for classes
+    whose evidence is built from filing facts alone. sync_notes.py rewrites
+    the data to this and validate_census.py checks against it."""
+    ev = rec.get("detection_evidence") or []
+    if rec.get("wrapper_class") == "interval_23c3":
+        n = (rec.get("n23c3a")
+             or rec.get("n23c3a_activity", {}).get("value") or {})
+        if not n:
+            return None
+        return [n23c3a_evidence(n["count"], n["first"], n["last"])]
+    if rec.get("wrapper_class") == "unlisted_cef_other":
+        return ev[:1] + [UNLISTED_CEF_EVIDENCE]
+    return None
+
 
 def efts_form_filers(label: str, forms: str, y0: int = 2001) -> dict:
     """{cik: {name, count, first, last}} for all filings of `forms`,
@@ -131,7 +202,7 @@ def formd_dark_universe() -> dict:
 
 
 def main() -> None:
-    print("enumerating (checkpointed; safe to interrupt/resume)…")
+    print("enumerating (checkpointed, safe to interrupt/resume)…")
     intervals = efts_form_filers("n23c3a", "N-23C3A")
     bdc_elect = efts_form_filers("n54a", "N-54A")
     tenders = efts_form_filers("sctoi", "SC TO-I")
@@ -150,7 +221,7 @@ def main() -> None:
             ex = sorted({e for e in (submissions(cik).get("exchanges") or [])
                          if e and e.upper() != "OTC"})
         except Exception:  # noqa: BLE001 - unreachable: unknown, never guess
-            print(f"  !! submissions unreachable for CIK {cik}; listing "
+            print(f"  !! submissions unreachable for CIK {cik}: listing "
                   "unknown", flush=True)
             return None, []
         return bool(ex), ex
@@ -167,7 +238,7 @@ def main() -> None:
                          "wrapper_class": klass,
                          "detection_evidence": evidence,
                          "all_signals": [klass],
-                         "listed": bool(exch),
+                         "listed": exch,      # True, False, or None when submissions were unreachable
                          "exchanges": ex_names,
                          "tickers": listed.get(int(cik), []),
                          **(extra or {})}
@@ -178,8 +249,7 @@ def main() -> None:
              + (f" (+{f['count']-1} more)" if f["count"] > 1 else "")])
     for cik, f in intervals.items():
         add(cik, f["name"], "interval_23c3",
-            [f"{f['count']} Form N-23C3A filings, {f['first']} to {f['last']} "
-             "(form exists only for Rule 23c-3 funds; EFTS coverage 2001+)"],
+            [n23c3a_evidence(f["count"], f["first"], f["last"])],
             {"n23c3a": {"count": f["count"], "first": f["first"],
                         "last": f["last"]}})
     for cik, f in tenders.items():
@@ -217,9 +287,7 @@ def main() -> None:
             add(cik, f["name"], "unlisted_cef_other",
                 [f"N-2-family registrant ({f['count']} registration filings, "
                  f"{f['first']} to {f['last']})",
-                 "no exchange listing; no SC TO-I or N-23C3A activity "
-                 "observed (EFTS coverage 2001+) - liquidity mechanism, "
-                 "if any, not detectable from filing behavior"])
+                 UNLISTED_CEF_EVIDENCE])
 
     # roster reconciliation: an R1-verified roster product whose wrapper has
     # no distinguishing form signature (e.g. a non-traded '34-Act reporting
@@ -261,32 +329,8 @@ def main() -> None:
         counts[rec["wrapper_class"]] = counts.get(rec["wrapper_class"], 0) + 1
 
     doc = {
-        "what": "T1 census candidate universe - wrapper classification from "
-                "filing behavior only (C2: no strategy claims); each record "
-                "carries detection_evidence",
-        "method_notes": [
-            "form filers enumerated via EFTS full-text search, empty query + "
-            "forms filter, year-split 2001-present, checkpointed",
-            "REIT candidates via browse-edgar company search SIC=6798 + "
-            "type=10-K",
-            "listing oracle: SEC company_tickers.json",
-            "precedence on overlapping signals: bdc > interval_23c3 > "
-            "tender_cef > nontraded_reit > listed_cef > unlisted_cef_other",
-            "'listed' means a real exchange listing confirmed in SEC "
-            "submissions; an OTC quotation alone does not count (non-traded "
-            "vehicles can carry OTC tickers)",
-            "unlisted_cef_other: N-2-family registrants that are neither "
-            "exchange-listed nor show tender/interval filing behavior - the "
-            "wrapper is real but its liquidity mechanism (if any) is not "
-            "detectable from filing behavior",
-            "EFTS coverage is 2001+; funds whose only relevant filings "
-            "predate 2001 are not seen",
-            "roster reconciliation: an evaluated roster product whose "
-            "wrapper has no distinguishing form signature (non-traded "
-            "'34-Act reporting company) is added individually with its "
-            "filing facts as evidence; that class CANNOT be enumerated "
-            "universe-wide and its census count covers roster entries only",
-        ],
+        "what": UNIVERSE_WHAT,
+        "method_notes": METHOD_NOTES,
         "as_of": date.today().isoformat(),
         "dark_universe": formd_dark_universe(),
         "counts_by_class": dict(sorted(counts.items())),

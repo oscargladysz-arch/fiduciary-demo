@@ -109,12 +109,38 @@ export function xirr(flows, lo = -0.9999, hi = 10.0, tol = 1e-8) {
 }
 
 export function levelOn(index, d) {
+  // refuses a date before the series starts: an "on or before" level there
+  // would silently anchor at the first observation (mirrors tark_analytics)
+  if (d < index[0][0]) throw new Error(`date ${d} is before the series starts (${index[0][0]})`);
   let lvl = index[0][1];
   for (const [di, vi] of index) {
     if (di <= d) lvl = vi;
     else break;
   }
   return lvl;
+}
+
+/** intersection of a fund window with the index's coverage, plus the clip
+ * note ("" when nothing was clipped); same rule as tark_analytics */
+export function effectiveWindow(d0, d1, index) {
+  const i0 = index[0][0];
+  const i1 = index[index.length - 1][0];
+  const e0 = d0 > i0 ? d0 : i0;
+  const e1 = d1 < i1 ? d1 : i1;
+  if (e0 >= e1) throw new Error(`window ${d0} to ${d1} does not overlap the series (${i0} to ${i1})`);
+  const parts = [];
+  if (e0 !== d0) parts.push(`proxy series begins ${i0}`);
+  if (e1 !== d1) parts.push(`proxy series ends ${i1}`);
+  return { d0: e0, d1: e1, note: parts.length ? `clipped: ${parts.join(", ")}` : "" };
+}
+
+/** [start, end] per fiscal year from a window and a count; same rule as
+ * tark_benchmark.fiscal_year_bounds */
+export function fiscalYearBounds(fyWindow, n) {
+  const [w0, w1] = fyWindow;
+  const y0 = +w0.slice(0, 4);
+  const starts = Array.from({ length: n }, (_, i) => `${y0 + i}${w0.slice(4)}`);
+  return starts.map((s, i) => [s, i + 1 < n ? starts[i + 1] : w1]);
 }
 
 export function ksPme(flows, index) {
@@ -127,6 +153,19 @@ export function ksPme(flows, index) {
     if (amt < 0) fvNeg += -amt * iT / levelOn(index, d);
   }
   return fvPos / fvNeg;
+}
+
+/** ILLUSTRATIVE flow schedule: one unit of cash at the window start and at
+ * each fund month-end strictly inside the window, each buying 1 / NAV
+ * units, valued once at the window end (mirrors tark_analytics) */
+export function monthlyScheduleFlows(fund, d0, d1) {
+  const win = fund.filter(([d]) => d >= d0 && d <= d1);
+  const dates = [d0, ...monthEndPoints(win).map(([d]) => d).filter((d) => d > d0 && d < d1)];
+  let units = 0;
+  const flows = [];
+  for (const d of dates) { units += 1 / levelOn(fund, d); flows.push([d, -1.0]); }
+  flows.push([d1, units * levelOn(fund, d1)]);
+  return flows;
 }
 
 export function directAlpha(flows, index) {

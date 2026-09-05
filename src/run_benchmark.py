@@ -1,36 +1,22 @@
 """
-Run the M3 benchmark engine for every profiled product.
+Run the benchmark engine (rubric v2) for every product with a return input.
     python src/run_benchmark.py
 Writes data/benchmarks/<product>_selection.json and prints the decisions.
+Profiles are assembled at import from data/registry.json, return inputs
+included (facts live in the data layer, not in engine code).
 """
 import json
-from pathlib import Path
 
-from tark_data import DATA
 from tark_benchmark import PRODUCT_PROFILES, run_selection
+from tark_data import DATA
 
 outdir = DATA / "benchmarks"
 outdir.mkdir(exist_ok=True)
 
-# inject return-profile inputs extracted from cell 1.2 evidence (structured
-# artifact written by the coverage pipeline — facts live in the data layer,
-# not in engine code)
-pi_path = DATA / "benchmarks" / "profiles_input.json"
-if pi_path.exists():
-    for key, inp in json.loads(pi_path.read_text()).items():
-        if key in PRODUCT_PROFILES:
-            PRODUCT_PROFILES[key].update(inp["profile"])
-
 for key in PRODUCT_PROFILES:
-    if PRODUCT_PROFILES[key].get("granularity") == "annual" and not (
-            PRODUCT_PROFILES[key].get("fy_returns")
-            or PRODUCT_PROFILES[key].get("aatr_5yr")
-            or PRODUCT_PROFILES[key].get("aatr")):
-        print(f"=== {key}: profile inputs not yet extracted - skipped")
-        continue
     sel = run_selection(key)
     (outdir / f"{key}_selection.json").write_text(json.dumps(sel, indent=2))
-    print(f"\n=== {key} ({sel['strategy']}) ===")
+    print(f"\n=== {key} ({sel['strategy']}) max attainable {sel['max_attainable']}/12 ===")
     if sel["primary"]:
         p = sel["primary"]
         print(f"  PRIMARY   {p['candidate']}  [{p['score']}/12]")
@@ -38,16 +24,14 @@ for key in PRODUCT_PROFILES:
             c = p["comparison"]
             print(f"            window {c['window']}: fund {c['fund_growth_x']}x "
                   f"({c['fund_ann_pct']}%/yr) vs index {c['index_growth_x']}x "
-                  f"({c['index_ann_pct']}%/yr) | KS-PME {c['ks_pme']} | "
+                  f"({c['index_ann_pct']}%/yr), KS-PME {c['ks_pme']}, "
                   f"Direct Alpha {c['direct_alpha_pct']}%/yr")
     if sel["secondary"]:
         s = sel["secondary"]
         print(f"  SECONDARY {s['candidate']}  [{s['score']}/12]")
-        if s.get("comparison"):
-            c = s["comparison"]
-            print(f"            KS-PME {c['ks_pme']} | Direct Alpha {c['direct_alpha_pct']}%/yr")
-    for r in sel["rejected"]:
-        print(f"  rejected  {r['candidate']}  [{r['score']}/12] - {r['rejection']}")
+    elif sel["primary"]:
+        print(f"  SECONDARY {sel['secondary_note']}")
     if sel["escalation"]:
-        print(f"  ESCALATION: {sel['escalation']}")
-print("\nwrote data/benchmarks/*.json")
+        print(f"  ESCALATION {sel['escalation'][:90]}")
+    for r in sel["rejected"]:
+        print(f"  rejected  {r['id']:16s} {r['score']:2d}/12  {r['rejection'][:80]}")

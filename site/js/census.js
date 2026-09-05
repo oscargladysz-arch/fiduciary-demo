@@ -24,7 +24,9 @@ export const CLASS_ORDER = ["interval_23c3", "tender_cef", "bdc",
   "nontraded_reit", "listed_cef", "unlisted_cef_other",
   "nontraded_34act_other"];
 
-/* index row: [nm, clsCode, flags, assets, laDate, tc, tl, hintMask, promo] */
+/* index rows are compact arrays; their field order ships in the chunk as
+ * row_fields (written by build_site.py) and is decoded here, so the wire
+ * format has one source */
 const FL = { listed: 1, ncen: 2, intervalSelf: 4, crossAgree: 8,
   evaluated: 16, structured: 32 };
 let _rows = null;
@@ -32,11 +34,14 @@ function rows() {
   if (_rows) return _rows;
   const cc = C().cls_codes;
   const hints = C().hints;
+  const ix = Object.fromEntries(
+    C().row_fields.map((f, i) => [f.split("(")[0], i]));
   _rows = Object.entries(C().entities).map(([cik, r]) => ({
-    cik, nm: r[0], cls: cc[r[1]], flags: r[2], ta: r[3] || null,
-    la: r[4] || null, tc: r[5], tl: r[6] || null, hm: r[7],
-    promo: r[8] || null,
-    hints: hints.filter((_, i) => r[7] & (1 << i)),
+    cik, nm: r[ix.nm], cls: cc[r[ix.cls_code]], flags: r[ix.flags],
+    ta: r[ix.assets_usd] || null, la: r[ix.latest_annual_date] || null,
+    tc: r[ix.tender_count], tl: r[ix.tender_last] || null,
+    hm: r[ix.hint_mask], promo: r[ix.promo_key] || null,
+    hints: hints.filter((_, i) => r[ix.hint_mask] & (1 << i)),
   }));
   return _rows;
 }
@@ -45,7 +50,7 @@ function rows() {
 export function tierLegend() {
   return `<div class="tierlegend">
     <span class="chip structured">T1 structured filing data</span>
-    <span class="cap">machine-read from N-CEN / XBRL / submissions — no
+    <span class="cap">machine-read from N-CEN / XBRL / submissions. No
       model judgment, every field carries {source, ref, as-of}</span>
     <span class="chip extracted">T2 extracted-unverified</span>
     <span class="cap">AI-extracted from filings, awaiting human check</span>
@@ -97,8 +102,8 @@ export function viewCensus(root, state, setState) {
   const needSearch = mem.adviser || mem.auditor;
   if (needSearch && !_search) {
     root.innerHTML = `<div class="nochart"><div class="k">Loading search sidecar</div>
-      Fetching the auditor/adviser sidecar (lazy — only loads when a text
-      filter is used; the query never enters the URL).</div>`;
+      Fetching the auditor/adviser sidecar (lazy: it only loads when a text
+      filter is used, and the query never enters the URL).</div>`;
     ensureSearch().then(() => setState({}));
     return;
   }
@@ -130,11 +135,12 @@ export function viewCensus(root, state, setState) {
     </select>`;
 
   root.innerHTML = `
-    <h1>Universe <span class="cap">— every registered alt wrapper the census can see</span></h1>
+    <h1>Universe: <span class="cap">every registered alt wrapper the census can see</span></h1>
     ${tierLegend()}
     <p class="cap">${C().total.toLocaleString()} entities enumerated from filing
-      behavior (EFTS form streams, SIC search, submissions listing check).
-      This layer is <b>T1: structured filing data only</b> — wrapper classes
+      behavior (EFTS form streams, SIC search, submissions listing check),
+      census as of ${esc(C().as_of)}.
+      This layer is <b>T1: structured filing data only</b>. Wrapper classes
       come from what each entity filed, never from what its name suggests.
       The ${Object.keys(T.products).length} evaluated products are the tiny
       lit patch: <button class="linklike" data-gofunnel>see the funnel</button>.</p>
@@ -155,7 +161,7 @@ export function viewCensus(root, state, setState) {
       <span class="lbl">Auditor</span>
       <input data-cm="auditor" size="10" placeholder="N-CEN auditor" value="${esc(mem.auditor)}">
       <details class="hintfilter"><summary>name-hint filter (off by default)</summary>
-        <p class="cap">Hints are derived from the fund NAME only — they are
+        <p class="cap">Hints are derived from the fund NAME only. They are
         <b>not strategy claims</b> and are excluded from filtering unless you
         opt in here.</p>
         ${sel("c_hint", "Hint", C().hints)}
@@ -171,10 +177,10 @@ export function viewCensus(root, state, setState) {
       <tbody>
       ${out.slice(0, 400).map((e) => `<tr data-cik="${e.cik}">
         <td><b>${esc(e.nm || "(name pending)")}</b>
-          ${e.hints.map((h) => `<span class="chip hint" title="derived from the name only — not a strategy claim">${esc(h)}</span>`).join("")}</td>
+          ${e.hints.map((h) => `<span class="chip hint" title="derived from the name only, not a strategy claim">${esc(h)}</span>`).join("")}</td>
         <td>${esc(CLASS_LABEL[e.cls] || e.cls)}</td>
         <td>${(e.flags & FL.listed) ? "yes" : "no"}</td>
-        <td>${e.ta ? `<span title="structured (T1) — open the entity for source · ref · as-of">${money(e.ta)}</span>` : "—"}</td>
+        <td>${e.ta ? `<span title="structured (T1): open the entity for source · ref · as-of">${money(e.ta)}</span>` : "—"}</td>
         <td>${(e.flags & FL.ncen)
           ? ((e.flags & FL.intervalSelf)
              ? ((e.flags & FL.crossAgree) ? "✓ self+behavior" : "self-only")
@@ -187,7 +193,7 @@ export function viewCensus(root, state, setState) {
           : `<span class="chip structured">T1</span>`}</td>
       </tr>`).join("")}
       </tbody></table></div>
-    ${out.length > 400 ? `<p class="cap">Showing the 400 largest by structured assets — narrow the filters to see the rest (all ${out.length.toLocaleString()} are loaded and filterable).</p>` : ""}`;
+    ${out.length > 400 ? `<p class="cap">Showing the 400 largest by structured assets. Narrow the filters to see the rest (all ${out.length.toLocaleString()} are loaded and filterable).</p>` : ""}`;
 
   root.querySelectorAll("[data-cf]").forEach((s) => s.addEventListener(
     "change", (e2) => setState({ [s.dataset.cf]: e2.target.value })));
@@ -212,7 +218,7 @@ function provRow(label, f, fmt) {
 
 export function viewCensusEntity(root, state, setState) {
   root.innerHTML = `<div class="nochart"><div class="k">Loading entity</div>
-    Fetching this entity's detail shard (full per-field provenance — split
+    Fetching this entity's detail shard (full per-field provenance, split
     from the index so the universe screener stays a light chunk).</div>`;
   entityDetail(state.c_cik).then((e) => {
     if (!e) {
@@ -223,8 +229,18 @@ export function viewCensusEntity(root, state, setState) {
   });
 }
 
+/* a product key suggestion from the entity name: lowercase, letters, digits
+ * and underscores, the ticker in parentheses dropped, 2 to 32 characters */
+export function suggestKey(name) {
+  const base = String(name || "").replace(/\(.*?\)/g, "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 32);
+  return base.length >= 2 ? base : `cik_${base}`;
+}
+
 function renderEntity(root, e, state, setState) {
   const nc = e.nc ? e.nc.value : null;
+  const serviceUrl = T.service_url;      // null unless a service was connected at build time
+  const cmd = `python src/ingest.py ${e.cik} --key ${suggestKey(e.nm)}`;
   root.innerHTML = `
     <p><button class="linklike" data-back>← back to the universe</button></p>
     <h1>${esc(e.nm || "(name pending)")} <span class="cap">CIK ${e.cik}</span></h1>
@@ -239,17 +255,28 @@ function renderEntity(root, e, state, setState) {
       <div class="card"><h3>${e.promo ? "Evaluated (T2+)" : "Evaluate this fund"}</h3>
         ${e.promo ? `
           <p>This entity is on the evaluated roster as
-            <b>${esc(T.products[e.promo]?.fund_name || e.promo)}</b> — full
-            six-factor extraction with per-cell provenance.</p>
+            <b>${esc(T.products[e.promo]?.fund_name || e.promo)}</b>, with a full
+            six-factor extraction and per-cell provenance.</p>
           <button class="primary" data-goproduct="${esc(e.promo)}">open the evaluation record</button>`
         : `
-          <p class="cap">Everything above is T1 — structured filing data. A
+          <p class="cap">Everything above is T1 (structured filing data). A
           promotion (src/promote.py) verifies identity against EDGAR (R1),
           fetches the fund's filings, scaffolds the 54-cell six-factor record,
           prefills what the census already answers (marked
           <span class="chip structured">structured filing data (T1)</span>),
           and emits the extraction worklist for the rest. Nothing here is
-          extracted or verified until that work is actually done.</p>`}
+          extracted or verified until that work is actually done.</p>
+          <p class="cap">The registry entry (cohort, strategy, wrapper, a person's
+            judgments) comes first, then this command on a machine with the
+            filings and a key:</p>
+          <pre class="cmd" data-cmd>${esc(cmd)}</pre>
+          <button class="btn ghost" data-copycmd>copy command</button>
+          ${serviceUrl
+            ? `<button class="primary" data-evaluate>Evaluate this fund</button>
+               <span class="cap">posts to ${esc(serviceUrl)}/evaluate and shows its answer as returned</span>`
+            : `<span class="cap">No evaluation service is connected to this build, so the
+               button is not shown. Run the command.</span>`}
+          <div data-evalresult></div>`}
       </div>
     </div>
     <h2>Structured facts <span class="cap">(every row carries source · ref · as-of)</span></h2>
@@ -257,8 +284,9 @@ function renderEntity(root, e, state, setState) {
       <thead><tr><th>Field</th><th>Value</th><th>Provenance</th></tr></thead>
       <tbody>
         ${provRow("Current entity name", e.enc)}
-        ${provRow("Exchange-listed", e.lif, (v) => v ? ((e.ex || []).join(", ") || "yes") : "no")}
-        ${e.tk && e.tk.value && e.tk.value.length ? provRow("Tickers (SEC oracle; OTC quotation ≠ listing)", e.tk, (v) => v.map(esc).join(", ")) : ""}
+        ${provRow("Exchange-listed (common shares)", e.lif, (v) => v ? ((e.ex || []).join(", ") || "yes") : "no")}
+        ${e.lsig ? provRow("Listing signal (submissions)", e.lsig) : ""}
+        ${e.tk && e.tk.value && e.tk.value.length ? provRow("Tickers (SEC oracle, OTC quotation ≠ listing)", e.tk, (v) => v.map(esc).join(", ")) : ""}
         ${provRow("First filing on record", e.ff)}
         ${provRow("Latest annual report", e.la, (v) => `${esc(v.form)} filed ${esc(v.date)}`)}
         ${provRow("Total assets", e.ta, (v) => `${money(v.value)} <span class="cap">(${esc(v.basis)})</span>`)}
@@ -286,7 +314,7 @@ function renderEntity(root, e, state, setState) {
       <span class="cap" title="source: ${esc(e.fs.source)} · ${esc(e.fs.ref)}">· source: submissions JSON, as of ${esc(e.fs.as_of)}</span></div>` : ""}
     ${(e.hint || []).length ? `
     <p class="cap"><span class="chip hint">hint</span> Name suggests:
-      ${e.hint.map(esc).join(", ")} — derived from the NAME ONLY; never a
+      ${e.hint.map(esc).join(", ")}. Derived from the NAME ONLY, never a
       strategy claim, never used in default filters (C2).</p>` : ""}`;
 
   root.querySelector("[data-back]").addEventListener("click",
@@ -294,6 +322,33 @@ function renderEntity(root, e, state, setState) {
   const gp = root.querySelector("[data-goproduct]");
   if (gp) gp.addEventListener("click", () => setState(
     { view: "evaluation", product: gp.dataset.goproduct, c_cik: "" }));
+  const cp = root.querySelector("[data-copycmd]");
+  if (cp) cp.addEventListener("click", () => {
+    navigator.clipboard?.writeText(cmd);
+    cp.textContent = "copied";
+  });
+  const ev = root.querySelector("[data-evaluate]");
+  if (ev) ev.addEventListener("click", async () => {
+    const out = root.querySelector("[data-evalresult]");
+    ev.disabled = true;
+    out.innerHTML = `<p class="cap">Request sent. The service runs the ingest synchronously and
+      answers when it is done or refused, so this can take a while.</p>`;
+    try {
+      const r = await fetch(`${serviceUrl}/evaluate`, { method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ cik: String(e.cik), key: suggestKey(e.nm) }) });
+      const j = await r.json();
+      out.innerHTML = `<p><b>Service answer:</b> ${esc(j.status || "no status")}
+        ${j.reason ? `<span class="cap">${esc(j.reason)}</span>` : ""}
+        ${j.exit_code !== undefined ? `<span class="cap">exit code ${esc(String(j.exit_code))}</span>` : ""}</p>
+        ${j.output_tail ? `<pre class="cmd">${esc(j.output_tail.join("\n"))}</pre>` : ""}
+        ${j.report ? `<p class="cap">report: ${esc(j.report)}</p>` : ""}
+        ${j.commands ? `<pre class="cmd">${esc(j.commands.join("\n"))}</pre>` : ""}`;
+    } catch (err) {
+      out.innerHTML = `<p class="cap">Service unreachable: ${esc(String(err))}. Run the command.</p>`;
+    }
+    ev.disabled = false;
+  });
 }
 
 /* ------------------------------------------------------------- funnel */
@@ -313,28 +368,28 @@ export function viewFunnel(root, state, setState) {
   const counts = C().counts_by_class;
   const maxC = Math.max(...Object.values(counts));
   root.innerHTML = `
-    <h1>The funnel <span class="cap">— what the census can see, honestly</span></h1>
+    <h1>The funnel: <span class="cap">what the census can see, honestly</span></h1>
     ${tierLegend()}
     <div class="cardgrid g2">
       <div class="card dark"><h3>${dark.formd_new_notices.toLocaleString()}</h3>
         <p>private pooled funds filed Form D in the trailing 24 months
-        (${esc(dark.window)}) — the <b>dark universe</b>. No NAV, no fee table,
+        (${esc(dark.window)}): the <b>dark universe</b>. No NAV, no fee table,
         no structured data: a 401(k) fiduciary cannot see into these at all.
-        <span class="cap">(+${dark.formd_amendments.toLocaleString()} amendments; EFTS phrase query on the Form D industry group)</span></p></div>
+        <span class="cap">(+${dark.formd_amendments.toLocaleString()} amendments. EFTS phrase query on the Form D industry group)</span></p></div>
       <div class="card"><h3>${C().total.toLocaleString()}</h3>
-        <p><b>registered wrappers enumerated</b> — the universe this census
+        <p><b>registered wrappers enumerated</b>: the universe this census
         covers, classified from filing behavior alone.</p>${bar(C().total, C().total)}</div>
       <div class="card"><h3>${censused.toLocaleString()}</h3>
-        <p><b>with structured facts (T1)</b> — N-CEN, XBRL, or an annual
+        <p><b>with structured facts (T1)</b>: N-CEN, XBRL, or an annual
         report on record.</p>${bar(censused, C().total)}</div>
       <div class="card"><h3>${evaluated}</h3>
-        <p><b>evaluated (T2)</b> — full six-factor extraction with per-cell
+        <p><b>evaluated (T2)</b>: full six-factor extraction with per-cell
         provenance, cohort placement, decision memo.</p>${bar(evaluated, C().total)}</div>
       <div class="card"><h3>${cellsV}</h3>
         <p><b>human-verified cells (T3)</b> of ${cellsT.toLocaleString()}
-        evaluated cells — the only tier a human has signed.</p>${bar(cellsV, cellsT)}</div>
+        evaluated cells, the only tier a human has signed.</p>${bar(cellsV, cellsT)}</div>
     </div>
-    <h2>Universe by wrapper class <span class="cap">(from filing behavior — real counts, no padding)</span></h2>
+    <h2>Universe by wrapper class <span class="cap">(from filing behavior: real counts, no padding)</span></h2>
     <div class="tablewrap"><table class="grid"><tbody>
       ${CLASS_ORDER.filter((k) => counts[k]).map((k) => `<tr>
         <td class="k">${esc(CLASS_LABEL[k])}</td>

@@ -5,67 +5,265 @@
     "1.2",
     "5.1"
   ],
+  "rubric_version": "v2",
+  "rubric": "rubric v2: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
+  "max_attainable": 10,
+  "declared_benchmarks": [
+    {
+      "name": "S&P 500 Index",
+      "candidate_id": "spy",
+      "cell": "5.1",
+      "status": "held, scored 8/12, fails the strategy gate (strategy_match 1/3)"
+    },
+    {
+      "name": "MSCI World Index",
+      "candidate_id": "urth",
+      "cell": "5.1",
+      "status": "held, scored 8/12, fails the strategy gate (strategy_match 1/3)"
+    }
+  ],
+  "declared_none_reason": null,
   "primary": {
+    "candidate": "Peer cohort composite: evergreen_pe without hl_paf (amg_pantheon, ares_pmf, kkr_kpec, stepstone_spm)",
+    "id": "peer_evergreen",
+    "lane": "C",
+    "score": 10,
+    "max": 12,
+    "criteria": {
+      "strategy_match": 3,
+      "risk_liquidity_match": 2,
+      "investability": 2,
+      "data_quality": 1,
+      "provider_independence": 2
+    },
+    "series_id": "composite:evergreen_pe",
+    "reasons": [
+      "strategy_match 3/3: same asset class and sub-strategy (private_equity / evergreen_pe)",
+      "risk_liquidity_match 2/3: NAV-class series, members span more than one leverage regime",
+      "investability 2/2: computable on held data (cohort composite from filings)",
+      "data_quality 1/2: annual composite with 5 overlapping fiscal years",
+      "provider_independence 2/2: provider unaffiliated with the fund (constructed (Tark cohort engine, leave-one-out))"
+    ],
+    "comparison": {
+      "kind": "composite",
+      "window": "FY2022 to FY2026",
+      "window_note": "5 overlapping fiscal year(s) of 5 composite years",
+      "fund_window": "FY2022 to FY2026",
+      "window_years": 5.0,
+      "alignment_note": "aligned by fiscal year-end year. Members' fiscal years end in month 03 (amg_pantheon, ares_pmf, stepstone_spm), 12 (kkr_kpec), the fund's in month 03",
+      "composite_rows": [
+        {
+          "year": "2022",
+          "composite_return_pct": 23.89,
+          "n": 2,
+          "members": [
+            "amg_pantheon",
+            "stepstone_spm"
+          ]
+        },
+        {
+          "year": "2023",
+          "composite_return_pct": 7.98,
+          "n": 3,
+          "members": [
+            "amg_pantheon",
+            "ares_pmf",
+            "stepstone_spm"
+          ]
+        },
+        {
+          "year": "2024",
+          "composite_return_pct": 13.7,
+          "n": 4,
+          "members": [
+            "amg_pantheon",
+            "ares_pmf",
+            "kkr_kpec",
+            "stepstone_spm"
+          ]
+        },
+        {
+          "year": "2025",
+          "composite_return_pct": 14.23,
+          "n": 4,
+          "members": [
+            "amg_pantheon",
+            "ares_pmf",
+            "kkr_kpec",
+            "stepstone_spm"
+          ]
+        },
+        {
+          "year": "2026",
+          "composite_return_pct": 9.72,
+          "n": 3,
+          "members": [
+            "amg_pantheon",
+            "ares_pmf",
+            "stepstone_spm"
+          ]
+        }
+      ],
+      "fund_growth_x": 2.0386,
+      "index_growth_x": 1.9064,
+      "ks_pme": 1.0693,
+      "direct_alpha_pct": 1.35,
+      "fund_ann_pct": 15.31,
+      "index_ann_pct": 13.78,
+      "low_confidence": null
+    },
+    "composite": {
+      "cohort": "evergreen_pe",
+      "members": [
+        "amg_pantheon",
+        "ares_pmf",
+        "kkr_kpec",
+        "stepstone_spm"
+      ],
+      "rows": [
+        {
+          "year": "2022",
+          "composite_return_pct": 23.89,
+          "n": 2,
+          "members": [
+            "amg_pantheon",
+            "stepstone_spm"
+          ]
+        },
+        {
+          "year": "2023",
+          "composite_return_pct": 7.98,
+          "n": 3,
+          "members": [
+            "amg_pantheon",
+            "ares_pmf",
+            "stepstone_spm"
+          ]
+        },
+        {
+          "year": "2024",
+          "composite_return_pct": 13.7,
+          "n": 4,
+          "members": [
+            "amg_pantheon",
+            "ares_pmf",
+            "kkr_kpec",
+            "stepstone_spm"
+          ]
+        },
+        {
+          "year": "2025",
+          "composite_return_pct": 14.23,
+          "n": 4,
+          "members": [
+            "amg_pantheon",
+            "ares_pmf",
+            "kkr_kpec",
+            "stepstone_spm"
+          ]
+        },
+        {
+          "year": "2026",
+          "composite_return_pct": 9.72,
+          "n": 3,
+          "members": [
+            "amg_pantheon",
+            "ares_pmf",
+            "stepstone_spm"
+          ]
+        }
+      ],
+      "fye_months": {
+        "amg_pantheon": "03",
+        "ares_pmf": "03",
+        "kkr_kpec": "12",
+        "stepstone_spm": "03"
+      },
+      "weighting": "equal-weight across members reporting that fiscal year, aligned by fiscal year-end year. Stub and partial periods excluded"
+    }
+  },
+  "secondary": {
     "candidate": "Listed private equity investable proxy (PSP)",
     "id": "psp",
     "lane": "B",
     "score": 9,
     "max": 12,
+    "criteria": {
+      "strategy_match": 2,
+      "risk_liquidity_match": 1,
+      "investability": 2,
+      "data_quality": 2,
+      "provider_independence": 2
+    },
+    "series_id": "psp",
     "reasons": [
-      "strategy_match 2/3: listed GPs/holdcos - PE exposure with public-market beta",
-      "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
-      "investability 2/2: investable, priced daily",
-      "data_quality 2/2: daily series",
-      "provider_independence 2/2: provider unaffiliated with the fund"
+      "strategy_match 2/3: the public-market version of the asset class (listed private equity for evergreen pe)",
+      "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
+      "investability 2/2: computable on held data (daily series)",
+      "data_quality 2/2: daily series held",
+      "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks)"
     ],
     "comparison": {
+      "kind": "series",
       "window": "2021-03-31 to 2026-03-31",
+      "window_note": "",
+      "fund_window": "2021-03-31 to 2026-03-31",
+      "window_years": 5.0,
       "fund_growth_x": 2.0386,
       "index_growth_x": 1.0419,
       "ks_pme": 1.9565,
       "direct_alpha_pct": 14.37,
       "fund_ann_pct": 15.31,
-      "index_ann_pct": 0.83
-    }
-  },
-  "secondary": {
-    "candidate": "MSCI World investable proxy (URTH)",
-    "id": "urth",
-    "lane": "A/B",
-    "score": 8,
-    "max": 12,
-    "reasons": [
-      "strategy_match 1/3: public equities - liquidity/leverage profile differs materially",
-      "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
-      "investability 2/2: investable, priced daily",
-      "data_quality 2/2: daily series",
-      "provider_independence 2/2: provider unaffiliated with the fund"
-    ],
-    "comparison": {
-      "window": "2021-03-31 to 2026-03-31",
-      "fund_growth_x": 2.0386,
-      "index_growth_x": 1.6459,
-      "ks_pme": 1.2386,
-      "direct_alpha_pct": 4.37,
-      "fund_ann_pct": 15.31,
-      "index_ann_pct": 10.48
+      "index_ann_pct": 0.83,
+      "low_confidence": null
     }
   },
   "rejected": [
     {
-      "candidate": "PME / Direct Alpha vs PSP",
-      "id": "pme_psp",
-      "lane": "D",
+      "candidate": "MSCI World investable proxy (URTH)",
+      "id": "urth",
+      "lane": "A",
       "score": 8,
       "max": 12,
+      "criteria": {
+        "strategy_match": 1,
+        "risk_liquidity_match": 1,
+        "investability": 2,
+        "data_quality": 2,
+        "provider_independence": 2
+      },
+      "series_id": "urth",
       "reasons": [
-        "strategy_match 2/3: wealth-ratio PME over the fund's fiscal window",
-        "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
-        "investability 2/2: investable, priced daily",
-        "data_quality 1/2: annual-window series",
-        "provider_independence 2/2: provider unaffiliated with the fund"
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (global equity for evergreen pe)",
+        "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
+        "investability 2/2: computable on held data (daily series)",
+        "data_quality 2/2: daily series held",
+        "provider_independence 2/2: provider unaffiliated with the fund (iShares / MSCI)"
       ],
-      "rejection": "outranked: score 8/12 vs primary 9/12 and secondary 8/12 - only two slots; retained in log as viable alternate"
+      "rejection": "rejected: strategy gate (score 8/12 but strategy_match 1/3)"
+    },
+    {
+      "candidate": "S&P 500 investable proxy (SPY)",
+      "id": "spy",
+      "lane": "A",
+      "score": 8,
+      "max": 12,
+      "criteria": {
+        "strategy_match": 1,
+        "risk_liquidity_match": 1,
+        "investability": 2,
+        "data_quality": 2,
+        "provider_independence": 2
+      },
+      "series_id": "spy",
+      "reasons": [
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (us large cap for evergreen pe)",
+        "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
+        "investability 2/2: computable on held data (daily series)",
+        "data_quality 2/2: daily series held",
+        "provider_independence 2/2: provider unaffiliated with the fund (SPDR / S&P DJI)"
+      ],
+      "rejection": "rejected: strategy gate (score 8/12 but strategy_match 1/3)"
     },
     {
       "candidate": "Cambridge Associates US PE benchmark",
@@ -73,30 +271,24 @@
       "lane": "B",
       "score": 7,
       "max": 12,
+      "criteria": {
+        "strategy_match": 3,
+        "risk_liquidity_match": 2,
+        "investability": 0,
+        "data_quality": 0,
+        "provider_independence": 2
+      },
+      "series_id": "cited:cambridge_pe",
       "reasons": [
-        "strategy_match 3/3: drawdown-fund universe - wrapper mismatch vs evergreen also applies",
-        "risk_liquidity_match 2/3: appraisal-cadence series, closer to the fund's NAV process",
-        "investability 0/2: not investable / not held",
-        "data_quality 0/2: licensed data not held (no Preqin/Cambridge subscription) - candidate cannot be computed, only cited",
-        "provider_independence 2/2: provider unaffiliated with the fund"
+        "strategy_match 3/3: a private private equity index for a evergreen pe fund",
+        "risk_liquidity_match 2/3: NAV-class series, quarterly observations vs the fund's annual return data and an index, not a fund set, so leverage regime is not comparable",
+        "investability 0/2: licensed data not held (no subscription), candidate can be cited, not computed",
+        "data_quality 0/2: cited, not computed",
+        "provider_independence 2/2: provider unaffiliated with the fund (Cambridge Associates)"
       ],
-      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 8/12 - only two slots; retained in log as viable alternate"
-    },
-    {
-      "candidate": "Peer cohort: evergreen_pe (hl_paf, stepstone_spm, kkr_kpec, ares_pmf, amg_pantheon)",
-      "id": "peer_evergreen",
-      "lane": "C",
-      "score": 7,
-      "max": 12,
-      "reasons": [
-        "strategy_match 3/3: n=5 equal-weight annual composite on printed FY returns (data/cohorts/evergreen_pe.json); fiscal year-ends differ and kkr_kpec joins cross-wrapper under the documented fallback - both disclosed in the caveat block",
-        "risk_liquidity_match 1/3: daily-liquid proxy vs semi-liquid fund - vol/liquidity regimes differ",
-        "investability 0/2: not investable / not held",
-        "data_quality 1/2: annual series",
-        "provider_independence 2/2: provider unaffiliated with the fund"
-      ],
-      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 8/12 - only two slots; retained in log as viable alternate"
+      "rejection": "outranked: score 7/12 vs primary 10/12 and secondary 9/12 (only two slots). Retained in log as viable alternate"
     }
   ],
+  "secondary_note": null,
   "escalation": null
 }

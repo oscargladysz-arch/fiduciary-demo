@@ -2,8 +2,8 @@
 Tark static-site data bundle builder
 ====================================
 Reads the canonical data layer (the SAME files the validator gates) and emits
-site/data.js — a single window.TARK bundle — plus copies the decision-memo
-docx artifacts into site/memos/. The site's HTML/JS never hard-codes a fact:
+site/data.js — a single window.TARK bundle — plus generates the decision-memo
+docx artifacts (one per plan and product) into site/memos/. The site's HTML/JS never hard-codes a fact:
 everything on screen comes from this generated bundle, so the data layer stays
 the single source of truth.
 
@@ -16,31 +16,26 @@ Run:  python src/build_site.py     -> site/data.js, site/memos/*.docx
 from __future__ import annotations
 
 import json
+import os
 import re
-import shutil
 from datetime import date
 from pathlib import Path
 
 from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
-from tark_data import (BASE, DATA, CELLS, FACTORS, load_evidence, load_plan,
+from tark_display import BASE_LABEL, WRAPPER_LABEL, cell_display, facts_by_cell
+from tark_memo import write_all
+from tark_packet import write_all_packets
+from tark_data import (ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_CELLS, BASE, DATA, CELLS, FACTORS,
+                       RULE, advisor_entries, authority,
+                       coverage_summary, rule_ref,
+                       coverage_totals, load_evidence, load_plan,
                        load_product, load_products, load_series,
                        load_series_manifest, plan_keys, product_keys,
                        status_kind)
-from tark_liquidity import LIQUIDITY_PROFILES, SCENARIO
+from tark_anon import docx_text, forbidden_tokens, leaks
 
 SITE = BASE / "site"
 
-RULE_CAPTION = ("Six-factor framework per DOL proposed rule, Fiduciary Duties in "
-                "Selecting Designated Investment Alternatives — 91 FR 16088 "
-                "(Mar 31, 2026), RIN 1210-AC38. Safe harbor attaches to a "
-                "documented, objective, thorough, analytical process.")
-
-# integrity stat, sourced from the independent cross-check pass; see the
-# report for the cell-by-cell record (v9 adjudicated the 2 discrepancies)
-CROSSCHECK = {"cells_checked": 44, "confirmed": 42, "corrected": 2,
-              "unlocatable": 0,
-              "source": "docs/crosscheck_report.md (independent re-location "
-                        "pass, 2026-08-08; both discrepancies corrected in v9)"}
 
 # glossary: plain-language primary, term-of-art secondary. Rendered as chips
 # with hover definitions wherever these terms appear in headline lines.
@@ -55,17 +50,17 @@ GLOSSARY = {
     "tender offer": "The fund's board CHOOSES each buyback window - nothing legally requires the next one.",
     "DIA": "An investment option on a 401(k) menu that participants pick themselves. (Designated Investment Alternative)",
     "404(c)": "The ERISA section that shields plan sponsors when participants direct their own accounts - assumes daily menus.",
-    "de-smoothing": "Un-flattering correction: appraisal prices understate risk; this statistically restores the hidden volatility. (Geltner AR(1) unsmoothing)",
+    "de-smoothing": "Un-flattering correction: appraisal prices understate risk. This statistically restores the hidden volatility. (Geltner AR(1) unsmoothing)",
     "high-water mark": "The manager earns performance fees only above the previous peak - no double-charging for recovered losses.",
     "hurdle": "Minimum return the fund must clear before performance fees start.",
     "catch-up": "After the hurdle, the manager temporarily takes ALL profit until they hold their full share.",
     "NAV": "What one share is worth by the fund's own books. (Net Asset Value)",
     "Transactional NAV": "The NAV at which the fund actually sells and buys back shares (can differ from GAAP NAV).",
     "premium/discount": "The gap between what the market pays and what the fund says a share is worth.",
-    "K-1": "The partnership tax form - arrives late, complicates filing; retirement recordkeepers hate it. (Schedule K-1)",
+    "K-1": "The partnership tax form: arrives late, complicates filing. Retirement recordkeepers hate it. (Schedule K-1)",
     "1099": "The ordinary dividend tax form retirement plans handle automatically. (Form 1099-DIV/-B)",
     "RIC": "A fund taxed like a mutual fund: no fund-level tax, 1099s to investors. (Regulated Investment Company)",
-    "REIT": "A tax structure for property funds: must pay out 90% of income; investors get 1099s. (Real Estate Investment Trust)",
+    "REIT": "A tax structure for property funds: must pay out 90% of income. Investors get 1099s. (Real Estate Investment Trust)",
     "QDIA": "The menu option your money lands in when you never choose. (Qualified Default Investment Alternative)",
     "DRIP": "Distributions automatically buy more shares unless you opt out. (Distribution Reinvestment Plan)",
     "proration": "When buyback requests exceed the cap, everyone gets only a slice - the rest waits for the next window.",
@@ -79,61 +74,58 @@ GLOSSARY = {
     "ROC": "Distributions that are your own money coming back, not earnings. (Return of Capital)",
     "smoothing": "Appraisal-based prices react late and move little - reported volatility understates real risk.",
     "expense limitation": "The adviser's promise to absorb costs above a cap - often reclaimable for 3 years.",
-    "PCAOB": "The audit regulator; registration means the auditor is inspected. (Public Company Accounting Oversight Board)",
+    "PCAOB": "The audit regulator. Registration means the auditor is inspected. (Public Company Accounting Oversight Board)",
     "N-23C3A": "The SEC form an interval fund files for EVERY buyback window - a public paper trail of kept promises.",
 }
 
-_FIG = re.compile(
-    r"(\$[\d,]+(?:\.\d+)?(?:\s?(?:billion|million|B|M))?"      # money
-    r"|\(?-?\d+(?:\.\d+)?\)?%(?:/yr)?"                          # percents
-    r"|\b\d+\.\d{2,4}x?\b"                                      # ratios/PME
-    r"|\b\d+(?:\.\d+)?x\b)")                                    # multiples
-
-
-def cell_display(cell: dict) -> dict:
-    """Numbers-first display derivation (display-only; full sourced text stays
-    one disclosure away). Headline = first strong figure in the value with a
-    few words of context; plain = first sentence, trimmed."""
-    st = str(cell.get("status", "pending"))
-    val = str(cell.get("value") or "")
-    kind = status_kind(st)
-    if kind == "n/a":
-        reason = st.split(":", 1)[1].strip() if ":" in st else st[6:].strip(" -")
-        return {"headline": "n/a", "plain": reason[:170]}
-    if not val:
-        return {"headline": "—", "plain": "Pending extraction."}
-    first_sentence = re.split(r"(?<=[.;])\s+", val, maxsplit=1)[0][:180]
-    m = _FIG.search(val)
-    if m:
-        s, e = m.span()
-        pre = val[max(0, s - 34):s]
-        pre = pre[pre.rfind(" ") + 1:] if " " in pre else pre
-        post = val[e:e + 30]
-        post = post[:post.find(" ", 18)] if post.find(" ", 18) > 0 else post
-        headline = (pre + m.group(0) + post).strip(" ,;:-")
-        headline = headline[:60]
-    else:
-        headline = {"partial": "partial", "computed": "computed",
-                    "fetched": "series on disk"}.get(kind, "…")
-    return {"headline": headline, "plain": first_sentence}
-
-
 def evidence_counts(key: str) -> dict:
-    c = {"extracted": 0, "verified": 0, "computed": 0, "partial": 0,
-         "fetched": 0, "pending": 0, "na": 0}
-    for row in load_evidence(key):
-        k = status_kind(row["status"])
-        if k == "n/a":
-            c["na"] += 1
-        elif k in c:
-            c[k] += 1
-        else:
-            c["pending"] += 1
-    seeded = c["extracted"] + c["verified"] + c["computed"]
-    soft = c["partial"] + c["fetched"]
-    applicable = seeded + soft + c["pending"]
-    c["coverage_pct"] = round((seeded + soft) / applicable * 100) if applicable else 0
-    return c
+    """Per-kind coverage for one product: the shared formula in tark_data."""
+    return coverage_summary(key)
+
+
+def crosscheck_summary() -> dict:
+    """The cross-check tile is read from the machine-readable header of
+    docs/crosscheck_report.md, never a literal. The human-verified count is
+    live from the record. An agent pass is described as an agent pass."""
+    text = (BASE / "docs" / "crosscheck_report.md").read_text()
+    m = re.search(r"<!-- tark:crosscheck\n(.*?)-->", text, re.S)
+    if not m:
+        raise SystemExit("docs/crosscheck_report.md lacks the tark:crosscheck header")
+    kv = {}
+    for line in m.group(1).splitlines():
+        if ":" in line:
+            k, v = line.split(":", 1)
+            kv[k.strip()] = v.strip()
+    ints = {k: int(kv[k]) for k in ("cells_checked", "confirmed", "corrected",
+                                    "unlocatable", "products")}
+    verified = coverage_totals()["counts"]["verified"]
+    return {**ints, "date": kv["date"], "run_by": kv["run_by"],
+            "human_verified": verified,
+            "tile": (f"{ints['cells_checked']} cells re-located by an agent pass "
+                     f"({ints['products']} products, {kv['date']}), "
+                     f"{ints['confirmed']} confirmed, {ints['corrected']} corrected. "
+                     f"Human verification: {verified}."),
+            "source": "docs/crosscheck_report.md"}
+
+
+
+ADJ_LABEL = "Yahoo adjusted close (approximates NAV total return)"
+CLOSE_LABEL = "Yahoo daily close (market price)"
+
+
+def series_sources() -> dict:
+    """Per held series: provider, role, coverage and the label every chart
+    prints beside it, from data/series/series_manifest.json (one source).
+    `<ticker>` is the adjusted close, `<ticker>_daily` the raw close."""
+    man = load_series_manifest()
+    out: dict = {}
+    for m in man.get("series", []):
+        t = m["ticker"].lower()
+        base = {"ticker": m["ticker"], "source": m["source"], "role": m["role"],
+                "first": m["first"], "last": m["last"], "pulled": m.get("pulled")}
+        out[t] = {**base, "column": "adj_close", "label": ADJ_LABEL}
+        out[f"{t}_daily"] = {**base, "column": "close", "label": CLOSE_LABEL}
+    return out
 
 
 def daily_series(ticker: str, column: str = "adj_close") -> list:
@@ -159,92 +151,166 @@ def _with_period_ends(nav: dict) -> dict:
 # the investable proxy library the swap lab can recompute against — every
 # entry has a committed daily series on disk
 PROXY_LIBRARY = {
-    "bkln": "BKLN — senior loans (Invesco / Morningstar LSTA class)",
-    "psp": "PSP — listed private equity (Invesco / Red Rocks)",
-    "urth": "URTH — MSCI World (iShares)",
-    "spy": "SPY — S&P 500 (SPDR)",
-    "vnq": "VNQ — listed REITs (Vanguard / MSCI US REIT)",
+    "bkln": "BKLN: senior loans (Invesco / Morningstar LSTA class)",
+    "psp": "PSP: listed private equity (Invesco / Red Rocks)",
+    "urth": "URTH: MSCI World (iShares)",
+    "spy": "SPY: S&P 500 (SPDR)",
+    "vnq": "VNQ: listed REITs (Vanguard / MSCI US REIT)",
 }
 
 
-def pme_profiles() -> dict:
-    """Window-explorer profiles for ALL six products at honest granularity."""
+STRATEGY_DEFAULT_PROXY = {
+    "private_credit": "bkln", "private_equity_evergreen": "psp",
+    "pe_conglomerate": "psp", "nontraded_reit": "vnq", "preipo_venture": "psp",
+}
+PRICE_SERIES_WARNING = ("MARKET-PRICE series. Any PME here benchmarks the premium, "
+                        "not the portfolio. The engine formally escalated instead "
+                        "of selecting (5.6)")
+
+
+def daily_series_map() -> dict:
+    """product -> the daily series the labs may recompute on, derived from the
+    engine profiles (never a second hand-typed roster). Market-priced
+    products point at their close series and carry the warning."""
     from tark_benchmark import PRODUCT_PROFILES as PP
-    import json as _json
-    pi = _json.loads((DATA / "benchmarks" / "profiles_input.json").read_text())
-    out = {
-        "cliffwater_cclfx": {"fund_series": "cclfx", "granularity": "monthly",
-                             "default_proxy": "bkln"},
-        "dxyz": {"fund_series": "dxyz_daily", "granularity": "monthly",
-                 "default_proxy": "psp", "price_series_warning":
-                     "MARKET-PRICE series — any PME here benchmarks the "
-                     "premium, not the portfolio; the engine formally "
-                     "escalated instead of selecting (5.6)"},
-        "hl_paf": {"fy_returns": PP["hl_paf"]["fy_returns"],
-                   "fy_window": list(PP["hl_paf"]["fy_window"]),
-                   "granularity": "annual", "default_proxy": "psp"},
-        "stepstone_spm": {"aatr": PP["stepstone_spm"]["aatr_5yr"],
-                          "aatr_years": 5,
-                          "fy_window": list(PP["stepstone_spm"]["fy_window"]),
-                          "granularity": "annual", "default_proxy": "psp"},
-        "kkr_kpec": {"aatr": pi["kkr_kpec"]["profile"]["aatr"],
-                     "aatr_years": pi["kkr_kpec"]["profile"]["aatr_years"],
-                     "fy_window": pi["kkr_kpec"]["profile"]["fy_window"],
-                     "granularity": "annual", "default_proxy": "psp"},
-        "breit": {"fy_returns": pi["breit"]["profile"]["fy_returns"],
-                  "fy_window": pi["breit"]["profile"]["fy_window"],
-                  "granularity": "annual", "default_proxy": "vnq"},
-    }
+    out = {}
+    for key, prof in PP.items():
+        t = prof.get("series")
+        if not t:
+            continue
+        price = bool(prof.get("price_nav_decoupled"))
+        out[key] = {"series": f"{t}_daily" if price else t,
+                    "ticker": t.upper(),
+                    "column": "close" if price else "adj_close",
+                    "price_series": price,
+                    "label": f"{t.upper()} {series_sources()[f'{t}_daily' if price else t]['label']}"}
+    return out
+
+
+def pme_profiles() -> dict:
+    """Analysis Lab profiles for EVERY product with a recomputable return
+    input: a daily series, a fiscal-year return list, or a disclosed
+    annualized figure. Inputs come from the engine profiles and the
+    registry's return inputs (the same inputs the selection used). The default
+    proxy is the series of the engine's own primary selection, so the lab
+    opens on the engine's comparison and the user swaps from there."""
+    from tark_benchmark import PRODUCT_PROFILES as PP, RETURN_INPUTS as pi, menu_for
+    daily = daily_series_map()
+    out = {}
+    for key, prof in PP.items():
+        merged = {**prof, **pi.get(key, {}).get("profile", {})}
+        strategy = merged["strategy"]
+        proxy = STRATEGY_DEFAULT_PROXY[strategy]
+        sel_path = DATA / "benchmarks" / f"{key}_selection.json"
+        if sel_path.exists():
+            sel = json.loads(sel_path.read_text())
+            if sel.get("primary"):
+                cand = next((c for c in menu_for(key)
+                             if c["id"] == sel["primary"]["id"]), None)
+                if cand and cand.get("series") in PROXY_LIBRARY:
+                    proxy = cand["series"]
+        entry: dict = {"default_proxy": proxy}
+        if key in daily:
+            entry.update({"fund_series": daily[key]["series"], "granularity": "monthly"})
+            if daily[key]["price_series"]:
+                entry["price_series_warning"] = PRICE_SERIES_WARNING
+        elif merged.get("fy_returns"):
+            entry.update({"fy_returns": list(merged["fy_returns"]),
+                          "fy_window": list(merged["fy_window"]),
+                          "granularity": "annual"})
+        elif merged.get("aatr_5yr"):
+            entry.update({"aatr": merged["aatr_5yr"], "aatr_years": 5,
+                          "fy_window": list(merged["fy_window"]),
+                          "granularity": "annual"})
+        elif merged.get("aatr"):
+            entry.update({"aatr": merged["aatr"], "aatr_years": merged["aatr_years"],
+                          "fy_window": list(merged["fy_window"]),
+                          "granularity": "annual"})
+        else:
+            continue   # no recomputable input on record: the lab shows why
+        out[key] = entry
     return out
 
 
 def swap_matrix() -> dict:
-    """Engine rubric verdict for every (product x proxy-library) pair the
-    user can select in the swap lab. On-menu pairs carry the committed score
-    and reasons; off-menu pairs say truthfully that the engine has no rubric
-    basis for that proxy under this strategy."""
-    from tark_benchmark import PRODUCT_PROFILES, STRATEGY_MENU, score_candidate
+    """Rubric v2 verdict for every (product x proxy-library) pair the lab
+    can select, on the engine's menu or not. Every pair goes through the
+    same scorer from typed descriptors. The verdict says whether the pair
+    would be eligible (passes the strategy gate and the threshold) and
+    whether it sits on the engine's menu for the product, so the lab grades
+    any choice instead of declaring some choices ungradeable."""
+    from tark_benchmark import (CANDIDATES, MIN_PRIMARY_SCORE, PRODUCT_PROFILES,
+                                menu_for, score_candidate)
     out: dict = {}
     for key, prof in PRODUCT_PROFILES.items():
-        menu = STRATEGY_MENU[prof["strategy"]]
+        if prof.get("held_kind") == "none":
+            continue          # no return input, no lab, nothing to grade
+        menu = menu_for(key)
         by_series: dict = {}
         for proxy in PROXY_LIBRARY:
-            cand = next((c for c in menu if c.get("series") == proxy), None)
-            if cand:
-                s = score_candidate(prof, cand)
-                by_series[proxy] = {"score": s["score"], "max": s["max"],
-                                    "reasons": s["reasons"],
-                                    "candidate": cand["name"]}
+            on_menu = next((c for c in menu if c.get("series") == proxy), None)
+            cand = {**CANDIDATES[proxy], "id": proxy}
+            if on_menu:
+                cand["lane"] = on_menu["lane"]
+            s = score_candidate(prof, cand)
+            sm = s["criteria"]["strategy_match"]
+            decoupled = bool(prof.get("price_nav_decoupled"))
+            gate = sm >= 2
+            eligible = gate and s["score"] >= MIN_PRIMARY_SCORE and not decoupled
+            if decoupled:
+                verdict = ("not eligible: the fund's price is decoupled from its NAV, so no "
+                           "proxy benchmarks the portfolio")
+            elif not gate:
+                verdict = f"not eligible: fails the strategy gate (strategy_match {sm}/3)"
+            elif s["score"] < MIN_PRIMARY_SCORE:
+                verdict = (f"not eligible: {s['score']}/{s['max']} is below the "
+                           f"{MIN_PRIMARY_SCORE}/{s['max']} threshold")
             else:
-                by_series[proxy] = {"score": None,
-                                    "verdict": "off-menu: the engine has not "
-                                               "scored this proxy for the "
-                                               f"'{prof['strategy']}' strategy "
-                                               "— no rubric basis; treat any "
-                                               "recomputation as "
-                                               "user-configured analysis only"}
+                verdict = (f"eligible under rubric v2: {s['score']}/{s['max']} passes the "
+                           "strategy gate and the threshold")
+            by_series[proxy] = {"score": s["score"], "max": s["max"],
+                                "criteria": s["criteria"], "reasons": s["reasons"],
+                                "candidate": cand["name"], "on_menu": bool(on_menu),
+                                "eligible": eligible, "verdict": verdict}
         out[key] = by_series
     return out
 
 
 def parse_verification_queue() -> dict:
     """Parse docs/verification_queue.md into an ordered queue of (product,
-    cell) refs plus live verified counts from the record itself."""
+    cell) refs plus live verified counts from the record itself. Each ref
+    carries the tier it sits under ("### Tier N <title>" headings; rows
+    outside a tier heading carry tier null) and the tier titles ship
+    verbatim so the surface repeats the document's words."""
     qp = BASE / "docs" / "verification_queue.md"
-    queue = []
+    queue: list[dict] = []
+    tiers: dict[str, str] = {}
+    tier = None
+    seen = set()
+
+    def add(product: str, cell: str) -> None:
+        if product in product_keys() and (product, cell) not in seen:
+            seen.add((product, cell))
+            queue.append({"product": product, "cell": cell, "tier": tier})
+
     if qp.exists():
         for line in qp.read_text().splitlines():
-            m = re.match(r"-\s+([a-z_]+)\s+(\d+\.\d+)\s+—", line.strip())
-            if m and m.group(1) in product_keys():
-                queue.append({"product": m.group(1), "cell": m.group(2)})
+            s = line.strip()
+            th = re.match(r"#{2,3}\s+Tier\s+(\d+)\s*[—:-]\s*(.+)$", s)
+            if th:
+                tier = int(th.group(1))
+                tiers[str(tier)] = th.group(2).strip()
+                continue
+            if s.startswith("#"):
+                tier = None
+                continue
+            m = re.match(r"-\s+([a-z_]+)\s+(\d+\.\d+)\s+—", s)
+            if m:
+                add(m.group(1), m.group(2))
             else:
                 for mm in re.finditer(
-                        r"([a-z_]+)\s+(\d+\.\d+)(?=\s*[/—-])", line.strip()):
-                    if (mm.group(1) in product_keys()
-                            and {"product": mm.group(1),
-                                 "cell": mm.group(2)} not in queue):
-                        queue.append({"product": mm.group(1),
-                                      "cell": mm.group(2)})
+                        r"([a-z_]+)\s+(\d+\.\d+)(?=\s*[/—-])", s):
+                    add(mm.group(1), mm.group(2))
     verified = {k: sum(1 for c in load_product(k)["cells"].values()
                        if str(c.get("status", "")).startswith("verified"))
                 for k in product_keys()}
@@ -252,8 +318,8 @@ def parse_verification_queue() -> dict:
                          if status_kind(str(c.get("status", ""))) in
                          ("extracted", "verified"))
                   for k in product_keys()}
-    return {"queue": queue, "verified": verified, "verifiable": verifiable,
-            "source": "docs/verification_queue.md"}
+    return {"queue": queue, "tiers": tiers, "verified": verified,
+            "verifiable": verifiable, "source": "docs/verification_queue.md"}
 
 
 def census_chunk() -> str:
@@ -268,8 +334,10 @@ def census_chunk() -> str:
                           or rec["name"]),
                    "cls": rec["wrapper_class"], "sig": rec["all_signals"],
                    "ev": rec["detection_evidence"]}
-        if rec.get("listed"):
-            e["lif"] = rec["listed"]
+        if rec.get("listed_common"):
+            e["lif"] = rec["listed_common"]        # exchange status of the common shares (P2-11)
+        if (rec.get("listed") or {}).get("value") is None and rec.get("listed"):
+            e["lsig"] = rec["listed"]              # the raw signal, null with its reason
         ex = (rec.get("exchanges", {}) or {}).get("value") or []
         if ex:
             e["ex"] = [x for x in ex if x and x.upper() != "OTC"]
@@ -334,7 +402,7 @@ def census_chunk() -> str:
         shards[int(cik) % N_SHARDS][cik] = s
         nc = rec.get("ncen")
         flags = 0
-        if (rec.get("listed", {}) or {}).get("value"):
+        if (rec.get("listed_common", {}) or {}).get("value") is True:
             flags |= 1
         if nc:
             flags |= 2
@@ -372,8 +440,9 @@ def census_chunk() -> str:
     (SITE / "census" / "search.json").write_text(
         json.dumps(search, separators=(",", ":")))
 
+    # "what" and "tiers" stay in data/census/census.json as file-level
+    # documentation; no view reads them, so they do not ship
     doc = {
-        "what": census["what"], "tiers": census["tiers"],
         "as_of": census["as_of"],
         "counts_by_class": census["counts_by_class"],
         "total": census["total"],
@@ -382,7 +451,7 @@ def census_chunk() -> str:
         "cls_codes": {v: k for k, v in CLS_CODE.items()},
         "hints": hints_all,
         "shards": N_SHARDS,
-        "row_fields": ["nm", "cls_code", "flags(1=listed,2=ncen,4=interval-"
+        "row_fields": ["nm", "cls_code", "flags(1=listed common,2=ncen,4=interval-"
                        "self,8=crosscheck-agree,16=evaluated,32=structured-"
                        "facts)", "assets_usd", "latest_annual_date",
                        "tender_count", "tender_last", "hint_mask",
@@ -392,29 +461,16 @@ def census_chunk() -> str:
     payload = json.dumps(doc, separators=(",", ":"))
     if len(payload) > 500_000:
         raise SystemExit(f"census chunk {len(payload):,}B exceeds the 500KB "
-                         "lazy-chunk budget — trim the transform, do not "
+                         "lazy-chunk budget. Trim the transform, do not "
                          "ship a bloated first-class page.")
     return payload
 
 
 def main() -> None:
     plans_raw = {k: load_plan(k) for k in plan_keys()}
-    # distinctive sponsor tokens = every word of the private identity that is
-    # not generic corporate/plan boilerplate (those words legitimately appear
-    # in anonymized display labels, e.g. 'tire & rubber manufacturer')
-    STOP = {"the", "inc", "inc.", "llc", "llp", "co", "co.", "company",
-            "corporation", "corp", "corp.", "usa", "us", "group", "and", "of",
-            "for", "plan", "trust", "savings", "profit", "sharing",
-            "retirement", "employee", "employees", "bargaining", "unit",
-            "restaurants", "tire", "rubber", "&", "(psrp)", "401(k)"}
-    sponsor_names: set[str] = set()
-    for p in plans_raw.values():
-        ident = p.get("identity_private", {})
-        for field in ("sponsor", "plan_name"):
-            for w in str(ident.get(field, "")).split():
-                w = w.strip(",.()").lower()
-                if w and len(w) > 3 and w not in STOP and not w.startswith("401("):
-                    sponsor_names.add(w)
+    # forbidden tokens (sponsor, plan name, EIN, ack id) come from ONE module
+    # shared with every test suite: src/tark_anon.py
+    sponsor_names = set(forbidden_tokens())
 
     plans_pub = {}
     for k, p in plans_raw.items():
@@ -430,8 +486,14 @@ def main() -> None:
         liquidity[f.stem.replace("_match", "")] = json.loads(f.read_text())
 
     products = load_products()
-    display = {k: {cid: cell_display(c) for cid, c in p["cells"].items()}
-               for k, p in products.items()}
+    facts = {}
+    for f in sorted((DATA / "facts").glob("*.json")):
+        facts[f.stem] = json.loads(f.read_text())["facts"]
+    display = {}
+    for k, p in products.items():
+        fbc = facts_by_cell(facts.get(k, {}))
+        display[k] = {cid: cell_display(c, cid, fbc.get(cid))
+                      for cid, c in p["cells"].items()}
     rollups = {}
     for k, p in products.items():
         by = {}
@@ -461,26 +523,68 @@ def main() -> None:
         with open(mpath, newline="") as fh:
             monthly["breit_nav"] = [[r["date"], float(r["nav_per_share"])]
                                     for r in _csv.DictReader(fh)]
-        monthly["breit_nav_manifest"] = json.loads(
-            (DATA / "series_monthly" / "manifest.json").read_text())
 
-    facts = {}
-    fdir = DATA / "facts"
-    for f in sorted(fdir.glob("*.json")):
-        facts[f.stem] = json.loads(f.read_text())["facts"]
+    metrics = json.loads((DATA / "analytics" / "metrics.json").read_text())
+    supplement = json.loads((DATA / "analytics" / "supplement.json").read_text())
 
+    # first paint ships element, value, status and verifier per cell. The
+    # citation-drawer detail (source, section, quote, extractor) rides in the
+    # lazy chunk as TARK_EVIDENCE and is merged into products on load.
+    FIRST_PAINT_FIELDS = ("element", "value", "status", "verified_by")
+    DETAIL_FIELDS = ("source", "section", "quote", "extracted_by")
+    evidence_detail = {k: {cid: {f: c.get(f, "") for f in DETAIL_FIELDS}
+                           for cid, c in p["cells"].items()}
+                       for k, p in products.items()}
+    # the accession column and the resolved EDGAR filings per cell (P2-10)
+    for k in products:
+        acc_by_cell = {r["cell_id"]: r.get("accession", "") for r in load_evidence(k)}
+        cp = DATA / "citations" / f"{k}.json"
+        cits = json.loads(cp.read_text())["cells"] if cp.exists() else {}
+        for cid, cell in evidence_detail[k].items():
+            cell["accession"] = acc_by_cell.get(cid, "")
+            edgar = []
+            for ref in cits.get(cid, []):
+                if ref["match"] in ("exact", "form_only", "accession_in_text"):
+                    edgar.append({"form": ref.get("form", ""), "filing_date": ref.get("filing_date", ""),
+                                  "accession": ref["accession"], "url": ref["url"]})
+                elif ref["match"] in ("range", "set"):
+                    edgar.extend({"form": ref.get("form", ""), "filing_date": f["filing_date"],
+                                  "accession": f["accession"], "url": f["url"]} for f in ref["filings"])
+            cell["edgar"] = edgar
+    products = {k: {**p, "cells": {cid: {f: c.get(f, "") for f in FIRST_PAINT_FIELDS}
+                                   for cid, c in p["cells"].items()}}
+                for k, p in products.items()}
+    _reg = json.loads((DATA / "registry.json").read_text())["products"]
+    descriptors = {k: {a: _reg[k].get(a) for a in ("wrapper_type", "pricing_class",
+                                                    "nav_cadence", "leverage_regime")}
+                   for k in products}
     bundle = {
         "generated": date.today().isoformat(),
         "facts": facts,
-        "rule_caption": RULE_CAPTION,
+        # the rule record once, the mapping basis once, per cell only what differs
+        # advisor-stated inputs per plan and product (P2-6), inputs not evidence
+        "advisor": advisor_entries(),
+        "advisor_cells": list(ADVISOR_STATED_CELLS),
+        "advisor_not_evidence": ADVISOR_NOT_EVIDENCE,
+        # an evaluation service, when one is connected at build time (P2-5)
+        "service_url": (os.environ.get("TARK_SERVICE_URL") or "").rstrip("/") or None,
+        "rule": {**RULE, "authority": authority(),
+                 "mapping_basis": rule_ref("1.1", authority())["basis"]},
+        "rule_refs": {cid: {k: v for k, v in rule_ref(cid, authority()).items() if k != "basis"}
+                      for cid in CELLS},
         "factors": FACTORS,
         "cell_registry": CELLS,
         "products": products,
+        "descriptors": descriptors,   # typed comparability attributes per product (registry)
+        "wrapper_labels": WRAPPER_LABEL,   # one vocabulary, shared with the memo (tark_display)
+        "base_labels": BASE_LABEL,
         "cell_display": display,
         "factor_rollups": rollups,
         "glossary": GLOSSARY,
-        "taxonomy": json.loads((DATA / "analytics" / "taxonomy.json").read_text()),
-        "supplement": json.loads((DATA / "analytics" / "supplement.json").read_text()),
+        "taxonomy": coverage_totals(),   # live, per kind, never a frozen file
+        "supplement": {k: supplement[k] for k in ("dxyz_premium",
+                                                  "ssss_premium",
+                                                  "breit_monthly_diagnostics")},
         "series_annual": series_annual,
         "series_monthly": monthly,
         "evidence_counts": {k: evidence_counts(k) for k in load_products()},
@@ -492,12 +596,12 @@ def main() -> None:
         # per-plan liquidity match artifacts ride the lazy series chunk —
         # only the Liquidity view reads them; merged by ensureSeries()
         "liquidity": None,
-        "liquidity_profiles": LIQUIDITY_PROFILES,
-        "scenario_defaults": SCENARIO,
-        "metrics": json.loads((DATA / "analytics" / "metrics.json").read_text()),
+        # only the parts a view reads ship (the rest stays on disk for the
+        # cell writer); a runtime check in test_frontend fails on unread keys
+        "metrics": {"cclfx": {"full_history": metrics["cclfx"]["full_history"]}},
+        "series_sources": series_sources(),
         "dxyz_nav": _with_period_ends(json.loads(
             (DATA / "analytics" / "dxyz_nav_quarterly.json").read_text())),
-        "series_manifest": load_series_manifest(),
         # series payload is SPLIT into site/series.js (lazy-loaded by the
         # chart/lab views) to keep the first-paint bundle inside the perf
         # budget; window.TARK.series is merged in by ensureSeries()
@@ -512,18 +616,27 @@ def main() -> None:
         "series_quarterly": {p.stem.replace("_nav", ""): [
             [r["date"], float(r["nav_per_share"])]
             for r in __import__("csv").DictReader(open(p, newline=""))]
-            for p in sorted((DATA / "series_quarterly").glob("*_nav.csv"))},
+            for p in sorted((DATA / "series_quarterly").glob("*_nav.csv"))
+            if p.stem == "ssss_nav"},   # the premium-pattern panel reads ssss only
         "caveat_matrix": json.loads(
             (DATA / "cohorts" / "caveat_matrix.json").read_text()),
         "roster_decisions_md": (DATA / "roster_decisions.md").read_text(),
         "pme_profiles": pme_profiles(),
+        "daily_series": daily_series_map(),
         "proxy_library": PROXY_LIBRARY,
-        "swap_matrix": swap_matrix(),
+        "swap_matrix": None,      # lab matrix, merged from the lazy chunk (TARK_LAB)
         "verification_queue": parse_verification_queue(),
-        "crosscheck": CROSSCHECK,
-        "memos": sorted(p.stem.replace("_decision_memo", "")
-                        for p in (DATA / "memos").glob("*_decision_memo.docx")),
+        "crosscheck": crosscheck_summary(),
+        "memos": None,            # every plan x product memo, generated below
     }
+    # the memos are generated by the build, never copied from a stale folder
+    memo_dir = SITE / "memos"
+    memo_paths = write_all(memo_dir)
+    bundle["memos"] = sorted(m.stem.replace("_decision_memo", "") for m in memo_paths)
+    # committee packets (P2-9), one per plan and product, same folder, same screen
+    packet_paths = write_all_packets(memo_dir)
+    bundle["packets"] = sorted(m.stem.replace("_committee_packet", "") for m in packet_paths)
+    memo_paths = memo_paths + packet_paths
 
     series_payload = json.dumps({
         "dxyz_daily": [[d, round(v, 4)] for d, v in load_series("dxyz", "close")],
@@ -532,7 +645,6 @@ def main() -> None:
         "arkvx": daily_series("arkvx"),
         "cadux": daily_series("cadux"),
         "nslr_daily": [[d, round(v, 4)] for d, v in load_series("nslr", "close")],
-        "nslr": daily_series("nslr"),
         "bkln": daily_series("bkln"),
         "psp": daily_series("psp"),
         "urth": daily_series("urth"),
@@ -542,29 +654,34 @@ def main() -> None:
 
     census_payload = census_chunk()
     payload = json.dumps(bundle, separators=(",", ":"))
-    low = (payload + series_payload + census_payload).lower()
-    leaks = sorted(n for n in sponsor_names if n in low)
-    if leaks:
-        raise SystemExit(f"ANONYMIZATION FAILURE: sponsor token(s) {leaks} "
-                         f"would enter site/data.js — build refused.")
+    lab_payload = json.dumps(swap_matrix(), separators=(",", ":"))
+    evidence_payload = json.dumps(evidence_detail, separators=(",", ":"))
+    low = (payload + series_payload + census_payload + lab_payload + evidence_payload).lower()
+    leaked = sorted(n for n in sponsor_names if n in low)
+    if leaked:
+        raise SystemExit(f"ANONYMIZATION FAILURE: sponsor token(s) {leaked} "
+                         f"would enter site/data.js. Build refused.")
+    # the memos ship from site/memos/: screen their text with the same list
+    for m in sorted(memo_paths):
+        bad = leaks(docx_text(m))
+        if bad:
+            raise SystemExit(f"ANONYMIZATION FAILURE: token(s) {bad} in "
+                             f"{m.name}. Build refused.")
 
     SITE.mkdir(exist_ok=True)
     (SITE / "data.js").write_text("window.TARK = " + payload + ";\n")
     (SITE / "series.js").write_text(
         "window.TARK_SERIES = " + series_payload + ";\n"
         + "window.TARK_LIQ = "
-        + json.dumps(liquidity, separators=(",", ":")) + ";\n")
+        + json.dumps(liquidity, separators=(",", ":")) + ";\n"
+        + "window.TARK_LAB = " + lab_payload + ";\n"
+        + "window.TARK_EVIDENCE = " + evidence_payload + ";\n")
     (SITE / "census.data.js").write_text("window.TARK_CENSUS = "
                                          + census_payload + ";\n")
 
-    memo_dir = SITE / "memos"
-    memo_dir.mkdir(exist_ok=True)
-    for m in (DATA / "memos").glob("*_decision_memo.docx"):
-        shutil.copy2(m, memo_dir / m.name)
-
     print(f"site/data.js written ({len(payload):,} bytes), census chunk "
-          f"{len(census_payload):,} bytes, {len(bundle['memos'])} memos "
-          f"copied, sponsor tokens screened: {len(sponsor_names)}")
+          f"{len(census_payload):,} bytes, {len(bundle['memos'])} memos and "
+          f"{len(bundle['packets'])} packets generated, sponsor tokens screened: {len(sponsor_names)}")
 
 
 if __name__ == "__main__":

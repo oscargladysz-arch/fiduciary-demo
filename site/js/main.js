@@ -57,16 +57,13 @@ const VALID = {
   cohort: (v) => !v || !!T.cohorts[v],
   f_cohort: (v) => !v || !!T.cohorts[v],
   f_depth: (v) => !v || ["full", "cohort"].includes(v),
-  f_wrapper: (v) => !v || ["tender_offer", "interval_23c3", "listed_cef",
-    "nontraded_reit", "nontraded_llc", "nontraded_bdc", "listed_bdc"].includes(v),
-  f_base: (v) => !v || ["net_assets", "managed_assets", "gross_incl_borrowings",
-    "nav", "outstanding_shares", "aggregate_nav",
-    "lesser_of_dual_base"].includes(v),
+  f_wrapper: (v) => !v || v in T.wrapper_labels,
+  f_base: (v) => !v || v in T.base_labels,
   f_tax: (v) => !v || ["1099", "K-1"].includes(v),
   f_gate: (v) => !v || ["yes", "no"].includes(v),
   f_big4: (v) => !v || ["yes", "no"].includes(v),
   f_verdict: (v) => !v || ["aligned-mechanical", "conditional",
-    "conditional-weak"].includes(v),
+    "conditional-weak", "misaligned", "partial"].includes(v),
   f_vonly: (v) => !v || v === "1",
   pme_min: (v) => !v || /^\d{0,2}(\.\d{1,4})?$/.test(v),
   pme_max: (v) => !v || /^\d{0,2}(\.\d{1,4})?$/.test(v),
@@ -133,6 +130,31 @@ function buildNav() {
   }
 }
 
+/* the rule, its identifiers with links, the six factors with their paragraph
+ * letters and, when fetched into the build, the verbatim paragraph text.
+ * Nothing here paraphrases the regulation: absent the fetched file, the panel
+ * says so. */
+function authorityPanel() {
+  const r = T.rule, a = r.authority;
+  const factors = Object.entries(T.factors).map(([n, label]) => {
+    const letter = T.rule_refs[`${n}.1`].para;
+    const paras = a.paragraphs && a.paragraphs[letter.replace(/[()]/g, "")];
+    const body = paras
+      ? paras.map((t) => `<blockquote class="verbatim">${esc(t)}</blockquote>`).join("")
+      : `<div class="cap">paragraph ${esc(letter)}: ${esc(a.note)}</div>`;
+    return `<div class="authfactor"><b>${n} · ${esc(label)}</b> <span class="cap">paragraph ${esc(letter)}</span>${body}</div>`;
+  }).join("");
+  return `<div class="authbody">
+    <div><b>${esc(r.title)}</b>, ${esc(r.issuer)}. ${esc(r.citation)}, ${esc(r.rin)}, ${esc(r.section)}, paragraphs ${esc(r.paragraphs)}.</div>
+    <div class="cap">Federal Register document <a href="${esc(r.fr_url)}" target="_blank" rel="noopener" id="fr_link">${esc(r.fr_document)}</a>
+      · docket <a href="${esc(r.docket_url)}" target="_blank" rel="noopener">${esc(r.docket)}</a>
+      · verbatim text: <span id="auth_status">${esc(a.status)}</span></div>
+    <div class="cap">Scope of this build: the selection of a designated investment alternative, documented per product and per plan. Monitoring is not documented here. Cells 6.6 and 6.8 are advisor-completed under paragraph (l).</div>
+    ${factors}
+    <div class="cap">Factor mapping basis: ${esc(r.mapping_basis)}.</div>
+  </div>`;
+}
+
 function buildTopbar() {
   const bar = document.getElementById("topbar");
   bar.innerHTML = `
@@ -144,12 +166,11 @@ function buildTopbar() {
       <select id="prodpick">${Object.keys(T.products).map((k) =>
         `<option value="${k}" ${k === state.product ? "selected" : ""}>${esc(T.products[k].fund_name)}</option>`).join("")}
       </select></span>
-    <button class="copylink" data-copylink title="Copy a shareable link (IDs only — no free text can enter the URL)">copy link</button>
+    <button class="copylink" data-copylink title="Copy a shareable link (IDs only, no free text can enter the URL)">copy link</button>
     <button class="copylink" id="densitybtn">${state.density === "compact" ? "comfortable" : "compact"} density</button>
     <button class="copylink" id="palettebtn"><kbd>⌘K</kbd> palette</button>
     <span class="spacer"></span>
-    <details class="authority"><summary>Authority</summary>
-      ${esc(T.rule_caption)}</details>`;
+    <details class="authority"><summary>Authority</summary>${authorityPanel()}</details>`;
   bar.querySelector("#planpick").addEventListener("change",
     (e) => setState({ plan: e.target.value }));
   bar.querySelector("#prodpick").addEventListener("change",
@@ -160,25 +181,34 @@ function buildTopbar() {
     () => window.tarkPalette.open());
 }
 
-/* the price/NAV series chunk is lazy-loaded (perf budget): chart/lab views
- * wait for series.js; screener/compare/plans first-paint stays light */
+/* the lazy chunk (series.js) carries the price/NAV series, the liquidity
+ * matches, the lab matrix and the citation-drawer detail of every cell
+ * (source, section, quote, extractor). Chart, lab and evidence views wait
+ * for it; the screener, compare, plans, roster and benchmark first paint
+ * stays light. */
 const SERIES_VIEWS = new Set(["evaluation", "pme", "dxyz", "desmooth",
-                              "liquidity"]);
+                              "liquidity", "cohorts", "search", "packet",
+                              "verification", "fees"]);
+window.tarkMergeLazy = function () {
+  window.TARK.series = window.TARK_SERIES;
+  window.TARK.liquidity = window.TARK_LIQ;
+  window.TARK.swap_matrix = window.TARK_LAB;   // lab verdict matrix
+  const ev = window.TARK_EVIDENCE || {};
+  for (const k of Object.keys(ev)) {
+    for (const cid of Object.keys(ev[k])) Object.assign(window.TARK.products[k].cells[cid], ev[k][cid]);
+  }
+};
 let seriesLoading = false;
 function ensureSeries() {
   const root = document.getElementById("view");
   root.innerHTML = `<div class="nochart"><div class="k">Loading series</div>
-    Loading the price/NAV series chunk — split from the core bundle so the
+    Loading the price/NAV series chunk, split from the core bundle so the
     screener and comparison views paint instantly.</div>`;
   if (!seriesLoading) {
     seriesLoading = true;
     const s = document.createElement("script");
     s.src = "series.js";
-    s.onload = () => {
-      window.TARK.series = window.TARK_SERIES;
-      window.TARK.liquidity = window.TARK_LIQ;
-      render();
-    };
+    s.onload = () => { window.tarkMergeLazy(); render(); };
     document.head.append(s);
   }
 }
@@ -190,7 +220,7 @@ let censusLoading = false;
 function ensureCensus() {
   const root = document.getElementById("view");
   root.innerHTML = `<div class="nochart"><div class="k">Loading the universe</div>
-    Loading the census chunk — the full T1 universe is split from the core
+    Loading the census chunk. The full T1 universe is split from the core
     bundle so the evaluated-roster views paint instantly.</div>`;
   if (!censusLoading) {
     censusLoading = true;

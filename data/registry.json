@@ -1,0 +1,1116 @@
+{
+  "what": "The one product registry: typed descriptors the engines read (benchmark rubric, liquidity, cohorts, facts builder, EDGAR fetcher). Each product field names its source in `sources`. Identity (fund_name, cik) stays in data/products. `cohorts` carries label, ordered members and fallback note per cohort, and every member's own `cohort` field must agree.",
+  "as_of": "2026-09-04",
+  "products": {
+    "cliffwater_cclfx": {
+      "cohort": "private_credit",
+      "strategy": "private_credit",
+      "asset_class": "private_credit",
+      "sub_strategy": "direct_lending",
+      "wrapper_type": "interval_23c3",
+      "pricing_class": "NAV",
+      "nav_cadence": "daily",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "series",
+        "series": "cclfx"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Cliffwater"
+      ],
+      "adviser_keys": [
+        "cliffwater"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "5.1",
+        "1.1",
+        "1.2"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/private_credit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "declared_none_reason": "cell 5.1: the fund expressly declares no designated performance benchmark",
+      "as_of": "2026-03-31",
+      "depth": "full",
+      "membership_rationale": "Direct corporate lending in a Rule 23c-3 interval wrapper, the cohort's reference member. Daily NAV, quarterly obligated liquidity.",
+      "filings": {
+        "prospectus": [
+          "486BPOS",
+          "424B3"
+        ],
+        "annual_report": [
+          "N-CSR"
+        ],
+        "holdings": [
+          "NPORT-P"
+        ]
+      }
+    },
+    "pflex": {
+      "cohort": "private_credit",
+      "strategy": "private_credit",
+      "asset_class": "private_credit",
+      "sub_strategy": "multi_sector_credit",
+      "wrapper_type": "interval_23c3",
+      "pricing_class": "NAV",
+      "nav_cadence": "daily",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "series",
+        "series": "pflex"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "PIMCO"
+      ],
+      "adviser_keys": [
+        "pimco"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "5.1",
+        "1.1",
+        "1.2"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/private_credit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "declared_none_reason": "cell 5.1: documented absence of a self-declared benchmark",
+      "as_of": "2025-06-30",
+      "depth": "cohort",
+      "membership_rationale": "Flexible multi-sector credit in the SAME wrapper as cclfx (interval, quarterly 5%). A wrapper twin with a broader credit mandate (loans, structured, EM). Mandate breadth is the disclosed mismatch.",
+      "filings": {
+        "prospectus": [
+          "486BPOS",
+          "424B3"
+        ],
+        "annual_report": [
+          "N-CSR"
+        ]
+      }
+    },
+    "cion_ares": {
+      "cohort": "private_credit",
+      "strategy": "private_credit",
+      "asset_class": "private_credit",
+      "sub_strategy": "diversified_credit",
+      "wrapper_type": "interval_23c3",
+      "pricing_class": "NAV",
+      "nav_cadence": "daily",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "series",
+        "series": "cadux"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "CION",
+        "Ares"
+      ],
+      "adviser_keys": [
+        "cion",
+        "ares"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "Credit Suisse Leveraged Loan Index",
+          "candidate": "csll"
+        }
+      ],
+      "source_cells": [
+        "5.1",
+        "1.1",
+        "1.2"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/private_credit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets derived from the filings held in data/manifest.csv",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "as_of": "2025-12-31",
+      "depth": "cohort",
+      "membership_rationale": "Diversified credit in the cclfx/pflex wrapper (interval, quarterly 5%). Joins via the census promotion pipeline. The dual-adviser CION+Ares structure and a leverage-inclusive Managed Assets fee base (1.89% of net assets at FY2025 leverage) widen the cohort's fee-base axis. Daily Class I NAV (CADUX).",
+      "filings": {
+        "annual_report": [
+          "N-CSR"
+        ],
+        "prospectus": [
+          "486BPOS"
+        ],
+        "repurchase_history": [
+          "N-23C3A"
+        ]
+      }
+    },
+    "bcred": {
+      "cohort": "private_credit",
+      "strategy": "private_credit",
+      "asset_class": "private_credit",
+      "sub_strategy": "direct_lending",
+      "wrapper_type": "nontraded_bdc",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "BDC 150% asset-coverage regime",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Blackstone"
+      ],
+      "adviser_keys": [
+        "blackstone"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/private_credit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "return_inputs": "moved from data/benchmarks/profiles_input.json (cells named in provenance)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "declared_none_reason": "cell 5.1: documented absence, zero index references",
+      "as_of": "2025-12-31",
+      "depth": "cohort",
+      "membership_rationale": "Direct-lending private credit in a non-traded BDC chassis: the same strategy as cclfx on different plumbing (150% asset-coverage leverage, discretionary quarterly tenders, monthly NAV). Admitted deliberately cross-wrapper so the caveat machinery has real work.",
+      "filings": {
+        "prospectus": [
+          "486BPOS",
+          "424B3"
+        ],
+        "annual_report": [
+          "10-K"
+        ],
+        "quarterly_report": [
+          "10-Q"
+        ],
+        "tender": [
+          "SC TO-I"
+        ]
+      },
+      "return_inputs": {
+        "profile": {
+          "fy_returns": [
+            0.126,
+            0.036,
+            0.144,
+            0.11,
+            0.08
+          ],
+          "fy_window": [
+            "2021-01-07",
+            "2025-12-31"
+          ]
+        },
+        "provenance": "Class I 'Total return based on NAV': FY2021 12.6% (from escrow break 2021-01-07), FY2022 3.6%, FY2023 14.4%, FY2024 11.0%, FY2025 8.0% - cell 1.2 (10-K FY2025 Note 10, filed 2026-03-13), 5.1: no self-declared benchmark (documented absence, zero index references)"
+      }
+    },
+    "ocic": {
+      "cohort": "private_credit",
+      "strategy": "private_credit",
+      "asset_class": "private_credit",
+      "sub_strategy": "direct_lending",
+      "wrapper_type": "nontraded_bdc",
+      "pricing_class": "NAV",
+      "nav_cadence": "quarterly",
+      "leverage_regime": "BDC 150% asset-coverage regime",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Blue Owl"
+      ],
+      "adviser_keys": [
+        "blue owl",
+        "owl rock"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/private_credit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets derived from the filings held in data/manifest.csv",
+        "return_inputs": "moved from data/benchmarks/profiles_input.json (cells named in provenance)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "declared_none_reason": "cell 5.1 (partial): no self-declared benchmark index appears in the 10-K or the N-2",
+      "as_of": "2025-12-31",
+      "depth": "cohort",
+      "membership_rationale": "Perpetual non-traded BDC running quarterly 13e-4 tenders, bcred's closest structural twin. Admitted via the census promotion pipeline (46 SC TO-I filings as T1 cadence evidence, Owl Rock -> Blue Owl rename verified in the SEC record).",
+      "filings": {
+        "annual_report": [
+          "10-K"
+        ],
+        "prospectus": [
+          "N-2"
+        ],
+        "tender_terms": [
+          "SC TO-I"
+        ]
+      },
+      "return_inputs": {
+        "profile": {
+          "fy_returns": [
+            0.043,
+            0.052,
+            0.135,
+            0.115,
+            0.079
+          ],
+          "fy_window": [
+            "2021-01-01",
+            "2025-12-31"
+          ]
+        },
+        "provenance": "Class I net total returns (change in NAV with distributions reinvested): FY2021 4.3%, FY2022 5.2%, FY2023 13.5%, FY2024 11.5%, FY2025 7.9% - cell 1.2 (10-K FY2025 financial highlights, filed 2026-03-03, operations commenced 2020-11-10, first full calendar year 2021), 5.1: no self-declared benchmark index appears in the 10-K, N-2, or SC TO-I (documented absence)"
+      }
+    },
+    "hl_paf": {
+      "cohort": "evergreen_pe",
+      "strategy": "private_equity_evergreen",
+      "asset_class": "private_equity",
+      "sub_strategy": "evergreen_pe",
+      "wrapper_type": "tender_offer",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Hamilton Lane"
+      ],
+      "adviser_keys": [
+        "hamilton lane"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "S&P 500 Index",
+          "candidate": "spy"
+        },
+        {
+          "name": "MSCI World Index",
+          "candidate": "urth"
+        }
+      ],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/evergreen_pe.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "return_inputs": "moved from data/benchmarks/profiles_input.json (cells named in provenance)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "as_of": "2026-03-31",
+      "depth": "full",
+      "membership_rationale": "Evergreen PE fund-of-funds/secondaries in a tender-offer wrapper - founding cohort member.",
+      "filings": {
+        "prospectus": [
+          "486BPOS",
+          "486BXT",
+          "424B3"
+        ],
+        "annual_report": [
+          "N-CSR"
+        ],
+        "holdings": [
+          "NPORT-P"
+        ],
+        "tender_offer": [
+          "SC TO-I"
+        ]
+      },
+      "return_inputs": {
+        "profile": {
+          "fy_returns": [
+            0.2077,
+            0.161,
+            0.1268,
+            0.1259,
+            0.146
+          ],
+          "fy_window": [
+            "2021-03-31",
+            "2026-03-31"
+          ],
+          "self_declared": "S&P 500 Index and MSCI World Index (N-CSR Fund Performance)"
+        },
+        "provenance": "Class I fiscal-year total returns FY2022 to FY2026 from the N-CSR financial highlights (cell 1.2), moved from engine code to this file in P1-7, 5.1: stated comparators S&P 500 and MSCI World"
+      }
+    },
+    "stepstone_spm": {
+      "cohort": "evergreen_pe",
+      "strategy": "private_equity_evergreen",
+      "asset_class": "private_equity",
+      "sub_strategy": "evergreen_pe",
+      "wrapper_type": "tender_offer",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "aatr_5yr"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "StepStone"
+      ],
+      "adviser_keys": [
+        "stepstone"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "MSCI World Index",
+          "candidate": "urth"
+        }
+      ],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/evergreen_pe.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "return_inputs": "moved from data/benchmarks/profiles_input.json (cells named in provenance)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "as_of": "2026-03-31",
+      "depth": "full",
+      "membership_rationale": "Evergreen PE multi-strategy (secondaries-led) tender-offer fund - founding cohort member.",
+      "filings": {
+        "prospectus": [
+          "486BPOS",
+          "424B3"
+        ],
+        "annual_report": [
+          "N-CSR"
+        ],
+        "holdings": [
+          "NPORT-P"
+        ],
+        "tender_offer": [
+          "SC TO-I"
+        ]
+      },
+      "return_inputs": {
+        "profile": {
+          "aatr_5yr": 0.1292,
+          "fy_window": [
+            "2021-03-31",
+            "2026-03-31"
+          ],
+          "self_declared": "MSCI World Index"
+        },
+        "provenance": "Five-year annualized total return 12.92% at 3/31/2026 (cell 1.2), moved from engine code to this file in P1-7, 5.1: stated primary benchmark MSCI World Index"
+      }
+    },
+    "ares_pmf": {
+      "cohort": "evergreen_pe",
+      "strategy": "private_equity_evergreen",
+      "asset_class": "private_equity",
+      "sub_strategy": "evergreen_pe",
+      "wrapper_type": "tender_offer",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Ares"
+      ],
+      "adviser_keys": [
+        "ares"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "MSCI World Index",
+          "candidate": "urth"
+        }
+      ],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/evergreen_pe.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "return_inputs": "moved from data/benchmarks/profiles_input.json (cells named in provenance)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "as_of": "2026-03-31",
+      "depth": "cohort",
+      "membership_rationale": "Secondaries-led evergreen PE tender-offer fund - wrapper and strategy twin of hl_paf/stepstone_spm.",
+      "filings": {
+        "prospectus": [
+          "486BPOS",
+          "424B3"
+        ],
+        "annual_report": [
+          "N-CSR"
+        ],
+        "tender": [
+          "SC TO-I"
+        ]
+      },
+      "return_inputs": {
+        "profile": {
+          "fy_returns": [
+            0.09269999999999999,
+            0.171,
+            0.19949999999999998,
+            0.0958
+          ],
+          "fy_window": [
+            "2022-04-01",
+            "2026-03-31"
+          ]
+        },
+        "provenance": "Class I FY total returns from N-CSR FY2026 highlights (cell 1.2), commencement 2022-04-01"
+      }
+    },
+    "amg_pantheon": {
+      "cohort": "evergreen_pe",
+      "strategy": "private_equity_evergreen",
+      "asset_class": "private_equity",
+      "sub_strategy": "evergreen_pe",
+      "wrapper_type": "tender_offer",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "AMG",
+        "Pantheon"
+      ],
+      "adviser_keys": [
+        "pantheon"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "MSCI World Index",
+          "candidate": "urth"
+        }
+      ],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/evergreen_pe.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "return_inputs": "moved from data/benchmarks/profiles_input.json (cells named in provenance)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "as_of": "2026-03-31",
+      "depth": "cohort",
+      "membership_rationale": "Evergreen PE (Pantheon) tender-offer LLC - wrapper and strategy twin of hl_paf/stepstone_spm.",
+      "filings": {
+        "prospectus": [
+          "N-2",
+          "424B3"
+        ],
+        "annual_report": [
+          "N-CSR"
+        ],
+        "tender": [
+          "SC TO-I"
+        ]
+      },
+      "return_inputs": {
+        "profile": {
+          "fy_returns": [
+            0.1427,
+            0.1426,
+            0.1011,
+            0.0415,
+            0.35719999999999996,
+            0.18359999999999999,
+            0.0645,
+            0.1208,
+            0.1007,
+            0.091
+          ],
+          "fy_window": [
+            "2016-03-31",
+            "2026-03-31"
+          ]
+        },
+        "provenance": "FY total returns x10 from N-CSR FY2026 highlights (cell 1.2), Fund inception 2014-09-30"
+      }
+    },
+    "kkr_kpec": {
+      "cohort": "evergreen_pe",
+      "strategy": "pe_conglomerate",
+      "asset_class": "private_equity",
+      "sub_strategy": "pe_conglomerate",
+      "wrapper_type": "nontraded_llc",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "no 1940-Act leverage limits (34-Act conglomerate)",
+      "held_returns": {
+        "kind": "aatr"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "KKR"
+      ],
+      "adviser_keys": [
+        "kkr"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/evergreen_pe.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "return_inputs": "moved from data/benchmarks/profiles_input.json (cells named in provenance)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "declared_none_reason": "cell 5.1: documented absence of a self-declared performance benchmark",
+      "as_of": "2025-12-31",
+      "depth": "full",
+      "membership_rationale": "'34-Act conglomerate of controlled PE businesses. Joins under the authorized fallback (its Reg D twins have no public filings). Cross-wrapper caveats carried by the cohort caveat block.",
+      "filings": {
+        "annual_report": [
+          "10-K"
+        ],
+        "quarterly_report": [
+          "10-Q"
+        ]
+      },
+      "return_inputs": {
+        "profile": {
+          "aatr": 0.1294,
+          "aatr_years": 2.334,
+          "fy_window": [
+            "2023-09-01",
+            "2025-12-31"
+          ],
+          "self_declared": null
+        },
+        "provenance": "Class I Transactional NAV Total Return, inception-to-date annualized 12.94% at 12/31/2025, class inception 2023-09-01 - cell 1.2 (10-K 2026-03-26 MD&A table), 5.1: no self-declared benchmark (documented absence)"
+      }
+    },
+    "breit": {
+      "cohort": "nontraded_reit",
+      "strategy": "nontraded_reit",
+      "asset_class": "real_estate",
+      "sub_strategy": "core_plus_nontraded_re",
+      "wrapper_type": "nontraded_reit",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "charter-level borrowing limits, no 1940-Act coverage test",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Blackstone"
+      ],
+      "adviser_keys": [
+        "blackstone"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/nontraded_reit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/nontraded_reit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "return_inputs": "moved from data/benchmarks/profiles_input.json (cells named in provenance)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "declared_none_reason": "cell 5.1: BREIT declares no benchmark index anywhere in the FY2025 10-K",
+      "as_of": "2025-12-31",
+      "depth": "full",
+      "membership_rationale": "Non-traded monthly-NAV REIT with 2%/5% repurchase plan - the cohort's reference member.",
+      "filings": {
+        "annual_report": [
+          "10-K"
+        ],
+        "quarterly_report": [
+          "10-Q"
+        ]
+      },
+      "return_inputs": {
+        "profile": {
+          "fy_returns": [
+            -0.005,
+            0.02,
+            0.081
+          ],
+          "fy_window": [
+            "2022-12-31",
+            "2025-12-31"
+          ],
+          "self_declared": null
+        },
+        "provenance": "Class I Year-to-Date Total Return without upfront selling commissions: 2023 -0.5% (10-K FY2023 filed 2024-03-28, '2023 Highlights'), 2024 2.0% (10-K FY2024 filed 2025-03-07, '2024 Highlights'), 2025 8.1% (10-K FY2025 filed 2026-02-27, '2025 Highlights' - cell 1.2), 5.1: no self-declared benchmark (documented absence)"
+      }
+    },
+    "sreit": {
+      "cohort": "nontraded_reit",
+      "strategy": "nontraded_reit",
+      "asset_class": "real_estate",
+      "sub_strategy": "core_plus_nontraded_re",
+      "wrapper_type": "nontraded_reit",
+      "pricing_class": "NAV",
+      "nav_cadence": "monthly",
+      "leverage_regime": "charter-level borrowing limits, no 1940-Act coverage test",
+      "held_returns": {
+        "kind": "fy_returns"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "Starwood"
+      ],
+      "adviser_keys": [
+        "starwood"
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/nontraded_reit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/nontraded_reit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "return_inputs": "moved from data/benchmarks/profiles_input.json (cells named in provenance)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "declared_none_reason": "cell 5.1: SREIT declares no benchmark index anywhere in the FY2025 10-K",
+      "as_of": "2025-12-31",
+      "depth": "cohort",
+      "membership_rationale": "Non-traded monthly-NAV REIT - breit's closest structural twin (class structure, repurchase plan, 2022-24 stress history).",
+      "filings": {
+        "prospectus": [
+          "424B3"
+        ],
+        "annual_report": [
+          "10-K"
+        ],
+        "quarterly_report": [
+          "10-Q"
+        ]
+      },
+      "return_inputs": {
+        "profile": {
+          "fy_returns": [
+            -0.024
+          ],
+          "fy_window": [
+            "2024-12-31",
+            "2025-12-31"
+          ]
+        },
+        "provenance": "Class I annual total return(s) as printed (cell 1.2), 1 year(s) - SHORT window, disclosed"
+      }
+    },
+    "jll_ipt": {
+      "cohort": "nontraded_reit",
+      "strategy": "nontraded_reit",
+      "asset_class": "real_estate",
+      "sub_strategy": "core_nontraded_re",
+      "wrapper_type": "nontraded_reit",
+      "pricing_class": "NAV",
+      "nav_cadence": "daily",
+      "leverage_regime": "charter-level borrowing limits, no 1940-Act coverage test",
+      "held_returns": {
+        "kind": "none",
+        "reason": "no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "LaSalle",
+        "JLL"
+      ],
+      "adviser_keys": [
+        "lasalle",
+        "jll"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "NFI-ODCE",
+          "candidate": "odce"
+        }
+      ],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/nontraded_reit.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/nontraded_reit.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "as_of": "2025-12-31",
+      "depth": "cohort",
+      "membership_rationale": "Perpetual NAV REIT of older vintage in the same wrapper class. NAV cadence and scale differences disclosed.",
+      "filings": {
+        "prospectus": [
+          "424B3"
+        ],
+        "annual_report": [
+          "10-K"
+        ],
+        "quarterly_report": [
+          "10-Q"
+        ]
+      }
+    },
+    "dxyz": {
+      "cohort": "venture",
+      "strategy": "preipo_venture",
+      "asset_class": "venture",
+      "sub_strategy": "pre_ipo_listed_cef",
+      "wrapper_type": "listed_cef",
+      "pricing_class": "MARKET",
+      "nav_cadence": "quarterly",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "series",
+        "series": "dxyz"
+      },
+      "price_nav_decoupled": true,
+      "advisers": [
+        "Destiny"
+      ],
+      "adviser_keys": [
+        "destiny"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "NASDAQ Composite Index",
+          "candidate": "nasdaq_comp"
+        }
+      ],
+      "source_cells": [
+        "1.10",
+        "4.7",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/venture.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/venture.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "exchange-listed shares deal at market price (wrapper type, cell 6.1, premium or discount in cell 1.10)"
+      },
+      "as_of": "2025-12-31",
+      "depth": "full",
+      "membership_rationale": "Listed CEF holding pre-IPO tech, the premium-pricing fail case. The cohort exists to show premium vs NAV pricing as a PATTERN.",
+      "filings": {
+        "prospectus": [
+          "N-2/A",
+          "424B3",
+          "424B5"
+        ],
+        "annual_report": [
+          "N-CSR"
+        ],
+        "holdings": [
+          "NPORT-P"
+        ]
+      }
+    },
+    "ssss": {
+      "cohort": "venture",
+      "strategy": "preipo_venture",
+      "asset_class": "venture",
+      "sub_strategy": "late_stage_listed_bdc",
+      "wrapper_type": "listed_bdc",
+      "pricing_class": "MARKET",
+      "nav_cadence": "quarterly",
+      "leverage_regime": "BDC 150% asset-coverage regime",
+      "held_returns": {
+        "kind": "series",
+        "series": "nslr"
+      },
+      "price_nav_decoupled": true,
+      "advisers": [
+        "Neostellar",
+        "SuRo"
+      ],
+      "adviser_keys": [
+        "neostellar",
+        "suro"
+      ],
+      "declared_benchmarks": [
+        {
+          "name": "S&P 500",
+          "candidate": "spy"
+        }
+      ],
+      "source_cells": [
+        "1.10",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/venture.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/venture.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "exchange-listed shares deal at market price (wrapper type, cell 6.1, premium or discount in cell 1.10)"
+      },
+      "as_of": "2025-12-31",
+      "depth": "cohort",
+      "membership_rationale": "Listed BDC (fka SuRo Capital) holding late-stage growth equity, the second market-priced venture vehicle. Gives dxyz a premium/discount comparable. Membership CONDITIONAL on strategy continuity through the Neostellar rename (verification queue).",
+      "filings": {
+        "prospectus": [
+          "N-2"
+        ],
+        "annual_report": [
+          "10-K"
+        ],
+        "quarterly_report": [
+          "10-Q"
+        ]
+      }
+    },
+    "arkvx": {
+      "cohort": "venture",
+      "strategy": "preipo_venture",
+      "asset_class": "venture",
+      "sub_strategy": "venture_interval",
+      "wrapper_type": "interval_23c3",
+      "pricing_class": "NAV",
+      "nav_cadence": "daily",
+      "leverage_regime": "1940-Act asset-coverage limits",
+      "held_returns": {
+        "kind": "series",
+        "series": "arkvx"
+      },
+      "price_nav_decoupled": false,
+      "advisers": [
+        "ARK"
+      ],
+      "adviser_keys": [
+        "ark "
+      ],
+      "declared_benchmarks": [],
+      "source_cells": [
+        "1.2",
+        "5.1"
+      ],
+      "sources": {
+        "asset_class": "cohort membership rationale (data/cohorts/venture.json), cells 6.1 and 6.2",
+        "sub_strategy": "cohort membership rationale (data/cohorts/venture.json)",
+        "nav_cadence": "cell 4.1",
+        "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
+        "declared_benchmarks": "cell 5.1",
+        "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
+        "price_nav_decoupled": "cells 1.10 and 4.7",
+        "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
+        "as_of": "latest fiscal period end in the record (moved from src/build_facts.py)",
+        "depth": "evidence depth tier (moved from src/build_facts.py COHORT_META)",
+        "membership_rationale": "cohort admission argument (moved from src/build_facts.py COHORT_META), exclusions in data/roster_decisions.md",
+        "pricing_class": "NAV-dealing wrapper (wrapper type, cell 6.1, repurchase terms in cell 3.1)"
+      },
+      "declared_none_reason": "cell 5.1: no prospectus-declared benchmark (zero occurrences of 'benchmark' in the 486BPOS)",
+      "as_of": "2025-07-31",
+      "depth": "cohort",
+      "membership_rationale": "Interval fund holding venture/growth, the NAV-priced contrast to the two market-priced members. Pricing-basis mix is the cohort's disclosed core caveat (composite refused).",
+      "filings": {
+        "prospectus": [
+          "486BPOS",
+          "424B3"
+        ],
+        "annual_report": [
+          "N-CSR"
+        ]
+      }
+    }
+  },
+  "cohorts": {
+    "private_credit": {
+      "label": "Private credit (interval fund + non-traded BDC)",
+      "members": [
+        "cliffwater_cclfx",
+        "bcred",
+        "pflex",
+        "cion_ares",
+        "ocic"
+      ]
+    },
+    "evergreen_pe": {
+      "label": "Evergreen private equity ('40-Act funds + '34-Act conglomerate)",
+      "members": [
+        "hl_paf",
+        "stepstone_spm",
+        "kkr_kpec",
+        "ares_pmf",
+        "amg_pantheon"
+      ],
+      "fallback_note": "kkr_kpec joins under the authorized fallback: its structural twins are Reg D vehicles with no public filings (data/roster_decisions.md - 'The kkr_kpec ruling'). Cross-wrapper caveats apply."
+    },
+    "nontraded_reit": {
+      "label": "Non-traded NAV REITs",
+      "members": [
+        "breit",
+        "sreit",
+        "jll_ipt"
+      ]
+    },
+    "venture": {
+      "label": "Pre-IPO / venture growth (listed CEF + listed BDC + interval fund)",
+      "members": [
+        "dxyz",
+        "ssss",
+        "arkvx"
+      ]
+    }
+  }
+}

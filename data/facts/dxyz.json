@@ -2,8 +2,8 @@
   "product_key": "dxyz",
   "cohort_id": "venture",
   "depth": "full",
-  "membership_rationale": "Listed CEF holding pre-IPO tech - the premium-pricing fail case; the cohort exists to show premium vs NAV pricing as a PATTERN.",
-  "what": "typed projections of evidenced cells - zero new facts; every field carries its source_cell and mirrors its status",
+  "membership_rationale": "Listed CEF holding pre-IPO tech, the premium-pricing fail case. The cohort exists to show premium vs NAV pricing as a PATTERN.",
+  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -33,37 +33,37 @@
     "early_repurchase": {
       "value": null,
       "source_cell": "2.7",
-      "reason": "exchange-listed; no repurchase program \u2014 fee inapplicable",
+      "reason": "exchange-listed with no repurchase program, so the fee is inapplicable",
       "status": "n/a - no early-repurchase fee (exchange-traded)"
     },
     "repurchase_cadence_per_year": {
       "value": 252,
       "source_cell": "3.1",
-      "status": "extracted-unverified",
+      "status": "computed",
       "note": "trading-days convention for daily on-exchange dealing - a derived figure, not a fund program"
     },
     "repurchase_cap_pct": {
       "value": null,
       "source_cell": "3.1",
-      "reason": "on-exchange liquidity; no fund-level cap",
+      "reason": "on-exchange liquidity with no fund-level cap",
       "status": "extracted-unverified"
     },
     "repurchase_cap_base": {
       "value": null,
       "source_cell": "3.1",
-      "reason": "on-exchange liquidity; no fund-level cap",
+      "reason": "on-exchange liquidity with no fund-level cap",
       "status": "extracted-unverified"
     },
     "gate_history": {
       "value": false,
       "source_cell": "3.1",
-      "note": "exchange wrapper has no gating mechanism; 'no fund-level repurchase program' is itself an absence-inference flagged in the cell",
+      "note": "exchange wrapper has no gating mechanism. The 'no fund-level repurchase program' finding is itself an absence-inference flagged in the cell",
       "status": "extracted-unverified"
     },
     "tax_form": {
       "value": null,
       "source_cell": "6.4",
-      "reason": "form number not printed in any on-disk filing; RIC status implies 1099 but the cell is partial",
+      "reason": "form number not printed in any on-disk filing. RIC status implies 1099 but the cell is partial",
       "status": "partial"
     },
     "auditor": {
@@ -92,7 +92,21 @@
     "inception": {
       "value": "2022-05-12",
       "source_cell": "1.11",
-      "note": "commenced operations as printed; NYSE listing 2024-03-26 (3.1) is the trading-history start",
+      "note": "commenced operations as printed. NYSE listing 2024-03-26 (3.1) is the trading-history start",
+      "status": "extracted-unverified"
+    },
+    "affe": {
+      "value": {
+        "present": true,
+        "rate_pct": 0.03
+      },
+      "source_cell": "2.4",
+      "status": "extracted-unverified"
+    },
+    "repurchase_program_status": {
+      "value": null,
+      "source_cell": "3.1",
+      "reason": "exchange-listed, no repurchase program",
       "status": "extracted-unverified"
     },
     "track_record_years": {
@@ -101,29 +115,11 @@
       "status": "computed",
       "note": "(as-of 2025-12-31 minus inception) / 365.25"
     },
-    "primary_benchmark_id": {
-      "value": null,
-      "source_cell": "1.8",
+    "liquidity_structural_verdict": {
+      "value": "aligned-mechanical",
+      "source_cell": "3.9",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
-    },
-    "selection_score": {
-      "value": null,
-      "source_cell": "1.8",
-      "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
-    },
-    "pme_primary": {
-      "value": null,
-      "source_cell": "1.8",
-      "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
-    },
-    "direct_alpha_primary": {
-      "value": null,
-      "source_cell": "1.8",
-      "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (premium-driven price)"
+      "note": "from typed facts only (cells 3.1, 3.3, 2.7), plan-independent"
     },
     "liquidity_verdict_by_plan": {
       "value": {
@@ -133,7 +129,32 @@
         "plan_tech_media": "aligned-mechanical"
       },
       "source_cell": "3.9",
-      "status": "computed"
+      "status": "computed",
+      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
+    },
+    "primary_benchmark_id": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "selection_score": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "pme_primary": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "direct_alpha_primary": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
     }
   }
 }

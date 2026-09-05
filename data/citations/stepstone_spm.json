@@ -1,0 +1,375 @@
+{
+  "product": "stepstone_spm",
+  "what": "filing references in the evidence CSV resolved against data/manifest.csv, offline. exact: form and filed date (or written accession) match one held filing. range: every held filing of that form between the two written dates. set: every held filing of that form when the citation names them as a plural with no date. form_only: no date written, one such filing held. accession_in_text: the citation carries its own accession, not a held filing, URL is the EDGAR folder. ambiguous and unresolved: stated reason, no accession invented",
+  "cells": {
+    "1.1": [
+      {
+        "text": "N-CSR 2026-06-09 (FY2026 annual report), Consolidated Financial Highlights",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "1.2": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "1.3": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "1.4": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "1.5": [
+      {
+        "text": "Searched: N-CSR 2026-06-09",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      },
+      {
+        "text": "486BPOS 2025-10-20",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-20",
+        "accession": "0001193125-25-243390",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312525243390/d60278d486bpos.htm",
+        "local_path": "data/raw/stepstone_spm/486BPOS_2025-10-20_d60278d486bpos.htm"
+      },
+      {
+        "text": "424B3 2025-12-31 (stripped texts",
+        "form": "424B3",
+        "match": "exact",
+        "filing_date": "2025-12-31",
+        "accession": "0001193125-25-338319",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312525338319/d63254d424b3.htm",
+        "local_path": "data/raw/stepstone_spm/424B3_2025-12-31_d63254d424b3.htm"
+      }
+    ],
+    "1.11": [
+      {
+        "text": "486BPOS 2025-10-20 (prospectus/SAI",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-20",
+        "accession": "0001193125-25-243390",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312525243390/d60278d486bpos.htm",
+        "local_path": "data/raw/stepstone_spm/486BPOS_2025-10-20_d60278d486bpos.htm"
+      }
+    ],
+    "2.1": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "2.2": [
+      {
+        "text": "486BPOS 2025-10-20",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-20",
+        "accession": "0001193125-25-243390",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312525243390/d60278d486bpos.htm",
+        "local_path": "data/raw/stepstone_spm/486BPOS_2025-10-20_d60278d486bpos.htm"
+      }
+    ],
+    "2.3": [
+      {
+        "text": "N-CSR 2026-06-09 (FY2026 annual report",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "2.4": [
+      {
+        "text": "486BPOS 2025-10-20 (prospectus",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-20",
+        "accession": "0001193125-25-243390",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312525243390/d60278d486bpos.htm",
+        "local_path": "data/raw/stepstone_spm/486BPOS_2025-10-20_d60278d486bpos.htm"
+      }
+    ],
+    "2.5": [
+      {
+        "text": "486BPOS 2025-10-20 (prospectus",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-20",
+        "accession": "0001193125-25-243390",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312525243390/d60278d486bpos.htm",
+        "local_path": "data/raw/stepstone_spm/486BPOS_2025-10-20_d60278d486bpos.htm"
+      }
+    ],
+    "2.6": [
+      {
+        "text": "486BPOS 2025-10-20 (prospectus",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-20",
+        "accession": "0001193125-25-243390",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312525243390/d60278d486bpos.htm",
+        "local_path": "data/raw/stepstone_spm/486BPOS_2025-10-20_d60278d486bpos.htm"
+      }
+    ],
+    "2.7": [
+      {
+        "text": "486BPOS 2025-10-20",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-20",
+        "accession": "0001193125-25-243390",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312525243390/d60278d486bpos.htm",
+        "local_path": "data/raw/stepstone_spm/486BPOS_2025-10-20_d60278d486bpos.htm"
+      },
+      {
+        "text": "N-CSR 2026-06-09",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "3.1": [
+      {
+        "text": "SC TO-I 2026-05-12",
+        "form": "SC TO-I",
+        "match": "exact",
+        "filing_date": "2026-05-12",
+        "accession": "0001193125-26-219013",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312526219013/na-20260512.htm",
+        "local_path": "data/raw/stepstone_spm/SC TO-I_2026-05-12_na-20260512.htm"
+      }
+    ],
+    "3.2": [
+      {
+        "text": "SC TO-I 2026-05-12 (Offer to Purchase",
+        "form": "SC TO-I",
+        "match": "exact",
+        "filing_date": "2026-05-12",
+        "accession": "0001193125-26-219013",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312526219013/na-20260512.htm",
+        "local_path": "data/raw/stepstone_spm/SC TO-I_2026-05-12_na-20260512.htm"
+      },
+      {
+        "text": "N-CSR 2026-06-09 Note 10",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "3.3": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "3.4": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "3.6": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "4.1": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "4.2": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "4.3": [
+      {
+        "text": "486BPOS 2025-10-20 (SAI",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-20",
+        "accession": "0001193125-25-243390",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312525243390/d60278d486bpos.htm",
+        "local_path": "data/raw/stepstone_spm/486BPOS_2025-10-20_d60278d486bpos.htm"
+      }
+    ],
+    "4.4": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "4.5": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "4.6": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "5.1": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "6.1": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ],
+    "6.2": [
+      {
+        "text": "486BPOS 2025-10-20 (prospectus",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-20",
+        "accession": "0001193125-25-243390",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312525243390/d60278d486bpos.htm",
+        "local_path": "data/raw/stepstone_spm/486BPOS_2025-10-20_d60278d486bpos.htm"
+      }
+    ],
+    "6.3": [
+      {
+        "text": "486BPOS 2025-10-20 (prospectus",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-20",
+        "accession": "0001193125-25-243390",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312525243390/d60278d486bpos.htm",
+        "local_path": "data/raw/stepstone_spm/486BPOS_2025-10-20_d60278d486bpos.htm"
+      }
+    ],
+    "6.4": [
+      {
+        "text": "486BPOS 2025-10-20",
+        "form": "486BPOS",
+        "match": "exact",
+        "filing_date": "2025-10-20",
+        "accession": "0001193125-25-243390",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000119312525243390/d60278d486bpos.htm",
+        "local_path": "data/raw/stepstone_spm/486BPOS_2025-10-20_d60278d486bpos.htm"
+      }
+    ],
+    "6.5": [
+      {
+        "text": "N-CSR 2026-06-09 (FY ended 3/31/2026",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066828",
+        "url": "https://www.sec.gov/Archives/edgar/data/1789470/000121390026066828/ea0293635-01_ncsr.htm",
+        "local_path": "data/raw/stepstone_spm/N-CSR_2026-06-09_ea0293635-01_ncsr.htm"
+      }
+    ]
+  },
+  "counts": {
+    "exact": 34
+  }
+}

@@ -51,7 +51,7 @@
       "status": "n/a - not publicly available: underlying Portfolio Fund/GP-level returns are LP-only reporting; filings disclose holdings at fair value (see 3.4/SOI), not underlying fund IRRs",
       "source": "N-CSR (FY2026 annual report), filed 2026-06-04, Note 3 (absence search across ncsr, 486bpos, sctoi, 424b3 stripped texts)",
       "section": "Note 3 - FAIR VALUE MEASUREMENTS (underlying-valuation disclaimer); absence search across all on-disk ares_pmf filings",
-      "quote": "has been estimated by the respective Portfolio Funds\u2019 management and is based upon available information in the absence of readily ascertainable fair values",
+      "quote": "has been estimated by the respective Portfolio Funds’ management and is based upon available information in the absence of readily ascertainable fair values",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -77,22 +77,22 @@
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": "KS-PME 1.5712 / Direct Alpha 11.97%/yr vs Listed private equity investable proxy (PSP) over 2022-04-01 to 2026-03-31. Window-sensitivity disclosure applies; explorable in the Analysis Lab.",
+      "value": "KS-PME 1.0822 and Direct Alpha +1.99%/yr vs Peer cohort composite: evergreen_pe without ares_pmf (amg_pantheon, hl_paf, kkr_kpec, stepstone_spm) over FY2023 to FY2026 (composite comparison, 4 overlapping fiscal year(s) of 5 composite years). Fund growth 1.6819x vs benchmark 1.5541x on two-point flows (one contribution at the window start, one valuation at the end). The fund led the benchmark over this window. aligned by fiscal year-end year. Members' fiscal years end in month 03 (amg_pantheon, hl_paf, stepstone_spm), 12 (kkr_kpec), the fund's in month 03. Secondary Listed private equity investable proxy (PSP): KS-PME 1.5712, Direct Alpha +11.97%/yr over 2022-04-01 to 2026-03-31. Window-sensitive: PME and alpha on appraisal-lagged NAVs move with the window (methodology section 3).",
       "status": "computed",
       "source": "data/benchmarks/ares_pmf_selection.json",
-      "section": "primary.comparison",
+      "section": "primary.comparison, secondary.comparison",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
-      "value": "Stress observations (computed from printed FY returns): worst disclosed FY 2023-03-31: 9.27%. FY spanning the 2022 shock (2023-03-31): 9.27% - appraisal-lag caveat applies (see de-smoothing lab).",
+      "value": "Stress observation from printed fiscal-year returns (data/series_annual/ares_pmf.csv). The fiscal year spanning the 2022 public-market drawdown (FY ending 2023-03-31) printed a total return of 9.27%. Worst disclosed fiscal year: FY ending 2023-03-31 at 9.27%. Annual disclosure cadence - fiscal-year figures are the finest public stress observations for this wrapper. CAVEAT: annual appraisal-based figures cannot show intra-year drawdowns, so this is a floor on the stress the wrapper absorbed, not a measure of it.",
       "status": "computed",
-      "source": "data/analytics/supplement.json (stress_windows.ares_pmf)",
-      "section": "stress_windows",
+      "source": "data/analytics/supplement.json",
+      "section": "stress_windows.ares_pmf",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "1.10": {
@@ -121,7 +121,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR (FY2026 annual report), filed 2026-06-04, Note 4; rate/base restated in 486BPOS filed 2026-07-29, fee table fn (3)",
       "section": "Note 4 - INVESTMENT ADVISORY SERVICES AND OTHER AGREEMENTS - Advisory Agreement; 486BPOS SUMMARY OF FUND FEES AND EXPENSES fn (3)",
-      "quote": "a quarterly advisory fee at an annual rate of 1.40% based on the value of the Fund\u2019s Managed Assets",
+      "quote": "a quarterly advisory fee at an annual rate of 1.40% based on the value of the Fund’s Managed Assets",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -141,7 +141,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR (FY2026 annual report), filed 2026-06-04 - Financial Highlights + Note 4 Expense Limitation Agreement; 486BPOS filed 2026-07-29 fee table",
       "section": "Consolidated Financial Highlights - RATIOS TO AVERAGE NET ASSETS; Note 4 - Expense Limitation Agreement; 486BPOS SUMMARY OF FUND FEES AND EXPENSES",
-      "quote": "after fee waivers, the Fund\u2019s total annual expense ratio was 4.99% for Class I, 5.18% for Class D and 5.82% for Class A",
+      "quote": "after fee waivers, the Fund’s total annual expense ratio was 4.99% for Class I, 5.18% for Class D and 5.82% for Class A",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -197,12 +197,12 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Cohort placement (evergreen_pe, R4 phrasing): mgmt fee: 50th percentile of cohort (n=5), at the median of 1.4 | expense ratio (bases differ - see notes): 90th percentile of cohort (n=5), above the median of 3.19 | repurchase cap: fact unavailable for this member. Stats + caveats in the cohort artifact.",
+      "value": "Cohort placement (evergreen_pe, R4 phrasing): mgmt fee: 50th percentile of cohort (n=5), at the median of 1.4 | expense ratio (bases differ, see notes): 90th percentile of cohort (n=5), above the median of 3.19 | repurchase cap: 50th percentile of cohort (n=5), at the median of 5. Stats and per-member values in data/cohorts/evergreen_pe.json, membership rationales in data/facts.",
       "status": "computed",
       "source": "data/cohorts/evergreen_pe.json",
-      "section": "stats (R4 phrasing by tark_cohort)",
+      "section": "stats block (R4 phrasing by tark_cohort.percentile_of)",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "2.10": {
@@ -221,7 +221,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR filed 2026-06-04, Notes 6-7 and Risk Factors; SC TO-I filed 2026-06-01, Item 1; 486BPOS filed 2026-07-29 facing sheet",
       "section": "Note 7 - REPURCHASE OF SHARES; Note 6 - PURCHASE OF SHARES; Note 10 Risk Factors (Closed-End Fund Structure); SC TO-I Item 1; 486BPOS registrant-characterization checkboxes",
-      "quote": "the Fund conduct repurchase offers of no more than 5% of the Fund\u2019s net assets on a quarterly basis",
+      "quote": "the Fund conduct repurchase offers of no more than 5% of the Fund’s net assets on a quarterly basis",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -287,22 +287,22 @@
     },
     "3.8": {
       "element": "Redemption stress test",
-      "value": "ILLUSTRATIVE redemption stress (computed, all four plans): tail turnover x2, active turnover x1.5 vs base scenario. Anchor plan: demand 19.2%/yr vs 20.0 capacity - within wrapper capacity (19.2% vs 20%) IF offers are not prorated",
+      "value": "ILLUSTRATIVE redemption stress test (computed for all four reference plans): tail turnover x2, active turnover x1.5 vs base scenario, default sliders allocation 5% of plan, tail turnover 20%/yr, active turnover 5%/yr. Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): stressed demand 26.4% of the position vs 20% annual wrapper capacity, EXCEEDS annual wrapper capacity. Unmet demand rolls into later windows (gating-equivalent outcome). US industrial manufacturer 401(k) plan (~$0.8B, OH): stressed demand 12.3% of the position vs 20% annual wrapper capacity, within wrapper capacity (12.3% vs 20%) IF offers are not prorated. US casual-dining restaurant group 401(k) plan (~$1.6B, FL): stressed demand 16.7% of the position vs 20% annual wrapper capacity, within wrapper capacity (16.7% vs 20%) IF offers are not prorated. US media/technology company 401(k) plan (~$570M, New York): stressed demand 19.2% of the position vs 20% annual wrapper capacity, within wrapper capacity (19.2% vs 20%) IF offers are not prorated. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
       "status": "computed",
-      "source": "data/liquidity/plan_tech_media__ares_pmf_match.json (+3 plans)",
-      "section": "stressed_scenario (ILLUSTRATIVE)",
+      "source": "data/liquidity/plan_consulting_alumni__ares_pmf_match.json",
+      "section": "stressed_scenario and scenario across the four plan match files",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Verdict (US media/technology company 401(k) plan (~$570M, New York)): CONDITIONAL. STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity; this wrapper deals 4x/year. Direct DIA use requires a bridging structure \u2014 CIT sleeve, managed account, or TDF sleeve (cell 3.5). Capacity: 4x per year at 5.0% of NAV (board-discretionary quarterly tenders, Rule 13e-4 - NOT an interval fund) \u2014 a FUND-level cap; at a 5% plan allocation the plan's position is far inside it unless offers are oversubscribed. Per-plan artifacts in data/liquidity/.",
+      "value": "Structural liquidity verdict CONDITIONAL (typed facts, cells 3.1, 3.3, 2.7, plan-independent). Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): conditional-weak, US industrial manufacturer 401(k) plan (~$0.8B, OH): conditional, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): conditional, US media/technology company 401(k) plan (~$570M, New York): conditional. STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed). A trustee-directed sleeve could hold this wrapper directly, and the daily-menu constraint (this wrapper deals 4x/year) applies only to the participant-directed portion (cell 3.5). Early repurchase economics: 2% if held < 1 year (2.7). Relevant to participant-level churn (2.7). Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts and on the Liquidity view.",
       "status": "computed",
-      "source": "data/liquidity/plan_tech_media__ares_pmf_match.json",
-      "section": "verdict + reasons",
+      "source": "data/liquidity/plan_consulting_alumni__ares_pmf_match.json",
+      "section": "verdict, scenario_verdict, missing_facts, structural_reasons across the four plan match files",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "4.1": {
@@ -351,7 +351,7 @@
       "status": "extracted-unverified",
       "source": "N-CSR (FY2026 annual report), filed 2026-06-04 - Report of Independent Registered Public Accounting Firm + Item 4; 486BPOS filed 2026-07-29 INDEPENDENT REGISTERED PUBLIC ACCOUNTING FIRM",
       "section": "Report of Independent Registered Public Accounting Firm (signature block); N-CSR Item 4 - Principal Accountant Fees and Services",
-      "quote": "Ernst & Young LLP (\u201c E&Y \u201d), the Fund\u2019s independent registered public accounting firm",
+      "quote": "Ernst & Young LLP (“ E&Y ”), the Fund’s independent registered public accounting firm",
       "extracted_by": "Claude Code (2026-08-14)",
       "verified_by": ""
     },
@@ -417,52 +417,52 @@
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": "Candidates evaluated incl. paid/manual indices and the real peer-cohort lane; full scoring + rejection ledger in the selection artifact.",
+      "value": "Benchmark candidates evaluated by the engine (rubric v2, threshold 7 of 12, strategy gate below 2 of 3 ineligible). PRIMARY Peer cohort composite: evergreen_pe without ares_pmf (amg_pantheon, hl_paf, kkr_kpec, stepstone_spm) 10/12 (C lane). SECONDARY Listed private equity investable proxy (PSP) 9/12 (B lane). REJECTED Cambridge Associates US PE benchmark 7/12 (B lane): outranked: score 7/12 vs primary 10/12 and secondary 9/12 (only two slots). Retained in log as viable alternate. REJECTED MSCI World investable proxy (URTH) 6/12 (A lane): rejected: strategy gate (score 6/12 but strategy_match 1/3). Fund-declared (cell 5.1): MSCI World Index (held, scored 6/12, fails the strategy gate (strategy_match 1/3)).",
       "status": "computed",
       "source": "data/benchmarks/ares_pmf_selection.json",
-      "section": "candidates + rejection log",
+      "section": "primary, secondary, rejected, declared_benchmarks",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort evergreen_pe (n=5): members, rationales, stats, composite (or its documented refusal) and caveat block in the cohort artifact; exclusions in data/roster_decisions.md.",
+      "value": "Peer cohort evergreen_pe (n=5: hl_paf, stepstone_spm, kkr_kpec, ares_pmf, amg_pantheon). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2022 (n=3), 2023 (n=5), 2024 (n=5), 2025 (n=5), 2026 (n=4). Wrapper types in the cohort: nontraded_llc, tender_offer. Cross-wrapper differences are disclosed in the cohort caveat block (3 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md.",
       "status": "computed",
       "source": "data/cohorts/evergreen_pe.json",
-      "section": "members + composite",
+      "section": "members, composite and caveats blocks",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": "PME inputs (computed): window 2022-04-01 to 2026-03-31; flows [-1, 1.6819]; index daily-anchored. KS-PME 1.5712, Direct Alpha 11.97%/yr.",
+      "value": "PME inputs (computed, primary comparison vs Peer cohort composite: evergreen_pe without ares_pmf (amg_pantheon, hl_paf, kkr_kpec, stepstone_spm)): window FY2023 to FY2026 (composite comparison, 4 overlapping fiscal year(s) of 5 composite years). Fund growth 1.6819x vs benchmark growth 1.5541x, flows = one contribution of 1 at the window start and the terminal growth at the end, benchmark series composite:evergreen_pe. KS-PME 1.0822 = fund growth / benchmark growth. Direct Alpha +1.99%/yr is the annualized form of the same two flows (fund 13.88%/yr vs benchmark 11.65%/yr). aligned by fiscal year-end year. Members' fiscal years end in month 03 (amg_pantheon, hl_paf, stepstone_spm), 12 (kkr_kpec), the fund's in month 03.",
       "status": "computed",
       "source": "data/benchmarks/ares_pmf_selection.json",
       "section": "primary.comparison",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": "Benchmark suitability memo is a constructed engine/committee artifact, not extractable product data; inputs live in 5.1 (MSCI World, no prospectus benchmark) and the strategy cells.",
-      "status": "n/a - constructed (L3)",
-      "source": "n/a (workflow cell)",
-      "section": "n/a",
+      "value": "Benchmark suitability (rubric v2, engine output). Primary Peer cohort composite: evergreen_pe without ares_pmf (amg_pantheon, hl_paf, kkr_kpec, stepstone_spm) (C lane) scored 10/12 with a composite comparison over FY2023 to FY2026: KS-PME 1.0822, Direct Alpha 1.99%/yr. Secondary Listed private equity investable proxy (PSP) scored 9/12. Max attainable on held data 10/12. Fund-declared benchmark(s) (cell 5.1): MSCI World Index: held, scored 6/12, fails the strategy gate (strategy_match 1/3). Rejected: 2 candidates, each with its reason in the ledger. Methodology: docs/benchmark_methodology.md.",
+      "status": "computed",
+      "source": "data/benchmarks/ares_pmf_selection.json",
+      "section": "primary, secondary, escalation, max_attainable, declared_benchmarks, rejected",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.7": {
       "element": "Case-law tracker",
-      "value": "Case-law tracker is a cross-product artifact maintained outside individual product records.",
-      "status": "n/a - cross-product tracker",
-      "source": "n/a (workflow cell)",
-      "section": "n/a",
-      "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "value": "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498 (U.S.). Certiorari granted 2026-01-16 per the Supreme Court docket listing. Question presented, per the docket as relayed in search-result snippets: whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary breached the duty of prudence requires alleging a meaningful benchmark. The Ninth Circuit had required plaintiffs to identify a comparable alternative giving a sound basis for comparison, a meaningful benchmark. Argument is listed for the October 2026 term and had not been held as of 2026-09-04. No holding exists yet, and this cell draws no consequence for the evaluation. Status partial: assembled from the docket listing and search snippets, not from the source documents, which this build could not fetch.",
+      "status": "partial - search snippets and docket listing only, source documents not fetched in this build",
+      "source": "Supreme Court docket 25-498, https://www.supremecourt.gov/docket/docketfiles/html/public/25-498.html (grant date). SCOTUSblog case page, https://www.scotusblog.com/cases/anderson-v-intel-corp-investment-policy-comm/ and CRS Legal Sidebar LSB11396, https://www.congress.gov/crs-product/LSB11396 (question presented, argument term). Accessed 2026-09-04 through web-search snippets only.",
+      "section": "docket listing and search-result snippets (question presented, argument scheduling)",
+      "quote": "search snippet, not the source document: \"whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary failed to use the requisite 'care, skill, prudence, or diligence' under the circumstances and thus breached ERISA's duty of prudence when investing plan assets requires alleging a 'meaningful benchmark'\" and \"The case is scheduled for argument before the Supreme Court of the United States during the court's October 2026-2027 term.\"",
+      "extracted_by": "Claude Code (WebSearch snippet, 2026-09-04)",
       "verified_by": ""
     },
     "6.1": {

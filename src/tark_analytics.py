@@ -132,7 +132,13 @@ def xirr(flows: list[tuple[str, float]],
 
 
 def _level_on(index: list[tuple[str, float]], d: str) -> float:
-    """Index level on the nearest date <= d (index ascending)."""
+    """Index level on the nearest date <= d (index ascending). Refuses a
+    date before the series starts: a level "on or before" a date the series
+    does not cover would silently anchor at the first observation and
+    misstate every growth built on it (the 2026-09-03 audit's window
+    defect). Callers clip to effective_window first."""
+    if d < index[0][0]:
+        raise ValueError(f"date {d} is before the series starts ({index[0][0]})")
     lvl = index[0][1]
     for di, vi in index:
         if di <= d:
@@ -140,6 +146,24 @@ def _level_on(index: list[tuple[str, float]], d: str) -> float:
         else:
             break
     return lvl
+
+
+def effective_window(d0: str, d1: str,
+                     index: list[tuple[str, float]]) -> tuple[str, str, str]:
+    """The intersection of a fund window with the index's coverage, plus
+    the note that says what was clipped ("" when nothing was). Raises when
+    the two do not overlap. The same rule runs in site/js/analytics.js."""
+    i0, i1 = index[0][0], index[-1][0]
+    e0, e1 = max(d0, i0), min(d1, i1)
+    if e0 >= e1:
+        raise ValueError(f"window {d0} to {d1} does not overlap the series "
+                         f"({i0} to {i1})")
+    parts = []
+    if e0 != d0:
+        parts.append(f"proxy series begins {i0}")
+    if e1 != d1:
+        parts.append(f"proxy series ends {i1}")
+    return e0, e1, ("clipped: " + ", ".join(parts)) if parts else ""
 
 
 def ks_pme(flows: list[tuple[str, float]], index: list[tuple[str, float]]) -> float:
@@ -154,6 +178,24 @@ def ks_pme(flows: list[tuple[str, float]], index: list[tuple[str, float]]) -> fl
     fv_pos = sum(amt * i_T / _level_on(index, d) for d, amt in flows if amt > 0)
     fv_neg = sum(-amt * i_T / _level_on(index, d) for d, amt in flows if amt < 0)
     return fv_pos / fv_neg
+
+
+def monthly_schedule_flows(fund: list[tuple[str, float]], d0: str,
+                           d1: str) -> list[tuple[str, float]]:
+    """ILLUSTRATIVE flow schedule: one unit of cash at the window start and
+    at each fund month-end strictly inside the window, each buying 1 / NAV
+    units, valued once at the window end. A schedule assumption, not a
+    fact: the two-point comparison stays primary. Mirrored by
+    monthlyScheduleFlows in site/js/analytics.js."""
+    win = [(d, v) for d, v in fund if d0 <= d <= d1]
+    dates = [d0] + [d for d, _ in month_end_points(win) if d0 < d < d1]
+    units = 0.0
+    flows: list[tuple[str, float]] = []
+    for d in dates:
+        units += 1.0 / _level_on(fund, d)
+        flows.append((d, -1.0))
+    flows.append((d1, units * _level_on(fund, d1)))
+    return flows
 
 
 def direct_alpha(flows: list[tuple[str, float]],

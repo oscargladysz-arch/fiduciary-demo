@@ -1,0 +1,577 @@
+{
+  "product": "amg_pantheon",
+  "what": "filing references in the evidence CSV resolved against data/manifest.csv, offline. exact: form and filed date (or written accession) match one held filing. range: every held filing of that form between the two written dates. set: every held filing of that form when the citation names them as a plural with no date. form_only: no date written, one such filing held. accession_in_text: the citation carries its own accession, not a held filing, URL is the EDGAR folder. ambiguous and unresolved: stated reason, no accession invented",
+  "cells": {
+    "1.1": [
+      {
+        "text": "N-CSR FY2026 (FYE 2026-03-31, filed 2026-06-09), Financial Highlights",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      },
+      {
+        "text": "N-2 filed 2026-07-30 (Prospectus dated 2026-07-31), Class 4 Financial Highlights",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      }
+    ],
+    "1.2": [
+      {
+        "text": "N-CSR FY2026 (FYE 2026-03-31, filed 2026-06-09",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "1.3": [
+      {
+        "text": "N-CSR FY2026 (FYE 2026-03-31, filed 2026-06-09",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "1.4": [
+      {
+        "text": "N-CSR FY2026 (FYE 2026-03-31, filed 2026-06-09",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      },
+      {
+        "text": "N-2 filed 2026-07-30 (Class 4 highlights, DRIP default",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      }
+    ],
+    "1.5": [
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      },
+      {
+        "text": "N-2 filed 2026-07-30 (risk factors",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      }
+    ],
+    "1.10": [
+      {
+        "text": "SC TO-I (filed 2026-08-03), Item 2(c",
+        "form": "SC TO-I",
+        "match": "exact",
+        "filing_date": "2026-08-03",
+        "accession": "0001193125-26-329591",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526329591/d129441dsctoi.htm",
+        "local_path": "data/raw/amg_pantheon/SC TO-I_2026-08-03_d129441dsctoi.htm"
+      },
+      {
+        "text": "N-2 filed 2026-07-30 (Limitations on Transfer risk factor",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      }
+    ],
+    "1.11": [
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09) performance table",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      },
+      {
+        "text": "N-2 filed 2026-07-30, Portfolio Management section",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      }
+    ],
+    "2.1": [
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Fund Note 2 and Master Fund Note 2",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      },
+      {
+        "text": "N-2 fee-table footnote (2",
+        "form": "N-2",
+        "match": "form_only",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm",
+        "reason": "no date written, the only N-2 filing held for this product"
+      }
+    ],
+    "2.2": [
+      {
+        "text": "N-2 filed 2026-07-30 (Prospectus dated 2026-07-31), SUMMARY OF FUND EXPENSES",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      }
+    ],
+    "2.3": [
+      {
+        "text": "N-2 filed 2026-07-30, SUMMARY OF FUND EXPENSES",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      },
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Note 2 (Expense Cap) and Note 1c",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "2.4": [
+      {
+        "text": "N-2 filed 2026-07-30 (Prospectus dated 2026-07-31), fee-table footnote (5) (Class 1) / (6) (Class 2-5",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      }
+    ],
+    "2.5": [
+      {
+        "text": "N-2 filed 2026-07-30, fee-table footnote (5",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      },
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Master Fund SOI narrative",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "2.6": [
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Notes 1 and 2",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      },
+      {
+        "text": "N-2 filed 2026-07-30, Class 2-5 fee table footnote (1",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      }
+    ],
+    "2.7": [
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Note 1g Capital Stock",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      },
+      {
+        "text": "N-2 filed 2026-07-30, fee-table footnote (1)/(2",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      }
+    ],
+    "2.8": [
+      {
+        "text": "wrapper per N-CSR Note 1",
+        "form": "N-CSR",
+        "match": "form_only",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm",
+        "reason": "no date written, the only N-CSR filing held for this product"
+      }
+    ],
+    "3.1": [
+      {
+        "text": "N-2 filed 2026-07-30, Summary of Terms",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      },
+      {
+        "text": "SC TO-I (filed 2026-08-03), Item 5(e",
+        "form": "SC TO-I",
+        "match": "exact",
+        "filing_date": "2026-08-03",
+        "accession": "0001193125-26-329591",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526329591/d129441dsctoi.htm",
+        "local_path": "data/raw/amg_pantheon/SC TO-I_2026-08-03_d129441dsctoi.htm"
+      }
+    ],
+    "3.2": [
+      {
+        "text": "SC TO-I (filed 2026-08-03), Items 4-5",
+        "form": "SC TO-I",
+        "match": "exact",
+        "filing_date": "2026-08-03",
+        "accession": "0001193125-26-329591",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526329591/d129441dsctoi.htm",
+        "local_path": "data/raw/amg_pantheon/SC TO-I_2026-08-03_d129441dsctoi.htm"
+      },
+      {
+        "text": "N-2 filed 2026-07-30, REPURCHASES OF UNITS AND TRANSFERS",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      }
+    ],
+    "3.3": [
+      {
+        "text": "SC TO-I (filed 2026-08-03), Item 2(b",
+        "form": "SC TO-I",
+        "match": "exact",
+        "filing_date": "2026-08-03",
+        "accession": "0001193125-26-329591",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526329591/d129441dsctoi.htm",
+        "local_path": "data/raw/amg_pantheon/SC TO-I_2026-08-03_d129441dsctoi.htm"
+      },
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Note 1g capital transactions",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "3.4": [
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Master Fund Note 3 attributes table",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "3.6": [
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Master Fund Note 8 Credit Agreement",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      },
+      {
+        "text": "N-2 filed 2026-07-30 (asset coverage",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      }
+    ],
+    "4.1": [
+      {
+        "text": "N-2 filed 2026-07-30, CALCULATION OF NET ASSET VALUE",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      },
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Master Fund Note 1a",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "4.2": [
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Consolidated Schedule of Investments - hierarchy and L3 reconciliation tables",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "4.3": [
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Master Fund Note 1a",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      },
+      {
+        "text": "N-2 filed 2026-07-30, Calculation of Net Asset Value",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      }
+    ],
+    "4.4": [
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Master Fund Note 1a",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "4.5": [
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Report of Independent Registered Public Accounting Firm",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "4.6": [
+      {
+        "text": "All four on-disk filings (searched 2026-08-15",
+        "form": "*",
+        "match": "set",
+        "filings": [
+          {
+            "filing_date": "2025-08-01",
+            "accession": "0001193125-25-170996",
+            "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312525170996/d36907d424b3.htm",
+            "local_path": "data/raw/amg_pantheon/424B3_2025-08-01_d36907d424b3.htm"
+          },
+          {
+            "filing_date": "2026-06-09",
+            "accession": "0001193125-26-264017",
+            "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+            "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+          },
+          {
+            "filing_date": "2026-07-30",
+            "accession": "0000950130-26-000196",
+            "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+            "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+          },
+          {
+            "filing_date": "2026-08-03",
+            "accession": "0001193125-26-329591",
+            "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526329591/d129441dsctoi.htm",
+            "local_path": "data/raw/amg_pantheon/SC TO-I_2026-08-03_d129441dsctoi.htm"
+          }
+        ],
+        "reason": "cited as all filings held for the product, 4 held"
+      }
+    ],
+    "5.1": [
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Portfolio Manager's Comments",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "6.1": [
+      {
+        "text": "SC TO-I (filed 2026-08-03), Item 2",
+        "form": "SC TO-I",
+        "match": "exact",
+        "filing_date": "2026-08-03",
+        "accession": "0001193125-26-329591",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526329591/d129441dsctoi.htm",
+        "local_path": "data/raw/amg_pantheon/SC TO-I_2026-08-03_d129441dsctoi.htm"
+      },
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Note 1 and Master Note 1",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "6.2": [
+      {
+        "text": "N-2 filed 2026-07-30, INVESTMENT PROGRAM - Investment Strategies",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      },
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Consolidated SOI",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "6.3": [
+      {
+        "text": "N-2 filed 2026-07-30, CONFLICTS OF INTEREST",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      },
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Note 2",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "6.4": [
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Other Tax Information (unaudited",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      }
+    ],
+    "6.5": [
+      {
+        "text": "N-2 filed 2026-07-30 (Transfer Agent, sub-administrator",
+        "form": "N-2",
+        "match": "exact",
+        "filing_date": "2026-07-30",
+        "accession": "0000950130-26-000196",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000095013026000196/d155376dn2.htm",
+        "local_path": "data/raw/amg_pantheon/N-2_2026-07-30_d155376dn2.htm"
+      },
+      {
+        "text": "N-CSR FY2026 (filed 2026-06-09), Notes 1h/2",
+        "form": "N-CSR",
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001193125-26-264017",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526264017/d138225dncsr.htm",
+        "local_path": "data/raw/amg_pantheon/N-CSR_2026-06-09_d138225dncsr.htm"
+      },
+      {
+        "text": "SC TO-I (filed 2026-08-03",
+        "form": "SC TO-I",
+        "match": "exact",
+        "filing_date": "2026-08-03",
+        "accession": "0001193125-26-329591",
+        "url": "https://www.sec.gov/Archives/edgar/data/1609211/000119312526329591/d129441dsctoi.htm",
+        "local_path": "data/raw/amg_pantheon/SC TO-I_2026-08-03_d129441dsctoi.htm"
+      }
+    ]
+  },
+  "counts": {
+    "exact": 50,
+    "form_only": 2,
+    "set": 1
+  }
+}

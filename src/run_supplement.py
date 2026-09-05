@@ -7,7 +7,7 @@ data/analytics/supplement.json with full provenance:
     quarterly NAV/share, plus the filed premium range
   - fee percentile within the evaluation universe (cell 2.9): each product's
     own primary net expense ratio as extracted in cell 2.3 — universe = this
-    six-product roster, bases differ and are quoted per product
+    evaluation roster, bases differ and are quoted per product
   - stress-window stats (cell 1.9) where a daily series exists; annual-tier
     products are computed from data/series_annual/ files when present
 
@@ -17,12 +17,11 @@ from __future__ import annotations
 
 import csv
 import json
-import re
-from datetime import date
 from pathlib import Path
 
 from tark_analytics import max_drawdown
-from tark_data import DATA, load_product, load_series, product_keys
+from tark_data import (DATA, load_product, load_series, product_keys,
+                       record_as_of)
 
 OUT = DATA / "analytics" / "supplement.json"
 
@@ -43,41 +42,45 @@ def dxyz_premium() -> dict:
         "latest_nav_period_end": latest.get("period_end"),
         "premium_pct_vs_latest_filed_nav": round(prem, 1),
         "filed_premium_range_pct": [min(lows), max(highs)],
-        "note": "premium computed vs the most recent FILED quarterly NAV - the "
-                "live NAV is unobservable between filings; filed range from the "
+        "note": "premium computed vs the most recent FILED quarterly NAV (the "
+                "live NAV is unobservable between filings). Filed range from the "
                 "fund's own prospectus table",
         "inputs": ["data/series/dxyz.csv",
                    "data/analytics/dxyz_nav_quarterly.json"],
     }
 
 
-TER_PAT = re.compile(r"(\d+\.\d+)\s*%")
-
-
 def fee_percentile() -> dict:
+    """Net expense ratio per product from the TYPED facts layer
+    (facts.expense_ratio_pct, cited to cell 2.3), never a regex over cell
+    prose. Ties share a mid-rank percentile."""
     entries = []
     for k in product_keys():
-        cell = load_product(k)["cells"]["2.3"]
-        val = str(cell.get("value") or "")
-        st = str(cell.get("status", ""))
-        m = TER_PAT.search(val)
-        if st.startswith(("extracted", "verified")) and m:
-            entries.append({"product": k, "ter_pct": float(m.group(1)),
-                            "basis_excerpt": val[:140], "cited_cell": "2.3"})
+        f = json.loads((DATA / "facts" / f"{k}.json").read_text())["facts"]["expense_ratio_pct"]
+        if f.get("value") is not None:
+            entries.append({"product": k, "ter_pct": float(f["value"]),
+                            "cited_cell": f["source_cell"],
+                            "basis_note": f.get("note", "")})
         else:
             entries.append({"product": k, "ter_pct": None,
-                            "reason": "no comparable TER line item (see 2.1/2.2)",
-                            "cited_cell": "2.3"})
+                            "reason": f.get("reason") or "no comparable net "
+                            "expense ratio line (see 2.1/2.2)",
+                            "cited_cell": f["source_cell"]})
     ranked = sorted([e for e in entries if e["ter_pct"] is not None],
                     key=lambda e: e["ter_pct"])
     n = len(ranked)
-    for i, e in enumerate(ranked):
-        e["rank"] = i + 1
+    values = [e["ter_pct"] for e in ranked]
+    for e in ranked:
+        below = sum(1 for v in values if v < e["ter_pct"])
+        ties = sum(1 for v in values if v == e["ter_pct"])
+        e["rank"] = below + 1
         e["of"] = n
-        e["percentile_low_is_cheap"] = round((i + 0.5) / n * 100)
-    return {"universe": "this six-product evaluation roster (n=%d with a TER "
-                        "line) - NOT a market-wide database; bases differ per "
-                        "product and are quoted from cell 2.3" % n,
+        e["percentile_low_is_cheap"] = round((below + 0.5 * ties) / n * 100)
+    return {"universe": "this %d-product evaluation roster (n=%d with a net "
+                        "expense ratio typed from cell 2.3), not a market-wide "
+                        "database. Bases differ per product and are quoted in "
+                        "the facts note" % (len(product_keys()), n),
+            "source": "data/facts/<product>.json expense_ratio_pct",
             "entries": entries}
 
 
@@ -185,8 +188,8 @@ def ssss_premium() -> dict | None:
         "latest_printed_nav": nav_v, "latest_nav_date": nav_d,
         "premium_pct_vs_latest_printed_nav": round((last_close / nav_v - 1) * 100, 1),
         "premium_pct_at_each_printed_quarter": hist,
-        "note": "price at-or-before each printed quarter-end NAV; a persistent "
-                "DISCOUNT is this fund's premium/discount signature - the "
+        "note": "price at-or-before each printed quarter-end NAV. A persistent "
+                "DISCOUNT is this fund's premium/discount signature, the "
                 "mirror image of dxyz's premium",
         "inputs": ["data/series/nslr.csv", "data/series_quarterly/ssss_nav.csv"],
     }
@@ -194,7 +197,7 @@ def ssss_premium() -> dict | None:
 
 def main() -> None:
     doc = {
-        "generated": date.today().isoformat(),
+        "generated": record_as_of(),
         "dxyz_premium": dxyz_premium(),
         "ssss_premium": ssss_premium(),
         "fee_percentile": fee_percentile(),

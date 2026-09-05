@@ -26,41 +26,21 @@ from statistics import median
 from tark_data import DATA
 
 # membership lives here (rationales in facts; exclusions in roster_decisions)
-COHORTS = {
-    "private_credit": {
-        "label": "Private credit (interval fund + non-traded BDC)",
-        "members": ["cliffwater_cclfx", "bcred", "pflex", "cion_ares",
-                    "ocic"],
-        "wrapper_types": {"cliffwater_cclfx": "interval_23c3",
-                          "bcred": "nontraded_bdc", "pflex": "interval_23c3",
-                          "cion_ares": "interval_23c3",
-                          "ocic": "nontraded_bdc"},
-    },
-    "evergreen_pe": {
-        "label": "Evergreen private equity ('40-Act funds + '34-Act conglomerate)",
-        "members": ["hl_paf", "stepstone_spm", "kkr_kpec", "ares_pmf",
-                    "amg_pantheon"],
-        "wrapper_types": {"hl_paf": "tender_offer", "stepstone_spm": "tender_offer",
-                          "kkr_kpec": "nontraded_llc", "ares_pmf": "tender_offer",
-                          "amg_pantheon": "tender_offer"},
-        "fallback_note": "kkr_kpec joins under the authorized fallback: its "
-                         "structural twins are Reg D vehicles with no public "
-                         "filings (data/roster_decisions.md - 'The kkr_kpec "
-                         "ruling'). Cross-wrapper caveats apply.",
-    },
-    "nontraded_reit": {
-        "label": "Non-traded NAV REITs",
-        "members": ["breit", "sreit", "jll_ipt"],
-        "wrapper_types": {"breit": "nontraded_reit", "sreit": "nontraded_reit",
-                          "jll_ipt": "nontraded_reit"},
-    },
-    "venture": {
-        "label": "Pre-IPO / venture growth (listed CEF + listed BDC + interval fund)",
-        "members": ["dxyz", "ssss", "arkvx"],
-        "wrapper_types": {"dxyz": "listed_cef", "ssss": "listed_bdc",
-                          "arkvx": "interval_23c3"},
-    },
-}
+# cohorts from the one registry: label, ordered members and fallback note per
+# cohort. Every member's own `cohort` field agrees (validate_registry).
+def _cohorts_from_registry() -> dict:
+    reg = json.loads((DATA / "registry.json").read_text())
+    out = {}
+    for cid, meta in reg["cohorts"].items():
+        members = list(meta["members"])
+        out[cid] = {"label": meta["label"], "members": members,
+                    "wrapper_types": {k: reg["products"][k]["wrapper_type"] for k in members}}
+        if meta.get("fallback_note"):
+            out[cid]["fallback_note"] = meta["fallback_note"]
+    return out
+
+
+COHORTS = _cohorts_from_registry()
 
 # fields the cohort stats layer summarizes (from structured facts)
 STAT_FIELDS = ["mgmt_fee_pct", "expense_ratio_pct", "repurchase_cap_pct",
@@ -105,43 +85,66 @@ def cohort_stats(cohort_id: str, field: str,
 def percentile_of(product_key: str, cohort_id: str, field: str,
                   facts_by_key: dict[str, dict]) -> dict | None:
     """R4: percentile language only at n >= 4; below that, median-relative
-    phrasing. Returns {'phrase', 'n', ...} or None if the product lacks the
-    fact."""
+    phrasing. Ties share one mid-rank percentile ((below + 0.5 * ties) / n),
+    and a value equal to the median is the 50th percentile by definition, so
+    no member can read as both "10th percentile" and "at the median" (the
+    2026-08 record printed that contradiction in 10 cells). Returns
+    {'phrase', 'n', ...} or None if the product lacks the fact."""
     st = cohort_stats(cohort_id, field, facts_by_key)
     if product_key not in st["values"]:
         return None
     v = st["values"][product_key]
     n = st["n"]
+    med = st["median"]
+    rel = "at" if v == med else "above" if v > med else "below"
     if n < 2:
         return {"phrase": f"only member with this fact (n={n})", "n": n,
-                "value": v, "median": st["median"]}
+                "value": v, "median": med}
     if n >= 4:
-        below = sum(1 for x in st["values"].values() if x < v)
-        pct = round((below + 0.5) / n * 100)
-        rel = ("at" if v == st["median"] else
-               "above" if v > st["median"] else "below")
+        values = list(st["values"].values())
+        below = sum(1 for x in values if x < v)
+        ties = sum(1 for x in values if x == v)
+        pct = 50 if v == med else int((below + 0.5 * ties) / n * 100 + 0.5)
         return {"phrase": f"{pct}th percentile of cohort (n={n}), {rel} the "
-                          f"median of {st['median']:g}",
-                "n": n, "percentile": pct, "value": v, "median": st["median"]}
-    rel = ("at" if v == st["median"] else
-           "above" if v > st["median"] else "below")
-    return {"phrase": f"{rel} the cohort median of {st['median']:g} (n={n} — "
-                      f"too small for percentile language)",
-            "n": n, "value": v, "median": st["median"]}
+                          f"median of {med:g}",
+                "n": n, "percentile": pct, "value": v, "median": med,
+                "ties": ties}
+    return {"phrase": f"{rel} the cohort median of {med:g} (n={n}, too small "
+                      f"for percentile language)",
+            "n": n, "value": v, "median": med}
+
+
+def _registry() -> dict:
+    return json.loads((DATA / "registry.json").read_text())["products"]
+
+
+def member_values(cohort_id: str, attr: str) -> tuple[dict[str, str], str]:
+    """{member: value} for one comparability attribute, and where it came
+    from. Typed per product (data/registry.json) when every member has the
+    attribute typed, otherwise the wrapper-type attribute for every member,
+    never a mix of the two vocabularies."""
+    wts = COHORTS[cohort_id]["wrapper_types"]
+    reg = _registry()
+    typed = {k: (reg.get(k) or {}).get(attr) for k in wts}
+    if typed and all(v is not None for v in typed.values()):
+        return typed, "typed per product"
+    attrs = json.loads((DATA / "cohorts" / "caveat_matrix.json").read_text())["wrapper_attributes"]
+    return {k: attrs[w][attr] for k, w in wts.items()}, "by wrapper type"
 
 
 def caveat_block(cohort_id: str) -> list[str]:
+    """Comparability caveats that the members' own values support. A caveat
+    fires only when the values differ across members. A wrapper-generic
+    caveat that the typed facts contradict (five NAV-priced members, one
+    pricing caveat) is not written."""
     matrix = json.loads((DATA / "cohorts" / "caveat_matrix.json").read_text())
-    attrs = matrix["wrapper_attributes"]
-    wts = COHORTS[cohort_id]["wrapper_types"]
     out = []
     for rule in matrix["pair_caveats"]:
         attr = rule["attrs"][0]
-        distinct = {attrs[w][attr] for w in wts.values()}
-        if len(distinct) > 1:
-            detail = "; ".join(f"{k}: {attrs[w][attr]}"
-                               for k, w in sorted(wts.items()))
-            out.append(f"{rule['caveat']} [{detail}]")
+        values, basis = member_values(cohort_id, attr)
+        if len(set(values.values())) > 1:
+            detail = ", ".join(f"{k}: {v}" for k, v in sorted(values.items()))
+            out.append(f"{rule['caveat']} [{basis}: {detail}]")
     fb = COHORTS[cohort_id].get("fallback_note")
     if fb:
         out.append(fb)
@@ -165,16 +168,15 @@ def composite(cohort_id: str) -> dict:
     """Equal-weight annual composite — or an explicit refusal where members'
     pricing bases are heterogeneous (averaging premiums against appraisals
     would fabricate a series)."""
-    matrix = json.loads((DATA / "cohorts" / "caveat_matrix.json").read_text())
-    attrs = matrix["wrapper_attributes"]
     wts = COHORTS[cohort_id]["wrapper_types"]
-    bases = {attrs[w]["pricing_class"] for w in wts.values()}
+    values, _ = member_values(cohort_id, "pricing_class")
+    bases = set(values.values())
     if len(bases) > 1:
         return {"refused": True,
                 "reason": "members' pricing bases are heterogeneous (market "
-                          "price vs NAV); an equal-weight composite would "
+                          "price vs NAV). An equal-weight composite would "
                           "average premium/discount dynamics against "
-                          "appraisal NAVs - refused, not fudged"}
+                          "appraisal NAVs, so it is refused, not fudged"}
     members = cohort_members(cohort_id)
     per = {k: _annual_returns(k) for k in members}
     years = sorted({y for m in per.values() for y in m})
@@ -186,8 +188,8 @@ def composite(cohort_id: str) -> dict:
                          "composite_return_pct": round(
                              sum(have.values()) / len(have) * 100, 2),
                          "n": len(have), "members": sorted(have)})
-    return {"refused": False, "granularity": "annual (fiscal years as filed; "
-            "year-end months differ across members and are disclosed per row)",
+    return {"refused": False, "granularity": "annual (fiscal years as filed, with "
+            "year-end months that differ across members and are disclosed per row)",
             "weighting": "equal-weight across members reporting that year",
             "rows": rows}
 

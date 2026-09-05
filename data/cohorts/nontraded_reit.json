@@ -15,7 +15,7 @@
     "jll_ipt": {
       "wrapper_type": "nontraded_reit",
       "depth": "cohort",
-      "membership_rationale": "Perpetual NAV REIT of older vintage - same wrapper class; NAV cadence and scale differences disclosed."
+      "membership_rationale": "Perpetual NAV REIT of older vintage in the same wrapper class. NAV cadence and scale differences disclosed."
     }
   },
   "n": 3,
@@ -41,38 +41,36 @@
       "max": null,
       "values": {},
       "missing": {
-        "breit": "no TER line item exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
-        "sreit": "no TER line exists for this '34-Act wrapper; components in 2.1/2.2/2.6",
-        "jll_ipt": "no TER line exists for this '34-Act wrapper; components in 2.1/2.2/2.6"
+        "breit": "no TER line item exists for this '34-Act wrapper. Components in 2.1/2.2/2.6",
+        "sreit": "no TER line exists for this '34-Act wrapper. Components in 2.1/2.2/2.6",
+        "jll_ipt": "no TER line exists for this '34-Act wrapper. Components in 2.1/2.2/2.6"
       }
     },
     "repurchase_cap_pct": {
       "field": "repurchase_cap_pct",
-      "n": 2,
-      "median": 3.5,
-      "min": 2.0,
+      "n": 3,
+      "median": 2.0,
+      "min": 0.0,
       "max": 5.0,
       "values": {
         "breit": 2.0,
+        "sreit": 0.0,
         "jll_ipt": 5.0
       },
-      "missing": {
-        "sreit": "plan SUSPENDED April 2026; cap history 2%/mo (2017) -> 0.33% (2024) -> 0.5% (2025) -> closed (2026)"
-      }
+      "missing": {}
     },
     "repurchase_cadence_per_year": {
       "field": "repurchase_cadence_per_year",
-      "n": 2,
-      "median": 8.0,
+      "n": 3,
+      "median": 12,
       "min": 4,
       "max": 12,
       "values": {
         "breit": 12,
+        "sreit": 12,
         "jll_ipt": 4
       },
-      "missing": {
-        "sreit": "plan SUSPENDED April 2026 - ordinary requests no longer accepted (death/disability and sub-$5,000 accounts only)"
-      }
+      "missing": {}
     },
     "track_record_years": {
       "field": "track_record_years",
@@ -85,7 +83,7 @@
         "jll_ipt": 13.2
       },
       "missing": {
-        "breit": "explicit Class I inception date not printed in on-disk filings; ITD basis year (2017 REIT election) sits in partial cell 6.4"
+        "breit": "explicit Class I inception date not printed in on-disk filings. ITD basis year (2017 REIT election) sits in partial cell 6.4"
       }
     },
     "net_assets_usd": {
@@ -96,15 +94,15 @@
       "max": null,
       "values": {},
       "missing": {
-        "breit": "aggregate NAV printed in the MD&A NAV-by-class table but not yet carried into a typed cell; verification-queue item",
-        "sreit": "aggregate NAV not yet carried into a typed cell; verification-queue item",
-        "jll_ipt": "aggregate NAV not yet carried into a typed cell; verification-queue item"
+        "breit": "aggregate NAV printed in the MD&A NAV-by-class table but not yet carried into a typed cell. Verification-queue item",
+        "sreit": "aggregate NAV not yet carried into a typed cell. Verification-queue item",
+        "jll_ipt": "aggregate NAV not yet carried into a typed cell. Verification-queue item"
       }
     }
   },
   "composite": {
     "refused": false,
-    "granularity": "annual (fiscal years as filed; year-end months differ across members and are disclosed per row)",
+    "granularity": "annual (fiscal years as filed, with year-end months that differ across members and are disclosed per row)",
     "weighting": "equal-weight across members reporting that year",
     "rows": [
       {
@@ -118,6 +116,8 @@
       }
     ]
   },
-  "caveats": [],
+  "caveats": [
+    "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing. Volatility and drawdown comparisons inherit that difference (see de-smoothing lab). [typed per product: breit: monthly, jll_ipt: daily, sreit: monthly]"
+  ],
   "exclusion_log": "data/roster_decisions.md"
 }

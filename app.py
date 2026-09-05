@@ -18,21 +18,19 @@ import json                                    # noqa: E402
 
 import streamlit as st                         # noqa: E402
 
-from tark_data import (DATA, FACTORS, cells_by_factor,  # noqa: E402
-                       load_evidence, load_plan, load_products, plan_keys,
-                       status_kind)
+from tark_data import (coverage_summary, DATA, FACTORS, RULE, RULE_CITATION,  # noqa: E402
+                       authority, cells_by_factor, load_evidence, load_plan,
+                       load_products, plan_keys, status_kind)
 
-st.set_page_config(page_title="Tark — Fiduciary Evaluation Demo",
+st.set_page_config(page_title="Tark: Fiduciary Evaluation Demo",
                    layout="wide")
 
-RULE_CAPTION = ("Six-factor framework per DOL proposed rule, Fiduciary Duties in "
-                "Selecting Designated Investment Alternatives — 91 FR 16088 "
-                "(Mar 31, 2026), RIN 1210-AC38. Safe harbor attaches to a "
-                "documented, objective, thorough, analytical process.")
+RULE_CAPTION = (f"Six factors per DOL proposed rule {RULE_CITATION}, paragraphs "
+                f"{RULE['paragraphs']}. Verbatim text: {authority()['status']}.")
 
 CHIP = {
     "verified": ":green[● verified]",
-    "extracted": ":green[● extracted — unverified]",
+    "extracted": ":green[● extracted-unverified]",
     "partial": ":orange[● partial]",
     "fetched": ":blue[● series fetched]",
     "computed": ":violet[● computed (pipeline)]",
@@ -48,22 +46,14 @@ def product_label(key: str) -> str:
     return PRODUCTS[key]["fund_name"]
 
 
-def coverage_pct(key: str) -> int:
-    s = p = pend = 0
-    for row in load_evidence(key):
-        k = status_kind(row["status"])
-        if k in ("extracted", "verified"):
-            s += 1
-        elif k in ("partial", "fetched"):
-            p += 1
-        elif k != "n/a":
-            pend += 1
-    return round((s + p) / (s + p + pend) * 100) if (s + p + pend) else 0
+def coverage_line(key: str) -> str:
+    """The one coverage formula (tark_data.coverage_summary), per kind."""
+    return coverage_summary(key)["headline"]
 
 
 # ------------------------------------------------------------------ sidebar
 st.sidebar.title("Tark")
-st.sidebar.caption("Benchmark selection & six-factor evaluation — demo build")
+st.sidebar.caption("Benchmark selection & six-factor evaluation (demo build)")
 view = st.sidebar.radio(
     "View",
     ["Reference Plan", "Candidate Roster", "Six-Factor Evaluation",
@@ -108,7 +98,7 @@ def render_anchor():
 
     tail_pct = part["separated_deferred_vested"] / part["with_account_balances"] * 100
     st.info(f"**Liquidity tail:** {int(part['separated_deferred_vested']):,} "
-            f"separated participants still hold balances — "
+            f"separated participants still hold balances, "
             f"{tail_pct:.0f}% of all accounts. This cohort, not the active base, "
             f"is the plan's near-term liquidity demand and drives the "
             f"product-to-plan match (cell 3.9).")
@@ -123,8 +113,10 @@ def render_anchor():
 # --------------------------------------------------------------- roster view
 def render_roster():
     st.title("Candidate Roster")
-    st.caption("Six real products, six wrappers — every cell traceable to a "
-               "public filing via data/evidence/.")
+    st.caption(f"{len(PRODUCTS)} real products across "
+               f"{len({p.get('wrapper') for p in PRODUCTS.values()})} wrapper "
+               "strings. Every cell is traceable to a public filing via "
+               "data/evidence/.")
     rows = []
     for k, p in PRODUCTS.items():
         rows.append({
@@ -132,12 +124,12 @@ def render_roster():
             "fund": p["fund_name"],
             "wrapper": p["wrapper"],
             "CIK": p["cik"],
-            "evidence coverage %": coverage_pct(k),
+            "evidence coverage": coverage_line(k),
             "note": p.get("note", p.get("identity_note", "")),
         })
     st.dataframe(rows, width="stretch", hide_index=True)
-    st.caption("Coverage counts seeded + partial cells over all applicable "
-               "cells (run `python src/coverage.py` for the same numbers).")
+    st.caption("Coverage per status kind from tark_data.coverage_summary, the "
+               "same function the static site and `python src/coverage.py` use.")
 
 
 # ----------------------------------------------------------- evaluation view
@@ -146,7 +138,7 @@ def render_evaluation():
     st.title("Six-Factor Evaluation")
     st.subheader(p["fund_name"])
     st.caption(f"{p['wrapper']} · CIK {p['cik']} · evidence coverage "
-               f"{coverage_pct(product_key)}%")
+               f"{coverage_line(product_key)}")
 
     tabs = st.tabs([f"{n} · {label}" for n, label in FACTORS.items()])
     grouped = cells_by_factor(p)
@@ -155,7 +147,7 @@ def render_evaluation():
             for cid, cell in grouped[label]:
                 kind = status_kind(cell.get("status", "pending"))
                 chip = CHIP.get(kind, cell.get("status", ""))
-                st.markdown(f"**{cid} · {cell['element']}** — {chip}")
+                st.markdown(f"**{cid} · {cell['element']}** {chip}")
                 if cell.get("value"):
                     st.markdown(cell["value"])
                     if cell.get("source"):
@@ -167,9 +159,9 @@ def render_evaluation():
                                 f"**Extracted:** {cell.get('extracted_by', '')} · "
                                 f"**Verified:** {cell.get('verified_by', '') or 'pending'}")
                 elif kind == "n/a":
-                    st.caption(f"Not applicable — {cell['status'][6:]}")
+                    st.caption(f"Not applicable: {cell['status'][6:]}")
                 else:
-                    st.caption("Pending extraction — pointer in "
+                    st.caption("Pending extraction. Pointer in "
                                f"data/evidence/{product_key}_evidence.csv")
                 st.divider()
 
@@ -181,14 +173,14 @@ def render_benchmark():
     st.subheader(p["fund_name"])
     sel_path = DATA / "benchmarks" / f"{product_key}_selection.json"
     if not sel_path.exists():
-        st.warning("Engine profile pending for this product — extraction depth "
+        st.warning("Engine profile pending for this product: extraction depth "
                    "first (see Increment 1 pointers in the evidence CSV).")
         return
     sel = json.loads(sel_path.read_text())
     st.caption(f"Strategy: {sel['strategy']} · engine inputs from cells "
-               f"{', '.join(sel['source_cells'])} · rubric: strategy match 3 · "
-               f"risk/liquidity 3 · investability 2 · data quality 2 · "
-               f"provider independence 2 (threshold 7/12)")
+               f"{', '.join(sel['source_cells'])} · {sel.get('rubric', 'rubric not recorded')}"
+               + (f" · max attainable on held data {sel['max_attainable']}/12"
+                  if sel.get("max_attainable") is not None else ""))
 
     if sel["escalation"]:
         st.error(sel["escalation"])
@@ -197,7 +189,7 @@ def render_benchmark():
         s = sel.get(slot)
         if not s:
             continue
-        st.markdown(f"### {badge}: {s['candidate']}  —  {s['score']}/{s['max']}")
+        st.markdown(f"### {badge}: {s['candidate']} ({s['score']}/{s['max']})")
         comp = s.get("comparison")
         if comp:
             c1, c2, c3, c4 = st.columns(4)
@@ -205,15 +197,17 @@ def render_benchmark():
             c2.metric("Benchmark (ann.)", f"{comp['index_ann_pct']}%/yr")
             c3.metric("KS-PME", f"{comp['ks_pme']}")
             c4.metric("Direct Alpha", f"{comp['direct_alpha_pct']}%/yr")
-            st.caption(f"Window {comp['window']}. PME and alpha on "
+            st.caption(f"Window {comp['window']}"
+                       f"{(' (' + comp['window_note'] + ')') if comp.get('window_note') else ''}"
+                       f". PME and alpha on "
                        f"appraisal-lagged NAVs are window-sensitive and can be "
-                       f"smoothing-flattered — disclosed per methodology §3.")
+                       f"smoothing-flattered (disclosed per methodology §3).")
         with st.expander("Scoring rationale"):
             for r in s["reasons"]:
                 st.markdown(f"- {r}")
 
     st.markdown("### Rejection log")
-    st.caption("Every candidate not selected, with its true reason — the other "
+    st.caption("Every candidate not selected, with its true reason: the other "
                "half of a defensible record.")
     st.dataframe(
         [{"candidate": r["candidate"], "lane": r["lane"],
@@ -221,10 +215,12 @@ def render_benchmark():
          for r in sel["rejected"]],
         width="stretch", hide_index=True)
 
-    memo = DATA / "memos" / f"{product_key}_decision_memo.docx"
+    memo = ROOT / "site" / "memos" / f"{plan_key}__{product_key}_decision_memo.docx"
     if memo.exists():
         st.download_button("Download decision memo (.docx)", memo.read_bytes(),
                            file_name=memo.name, key="memo_dl")
+    else:
+        st.caption("Decision memo not built yet: run python src/build_site.py.")
 
 
 def render_liquidity():
@@ -236,12 +232,16 @@ def render_liquidity():
         st.warning("Match pending for this plan x product.")
         return
     m = json.loads(mp.read_text())
-    st.caption(f"Plan: {ANCHOR['display_label']} - liquidity tail "
+    st.caption(f"Plan: {m['plan_display_label']} - liquidity tail "
                f"{m['plan_inputs']['tail_share_pct']}% of accounts "
                f"({int(m['plan_inputs']['separated_with_balances']):,} separated "
                f"participants with balances).")
     v = m["verdict"]
-    (st.success if v.startswith("aligned") else st.warning)(f"Verdict: {v.upper()}")
+    box = (st.success if v.startswith("aligned")
+           else st.error if v in ("misaligned", "conditional-weak") else st.warning)
+    box(f"Structural verdict (typed facts, cells 3.1, 3.3, 2.7): {v.upper()}")
+    if m.get("scenario_verdict"):
+        st.info(f"Scenario verdict (ILLUSTRATIVE, this plan): {m['scenario_verdict'].upper()}")
     for r in m["reasons"]:
         st.markdown(f"- {r}")
     st.markdown("#### Scenario (ILLUSTRATIVE - adjustable parameters, not facts)")

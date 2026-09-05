@@ -30,16 +30,38 @@ export function computeScenario(planInputs, profile, params) {
   };
 }
 
-export function scenarioReason(sc) {
-  if (sc.annual_wrapper_capacity_pct === null) return null;
-  const head = `Scenario demand (illustrative): ${sc.demand_pct_of_position.toFixed(1)}% ` +
-    `of the position per year vs ${sc.annual_wrapper_capacity_pct.toFixed(0)}% ` +
-    `annual wrapper capacity — `;
-  return head + (sc.thin_headroom
-    ? "THIN HEADROOM: demand consumes over 60% of wrapper capacity; " +
-      "proration in any oversubscribed quarter would push the shortfall " +
-      "into the next window."
-    : "adequate headroom at this allocation if offers are not prorated.");
+/** stressed demand as a percent of the position (same multiples as the
+ * Python STRESS constants, shipped in each match file) */
+export function stressedDemandPct(planInputs, params, multiples) {
+  const tailShare = planInputs.tail_share_pct / 100;
+  return tailShare * params.tail_annual_turnover_pct * multiples.tail_multiple
+    + (1 - tailShare) * params.active_annual_turnover_pct * multiples.active_multiple;
 }
 
-window.TarkLiquidity = { computeScenario, scenarioReason };
+/** ILLUSTRATIVE scenario verdict, the same ladder as tark_liquidity.scenario_verdict */
+export function scenarioVerdict(sc, stressedPct, exchange) {
+  if (exchange) return "aligned-mechanical";
+  if (sc.annual_wrapper_capacity_pct === null) return null;
+  if (sc.demand_pct_of_position > sc.annual_wrapper_capacity_pct) return "misaligned";
+  if (stressedPct > sc.annual_wrapper_capacity_pct) return "conditional-weak";
+  return "conditional";
+}
+
+export function scenarioReason(sc) {
+  if (sc.annual_wrapper_capacity_pct === null) return null;
+  if (sc.annual_wrapper_capacity_pct === 0) {
+    return `Scenario demand (illustrative): ${sc.demand_pct_of_position.toFixed(1)}% of the ` +
+      "position per year vs 0% annual wrapper capacity. EXCEEDS: repurchases are closed, " +
+      "so every request waits for the program to reopen.";
+  }
+  const head = `Scenario demand (illustrative): ${sc.demand_pct_of_position.toFixed(1)}% ` +
+    `of the position per year vs ${sc.annual_wrapper_capacity_pct.toFixed(0)}% ` +
+    `annual wrapper capacity. `;
+  return head + (sc.thin_headroom
+    ? "THIN HEADROOM: demand consumes over 60% of wrapper capacity. " +
+      "Proration in any oversubscribed quarter would push the shortfall " +
+      "into the next window."
+    : "Adequate headroom at this allocation if offers are not prorated.");
+}
+
+window.TarkLiquidity = { computeScenario, scenarioReason, scenarioVerdict, stressedDemandPct };

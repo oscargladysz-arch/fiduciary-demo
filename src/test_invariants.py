@@ -1,0 +1,169 @@
+"""
+Invariants of the record and its surfaces (grows with every phase)
+==================================================================
+Each check is a property the audit found violated or a rule the brief makes
+non-negotiable. Run: python src/test_invariants.py   (exit 0 = all hold)
+"""
+from __future__ import annotations
+
+import csv
+import re
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from tark_data import (BASE, DATA, coverage_summary, coverage_totals,  # noqa: E402
+                       load_evidence, product_keys)
+
+FAILS: list[str] = []
+
+
+def check(name: str, cond: bool, extra: str = "") -> None:
+    print(f"[{'PASS' if cond else 'FAIL'}] {name}{(' : ' + extra) if extra and not cond else ''}")
+    if not cond:
+        FAILS.append(name)
+
+
+# 1. verified is human-only: this remediation never sets it
+verified_rows = 0
+signed = 0
+for key in product_keys():
+    for r in load_evidence(key):
+        if r["status"].startswith("verified"):
+            verified_rows += 1
+        if r["verified_by"].strip():
+            signed += 1
+check("no cell is verified and no verified_by is signed in this pull request",
+      verified_rows == 0 and signed == 0, f"verified={verified_rows} signed={signed}")
+
+# 2. one coverage formula: build_site and app.py call tark_data.coverage_summary
+bs = (BASE / "src" / "build_site.py").read_text()
+ap = (BASE / "app.py").read_text()
+check("build_site.evidence_counts delegates to coverage_summary",
+      "return coverage_summary(key)" in bs)
+check("app.py uses coverage_summary and has no local coverage formula",
+      "coverage_summary(" in ap and "def coverage_pct" not in ap)
+tot = coverage_totals()["counts"]
+# P1-23 moved 16 cells 5.6 from n/a to computed and 16 cells 5.7 from n/a to
+# partial (32 fewer n/a). The pin is a snapshot of the record, not a target.
+check("record totals per kind (recomputed): extracted 406, n/a 205, computed 161, "
+      "partial 75, fetched 16, structured 1, verified 0, pending 0",
+      (tot["extracted"], tot["na"], tot["computed"], tot["partial"], tot["fetched"],
+       tot["structured"], tot["verified"], tot["pending"]) == (406, 205, 161, 75, 16, 1, 0, 0),
+      str(tot))
+c = coverage_summary("cion_ares")
+check("cion_ares: structured counts as resolved (structured 1, pending 0)",
+      c["structured"] == 1 and c["pending"] == 0)
+
+# 3. no product-count "six" copy on any surface or in the record
+SIX = re.compile(r"six (real )?products|six-product|six rows|six hundred|six wrappers", re.I)
+hits = []
+for pattern in ("site/js/*.js", "site/index.html", "app.py", "data/products/*.json",
+                "data/evidence/*.csv", "data/analytics/*.json", "data/roster_decisions.md"):
+    for f in BASE.glob(pattern):
+        for i, line in enumerate(f.read_text(errors="ignore").splitlines(), 1):
+            if SIX.search(line):
+                hits.append(f"{f.relative_to(BASE)}:{i}")
+check("no product-count 'six' string in site/, app.py or data/", not hits, "; ".join(hits[:5]))
+
+# 4. every non-raw data/ path a cell cites exists (raw paths are checked
+#    against the manifest by the validator, as warnings until P2-10)
+from tark_data import data_paths_in, load_product  # noqa: E402
+dangling = []
+for key in product_keys():
+    for cid, cell in load_product(key)["cells"].items():
+        for field in ("value", "source", "section", "quote"):
+            for pth in data_paths_in(str(cell.get(field) or "")):
+                if not pth.startswith("data/raw/") and not (BASE / pth).exists():
+                    dangling.append(f"{key}:{cid}:{pth}")
+check("every non-raw data/ path cited by a cell exists", not dangling, "; ".join(dangling[:5]))
+
+# 5. the frozen taxonomy file is gone (the build computes it)
+check("data/analytics/taxonomy.json no longer exists",
+      not (DATA / "analytics" / "taxonomy.json").exists())
+
+# offline accession resolution (P1-D prep): a resolved reference points at a
+# manifest row of the same product and form, with the manifest's own URL
+import csv as _csv  # noqa: E402
+import json as _json  # noqa: E402
+_man = list(_csv.DictReader(open(BASE / "data" / "manifest.csv", newline="")))
+_by_acc = {(r["product"], r["accession"]): r for r in _man}
+_bad, _n_res, _n_all = [], 0, 0
+for _p in sorted((BASE / "data" / "citations").glob("*.json")):
+    if _p.name == "summary.json":
+        continue
+    _doc = _json.loads(_p.read_text())
+    for _cid, _refs in _doc["cells"].items():
+        for _r in _refs:
+            _n_all += 1
+            if _r["match"] in ("exact", "form_only"):
+                _n_res += 1
+                _m = _by_acc.get((_doc["product"], _r["accession"]))
+                if not _m or _m["form"] != _r["form"] or _m["url"] != _r["url"]:
+                    _bad.append(f"{_doc['product']} {_cid}: {_r.get('accession')}")
+            elif _r["match"] in ("range", "set"):
+                _n_res += 1
+                for _f in _r["filings"]:
+                    _m = _by_acc.get((_doc["product"], _f["accession"]))
+                    if not _m or (_r["form"] != "*" and _m["form"] != _r["form"]) or _m["url"] != _f["url"]:
+                        _bad.append(f"{_doc['product']} {_cid}: range {_f['accession']}")
+            elif _r["match"] == "accession_in_text":
+                _n_res += 1
+                if _r["accession"] not in _r["text"] or _r["accession"].replace("-", "") not in _r["url"]:
+                    _bad.append(f"{_doc['product']} {_cid}: accession_in_text {_r['accession']}")
+            elif not _r.get("reason"):
+                _bad.append(f"{_doc['product']} {_cid}: {_r['match']} without a reason")
+_summary = _json.loads((BASE / "data" / "citations" / "summary.json").read_text())
+check("citations: every resolved reference is the same product's manifest row with its URL, "
+      f"every other one carries a reason ({_n_res} of {_n_all} resolved)", not _bad, "; ".join(_bad[:5]))
+check("citations: the summary counts equal the per-product files",
+      _summary["references"] == _n_all and sum(_summary["counts"].values()) == _n_all)
+
+# engine-owned cells restate their artifacts, never an older run
+import re as _re  # noqa: E402
+from tark_data import load_products as _lp, status_kind as _sk  # noqa: E402
+_bad18, _bad39 = [], []
+for _k, _p in _lp().items():
+    _c18 = _p["cells"]["1.8"]
+    _sp = BASE / "data" / "benchmarks" / f"{_k}_selection.json"
+    if _sk(_c18["status"]) == "computed" and _sp.exists():
+        _sel = _json.loads(_sp.read_text())
+        _comp = ((_sel.get("primary") or {}).get("comparison") or {})
+        _m = _re.search(r"KS-PME ([0-9.]+)", _c18["value"])
+        if _comp and (not _m or float(_m.group(1)) != _comp["ks_pme"]):
+            _bad18.append(f"{_k}: cell {_m.group(1) if _m else None} vs artifact {_comp['ks_pme']}")
+    _fx = _json.loads((BASE / "data" / "facts" / f"{_k}.json").read_text())["facts"]
+    _sv = (_fx.get("liquidity_structural_verdict") or {}).get("value")
+    if _sv and not _p["cells"]["3.9"]["value"].startswith(f"Structural liquidity verdict {_sv.upper()}"):
+        _bad39.append(_k)
+check("cell 1.8 states the selection artifact's primary KS-PME for every product with one", not _bad18,
+      "; ".join(_bad18[:4]))
+check("cell 3.9 opens with the typed structural verdict for every product", not _bad39, "; ".join(_bad39))
+
+# the authority parser reads what fetch_authority.py writes, letter by letter
+from tark_data import parse_authority as _pa, rule_ref as _rr, authority as _auth  # noqa: E402
+_sample = "# head\n\n## (g)\n\n> first para.\n>\n> second para.\n\n## (h)\n\n> third.\n"
+check("parse_authority: paragraphs keyed by letter, blockquote lines only",
+      _pa(_sample) == {"g": ["first para.", "second para."], "h": ["third."]})
+_a = _auth()
+check("rule_ref: paragraph letter follows the factor and the basis names the verbatim state",
+      _rr("3.4", _a)["para"] == "(i)" and _rr("6.6", _a)["advisor_completed"]
+      and not _rr("6.5", _a)["advisor_completed"]
+      and (("verbatim text in " in _rr("1.1", _a)["basis"]) == (_a["status"] == "fetched")))
+
+# P2-10: no laptop path anywhere under data/ (evidence, facts, notes, manifests)
+_lap = _re.compile(r"/private/tmp/|/Users/|/tmp/claude")
+_lap_hits = [str(_f.relative_to(BASE)) for _f in (BASE / "data").rglob("*")
+             if _f.is_file() and _f.suffix in (".csv", ".json", ".md") and _lap.search(_f.read_text(errors="ignore"))]
+check("no laptop path anywhere under data/", not _lap_hits, "; ".join(_lap_hits[:5]))
+
+# data/roster_decisions.md claims to be validator-enforced: every product key
+# in the record must be named in it
+from tark_data import product_keys as _product_keys  # noqa: E402
+_roster_md = (BASE / "data" / "roster_decisions.md").read_text()
+_missing = [k for k in _product_keys() if k not in _roster_md]
+check("data/roster_decisions.md names every product key in the record",
+      not _missing, ", ".join(_missing))
+
+print(f"\n{len(FAILS)} failure(s)." if FAILS else "\nAll invariants hold.")
+sys.exit(1 if FAILS else 0)

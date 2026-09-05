@@ -1,0 +1,512 @@
+{
+  "product": "sreit",
+  "what": "filing references in the evidence CSV resolved against data/manifest.csv, offline. exact: form and filed date (or written accession) match one held filing. range: every held filing of that form between the two written dates. set: every held filing of that form when the citation names them as a plural with no date. form_only: no date written, one such filing held. accession_in_text: the citation carries its own accession, not a held filing, URL is the EDGAR folder. ambiguous and unresolved: stated reason, no accession invented",
+  "cells": {
+    "1.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20) Item 5",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      },
+      {
+        "text": "424B3 Supplement No. 7 (dated 2026-08-14",
+        "form": "424B3",
+        "match": "exact",
+        "filing_date": "2026-08-14",
+        "accession": "0001193125-26-351388",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526351388/ck0001711929-20260813.htm",
+        "local_path": "data/raw/sreit/424B3_2026-08-14_ck0001711929-20260813.htm"
+      }
+    ],
+    "1.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20) MD&A '2025 Highlights'",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12) MD&A '2026 Highlights'",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      }
+    ],
+    "1.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "1.4": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20) MD&A Distributions",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12) Recent Developments and 2026 Highlights",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      }
+    ],
+    "1.5": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "1.10": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "1.11": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "2.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12) Note 10",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      }
+    ],
+    "2.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12) Note 10",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      }
+    ],
+    "2.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      }
+    ],
+    "2.4": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      }
+    ],
+    "2.5": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "2.6": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      }
+    ],
+    "2.7": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "3.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20) Item 5",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12) Note 9 and Part II Item 2",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      }
+    ],
+    "3.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "3.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20) Item 5 and cash-flow statement",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12) Part II Item 2 and Recent Developments",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      },
+      {
+        "text": "424B3 Supplement No. 7 (dated 2026-08-14",
+        "form": "424B3",
+        "match": "exact",
+        "filing_date": "2026-08-14",
+        "accession": "0001193125-26-351388",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526351388/ck0001711929-20260813.htm",
+        "local_path": "data/raw/sreit/424B3_2026-08-14_ck0001711929-20260813.htm"
+      }
+    ],
+    "3.4": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20) MD&A Liquidity and Capital Resources",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12) Note 6 and MD&A",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      }
+    ],
+    "3.6": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "4.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "4.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "4.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "4.4": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      }
+    ],
+    "4.5": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "4.6": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      }
+    ],
+    "5.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "6.1": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      }
+    ],
+    "6.2": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "6.3": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ],
+    "6.4": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      },
+      {
+        "text": "Form 10-Q Q2-2026 (filed 2026-08-12",
+        "form": "10-Q",
+        "match": "exact",
+        "filing_date": "2026-08-12",
+        "accession": "0001193125-26-346339",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526346339/ck0001711929-20260630.htm",
+        "local_path": "data/raw/sreit/10-Q_2026-08-12_ck0001711929-20260630.htm"
+      },
+      {
+        "text": "424B3 Supplement No. 7 (dated 2026-08-14",
+        "form": "424B3",
+        "match": "exact",
+        "filing_date": "2026-08-14",
+        "accession": "0001193125-26-351388",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526351388/ck0001711929-20260813.htm",
+        "local_path": "data/raw/sreit/424B3_2026-08-14_ck0001711929-20260813.htm"
+      }
+    ],
+    "6.5": [
+      {
+        "text": "Form 10-K FY2025 (filed 2026-03-20",
+        "form": "10-K",
+        "match": "exact",
+        "filing_date": "2026-03-20",
+        "accession": "0001193125-26-117060",
+        "url": "https://www.sec.gov/Archives/edgar/data/1711929/000119312526117060/ck0001711929-20251231.htm",
+        "local_path": "data/raw/sreit/10-K_2026-03-20_ck0001711929-20251231.htm"
+      }
+    ]
+  },
+  "counts": {
+    "exact": 49
+  }
+}

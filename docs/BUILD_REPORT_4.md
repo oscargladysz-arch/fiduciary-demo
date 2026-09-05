@@ -69,6 +69,12 @@ errors mid-build: breit's partial 2.2 and a mis-cited inception). New
 - **Lane C fed**: peer cohorts now score on real composites — private_credit
   peer reaches 7/12 (threshold) and is outranked at 9 — an honest near-miss
   retained in the ledger; venture's peer entry carries its refusal reason.
+  - **Superseded (2026-09).** The 2026-09-03 audit
+    (`docs/GAP_ANALYSIS_2026-09-03.md`, finding "Lane C composites are never
+    scored") found that the composites never entered `comparison_stats`:
+    the Lane C entries were fixed dicts with no series, so the scores above
+    were not computed from cohort returns. Lane C scoring is task P1-11 of
+    the remediation and `docs/BUILD_REPORT_6.md` records the outcome.
 - Selections at 14: arkvx gets the venture cohort's one real selection (PSP
   8/12); **ssss escalates exactly like dxyz** — and with **NSLR at −21.7%
   discount vs DXYZ's premium**, "benchmarking the price benchmarks the

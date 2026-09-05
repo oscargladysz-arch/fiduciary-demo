@@ -21,10 +21,41 @@ from __future__ import annotations
 
 import csv
 import json
+import os
+import re
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parents[1]
-DATA = BASE / "data"
+# TARK_DATA_DIR lets the freshness gate run the whole producer chain into a
+# scratch copy of the record and diff it against the committed artifacts.
+DATA = Path(os.environ.get("TARK_DATA_DIR") or (BASE / "data")).resolve()
+
+
+def record_as_of() -> str:
+    """The record's as-of date, stamped on every machine-written artifact
+    (memo date, computed cells, supplement). TARK_AS_OF overrides
+    data/as_of.json. Never the wall clock: producers must be reproducible so
+    the freshness gate can compare a fresh run against the committed files."""
+    v = os.environ.get("TARK_AS_OF", "").strip()
+    if v:
+        return v
+    p = DATA / "as_of.json"
+    if p.exists():
+        return json.loads(p.read_text())["record_as_of"]
+    raise SystemExit("record as-of date missing: set TARK_AS_OF or add "
+                     "data/as_of.json {\"record_as_of\": \"YYYY-MM-DD\"}")
+
+
+def sec_user_agent() -> str:
+    """Identified User-Agent for SEC and other fetchers. The contact comes
+    from the environment, never from source. SEC fair-access policy requires
+    a name and email, so the fetchers refuse to run without one."""
+    contact = os.environ.get("TARK_SEC_CONTACT", "").strip()
+    if not contact:
+        raise SystemExit("TARK_SEC_CONTACT is not set. Export it as "
+                         "'Your Name your@email' (SEC fair-access policy "
+                         "requires an identified User-Agent).")
+    return f"Tark research tool ({contact})"
 
 # ---------------------------------------------------------------- registry
 FACTORS = {
@@ -35,6 +66,80 @@ FACTORS = {
     "5": "Performance Benchmarks",
     "6": "Complexity",
 }
+
+# The one rule record every surface reads. Identifiers are those recorded
+# with their sources in docs/DECISIONS_2026-09.md (section 0). No sentence of
+# the regulation is paraphrased here: verbatim paragraphs come only from
+# data/authority/, written by src/fetch_authority.py from the Federal
+# Register text, and every surface says when that file is absent.
+RULE = {
+    "title": "Fiduciary Duties in Selecting Designated Investment Alternatives",
+    "issuer": "U.S. Department of Labor, Employee Benefits Security Administration",
+    "citation": "91 FR 16088 (Mar. 31, 2026)",
+    "rin": "RIN 1210-AC38",
+    "section": "proposed 29 CFR 2550.404a-6",
+    "paragraphs": "(g) to (l)",
+    "fr_document": "2026-06178",
+    "fr_url": ("https://www.federalregister.gov/documents/2026/03/31/2026-06178/"
+               "fiduciary-duties-in-selecting-designated-investment-alternatives"),
+    "docket": "EBSA-2026-0166",
+    "docket_url": "https://www.regulations.gov/docket/EBSA-2026-0166",
+}
+RULE_CITATION = f"{RULE['title']}, {RULE['citation']}, {RULE['rin']}, {RULE['section']}"
+# factor n maps to paragraph letter per the 2026-09-03 audit's check of the
+# Federal Register text (audit section 3, item on rule mapping)
+FACTOR_PARAS = {"1": "g", "2": "h", "3": "i", "4": "j", "5": "k", "6": "l"}
+# cells the adopting fiduciary completes for its own plan rather than the
+# record extracting them from filings
+ADVISOR_COMPLETED = ("6.6", "6.8")
+MAPPING_BASIS = ("factor order per the 2026-09-03 audit's check of 91 FR 16088, "
+                 "paragraphs (g) to (l) of proposed 29 CFR 2550.404a-6")
+
+
+def parse_authority(text: str) -> dict[str, list[str]]:
+    """{letter: [verbatim paragraphs]} from the markdown src/fetch_authority.py
+    writes: '## (g)' headings followed by '> ' blockquote lines."""
+    out: dict[str, list[str]] = {}
+    letter = None
+    for line in text.splitlines():
+        m = re.match(r"^## \(([a-z])\)\s*$", line)
+        if m:
+            letter = m.group(1)
+            out[letter] = []
+            continue
+        if letter and line.startswith("> ") and line[2:].strip():
+            out[letter].append(line[2:].strip())
+    return out
+
+
+def authority() -> dict:
+    """The verbatim regulatory text when fetched into this build, else the
+    not-fetched state. Never text from memory."""
+    d = DATA / "authority"
+    files = sorted(d.glob("*_proposed.md")) if d.exists() else []
+    if not files:
+        return {"status": "not fetched",
+                "note": ("verbatim regulatory text not yet fetched into this build: run "
+                         "python src/fetch_authority.py on a machine that reaches "
+                         "federalregister.gov"),
+                "file": None, "paragraphs": None}
+    paras = parse_authority(files[0].read_text())
+    return {"status": "fetched", "note": f"verbatim Federal Register text in {files[0].relative_to(BASE)}",
+            "file": str(files[0].relative_to(BASE)), "paragraphs": paras}
+
+
+def rule_ref(cid: str, auth: dict | None = None) -> dict:
+    """Where a cell sits in the rule: paragraph letter, the basis for that
+    mapping, and whether the adopting fiduciary completes the cell."""
+    auth = auth or authority()
+    letter = FACTOR_PARAS[cid.split(".")[0]]
+    verbatim = auth["status"] == "fetched"
+    return {"para": f"({letter})",
+            "basis": MAPPING_BASIS + (", verbatim text in " + auth["file"] if verbatim
+                                      else ", verbatim text not in this build"),
+            "verbatim": verbatim,
+            "advisor_completed": cid in ADVISOR_COMPLETED}
+
 
 CELLS = {
     "1.1": "Net total return series", "1.2": "Trailing & calendar-year returns",
@@ -71,13 +176,65 @@ CELLS = {
 # status vocabulary is prefix-based: the wild data legitimately contains
 # refinements like "pending-verify" and "fetched-series, extraction pending"
 STATUS_PREFIXES = ("pending", "partial", "extracted", "verified",
-                   "structured", "computed", "fetched", "n/a")
+                   "structured", "computed", "fetched", "n/a", "advisor-stated")
+
+# the six cells the adopting fiduciary states for its own plan (P2-6). They
+# live in data/advisor/<plan>__<product>.json with a signer and a date, never
+# in the evidence CSVs: an advisor statement is an input, not evidence.
+ADVISOR_STATED_CELLS = ("6.6", "6.8", "3.7", "2.8", "3.5", "4.9")
+ADVISOR_NOT_EVIDENCE = ("An advisor-stated cell is the adopting fiduciary's own input for its plan, "
+                        "signed and dated. It is not evidence, it is never extracted or verified, "
+                        "and the product record's cell stays as it is.")
+
+
+def advisor_path(plan_key: str, product_key: str) -> Path:
+    return DATA / "advisor" / f"{plan_key}__{product_key}.json"
+
+
+def load_advisor(plan_key: str, product_key: str) -> dict | None:
+    p = advisor_path(plan_key, product_key)
+    return json.loads(p.read_text()) if p.exists() else None
+
+
+def advisor_entries() -> dict[str, dict]:
+    """{"<plan>__<product>": file} for every advisor file on disk."""
+    d = DATA / "advisor"
+    if not d.exists():
+        return {}
+    return {p.stem: json.loads(p.read_text()) for p in sorted(d.glob("*__*.json"))}
+
+
+def validate_advisor() -> list[str]:
+    """Every advisor file: a known plan and product, only the six cells, each
+    entry with value, signer, ISO date and the advisor-stated status."""
+    errs: list[str] = []
+    plans, products = set(plan_keys()), set(product_keys())
+    for stem, doc in advisor_entries().items():
+        plan, _, prod = stem.partition("__")
+        if plan not in plans or prod not in products:
+            errs.append(f"advisor {stem}: unknown plan or product")
+        if doc.get("plan") != plan or doc.get("product") != prod:
+            errs.append(f"advisor {stem}: plan or product inside the file differs from its name")
+        for cid, e in (doc.get("cells") or {}).items():
+            if cid not in ADVISOR_STATED_CELLS:
+                errs.append(f"advisor {stem}: cell {cid} is not an advisor-stated cell")
+            if not str(e.get("value") or "").strip():
+                errs.append(f"advisor {stem}: cell {cid} has no value")
+            if not str(e.get("signer") or "").strip():
+                errs.append(f"advisor {stem}: cell {cid} has no signer")
+            if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(e.get("date") or "")):
+                errs.append(f"advisor {stem}: cell {cid} date is not ISO")
+            if not str(e.get("status") or "").startswith("advisor-stated"):
+                errs.append(f"advisor {stem}: cell {cid} status must start with advisor-stated")
+        if not (doc.get("cells") or {}):
+            errs.append(f"advisor {stem}: no cells stated")
+    return errs
 
 SERIES_COLUMNS = ["date", "close", "adj_close"]
 
 EVIDENCE_COLUMNS = [
     "cell_id", "element", "value", "source_doc", "source_section", "quote",
-    "local_file", "date_pulled", "extracted_by", "verified_by", "status",
+    "local_file", "accession", "date_pulled", "extracted_by", "verified_by", "status",
 ]
 
 
@@ -179,6 +336,12 @@ def validate_product(key: str) -> list[str]:
             errs.append(f"{key}: missing top-level key '{req}'")
     if p.get("product_key") != key:
         errs.append(f"{key}: product_key mismatch ('{p.get('product_key')}')")
+    # one type for the CIK everywhere: a digit string (the census keys its
+    # entities by the same string, and a mixed int/str column breaks the
+    # Streamlit roster table's Arrow conversion)
+    cik = p.get("cik")
+    if not (isinstance(cik, str) and cik.isdigit() and 1 <= len(cik) <= 10):
+        errs.append(f"{key}: cik must be a string of digits, got {cik!r}")
 
     cells = p.get("cells", {})
     missing = sorted(set(CELLS) - set(cells))
@@ -196,6 +359,8 @@ def validate_product(key: str) -> list[str]:
         st = cell.get("status", "")
         if status_kind(st) == "unknown":
             errs.append(f"{key}:{cid}: unknown status '{st}'")
+        if status_kind(st) == "advisor-stated":
+            errs.append(f"{key}:{cid}: advisor-stated is not an evidence status, it lives in data/advisor/")
         if status_kind(st) in ("extracted", "verified", "computed",
                               "structured") and not cell.get("value"):
             errs.append(f"{key}:{cid}: status '{st}' but no value")
@@ -206,6 +371,28 @@ def validate_product(key: str) -> list[str]:
                               "structured") and not str(cell.get("extracted_by", "")).strip():
             errs.append(f"{key}:{cid}: status '{st}' but empty extracted_by "
                         f"(provenance is part of the record)")
+
+    # every data/ path a cell cites must resolve. Non-raw paths must exist in
+    # the repo (hard error). data/raw/ is gitignored, so a raw path is checked
+    # against data/manifest.csv local_path (a warning until P2-10 makes the
+    # ledger complete). Paths may contain spaces (SEC primary documents such
+    # as "SC TO-I_...") and may be directories.
+    for cid, cell in cells.items():
+        if cid not in CELLS:
+            continue
+        st = cell.get("status", "")      # this cell's status, not the previous loop's
+        if status_kind(st) == "partial" and str(cell.get("value") or "").strip():
+            if not str(cell.get("source") or "").strip():
+                errs.append(f"{key}:{cid}: partial with a value but no source")
+            if not str(cell.get("extracted_by") or "").strip():
+                errs.append(f"{key}:{cid}: partial with a value but empty extracted_by")
+        for field in ("value", "source", "section", "quote"):
+            for pth in data_paths_in(str(cell.get(field) or "")):
+                if pth.startswith("data/raw/"):
+                    continue   # reported by data_path_warnings()
+                if not (BASE / pth).exists():
+                    errs.append(f"{key}:{cid}: {field} cites {pth}, which does "
+                                f"not exist")
 
     # evidence CSV cross-check
     try:
@@ -219,12 +406,59 @@ def validate_product(key: str) -> list[str]:
     if sorted(ev_ids) != sorted(CELLS):
         errs.append(f"{key}: evidence CSV cell set differs from registry "
                     f"({len(ev_ids)} rows)")
+    # the JSON cell and the CSV row are one record in two stores: every
+    # field must agree, not only the status (33 extracted_by drifts shipped
+    # before this check existed)
+    FIELD_PAIRS = (("value", "value"), ("source", "source_doc"),
+                   ("section", "source_section"), ("quote", "quote"),
+                   ("extracted_by", "extracted_by"),
+                   ("verified_by", "verified_by"))
     for r in ev:
         cid = r["cell_id"]
-        if cid in cells and r["status"] != cells[cid].get("status"):
-            errs.append(f"{key}:{cid}: status drift JSON='{cells[cid].get('status')}' "
+        if cid not in cells:
+            continue
+        c = cells[cid]
+        if r["status"] != c.get("status"):
+            errs.append(f"{key}:{cid}: status drift JSON='{c.get('status')}' "
                         f"CSV='{r['status']}'")
+        for jf, cf in FIELD_PAIRS:
+            if str(c.get(jf) or "").strip() != str(r.get(cf) or "").strip():
+                errs.append(f"{key}:{cid}: {jf} differs between JSON and CSV")
     return errs
+
+
+DATA_PATH_RE = re.compile(
+    r"data/(?:[A-Za-z0-9_.\-]+/)*"                      # directories
+    r"(?:[A-Za-z0-9_.\- ]*?\.(?:htm|html|csv|json|md|txt|pdf|xml)"  # a file
+    r"|(?=[\s,;:)\]'\"]|$))")                             # or a bare directory
+
+
+def data_paths_in(text: str) -> list[str]:
+    """Every data/... path token in a prose or source string."""
+    out = []
+    for m in DATA_PATH_RE.finditer(text):
+        tok = m.group(0).rstrip(".")
+        if tok and tok != "data/":
+            out.append(tok)
+    return out
+
+
+def data_path_warnings() -> list[str]:
+    """Raw-filing citations that no manifest row covers. Errors since P2-10:
+    the manifest is the ledger of every filing on disk."""
+    man = {r["local_path"] for r in load_manifest()}
+    dirs = {p.rsplit("/", 1)[0] + "/" for p in man}
+    out = []
+    for key in product_keys():
+        for cid, cell in load_product(key)["cells"].items():
+            for field in ("value", "source", "section", "quote"):
+                for pth in data_paths_in(str(cell.get(field) or "")):
+                    if not pth.startswith("data/raw/"):
+                        continue
+                    if pth in man or pth in dirs or any(pth.startswith(d) for d in dirs):
+                        continue
+                    out.append(f"{key}:{cid}: {field} cites {pth}, not in data/manifest.csv")
+    return out
 
 
 def validate_plan(key: str) -> list[str]:
@@ -233,10 +467,22 @@ def validate_plan(key: str) -> list[str]:
         a = load_plan(key)
     except Exception as e:  # noqa: BLE001
         return [f"{key}: cannot load ({e})"]
-    for req in ("display_label", "identity_private", "participants",
-                "financials", "derived", "source"):
+    for req in ("display_label", "participants", "financials", "derived", "source",
+                "plan_characteristics"):
         if req not in a:
             errs.append(f"{key}: missing '{req}'")
+    # a reference plan carries its identity block (sponsor tokens the build
+    # screens for), an intake plan carries an anonymization label instead
+    if "identity_private" not in a:
+        lab = str(a.get("anonymization_label") or "").strip()
+        if not lab:
+            errs.append(f"{key}: no identity_private and no anonymization_label")
+        elif lab != str(a.get("display_label") or "").strip():
+            errs.append(f"{key}: anonymization_label must equal display_label")
+    if a.get("plan_key") not in (None, key):
+        errs.append(f"{key}: plan_key inside the file is {a.get('plan_key')!r}")
+    if not str((a.get("plan_characteristics") or {}).get("pension_benefit_codes") or "").strip():
+        errs.append(f"{key}: plan_characteristics.pension_benefit_codes missing (plan direction reads it)")
     fin, part, der = a.get("financials", {}), a.get("participants", {}), a.get("derived", {})
     net = fin.get("net_assets_eoy")
     bal = part.get("with_account_balances")
@@ -253,6 +499,21 @@ def validate_plan(key: str) -> list[str]:
         recomputed = round(adm / net * 100, 3)
         if abs(recomputed - (der.get("admin_expense_ratio_pct") or 0)) > 0.001:
             errs.append(f"{key}: admin_expense_ratio drift")
+    # Schedule H fields (P1-18): present as records, null only with a reason,
+    # a value only with a source
+    sh = a.get("schedule_h")
+    if not isinstance(sh, dict):
+        errs.append(f"{key}: missing 'schedule_h' block")
+    else:
+        for fld in ("benefit_payments_2e", "participant_contributions_2a1b", "qdia_indicator"):
+            rec = sh.get(fld)
+            if not isinstance(rec, dict):
+                errs.append(f"{key}: schedule_h.{fld} missing or not a record")
+                continue
+            if rec.get("value") is None and not rec.get("reason"):
+                errs.append(f"{key}: schedule_h.{fld} is null without a reason")
+            if rec.get("value") is not None and not rec.get("source"):
+                errs.append(f"{key}: schedule_h.{fld} has a value without a source")
     return errs
 
 
@@ -286,6 +547,58 @@ def validate_series() -> list[str]:
         if any(c <= 0 for _, c in s_close) or any(a <= 0 for _, a in s_adj):
             errs.append(f"series {t}: non-positive values present")
     return errs
+
+
+# ------------------------------------------------------------- coverage
+COVERAGE_KINDS = ("structured", "extracted", "verified", "computed", "partial",
+                  "fetched", "na", "pending")
+
+
+def coverage_summary(key: str) -> dict:
+    """The ONE coverage formula (coverage.py, build_site.py and app.py all
+    call this). Counts per status kind, never one merged number: structured
+    is T1, extracted is T2, verified is T3, computed is the pipeline's own
+    output, partial and fetched are soft, n/a is documented-unavailable and
+    stays in the denominator as its own segment. `resolvable` = cells that
+    are not n/a; `resolved` = resolvable cells that carry content."""
+    c = {k: 0 for k in COVERAGE_KINDS}
+    for row in load_evidence(key):
+        kind = status_kind(row["status"])
+        kind = "na" if kind == "n/a" else kind
+        c[kind if kind in c else "pending"] += 1
+    total = sum(c.values())
+    resolvable = total - c["na"]
+    resolved = resolvable - c["pending"]
+    c.update({
+        "total": total, "resolvable": resolvable, "resolved": resolved,
+        "resolved_pct": round(resolved / resolvable * 100) if resolvable else 0,
+        "headline": (f"{resolved} of {resolvable} resolvable, {c['verified']} verified, "
+                     f"{c['na']} n/a by wrapper"
+                     + (f", {c['pending']} pending" if c["pending"] else "")),
+    })
+    return c
+
+
+def coverage_totals() -> dict:
+    """Record-wide per-kind counts plus the one-line taxonomy the Coverage
+    view prints. Computed from the live record on every build."""
+    tot = {k: 0 for k in COVERAGE_KINDS}
+    for key in product_keys():
+        c = coverage_summary(key)
+        for k in COVERAGE_KINDS:
+            tot[k] += c[k]
+    total = sum(tot.values())
+    na = tot["na"]
+    resolvable = total - na
+    resolved = resolvable - tot["pending"]
+    line = (f"{resolved} of {resolvable} resolvable cells resolved · "
+            f"{tot['structured']} structured (T1) · {tot['extracted']} "
+            f"extracted-unverified (T2) · {tot['verified']} verified (T3) · "
+            f"{tot['computed']} computed · {tot['partial'] + tot['fetched']} "
+            f"partial · {na} documented n/a · {tot['pending']} pending")
+    return {"counts": tot, "total": total, "resolvable": resolvable,
+            "resolved": resolved, "line": line,
+            "products": len(product_keys())}
 
 
 # statuses a non-null structured fact may cite (invariant: the screener layer
@@ -353,10 +666,111 @@ def validate_facts() -> list[str]:
     return errs
 
 
+# return-input kinds the benchmark engine reads: a daily or monthly series, a
+# printed fiscal-year return list, a disclosed annualized figure (aatr, or
+# aatr_5yr when the disclosure is a five-year figure), or none
+HELD_RETURN_KINDS = ("series", "fy_returns", "aatr", "aatr_5yr", "none")
+REGISTRY_FIELDS = ("cohort", "strategy", "asset_class", "sub_strategy", "wrapper_type",
+                   "pricing_class", "nav_cadence", "leverage_regime", "held_returns",
+                   "advisers", "adviser_keys", "declared_benchmarks", "source_cells",
+                   "as_of", "depth", "membership_rationale", "filings")
+
+
+def validate_registry() -> list[str]:
+    """The one product registry: same product set as data/products, every
+    typed field present with its source named, cohorts consistent."""
+    from tark_display import WRAPPER_LABEL
+    errs: list[str] = []
+    path = DATA / "registry.json"
+    if not path.exists():
+        return ["data/registry.json missing"]
+    reg = json.loads(path.read_text())
+    prods = reg.get("products", {})
+    keys = set(product_keys())
+    if set(prods) != keys:
+        errs.append(f"registry product set differs from data/products: only in registry "
+                    f"{sorted(set(prods) - keys)}, only in products {sorted(keys - set(prods))}")
+    cohorts = reg.get("cohorts", {})
+    for k, d in prods.items():
+        for f in REGISTRY_FIELDS:
+            if f not in d:
+                errs.append(f"registry {k}: field {f} missing")
+            elif d[f] in (None, "", [], {}) and f != "declared_benchmarks":
+                errs.append(f"registry {k}: field {f} empty")
+        if not d.get("declared_benchmarks") and not d.get("declared_none_reason"):
+            errs.append(f"registry {k}: no declared benchmark and no declared_none_reason")
+        if d.get("wrapper_type") not in WRAPPER_LABEL:
+            errs.append(f"registry {k}: wrapper_type {d.get('wrapper_type')!r} not in the vocabulary")
+        if d.get("pricing_class") not in ("NAV", "MARKET"):
+            errs.append(f"registry {k}: pricing_class must be NAV or MARKET")
+        if d.get("depth") not in ("full", "cohort"):
+            errs.append(f"registry {k}: depth must be full or cohort")
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(d.get("as_of", ""))):
+            errs.append(f"registry {k}: as_of is not an ISO date")
+        c = cohorts.get(d.get("cohort"))
+        if c is None:
+            errs.append(f"registry {k}: cohort {d.get('cohort')!r} has no entry in registry cohorts")
+        elif k not in c.get("members", []):
+            errs.append(f"registry {k}: not listed among the members of cohort {d['cohort']}")
+        if (d.get("held_returns") or {}).get("kind") not in HELD_RETURN_KINDS:
+            errs.append(f"registry {k}: held_returns.kind {(d.get('held_returns') or {}).get('kind')!r} "
+                        f"not one of {HELD_RETURN_KINDS}")
+        for f in ("asset_class", "sub_strategy", "pricing_class", "leverage_regime", "nav_cadence",
+                  "as_of", "depth", "membership_rationale", "filings"):
+            if f not in (d.get("sources") or {}):
+                errs.append(f"registry {k}: no source named for {f}")
+    for cid, c in cohorts.items():
+        for m in c.get("members", []):
+            if prods.get(m, {}).get("cohort") != cid:
+                errs.append(f"registry cohort {cid}: member {m} does not name this cohort")
+        if not c.get("members"):
+            errs.append(f"registry cohort {cid}: no member")
+    return errs
+
+
+ACCESSION_RE = re.compile(r"\d{10}-\d{2}-\d{6}")
+LAPTOP_RE = re.compile(r"/private/tmp/|/Users/|/tmp/claude")
+
+
+def validate_accessions() -> list[str]:
+    """The accession column of every evidence row: empty, one accession the
+    manifest holds for that product (or one written in the citation itself),
+    or a pointer to the citations file for a set. No laptop path anywhere."""
+    errs: list[str] = []
+    by_prod: dict[str, set[str]] = {}
+    for r in load_manifest():
+        by_prod.setdefault(r["product"], set()).add(r["accession"])
+    for key in product_keys():
+        for r in load_evidence(key):
+            acc = (r.get("accession") or "").strip()
+            if acc and not acc.startswith("multiple ("):
+                if not ACCESSION_RE.fullmatch(acc):
+                    errs.append(f"{key}:{r['cell_id']}: accession {acc!r} is not an accession number")
+                elif acc not in by_prod.get(key, set()) and acc not in (r.get("source_doc") or ""):
+                    errs.append(f"{key}:{r['cell_id']}: accession {acc} is neither a manifest row for this "
+                                "product nor written in its citation")
+            for col in EVIDENCE_COLUMNS:
+                if LAPTOP_RE.search(r.get(col) or ""):
+                    errs.append(f"{key}:{r['cell_id']}: {col} carries a laptop path")
+    return errs
+
+
 def validate_all() -> dict[str, list[str]]:
     report = {k: validate_product(k) for k in product_keys()}
+    report["registry"] = validate_registry()
+    report["advisor"] = validate_advisor()
+    report["raw_paths"] = data_path_warnings()
+    report["accessions"] = validate_accessions()
     for pk in plan_keys():
         report[f"plan:{pk}"] = validate_plan(pk)
     report["series"] = validate_series()
     report["facts"] = validate_facts()
     return report
+
+
+def validate_warnings() -> dict[str, list[str]]:
+    """Non-fatal findings the validator prints but does not fail on."""
+    # raw-path citations became errors in P2-10 (validate_all raw_paths)
+    return {}
+
+

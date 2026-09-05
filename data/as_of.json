@@ -1,0 +1,7 @@
+{
+  "record_as_of": "2026-09-04",
+  "what": "The as-of date stamped on machine-written artifacts (memo date, computed cells, supplement). Bump it when the record changes. Producers never use the wall clock, so python src/produce.py is reproducible and src/test_artifacts_fresh.py can diff a fresh run against the committed files.",
+  "history": [
+    {"record_as_of": "2026-09-04", "reason": "remediation of the 2026-09-03 audit: first deterministic regeneration"}
+  ]
+}
