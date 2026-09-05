@@ -165,15 +165,28 @@
       "source_cell": "5.3",
       "status": "computed"
     },
-    "pme_primary": {
+    "pme_public_proxy": {
       "value": 1.1089,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "KS-PME vs BKLN over 2018-07-18 to 2026-07-17, fund return source: Yahoo adjusted close, approximates NAV total return"
+    },
+    "pme_public_proxy_name": {
+      "value": "BKLN",
       "source_cell": "1.8",
       "status": "computed"
     },
-    "direct_alpha_primary": {
+    "direct_alpha_public_proxy": {
       "value": 1.3,
       "source_cell": "1.8",
-      "status": "computed"
+      "status": "computed",
+      "note": "KS-PME vs BKLN over 2018-07-18 to 2026-07-17, fund return source: Yahoo adjusted close, approximates NAV total return"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": 0.9799,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "relative wealth ratio vs private credit peer composite over FY2021 to FY2025, fund return source: filed fiscal-year returns. Not a public market equivalent"
     }
   }
 }

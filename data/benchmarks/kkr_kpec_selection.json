@@ -33,6 +33,9 @@
     ],
     "comparison": {
       "kind": "series",
+      "statistic": "KS-PME vs public market proxy",
+      "comparator_kind": "public market series (exchange-traded proxy, Yahoo adjusted close)",
+      "fund_return_source": "disclosed annualized figure (cell 1.2)",
       "window": "2023-09-01 to 2025-12-31",
       "window_note": "",
       "fund_window": "2023-09-01 to 2025-12-31",

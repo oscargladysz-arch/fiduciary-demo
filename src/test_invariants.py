@@ -166,14 +166,20 @@ for _k, _p in _lp().items():
     if _sk(_c18["status"]) == "computed" and _sp.exists():
         _sel = _json.loads(_sp.read_text())
         _comp = ((_sel.get("primary") or {}).get("comparison") or {})
-        _m = _re.search(r"KS-PME ([0-9.]+)", _c18["value"])
-        if _comp and (not _m or float(_m.group(1)) != _comp["ks_pme"]):
-            _bad18.append(f"{_k}: cell {_m.group(1) if _m else None} vs artifact {_comp['ks_pme']}")
+        if _comp.get("kind") == "composite":
+            _m = _re.search(r"relative wealth ratio ([0-9.]+)", _c18["value"])
+            _want = _comp["relative_wealth_ratio"]
+        else:
+            _m = _re.search(r"KS-PME ([0-9.]+)", _c18["value"])
+            _want = _comp.get("ks_pme")
+        if _comp and (not _m or float(_m.group(1)) != _want):
+            _bad18.append(f"{_k}: cell {_m.group(1) if _m else None} vs artifact {_want}")
     _fx = _json.loads((BASE / "data" / "facts" / f"{_k}.json").read_text())["facts"]
     _sv = (_fx.get("liquidity_structural_verdict") or {}).get("value")
     if _sv and not _p["cells"]["3.9"]["value"].startswith(f"Structural liquidity verdict {_sv.upper()}"):
         _bad39.append(_k)
-check("cell 1.8 states the selection artifact's primary KS-PME for every product with one", not _bad18,
+check("cell 1.8 states the selection artifact's primary statistic (KS-PME for a public proxy, relative wealth "
+      "ratio for the peer composite) for every product with one", not _bad18,
       "; ".join(_bad18[:4]))
 check("cell 3.9 opens with the typed structural verdict for every product", not _bad39, "; ".join(_bad39))
 

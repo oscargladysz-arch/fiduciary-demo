@@ -505,8 +505,19 @@ def comparison_stats(profile: dict, cand: dict) -> dict | None:
     if years is None:
         years = year_frac(d0, d1)
     flows = [(d0, -1.0), (d1, f_growth)]
+    # the fund side of a public-proxy comparison comes from one of three
+    # sources, named on every surface that prints the return (R2-P0-6)
+    if profile.get("series"):
+        source = "Yahoo adjusted close, approximates NAV total return"
+    elif profile.get("fy_returns"):
+        source = "filed fiscal-year returns"
+    else:
+        source = "disclosed annualized figure (cell 1.2)"
     return {
         "kind": "series",
+        "statistic": "KS-PME vs public market proxy",
+        "comparator_kind": "public market series (exchange-traded proxy, Yahoo adjusted close)",
+        "fund_return_source": source,
         "window": f"{d0} to {d1}",
         "window_note": note,
         "fund_window": f"{fund_window[0]} to {fund_window[1]}",
@@ -561,8 +572,18 @@ def composite_comparison(profile: dict, cand: dict) -> dict | None:
              + (f", the fund's in month {subject_m}" if diff else ", the same month as the fund's")
              + (f". Composite year(s) {', '.join(skipped)} skipped: the fund has no whole fiscal year "
                 "with that label (stub or partial period excluded)" if skipped else ""))
+    # a peer composite is appraisal-based and cannot be bought, so the
+    # statistic is a relative wealth ratio (fund growth / composite growth
+    # over the same fiscal years) and an annualized excess return. It is
+    # never called a PME (R2-P0-6, rule 12, audit round 2 item 11).
+    ratio = f_growth / i_growth
     return {
         "kind": "composite",
+        "statistic": "relative wealth ratio vs peer composite",
+        "comparator_kind": "appraisal-based peer composite constructed by the evaluator, not a market series",
+        "fund_return_source": "filed fiscal-year returns",
+        "not_pme_note": ("Not a public market equivalent: the peer composite is appraisal-based, "
+                         "constructed by the evaluator and cannot be bought."),
         "window": f"FY{years[0]} to FY{years[-1]}",
         "window_note": f"{len(years)} overlapping fiscal year(s) of {len(cand['rows'])} composite years",
         "fund_window": f"FY{min(fund)} to FY{max(fund)}",
@@ -571,8 +592,8 @@ def composite_comparison(profile: dict, cand: dict) -> dict | None:
         "composite_rows": [comp_by_year[y] for y in years],
         "fund_growth_x": round(f_growth, 4),
         "index_growth_x": round(i_growth, 4),
-        "ks_pme": round(ks_pme(flows, levels), 4),
-        "direct_alpha_pct": round((direct_alpha(flows, levels) or 0) * 100, 2),
+        "relative_wealth_ratio": round(ratio, 4),
+        "excess_return_pct": round((ratio ** (1 / yrs) - 1) * 100, 2),
         "fund_ann_pct": round((f_growth ** (1 / yrs) - 1) * 100, 2),
         "index_ann_pct": round((i_growth ** (1 / yrs) - 1) * 100, 2),
         "low_confidence": low_confidence(len(years), "fiscal-year"),

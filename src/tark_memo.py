@@ -482,12 +482,28 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
                 doc.add_paragraph("Comparison not computable on held data: "
                                   f"{s['comparison_note']}. The candidate is scored on "
                                   "its own descriptors.")
-            if comp:
+            if comp and comp["kind"] == "composite":
+                # a peer composite is not a market series: the statistic is a
+                # relative wealth ratio, never a PME (R2-P0-6, rule 12)
+                doc.add_paragraph(
+                    f"Window {comp['window']} ({comp['window_note']}): fund {comp['fund_ann_pct']}%/yr "
+                    f"({comp['fund_return_source']}) vs peer composite {comp['index_ann_pct']}%/yr, "
+                    f"relative wealth ratio {comp['relative_wealth_ratio']}, annualized excess return "
+                    f"{comp['excess_return_pct']}%/yr. {comp['not_pme_note']} Disclosure: ratios on "
+                    "appraisal-lagged NAVs are window-sensitive and can be smoothing-flattered."
+                    + (f" {comp['low_confidence'][0].upper()}{comp['low_confidence'][1:]}."
+                       if comp.get("low_confidence") else ""))
+                doc.add_paragraph("Alignment: " + comp["alignment_note"].rstrip(".") + ".")
+                doc.add_paragraph(
+                    "Two-point comparison: one contribution at the window start and one valuation "
+                    "at the end, on the fund's fiscal year-end dates. The ratio is fund growth divided "
+                    "by the composite's growth over the same fiscal years.")
+            elif comp:
                 doc.add_paragraph(
                     f"Window {comp['window']}"
                     f"{(' (' + comp['window_note'] + ')') if comp.get('window_note') else ''}"
-                    f": fund {comp['fund_ann_pct']}%/yr "
-                    f"vs benchmark {comp['index_ann_pct']}%/yr, "
+                    f": fund {comp['fund_ann_pct']}%/yr ({comp['fund_return_source']}) "
+                    f"vs public proxy {comp['index_ann_pct']}%/yr, "
                     f"KS-PME {comp['ks_pme']}, Direct Alpha "
                     f"{comp['direct_alpha_pct']}%/yr. Disclosure: PME and "
                     "alpha computed on appraisal-lagged NAVs are "

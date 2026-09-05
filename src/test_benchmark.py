@@ -184,9 +184,17 @@ check_true("CCLFX primary is the leave-one-out peer composite (9/12), BKLN secon
 check_true("CDLI rejected for cliffwater_cclfx with the adviser-owned reasoning",
            any(r["id"] == "cdli" and any("manufacturer-owned" in x for x in r["reasons"])
                for r in sel_c["rejected"]))
-check_true("CCLFX primary carries a computed composite comparison",
+check_true("CCLFX primary carries a computed composite comparison named a relative wealth ratio, never a PME",
            (sel_c["primary"].get("comparison") or {}).get("kind") == "composite"
-           and sel_c["primary"]["comparison"]["ks_pme"] > 0)
+           and sel_c["primary"]["comparison"]["relative_wealth_ratio"] > 0
+           and "ks_pme" not in sel_c["primary"]["comparison"]
+           and "direct_alpha_pct" not in sel_c["primary"]["comparison"]
+           and sel_c["primary"]["comparison"]["statistic"] == "relative wealth ratio vs peer composite"
+           and sel_c["primary"]["comparison"]["fund_return_source"] == "filed fiscal-year returns")
+check_true("CCLFX secondary (BKLN) is a KS-PME against a public market series with the Yahoo source named",
+           sel_c["secondary"]["comparison"]["kind"] == "series"
+           and sel_c["secondary"]["comparison"]["statistic"] == "KS-PME vs public market proxy"
+           and sel_c["secondary"]["comparison"]["fund_return_source"].startswith("Yahoo adjusted close"))
 sel_d = run_selection("dxyz")
 check_true("DXYZ returns NO primary (the flag path)", sel_d["primary"] is None)
 check_true("DXYZ escalates with a reasoned message",
@@ -317,9 +325,17 @@ for sp in sorted(bench_dir.glob("*_selection.json")):
             d0, d1 = comp["window"].split(" to ")
             if not (ser[0][0] <= d0 < d1 <= ser[-1][0]):
                 outside.append(f"{key}/{slot}: {comp['window']} vs {ser[0][0]}..{ser[-1][0]}")
-        if abs(comp["ks_pme"] - comp["fund_growth_x"] / comp["index_growth_x"]) > 2e-3:
-            broken_identity.append(f"{key}/{slot}: {comp['ks_pme']} vs "
+        stat = comp["ks_pme"] if comp["kind"] == "series" else comp["relative_wealth_ratio"]
+        if abs(stat - comp["fund_growth_x"] / comp["index_growth_x"]) > 2e-3:
+            broken_identity.append(f"{key}/{slot}: {stat} vs "
                                    f"{comp['fund_growth_x']}/{comp['index_growth_x']}")
+        # rule 12: the keys and the statistic name follow the comparator
+        if comp["kind"] == "composite" and ("ks_pme" in comp or "direct_alpha_pct" in comp
+                                            or not comp["statistic"].startswith("relative wealth ratio")
+                                            or "PME" in json.dumps({k2: v for k2, v in comp.items() if k2 != "not_pme_note"})):
+            broken_identity.append(f"{key}/{slot}: composite comparison carries a PME name")
+        if comp["kind"] == "series" and not (comp["statistic"].startswith("KS-PME") and comp.get("fund_return_source")):
+            broken_identity.append(f"{key}/{slot}: series comparison lacks its statistic name or fund return source")
         if key in DISCLOSED_ANNUALIZED and comp.get("kind") == "series":
             if abs(comp["fund_ann_pct"] - DISCLOSED_ANNUALIZED[key]) > 0.005:
                 ann_bad.append(f"{key}/{slot}: disclosed {DISCLOSED_ANNUALIZED[key]} printed as {comp['fund_ann_pct']}")
@@ -339,7 +355,8 @@ for sp in sorted(bench_dir.glob("*_selection.json")):
             sched_bad.append(f"{key}/{slot}: schedule row malformed")
 check_true("every committed series comparison window lies inside its proxy's coverage"
            + (": " + "; ".join(outside) if outside else ""), not outside)
-check_true("two-point identity: KS-PME equals fund growth over index growth on every committed comparison"
+check_true("two-point identity: the statistic equals fund growth over comparator growth on every committed comparison, "
+           "and it is named for its comparator (rule 12)"
            + (": " + "; ".join(broken_identity) if broken_identity else ""), not broken_identity)
 check_true("annualized figures are the day count of the effective window (disclosed figures print as disclosed)"
            + (": " + "; ".join(ann_bad) if ann_bad else ""), not ann_bad)

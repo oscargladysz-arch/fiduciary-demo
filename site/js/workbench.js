@@ -70,10 +70,12 @@ const COLS = [
       (v) => v === "K-1")],
   ["big4", "Big-4 audit", (k) => factCell(k, fact(k, "big4"),
       (v) => v ? "yes" : "no")],
-  ["pme", "KS-PME", (k) => factCell(k, fact(k, "pme_primary"),
+  ["pme", "KS-PME vs public proxy", (k) => factCell(k, fact(k, "pme_public_proxy"),
       (v) => v.toFixed(4))],
-  ["alpha", "Direct Alpha", (k) => factCell(k, fact(k, "direct_alpha_primary"),
+  ["alpha", "Direct Alpha vs public proxy", (k) => factCell(k, fact(k, "direct_alpha_public_proxy"),
       (v) => v.toFixed(2) + "%/yr")],
+  ["peer", "Peer relative wealth ratio", (k) => factCell(k, fact(k, "peer_relative_wealth_ratio"),
+      (v) => v.toFixed(4))],
   ["score", "Engine score", (k) => factCell(k, fact(k, "selection_score"),
       (v) => v + "/12")],
   ["verdict", "Liquidity (structural)", (k) => {
@@ -88,8 +90,9 @@ const COLS = [
 const SORT_VAL = {
   fee: (k) => fact(k, "mgmt_fee_pct").value,
   ter: (k) => fact(k, "expense_ratio_pct").value,
-  pme: (k) => fact(k, "pme_primary").value,
-  alpha: (k) => fact(k, "direct_alpha_primary").value,
+  pme: (k) => fact(k, "pme_public_proxy").value,
+  alpha: (k) => fact(k, "direct_alpha_public_proxy").value,
+  peer: (k) => fact(k, "peer_relative_wealth_ratio").value,
   score: (k) => fact(k, "selection_score").value,
   track: (k) => fact(k, "track_record_years").value,
   aum: (k) => fact(k, "net_assets_usd").value,
@@ -129,8 +132,8 @@ export function viewScreener(root, state, setState) {
     if (F.f_big4 === "yes" && fact(k, "big4").value !== true) return false;
     if (F.f_big4 === "no" && fact(k, "big4").value !== false) return false;
     if (F.f_verdict && fact(k, "liquidity_structural_verdict").value !== F.f_verdict) return false;
-    if (F.pme_min && !(fact(k, "pme_primary").value >= +F.pme_min)) return false;
-    if (F.pme_max && !(fact(k, "pme_primary").value <= +F.pme_max)) return false;
+    if (F.pme_min && !(fact(k, "pme_public_proxy").value >= +F.pme_min)) return false;
+    if (F.pme_max && !(fact(k, "pme_public_proxy").value <= +F.pme_max)) return false;
     return true;
   });
   if (F.f_vonly === "1") rows = rows.filter((k) =>
@@ -165,7 +168,7 @@ export function viewScreener(root, state, setState) {
       ${sel("f_gate", "gate hist", ["yes", "no"])}
       ${sel("f_big4", "big-4", ["yes", "no"])}
       ${sel("f_verdict", "liquidity (structural)", ["aligned-mechanical", "conditional", "conditional-weak", "misaligned", "partial"])}
-      <span class="lbl">PME ≥</span><input type="number" step="0.05" style="width:70px" data-f="pme_min" value="${esc(F.pme_min || "")}">
+      <span class="lbl">KS-PME vs public proxy ≥</span><input type="number" step="0.05" style="width:70px" data-f="pme_min" value="${esc(F.pme_min || "")}">
       <span class="lbl">≤</span><input type="number" step="0.05" style="width:70px" data-f="pme_max" value="${esc(F.pme_max || "")}">
       <label class="lbl" style="cursor:pointer"><input type="checkbox" data-f="f_vonly" ${F.f_vonly === "1" ? "checked" : ""}> verified only</label>
       <details style="font-size:11px"><summary class="lbl" style="cursor:pointer">columns</summary>
@@ -232,8 +235,9 @@ const CMP_ROWS = [
   ["Big-4", "big4", (v) => v ? "yes" : "no", null],
   ["Primary benchmark", "primary_benchmark_id", (v) => T.candidate_short[v] || v, null],
   ["Engine score", "selection_score", (v) => v + "/12", null],
-  ["KS-PME (primary)", "pme_primary", (v) => v.toFixed(4), (v) => v < 1],
-  ["Direct Alpha", "direct_alpha_primary", (v) => v.toFixed(2) + "%/yr", (v) => v < 0],
+  ["KS-PME vs public proxy", "pme_public_proxy", (v) => v.toFixed(4), (v) => v < 1],
+  ["Direct Alpha vs public proxy", "direct_alpha_public_proxy", (v) => v.toFixed(2) + "%/yr", (v) => v < 0],
+  ["Peer relative wealth ratio", "peer_relative_wealth_ratio", (v) => v.toFixed(4), (v) => v < 1],
   ["Track record", "track_record_years", (v) => v + " yrs", null],
   ["Net assets", "net_assets_usd", (v) => money(v), null],
 ];
@@ -728,7 +732,8 @@ export function viewCohorts(root, state, setState) {
     ["repurchase_cap_pct", "Cap %"], ["gate_history", "Gate history"],
     ["tax_form", "Tax form"], ["big4", "Big-4 audit"],
     ["track_record_years", "Track record (yrs)"],
-    ["pme_primary", "KS-PME (primary)"],
+    ["pme_public_proxy", "KS-PME vs public proxy"],
+    ["peer_relative_wealth_ratio", "Peer relative wealth ratio"],
   ];
   const cell = (k, field) => {
     const f = fact(k, field);

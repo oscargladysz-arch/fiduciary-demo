@@ -110,7 +110,8 @@ def collect(tree: Tree) -> dict[tuple[str, str], str]:
             out[(key, f"selection.{slot}.id")] = canon(s["id"] if s else None)
             out[(key, f"selection.{slot}.score")] = canon(s["score"] if s else None)
             comp = (s or {}).get("comparison") or {}
-            for f in ("window", "ks_pme", "direct_alpha_pct", "fund_ann_pct",
+            for f in ("window", "ks_pme", "direct_alpha_pct", "relative_wealth_ratio",
+                      "excess_return_pct", "statistic", "fund_return_source", "fund_ann_pct",
                       "index_ann_pct", "fund_growth_x", "index_growth_x",
                       "ks_pme_monthly_schedule"):
                 out[(key, f"selection.{slot}.{f}")] = canon(comp.get(f))

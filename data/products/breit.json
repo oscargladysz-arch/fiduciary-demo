@@ -77,7 +77,7 @@
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": "KS-PME 0.9064 and Direct Alpha -3.22%/yr vs Listed REIT investable proxy (VNQ) over 2022-12-31 to 2025-12-31 (series comparison). Fund growth 1.0971x vs benchmark 1.2104x on two-point flows (one contribution at the window start, one valuation at the end). The fund lagged the benchmark over this window. Window-sensitive: PME and alpha on appraisal-lagged NAVs move with the window (methodology section 3).",
+      "value": "Primary Listed REIT investable proxy (VNQ): KS-PME 0.9064 and Direct Alpha -3.22%/yr over 2022-12-31 to 2025-12-31 (series comparison), fund growth 1.0971x vs proxy growth 1.2104x on two-point flows (one contribution at the window start, one valuation at the end), fund return source: filed fiscal-year returns. The fund lagged the public proxy over this window. Window-sensitive: every figure on appraisal-lagged NAVs moves with the window (methodology section 3).",
       "status": "computed",
       "source": "benchmark selection artifact (Blackstone Real Estate Income Trust Inc)",
       "section": "primary and secondary comparisons",
@@ -412,17 +412,17 @@
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": "PME inputs (computed, primary comparison vs Listed REIT investable proxy (VNQ)): window 2022-12-31 to 2025-12-31 (series comparison). Fund growth 1.0971x vs benchmark growth 1.2104x, flows = one contribution of 1 at the window start and the terminal growth at the end, benchmark Listed REIT investable proxy (VNQ). KS-PME 0.9064 = fund growth / benchmark growth. Direct Alpha -3.22%/yr is the annualized form of the same two flows (fund 3.14%/yr vs benchmark 6.57%/yr).",
+      "value": "PME inputs (computed, public market proxy Listed REIT investable proxy (VNQ), primary slot): window 2022-12-31 to 2025-12-31 (series comparison). Fund growth 1.0971x vs proxy growth 1.2104x, flows = one contribution of 1 at the window start and the terminal growth at the end, fund return source: filed fiscal-year returns. KS-PME 0.9064 = fund growth / proxy growth. Direct Alpha -3.22%/yr is the annualized form of the same two flows (fund 3.14%/yr vs proxy 6.57%/yr).",
       "status": "computed",
       "source": "benchmark selection artifact (Blackstone Real Estate Income Trust Inc)",
-      "section": "primary comparison",
+      "section": "primary and secondary comparisons",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": "Benchmark suitability (Tark benchmark rubric, 12 points). Primary Listed REIT investable proxy (VNQ) (third-party index or investable proxy) scored 9/12 with a series comparison over 2022-12-31 to 2025-12-31: KS-PME 0.9064, Direct Alpha -3.22%/yr. Secondary NCREIF Fund Index - ODCE (private core RE) scored 7/12. Max attainable on held data 9/12. Declared benchmark: none (cell 5.1: BREIT declares no benchmark index anywhere in the FY2025 10-K). Rejected: 2 candidates, each with its reason in the ledger. The scoring rules are in the benchmark methodology document.",
+      "value": "Benchmark suitability (Tark benchmark rubric, 12 points). Primary Listed REIT investable proxy (VNQ) (third-party index or investable proxy) scored 9/12 with a KS-PME vs public market proxy over 2022-12-31 to 2025-12-31: KS-PME 0.9064, Direct Alpha -3.22%/yr. Secondary NCREIF Fund Index - ODCE (private core RE) scored 7/12. Max attainable on held data 9/12. Declared benchmark: none (cell 5.1: BREIT declares no benchmark index anywhere in the FY2025 10-K). Rejected: 2 candidates, each with its reason in the ledger. The scoring rules are in the benchmark methodology document.",
       "status": "computed",
       "source": "benchmark selection artifact (Blackstone Real Estate Income Trust Inc)",
       "section": "primary, secondary, escalation, maximum attainable, declared benchmarks, rejected",

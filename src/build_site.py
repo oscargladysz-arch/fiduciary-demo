@@ -44,6 +44,7 @@ GLOSSARY = {
     "PME": "Did the fund beat simply buying an index with the same cash, at the same times? Above 1.0 = yes. (Kaplan-Schoar Public Market Equivalent)",
     "KS-PME": "Did the fund beat simply buying an index with the same cash, at the same times? Above 1.0 = yes. (Kaplan-Schoar Public Market Equivalent)",
     "Direct Alpha": "The fund's yearly edge over the index, as a percentage. Zero = index-like. (Gredil/Griffiths/Stucke annualized excess IRR)",
+    "relative wealth ratio": "The fund's cumulative growth divided by the peer composite's over the same fiscal years. Above 1.0 = the fund grew more. Not a PME: the composite is appraisal-based, built by the evaluator, and cannot be bought.",
     "AFFE": "Fees of the funds this fund invests in, passed through to you on top of its own fees. (Acquired Fund Fees & Expenses)",
     "TER": "Everything the fund charges in a year as a percent of assets. (Total Expense Ratio)",
     "Rule 23c-3": "The SEC rule forcing an interval fund to offer buybacks on a fixed schedule - liquidity by law, not by choice.",

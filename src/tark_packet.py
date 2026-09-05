@@ -30,6 +30,14 @@ from tark_memo import (KIND_ORDER, SITE_MEMOS, _fill, _flags, _liquidity_section
 FEE_CELLS = ("2.1", "2.2", "2.3", "2.4", "2.6", "2.7", "6.4")
 
 
+def _stat_line(comp: dict) -> str:
+    """The comparison's statistic named for its comparator (rule 12)."""
+    if comp.get("kind") == "composite":
+        return (f"relative wealth ratio {comp['relative_wealth_ratio']} vs the peer composite, annualized "
+                f"excess return {comp['excess_return_pct']}%/yr (not a public market equivalent)")
+    return f"KS-PME {comp['ks_pme']}, Direct Alpha {comp['direct_alpha_pct']}%/yr"
+
+
 def packet_name(plan_key: str, key: str) -> str:
     return f"{plan_key}__{key}_committee_packet.docx"
 
@@ -72,7 +80,7 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
         comp = pr.get("comparison") or {}
         line = f"Benchmark: {pr['candidate']} at {pr['score']}/{pr['max']}"
         if comp:
-            line += f", KS-PME {comp['ks_pme']}, Direct Alpha {comp['direct_alpha_pct']}%/yr over {comp['window']}"
+            line += f", {_stat_line(comp)} over {comp['window']}"
         doc.add_paragraph(line + ".")
     flags = _flags(sel, m, fdoc)
     doc.add_paragraph("Flags raised by the record (each restates a typed value or verdict, with its source):")
@@ -100,7 +108,7 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
                 r = t.add_row().cells
                 comp = s2.get("comparison") or {}
                 r[0].text, r[1].text, r[2].text = slot, s2["candidate"], f"{s2['score']}/{s2['max']}"
-                r[3].text = (f"KS-PME {comp['ks_pme']}, Direct Alpha {comp['direct_alpha_pct']}%/yr, {comp['window']}"
+                r[3].text = (f"{_stat_line(comp)}, {comp['window']}"
                              if comp else (s2.get("comparison_note") or sel.get("comparison_note") or "selected"))
         for rj in sel.get("rejected", []):
             r = t.add_row().cells

@@ -77,7 +77,7 @@
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": "KS-PME 0.8964 and Direct Alpha -4.58%/yr vs Listed private equity investable proxy (PSP) over 2023-09-01 to 2025-12-31 (series comparison). Fund growth 1.3285x vs benchmark 1.4819x on two-point flows (one contribution at the window start, one valuation at the end). The fund lagged the benchmark over this window. Low confidence: 2.33-year window, shorter than 3 years. Window-sensitive: PME and alpha on appraisal-lagged NAVs move with the window (methodology section 3).",
+      "value": "Primary Listed private equity investable proxy (PSP): KS-PME 0.8964 and Direct Alpha -4.58%/yr over 2023-09-01 to 2025-12-31 (series comparison), fund growth 1.3285x vs proxy growth 1.4819x on two-point flows (one contribution at the window start, one valuation at the end), fund return source: disclosed annualized figure (cell 1.2). The fund lagged the public proxy over this window. Low confidence: 2.33-year window, shorter than 3 years. Window-sensitive: every figure on appraisal-lagged NAVs moves with the window (methodology section 3).",
       "status": "computed",
       "source": "benchmark selection artifact (KKR Private Equity Conglomerate LLC)",
       "section": "primary and secondary comparisons",
@@ -412,17 +412,17 @@
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": "PME inputs (computed, primary comparison vs Listed private equity investable proxy (PSP)): window 2023-09-01 to 2025-12-31 (series comparison). Fund growth 1.3285x vs benchmark growth 1.4819x, flows = one contribution of 1 at the window start and the terminal growth at the end, benchmark Listed private equity investable proxy (PSP). KS-PME 0.8964 = fund growth / benchmark growth. Direct Alpha -4.58%/yr is the annualized form of the same two flows (fund 12.94%/yr vs benchmark 18.36%/yr).",
+      "value": "PME inputs (computed, public market proxy Listed private equity investable proxy (PSP), primary slot): window 2023-09-01 to 2025-12-31 (series comparison). Fund growth 1.3285x vs proxy growth 1.4819x, flows = one contribution of 1 at the window start and the terminal growth at the end, fund return source: disclosed annualized figure (cell 1.2). KS-PME 0.8964 = fund growth / proxy growth. Direct Alpha -4.58%/yr is the annualized form of the same two flows (fund 12.94%/yr vs proxy 18.36%/yr).",
       "status": "computed",
       "source": "benchmark selection artifact (KKR Private Equity Conglomerate LLC)",
-      "section": "primary comparison",
+      "section": "primary and secondary comparisons",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": "Benchmark suitability (Tark benchmark rubric, 12 points). Primary Listed private equity investable proxy (PSP) (third-party index or investable proxy) scored 9/12 with a series comparison over 2023-09-01 to 2025-12-31: KS-PME 0.8964, Direct Alpha -4.58%/yr (low confidence: 2.33-year window, shorter than 3 years). Secondary Cambridge Associates US PE benchmark scored 7/12. Max attainable on held data 9/12. Declared benchmark: none (cell 5.1: documented absence of a self-declared performance benchmark). Rejected: 2 candidates, each with its reason in the ledger. The scoring rules are in the benchmark methodology document.",
+      "value": "Benchmark suitability (Tark benchmark rubric, 12 points). Primary Listed private equity investable proxy (PSP) (third-party index or investable proxy) scored 9/12 with a KS-PME vs public market proxy over 2023-09-01 to 2025-12-31: KS-PME 0.8964, Direct Alpha -4.58%/yr (low confidence: 2.33-year window, shorter than 3 years). Secondary Cambridge Associates US PE benchmark scored 7/12. Max attainable on held data 9/12. Declared benchmark: none (cell 5.1: documented absence of a self-declared performance benchmark). Rejected: 2 candidates, each with its reason in the ledger. The scoring rules are in the benchmark methodology document.",
       "status": "computed",
       "source": "benchmark selection artifact (KKR Private Equity Conglomerate LLC)",
       "section": "primary, secondary, escalation, maximum attainable, declared benchmarks, rejected",

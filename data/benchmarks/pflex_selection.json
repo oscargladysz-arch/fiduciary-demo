@@ -34,6 +34,9 @@
     ],
     "comparison": {
       "kind": "series",
+      "statistic": "KS-PME vs public market proxy",
+      "comparator_kind": "public market series (exchange-traded proxy, Yahoo adjusted close)",
+      "fund_return_source": "Yahoo adjusted close, approximates NAV total return",
       "window": "2018-07-18 to 2026-07-17",
       "window_note": "clipped: proxy series begins 2018-07-18, proxy series ends 2026-07-17",
       "fund_window": "2017-02-23 to 2026-08-13",
@@ -73,6 +76,10 @@
     ],
     "comparison": {
       "kind": "composite",
+      "statistic": "relative wealth ratio vs peer composite",
+      "comparator_kind": "appraisal-based peer composite constructed by the evaluator, not a market series",
+      "fund_return_source": "filed fiscal-year returns",
+      "not_pme_note": "Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought.",
       "window": "FY2021 to FY2025",
       "window_note": "5 overlapping fiscal year(s) of 5 composite years",
       "fund_window": "FY2021 to FY2025",
@@ -136,8 +143,8 @@
       ],
       "fund_growth_x": 1.4884,
       "index_growth_x": 1.5189,
-      "ks_pme": 0.9799,
-      "direct_alpha_pct": -0.41,
+      "relative_wealth_ratio": 0.9799,
+      "excess_return_pct": -0.41,
       "fund_ann_pct": 8.28,
       "index_ann_pct": 8.72,
       "low_confidence": null

@@ -1555,3 +1555,45 @@ sreit, jll_ipt under the tech/media plan, product-independent views once),
   not in the build, on any sentence of the form "the rule requires",
   "required by the proposal" or "to qualify for the safe harbor", in all
   64 memos. The packets are screened for the same conclusion phrases.
+
+### 7.18 R2-P0-6: a statistic is named for what its comparator is
+- The composite comparison in the selection artifact no longer carries
+  `ks_pme` or `direct_alpha_pct`. It carries `relative_wealth_ratio` (fund
+  growth / composite growth over the overlapping fiscal years, the same
+  arithmetic as before) and `excess_return_pct` (its annualized form),
+  `statistic` "relative wealth ratio vs peer composite", `comparator_kind`,
+  `fund_return_source` "filed fiscal-year returns" and a not-PME note.
+  Every series comparison carries `statistic` "KS-PME vs public market
+  proxy" and its `fund_return_source` (Yahoo adjusted close approximating
+  NAV total return, filed fiscal-year returns, or the disclosed annualized
+  figure). The renamed fields are watched by the corrections log, so the
+  old composite `ks_pme` rows show as retired under the R2-P0-6 cause. No
+  figure changed (audit round 2 items 7, 8, 11).
+- Facts: `pme_primary` and `direct_alpha_primary` are retired. In their
+  place `pme_public_proxy`, `pme_public_proxy_name` and
+  `direct_alpha_public_proxy` come from whichever slot holds a public
+  market series, and `peer_relative_wealth_ratio` from whichever slot
+  holds the composite. The Screener column "KS-PME" becomes two columns,
+  "KS-PME vs public proxy" and "Peer relative wealth ratio", each sortable
+  on its own kind, so the sort is no longer meaningless (audit item 8).
+- Cell 1.8 states each slot in one sentence named for its comparator, the
+  "lagged" and "led" sentence appears only for a public proxy, the fund
+  return source is named on every window, and the composite's alignment
+  note is printed verbatim in the cell, on the card and in the memo's
+  benchmark section (audit item 32). Cell 5.5 states PME inputs only for
+  the public proxy and the composite's inputs as a ratio.
+- The card prints one fund return per slot with its source named ("Fund,
+  filed fiscal-year returns" beside the composite, "Fund, Yahoo adjusted
+  close" beside BKLN), so two fund returns on one card are explained
+  (audit item 7). The composite card's statistic labels are "Relative
+  wealth ratio vs peer composite" and "Excess return vs peer composite".
+- Gates: the benchmark gate asserts the keys and names per kind and the
+  two-point identity on the right statistic. The reconcile gate ties every
+  computed comparison across artifact, bundle card, cell 1.8, facts and
+  all 64 memos, requires the fund return source on each, and fails on any
+  composite sentence in cells 1.8, 5.5 or 5.6 or in a memo that carries a
+  PME name. The frontend gate checks the composite card labels and the
+  two Screener columns.
+- The composite's own number (cclfx 0.9756 on fiscal-year labels) stays
+  on the surfaces under its honest name until R2-P1-3 recomputes it on
+  calendar-aligned periods. Demo script v8 does not speak it.

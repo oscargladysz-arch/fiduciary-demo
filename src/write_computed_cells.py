@@ -134,8 +134,11 @@ def cell_5_6(key: str) -> dict | None:
         pr = sel["primary"]
         comp = pr.get("comparison") or {}
         line = f"Primary {pr['candidate']} ({lane_label(pr['lane'])}) scored {pr['score']}/{pr['max']}"
-        if comp:
-            line += (f" with a {comp['kind']} comparison over {comp['window']}: "
+        if comp and comp["kind"] == "composite":
+            line += (f" with a {comp['statistic']} over {comp['window']}: relative wealth ratio "
+                     f"{comp['relative_wealth_ratio']}, annualized excess return {comp['excess_return_pct']}%/yr")
+        elif comp:
+            line += (f" with a {comp['statistic']} over {comp['window']}: "
                      f"KS-PME {comp['ks_pme']}, Direct Alpha {comp['direct_alpha_pct']}%/yr")
             if comp.get("low_confidence"):
                 line += f" ({comp['low_confidence']})"
@@ -184,8 +187,29 @@ def _signed(x: float) -> str:
     return f"{x:+g}"
 
 
+def _slot_sentence(label: str, slot: dict) -> str:
+    """One sentence per slot, the statistic named for its comparator (rule
+    12): KS-PME and Direct Alpha only against a public market series, a
+    relative wealth ratio and an excess return against the peer composite."""
+    c = slot["comparison"]
+    if c["kind"] == "composite":
+        return (f"{label} {slot['candidate']}: relative wealth ratio {c['relative_wealth_ratio']} over "
+                f"{c['window']} ({c['window_note']}), fund growth {c['fund_growth_x']}x / peer composite growth "
+                f"{c['index_growth_x']}x on two-point flows, annualized excess return "
+                f"{_signed(c['excess_return_pct'])}%/yr, fund return source: {c['fund_return_source']}. "
+                f"{c['not_pme_note']} Alignment: {c['alignment_note'].rstrip('.')}.")
+    return (f"{label} {slot['candidate']}: KS-PME {c['ks_pme']} and Direct Alpha {_signed(c['direct_alpha_pct'])}%/yr "
+            f"over {c['window']} (series comparison" + (f", {c['window_note']}" if c.get("window_note") else "")
+            + f"), fund growth {c['fund_growth_x']}x vs proxy growth {c['index_growth_x']}x on two-point flows "
+            "(one contribution at the window start, one valuation at the end), fund return source: "
+            f"{c['fund_return_source']}. "
+            + ("The fund lagged the public proxy over this window." if c["ks_pme"] < 1
+               else "The fund led the public proxy over this window."))
+
+
 def cell_1_8(key: str) -> dict | None:
-    """Risk-adjusted metrics: the primary comparison of the selection artifact."""
+    """Risk-adjusted metrics: every computed comparison of the selection
+    artifact, each named for what it is."""
     sel = _selection(key)
     if not sel:
         return None
@@ -194,33 +218,23 @@ def cell_1_8(key: str) -> dict | None:
         text = ("No KS-PME or Direct Alpha computable: " + sel["escalation"].rstrip(".")
                 + ". The escalation is documented in the selection artifact.")
         return {"value": text, "source": src, "section": "escalation", "quote": ""}
-    pr = sel["primary"]
-    comp = pr.get("comparison") or {}
-    if not comp:
+    slots = [(lab, sel.get(s)) for lab, s in (("Primary", "primary"), ("Secondary", "secondary"))
+             if sel.get(s) and sel[s].get("comparison")]
+    if not slots:
         return None
-    parts = [f"KS-PME {comp['ks_pme']} and Direct Alpha {_signed(comp['direct_alpha_pct'])}%/yr vs "
-             f"{pr['candidate']} over {comp['window']} ({comp['kind']} comparison"
-             + (f", {comp['window_note']}" if comp.get("window_note") else "") + ")."]
-    parts.append(f"Fund growth {comp['fund_growth_x']}x vs benchmark {comp['index_growth_x']}x on "
-                 "two-point flows (one contribution at the window start, one valuation at the end).")
-    parts.append("The fund lagged the benchmark over this window." if comp["ks_pme"] < 1
-                 else "The fund led the benchmark over this window.")
-    if comp.get("low_confidence"):
-        lc = comp["low_confidence"]
-        parts.append(lc[0].upper() + lc[1:].rstrip(".") + ".")
-    if comp.get("alignment_note"):
-        parts.append(comp["alignment_note"].rstrip(".") + ".")
-    sec = sel.get("secondary")
-    sc = (sec or {}).get("comparison") or {}
-    if sc:
-        parts.append(f"Secondary {sec['candidate']}: KS-PME {sc['ks_pme']}, Direct Alpha "
-                     f"{_signed(sc['direct_alpha_pct'])}%/yr over {sc['window']}.")
-    for slot in (comp, sc):
-        if slot.get("ks_pme_monthly_schedule") is not None:
-            parts.append(f"ILLUSTRATIVE monthly-schedule KS-PME {slot['ks_pme_monthly_schedule']} "
-                         f"({slot['schedule_contributions']} equal contributions), the two-point figure is primary.")
+    parts = [_slot_sentence(lab, s) for lab, s in slots]
+    for _, s in slots:
+        c = s["comparison"]
+        if c.get("low_confidence"):
+            lc = c["low_confidence"]
+            parts.append(lc[0].upper() + lc[1:].rstrip(".") + ".")
+    for _, s in slots:
+        c = s["comparison"]
+        if c.get("ks_pme_monthly_schedule") is not None:
+            parts.append(f"ILLUSTRATIVE monthly-schedule KS-PME {c['ks_pme_monthly_schedule']} vs {s['candidate']} "
+                         f"({c['schedule_contributions']} equal contributions), the two-point figure is primary.")
             break
-    parts.append("Window-sensitive: PME and alpha on appraisal-lagged NAVs move with the window "
+    parts.append("Window-sensitive: every figure on appraisal-lagged NAVs moves with the window "
                  "(methodology section 3).")
     text = " ".join(parts)
     note = analyst_note(key, "1.8")
@@ -343,7 +357,8 @@ def cell_5_3(key: str) -> dict | None:
 
 
 def cell_5_5(key: str) -> dict | None:
-    """PME inputs of the primary comparison, stated as the formula."""
+    """PME inputs of the public-proxy comparison, stated as the formula, and
+    the peer comparison's inputs stated as a ratio, never as a PME."""
     sel = _selection(key)
     if not sel:
         return None
@@ -351,25 +366,39 @@ def cell_5_5(key: str) -> dict | None:
     if sel.get("escalation"):
         return {"value": "No PME inputs constructible: " + sel["escalation"].rstrip(".") + ".",
                 "source": src, "section": "escalation", "quote": ""}
-    pr = sel["primary"]
-    comp = pr.get("comparison") or {}
-    if not comp:
+    slots = [(lab, sel.get(s)) for lab, s in (("primary", "primary"), ("secondary", "secondary"))
+             if sel.get(s) and sel[s].get("comparison")]
+    series = next(((lab, s) for lab, s in slots if s["comparison"]["kind"] == "series"), None)
+    comp = next(((lab, s) for lab, s in slots if s["comparison"]["kind"] == "composite"), None)
+    if not slots:
         return None
-    parts = [f"PME inputs (computed, primary comparison vs {pr['candidate']}): window {comp['window']} "
-             f"({comp['kind']} comparison" + (f", {comp['window_note']}" if comp.get("window_note") else "") + ")."]
-    parts.append(f"Fund growth {comp['fund_growth_x']}x vs benchmark growth {comp['index_growth_x']}x, "
-                 "flows = one contribution of 1 at the window start and the terminal growth at the end, "
-                 f"benchmark {pr['candidate']}.")
-    parts.append(f"KS-PME {comp['ks_pme']} = fund growth / benchmark growth. Direct Alpha "
-                 f"{_signed(comp['direct_alpha_pct'])}%/yr is the annualized form of the same two flows "
-                 f"(fund {comp['fund_ann_pct']}%/yr vs benchmark {comp['index_ann_pct']}%/yr).")
-    if comp.get("alignment_note"):
-        parts.append(comp["alignment_note"].rstrip(".") + ".")
-    if comp.get("ks_pme_monthly_schedule") is not None:
-        parts.append(f"ILLUSTRATIVE monthly-schedule KS-PME {comp['ks_pme_monthly_schedule']} "
-                     f"({comp['schedule_contributions']} equal contributions at the window start and each "
-                     "month-end inside it, valued at the window end).")
-    return {"value": " ".join(parts), "source": src, "section": "primary comparison", "quote": ""}
+    parts = []
+    if series:
+        lab, s = series
+        c = s["comparison"]
+        parts.append(f"PME inputs (computed, public market proxy {s['candidate']}, {lab} slot): window {c['window']} "
+                     f"(series comparison" + (f", {c['window_note']}" if c.get("window_note") else "") + ").")
+        parts.append(f"Fund growth {c['fund_growth_x']}x vs proxy growth {c['index_growth_x']}x, flows = one "
+                     "contribution of 1 at the window start and the terminal growth at the end, fund return "
+                     f"source: {c['fund_return_source']}.")
+        parts.append(f"KS-PME {c['ks_pme']} = fund growth / proxy growth. Direct Alpha "
+                     f"{_signed(c['direct_alpha_pct'])}%/yr is the annualized form of the same two flows "
+                     f"(fund {c['fund_ann_pct']}%/yr vs proxy {c['index_ann_pct']}%/yr).")
+        if c.get("ks_pme_monthly_schedule") is not None:
+            parts.append(f"ILLUSTRATIVE monthly-schedule KS-PME {c['ks_pme_monthly_schedule']} "
+                         f"({c['schedule_contributions']} equal contributions at the window start and each "
+                         "month-end inside it, valued at the window end).")
+    else:
+        parts.append("No public market proxy comparison is computable on held data, so no PME inputs exist "
+                     "for this product.")
+    if comp:
+        lab, s = comp
+        c = s["comparison"]
+        parts.append(f"Peer comparison inputs ({s['candidate']}, {lab} slot): relative wealth ratio "
+                     f"{c['relative_wealth_ratio']} = fund growth {c['fund_growth_x']}x / peer composite growth "
+                     f"{c['index_growth_x']}x over {c['window']}, fund return source: {c['fund_return_source']}. "
+                     f"{c['not_pme_note']} Alignment: {c['alignment_note'].rstrip('.')}.")
+    return {"value": " ".join(parts), "source": src, "section": "primary and secondary comparisons", "quote": ""}
 
 
 OWNED = {

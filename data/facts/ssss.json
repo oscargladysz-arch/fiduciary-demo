@@ -165,13 +165,25 @@
       "status": "computed",
       "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
     },
-    "pme_primary": {
+    "pme_public_proxy": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
       "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
     },
-    "direct_alpha_primary": {
+    "pme_public_proxy_name": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "direct_alpha_public_proxy": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "peer_relative_wealth_ratio": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",

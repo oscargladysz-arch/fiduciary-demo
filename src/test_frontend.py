@@ -160,10 +160,19 @@ else:
 check("facts bundle: every field cites a real cell", all(
     f.get("source_cell") in bundle["products"][k]["cells"]
     for k in PRODUCTS for f in bundle["facts"][k].values()))
-check("facts bundle: pme_primary mirrors selection artifact", all(
-    bundle["facts"][k]["pme_primary"]["value"] ==
-    ((bundle["benchmarks"][k].get("primary") or {}).get("comparison") or {}).get("ks_pme")
+def _slot_of_kind(k, kind):
+    sel = bundle["benchmarks"].get(k) or {}
+    return next((s["comparison"] for s in (sel.get("primary"), sel.get("secondary"))
+                 if s and (s.get("comparison") or {}).get("kind") == kind), None)
+check("facts bundle: pme_public_proxy mirrors the public-proxy slot and peer_relative_wealth_ratio the composite "
+      "slot of the selection artifact (rule 12)", all(
+    bundle["facts"][k]["pme_public_proxy"]["value"] == (_slot_of_kind(k, "series") or {}).get("ks_pme")
+    and bundle["facts"][k]["peer_relative_wealth_ratio"]["value"]
+    == (_slot_of_kind(k, "composite") or {}).get("relative_wealth_ratio")
     for k in PRODUCTS if bundle["benchmarks"].get(k, {}).get("primary")))
+check("benchmarks bundle: no composite comparison carries a PME key or name", all(
+    "ks_pme" not in comp and "direct_alpha_pct" not in comp and comp["statistic"].startswith("relative wealth ratio")
+    for k in PRODUCTS for comp in [_slot_of_kind(k, "composite")] if comp))
 sm = json.loads((SITE / "series.js").read_text().split("\n")[2][len("window.TARK_LAB = "):-1])
 check("lab matrix: every product x proxy pair carries a real v2 score, criteria and eligibility",
       all(isinstance(v["score"], int) and set(v["criteria"]) == {"strategy_match", "risk_liquidity_match",
@@ -356,6 +365,24 @@ with sync_playwright() as pw:
     check("plans: liquidity tail 1,847 rendered", "1,847" in t)
     t = view_text("benchmarks", product="cliffwater_cclfx")
     check("benchmark cclfx: KS-PME 1.2532 on screen", "1.2532" in t)
+    # R2-P0-6: the composite card is named a relative wealth ratio and never a PME,
+    # the public-proxy card keeps KS-PME, each names its fund return source
+    # stat labels render uppercase through CSS and inner_text follows, so the
+    # label tokens are compared case-folded and the PME names case-sensitively
+    _comp_card = page.locator('[data-stat-kind="composite"]').first
+    _card_html = page.locator('.cardgrid .card', has=_comp_card).first.inner_text()
+    _card_low = _card_html.lower()
+    check("benchmark cclfx: the composite card reads relative wealth ratio, names the filed fiscal-year source "
+          "and the alignment note, and carries no PME name",
+          "relative wealth ratio vs peer composite" in _card_low and "filed fiscal-year returns" in _card_low
+          and "Alignment:" in _card_html and "KS-PME" not in _card_html and "Direct Alpha" not in _card_html
+          and "pme" not in _card_low.replace("public market equivalent", ""))
+    _ser_card = page.locator('.cardgrid .card', has=page.locator('[data-stat-kind="series"]')).first.inner_text()
+    check("benchmark cclfx: the public-proxy card keeps KS-PME and names the Yahoo adjusted close source",
+          "KS-PME" in _ser_card and "yahoo adjusted close" in _ser_card.lower())
+    _scr = view_text("screener")
+    check("screener: the PME column is split into KS-PME vs public proxy and peer relative wealth ratio",
+          "KS-PME vs public proxy" in _scr and "Peer relative wealth ratio" in _scr)
     tl = t.lower()   # stat labels render uppercase (CSS), inner_text follows
     check("benchmark cclfx: monthly-schedule row labeled ILLUSTRATIVE, two-point stated primary",
           "monthly schedule" in tl and "illustrative" in tl and "two-point figure is primary" in tl

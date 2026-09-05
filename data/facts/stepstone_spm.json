@@ -160,15 +160,28 @@
       "source_cell": "5.3",
       "status": "computed"
     },
-    "pme_primary": {
-      "value": 1.0206,
+    "pme_public_proxy": {
+      "value": 1.762,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "KS-PME vs PSP over 2021-03-31 to 2026-03-31, fund return source: disclosed annualized figure (cell 1.2)"
+    },
+    "pme_public_proxy_name": {
+      "value": "PSP",
       "source_cell": "1.8",
       "status": "computed"
     },
-    "direct_alpha_primary": {
-      "value": 0.41,
+    "direct_alpha_public_proxy": {
+      "value": 12.0,
       "source_cell": "1.8",
-      "status": "computed"
+      "status": "computed",
+      "note": "KS-PME vs PSP over 2021-03-31 to 2026-03-31, fund return source: disclosed annualized figure (cell 1.2)"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": 1.0206,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "relative wealth ratio vs evergreen PE peer composite over FY2022 to FY2026, fund return source: filed fiscal-year returns. Not a public market equivalent"
     }
   }
 }

@@ -40,6 +40,10 @@
     ],
     "comparison": {
       "kind": "composite",
+      "statistic": "relative wealth ratio vs peer composite",
+      "comparator_kind": "appraisal-based peer composite constructed by the evaluator, not a market series",
+      "fund_return_source": "filed fiscal-year returns",
+      "not_pme_note": "Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought.",
       "window": "FY2022 to FY2026",
       "window_note": "5 overlapping fiscal year(s) of 5 composite years",
       "fund_window": "FY2017 to FY2026",
@@ -100,8 +104,8 @@
       ],
       "fund_growth_x": 1.6958,
       "index_growth_x": 2.0292,
-      "ks_pme": 0.8357,
-      "direct_alpha_pct": -3.53,
+      "relative_wealth_ratio": 0.8357,
+      "excess_return_pct": -3.53,
       "fund_ann_pct": 11.14,
       "index_ann_pct": 15.21,
       "low_confidence": null
@@ -199,6 +203,9 @@
     ],
     "comparison": {
       "kind": "series",
+      "statistic": "KS-PME vs public market proxy",
+      "comparator_kind": "public market series (exchange-traded proxy, Yahoo adjusted close)",
+      "fund_return_source": "filed fiscal-year returns",
       "window": "2019-03-31 to 2026-03-31",
       "window_note": "clipped: proxy series begins 2018-07-18, 3 fiscal year(s) outside it dropped",
       "fund_window": "2016-03-31 to 2026-03-31",

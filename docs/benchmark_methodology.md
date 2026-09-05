@@ -87,7 +87,11 @@ Annual-tier products have no such row because no intra-year NAV path is
 on record.
 
 A Lane C comparison (fund against its leave-one-out cohort composite)
-runs on fiscal years, not dates. The overlapping years are those the fund
+is a relative wealth ratio and an annualized excess return, never a PME:
+the composite is appraisal-based, constructed by the evaluator, and
+cannot be bought, so "public market equivalent" would be a category error
+(round-2 audit item 11, rule 12 of the round-2 brief). It runs on fiscal
+years, not dates. The overlapping years are those the fund
 and the composite both report as whole fiscal years (stub and partial
 periods excluded on both sides, aligned by fiscal year-end year with the
 members' year-end months printed). The fund's returns and the composite's

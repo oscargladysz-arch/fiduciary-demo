@@ -500,11 +500,24 @@ export function viewBenchmarks(root, state, setState) {
       <h3>${esc(s.candidate)}</h3>
       <div class="num" style="font-size:15px;margin-top:2px">${s.score}/${s.max}</div>
       <div class="scorebar"><div class="fill" style="width:${s.score / s.max * 100}%"></div></div>
-      ${comp ? `<div class="statrow">
+      ${comp && comp.kind === "composite" ? `<div class="statrow" data-stat-kind="composite">
+        ${stat("Relative wealth ratio vs peer composite", comp.relative_wealth_ratio)}
+        ${stat("Excess return vs peer composite", `${comp.excess_return_pct}%<small>/yr</small>`)}
+        ${stat("Fund, filed fiscal-year returns", `${comp.fund_ann_pct}%<small>/yr</small>`)}
+        ${stat("Peer composite", `${comp.index_ann_pct}%<small>/yr</small>`)}
+      </div>
+      <div class="cap">${esc(comp.not_pme_note)} The ${gloss("relative wealth ratio")} is the fund's
+        growth divided by the composite's over the same fiscal years, on two-point flows (one
+        contribution at the window start, one valuation at the end). Fund return source:
+        ${esc(comp.fund_return_source)}.
+        <span class="num">(${esc(comp.window)}${comp.window_note ? `, ${esc(comp.window_note)}` : ""})</span>
+        ${comp.low_confidence ? ` <span class="chip illustrative">${esc(comp.low_confidence)}</span>` : ""}
+        <span data-alignment-note>Alignment: ${esc(comp.alignment_note)}.</span></div>`
+      : comp ? `<div class="statrow" data-stat-kind="series">
         ${stat("KS-PME", comp.ks_pme)}
         ${stat("Direct Alpha", `${comp.direct_alpha_pct}%<small>/yr</small>`)}
-        ${stat("Fund", `${comp.fund_ann_pct}%<small>/yr</small>`)}
-        ${stat("Benchmark", `${comp.index_ann_pct}%<small>/yr</small>`)}
+        ${stat(`Fund, ${(comp.fund_return_source || "source not named").split(",")[0]}`, `${comp.fund_ann_pct}%<small>/yr</small>`)}
+        ${stat("Public proxy", `${comp.index_ann_pct}%<small>/yr</small>`)}
         ${comp.ks_pme_monthly_schedule != null
           ? stat("KS-PME, monthly schedule", `${comp.ks_pme_monthly_schedule} <span class="chip illustrative">ILLUSTRATIVE</span>`)
           : ""}
@@ -513,12 +526,12 @@ export function viewBenchmarks(root, state, setState) {
         valuation at the end. ${gloss("Direct Alpha")} is the annualized form of the same
         two flows.${comp.ks_pme_monthly_schedule != null
           ? ` The monthly-schedule figure is ${esc(comp.schedule_note)}` : ""}
+        Fund return source: ${esc(comp.fund_return_source)}.
         ${gloss("KS-PME")} and ${gloss("Direct Alpha")} on
         appraisal-lagged NAVs are window-sensitive, disclosed, and explorable:
         <a href="#" data-goto="pme">move the window yourself →</a>
         <span class="num">(${esc(comp.window)}${comp.window_note ? `, ${esc(comp.window_note)}` : ""})</span>
-        ${comp.low_confidence ? ` <span class="chip illustrative">${esc(comp.low_confidence)}</span>` : ""}
-        ${comp.alignment_note ? ` <span>Lane C composite, ${esc(comp.alignment_note)}.</span>` : ""}</div>`
+        ${comp.low_confidence ? ` <span class="chip illustrative">${esc(comp.low_confidence)}</span>` : ""}</div>`
       : s.comparison_note ? `<div class="cap">Comparison not computable on held data: ${esc(s.comparison_note)}.${
           s.comparison_note.includes("proxy series")
             ? " A proxy series covering the fund's window would make it computable."

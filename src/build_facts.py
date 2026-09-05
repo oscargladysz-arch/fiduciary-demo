@@ -797,32 +797,56 @@ def main() -> None:
                 "reason": "liquidity match not yet run"}
         sel_path = DATA / "benchmarks" / f"{key}_selection.json"
         sel = json.loads(sel_path.read_text()) if sel_path.exists() else None
+        # the statistic is named for its comparator (R2-P0-6, rule 12): a PME
+        # only against a public market series, a relative wealth ratio against
+        # the peer composite, each from whichever slot carries that comparator
+        ENGINE_NULL = ("primary_benchmark_id", "selection_score", "pme_public_proxy",
+                       "pme_public_proxy_name", "direct_alpha_public_proxy", "peer_relative_wealth_ratio")
         if sel is None:
-            for fld in ("primary_benchmark_id", "selection_score",
-                        "pme_primary", "direct_alpha_primary"):
+            for fld in ENGINE_NULL:
                 facts[fld] = {"value": None, "source_cell": "1.8",
                               "status": "pending",
                               "reason": "engine selection not yet run for this product"}
         elif sel.get("primary"):
-            comp = sel["primary"].get("comparison") or {}
+            from tark_display import candidate_short
+            slots = [s for s in (sel.get("primary"), sel.get("secondary")) if s]
+            series_slot = next((s for s in slots if (s.get("comparison") or {}).get("kind") == "series"), None)
+            comp_slot = next((s for s in slots if (s.get("comparison") or {}).get("kind") == "composite"), None)
             facts["primary_benchmark_id"] = F(sel["primary"]["id"], "5.3",
                                               status="computed")
             facts["selection_score"] = F(sel["primary"]["score"], "5.3",
                                          status="computed")
-            if comp:
-                facts["pme_primary"] = F(comp.get("ks_pme"), "1.8", status="computed")
-                facts["direct_alpha_primary"] = F(comp.get("direct_alpha_pct"),
-                                                  "1.8", status="computed")
+            # .get throughout: the first facts pass of the producer runs before
+            # the benchmark step and may read an older artifact, which the
+            # facts-engine pass then overwrites
+            if series_slot:
+                c = series_slot["comparison"]
+                name = candidate_short(series_slot["id"])
+                note = (f"KS-PME vs {name} over {c.get('window')}, fund return source: "
+                        f"{c.get('fund_return_source', '')}")
+                facts["pme_public_proxy"] = F(c.get("ks_pme"), "1.8", status="computed", note=note)
+                facts["pme_public_proxy_name"] = F(name, "1.8", status="computed")
+                facts["direct_alpha_public_proxy"] = F(c.get("direct_alpha_pct"), "1.8", status="computed", note=note)
             else:
-                why = sel["primary"].get("comparison_note") or "comparison not computable"
-                for fld in ("pme_primary", "direct_alpha_primary"):
+                why = ((sel["primary"].get("comparison_note") or
+                        "no public market proxy comparison computable on held data"))
+                for fld in ("pme_public_proxy", "pme_public_proxy_name", "direct_alpha_public_proxy"):
                     facts[fld] = {"value": None, "source_cell": "1.8",
                                   "status": "computed", "reason": why}
+            if comp_slot:
+                c = comp_slot["comparison"]
+                facts["peer_relative_wealth_ratio"] = F(
+                    c.get("relative_wealth_ratio"), "1.8", status="computed",
+                    note=(f"relative wealth ratio vs {candidate_short(comp_slot['id'])} over {c.get('window')}, "
+                          "fund return source: filed fiscal-year returns. Not a public market equivalent"))
+            else:
+                facts["peer_relative_wealth_ratio"] = {
+                    "value": None, "source_cell": "1.8", "status": "computed",
+                    "reason": "no peer composite comparison in either slot for this product"}
         else:
             esc = ("engine escalation: no meaningful benchmark constructible "
                    "(see the selection artifact)")
-            for fld in ("primary_benchmark_id", "selection_score",
-                        "pme_primary", "direct_alpha_primary"):
+            for fld in ENGINE_NULL:
                 facts[fld] = {"value": None, "source_cell": "1.8",
                               "status": "computed", "reason": esc}
         doc = {"product_key": key, "cohort_id": cohort_id, "depth": depth,

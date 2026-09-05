@@ -164,15 +164,28 @@
       "source_cell": "5.3",
       "status": "computed"
     },
-    "pme_primary": {
+    "pme_public_proxy": {
       "value": 0.8964,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "KS-PME vs PSP over 2023-09-01 to 2025-12-31, fund return source: disclosed annualized figure (cell 1.2)"
+    },
+    "pme_public_proxy_name": {
+      "value": "PSP",
       "source_cell": "1.8",
       "status": "computed"
     },
-    "direct_alpha_primary": {
+    "direct_alpha_public_proxy": {
       "value": -4.58,
       "source_cell": "1.8",
-      "status": "computed"
+      "status": "computed",
+      "note": "KS-PME vs PSP over 2023-09-01 to 2025-12-31, fund return source: disclosed annualized figure (cell 1.2)"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "no peer composite comparison in either slot for this product"
     }
   }
 }

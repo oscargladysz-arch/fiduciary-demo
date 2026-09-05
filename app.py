@@ -195,8 +195,12 @@ def render_benchmark():
             c1, c2, c3, c4 = st.columns(4)
             c1.metric("Fund (ann.)", f"{comp['fund_ann_pct']}%/yr")
             c2.metric("Benchmark (ann.)", f"{comp['index_ann_pct']}%/yr")
-            c3.metric("KS-PME", f"{comp['ks_pme']}")
-            c4.metric("Direct Alpha", f"{comp['direct_alpha_pct']}%/yr")
+            if comp.get("kind") == "composite":
+                c3.metric("Relative wealth ratio vs peer composite", f"{comp['relative_wealth_ratio']}")
+                c4.metric("Excess return vs peer composite", f"{comp['excess_return_pct']}%/yr")
+            else:
+                c3.metric("KS-PME", f"{comp['ks_pme']}")
+                c4.metric("Direct Alpha", f"{comp['direct_alpha_pct']}%/yr")
             st.caption(f"Window {comp['window']}"
                        f"{(' (' + comp['window_note'] + ')') if comp.get('window_note') else ''}"
                        f". PME and alpha on "

@@ -169,15 +169,28 @@
       "source_cell": "5.3",
       "status": "computed"
     },
-    "pme_primary": {
+    "pme_public_proxy": {
       "value": 0.9453,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "KS-PME vs VNQ over 2024-12-31 to 2025-12-31, fund return source: filed fiscal-year returns"
+    },
+    "pme_public_proxy_name": {
+      "value": "VNQ",
       "source_cell": "1.8",
       "status": "computed"
     },
-    "direct_alpha_primary": {
+    "direct_alpha_public_proxy": {
       "value": -5.47,
       "source_cell": "1.8",
-      "status": "computed"
+      "status": "computed",
+      "note": "KS-PME vs VNQ over 2024-12-31 to 2025-12-31, fund return source: filed fiscal-year returns"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "no peer composite comparison in either slot for this product"
     }
   }
 }

@@ -136,9 +136,13 @@ def typed_headline(cid: str, fx: dict) -> str | None:
         return f"inception {g('inception')}" + (f", {yrs:g} years" if yrs is not None else "")
     if cid == "6.1" and g("wrapper_type"):
         return WRAPPER_LABEL.get(g("wrapper_type"), g("wrapper_type"))
-    if cid == "1.8" and g("pme_primary") is not None:
-        da = g("direct_alpha_primary")
-        return f"KS-PME {g('pme_primary'):.2f}" + (f", Direct Alpha {da:.2f}%/yr" if da is not None else "")
+    if cid == "1.8" and (g("pme_public_proxy") is not None or g("peer_relative_wealth_ratio") is not None):
+        parts = []
+        if g("pme_public_proxy") is not None:
+            parts.append(f"KS-PME {g('pme_public_proxy'):.2f} vs {g('pme_public_proxy_name') or 'public proxy'}")
+        if g("peer_relative_wealth_ratio") is not None:
+            parts.append(f"peer relative wealth ratio {g('peer_relative_wealth_ratio'):.2f}")
+        return ", ".join(parts)
     if cid == "5.3" and g("primary_benchmark_id"):
         sc = g("selection_score")
         return (f"{candidate_short(g('primary_benchmark_id'))} selected"
