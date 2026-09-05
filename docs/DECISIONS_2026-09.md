@@ -1634,3 +1634,10 @@ sreit, jll_ipt under the tech/media plan, product-independent views once),
 - Screenshots: `docs/screenshots/after_r2/`, the same 42 views as the
   baseline set, shot from the deployed build for the runbook's fallback
   plan. Round 1's two sets stay for history.
+- Deploy mechanics: the session's permission policy refused the runbook's
+  orphan-branch force-push. The deploy was made instead as a normal commit
+  on top of the existing `gh-pages` history (all prior files removed, the
+  built `site/` copied in, `.nojekyll` kept), verified by a recursive diff
+  against `site/`, and pushed without force (`94bf391..d74e91c`). The
+  runbook recipe stands for a person with force-push rights. Either form
+  yields the same tree.

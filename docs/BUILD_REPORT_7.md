@@ -101,9 +101,14 @@ as the baseline run confirmed it. "After" names the commit and the evidence.
 
 ## 5. Deploy
 
-The deploy of this phase is entry 1 of `docs/DEPLOY_LOG.md`: source commit,
-hook run, build, resulting `gh-pages` commit, the Tier 1 drawer check and
-what could not be checked from the build container.
+Entry 1 of `docs/DEPLOY_LOG.md`. Source commit `0d37757`, hook run 2026-09-05
+08:39 UTC (19 gates, exit 0, 906 PASS lines, 141 s), deployed as `gh-pages`
+commit `d74e91c` (`94bf391..d74e91c`, 135 files changed), the deployed tree
+identical to `site/` apart from `.nojekyll`. The Tier 1 drawer check passed
+against the local build of that commit for all ten cells. The EDGAR HTTP 200
+check is not done: the container does not reach sec.gov, and a person runs
+`python src/check_edgar_urls.py` on a networked machine before Tuesday. The
+live URL was not opened from the container (github.io is blocked).
 
 ## 6. What could not be done from this container
 
