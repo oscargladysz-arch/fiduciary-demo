@@ -1,25 +1,27 @@
 {
   "product": "hl_paf",
-  "what": "filing references in the evidence CSV resolved against data/manifest.csv, offline. exact: form and filed date (or written accession) match one held filing. range: every held filing of that form between the two written dates. set: every held filing of that form when the citation names them as a plural with no date. form_only: no date written, one such filing held. accession_in_text: the citation carries its own accession, not a held filing, URL is the EDGAR folder. ambiguous and unresolved: stated reason, no accession invented",
+  "what": "filing references in the evidence CSV resolved against data/manifest.csv, offline. exact: form and filed date (or written accession) match one held filing. range: every held filing of that form between the two written dates. set: every held filing of that form when the citation names them as a plural with no date. form_only: no date written, one such filing held. An accession written in the citation resolves only when the manifest holds it for this product, and one that disagrees with the manifest's filing on the written date is a conflict for the validator. ambiguous and unresolved: stated reason, no accession invented",
   "cells": {
     "1.1": [
       {
-        "text": "N-CSR 2026-06-09 (acc 0001213900-26-054176*",
+        "text": "N-CSR 2026-06-09 (acc 0001213900-26-066804",
         "form": "N-CSR",
-        "match": "accession_in_text",
-        "accession": "0001213900-26-054176",
-        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026054176/",
-        "reason": "accession written in the citation, filing not in data/manifest.csv, the URL is the EDGAR archive folder for that accession"
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066804",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026066804/ea0291054-01_ncsr.htm",
+        "local_path": "data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm"
       }
     ],
     "1.2": [
       {
-        "text": "N-CSR 2026-06-09 (acc 0001213900-26-054176*",
+        "text": "N-CSR 2026-06-09 (acc 0001213900-26-066804",
         "form": "N-CSR",
-        "match": "accession_in_text",
-        "accession": "0001213900-26-054176",
-        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026054176/",
-        "reason": "accession written in the citation, filing not in data/manifest.csv, the URL is the EDGAR archive folder for that accession"
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066804",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026066804/ea0291054-01_ncsr.htm",
+        "local_path": "data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm"
       }
     ],
     "1.3": [
@@ -77,12 +79,13 @@
     ],
     "2.1": [
       {
-        "text": "N-CSR 2026-06-09 (acc 0001213900-26-054176*",
+        "text": "N-CSR 2026-06-09 (acc 0001213900-26-066804",
         "form": "N-CSR",
-        "match": "accession_in_text",
-        "accession": "0001213900-26-054176",
-        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026054176/",
-        "reason": "accession written in the citation, filing not in data/manifest.csv, the URL is the EDGAR archive folder for that accession"
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066804",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026066804/ea0291054-01_ncsr.htm",
+        "local_path": "data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm"
       }
     ],
     "2.2": [
@@ -107,12 +110,13 @@
     ],
     "2.3": [
       {
-        "text": "N-CSR 2026-06-09 (acc 0001213900-26-054176*",
+        "text": "N-CSR 2026-06-09 (acc 0001213900-26-066804",
         "form": "N-CSR",
-        "match": "accession_in_text",
-        "accession": "0001213900-26-054176",
-        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026054176/",
-        "reason": "accession written in the citation, filing not in data/manifest.csv, the URL is the EDGAR archive folder for that accession"
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066804",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026066804/ea0291054-01_ncsr.htm",
+        "local_path": "data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm"
       }
     ],
     "2.4": [
@@ -159,12 +163,13 @@
     ],
     "2.7": [
       {
-        "text": "N-CSR 2026-06-09 (acc 0001213900-26-054176*",
+        "text": "N-CSR 2026-06-09 (acc 0001213900-26-066804",
         "form": "N-CSR",
-        "match": "accession_in_text",
-        "accession": "0001213900-26-054176",
-        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026054176/",
-        "reason": "accession written in the citation, filing not in data/manifest.csv, the URL is the EDGAR archive folder for that accession"
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066804",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026066804/ea0291054-01_ncsr.htm",
+        "local_path": "data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm"
       }
     ],
     "3.1": [
@@ -231,12 +236,13 @@
     ],
     "3.6": [
       {
-        "text": "N-CSR 2026-06-09 (acc 0001213900-26-054176*",
+        "text": "N-CSR 2026-06-09 (acc 0001213900-26-066804",
         "form": "N-CSR",
-        "match": "accession_in_text",
-        "accession": "0001213900-26-054176",
-        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026054176/",
-        "reason": "accession written in the citation, filing not in data/manifest.csv, the URL is the EDGAR archive folder for that accession"
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066804",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026066804/ea0291054-01_ncsr.htm",
+        "local_path": "data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm"
       }
     ],
     "4.1": [
@@ -252,12 +258,13 @@
     ],
     "4.2": [
       {
-        "text": "N-CSR 2026-06-09 (acc 0001213900-26-054176*",
+        "text": "N-CSR 2026-06-09 (acc 0001213900-26-066804",
         "form": "N-CSR",
-        "match": "accession_in_text",
-        "accession": "0001213900-26-054176",
-        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026054176/",
-        "reason": "accession written in the citation, filing not in data/manifest.csv, the URL is the EDGAR archive folder for that accession"
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066804",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026066804/ea0291054-01_ncsr.htm",
+        "local_path": "data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm"
       }
     ],
     "4.3": [
@@ -284,12 +291,13 @@
     ],
     "4.5": [
       {
-        "text": "N-CSR 2026-06-09 (acc 0001213900-26-054176*",
+        "text": "N-CSR 2026-06-09 (acc 0001213900-26-066804",
         "form": "N-CSR",
-        "match": "accession_in_text",
-        "accession": "0001213900-26-054176",
-        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026054176/",
-        "reason": "accession written in the citation, filing not in data/manifest.csv, the URL is the EDGAR archive folder for that accession"
+        "match": "exact",
+        "filing_date": "2026-06-09",
+        "accession": "0001213900-26-066804",
+        "url": "https://www.sec.gov/Archives/edgar/data/1803491/000121390026066804/ea0291054-01_ncsr.htm",
+        "local_path": "data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm"
       }
     ],
     "4.6": [
@@ -398,7 +406,6 @@
     ]
   },
   "counts": {
-    "accession_in_text": 8,
-    "exact": 30
+    "exact": 38
   }
 }

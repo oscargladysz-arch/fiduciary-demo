@@ -82,42 +82,79 @@ check("every non-raw data/ path cited by a cell exists", not dangling, "; ".join
 check("data/analytics/taxonomy.json no longer exists",
       not (DATA / "analytics" / "taxonomy.json").exists())
 
-# offline accession resolution (P1-D prep): a resolved reference points at a
-# manifest row of the same product and form, with the manifest's own URL
+# accessions (P1-D prep, tightened in R2-P0-1, rule 15): a resolved reference
+# points at a manifest row of the same product and form with the manifest's
+# own URL, that URL is built from the product's CIK and that accession, no
+# reference resolves from a number written in the citation text, and no
+# written number disagrees with the manifest
 import csv as _csv  # noqa: E402
 import json as _json  # noqa: E402
 _man = list(_csv.DictReader(open(BASE / "data" / "manifest.csv", newline="")))
 _by_acc = {(r["product"], r["accession"]): r for r in _man}
-_bad, _n_res, _n_all = [], 0, 0
+_held = {}
+for _r in _man:
+    _held.setdefault(_r["product"], set()).add(_r["accession"])
+_ciks = {k: load_product(k)["cik"] for k in product_keys()}
+
+
+def _built_from(url: str, product: str, acc: str) -> bool:
+    return f"/edgar/data/{int(_ciks[product])}/{acc.replace('-', '')}/" in url
+
+
+_bad, _n_res, _n_all, _conflicts, _retired = [], 0, 0, [], []
 for _p in sorted((BASE / "data" / "citations").glob("*.json")):
     if _p.name == "summary.json":
         continue
     _doc = _json.loads(_p.read_text())
+    _prod = _doc["product"]
     for _cid, _refs in _doc["cells"].items():
         for _r in _refs:
             _n_all += 1
+            if _r.get("conflict"):
+                _conflicts.append(f"{_prod} {_cid}: {_r['conflict'][:70]}")
+            if _r["match"] == "accession_in_text":
+                _retired.append(f"{_prod} {_cid}")
             if _r["match"] in ("exact", "form_only"):
                 _n_res += 1
-                _m = _by_acc.get((_doc["product"], _r["accession"]))
-                if not _m or _m["form"] != _r["form"] or _m["url"] != _r["url"]:
-                    _bad.append(f"{_doc['product']} {_cid}: {_r.get('accession')}")
+                _m = _by_acc.get((_prod, _r["accession"]))
+                if not _m or _m["form"] != _r["form"] or _m["url"] != _r["url"] \
+                        or not _built_from(_r["url"], _prod, _r["accession"]):
+                    _bad.append(f"{_prod} {_cid}: {_r.get('accession')}")
             elif _r["match"] in ("range", "set"):
                 _n_res += 1
                 for _f in _r["filings"]:
-                    _m = _by_acc.get((_doc["product"], _f["accession"]))
-                    if not _m or (_r["form"] != "*" and _m["form"] != _r["form"]) or _m["url"] != _f["url"]:
-                        _bad.append(f"{_doc['product']} {_cid}: range {_f['accession']}")
-            elif _r["match"] == "accession_in_text":
-                _n_res += 1
-                if _r["accession"] not in _r["text"] or _r["accession"].replace("-", "") not in _r["url"]:
-                    _bad.append(f"{_doc['product']} {_cid}: accession_in_text {_r['accession']}")
-            elif not _r.get("reason"):
-                _bad.append(f"{_doc['product']} {_cid}: {_r['match']} without a reason")
+                    _m = _by_acc.get((_prod, _f["accession"]))
+                    if not _m or (_r["form"] != "*" and _m["form"] != _r["form"]) or _m["url"] != _f["url"] \
+                            or not _built_from(_f["url"], _prod, _f["accession"]):
+                        _bad.append(f"{_prod} {_cid}: range {_f['accession']}")
+            else:
+                if not _r.get("reason"):
+                    _bad.append(f"{_prod} {_cid}: {_r['match']} without a reason")
+                if _r.get("url") or _r.get("accession"):
+                    _bad.append(f"{_prod} {_cid}: {_r['match']} yet carries a URL or an accession")
 _summary = _json.loads((BASE / "data" / "citations" / "summary.json").read_text())
-check("citations: every resolved reference is the same product's manifest row with its URL, "
-      f"every other one carries a reason ({_n_res} of {_n_all} resolved)", not _bad, "; ".join(_bad[:5]))
+check("citations: every resolved reference is the same product's manifest row with its URL built from "
+      f"the CIK and that accession, every other one carries a reason and no URL ({_n_res} of {_n_all} resolved)",
+      not _bad, "; ".join(_bad[:5]))
+check("citations: no reference resolves from a number written in the text and no written accession "
+      "disagrees with the manifest (rule 15)", not _conflicts and not _retired,
+      "; ".join((_conflicts + _retired)[:5]))
 check("citations: the summary counts equal the per-product files",
       _summary["references"] == _n_all and sum(_summary["counts"].values()) == _n_all)
+# every single accession in every evidence row, in the accession column and
+# written in the citation text, is a manifest row for that product
+from tark_data import ACCESSION_RE as _ACC  # noqa: E402
+_acc_bad = []
+for _k in product_keys():
+    for _row in load_evidence(_k):
+        _a = (_row.get("accession") or "").strip()
+        if _a and not _a.startswith("multiple (") and _a not in _held.get(_k, set()):
+            _acc_bad.append(f"{_k} {_row['cell_id']}: column {_a}")
+        for _w in _ACC.findall(_row.get("source_doc") or ""):
+            if _w not in _held.get(_k, set()):
+                _acc_bad.append(f"{_k} {_row['cell_id']}: text {_w}")
+check("evidence: every accession in the accession column and every accession written in a citation "
+      "is a manifest row for that product", not _acc_bad, "; ".join(_acc_bad[:5]))
 
 # engine-owned cells restate their artifacts, never an older run
 import re as _re  # noqa: E402

@@ -1235,3 +1235,154 @@ detail with EDGAR links rides there, total payload 2,283,031 against
 the 2,400,000 cap), census chunk 303,113 bytes, 128 build-side
 documents. Record totals unchanged since P1 exit. Not green here and
 therefore P3 stays a plan: P2-3 and P2-4 (decision 6.24).
+
+## 7. Round 2 (2026-09)
+
+Specification: `docs/GAP_ANALYSIS_2026-09-05.md` (46 findings, every one
+reproduced by the auditor on the live site, recomputed from `data/`, or
+checked live against EDGAR and the Federal Register API). Where the round-2
+brief and the audit disagree on a detail, the audit wins and the
+discrepancy is written here. Entries 7.1 and 7.2 were decided by Oscar on
+2026-09-05 and are not defaults. Entries 7.3 to 7.6 are defaults taken by
+the engineer and reversible by Oscar. Later entries are appended as the
+work lands, each with its task id.
+
+### 7.1 Decided: benchmark architecture v3, Slot K and Slot G
+Every card, memo and record carries two explicit comparisons that satisfy
+different paragraphs of the rule and are named as such. Slot K, "Meaningful
+benchmark (paragraph (k))": the fund's declared benchmark (Lane A),
+exchange-traded strategy proxies (Lane B) and published strategy indices
+(Lane P: CDLI, NFI-ODCE, Cambridge, Burgiss, LSTA, Credit Suisse Leveraged
+Loan). A candidate with a public market price series gets a PME. A
+candidate with an appraisal-based published series gets a relative wealth
+ratio and an excess return on calendar-quarter aligned periods. A candidate
+that is cited but not held gets no number and says so. Slot G, "Peer
+comparison (paragraphs (g) and (h))": the cohort, members side by side over
+identical calendar periods with n per period, an equal-weight composite
+only where every member has the period, a relative wealth ratio for the
+fund versus that composite, a survivorship sentence and a heterogeneity
+sentence. Slot G is never "the benchmark" and never a PME. Not reopened in
+this engagement. Implemented in R2-P1-A.
+
+### 7.2 Decided: acquire the public CDLI and NFI-ODCE headline series
+Oscar's instruction: whatever makes the product most usable. CDLI quarterly
+headline returns from Cliffwater's published index page and NFI-ODCE
+quarterly headline returns from NCREIF's published releases, each with a
+manifest row (URL, fetch date, license note), into
+`data/series_quarterly/idx_cdli.csv` and `idx_odce.csv`. If a source forbids
+automated access, download once by hand and record the URL and date.
+Cambridge and Burgiss stay cite-only until a license exists. If a public
+series turns out to be unavailable without a license, the report says so
+and the cite-only path stays. The composite is never substituted.
+Constraint recorded on 2026-09-05: the build container reaches neither
+cliffwaterdirectlendingindex.com nor ncreif.org (CONNECT 403 at the egress
+proxy, section 7.8), so the fetch runs on a networked machine in R2-P1-1.
+
+### 7.3 Default: demo script v8 for Tuesday speaks no composite number
+v8 speaks no composite number and no PME number without the data-source
+caveat ("Yahoo adjusted close, approximates NAV total return"). BKLN and PSP
+comparisons are spoken with that caveat. The sreit misaligned verdict is
+spoken. The Authority panel is opened only if the verbatim rule text is in
+the build. The closing table is re-derived and Tier 1 of the verification
+queue is re-derived from it. Reverse by: edit `docs/demo_script.md`.
+
+### 7.4 Default: the verification gate admits a human signature (rule 16)
+The invariant "verified = 0" is replaced in R2-P2-1 by "every verified row
+has a signer that is not a script, an ISO date, and was written by
+`verify_cell.py` (a marker in `verified_by`)". Zero is the current count,
+pinned as a snapshot that any signature may move. Until R2-P2-1 lands the
+existing pin stays, and no cell is signed by anyone in this engagement.
+
+### 7.5 Default: sponsor identity leaves tracked files in R2-P3-2, no history rewrite
+`identity_private` blocks move to an untracked encrypted file or a private
+repository read by `src/tark_anon.py` at build time. Git history still
+contains the blocks. A history purge is a separate decision for Oscar and
+is not taken here.
+
+### 7.6 Default: the service stays local-only for October
+Bearer-token authentication from the environment, CORS restricted to the
+site origin, each job in a temporary clone producing a patch a human
+applies, a job table with status, a failed job never marking the census
+entity evaluated. Not hosted unless Oscar decides otherwise.
+
+### 7.7 Discrepancy: branch name
+The brief names `remediation-r2-2026-09`. The session harness assigns
+`claude/tark-round-2-audit-jl9q4q` and forbids pushing elsewhere. Work is
+on the assigned branch. Oscar can rename or re-point the pull request.
+
+### 7.8 Environment facts that constrain round 2 (2026-09-05)
+Blocked at the egress proxy (CONNECT 403): `www.sec.gov`, `data.sec.gov`,
+`www.federalregister.gov`, `query1.finance.yahoo.com`,
+`www.cliffwaterdirectlendingindex.com`, `www.ncreif.org`,
+`askebsa.dol.gov`, `www.supremecourt.gov`, `oscargladysz-arch.github.io`.
+Open: `api.github.com`, PyPI, the Anthropic API host. No
+`ANTHROPIC_API_KEY`. `data/raw/` absent. Consequences, each recorded where
+it bites: the HTTP 200 check of the Tier 1 EDGAR URLs (R2-P0-10) cannot run
+from this container and is recorded as such in `docs/DEPLOY_LOG.md` for a
+person on a networked machine, the CDLI and ODCE fetch (R2-P1-1), the
+Schedule H bulk file (R2-P1-10), the case-law documents (R2-P1-14), the
+authority text (R2-P1-16), calibration and the 17th product (R2-P2-7,
+R2-P2-8) all need a networked machine. Nothing is faked in their place.
+Playwright: the venv pins 1.56.0 to match the shipped Chromium build 1194.
+
+### 7.9 Baseline recorded 2026-09-05 (before any round-2 change)
+Branch `claude/tark-round-2-audit-jl9q4q` at `4519e61` (main `3d158ff` plus
+the round-2 audit document). `sh hooks/pre-commit`: 18 gates, exit 0, 849
+`[PASS]` lines plus the validators' `[ok]` lines, wall time 107 seconds
+(1m47s real, of which the frontend gate is about 70 seconds). The audit
+counted 657 + 216 checks with a different convention (per-gate printed
+counts). Record totals: 406 extracted-unverified, 205 n/a, 161 computed,
+75 partial, 16 fetched, 1 structured, 0 verified, 0 pending, 864 cells.
+Bundle: `site/data.js` 1,035,854 bytes, census chunk 303,090 bytes, 64
+memos and 64 packets. Screenshots: `docs/screenshots/baseline_r2/`, the
+same 42 views as `docs/screenshots/after_2026-09/` (hl_paf, cion_ares,
+sreit, jll_ipt under the tech/media plan, product-independent views once),
+8.5 MB.
+
+### 7.10 R2-P0-1: accessions come from the manifest, and only from it
+- The eight hl_paf citations (cells 1.1, 1.2, 2.1, 2.3, 2.7, 3.6, 4.2, 4.5)
+  wrote `0001213900-26-054176*` (the July spike placeholder, HTTP 404 on
+  EDGAR per the audit). The manifest's N-CSR filed 2026-06-09 for CIK
+  1803491 is `0001213900-26-066804` (primary document
+  `ea0291054-01_ncsr.htm`). The citation text and the product JSON source
+  now carry the manifest accession. Eight source_doc and eight accession
+  cells are allowlisted with the reason, and the eight accession changes
+  are in the corrections table (old 054176, new 066804, cause "R2-P0-1:
+  July spike placeholder accession"). No value, quote or status moved.
+- The resolver's `accession_in_text` match type is retired. An accession
+  written in a citation resolves only when the manifest holds it for that
+  product. When the manifest holds a filing of that form on the written
+  date and the written number differs, the manifest row resolves the
+  reference and the row carries a `conflict` field that the invariants
+  gate fails on. A written number the manifest does not hold resolves
+  nothing and gets no URL. `validate_accessions` refuses an accession in
+  the accession column or in any citation text that is not a manifest row
+  for the product (the "or written in its citation" escape is gone).
+- The accession column of every evidence row is now a watched number in
+  the corrections log (surface: citation drawer EDGAR link, memo
+  provenance table, packet provenance), so a changed accession is logged
+  like a changed figure.
+- The one other `accession_in_text` reference, cion_ares 4.6 (the N-CEN
+  structured-dataset flag, status structured, T1), cites
+  `0001049169-26-000801`. That accession is the census record's `ncen.ref`
+  for CIK 1678124 (period 31-DEC-2025) from the SEC N-CEN structured
+  dataset. The manifest gains a row for it (doc_set
+  `structured_dataset_ncen`, form N-CEN, URL the EDGAR folder built from
+  the CIK and the accession). Its filing date and primary document are not
+  in the record and are left empty rather than guessed, and no document is
+  held on disk (local_path empty). The ingest reads only manifest rows that
+  name a local file. The URL was not HTTP-checked from this container
+  (section 7.8). Reverse by: delete the row, and the cell's accession column
+  empties with the reason "not a manifest row".
+- "Every EDGAR URL in the bundle is built from the product's CIK and a
+  manifest accession" is asserted twice: in `test_invariants` over
+  `data/citations/` (the bundle's only source of EDGAR links, before the
+  build) and in `reconcile` over the built `TARK_EVIDENCE` chunk (after the
+  build). The invariants gate runs before `build_site` in the hook, so the
+  bundle itself can only be checked after it.
+- The local `origin/main` ref was stale at baseline (3d9b93e, the
+  pre-merge main), so the immutability and corrections gates at baseline
+  diffed against round 1's base. After `git fetch origin main` the ref is
+  `4519e61` (main after PR #1 plus the audit upload), and both gates are
+  re-run against it: the round-1 rows stay in the table as history, the
+  round-2 rows are attributed to their task ids.

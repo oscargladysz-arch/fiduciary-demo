@@ -12,7 +12,8 @@ docs/crosscheck_report.md:
 
 Watched numbers: benchmark selections (slots, scores, comparison figures,
 escalation), typed facts, liquidity verdicts per plan, fee_percentile bars,
-and the engine-owned cells (1.8, 1.9, 2.9, 3.8, 3.9, 5.3, 5.4, 5.5, 5.6, 5.7).
+the engine-owned cells (1.8, 1.9, 2.9, 3.8, 3.9, 5.3, 5.4, 5.5, 5.6, 5.7),
+and the accession column of every evidence row.
 
 Commands:
   python src/corrections_log.py diff  [--base REF]
@@ -49,6 +50,7 @@ SURFACES = {
     "liquidity": "liquidity view, screener verdict column, memo",
     "fee_percentile": "fee matrix bar chart",
     "cell": "evaluation cell, source drawer, memo",
+    "evidence": "citation drawer EDGAR link, memo provenance table, packet provenance",
 }
 
 
@@ -137,6 +139,14 @@ def collect(tree: Tree) -> dict[tuple[str, str], str]:
             c = cells.get(cid) or {}
             out[(key, f"cell.{cid}.value")] = canon(c.get("value"))
             out[(key, f"cell.{cid}.status")] = canon(c.get("status"))
+    # the accession behind every citation is a published identifier (the
+    # drawer links it): a change is logged like any number (R2-P0-1)
+    for rel in tree.files("data/evidence", "_evidence.csv"):
+        key = Path(rel).name.replace("_evidence.csv", "")
+        for r in csv.DictReader(io.StringIO(tree.text(rel) or "")):
+            acc = (r.get("accession") or "").strip()
+            if acc:
+                out[(key, f"evidence.{r['cell_id']}.accession")] = acc
     return out
 
 

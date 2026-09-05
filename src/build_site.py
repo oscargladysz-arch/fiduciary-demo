@@ -544,7 +544,7 @@ def main() -> None:
             cell["accession"] = acc_by_cell.get(cid, "")
             edgar = []
             for ref in cits.get(cid, []):
-                if ref["match"] in ("exact", "form_only", "accession_in_text"):
+                if ref["match"] in ("exact", "form_only"):
                     edgar.append({"form": ref.get("form", ""), "filing_date": ref.get("filing_date", ""),
                                   "accession": ref["accession"], "url": ref["url"]})
                 elif ref["match"] in ("range", "set"):

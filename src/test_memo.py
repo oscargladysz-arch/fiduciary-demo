@@ -152,7 +152,7 @@ for k in prods:
         if status_kind(prods[k]["cells"][cid].get("status", "")) not in EVIDENCED:
             continue
         for r in refs:
-            accs = [r["accession"]] if r["match"] in ("exact", "form_only", "accession_in_text") \
+            accs = [r["accession"]] if r["match"] in ("exact", "form_only") \
                 else [f["accession"] for f in r.get("filings", [])]
             for a in accs:
                 if a.lower() not in t or r.get("url", r.get("filings", [{}])[0].get("url", "")).lower() not in t:

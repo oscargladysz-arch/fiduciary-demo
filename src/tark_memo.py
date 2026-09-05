@@ -297,7 +297,7 @@ def _case_law_section(doc: Document, product: dict) -> None:
 KIND_ORDER = (("structured", "structured"), ("extracted", "extracted-unverified"),
               ("verified", "verified"), ("computed", "computed"), ("partial", "partial"),
               ("fetched", "fetched"), ("na", "n/a"), ("pending", "pending"))
-RESOLVED_ONE = ("exact", "form_only", "accession_in_text")
+RESOLVED_ONE = ("exact", "form_only")
 
 
 def _citation_lines(refs: list[dict]) -> list[str]:
@@ -305,8 +305,7 @@ def _citation_lines(refs: list[dict]) -> list[str]:
     lines = []
     for r in refs:
         if r["match"] in RESOLVED_ONE:
-            tag = {"form_only": " (matched by form only: the single such filing held)",
-                   "accession_in_text": " (accession written in the citation, EDGAR folder URL)"
+            tag = {"form_only": " (matched by form only: the single such filing held)"
                    }.get(r["match"], "")
             lines.append(f"{r['form']} {r.get('filing_date', '')} accession {r['accession']} "
                          f"{r['url']}{tag}".replace("  ", " "))

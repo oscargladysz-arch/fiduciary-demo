@@ -20,7 +20,7 @@ import re
 
 from tark_data import DATA, EVIDENCE_COLUMNS, LAPTOP_RE, load_evidence, product_keys
 
-RESOLVED_ONE = ("exact", "form_only", "accession_in_text")
+RESOLVED_ONE = ("exact", "form_only")
 
 
 def accession_for(refs: list[dict], key: str) -> tuple[str, str | None]:

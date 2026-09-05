@@ -394,8 +394,10 @@ def main() -> int:
         return 1
     docs = []
     for r in rows:
+        if not r.get("local_path"):
+            continue    # a structured-dataset row names an accession, not a document on disk
         p = DATA.parent / r["local_path"] if not Path(r["local_path"]).is_absolute() else Path(r["local_path"])
-        if p.exists():
+        if p.is_file():
             docs.append(filing_text(p, doc_label(r)))
     if not docs:
         print("refused: manifest rows exist but no local filing text is on disk (data/raw is not in git)")

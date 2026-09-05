@@ -116,6 +116,28 @@ def main() -> int:
           not bad["pme"], "; ".join(bad["pme"][:4]))
     check("structural liquidity verdict agrees across facts, bundle, cell 3.9, four match files and memo",
           not bad["verdict"], "; ".join(bad["verdict"][:4]))
+    # R2-P0-1 (rule 15): every EDGAR URL the drawer can link is the manifest's
+    # own URL for that product and accession, built from the product's CIK
+    import csv
+    man = {(r["product"], r["accession"]): r["url"]
+           for r in csv.DictReader(open(DATA / "manifest.csv", newline=""))}
+    ev_text = (SITE / "series.js").read_text()
+    m = re.search(r"^window\.TARK_EVIDENCE = (.*);$", ev_text, re.M)
+    evidence = json.loads(m.group(1)) if m else {}
+    bad_url, n_url = [], 0
+    for k, cells in evidence.items():
+        cik = int(prods[k]["cik"])
+        for cid, cell in cells.items():
+            for f in cell.get("edgar") or []:
+                n_url += 1
+                folder = f"/edgar/data/{cik}/{f['accession'].replace('-', '')}/"
+                if man.get((k, f["accession"])) != f["url"] or folder not in f["url"]:
+                    bad_url.append(f"{k} {cid}: {f['url']}")
+            acc = (cell.get("accession") or "").strip()
+            if acc and not acc.startswith("multiple (") and (k, acc) not in man:
+                bad_url.append(f"{k} {cid}: accession {acc} not in the manifest")
+    check(f"bundle: every EDGAR URL in the citation drawer is the manifest URL for that product and accession, "
+          f"built from the CIK ({n_url} links)", bool(evidence) and not bad_url, "; ".join(bad_url[:4]))
     print(f"\n{len(FAILS)} failure(s)." if FAILS else "\nAll surfaces reconcile.")
     return 1 if FAILS else 0
 

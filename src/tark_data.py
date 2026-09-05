@@ -734,21 +734,30 @@ LAPTOP_RE = re.compile(r"/private/tmp/|/Users/|/tmp/claude")
 
 def validate_accessions() -> list[str]:
     """The accession column of every evidence row: empty, one accession the
-    manifest holds for that product (or one written in the citation itself),
-    or a pointer to the citations file for a set. No laptop path anywhere."""
+    manifest holds for that product, or a pointer to the citations file for
+    a set. Every accession written in a citation text must also be a
+    manifest row for that product (R2-P0-1, rule 15: a number written in
+    the text is accepted only when it matches the manifest). No laptop path
+    anywhere."""
     errs: list[str] = []
     by_prod: dict[str, set[str]] = {}
     for r in load_manifest():
         by_prod.setdefault(r["product"], set()).add(r["accession"])
     for key in product_keys():
+        held = by_prod.get(key, set())
         for r in load_evidence(key):
             acc = (r.get("accession") or "").strip()
             if acc and not acc.startswith("multiple ("):
                 if not ACCESSION_RE.fullmatch(acc):
                     errs.append(f"{key}:{r['cell_id']}: accession {acc!r} is not an accession number")
-                elif acc not in by_prod.get(key, set()) and acc not in (r.get("source_doc") or ""):
-                    errs.append(f"{key}:{r['cell_id']}: accession {acc} is neither a manifest row for this "
-                                "product nor written in its citation")
+                elif acc not in held:
+                    errs.append(f"{key}:{r['cell_id']}: accession {acc} is not a manifest row for this "
+                                "product (data/manifest.csv is the ledger, a number written in the "
+                                "citation is not)")
+            for written in ACCESSION_RE.findall(r.get("source_doc") or ""):
+                if written not in held:
+                    errs.append(f"{key}:{r['cell_id']}: the citation writes accession {written}, which "
+                                "is not a manifest row for this product")
             for col in EVIDENCE_COLUMNS:
                 if LAPTOP_RE.search(r.get(col) or ""):
                     errs.append(f"{key}:{r['cell_id']}: {col} carries a laptop path")
