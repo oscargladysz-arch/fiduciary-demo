@@ -143,10 +143,11 @@ def typed_headline(cid: str, fx: dict) -> str | None:
         sc = g("selection_score")
         return (f"{candidate_short(g('primary_benchmark_id'))} selected"
                 + (f", {sc}/12" if sc is not None else ""))
-    if cid == "3.9" and isinstance(g("liquidity_verdict_by_plan"), dict):
-        vs = sorted(set(g("liquidity_verdict_by_plan").values()))
-        return ("verdict " + vs[0] + " under all plans") if len(vs) == 1 \
-            else "verdict varies by plan: " + ", ".join(vs)
+    if cid == "3.9" and g("liquidity_structural_verdict"):
+        # the headline is the structural layer only (typed facts, plan-
+        # independent). The per-plan scenario verdicts are ILLUSTRATIVE and
+        # appear in the cell text under that label, never in a headline (R2-P0-7)
+        return f"structural verdict {g('liquidity_structural_verdict')}, plan-independent"
     field, f = next(iter(fx.items()))
     v = f["value"]
     return f"{field.replace('_', ' ')}: {v if not isinstance(v, float) else f'{v:g}'}"

@@ -48,12 +48,19 @@ def squash(t: str) -> str:
 def main() -> int:
     B = bundle()
     prods = load_products()
-    bad: dict[str, list[str]] = {"expense": [], "mgmt": [], "pme": [], "verdict": []}
+    bad: dict[str, list[str]] = {"expense": [], "mgmt": [], "pme": [], "verdict": [], "scenario": []}
+    plans = sorted(p.stem for p in (DATA / "plans").glob("*.json"))
+    liq_text = (SITE / "series.js").read_text()
+    m_liq = re.search(r"^window\.TARK_LIQ = (.*);$", liq_text, re.M)
+    bundle_liq = json.loads(m_liq.group(1)) if m_liq else {}
+    n_memos = 0
     for k in prods:
         fx = json.loads((DATA / "facts" / f"{k}.json").read_text())["facts"]
         bfx = B["facts"][k]
         fbc = facts_by_cell(fx)
-        memo = squash(docx_text(SITE / "memos" / memo_name("plan_tech_media", k)))
+        memos = {pl: squash(docx_text(SITE / "memos" / memo_name(pl, k))) for pl in plans}
+        n_memos += len(memos)
+        memo = memos["plan_tech_media"]
         # ---- expense ratio: facts, bundle facts, the cell 2.3 headline, the memo typed line
         er = (fx.get("expense_ratio_pct") or {}).get("value")
         if bfx["expense_ratio_pct"]["value"] != er:
@@ -106,16 +113,42 @@ def main() -> int:
             for mp in sorted((DATA / "liquidity").glob(f"*__{k}_match.json")):
                 if json.loads(mp.read_text())["verdict"] != sv:
                     bad["verdict"].append(f"{k}: {mp.name} verdict differs")
-            if f"structural liquidity verdict: {sv}" not in memo:
-                bad["verdict"].append(f"{k}: memo lacks the structural verdict {sv}")
+            for pl, mt in memos.items():
+                if f"structural liquidity verdict: {sv}" not in mt:
+                    bad["verdict"].append(f"{k}: {pl} memo lacks the structural verdict {sv}")
+            head39 = B["cell_display"][k]["3.9"]["headline"]
+            if head39 != f"structural verdict {sv}, plan-independent":
+                bad["verdict"].append(f"{k}: 3.9 headline {head39!r} is not the structural verdict alone")
+        # ---- ILLUSTRATIVE scenario verdict, per plan: facts, match file, bundle, cell 3.9 text, memo
+        by_plan = (fx.get("liquidity_verdict_by_plan") or {}).get("value") or {}
+        c39 = prods[k]["cells"]["3.9"]["value"]
+        for pl in plans:
+            mp = DATA / "liquidity" / f"{pl}__{k}_match.json"
+            if not mp.exists():
+                continue
+            mdoc = json.loads(mp.read_text())
+            scv = mdoc.get("scenario_verdict")
+            shown = scv or "not computable"
+            label = json.loads((DATA / "plans" / f"{pl}.json").read_text())["display_label"]
+            if by_plan and by_plan.get(pl) != scv:
+                bad["scenario"].append(f"{k} {pl}: facts {by_plan.get(pl)} vs match {scv}")
+            if bundle_liq and (bundle_liq.get(f"{pl}__{k}") or {}).get("scenario_verdict") != scv:
+                bad["scenario"].append(f"{k} {pl}: bundle match differs")
+            if f"{label}: {shown}" not in c39 or "ILLUSTRATIVE" not in c39.split("Scenario verdicts")[1][:20]:
+                bad["scenario"].append(f"{k} {pl}: cell 3.9 lacks the labeled scenario verdict {shown}")
+            if f"scenario verdict under {label.lower()} (illustrative): {shown}" not in memos[pl]:
+                bad["scenario"].append(f"{k} {pl}: memo lacks the ILLUSTRATIVE scenario verdict {shown} for its own plan")
     check("expense ratio agrees across facts, bundle, cell 2.3 headline and memo, all 16", not bad["expense"],
           "; ".join(bad["expense"][:4]))
     check("management fee rate and base agree across facts, bundle, cell 2.1 headline and memo, all 16",
           not bad["mgmt"], "; ".join(bad["mgmt"][:4]))
     check("KS-PME and Direct Alpha agree across artifact, bundle card, cell 1.8, facts and memo",
           not bad["pme"], "; ".join(bad["pme"][:4]))
-    check("structural liquidity verdict agrees across facts, bundle, cell 3.9, four match files and memo",
-          not bad["verdict"], "; ".join(bad["verdict"][:4]))
+    check(f"structural liquidity verdict agrees across facts, bundle, cell 3.9 headline, four match files and "
+          f"all {n_memos} memos", not bad["verdict"], "; ".join(bad["verdict"][:4]))
+    check("ILLUSTRATIVE scenario verdict agrees per plan across facts, match file, bundle, cell 3.9 text and "
+          f"the plan's memo, always under its label ({n_memos} memos)", not bad["scenario"],
+          "; ".join(bad["scenario"][:4]))
     # R2-P0-1 (rule 15): every EDGAR URL the drawer can link is the manifest's
     # own URL for that product and accession, built from the product's CIK
     import csv

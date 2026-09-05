@@ -1510,3 +1510,17 @@ sreit, jll_ipt under the tech/media plan, product-independent views once),
   4.6 "Supplement No.", bcred 6.2 "U.S.", cion_ares 6.5 and jll_ipt 6.5
   "Inc."), and asserts that no findings row in any of the 64 memos and no
   headline or plain line in the bundle ends at an abbreviation.
+
+### 7.15 R2-P0-7: the 3.9 headline is the structural layer alone
+- `typed_headline` for cell 3.9 prints "structural verdict <verdict>,
+  plan-independent" from the `liquidity_structural_verdict` fact. The
+  per-plan scenario verdicts are ILLUSTRATIVE and appear only inside the
+  cell text and the memo under that label, never as a headline (audit
+  round 2 item 9). The Plans view says the selected plan drives the
+  illustrative scenario layer and the structural verdict is
+  plan-independent (done in R2-P0-3).
+- `reconcile` now reads all 64 memos, not the tech plan's 16, and checks
+  both layers: the structural verdict across facts, bundle, the 3.9
+  headline, the four match files and every memo, and the scenario verdict
+  per plan across facts, match file, bundle, the 3.9 cell text and that
+  plan's own memo, always under the ILLUSTRATIVE label.
