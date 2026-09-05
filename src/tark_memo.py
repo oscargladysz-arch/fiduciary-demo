@@ -465,12 +465,12 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
             doc.add_heading("ESCALATION: no meaningful benchmark "
                             "constructible", level=2)
             doc.add_paragraph(sel["escalation"])
+            # no legal conclusion (R2-P0-9, audit round 2 item 29): the memo
+            # states what the record holds and does not decide
             doc.add_paragraph(
-                "Under the proposal's own terms, a benchmark that is not "
-                "meaningful cannot support the comparison. Proceeding without "
-                "one documented here would undercut the safe harbor. "
-                "Recommended action: do not proceed pending the data steps "
-                "above. Retain this memo as the record of the determination.")
+                "No meaningful benchmark could be constructed from the data held. "
+                "The record cannot support the paragraph (k) comparison until one "
+                "is identified. This memo does not decide.")
         for slot, badge in (("primary", "Primary"), ("secondary", "Secondary")):
             s = sel.get(slot)
             if not s:

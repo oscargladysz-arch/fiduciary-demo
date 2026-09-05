@@ -256,9 +256,23 @@ for pl in plan_keys():
             _rb_bad.append(f"{pl} {k}: regulatory basis incomplete")
         if "safe harbor attaches" in t or "the proposal requires comparison" in t:
             _rb_bad.append(f"{pl} {k}: paraphrase of the regulation")
+        # R2-P0-9: no legal conclusion and, while the rule text is not in the
+        # build, no sentence that states what the rule requires
+        for phrase in ("undercut", "do not proceed", "cannot support the safe harbor",
+                       "satisfies the safe harbor", "would defeat the safe harbor",
+                       "recommended action:", "under the proposal's own terms"):
+            if phrase in t:
+                _rb_bad.append(f"{pl} {k}: legal conclusion phrase {phrase!r}")
+        if authority()["status"] != "fetched":
+            for rx in (r"\bthe (?:rule|proposal|regulation|safe harbor) (?:requires|mandates|demands|obliges|calls for)\b",
+                       r"\brequired by the (?:rule|proposal|regulation)\b",
+                       r"\bto (?:qualify for|earn|keep|preserve) the safe harbor\b"):
+                if re.search(rx, t):
+                    _rb_bad.append(f"{pl} {k}: states what the rule requires while the text is not in the build ({rx})")
         if authority()["status"] != "fetched" and "not yet in this build" not in t:
             _rb_bad.append(f"{pl} {k}: verbatim-text status missing")
-check("regulatory basis: citation, links, paragraph mapping and basis in all 64, no paraphrase", not _rb_bad)
+check("regulatory basis: citation, links, paragraph mapping and basis in all 64, no paraphrase, no legal "
+      "conclusion, no statement of what the rule requires while its text is absent", not _rb_bad)
 if _rb_bad:
     print("   bad:", "; ".join(_rb_bad[:4]))
 
@@ -304,6 +318,9 @@ for pl in plan_keys():
             _pk_bad.append(f"{pl} {k}: exhibits")
         if "verified cells have been independently" in t:
             _pk_bad.append(f"{pl} {k}: verified sentence")
+        if any(ph in t for ph in ("undercut", "do not proceed", "cannot support the safe harbor",
+                                  "satisfies the safe harbor", "recommended action:")):
+            _pk_bad.append(f"{pl} {k}: legal conclusion phrase")
 check("packets: anonymized, own plan, both verdicts from the match file, exhibits, no decision, all 64", not _pk_bad)
 if _pk_bad:
     print("   bad:", "; ".join(_pk_bad[:5]))

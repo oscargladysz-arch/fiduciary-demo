@@ -1541,3 +1541,17 @@ sreit, jll_ipt under the tech/media plan, product-independent views once),
   absence note no longer calls the missing line "net".
 - Demo script v8 speaks Cliffwater's 1.36% as an expense ratio before
   waivers and excluding interest, never as a net expense ratio.
+
+### 7.17 R2-P0-9: the memo does not decide, and says nothing the rule text does not say
+- The twelve escalated memos said "Under the proposal's own terms ...
+  would undercut the safe harbor. Recommended action: do not proceed" two
+  sections above "This memo does not decide" (audit round 2 item 29).
+  The paragraph now reads: "No meaningful benchmark could be constructed
+  from the data held. The record cannot support the paragraph (k)
+  comparison until one is identified. This memo does not decide."
+- The memo gate fails on "undercut", "do not proceed", "cannot support
+  the safe harbor", "satisfies the safe harbor", "recommended action:",
+  "under the proposal's own terms", and, while the verbatim rule text is
+  not in the build, on any sentence of the form "the rule requires",
+  "required by the proposal" or "to qualify for the safe harbor", in all
+  64 memos. The packets are screened for the same conclusion phrases.
