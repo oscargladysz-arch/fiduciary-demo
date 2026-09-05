@@ -29,7 +29,7 @@
       "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
       "investability 2/2: computable on held data (daily series)",
       "data_quality 2/2: daily series held",
-      "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks)"
+      "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks): the registry affiliation map ties it to none of the fund's advisers"
     ],
     "comparison": {
       "kind": "series",
@@ -47,137 +47,27 @@
     }
   },
   "secondary": {
-    "candidate": "Peer cohort composite: evergreen_pe without kkr_kpec (amg_pantheon, ares_pmf, hl_paf, stepstone_spm)",
-    "id": "peer_kpec",
-    "lane": "C",
-    "score": 8,
+    "candidate": "Cambridge Associates US PE benchmark",
+    "id": "cambridge_pe_k",
+    "lane": "B",
+    "score": 7,
     "max": 12,
     "criteria": {
-      "strategy_match": 2,
+      "strategy_match": 3,
       "risk_liquidity_match": 2,
-      "investability": 2,
+      "investability": 0,
       "data_quality": 0,
       "provider_independence": 2
     },
-    "series_id": "composite:evergreen_pe",
+    "series_id": "cited:cambridge_pe_k",
     "reasons": [
-      "strategy_match 2/3: same asset class, different sub-strategy (evergreen pe vs pe conglomerate)",
-      "risk_liquidity_match 2/3: NAV-class series, members span more than one leverage regime",
-      "investability 2/2: computable on held data (cohort composite from filings)",
-      "data_quality 0/2: annual composite with only 2 overlapping fiscal year(s), fewer than 3",
-      "provider_independence 2/2: provider unaffiliated with the fund (constructed (Tark cohort engine, leave-one-out))"
+      "strategy_match 3/3: a private private equity index for a pe conglomerate fund",
+      "risk_liquidity_match 2/3: NAV-class series, quarterly observations vs the fund's annual return data and an index, not a fund set, so leverage regime is not comparable",
+      "investability 0/2: licensed data not held (no subscription), candidate can be cited, not computed",
+      "data_quality 0/2: cited, not computed",
+      "provider_independence 2/2: provider unaffiliated with the fund (Cambridge Associates): the registry affiliation map ties it to none of the fund's advisers"
     ],
-    "comparison": {
-      "kind": "composite",
-      "window": "FY2024 to FY2025",
-      "window_note": "2 overlapping fiscal year(s) of 5 composite years",
-      "fund_window": "FY2024 to FY2025",
-      "window_years": 2.0,
-      "alignment_note": "aligned by fiscal year-end year. Members' fiscal years end in month 03 (amg_pantheon, ares_pmf, hl_paf, stepstone_spm), the fund's in month 12",
-      "composite_rows": [
-        {
-          "year": "2024",
-          "composite_return_pct": 13.91,
-          "n": 4,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf",
-            "stepstone_spm"
-          ]
-        },
-        {
-          "year": "2025",
-          "composite_return_pct": 13.34,
-          "n": 4,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf",
-            "stepstone_spm"
-          ]
-        }
-      ],
-      "fund_growth_x": 1.2987,
-      "index_growth_x": 1.2911,
-      "ks_pme": 1.0059,
-      "direct_alpha_pct": 0.29,
-      "fund_ann_pct": 13.95,
-      "index_ann_pct": 13.61,
-      "low_confidence": "low confidence: 2-fiscal-year window, shorter than 3 years"
-    },
-    "composite": {
-      "cohort": "evergreen_pe",
-      "members": [
-        "amg_pantheon",
-        "ares_pmf",
-        "hl_paf",
-        "stepstone_spm"
-      ],
-      "rows": [
-        {
-          "year": "2022",
-          "composite_return_pct": 22.85,
-          "n": 3,
-          "members": [
-            "amg_pantheon",
-            "hl_paf",
-            "stepstone_spm"
-          ]
-        },
-        {
-          "year": "2023",
-          "composite_return_pct": 10.01,
-          "n": 4,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf",
-            "stepstone_spm"
-          ]
-        },
-        {
-          "year": "2024",
-          "composite_return_pct": 13.91,
-          "n": 4,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf",
-            "stepstone_spm"
-          ]
-        },
-        {
-          "year": "2025",
-          "composite_return_pct": 13.34,
-          "n": 4,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf",
-            "stepstone_spm"
-          ]
-        },
-        {
-          "year": "2026",
-          "composite_return_pct": 10.94,
-          "n": 4,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf",
-            "stepstone_spm"
-          ]
-        }
-      ],
-      "fye_months": {
-        "amg_pantheon": "03",
-        "ares_pmf": "03",
-        "hl_paf": "03",
-        "stepstone_spm": "03"
-      },
-      "weighting": "equal-weight across members reporting that fiscal year, aligned by fiscal year-end year. Stub and partial periods excluded"
-    }
+    "comparison": null
   },
   "rejected": [
     {
@@ -199,32 +89,32 @@
         "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
         "investability 2/2: computable on held data (daily series)",
         "data_quality 2/2: daily series held",
-        "provider_independence 2/2: provider unaffiliated with the fund (iShares / MSCI)"
+        "provider_independence 2/2: provider unaffiliated with the fund (iShares / MSCI): the registry affiliation map ties it to none of the fund's advisers"
       ],
       "rejection": "rejected: strategy gate (score 8/12 but strategy_match 1/3)"
     },
     {
-      "candidate": "Cambridge Associates US PE benchmark",
-      "id": "cambridge_pe_k",
-      "lane": "B",
+      "candidate": "Peer cohort composite: evergreen_pe without kkr_kpec (amg_pantheon, ares_pmf, hl_paf, stepstone_spm)",
+      "id": "peer_kpec",
+      "lane": "C",
       "score": 7,
       "max": 12,
       "criteria": {
-        "strategy_match": 3,
+        "strategy_match": 2,
         "risk_liquidity_match": 2,
-        "investability": 0,
+        "investability": 2,
         "data_quality": 0,
-        "provider_independence": 2
+        "provider_independence": 1
       },
-      "series_id": "cited:cambridge_pe_k",
+      "series_id": "composite:evergreen_pe",
       "reasons": [
-        "strategy_match 3/3: a private private equity index for a pe conglomerate fund",
-        "risk_liquidity_match 2/3: NAV-class series, quarterly observations vs the fund's annual return data and an index, not a fund set, so leverage regime is not comparable",
-        "investability 0/2: licensed data not held (no subscription), candidate can be cited, not computed",
-        "data_quality 0/2: cited, not computed",
-        "provider_independence 2/2: provider unaffiliated with the fund (Cambridge Associates)"
+        "strategy_match 2/3: same asset class, different sub-strategy (evergreen pe vs pe conglomerate)",
+        "risk_liquidity_match 2/3: NAV-class series, members span more than one leverage regime",
+        "investability 2/2: computable on held data (cohort composite from filings)",
+        "data_quality 0/2: annual composite with only 2 overlapping fiscal year(s), fewer than 3",
+        "provider_independence 1/2: constructed by the evaluator from the roster, not a third-party index. A composite the evaluator built from a roster the evaluator chose is not an independent yardstick, so it earns at most 1 of 2"
       ],
-      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 8/12 (only two slots). Retained in log as viable alternate"
+      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 7/12 (only two slots). Retained in log as viable alternate"
     }
   ],
   "secondary_note": null,

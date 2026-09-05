@@ -39,7 +39,7 @@
         "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
         "investability 2/2: computable on held data (daily series)",
         "data_quality 2/2: daily series held",
-        "provider_independence 2/2: provider unaffiliated with the fund (SPDR / S&P DJI)"
+        "provider_independence 2/2: provider unaffiliated with the fund (SPDR / S&P DJI): the registry affiliation map ties it to none of the fund's advisers"
       ],
       "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     },
@@ -62,7 +62,7 @@
         "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
         "investability 2/2: computable on held data (daily series)",
         "data_quality 2/2: daily series held",
-        "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks)"
+        "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks): the registry affiliation map ties it to none of the fund's advisers"
       ],
       "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     },
@@ -70,14 +70,14 @@
       "candidate": "Peer cohort composite: venture without ssss (arkvx, dxyz)",
       "id": "peer_venture",
       "lane": "C",
-      "score": 4,
+      "score": 3,
       "max": 12,
       "criteria": {
         "strategy_match": 2,
         "risk_liquidity_match": 0,
         "investability": 0,
         "data_quality": 0,
-        "provider_independence": 2
+        "provider_independence": 1
       },
       "series_id": "composite:venture",
       "reasons": [
@@ -85,7 +85,7 @@
         "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
         "investability 0/2: composite refused, nothing to compute",
         "data_quality 0/2: cited, not computed",
-        "provider_independence 2/2: provider unaffiliated with the fund (constructed (Tark cohort engine, leave-one-out))"
+        "provider_independence 1/2: constructed by the evaluator from the roster, not a third-party index. A composite the evaluator built from a roster the evaluator chose is not an independent yardstick, so it earns at most 1 of 2"
       ],
       "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     }

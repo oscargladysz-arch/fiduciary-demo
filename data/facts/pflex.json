@@ -132,7 +132,7 @@
       "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
     },
     "primary_benchmark_id": {
-      "value": "peer_credit",
+      "value": "bkln",
       "source_cell": "5.3",
       "status": "computed"
     },
@@ -142,12 +142,12 @@
       "status": "computed"
     },
     "pme_primary": {
-      "value": 0.9799,
+      "value": 1.1089,
       "source_cell": "1.8",
       "status": "computed"
     },
     "direct_alpha_primary": {
-      "value": -0.41,
+      "value": 1.3,
       "source_cell": "1.8",
       "status": "computed"
     }

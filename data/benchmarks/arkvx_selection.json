@@ -32,7 +32,7 @@
         "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
         "investability 2/2: computable on held data (daily series)",
         "data_quality 2/2: daily series held",
-        "provider_independence 2/2: provider unaffiliated with the fund (SPDR / S&P DJI)"
+        "provider_independence 2/2: provider unaffiliated with the fund (SPDR / S&P DJI): the registry affiliation map ties it to none of the fund's advisers"
       ],
       "rejection": "rejected: strategy gate (score 8/12 but strategy_match 1/3)"
     },
@@ -55,7 +55,7 @@
         "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
         "investability 2/2: computable on held data (daily series)",
         "data_quality 2/2: daily series held",
-        "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks)"
+        "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks): the registry affiliation map ties it to none of the fund's advisers"
       ],
       "rejection": "rejected: strategy gate (score 8/12 but strategy_match 1/3)"
     },
@@ -63,14 +63,14 @@
       "candidate": "Peer cohort composite: venture without arkvx (dxyz, ssss)",
       "id": "peer_venture",
       "lane": "C",
-      "score": 2,
+      "score": 3,
       "max": 12,
       "criteria": {
         "strategy_match": 2,
         "risk_liquidity_match": 0,
         "investability": 0,
         "data_quality": 0,
-        "provider_independence": 0
+        "provider_independence": 1
       },
       "series_id": "composite:venture",
       "reasons": [
@@ -78,11 +78,11 @@
         "risk_liquidity_match 0/3: no computable series: fewer than 3 members remain after leaving arkvx out (2: dxyz, ssss)",
         "investability 0/2: composite refused, nothing to compute",
         "data_quality 0/2: cited, not computed",
-        "provider_independence 0/2: index published by the fund's own adviser (ARK). A manufacturer-owned yardstick sits poorly with the rule's conflict-free ethos, so it is usable as secondary color only"
+        "provider_independence 1/2: constructed by the evaluator from the roster, not a third-party index. A composite the evaluator built from a roster the evaluator chose is not an independent yardstick, so it earns at most 1 of 2"
       ],
-      "rejection": "score 2/12 below primary threshold 7"
+      "rejection": "score 3/12 below primary threshold 7"
     }
   ],
   "secondary_note": null,
-  "escalation": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from held data: no candidate passes the strategy gate at or above 7/12. spy 8/12 (rejected: strategy gate); psp_v 8/12 (rejected: strategy gate); peer_venture 2/12 (score 2/12 below primary threshold 7). Required next: a strategy-exact series (a venture index or a computable peer cohort of at least three NAV-priced members)."
+  "escalation": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from held data: no candidate passes the strategy gate at or above 7/12. spy 8/12 (rejected: strategy gate); psp_v 8/12 (rejected: strategy gate); peer_venture 3/12 (score 3/12 below primary threshold 7). Required next: a strategy-exact series (a venture index or a computable peer cohort of at least three NAV-priced members)."
 }

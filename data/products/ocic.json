@@ -417,7 +417,7 @@
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": "Benchmark candidates evaluated by the engine (rubric v2, threshold 7 of 12, strategy gate below 2 of 3 ineligible). PRIMARY Peer cohort composite: private_credit without ocic (bcred, cion_ares, cliffwater_cclfx, pflex) 10/12 (C lane). SECONDARY Senior loan investable proxy (BKLN, for Morningstar LSTA class) 9/12 (B lane). REJECTED Cliffwater Direct Lending Index (CDLI) 7/12 (B lane): outranked: score 7/12 vs primary 10/12 and secondary 9/12 (only two slots). Retained in log as viable alternate. Fund-declared benchmark: none (cell 5.1 (partial): no self-declared benchmark index appears in the 10-K or the N-2).",
+      "value": "Benchmark candidates evaluated by the engine (rubric v2, threshold 7 of 12, strategy gate below 2 of 3 ineligible). PRIMARY Peer cohort composite: private_credit without ocic (bcred, cion_ares, cliffwater_cclfx, pflex) 9/12 (C lane). SECONDARY Senior loan investable proxy (BKLN, for Morningstar LSTA class) 9/12 (B lane). REJECTED Cliffwater Direct Lending Index (CDLI) 7/12 (B lane): outranked: score 7/12 vs primary 9/12 and secondary 9/12 (only two slots). Retained in log as viable alternate. Fund-declared benchmark: none (cell 5.1 (partial): no self-declared benchmark index appears in the 10-K or the N-2).",
       "status": "computed",
       "source": "data/benchmarks/ocic_selection.json",
       "section": "primary, secondary, rejected, declared_benchmarks",
@@ -447,7 +447,7 @@
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": "Benchmark suitability (rubric v2, engine output). Primary Peer cohort composite: private_credit without ocic (bcred, cion_ares, cliffwater_cclfx, pflex) (C lane) scored 10/12 with a composite comparison over FY2021 to FY2025: KS-PME 0.9973, Direct Alpha -0.05%/yr. Secondary Senior loan investable proxy (BKLN, for Morningstar LSTA class) scored 9/12. Max attainable on held data 10/12. Declared benchmark: none (cell 5.1 (partial): no self-declared benchmark index appears in the 10-K or the N-2). Rejected: 1 candidates, each with its reason in the ledger. Methodology: docs/benchmark_methodology.md.",
+      "value": "Benchmark suitability (rubric v2, engine output). Primary Peer cohort composite: private_credit without ocic (bcred, cion_ares, cliffwater_cclfx, pflex) (C lane) scored 9/12 with a composite comparison over FY2021 to FY2025: KS-PME 0.9973, Direct Alpha -0.05%/yr. Secondary Senior loan investable proxy (BKLN, for Morningstar LSTA class) scored 9/12. Max attainable on held data 9/12. Declared benchmark: none (cell 5.1 (partial): no self-declared benchmark index appears in the 10-K or the N-2). Rejected: 1 candidates, each with its reason in the ledger. Methodology: docs/benchmark_methodology.md.",
       "status": "computed",
       "source": "data/benchmarks/ocic_selection.json",
       "section": "primary, secondary, escalation, max_attainable, declared_benchmarks, rejected",

@@ -8,21 +8,21 @@
   ],
   "rubric_version": "v2",
   "rubric": "rubric v2: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
-  "max_attainable": 10,
+  "max_attainable": 9,
   "declared_benchmarks": [],
   "declared_none_reason": "cell 5.1: the fund expressly declares no designated performance benchmark",
   "primary": {
     "candidate": "Peer cohort composite: private_credit without cliffwater_cclfx (bcred, cion_ares, ocic, pflex)",
     "id": "peer_credit",
     "lane": "C",
-    "score": 10,
+    "score": 9,
     "max": 12,
     "criteria": {
       "strategy_match": 3,
       "risk_liquidity_match": 2,
       "investability": 2,
       "data_quality": 1,
-      "provider_independence": 2
+      "provider_independence": 1
     },
     "series_id": "composite:private_credit",
     "reasons": [
@@ -30,7 +30,7 @@
       "risk_liquidity_match 2/3: NAV-class series, annual observations vs the fund's daily return data and members span more than one leverage regime",
       "investability 2/2: computable on held data (cohort composite from filings)",
       "data_quality 1/2: annual composite with 4 overlapping fiscal years",
-      "provider_independence 2/2: provider unaffiliated with the fund (constructed (Tark cohort engine, leave-one-out))"
+      "provider_independence 1/2: constructed by the evaluator from the roster, not a third-party index. A composite the evaluator built from a roster the evaluator chose is not an independent yardstick, so it earns at most 1 of 2"
     ],
     "comparison": {
       "kind": "composite",
@@ -186,7 +186,7 @@
       "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
       "investability 2/2: computable on held data (daily series)",
       "data_quality 2/2: daily series held",
-      "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Morningstar LSTA class)"
+      "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Morningstar LSTA class): the registry affiliation map ties it to none of the fund's advisers"
     ],
     "comparison": {
       "kind": "series",
@@ -226,7 +226,7 @@
         "risk_liquidity_match 2/3: NAV-class series, quarterly observations vs the fund's daily return data and an index, not a fund set, so leverage regime is not comparable",
         "investability 0/2: index cited, series not held, not computable",
         "data_quality 0/2: cited, not computed",
-        "provider_independence 0/2: index published by the fund's own adviser (Cliffwater). A manufacturer-owned yardstick sits poorly with the rule's conflict-free ethos, so it is usable as secondary color only"
+        "provider_independence 0/2: index published by the fund's own adviser (Cliffwater) per the registry affiliation map. A manufacturer-owned yardstick is not an independent comparator, so it is usable as secondary color only"
       ],
       "rejection": "score 5/12 below primary threshold 7"
     }

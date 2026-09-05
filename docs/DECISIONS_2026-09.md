@@ -1386,3 +1386,32 @@ sreit, jll_ipt under the tech/media plan, product-independent views once),
   `4519e61` (main after PR #1 plus the audit upload), and both gates are
   re-run against it: the round-1 rows stay in the table as history, the
   round-2 rows are attributed to their task ids.
+
+### 7.11 R2-P0-2: affiliation is a fact from a map, and a composite is not a third party
+- `provider_independence` no longer tests substrings. `data/registry.json`
+  gains an `affiliations.providers` block: provider entity key to adviser
+  entity keys, each entry cited to the registry's adviser entries. Today
+  it holds one entry, Cliffwater (publisher of CDLI, adviser of
+  cliffwater_cclfx). Nothing else is affiliated. "Published by the fund's
+  own adviser" is written only where the map says so, and a property test
+  over every product and every candidate asserts it.
+- A peer composite is never "published by" anyone. Its independence reason
+  reads "constructed by the evaluator from the roster, not a third-party
+  index" and it earns 1 of 2: a construct the evaluator built from a
+  roster the evaluator chose is not an independent yardstick.
+- Consequence, recomputed and repinned (rule 6, cause named in the
+  commit): every composite loses one point. cliffwater_cclfx, bcred, ocic
+  and the four evergreen-PE funds keep the composite as primary at 9
+  (tied with BKLN or PSP at 9, ordered on strategy_match). pflex and
+  cion_ares move to BKLN as primary (9) with the composite secondary (8).
+  kkr_kpec's secondary moves from the composite (7, data_quality 0) to
+  the Cambridge PE benchmark (7, licensed and not held, no computable
+  comparison), ordered ahead on strategy_match. The tie wording
+  ("outranked") is audit item 18 and is R2-P1-2. The expected-outcome
+  table in `docs/benchmark_methodology.md` section 9 is repinned from the
+  engine's recomputation and says so. Every changed number is in the
+  corrections table under the R2-P0-2 cause.
+- Not tuned: a cited index taking kkr_kpec's secondary slot is the rubric's
+  arithmetic on today's data, and the slot says the comparison is not
+  computable. Slot K and Slot G (decision 7.1) replace this rubric in
+  R2-P1-A.

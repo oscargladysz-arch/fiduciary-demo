@@ -182,7 +182,7 @@ gate stays on the card as a fact, with one sentence saying it fails.
 | risk_liquidity_match | 0 to 3 | 3: a NAV-class candidate whose observation cadence matches the fund's held return cadence and whose members all share the fund's leverage regime. 2: a NAV-class candidate with a different cadence or a mixed leverage regime, or a daily market proxy for an exchange-traded fund. 1: a daily market proxy against a semi-liquid NAV fund. 0: no computable series, or the fund's price is decoupled from its NAV. |
 | investability | 0 or 2 | 2 when the comparison can be computed on held data (a held series or a computable composite), 0 for a cited index. Window clipping is reported in the window note, not scored. |
 | data_quality | 0 to 2 | 2 daily or monthly held. 1 annual or quarterly with at least 3 overlapping years. 0 cited, not computed. |
-| provider_independence | 0 or 2 | 0 when the provider is the fund's adviser or sub-adviser (registry), else 2. Judged per product, not per menu. |
+| provider_independence | 0 to 2 | 0 when the registry's affiliation map (`data/registry.json`, `affiliations`) ties the candidate's provider entity to one of the fund's adviser or sub-adviser entities. 1 for a peer composite: the evaluator built it from a roster the evaluator chose, so it is not a third-party yardstick. 2 for an unaffiliated third party. Affiliation is a fact read from the map, never a string match. Judged per product, not per menu. |
 
 A synthetic candidate scores 12 and the gate asserts it. On the data held
 today no product reaches `risk_liquidity_match` 3: the private credit
@@ -208,11 +208,17 @@ the ceiling the data sets. The threshold for primary and secondary stays
   refused below 3 remaining members, and it earns data_quality 1 only
   with at least 3 overlapping years. It is shown as the rule's "history of
   a similar type of investment" comparison.
-- Independence is judged per product: the registry's adviser and
-  sub-adviser against the candidate's provider. CDLI is adviser-owned for
-  cliffwater_cclfx and independent for the other four private credit
-  products. BKLN's note no longer claims that every private credit fund
-  declares no benchmark.
+- Independence is judged per product from the registry's affiliation map
+  (provider entity to adviser entity keys, each entry cited to the
+  registry's adviser entries). Today the map holds one entry: Cliffwater,
+  the publisher of CDLI, is the adviser of cliffwater_cclfx, so CDLI is
+  adviser-owned for that product and independent for the other four
+  private credit products. Nothing else is affiliated. The substring test
+  that preceded the map ("ares" inside "ishares") is deleted, and a
+  property test asserts that "published by the fund's own adviser" appears
+  only where the map says so. A peer composite is never "published by"
+  anyone: it is constructed by the evaluator from the roster and earns at
+  most 1 of 2 on independence (R2-P0-2, audit round 2 item 2).
 - Escalation is computable: when no candidate passes the gate and reaches
   7, the product escalates with the ledger showing why each candidate
   fell (arkvx: public equity and listed PE fail the gate, the venture
@@ -238,18 +244,28 @@ the same gate now asserts the v2 columns and the max attainable column
 against the live artifacts (jll_ipt joins when P1-13 gives it a
 selection).
 
+Repinned 2026-09-05 (R2-P0-2, audit round 2 item 2): provider
+independence now comes from the registry's affiliation map and a peer
+composite earns at most 1 of 2 on it, so every composite lost one point.
+The v2 columns below are the engine's recomputation after that change,
+not a prediction: pflex and cion_ares moved to BKLN as primary with the
+composite secondary, and kkr_kpec's secondary moved from the composite
+(7, data_quality 0) to the Cambridge PE benchmark (7, cited, ordered
+ahead on strategy_match). The composite's name and label change in
+R2-P0-6 and its architecture in R2-P1-A (decision 7.1).
+
 | product | v1 primary | v1 secondary | v2 primary (expected) | v2 secondary (expected) | max attainable v2 |
 |---|---|---|---|---|---|
-| cliffwater_cclfx | bkln 9/12 | pme_bkln 9/12 | peer_credit 10/12 | bkln 9/12 | 10/12 |
-| pflex | bkln 9/12 | pme_bkln 9/12 | peer_credit 9/12 | bkln 9/12 | 9/12 |
-| cion_ares | bkln 9/12 | pme_bkln 9/12 | peer_credit 9/12 | bkln 9/12 | 9/12 |
-| bcred | bkln 9/12 | pme_bkln 9/12 | peer_credit 10/12 | bkln 9/12 | 10/12 |
-| ocic | bkln 9/12 | pme_bkln 9/12 | peer_credit 10/12 | bkln 9/12 | 10/12 |
-| hl_paf | psp 9/12 | urth 8/12 | peer_evergreen 10/12 | psp 9/12 | 10/12 |
-| stepstone_spm | psp 9/12 | urth 8/12 | peer_evergreen 10/12 | psp 9/12 | 10/12 |
-| ares_pmf | psp 9/12 | urth 8/12 | peer_evergreen 10/12 | psp 9/12 | 10/12 |
-| amg_pantheon | psp 9/12 | urth 8/12 | peer_evergreen 10/12 | psp 9/12 | 10/12 |
-| kkr_kpec | psp_k 9/12 | urth_k 8/12 | psp_k 9/12 | peer_kpec 8/12 | 9/12 |
+| cliffwater_cclfx | bkln 9/12 | pme_bkln 9/12 | peer_credit 9/12 | bkln 9/12 | 9/12 |
+| pflex | bkln 9/12 | pme_bkln 9/12 | bkln 9/12 | peer_credit 8/12 | 9/12 |
+| cion_ares | bkln 9/12 | pme_bkln 9/12 | bkln 9/12 | peer_credit 8/12 | 9/12 |
+| bcred | bkln 9/12 | pme_bkln 9/12 | peer_credit 9/12 | bkln 9/12 | 9/12 |
+| ocic | bkln 9/12 | pme_bkln 9/12 | peer_credit 9/12 | bkln 9/12 | 9/12 |
+| hl_paf | psp 9/12 | urth 8/12 | peer_evergreen 9/12 | psp 9/12 | 9/12 |
+| stepstone_spm | psp 9/12 | urth 8/12 | peer_evergreen 9/12 | psp 9/12 | 9/12 |
+| ares_pmf | psp 9/12 | urth 8/12 | peer_evergreen 9/12 | psp 9/12 | 9/12 |
+| amg_pantheon | psp 9/12 | urth 8/12 | peer_evergreen 9/12 | psp 9/12 | 9/12 |
+| kkr_kpec | psp_k 9/12 | urth_k 8/12 | psp_k 9/12 | cambridge_pe_k 7/12 | 9/12 |
 | breit | vnq 9/12 | odce 8/12 | vnq 9/12 | odce 7/12 | 9/12 |
 | sreit | vnq 9/12 | odce 8/12 | vnq 9/12 | odce 7/12 | 9/12 |
 | jll_ipt | none | none | vnq 9/12 | odce 7/12 | 9/12 |
@@ -259,21 +275,28 @@ selection).
 
 Why each row moves:
 
-- Private credit: the leave-one-out composite of four peers scores 10 for
+- Private credit: the leave-one-out composite of four peers scores 9 for
   the three direct lenders (strategy 3, NAV-class annual composite 2,
-  computable 2, annual with 3 or more overlapping years 1, independent 2)
-  and 9 for pflex and cion_ares (strategy 2). BKLN stays 9 (strategy 2,
-  daily proxy against a semi-liquid fund 1, held 2, daily 2, independent
-  2). Where the two tie at 9 the risk criterion breaks it for the
-  composite. CDLI scores 7 for bcred and ocic (cited) and 5 for
-  cliffwater_cclfx (adviser-owned) and never wins. cion_ares's declared
-  CSLLI scores 5 and the card says the declared benchmark fails.
-- Evergreen PE: the composite scores 10 and PSP 9. URTH and SPY, declared
-  by four funds, score 8 and fail the gate at strategy 1, and the card
-  says so.
+  computable 2, annual with 3 or more overlapping years 1, evaluator-
+  constructed 1) and 8 for pflex and cion_ares (strategy 2). BKLN scores 9
+  everywhere (strategy 2, daily proxy against a semi-liquid fund 1, held 2,
+  daily 2, independent 2). Where the composite and BKLN tie at 9,
+  strategy_match orders the composite first. For pflex and cion_ares BKLN
+  is primary at 9 and the composite secondary at 8. CDLI scores 7 for
+  bcred and ocic, 6 for pflex and cion_ares (strategy 2) and 5 for
+  cliffwater_cclfx (adviser-owned per the affiliation map) and never wins.
+  cion_ares's declared CSLLI scores 5 and the card says the declared
+  benchmark fails.
+- Evergreen PE: the composite scores 9 and PSP 9, ordered by
+  strategy_match. URTH and SPY, declared by four funds, score 8 and fail
+  the gate at strategy 1, and the card says so.
 - kkr_kpec: its held figure spans 2023-09 to 2025-12, so the composite
-  overlaps only two fiscal years and earns data_quality 0: 8, behind PSP
-  at 9.
+  overlaps only two fiscal years and earns data_quality 0: 7 (strategy 2,
+  NAV-class 2, computable 2, 0, evaluator-constructed 1). The Cambridge PE
+  benchmark also scores 7 (strategy 3, NAV-class 2, licensed not held 0
+  and 0, independent 2) and is ordered ahead on strategy_match, so it is
+  the secondary with no computable comparison and the composite is
+  rejected at 7. PSP stays primary at 9.
 - Non-traded REITs: the cohort has three members, so leave-one-out leaves
   two and the composite is refused. VNQ 9 primary, ODCE 7 as a cited
   secondary (strategy 3, NAV-class 2, cited 0 and 0, independent 2).

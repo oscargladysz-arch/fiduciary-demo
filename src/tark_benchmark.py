@@ -46,7 +46,12 @@ RUBRIC_CAPTION = ("rubric v2: strategy match 3 (gate below 2), risk/liquidity ma
                   "investability 2, data quality 2, provider independence 2, "
                   f"threshold {MIN_PRIMARY_SCORE}/{RUBRIC_MAX}")
 
-REGISTRY = json.loads((DATA / "registry.json").read_text())["products"]
+_REGISTRY_DOC = json.loads((DATA / "registry.json").read_text())
+REGISTRY = _REGISTRY_DOC["products"]
+# provider entity -> adviser entity keys (R2-P0-2). A candidate is affiliated
+# with a fund only when this map says so. Never a string match: "ares" inside
+# "ishares blackrock msci" published a false affiliation on the live site.
+AFFILIATIONS: dict[str, dict] = (_REGISTRY_DOC.get("affiliations") or {}).get("providers", {})
 # return inputs live in the registry (P2-1). Exposed for the site build and tests.
 RETURN_INPUTS = {k: r["return_inputs"] for k, r in REGISTRY.items() if r.get("return_inputs")}
 
@@ -341,13 +346,24 @@ def data_quality(cand: dict, overlap_years: int | None) -> tuple[int, str]:
 
 
 def provider_independence(prof: dict, cand: dict) -> tuple[int, str]:
-    pk = cand["provider_key"].lower()
-    hits = [a for a in prof["adviser_keys"] if a.strip() and (a.strip() in pk or pk in a.strip())]
+    """0, 1 or 2. 0 when the registry's affiliation map ties the candidate's
+    provider entity to one of the fund's adviser entities. 1 for a peer
+    composite: the evaluator built it from a roster the evaluator chose, so
+    it is not a third-party yardstick whatever its members. 2 for an
+    unaffiliated third party. Affiliation is a fact read from the map,
+    never a string match (R2-P0-2)."""
+    if cand.get("data") == "composite":
+        return 1, ("constructed by the evaluator from the roster, not a third-party index. A "
+                   "composite the evaluator built from a roster the evaluator chose is not an "
+                   "independent yardstick, so it earns at most 1 of 2")
+    affiliated = {a.strip() for a in (AFFILIATIONS.get(cand["provider_key"]) or {}).get("adviser_keys", [])}
+    hits = [a.strip() for a in prof["adviser_keys"] if a.strip() in affiliated]
     if hits:
-        return 0, (f"index published by the fund's own adviser ({', '.join(prof['advisers'])}). "
-                   "A manufacturer-owned yardstick sits poorly with the rule's conflict-free "
-                   "ethos, so it is usable as secondary color only")
-    return 2, f"provider unaffiliated with the fund ({cand['provider']})"
+        return 0, (f"index published by the fund's own adviser ({', '.join(prof['advisers'])}) per the "
+                   "registry affiliation map. A manufacturer-owned yardstick is not an independent "
+                   "comparator, so it is usable as secondary color only")
+    return 2, (f"provider unaffiliated with the fund ({cand['provider']}): the registry affiliation "
+               "map ties it to none of the fund's advisers")
 
 
 def _overlap_years(prof: dict, cand: dict) -> tuple[list[str], dict[str, tuple[str, float]]]:

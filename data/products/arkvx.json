@@ -77,7 +77,7 @@
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": "No KS-PME or Direct Alpha computable: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from held data: no candidate passes the strategy gate at or above 7/12. spy 8/12 (rejected: strategy gate); psp_v 8/12 (rejected: strategy gate); peer_venture 2/12 (score 2/12 below primary threshold 7). Required next: a strategy-exact series (a venture index or a computable peer cohort of at least three NAV-priced members). The escalation is documented in the selection artifact.",
+      "value": "No KS-PME or Direct Alpha computable: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from held data: no candidate passes the strategy gate at or above 7/12. spy 8/12 (rejected: strategy gate); psp_v 8/12 (rejected: strategy gate); peer_venture 3/12 (score 3/12 below primary threshold 7). Required next: a strategy-exact series (a venture index or a computable peer cohort of at least three NAV-priced members). The escalation is documented in the selection artifact.",
       "status": "computed",
       "source": "data/benchmarks/arkvx_selection.json",
       "section": "escalation",
@@ -417,7 +417,7 @@
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": "Benchmark candidates evaluated by the engine (rubric v2, threshold 7 of 12, strategy gate below 2 of 3 ineligible). ESCALATED: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from held data: no candidate passes the strategy gate at or above 7/12. spy 8/12 (rejected: strategy gate); psp_v 8/12 (rejected: strategy gate); peer_venture 2/12 (score 2/12 below primary threshold 7). Required next: a strategy-exact series (a venture index or a computable peer cohort of at least three NAV-priced members). REJECTED S&P 500 investable proxy (SPY) 8/12 (B lane): rejected: strategy gate (score 8/12 but strategy_match 1/3). REJECTED Listed private equity investable proxy (PSP) 8/12 (B lane): rejected: strategy gate (score 8/12 but strategy_match 1/3). REJECTED Peer cohort composite: venture without arkvx (dxyz, ssss) 2/12 (C lane): score 2/12 below primary threshold 7. Fund-declared benchmark: none (cell 5.1: no prospectus-declared benchmark (zero occurrences of 'benchmark' in the 486BPOS)).",
+      "value": "Benchmark candidates evaluated by the engine (rubric v2, threshold 7 of 12, strategy gate below 2 of 3 ineligible). ESCALATED: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from held data: no candidate passes the strategy gate at or above 7/12. spy 8/12 (rejected: strategy gate); psp_v 8/12 (rejected: strategy gate); peer_venture 3/12 (score 3/12 below primary threshold 7). Required next: a strategy-exact series (a venture index or a computable peer cohort of at least three NAV-priced members). REJECTED S&P 500 investable proxy (SPY) 8/12 (B lane): rejected: strategy gate (score 8/12 but strategy_match 1/3). REJECTED Listed private equity investable proxy (PSP) 8/12 (B lane): rejected: strategy gate (score 8/12 but strategy_match 1/3). REJECTED Peer cohort composite: venture without arkvx (dxyz, ssss) 3/12 (C lane): score 3/12 below primary threshold 7. Fund-declared benchmark: none (cell 5.1: no prospectus-declared benchmark (zero occurrences of 'benchmark' in the 486BPOS)).",
       "status": "computed",
       "source": "data/benchmarks/arkvx_selection.json",
       "section": "primary, secondary, rejected, declared_benchmarks",
@@ -437,7 +437,7 @@
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": "No PME inputs constructible: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from held data: no candidate passes the strategy gate at or above 7/12. spy 8/12 (rejected: strategy gate); psp_v 8/12 (rejected: strategy gate); peer_venture 2/12 (score 2/12 below primary threshold 7). Required next: a strategy-exact series (a venture index or a computable peer cohort of at least three NAV-priced members).",
+      "value": "No PME inputs constructible: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from held data: no candidate passes the strategy gate at or above 7/12. spy 8/12 (rejected: strategy gate); psp_v 8/12 (rejected: strategy gate); peer_venture 3/12 (score 3/12 below primary threshold 7). Required next: a strategy-exact series (a venture index or a computable peer cohort of at least three NAV-priced members).",
       "status": "computed",
       "source": "data/benchmarks/arkvx_selection.json",
       "section": "escalation",
@@ -447,7 +447,7 @@
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": "Benchmark suitability (rubric v2, engine output). ESCALATED: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from held data: no candidate passes the strategy gate at or above 7/12. spy 8/12 (rejected: strategy gate); psp_v 8/12 (rejected: strategy gate); peer_venture 2/12 (score 2/12 below primary threshold 7). Required next: a strategy-exact series (a venture index or a computable peer cohort of at least three NAV-priced members). No candidate is eligible, so no maximum is attainable on held data. Declared benchmark: none (cell 5.1: no prospectus-declared benchmark (zero occurrences of 'benchmark' in the 486BPOS)). Rejected: 3 candidates, each with its reason in the ledger. Methodology: docs/benchmark_methodology.md. Analyst note: Product-side input on file: the Fund measures itself (and its CODM assesses segment performance) against broad public equity indexes - S&P 500 and MSCI World - while carrying an 82.2% Level 3 private venture book (4.2), i.e., a listed-equity yardstick over an overwhelmingly private, precedent-transaction-marked portfolio (see 5.1, 4.4).",
+      "value": "Benchmark suitability (rubric v2, engine output). ESCALATED: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from held data: no candidate passes the strategy gate at or above 7/12. spy 8/12 (rejected: strategy gate); psp_v 8/12 (rejected: strategy gate); peer_venture 3/12 (score 3/12 below primary threshold 7). Required next: a strategy-exact series (a venture index or a computable peer cohort of at least three NAV-priced members). No candidate is eligible, so no maximum is attainable on held data. Declared benchmark: none (cell 5.1: no prospectus-declared benchmark (zero occurrences of 'benchmark' in the 486BPOS)). Rejected: 3 candidates, each with its reason in the ledger. Methodology: docs/benchmark_methodology.md. Analyst note: Product-side input on file: the Fund measures itself (and its CODM assesses segment performance) against broad public equity indexes - S&P 500 and MSCI World - while carrying an 82.2% Level 3 private venture book (4.2), i.e., a listed-equity yardstick over an overwhelmingly private, precedent-transaction-marked portfolio (see 5.1, 4.4).",
       "status": "computed",
       "source": "data/benchmarks/arkvx_selection.json",
       "section": "primary, secondary, escalation, max_attainable, declared_benchmarks, rejected",
