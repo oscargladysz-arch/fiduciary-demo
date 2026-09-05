@@ -1336,6 +1336,41 @@ with sync_playwright() as pw:
     check(f"Tier 1 manual check, automated: drawer document, quote and accession equal the CSV for all {len(tier1)} cells "
           "(EDGAR HTTP status cannot be checked from this container)", bool(tier1) and not t1_bad, "; ".join(t1_bad))
 
+    # ---------- VERIFY 7: the demo script speaks only what is on screen (R2-P0-10)
+    # docs/demo_script.md ends with a "## Surface checks" block, one line per
+    # spoken text: view | product | plan | text. Every text must render on
+    # that view under that plan (case-folded: stat labels render uppercase).
+    # A drawer row names the cell in the plan column and reads the citation
+    # drawer of that cell on the Evaluation view.
+    _script = (BASE / "docs" / "demo_script.md").read_text()
+    check("demo script: the title carries a version and the queue's Tier 1 names the same one",
+          bool(re.search(r"Demo Script v(\d+)", _script))
+          and re.search(r"Demo Script v(\d+)", _script).group(1)
+          == (re.search(r"demo_script\.md` \(v(\d+)\)", (BASE / "docs" / "verification_queue.md").read_text()) or re.match(r"(x)", "x")).group(1))
+    _blk = _script.split("## Surface checks", 1)
+    _rows = []
+    if len(_blk) == 2:
+        for _line in _blk[1].splitlines():
+            _mm = re.match(r"-\s+(\w+)\s*\|\s*(\S+)\s*\|\s*(\S+)\s*\|\s*(.+?)\s*$", _line.strip())
+            if _mm:
+                _rows.append(_mm.groups())
+    _fold = lambda t: re.sub(r"\s+", " ", t).strip().lower()  # noqa: E731
+    _miss = []
+    for _view, _product, _plan, _token in _rows:
+        if _view == "drawer":
+            view_text("evaluation", product=_product)
+            page.locator(f'[data-cite][data-cid="{_plan}"]').first.click()
+            _body = page.locator("#drawer .dbody").inner_text()
+            page.evaluate("() => { document.getElementById('drawer').classList.remove('open'); }")
+        else:
+            _body = view_text(_view, plan=_plan, product=("hl_paf" if _product == "-" else _product))
+        if _fold(_token) not in _fold(_body):
+            _miss.append(f"{_view}/{_product}/{_plan}: {_token}")
+    check(f"demo script: all {len(_rows)} surface-check texts render on the named view under the named plan",
+          len(_rows) >= 20 and not _miss, "; ".join(_miss[:6]))
+    check("demo script: no peer-composite ratio is spoken (decision 7.3)",
+          not re.search(r"\b0\.97\d\d\b|\b1\.06\d\d\b|relative wealth ratio (?:of )?\d", _script.split("## Numbers this script speaks")[0]))
+
     # ---------- VERIFY 5: mobile (390 px) and print renders of Roster, Evaluation, Benchmarks
     mobile = browser.new_page(viewport={"width": 390, "height": 844})
     m_err = []

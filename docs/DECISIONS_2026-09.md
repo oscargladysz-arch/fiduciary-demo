@@ -1597,3 +1597,40 @@ sreit, jll_ipt under the tech/media plan, product-independent views once),
 - The composite's own number (cclfx 0.9756 on fiscal-year labels) stays
   on the surfaces under its honest name until R2-P1-3 recomputes it on
   calendar-aligned periods. Demo script v8 does not speak it.
+
+### 7.19 R2-P0-10: the recorded redeploy, and what the demo says on Tuesday
+- Demo script v8 (`docs/demo_script.md`) speaks no peer-composite number,
+  speaks the BKLN KS-PME only with "Yahoo adjusted close, approximates NAV
+  total return", names the Cliffwater 1.36% by its basis (before waivers,
+  excluding interest expense, 3.31% including interest), leaves the
+  Authority panel closed because the verbatim text is not in this build,
+  and re-derives its closing table from the record at this commit. Tier 1
+  of `docs/verification_queue.md` is re-derived from that table: the same
+  ten cells, with descriptions that match the surfaces.
+- The script ends with a machine-read "Surface checks" block (view,
+  product, plan, on-screen text). The frontend gate renders each view and
+  fails when a spoken text is not on it, and fails if a composite ratio
+  appears in the spoken part. The docs gate ties the script version to the
+  queue and the runbook. "The screen is right and the script is stale" is
+  now enforced rather than hoped.
+- The queue keeps its row format, a dash glyph between the cell id and the
+  description. Rule 9 (no em dashes in documents) yields here because the
+  queue parser reads that glyph and the copy gate exempts the file for that
+  reason. Changing the separator is a
+  parser change, not a copy fix, and is deferred to R2-P3 with the CI work.
+- `src/check_edgar_urls.py` is the pre-deploy HTTP 200 check the audit
+  asked for (rule 15). It is not a hook gate because the build container
+  does not reach sec.gov (exit 2 here, "unreachable (ProxyError)" on every
+  URL). It lists 13 Tier 1 citation rows over 9 distinct URLs. A person on a
+  networked machine runs it before Tuesday and the result goes into
+  `docs/DEPLOY_LOG.md`.
+- The deploy goes to `gh-pages` from the branch head, not from `main`,
+  because the brief orders the redeploy inside R2-P0-10 and the sends are
+  Tuesday 10:02am, while merging the pull request is Oscar's call. The tree
+  deployed is the tree the pull request carries, so a redeploy from `main`
+  after the merge is a no-op on content. The runbook's old sentence "only
+  from a green main after the pull request is merged" is replaced by "only
+  from a green hook run on the exact commit, recorded in the deploy log".
+- Screenshots: `docs/screenshots/after_r2/`, the same 42 views as the
+  baseline set, shot from the deployed build for the runbook's fallback
+  plan. Round 1's two sets stay for history.

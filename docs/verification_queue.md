@@ -11,18 +11,18 @@ from the statuses (machine-parsed: keep the `- key cell_id —` line format).
 ## Queue (demo-load-bearing first)
 
 ### Tier 1 — numbers spoken aloud in the demo
-Derived from the table at the end of `docs/demo_script.md` (v7). Re-derive
+Derived from the table at the end of `docs/demo_script.md` (v8). Re-derive
 this list whenever the script changes.
-- hl_paf 2.1 — 1.40% on managed assets, leverage-inclusive (the fee-base trap beat)
-- dxyz 2.1 — 2.50% on gross assets incl. borrowings (corrected cell)
+- hl_paf 2.1 — 1.40% on managed assets, leverage-inclusive (the fee-base trap beat, and the first drawer the script opens: accession 0001213900-26-066804)
+- dxyz 2.1 — 2.50% on gross assets incl. borrowings (Fee Matrix)
 - kkr_kpec 6.4 — Schedule K-1 (the recordkeeper beat)
-- cliffwater_cclfx 2.3 — 1.36% net expense ratio (Fee Matrix chip and Screener)
-- cliffwater_cclfx 5.1 — the fund expressly declares no benchmark (corrected cell, drives the Benchmark card)
-- hl_paf 5.1 — S&P 500 and MSCI World stated as comparators (Lane A on the card, both fail the strategy gate)
+- cliffwater_cclfx 2.3 — 1.36% expense ratio before waivers, excluding interest expense, 3.31% including interest (Fee Matrix, Screener and Evaluation)
+- cliffwater_cclfx 5.1 — the fund expressly declares no benchmark (drives the Benchmark card)
+- hl_paf 5.1 — S&P 500 and MSCI World stated as comparators (declared benchmarks on the card, both fail the strategy gate)
 - arkvx 5.1 — no prospectus-declared benchmark (the escalation beat)
-- sreit 3.1 — 12x per year, 0% cap on aggregate NAV, program suspended (the misaligned verdict)
-- sreit 3.3 — gating history, requests above the cap (the misaligned verdict)
-- hl_paf 3.1 — 4x per year, 5% cap on net assets (the 20% annual capacity in the scenario beat)
+- sreit 3.1 — repurchases suspended, 0% cap on aggregate NAV for ordinary requests (the misaligned structural verdict)
+- sreit 3.3 — gating history, requests above the cap (the misaligned structural verdict)
+- hl_paf 3.1 — quarterly offers, 5% cap per quarter on net assets (the 20% annual capacity in the scenario beat)
 
 ### Tier 2 — screener-facing facts (typed layer inputs)
 - hl_paf 2.2 — incentive fee CURRENT terms (10.00% over Loss Recovery Account, approved 2025-03-14; 2021 12.5% terms superseded — corrected by facts-layer verification)

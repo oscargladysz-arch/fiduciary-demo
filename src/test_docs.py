@@ -112,6 +112,23 @@ check("queue states the structured count the record has",
       bool(m) and int(m.group(1)) == len(structured),
       f"{m and m.group(1)} vs {len(structured)}")
 
+# ---- the demo script version is one number, named the same everywhere
+script = (BASE / "docs" / "demo_script.md").read_text()
+sv = re.search(r"Demo Script v(\d+)", script)
+qv = re.search(r"demo_script\.md` \(v(\d+)\)", queue)
+rv = re.search(r"demo_script\.md` \(v(\d+),", runbook)
+check("verification queue Tier 1 is derived from the current demo script version",
+      bool(sv and qv) and sv.group(1) == qv.group(1),
+      f"script v{sv and sv.group(1)} vs queue v{qv and qv.group(1)}")
+check("runbook names the current demo script version",
+      bool(sv and rv) and sv.group(1) == rv.group(1),
+      f"script v{sv and sv.group(1)} vs runbook v{rv and rv.group(1)}")
+check("demo script carries a surface-check block for the frontend gate",
+      "## Surface checks" in script and script.count("\n- ") >= 20)
+check("deploy log exists and names the pre-deploy EDGAR URL check",
+      (BASE / "docs" / "DEPLOY_LOG.md").exists()
+      and "check_edgar_urls.py" in (BASE / "docs" / "DEPLOY_LOG.md").read_text())
+
 # ---- superseded claims stay marked
 br4 = (BASE / "docs" / "BUILD_REPORT_4.md").read_text()
 check("BUILD_REPORT_4 Lane C claim is marked superseded",
