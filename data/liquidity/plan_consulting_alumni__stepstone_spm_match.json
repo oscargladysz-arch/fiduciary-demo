@@ -12,7 +12,7 @@
     "Capacity: 4x per year at 5% of outstanding shares: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed.",
     "Scenario demand (illustrative): 13.7% of the position per year vs 20% annual wrapper capacity. THIN HEADROOM: demand consumes over 60% of wrapper capacity, so proration in any oversubscribed quarter would push the shortfall into the next window.",
     "Scenario verdict (ILLUSTRATIVE, this plan): conditional-weak. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
-    "Schedule H benefit payments (line 2e) not typed: the DOL bulk file F_SCH_H_2024_latest.csv is not in the repository and askebsa.dol.gov is blocked from the build container. Fill from the bulk file on a machine with access, citing the row. Demand uses the illustrative turnover sliders only."
+    "Schedule H benefit-payment lines are not yet in the plan record. Demand uses the illustrative turnover sliders only."
   ],
   "reasons": [
     "STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed). A trustee-directed sleeve could hold this wrapper directly, and the daily-menu constraint (this wrapper deals 4x/year) applies only to the participant-directed portion (cell 3.5).",
@@ -21,7 +21,7 @@
     "Capacity: 4x per year at 5% of outstanding shares: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed.",
     "Scenario demand (illustrative): 13.7% of the position per year vs 20% annual wrapper capacity. THIN HEADROOM: demand consumes over 60% of wrapper capacity, so proration in any oversubscribed quarter would push the shortfall into the next window.",
     "Scenario verdict (ILLUSTRATIVE, this plan): conditional-weak. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
-    "Schedule H benefit payments (line 2e) not typed: the DOL bulk file F_SCH_H_2024_latest.csv is not in the repository and askebsa.dol.gov is blocked from the build container. Fill from the bulk file on a machine with access, citing the row. Demand uses the illustrative turnover sliders only."
+    "Schedule H benefit-payment lines are not yet in the plan record. Demand uses the illustrative turnover sliders only."
   ],
   "missing_facts": [
     "gate_history"

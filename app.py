@@ -128,8 +128,8 @@ def render_roster():
             "note": p.get("note", p.get("identity_note", "")),
         })
     st.dataframe(rows, width="stretch", hide_index=True)
-    st.caption("Coverage per status kind from tark_data.coverage_summary, the "
-               "same function the static site and `python src/coverage.py` use.")
+    st.caption("Coverage per status kind from the record's one coverage formula, "
+               "the same one the static site uses.")
 
 
 # ----------------------------------------------------------- evaluation view
@@ -220,7 +220,7 @@ def render_benchmark():
         st.download_button("Download decision memo (.docx)", memo.read_bytes(),
                            file_name=memo.name, key="memo_dl")
     else:
-        st.caption("Decision memo not built yet: run python src/build_site.py.")
+        st.caption("The decision memo for this plan and product has not been built yet.")
 
 
 def render_liquidity():

@@ -11,7 +11,7 @@
     "Capacity: 4x per year at 5% of outstanding shares: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed.",
     "Scenario demand (illustrative): 10.4% of the position per year vs 20% annual wrapper capacity. Adequate headroom at this allocation if offers are not prorated.",
     "Scenario verdict (ILLUSTRATIVE, this plan): conditional. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
-    "Schedule H benefit payments (line 2e) not typed: the DOL bulk file F_SCH_H_2024_latest.csv is not in the repository and askebsa.dol.gov is blocked from the build container. Fill from the bulk file on a machine with access, citing the row. Demand uses the illustrative turnover sliders only."
+    "Schedule H benefit-payment lines are not yet in the plan record. Demand uses the illustrative turnover sliders only."
   ],
   "reasons": [
     "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity, whereas this wrapper deals 4x/year. Direct DIA use requires a bridging structure: CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
@@ -19,7 +19,7 @@
     "Capacity: 4x per year at 5% of outstanding shares: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed.",
     "Scenario demand (illustrative): 10.4% of the position per year vs 20% annual wrapper capacity. Adequate headroom at this allocation if offers are not prorated.",
     "Scenario verdict (ILLUSTRATIVE, this plan): conditional. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
-    "Schedule H benefit payments (line 2e) not typed: the DOL bulk file F_SCH_H_2024_latest.csv is not in the repository and askebsa.dol.gov is blocked from the build container. Fill from the bulk file on a machine with access, citing the row. Demand uses the illustrative turnover sliders only."
+    "Schedule H benefit-payment lines are not yet in the plan record. Demand uses the illustrative turnover sliders only."
   ],
   "missing_facts": [
     "gate_history"

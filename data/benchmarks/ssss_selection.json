@@ -6,7 +6,7 @@
     "5.1"
   ],
   "rubric_version": "v2",
-  "rubric": "rubric v2: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
+  "rubric": "Tark benchmark rubric, 12 points: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
   "max_attainable": null,
   "declared_benchmarks": [
     {
@@ -35,7 +35,7 @@
       },
       "series_id": "spy",
       "reasons": [
-        "strategy_match 1/3: adjacent asset class sharing the dominant risk (us large cap for late stage listed bdc)",
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (US large cap for late-stage growth in a listed BDC)",
         "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
         "investability 2/2: computable on held data (daily series)",
         "data_quality 2/2: daily series held",
@@ -58,7 +58,7 @@
       },
       "series_id": "psp",
       "reasons": [
-        "strategy_match 1/3: adjacent asset class sharing the dominant risk (listed private equity for late stage listed bdc)",
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (listed private equity for late-stage growth in a listed BDC)",
         "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
         "investability 2/2: computable on held data (daily series)",
         "data_quality 2/2: daily series held",
@@ -67,7 +67,7 @@
       "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     },
     {
-      "candidate": "Peer cohort composite: venture without ssss (arkvx, dxyz)",
+      "candidate": "Peer composite, pre-IPO and venture cohort without Neostellar Capital Corp. (members: ARK Venture Fund, Destiny Tech100 Inc)",
       "id": "peer_venture",
       "lane": "C",
       "score": 3,
@@ -81,7 +81,7 @@
       },
       "series_id": "composite:venture",
       "reasons": [
-        "strategy_match 2/3: same asset class, different sub-strategy (pre ipo listed cef vs late stage listed bdc)",
+        "strategy_match 2/3: same asset class, different sub-strategy (pre-IPO holdings in a listed closed-end fund vs late-stage growth in a listed BDC)",
         "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
         "investability 0/2: composite refused, nothing to compute",
         "data_quality 0/2: cited, not computed",

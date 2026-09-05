@@ -45,8 +45,9 @@ METHOD_NOTES = [
     "REIT candidates via browse-edgar company search SIC=6798 + "
     "type=10-K",
     "listing oracle: SEC company_tickers.json",
-    "precedence on overlapping signals: bdc > interval_23c3 > "
-    "tender_cef > nontraded_reit > listed_cef > unlisted_cef_other",
+    "precedence on overlapping signals: BDC, then interval fund (Rule 23c-3), "
+    "then tender-offer CEF, then non-traded REIT, then listed CEF, then other "
+    "unlisted CEF",
     "'listed' means a real exchange listing confirmed in SEC "
     "submissions. An OTC quotation alone does not count (non-traded "
     "vehicles can carry OTC tickers)",
@@ -62,7 +63,7 @@ METHOD_NOTES = [
     "does not enumerate share classes. An interval_23c3 record that is "
     "exchange-listed and whose last N-23C3A is more than 24 months before "
     "the census as-of is reclassified to listed_cef by the N-23C3A "
-    "recency rule (src/census/reclassify_listed.py, reversible on a fresh "
+    "recency rule (a committed census step, reversible on a fresh "
     "N-23C3A). One that still files N-23C3A keeps its class with listing "
     "null: offline, the census cannot tell which share class is listed",
     "roster reconciliation: an evaluated roster product whose "

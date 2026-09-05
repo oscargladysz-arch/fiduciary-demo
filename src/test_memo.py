@@ -54,7 +54,7 @@ check("liquidity match section is plan-specific (consulting memo carries the thi
 
 import re  # noqa: E402
 from tark_data import status_kind  # noqa: E402
-from tark_display import facts_by_cell, typed_headline  # noqa: E402
+from tark_display import display_path_free, facts_by_cell, typed_headline  # noqa: E402
 from tark_memo import EVIDENCED, first_sentence  # noqa: E402
 import json  # noqa: E402
 
@@ -74,7 +74,7 @@ for k, prod in prods.items():
     for cid, cell in prod["cells"].items():
         v = (cell.get("value") or "").strip()
         if status_kind(cell.get("status", "")) in EVIDENCED and v:
-            if squash(first_sentence(v)) not in t:
+            if squash(first_sentence(display_path_free(v))) not in t:
                 missing.append(f"{k} {cid}")
             th = typed_headline(cid, fbc.get(cid, {}))
             if th and squash(th) not in t:
@@ -212,7 +212,7 @@ for pl in plan_keys():
             _rb_bad.append(f"{pl} {k}: regulatory basis incomplete")
         if "safe harbor attaches" in t or "the proposal requires comparison" in t:
             _rb_bad.append(f"{pl} {k}: paraphrase of the regulation")
-        if authority()["status"] != "fetched" and "not yet fetched into this build" not in t:
+        if authority()["status"] != "fetched" and "not yet in this build" not in t:
             _rb_bad.append(f"{pl} {k}: verbatim-text status missing")
 check("regulatory basis: citation, links, paragraph mapping and basis in all 64, no paraphrase", not _rb_bad)
 if _rb_bad:

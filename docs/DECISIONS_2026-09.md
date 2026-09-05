@@ -1415,3 +1415,52 @@ sreit, jll_ipt under the tech/media plan, product-independent views once),
   arithmetic on today's data, and the slot says the comparison is not
   computable. Slot K and Slot G (decision 7.1) replace this rubric in
   R2-P1-A.
+
+### 7.12 R2-P0-3: nothing a developer would say reaches a surface or a document
+- `src/tark_display.py` holds the maintained list `SURFACE_FORBIDDEN`
+  (case-insensitive patterns) and `src/test_surfaces.py` (new gate, after
+  `reconcile` in the hook) scans the built bundle's displayable strings,
+  every rendered view including the Authority panel, the citation drawer,
+  the three forms with their outputs and the census entity detail, and
+  every generated docx. The list only grows.
+- The brief's token `run ` is implemented as the developer-instruction
+  sense (`run python`, `run src/`, `run the hook`) because the bare token
+  appears in ordinary English inside immutable T2 evidence: "tenders run
+  contemporaneously" (amg_pantheon 3.2), "offers have run every quarter"
+  (cion_ares 3.3), "searches run on stripped text" (bcred 5.1, breit 5.1),
+  "expenses run through" (jll_ipt 2.3). None of these is an instruction.
+- Internal keys render through display maps (`STRATEGY_LABEL`,
+  `COHORT_LABEL`, `LANE_LABEL`, `ASSET_CLASS_LABEL`, `SUB_STRATEGY_LABEL`,
+  `CANDIDATE_SHORT`, `RUBRIC_LABEL`) shared by the engine, the writer, the
+  memo, the packet and the JS through the bundle. Product keys
+  (`hl_paf`, `cliffwater_cclfx`) are the record's own identifiers, appear
+  in file names and in the demo script, and are not on the forbidden list.
+  Prose written for a reader uses fund short names instead.
+- Computed cells no longer cite a repository path as their source or a
+  script path as their extractor. The source names the artifact kind and
+  the fund or cohort ("benchmark selection artifact (Hamilton Lane Private
+  Assets Fund)"), the extractor is "Tark computed-cells writer (as-of
+  date)". The artifact files are unchanged and the writer's producer
+  functions name them. 18 T2 citations carried "(raw: data/raw/...)"
+  locators and 3 T2 values carried a repository folder inside workflow
+  prose. The locators are removed (the manifest local_path and the
+  citations record carry the file), each row allowlisted with the reason.
+  No value figure, quote or status changed.
+- The Authority panel and the memo print one sentence while the verbatim
+  text is absent: "The verbatim text of paragraphs (g) to (l) is not yet
+  in this build. The Federal Register document is linked above." The
+  Schedule H sentence is "Schedule H benefit-payment lines are not yet in
+  the plan record. Demand uses the illustrative turnover sliders only."
+  The plan files' null reasons lose the environment excuse.
+- The `anonymization_rule` string is no longer printed anywhere. The plan
+  is shown under its anonymized label and the memo says so.
+- The three browser forms no longer print a command line or a "save as
+  <path>" comment. Each prints valid JSON (or, for verification, a
+  signature request naming the product, cell, signer and date) and one
+  sentence: send it to Tark to record it. Downloadable files and a copy
+  button are R2-P2-3. The census entity card no longer prints an ingest
+  command: it names the CIK and says that Tark runs the evaluation.
+- Not changed in P0: extractor strings on protected T2 rows such as
+  "Claude (spike 2026-07-09)" and "Claude (M6 pipeline)" are provenance
+  written by earlier passes. They name no path or script and stay until
+  the cells are re-extracted or re-owned (R2-P1-13).

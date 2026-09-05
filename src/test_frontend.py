@@ -857,9 +857,10 @@ with sync_playwright() as pw:
     page.evaluate("() => window.tarkSetState({view: 'census', c_cik: '1467631'})")
     page.wait_for_selector("#view [data-back]", timeout=15000)
     t = page.locator("#view").inner_text()
-    check("census entity (unevaluated): the ingest command with this CIK is copyable",
-          "python src/ingest.py 1467631 --key " in t and page.locator("[data-copycmd]").count() == 1
-          and page.locator("[data-cmd]").inner_text().startswith("python src/ingest.py 1467631"))
+    check("census entity (unevaluated): an evaluation request naming this CIK is copyable, no command line",
+          "Evaluate CIK 1467631" in t and page.locator("[data-copycmd]").count() == 1
+          and page.locator("[data-cmd]").inner_text().startswith("Evaluate CIK 1467631")
+          and "python" not in t and "src/" not in t)
     check("census entity (unevaluated): no service connected to this build, no button, no job state",
           (bundle.get("service_url") is None) == ("No evaluation service is connected" in t)
           and page.locator("[data-evaluate]").count() == (0 if bundle.get("service_url") is None else 1)
@@ -1119,7 +1120,7 @@ with sync_playwright() as pw:
     pf.locator('[data-f="anonymization_label"]').check()
     pf.locator("[data-plan-make]").click()
     try:
-        intake_doc = json.loads(pf.locator("[data-plan-patch]").inner_text().split("\n", 1)[1])
+        intake_doc = json.loads(pf.locator("[data-plan-patch]").inner_text())
     except Exception:  # noqa: BLE001
         intake_doc = {}
     check("plan intake: the file carries the label, the confirmation, the codes upper-cased and a derived preview",
@@ -1145,9 +1146,12 @@ with sync_playwright() as pw:
     vf.locator('[data-f="signer"]').fill("A. Person, committee chair")
     vf.locator('[data-f="date"]').fill("2026-09-04")
     vf.locator("[data-verify-make]").click()
-    check("verification: the command names the product, cell, signer and date, nothing is written by the site",
-          vf.locator("[data-verify-cmd]").inner_text()
-          == f"python src/verify_cell.py {order[0].replace(':', ' ')} --signer \"A. Person, committee chair\" --date 2026-09-04"
+    _req = json.loads(vf.locator("[data-verify-cmd]").inner_text())
+    check("verification: the signature request names the product, cell, signer and date, no command line, "
+          "nothing is written by the site",
+          _req.get("signature_request") == "verify"
+          and f"{_req.get('product')}:{_req.get('cell')}" == order[0]
+          and _req.get("signer") == "A. Person, committee chair" and _req.get("date") == "2026-09-04"
           and "writes nothing" in vf.locator("[data-verify-msg]").inner_text())
 
     # ---------- P1-26: authority panel and rule references ----------
@@ -1162,7 +1166,7 @@ with sync_playwright() as pw:
           and bundle["rule"]["docket"] in auth_t)
     check("authority panel: verbatim status is the build's, never text from memory",
           page.locator("#auth_status").inner_text() == bundle["rule"]["authority"]["status"]
-          and (bundle["rule"]["authority"]["status"] == "fetched" or "not yet fetched" in auth_t))
+          and (bundle["rule"]["authority"]["status"] == "fetched" or "not yet in this build" in auth_t))
     check("authority panel: scope sentence (selection, not monitoring) and advisor-completed cells",
           "Monitoring is not documented here" in auth_t and "6.6 and 6.8" in auth_t)
     ev_t = view_text("evaluation", product="hl_paf")
@@ -1189,11 +1193,11 @@ with sync_playwright() as pw:
         patch_text = form.locator("[data-advisor-patch]").inner_text()
         cid = form.get_attribute("data-advisor-form")
         try:
-            patch = json.loads(patch_text.split("\n", 1)[1])
+            patch = json.loads(patch_text)
         except Exception:  # noqa: BLE001
             patch = {}
-        check("advisor form: the patch is the exact file for this plan and product, signed and dated",
-              patch_text.startswith("# save as data/advisor/plan_tech_media__hl_paf.json")
+        check("advisor form: the output is valid JSON for this plan and product, signed and dated, no comment line",
+              patch_text.startswith("{")
               and patch.get("plan") == "plan_tech_media" and patch.get("product") == "hl_paf"
               and patch.get("cells", {}).get(cid, {}).get("signer") == "A. Person, committee chair"
               and patch["cells"][cid]["status"].startswith("advisor-stated - A. Person")

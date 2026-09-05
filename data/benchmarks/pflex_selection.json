@@ -7,7 +7,7 @@
     "1.2"
   ],
   "rubric_version": "v2",
-  "rubric": "rubric v2: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
+  "rubric": "Tark benchmark rubric, 12 points: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
   "max_attainable": 9,
   "declared_benchmarks": [],
   "declared_none_reason": "cell 5.1: documented absence of a self-declared benchmark",
@@ -26,7 +26,7 @@
     },
     "series_id": "bkln",
     "reasons": [
-      "strategy_match 2/3: the public-market version of the asset class (syndicated loans for multi sector credit)",
+      "strategy_match 2/3: the public-market version of the asset class (syndicated loans for multi-sector credit)",
       "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
       "investability 2/2: computable on held data (daily series)",
       "data_quality 2/2: daily series held",
@@ -51,7 +51,7 @@
     }
   },
   "secondary": {
-    "candidate": "Peer cohort composite: private_credit without pflex (bcred, cion_ares, cliffwater_cclfx, ocic)",
+    "candidate": "Peer composite, private credit cohort without PIMCO Flexible Credit Income Fund (members: Blackstone Private Credit Fund, CION Ares Diversified Credit Fund, Cliffwater Corporate Lending Fund, Blue Owl Credit Income Corp.)",
     "id": "peer_credit",
     "lane": "C",
     "score": 8,
@@ -65,7 +65,7 @@
     },
     "series_id": "composite:private_credit",
     "reasons": [
-      "strategy_match 2/3: same asset class, different sub-strategy (direct lending vs multi sector credit)",
+      "strategy_match 2/3: same asset class, different sub-strategy (direct lending vs multi-sector credit)",
       "risk_liquidity_match 2/3: NAV-class series, annual observations vs the fund's daily return data and members span more than one leverage regime",
       "investability 2/2: computable on held data (cohort composite from filings)",
       "data_quality 1/2: annual composite with 5 overlapping fiscal years",
@@ -231,7 +231,7 @@
       },
       "series_id": "cited:cdli",
       "reasons": [
-        "strategy_match 2/3: same asset class, different sub-strategy (direct lending vs multi sector credit)",
+        "strategy_match 2/3: same asset class, different sub-strategy (direct lending vs multi-sector credit)",
         "risk_liquidity_match 2/3: NAV-class series, quarterly observations vs the fund's daily return data and an index, not a fund set, so leverage regime is not comparable",
         "investability 0/2: index cited, series not held, not computable",
         "data_quality 0/2: cited, not computed",

@@ -22,7 +22,8 @@ from datetime import date
 from pathlib import Path
 
 from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
-from tark_display import BASE_LABEL, WRAPPER_LABEL, cell_display, facts_by_cell
+from tark_display import (BASE_LABEL, CANDIDATE_SHORT, LANE_LABEL, RUBRIC_LABEL, STRATEGY_LABEL,
+                          WRAPPER_LABEL, cell_display, display_path_free, facts_by_cell)
 from tark_memo import write_all
 from tark_packet import write_all_packets
 from tark_data import (ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_CELLS, BASE, DATA, CELLS, FACTORS,
@@ -77,6 +78,16 @@ GLOSSARY = {
     "PCAOB": "The audit regulator. Registration means the auditor is inspected. (Public Company Accounting Oversight Board)",
     "N-23C3A": "The SEC form an interval fund files for EVERY buyback window - a public paper trail of kept promises.",
 }
+
+def _path_free(obj):
+    """Every string inside a shipped structure with repository paths rendered
+    as reader labels (R2-P0-3)."""
+    if isinstance(obj, dict):
+        return {k: _path_free(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_path_free(v) for v in obj]
+    return display_path_free(obj) if isinstance(obj, str) else obj
+
 
 def evidence_counts(key: str) -> dict:
     """Per-kind coverage for one product: the shared formula in tark_data."""
@@ -266,7 +277,7 @@ def swap_matrix() -> dict:
                 verdict = (f"not eligible: {s['score']}/{s['max']} is below the "
                            f"{MIN_PRIMARY_SCORE}/{s['max']} threshold")
             else:
-                verdict = (f"eligible under rubric v2: {s['score']}/{s['max']} passes the "
+                verdict = (f"eligible under the {RUBRIC_LABEL}: {s['score']}/{s['max']} passes the "
                            "strategy gate and the threshold")
             by_series[proxy] = {"score": s["score"], "max": s["max"],
                                 "criteria": s["criteria"], "reasons": s["reasons"],
@@ -474,7 +485,9 @@ def main() -> None:
 
     plans_pub = {}
     for k, p in plans_raw.items():
-        pub = {kk: vv for kk, vv in p.items() if kk != "identity_private"}
+        # identity never ships, and the internal anonymization rule string is
+        # not a surface sentence (R2-P0-3)
+        pub = {kk: vv for kk, vv in p.items() if kk not in ("identity_private", "anonymization_rule")}
         plans_pub[k] = pub
 
     benchmarks = {}
@@ -532,7 +545,8 @@ def main() -> None:
     # lazy chunk as TARK_EVIDENCE and is merged into products on load.
     FIRST_PAINT_FIELDS = ("element", "value", "status", "verified_by")
     DETAIL_FIELDS = ("source", "section", "quote", "extracted_by")
-    evidence_detail = {k: {cid: {f: c.get(f, "") for f in DETAIL_FIELDS}
+    # repository paths inside the record render as reader labels (R2-P0-3)
+    evidence_detail = {k: {cid: {f: display_path_free(c.get(f, "")) for f in DETAIL_FIELDS}
                            for cid, c in p["cells"].items()}
                        for k, p in products.items()}
     # the accession column and the resolved EDGAR filings per cell (P2-10)
@@ -541,7 +555,10 @@ def main() -> None:
         cp = DATA / "citations" / f"{k}.json"
         cits = json.loads(cp.read_text())["cells"] if cp.exists() else {}
         for cid, cell in evidence_detail[k].items():
-            cell["accession"] = acc_by_cell.get(cid, "")
+            acc = acc_by_cell.get(cid, "")
+            # the ledger's set pointer names the citations file, the drawer says it in words
+            cell["accession"] = (f"{acc.split(',')[0]} filings, each linked under EDGAR"
+                                 if acc.startswith("multiple (") else acc)
             edgar = []
             for ref in cits.get(cid, []):
                 if ref["match"] in ("exact", "form_only"):
@@ -551,7 +568,8 @@ def main() -> None:
                     edgar.extend({"form": ref.get("form", ""), "filing_date": f["filing_date"],
                                   "accession": f["accession"], "url": f["url"]} for f in ref["filings"])
             cell["edgar"] = edgar
-    products = {k: {**p, "cells": {cid: {f: c.get(f, "") for f in FIRST_PAINT_FIELDS}
+    products = {k: {**p, "cells": {cid: {f: (display_path_free(c.get(f, "")) if f == "value" else c.get(f, ""))
+                                         for f in FIRST_PAINT_FIELDS}
                                    for cid, c in p["cells"].items()}}
                 for k, p in products.items()}
     _reg = json.loads((DATA / "registry.json").read_text())["products"]
@@ -578,13 +596,18 @@ def main() -> None:
         "descriptors": descriptors,   # typed comparability attributes per product (registry)
         "wrapper_labels": WRAPPER_LABEL,   # one vocabulary, shared with the memo (tark_display)
         "base_labels": BASE_LABEL,
+        # internal keys never render bare (R2-P0-3): the JS prints these labels
+        "strategy_labels": STRATEGY_LABEL,
+        "lane_labels": LANE_LABEL,
+        "candidate_short": CANDIDATE_SHORT,
+        "rubric_label": RUBRIC_LABEL,
         "cell_display": display,
         "factor_rollups": rollups,
         "glossary": GLOSSARY,
         "taxonomy": coverage_totals(),   # live, per kind, never a frozen file
-        "supplement": {k: supplement[k] for k in ("dxyz_premium",
-                                                  "ssss_premium",
-                                                  "breit_monthly_diagnostics")},
+        "supplement": _path_free({k: supplement[k] for k in ("dxyz_premium",
+                                                             "ssss_premium",
+                                                             "breit_monthly_diagnostics")}),
         "series_annual": series_annual,
         "series_monthly": monthly,
         "evidence_counts": {k: evidence_counts(k) for k in load_products()},
@@ -600,8 +623,8 @@ def main() -> None:
         # cell writer); a runtime check in test_frontend fails on unread keys
         "metrics": {"cclfx": {"full_history": metrics["cclfx"]["full_history"]}},
         "series_sources": series_sources(),
-        "dxyz_nav": _with_period_ends(json.loads(
-            (DATA / "analytics" / "dxyz_nav_quarterly.json").read_text())),
+        "dxyz_nav": _path_free(_with_period_ends(json.loads(
+            (DATA / "analytics" / "dxyz_nav_quarterly.json").read_text()))),
         # series payload is SPLIT into site/series.js (lazy-loaded by the
         # chart/lab views) to keep the first-paint bundle inside the perf
         # budget; window.TARK.series is merged in by ensureSeries()

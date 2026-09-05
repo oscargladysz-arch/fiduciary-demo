@@ -94,6 +94,10 @@ FACTOR_PARAS = {"1": "g", "2": "h", "3": "i", "4": "j", "5": "k", "6": "l"}
 ADVISOR_COMPLETED = ("6.6", "6.8")
 MAPPING_BASIS = ("factor order per the 2026-09-03 audit's check of 91 FR 16088, "
                  "paragraphs (g) to (l) of proposed 29 CFR 2550.404a-6")
+# the one sentence every surface prints while the verbatim text is absent
+# (R2-P0-3): no instruction, no script name, no environment excuse
+NOT_FETCHED_SENTENCE = ("The verbatim text of paragraphs (g) to (l) is not yet in this build. "
+                        "The Federal Register document is linked above.")
 
 
 def parse_authority(text: str) -> dict[str, list[str]]:
@@ -118,13 +122,10 @@ def authority() -> dict:
     d = DATA / "authority"
     files = sorted(d.glob("*_proposed.md")) if d.exists() else []
     if not files:
-        return {"status": "not fetched",
-                "note": ("verbatim regulatory text not yet fetched into this build: run "
-                         "python src/fetch_authority.py on a machine that reaches "
-                         "federalregister.gov"),
+        return {"status": "not fetched", "note": NOT_FETCHED_SENTENCE,
                 "file": None, "paragraphs": None}
     paras = parse_authority(files[0].read_text())
-    return {"status": "fetched", "note": f"verbatim Federal Register text in {files[0].relative_to(BASE)}",
+    return {"status": "fetched", "note": "verbatim Federal Register text is in this build",
             "file": str(files[0].relative_to(BASE)), "paragraphs": paras}
 
 
@@ -135,7 +136,7 @@ def rule_ref(cid: str, auth: dict | None = None) -> dict:
     letter = FACTOR_PARAS[cid.split(".")[0]]
     verbatim = auth["status"] == "fetched"
     return {"para": f"({letter})",
-            "basis": MAPPING_BASIS + (", verbatim text in " + auth["file"] if verbatim
+            "basis": MAPPING_BASIS + (", verbatim text in this build" if verbatim
                                       else ", verbatim text not in this build"),
             "verbatim": verbatim,
             "advisor_completed": cid in ADVISOR_COMPLETED}

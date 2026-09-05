@@ -7,7 +7,7 @@
     "1.2"
   ],
   "rubric_version": "v2",
-  "rubric": "rubric v2: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
+  "rubric": "Tark benchmark rubric, 12 points: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
   "max_attainable": 9,
   "declared_benchmarks": [
     {
@@ -58,7 +58,7 @@
     }
   },
   "secondary": {
-    "candidate": "Peer cohort composite: private_credit without cion_ares (bcred, cliffwater_cclfx, ocic, pflex)",
+    "candidate": "Peer composite, private credit cohort without CION Ares Diversified Credit Fund (members: Blackstone Private Credit Fund, Cliffwater Corporate Lending Fund, Blue Owl Credit Income Corp., PIMCO Flexible Credit Income Fund)",
     "id": "peer_credit",
     "lane": "C",
     "score": 8,

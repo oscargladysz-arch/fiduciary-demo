@@ -134,9 +134,8 @@ def schedule_h_lines(plan: dict) -> tuple[list[str], list[str]]:
                         f"rate applied to the position, {pct:.1f}% of the position per year, "
                         "shown beside the slider model above, not blended with it.")
     else:
-        scenario.append("Schedule H benefit payments (line 2e) "
-                        + (bp.get("reason") or "not typed")
-                        + ". Demand uses the illustrative turnover sliders only.")
+        scenario.append("Schedule H benefit-payment lines are not yet in the plan record. "
+                        "Demand uses the illustrative turnover sliders only.")
     pc = sh.get("participant_contributions_2a1b") or {}
     if isinstance(pc.get("value"), (int, float)) and boy:
         scenario.append(f"Participant contributions (Schedule H line 2a(1)(B)) were "

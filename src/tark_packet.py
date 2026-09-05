@@ -23,7 +23,7 @@ from docx.shared import Inches, Pt
 from tark_data import (ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_CELLS, DATA, RULE, RULE_CITATION,
                        coverage_summary, load_advisor, load_plan, load_products, plan_keys,
                        record_as_of, status_kind)
-from tark_display import facts_by_cell, typed_headline
+from tark_display import RUBRIC_LABEL, display_path_free, facts_by_cell, typed_headline
 from tark_memo import (KIND_ORDER, SITE_MEMOS, _fill, _flags, _liquidity_section, _save,
                        _set_letter, cell_title)
 
@@ -87,7 +87,7 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
     if sel is None:
         doc.add_paragraph("No selection artifact for this product.")
     else:
-        doc.add_paragraph(f"Rubric {sel.get('rubric_version', 'v2')}, threshold 7 of 12, strategy gate. "
+        doc.add_paragraph(f"{RUBRIC_LABEL[0].upper()}{RUBRIC_LABEL[1:]}, threshold 7 of 12, strategy gate. "
                           + (f"Max attainable on held data {sel['max_attainable']}/12." if sel.get("max_attainable") is not None
                              else "No candidate is eligible on held data."))
         t = doc.add_table(rows=1, cols=4)
@@ -109,7 +109,7 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
             row.cells[0].width, row.cells[1].width, row.cells[2].width, row.cells[3].width = Inches(0.8), Inches(2.4), Inches(0.6), Inches(2.7)
 
     # ---- exhibit B: liquidity match for this plan (the memo's section, verbatim)
-    doc.add_heading("Exhibit B.", level=1)
+    doc.add_heading("Exhibit B. Liquidity match for this plan", level=1)
     _liquidity_section(doc, m, fdoc, plan)
 
     # ---- exhibit C: the typed fee row
@@ -125,7 +125,7 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
         r = t.add_row().cells
         r[0].text = f"{cid} {cell_title(cid)}"
         r[1].text = typed_headline(cid, fbc.get(cid, {})) or ("n/a" if status_kind(c.get("status", "")) == "n/a"
-                                                               else status_kind(c.get("status", "")))
+                                                               else "no typed fact for this cell")
         r[2].text = str(c.get("status", ""))
     for row in t.rows:
         row.cells[0].width, row.cells[1].width, row.cells[2].width = Inches(2.0), Inches(2.5), Inches(2.0)
@@ -139,7 +139,7 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
         doc.add_paragraph(f"Cohort {co['label']} (n={co['n']}). {fdoc.get('membership_rationale', '')}")
         v29 = p["cells"]["2.9"].get("value")
         if v29:
-            doc.add_paragraph(str(v29))
+            doc.add_paragraph(display_path_free(v29))
         for cv in co.get("caveats", []):
             doc.add_paragraph(cv, style="List Bullet")
     else:
@@ -159,7 +159,8 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
     doc.add_paragraph("Cell status for this product: " + ", ".join(f"{label} {cov[k]}" for k, label in KIND_ORDER) + ".")
     doc.add_paragraph(f"Regulatory basis: {RULE_CITATION}, paragraphs {RULE['paragraphs']}, cited not paraphrased. "
                       f"Every figure above is a cited cell, a typed projection of one, or an engine artifact of the "
-                      f"record as of {record_as_of()}. Scenario figures are ILLUSTRATIVE. {plan['anonymization_rule']}")
+                      f"record as of {record_as_of()}. Scenario figures are ILLUSTRATIVE. The plan is shown "
+                      "under its anonymized label.")
 
     out = out_dir or SITE_MEMOS
     out.mkdir(parents=True, exist_ok=True)

@@ -26,7 +26,7 @@
     ],
     "1.3": [
       {
-        "text": "N-CSR (FY2026 annual report), filed 2026-06-09 (raw: data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm",
+        "text": "N-CSR (FY2026 annual report), filed 2026-06-09",
         "form": "N-CSR",
         "match": "exact",
         "filing_date": "2026-06-09",
@@ -132,7 +132,7 @@
     ],
     "2.5": [
       {
-        "text": "486BPOS base prospectus+SAI, 2021-07-29 (2021-dated) (raw: data/raw/hl_paf/486BPOS_2021-07-29_fp0067291_486bpos.htm",
+        "text": "486BPOS base prospectus+SAI, 2021-07-29 (2021-dated",
         "form": "486BPOS",
         "match": "exact",
         "filing_date": "2021-07-29",
@@ -185,7 +185,7 @@
     ],
     "3.2": [
       {
-        "text": "SC TO-I filed 2026-05-06 (raw: data/raw/hl_paf/SC TO-I_2026-05-06_ea0288793-01_sctoi.htm",
+        "text": "SC TO-I filed 2026-05-06",
         "form": "SC TO-I",
         "match": "exact",
         "filing_date": "2026-05-06",
@@ -205,7 +205,7 @@
     ],
     "3.3": [
       {
-        "text": "SC TO-I filed 2026-05-06, Item 5 (raw: data/raw/hl_paf/SC TO-I_2026-05-06_ea0288793-01_sctoi.htm",
+        "text": "SC TO-I filed 2026-05-06, Item 5",
         "form": "SC TO-I",
         "match": "exact",
         "filing_date": "2026-05-06",
@@ -280,7 +280,7 @@
     ],
     "4.4": [
       {
-        "text": "N-CSR (FY2026 annual report), filed 2026-06-09 (raw: data/raw/hl_paf/N-CSR_2026-06-09_ea0291054-01_ncsr.htm",
+        "text": "N-CSR (FY2026 annual report), filed 2026-06-09",
         "form": "N-CSR",
         "match": "exact",
         "filing_date": "2026-06-09",

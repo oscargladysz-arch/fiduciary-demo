@@ -240,7 +240,7 @@ export function suggestKey(name) {
 function renderEntity(root, e, state, setState) {
   const nc = e.nc ? e.nc.value : null;
   const serviceUrl = T.service_url;      // null unless a service was connected at build time
-  const cmd = `python src/ingest.py ${e.cik} --key ${suggestKey(e.nm)}`;
+  const cmd = `Evaluate CIK ${e.cik} (suggested record key ${suggestKey(e.nm)})`;
   root.innerHTML = `
     <p><button class="linklike" data-back>← back to the universe</button></p>
     <h1>${esc(e.nm || "(name pending)")} <span class="cap">CIK ${e.cik}</span></h1>
@@ -260,22 +260,21 @@ function renderEntity(root, e, state, setState) {
           <button class="primary" data-goproduct="${esc(e.promo)}">open the evaluation record</button>`
         : `
           <p class="cap">Everything above is T1 (structured filing data). A
-          promotion (src/promote.py) verifies identity against EDGAR (R1),
+          promotion step verifies identity against EDGAR (R1),
           fetches the fund's filings, scaffolds the 54-cell six-factor record,
           prefills what the census already answers (marked
           <span class="chip structured">structured filing data (T1)</span>),
           and emits the extraction worklist for the rest. Nothing here is
           extracted or verified until that work is actually done.</p>
           <p class="cap">The registry entry (cohort, strategy, wrapper, a person's
-            judgments) comes first, then this command on a machine with the
-            filings and a key:</p>
+            judgments) comes first, then Tark runs the evaluation for this fund:</p>
           <pre class="cmd" data-cmd>${esc(cmd)}</pre>
-          <button class="btn ghost" data-copycmd>copy command</button>
+          <button class="btn ghost" data-copycmd>copy request</button>
           ${serviceUrl
             ? `<button class="primary" data-evaluate>Evaluate this fund</button>
                <span class="cap">posts to ${esc(serviceUrl)}/evaluate and shows its answer as returned</span>`
             : `<span class="cap">No evaluation service is connected to this build, so the
-               button is not shown. Run the command.</span>`}
+               button is not shown. Send the request to Tark.</span>`}
           <div data-evalresult></div>`}
       </div>
     </div>

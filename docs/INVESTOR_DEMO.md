@@ -142,7 +142,7 @@ the record. The static site itself writes nothing.
    accession column included.
 
 ## What is enforced by machines (say this in the meeting)
-- Pre-commit runs 18 gates, in this order: `validate_data` (data contract,
+- Pre-commit runs 19 gates, in this order: `validate_data` (data contract,
   registry, advisor files, accessions, no laptop paths), `validate_census`
   (T1 census), `test_evidence_immutable` (T2 rows change only through an
   allowlisted correction), `corrections_log` (every changed published number
@@ -156,7 +156,10 @@ the record. The static site itself writes nothing.
   (committed artifacts reproduce from a clean producer run), `build_site`
   (anonymization gate), `reconcile` (one number, every surface: facts,
   headlines, cards, cells 1.8 and 3.9, match files and memo agree on expense
-  ratio, management fee, KS-PME, Direct Alpha and the liquidity verdict),
+  ratio, management fee, KS-PME, Direct Alpha and the liquidity verdict,
+  and every EDGAR link in the drawer is the manifest's URL), `test_surfaces`
+  (no developer instruction, file path, script name or internal key on any
+  rendered view, in the bundle or in any generated document),
   `test_frontend` (render sweep across every view, product and plan with the
   HTML parsed, anonymization, JS/Python parity, runtime dead-key check,
   mobile and print renders, Tier 1 drawer against the CSV). The full hook

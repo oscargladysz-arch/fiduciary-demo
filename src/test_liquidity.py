@@ -95,10 +95,13 @@ check("schedule H present: QDIA named in the structural reasons",
       any("Plan QDIA on file: target-date series" in x and "cell 3.5" in x for x in st_lines))
 absent_lines, _ = schedule_h_lines({"financials": {"net_assets_boy": 1.0}, "schedule_h": {
     "benefit_payments_2e": {"value": None, "reason": "not typed in the test"}}})
-check("schedule H absent: the match says so with the plan file's reason and uses the sliders only",
-      any("not typed in the test" in x and "sliders only" in x for x in absent_lines))
+check("schedule H absent: the match says the lines are not yet in the plan record and uses the sliders only, "
+      "no environment excuse",
+      any("not yet in the plan record" in x and "sliders only" in x for x in absent_lines)
+      and not any("askebsa" in x or "container" in x or "repository" in x for x in absent_lines))
 check("today's four plans carry Schedule H as null-with-reason and every non-exchange match says so",
-      all(any("Schedule H benefit payments (line 2e)" in r and "sliders only" in r for r in m["scenario_reasons"])
+      all(any("Schedule H benefit-payment lines are not yet in the plan record" in r and "sliders only" in r
+              for r in m["scenario_reasons"])
           for m in matches.values() if not m["wrapper_facts"]["exchange"]))
 
 # ---- committed artifacts equal a fresh run's verdicts, and the wrapper facts name cells

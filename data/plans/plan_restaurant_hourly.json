@@ -42,12 +42,12 @@
   "schedule_h": {
     "benefit_payments_2e": {
       "value": null,
-      "reason": "not typed: the DOL bulk file F_SCH_H_2024_latest.csv is not in the repository and askebsa.dol.gov is blocked from the build container. Fill from the bulk file on a machine with access, citing the row",
+      "reason": "not typed: Schedule H line 2e is not yet in the plan record",
       "source": "Schedule H line 2e (benefit payments and payments to provide benefits)"
     },
     "participant_contributions_2a1b": {
       "value": null,
-      "reason": "not typed: the DOL bulk file F_SCH_H_2024_latest.csv is not in the repository and askebsa.dol.gov is blocked from the build container. Fill from the bulk file on a machine with access, citing the row",
+      "reason": "not typed: Schedule H line 2a(1)(B) is not yet in the plan record",
       "source": "Schedule H line 2a(1)(B) (participant contributions)"
     },
     "qdia_indicator": {

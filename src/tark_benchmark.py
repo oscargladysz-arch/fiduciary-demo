@@ -27,7 +27,9 @@ from pathlib import Path
 from tark_analytics import (_level_on, cumulative_growth, direct_alpha,
                             effective_window, ks_pme, monthly_schedule_flows,
                             year_frac)
-from tark_data import DATA, load_series
+from tark_data import DATA, load_products, load_series
+from tark_display import (RUBRIC_LABEL, asset_label, candidate_short, cohort_label,
+                          sub_label)
 
 MIN_PRIMARY_SCORE = 7
 RUBRIC_MAX = 12
@@ -42,9 +44,11 @@ def low_confidence(window_years: float, unit: str = "year") -> str | None:
     n = round(window_years, 2)
     shown = f"{int(n)}" if float(n).is_integer() else f"{n}"
     return f"low confidence: {shown}-{unit} window, shorter than {int(LOW_CONFIDENCE_YEARS)} years"
-RUBRIC_CAPTION = ("rubric v2: strategy match 3 (gate below 2), risk/liquidity match 3, "
+RUBRIC_CAPTION = (f"{RUBRIC_LABEL}: strategy match 3 (gate below 2), risk/liquidity match 3, "
                   "investability 2, data quality 2, provider independence 2, "
                   f"threshold {MIN_PRIMARY_SCORE}/{RUBRIC_MAX}")
+# fund short names for anything a surface prints (never a product key)
+FUND_SHORT = {k: p["fund_name"].split(" (")[0] for k, p in load_products().items()}
 
 _REGISTRY_DOC = json.loads((DATA / "registry.json").read_text())
 REGISTRY = _REGISTRY_DOC["products"]
@@ -219,10 +223,13 @@ def peer_candidate(peer_id: str, subject: str) -> dict:
             "asset_class": _mode([r["asset_class"] for r in regs.values()]) if regs else "none",
             "sub_strategy": _mode([r["sub_strategy"] for r in regs.values()]) if regs else "none",
             "leverage_regimes": sorted({r["leverage_regime"] for r in regs.values()}),
-            "name": f"Peer cohort composite: {cohort} without {subject} ({', '.join(members)})"}
+            "name": (f"Peer composite, {cohort_label(cohort)} without "
+                     f"{FUND_SHORT.get(subject, subject)} (members: "
+                     + ", ".join(FUND_SHORT.get(m, m) for m in members) + ")")}
     if len(members) < 3:
-        return {**base, "refused": f"fewer than 3 members remain after leaving {subject} out "
-                                    f"({len(members)}: {', '.join(members)})"}
+        return {**base, "refused": (f"fewer than 3 members remain after leaving "
+                                    f"{FUND_SHORT.get(subject, subject)} out ({len(members)}: "
+                                    + ", ".join(FUND_SHORT.get(m, m) for m in members) + ")")}
     classes = {r["pricing_class"] for r in regs.values()}
     if len(classes) > 1:
         return {**base, "refused": "members' pricing bases are heterogeneous (market price vs "
@@ -269,7 +276,7 @@ def menu_for(key: str) -> list[dict]:
 # tests): Lane B and C entries as dicts
 STRATEGY_MENU: dict[str, list[dict]] = {
     strat: [{**CANDIDATES[c], "id": c} if c in CANDIDATES else
-            {"id": c, "name": f"Peer cohort composite ({PEER_COHORT[c]}, leave-one-out)",
+            {"id": c, "name": f"Peer composite ({cohort_label(PEER_COHORT[c])}, leave-one-out)",
              "lane": "C", "series": None, "data": "composite"}
             for c in ids]
     for strat, ids in STRATEGY_MENU_IDS.items()}
@@ -280,18 +287,19 @@ def strategy_match(prof: dict, cand: dict) -> tuple[int, str]:
     pac, psub = prof["asset_class"], prof["sub_strategy"]
     cac, csub = cand["asset_class"], cand["sub_strategy"]
     if cac == pac and (csub == psub or csub in PRIVATE_INDEX_SUBS):
-        return 3, (f"same asset class and sub-strategy ({pac} / {psub})" if csub == psub
-                   else f"a private {pac.replace('_', ' ')} index for a {psub.replace('_', ' ')} fund")
+        return 3, (f"same asset class and sub-strategy ({asset_label(pac)} / {sub_label(psub)})"
+                   if csub == psub else
+                   f"a {sub_label(csub)} of {asset_label(pac)} for a {sub_label(psub)} fund")
     if FAMILY.get(cac) == FAMILY.get(pac):
-        return 2, (f"same asset class, different sub-strategy ({csub.replace('_', ' ')} vs "
-                   f"{psub.replace('_', ' ')})" if cac == pac else
-                   f"the public-market version of the asset class ({csub.replace('_', ' ')} "
-                   f"for {psub.replace('_', ' ')})")
+        return 2, (f"same asset class, different sub-strategy ({sub_label(csub)} vs "
+                   f"{sub_label(psub)})" if cac == pac else
+                   f"the public-market version of the asset class ({sub_label(csub)} "
+                   f"for {sub_label(psub)})")
     if (FAMILY.get(pac) in ("private_equity", "venture") and cac == "public_equity") or \
             (pac == "venture" and cac == "listed_private_equity"):
-        return 1, (f"adjacent asset class sharing the dominant risk ({csub.replace('_', ' ')} "
-                   f"for {psub.replace('_', ' ')})")
-    return 0, f"unrelated asset class ({cac.replace('_', ' ')} for {pac.replace('_', ' ')})"
+        return 1, (f"adjacent asset class sharing the dominant risk ({sub_label(csub)} "
+                   f"for {sub_label(psub)})")
+    return 0, f"unrelated asset class ({asset_label(cac)} for {asset_label(pac)})"
 
 
 def _held_cadence(prof: dict) -> str:
@@ -654,7 +662,7 @@ def run_selection(product_key: str) -> dict:
                 "next: public NAV series (quarterly filings) plus a premium/NAV "
                 "decomposition before any comparator is defensible.")
         else:
-            failed = "; ".join(f"{r['id']} {r['score']}/12 ({r['rejection'].split(' (')[0]})"
+            failed = "; ".join(f"{candidate_short(r['id'])} {r['score']}/12 ({r['rejection'].split(' (')[0]})"
                                for r in rejected)
             result["escalation"] = (
                 "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from held data: no candidate passes "

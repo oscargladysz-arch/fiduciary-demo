@@ -6,7 +6,7 @@
     "5.1"
   ],
   "rubric_version": "v2",
-  "rubric": "rubric v2: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
+  "rubric": "Tark benchmark rubric, 12 points: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
   "max_attainable": 9,
   "declared_benchmarks": [],
   "declared_none_reason": "cell 5.1: SREIT declares no benchmark index anywhere in the FY2025 10-K",
@@ -25,7 +25,7 @@
     },
     "series_id": "vnq",
     "reasons": [
-      "strategy_match 2/3: the public-market version of the asset class (listed reits for core plus nontraded re)",
+      "strategy_match 2/3: the public-market version of the asset class (listed REITs for core-plus non-traded real estate)",
       "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
       "investability 2/2: computable on held data (daily series)",
       "data_quality 2/2: daily series held",
@@ -61,7 +61,7 @@
     },
     "series_id": "cited:odce",
     "reasons": [
-      "strategy_match 3/3: a private real estate index for a core plus nontraded re fund",
+      "strategy_match 3/3: a private-market index of real estate for a core-plus non-traded real estate fund",
       "risk_liquidity_match 2/3: NAV-class series, quarterly observations vs the fund's annual return data and an index, not a fund set, so leverage regime is not comparable",
       "investability 0/2: index cited, series not held, not computable",
       "data_quality 0/2: cited, not computed",
@@ -85,7 +85,7 @@
       },
       "series_id": "cited:cambridge_re",
       "reasons": [
-        "strategy_match 3/3: a private real estate index for a core plus nontraded re fund",
+        "strategy_match 3/3: a private-market index of real estate for a core-plus non-traded real estate fund",
         "risk_liquidity_match 2/3: NAV-class series, quarterly observations vs the fund's annual return data and an index, not a fund set, so leverage regime is not comparable",
         "investability 0/2: licensed data not held (no subscription), candidate can be cited, not computed",
         "data_quality 0/2: cited, not computed",
@@ -94,7 +94,7 @@
       "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 7/12 (only two slots). Retained in log as viable alternate"
     },
     {
-      "candidate": "Peer cohort composite: nontraded_reit without sreit (breit, jll_ipt)",
+      "candidate": "Peer composite, non-traded real estate cohort without Starwood Real Estate Income Trust, Inc. (members: Blackstone Real Estate Income Trust Inc, JLL Income Property Trust, Inc.)",
       "id": "peer_reit",
       "lane": "C",
       "score": 3,
@@ -108,8 +108,8 @@
       },
       "series_id": "composite:nontraded_reit",
       "reasons": [
-        "strategy_match 2/3: same asset class, different sub-strategy (core nontraded re vs core plus nontraded re)",
-        "risk_liquidity_match 0/3: no computable series: fewer than 3 members remain after leaving sreit out (2: breit, jll_ipt)",
+        "strategy_match 2/3: same asset class, different sub-strategy (core non-traded real estate vs core-plus non-traded real estate)",
+        "risk_liquidity_match 0/3: no computable series: fewer than 3 members remain after leaving Starwood Real Estate Income Trust, Inc. out (2: Blackstone Real Estate Income Trust Inc, JLL Income Property Trust, Inc.)",
         "investability 0/2: composite refused, nothing to compute",
         "data_quality 0/2: cited, not computed",
         "provider_independence 1/2: constructed by the evaluator from the roster, not a third-party index. A composite the evaluator built from a roster the evaluator chose is not an independent yardstick, so it earns at most 1 of 2"
