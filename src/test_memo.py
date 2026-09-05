@@ -88,6 +88,50 @@ if typed_missing:
     print("   missing:", "; ".join(typed_missing[:8]))
 check("findings: no ellipsis cut anywhere in the memos", not cut)
 
+# R2-P0-4: the abbreviation-aware splitter (audit round 2 item 4). The old
+# "period then whitespace" splitter cut "Anderson v." on all 16 products and
+# "Stephen L." on hl_paf 1.11. The regression set is every cell where the two
+# splitters differ today, and the audit's named examples must be inside it.
+from tark_display import ends_at_abbreviation  # noqa: E402
+_naive = lambda v: re.split(r"(?<=[.!?])\s+", v.strip(), maxsplit=1)[0]  # noqa: E731
+_reg = {(k, cid) for k, prod in prods.items() for cid, c in prod["cells"].items()
+        if (c.get("value") or "").strip() and status_kind(c.get("status", "")) != "n/a"
+        and _naive(c["value"]) != first_sentence(c["value"])}
+_named = {(k, "5.7") for k in prods} | {("cliffwater_cclfx", "1.11"), ("amg_pantheon", "3.2"),
+                                        ("cliffwater_cclfx", "3.2"), ("bcred", "4.6"), ("jll_ipt", "4.6"),
+                                        ("bcred", "6.2"), ("cion_ares", "6.5"), ("jll_ipt", "6.5"),
+                                        ("dxyz", "6.3"), ("breit", "2.7"), ("arkvx", "6.5")}
+check(f"splitter: the audit's abbreviation cuts (Anderson v. on all 16, Stephen L., p.m., Supplement No., U.S., "
+      f"Inc., Mr., i.e., St.) are in the regression set of {len(_reg)} cells where the old splitter cut short",
+      _named <= _reg)
+if not _named <= _reg:
+    print("   missing:", sorted(_named - _reg))
+_unit = {"Anderson v. Intel Corp. Investment Policy Committee, No. 25-498. Next.":
+         "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498.",
+         "Portfolio manager Stephen L. Nesbitt since inception. Next.": "Portfolio manager Stephen L. Nesbitt since inception.",
+         "Tenders due 11:59 p.m. ET 2026-08-28. Next.": "Tenders due 11:59 p.m. ET 2026-08-28.",
+         "STRATEGY: U.S. middle-market loans (incl. unitranche). Next.": "STRATEGY: U.S. middle-market loans (incl. unitranche).",
+         "Adviser ARK Investment Management LLC (St. Petersburg, FL). Next.": "Adviser ARK Investment Management LLC (St. Petersburg, FL).",
+         "At the median of 5. Next sentence.": "At the median of 5."}
+check("splitter: unit cases (v., initial, p.m., U.S., incl., parenthesis, a number is a sentence end)",
+      all(first_sentence(k) == v for k, v in _unit.items()))
+_abbr_rows = []
+for pl in plan_keys():
+    for k in prods:
+        _d = Document(OUT / memo_name(pl, k))
+        for _t in _d.tables:
+            for _row in _t.rows:
+                for _c in _row.cells:
+                    for _para in _c.paragraphs:
+                        _txt = _para.text.strip()
+                        if re.match(r"^\d+\.\d+ .*\((?:extracted-unverified|computed|partial|verified|structured)\): ",
+                                    _txt) and ends_at_abbreviation(_txt):
+                            _abbr_rows.append(f"{pl} {k}: {_txt[-40:]}")
+check("findings: no row in any of the 64 memos ends at an abbreviation (v., L., U.S., p.m., No., Inc.)",
+      not _abbr_rows)
+if _abbr_rows:
+    print("   rows:", "; ".join(_abbr_rows[:6]))
+
 # P1-21: the four sections, in every plan x product memo
 SECTIONS = ("product-to-plan liquidity match", "structural verdict (typed facts, plan-independent)",
             "scenario (illustrative, this plan)", "recommendation", "scope", "case law",

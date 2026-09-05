@@ -1489,3 +1489,24 @@ sreit, jll_ipt under the tech/media plan, product-independent views once),
   7e8ba68 and merged three-way into the tree after R2-P0-3. Only the code
   and the plan files were taken. The data artifacts were regenerated here
   by the producer chain, so they carry both tasks' changes.
+
+### 7.14 R2-P0-4: one sentence splitter, abbreviation-aware, shared by the site and the memo
+- `tark_display.first_sentence` replaces the two "period followed by
+  whitespace" splitters (`tark_memo.first_sentence` and the inline split
+  in `cell_display`). It does not end a sentence after a listed
+  abbreviation (v., vs., Mr., Ms., No., Inc., Corp., L.P., LLC., p.m.,
+  a.m., incl., excl., approx., i.e., e.g., St., Ste., U.S., et al., month
+  abbreviations and a few more), after a single capital initial
+  ("Stephen L."), after a dotted acronym of any length ("L.L.C."), or
+  inside an open parenthesis or bracket. A number followed by a period
+  ("at the median of 5.") is a sentence end.
+- The typed-fact headline is preferred wherever a fact cites the cell, as
+  before. The splitter is only the fallback.
+- The audit named 63 pairs from its own abbreviation list. The gate pins
+  the pairs where the old splitter and the new one differ on today's
+  record (the regression set), asserts the audit's examples by name
+  (every product's 5.7 "Anderson v.", hl_paf 1.11 "Stephen L.",
+  amg_pantheon 3.2 and cliffwater_cclfx 3.2 "p.m.", bcred 4.6 and jll_ipt
+  4.6 "Supplement No.", bcred 6.2 "U.S.", cion_ares 6.5 and jll_ipt 6.5
+  "Inc."), and asserts that no findings row in any of the 64 memos and no
+  headline or plain line in the bundle ends at an abbreviation.

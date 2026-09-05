@@ -138,6 +138,16 @@ def main() -> int:
                 bad_url.append(f"{k} {cid}: accession {acc} not in the manifest")
     check(f"bundle: every EDGAR URL in the citation drawer is the manifest URL for that product and accession, "
           f"built from the CIK ({n_url} links)", bool(evidence) and not bad_url, "; ".join(bad_url[:4]))
+    # R2-P0-4: no site headline or plain line stops at an abbreviation
+    from tark_display import ends_at_abbreviation
+    # a typed-fact headline is a fact, not a split sentence: an auditor named
+    # "Cohen & Company, Ltd." is complete
+    bad_head = [f"{k} {cid}: {d.get('headline', '')[-30:]!r}" for k, cells in B["cell_display"].items()
+                for cid, d in cells.items()
+                if (not d.get("typed") and ends_at_abbreviation(d.get("headline")))
+                or ends_at_abbreviation(d.get("plain"))]
+    check("headlines: no site headline or plain line ends at an abbreviation (v., L., U.S., p.m., No.)",
+          not bad_head, "; ".join(bad_head[:4]))
     print(f"\n{len(FAILS)} failure(s)." if FAILS else "\nAll surfaces reconcile.")
     return 1 if FAILS else 0
 

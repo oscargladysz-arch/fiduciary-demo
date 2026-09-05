@@ -60,9 +60,8 @@ KIND_LABEL = {"extracted": "extracted-unverified", "verified": "verified",
 EVIDENCED = tuple(KIND_LABEL)
 
 
-def first_sentence(value: str) -> str:
-    """The complete first sentence of a cell value, never cut mid-word."""
-    return re.split(r"(?<=[.!?])\s+", value.strip(), maxsplit=1)[0]
+# the abbreviation-aware splitter is shared with the site (R2-P0-4)
+from tark_display import ends_at_abbreviation, first_sentence  # noqa: E402,F401
 
 
 def _findings(product: dict, factor_label: str, fbc: dict) -> list[str]:

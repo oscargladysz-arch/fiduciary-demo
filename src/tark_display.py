@@ -152,6 +152,54 @@ def typed_headline(cid: str, fx: dict) -> str | None:
     return f"{field.replace('_', ' ')}: {v if not isinstance(v, float) else f'{v:g}'}"
 
 
+# Abbreviations a period does not end a sentence after (R2-P0-4, audit round
+# 2 item 4). Lower-cased. Single initials ("Stephen L.") and dotted acronyms
+# ("U.S.", "p.m.", "i.e.", "L.L.C.") are matched by shape, and a period inside
+# an open parenthesis or bracket never ends the sentence.
+SENTENCE_ABBREVIATIONS = {
+    "v.", "vs.", "mr.", "ms.", "mrs.", "dr.", "jr.", "sr.", "no.", "nos.", "inc.", "corp.",
+    "co.", "ltd.", "l.p.", "llc.", "llp.", "p.m.", "a.m.", "incl.", "excl.", "approx.",
+    "i.e.", "e.g.", "st.", "ste.", "u.s.", "et al.", "al.", "cf.", "sec.", "para.", "fig.",
+    "vol.", "ch.", "art.", "reg.", "fed.", "del.", "n.a.", "s.a.", "inc", "mgmt.", "avg.",
+    "est.", "dept.", "assoc.", "bros.", "mt.", "ft.", "jan.", "feb.", "mar.", "apr.", "jun.",
+    "jul.", "aug.", "sep.", "sept.", "oct.", "nov.", "dec.",
+}
+_INITIAL = re.compile(r"^[A-Z]\.$")
+_DOTTED = re.compile(r"^(?:[A-Za-z]\.){2,}$")
+
+
+def first_sentence(text) -> str:
+    """The complete first sentence of a value: the text up to the first
+    sentence-ending punctuation followed by whitespace that is not an
+    abbreviation, an initial, a dotted acronym, or inside parentheses."""
+    s = str(text or "").strip()
+    depth = 0
+    for i, ch in enumerate(s):
+        if ch in "([":
+            depth += 1
+        elif ch in ")]":
+            depth = max(0, depth - 1)
+        elif ch in ".!?" and depth == 0 and i + 1 < len(s) and s[i + 1].isspace():
+            start = s.rfind(" ", 0, i) + 1
+            tok = s[start:i + 1]
+            low = tok.lower()
+            if (low in SENTENCE_ABBREVIATIONS or _INITIAL.match(tok) or _DOTTED.match(tok)
+                    or s[max(0, start - 3):i + 1].lower() == "et al."):
+                continue
+            return s[:i + 1]
+    return s
+
+
+def ends_at_abbreviation(text) -> bool:
+    """True when a headline or findings row stops at an abbreviation."""
+    s = str(text or "").rstrip()
+    if not s or s.endswith("…"):
+        return False    # a marked cut is not a sentence end
+    tok = s.rsplit(" ", 1)[-1]
+    low = tok.lower()
+    return low in SENTENCE_ABBREVIATIONS or bool(_INITIAL.match(tok)) or bool(_DOTTED.match(tok))
+
+
 def cell_display(cell: dict, cid: str = "", fx: dict | None = None) -> dict:
     """Display derivation (display-only; the full sourced text stays one
     disclosure away). headline = the typed fact that cites the cell when one
@@ -166,15 +214,17 @@ def cell_display(cell: dict, cid: str = "", fx: dict | None = None) -> dict:
         return {"headline": "n/a", "plain": reason[:170]}
     if not val:
         return {"headline": "—", "plain": "Pending extraction."}
-    first_sentence = re.split(r"(?<=[.!?])\s+", val, maxsplit=1)[0]
-    plain = first_sentence[:180]
+    sentence = first_sentence(val)
+    # a long plain line is cut at a word boundary and marked, never left
+    # looking like a sentence that stops at an abbreviation
+    plain = sentence if len(sentence) <= 180 else sentence[:177].rsplit(" ", 1)[0].rstrip(" ,;:") + "…"
     typed = typed_headline(cid, fx or {})
     if typed:
         return {"headline": typed, "plain": plain, "typed": True}
-    if len(first_sentence) <= 140:
-        headline = first_sentence
+    if len(sentence) <= 140:
+        headline = sentence
     else:
-        cut = first_sentence[:137]
+        cut = sentence[:137]
         headline = cut[: cut.rfind(" ")].rstrip(" ,;:") + "…" if " " in cut else cut + "…"
     return {"headline": headline, "plain": plain, "typed": False}
 
