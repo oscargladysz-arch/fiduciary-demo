@@ -8,7 +8,10 @@
 
 export function computeScenario(planInputs, profile, params) {
   // planInputs: {net_assets, tail_share_pct} from the match file (cited)
-  // profile: wrapper facts (cadence_per_year, cap_pct, exchange)
+  // profile: wrapper facts. annual_capacity_pct is the binding annual figure
+  //          Python computed from the typed cap list (null when no cap is
+  //          typed or the wrapper is exchange-listed). It is read, never
+  //          recomputed here, so a null cap yields null and never 0.
   // params: {allocation_pct_of_plan, tail_annual_turnover_pct,
   //          active_annual_turnover_pct}
   const tailShare = planInputs.tail_share_pct / 100;
@@ -18,9 +21,10 @@ export function computeScenario(planInputs, profile, params) {
     alloc * (1 - tailShare) * params.active_annual_turnover_pct / 100;
   const demand = tailDemand + activeDemand;
   const demandPct = demand / alloc * 100;
-  const capacityPct = profile.exchange
+  const filed = profile.annual_capacity_pct;
+  const capacityPct = (profile.exchange || filed === null || filed === undefined)
     ? null
-    : profile.cadence_per_year * profile.cap_pct;
+    : filed;
   return {
     plan_allocation_usd: Math.round(alloc),
     annual_demand_usd: Math.round(demand),
@@ -59,7 +63,7 @@ export function scenarioReason(sc) {
     `annual wrapper capacity. `;
   return head + (sc.thin_headroom
     ? "THIN HEADROOM: demand consumes over 60% of wrapper capacity. " +
-      "Proration in any oversubscribed quarter would push the shortfall " +
+      "Proration in any oversubscribed window would push the shortfall " +
       "into the next window."
     : "Adequate headroom at this allocation if offers are not prorated.");
 }

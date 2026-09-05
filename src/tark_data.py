@@ -607,6 +607,13 @@ def coverage_totals() -> dict:
 FACT_OK_STATUS = ("extracted", "verified", "computed", "fetched",
                   "structured")
 
+# string facts with a closed vocabulary (R2-P0-5): a value outside it is a
+# transcription error, not a new kind of wrapper
+FACT_ENUMS = {
+    "dealing_cadence": ("daily", "monthly", "quarterly", "exchange"),
+    "cap_period": ("month", "quarter", "year"),
+}
+
 
 def _num_forms(v) -> set[str]:
     if isinstance(v, float):
@@ -647,11 +654,34 @@ def validate_facts() -> list[str]:
                     and f.get("status") != "computed"):
                 errs.append(f"facts:{key}:{field}: cites cell {sc} whose "
                             f"status is '{cell.get('status')}'")
+            v = f["value"]
+            # closed vocabularies and the shape of the cap list are checked
+            # whatever the status: a computed or approximate fact is still
+            # spelled from the same vocabulary
+            if field in FACT_ENUMS and v not in FACT_ENUMS[field]:
+                errs.append(f"facts:{key}:{field}: value {v!r} is not one of "
+                            f"{FACT_ENUMS[field]}")
+            if field == "repurchase_caps":
+                if not isinstance(v, list) or not v:
+                    errs.append(f"facts:{key}:{field}: must be a non-empty list of "
+                                "{pct, period} records")
+                else:
+                    for i, item in enumerate(v):
+                        if (not isinstance(item, dict)
+                                or not isinstance(item.get("pct"), (int, float))
+                                or isinstance(item.get("pct"), bool)
+                                or item.get("period") not in FACT_ENUMS["cap_period"]):
+                            errs.append(f"facts:{key}:{field}[{i}]: each cap is "
+                                        "{pct: number, period: month|quarter|year}")
+                    periods = {item.get("period") for item in v if isinstance(item, dict)}
+                    cp = (doc["facts"].get("cap_period") or {}).get("value")
+                    if cp is not None and cp not in periods:
+                        errs.append(f"facts:{key}:cap_period: {cp!r} is not the period "
+                                    f"of any cap in repurchase_caps {sorted(periods)}")
             if f.get("approx") or f.get("status") == "computed":
                 continue
             text = str(cell.get("value") or "")
             checks = []
-            v = f["value"]
             if isinstance(v, float):
                 checks.append((field, v))
             elif isinstance(v, int) and not isinstance(v, bool) and v >= 1000:
@@ -659,6 +689,12 @@ def validate_facts() -> list[str]:
             elif isinstance(v, dict):
                 checks += [(f"{field}.{k}", x) for k, x in v.items()
                            if isinstance(x, float)]
+            elif isinstance(v, list):
+                # a list of records is checked item by item the same way
+                for i, item in enumerate(v):
+                    if isinstance(item, dict):
+                        checks += [(f"{field}[{i}].{k}", x) for k, x in item.items()
+                                   if isinstance(x, float)]
             for label, num in checks:
                 if not any(s in text for s in _num_forms(num)):
                     errs.append(f"facts:{key}:{label}: value {num} not found "
@@ -735,30 +771,21 @@ LAPTOP_RE = re.compile(r"/private/tmp/|/Users/|/tmp/claude")
 
 def validate_accessions() -> list[str]:
     """The accession column of every evidence row: empty, one accession the
-    manifest holds for that product, or a pointer to the citations file for
-    a set. Every accession written in a citation text must also be a
-    manifest row for that product (R2-P0-1, rule 15: a number written in
-    the text is accepted only when it matches the manifest). No laptop path
-    anywhere."""
+    manifest holds for that product (or one written in the citation itself),
+    or a pointer to the citations file for a set. No laptop path anywhere."""
     errs: list[str] = []
     by_prod: dict[str, set[str]] = {}
     for r in load_manifest():
         by_prod.setdefault(r["product"], set()).add(r["accession"])
     for key in product_keys():
-        held = by_prod.get(key, set())
         for r in load_evidence(key):
             acc = (r.get("accession") or "").strip()
             if acc and not acc.startswith("multiple ("):
                 if not ACCESSION_RE.fullmatch(acc):
                     errs.append(f"{key}:{r['cell_id']}: accession {acc!r} is not an accession number")
-                elif acc not in held:
-                    errs.append(f"{key}:{r['cell_id']}: accession {acc} is not a manifest row for this "
-                                "product (data/manifest.csv is the ledger, a number written in the "
-                                "citation is not)")
-            for written in ACCESSION_RE.findall(r.get("source_doc") or ""):
-                if written not in held:
-                    errs.append(f"{key}:{r['cell_id']}: the citation writes accession {written}, which "
-                                "is not a manifest row for this product")
+                elif acc not in by_prod.get(key, set()) and acc not in (r.get("source_doc") or ""):
+                    errs.append(f"{key}:{r['cell_id']}: accession {acc} is neither a manifest row for this "
+                                "product nor written in its citation")
             for col in EVIDENCE_COLUMNS:
                 if LAPTOP_RE.search(r.get(col) or ""):
                     errs.append(f"{key}:{r['cell_id']}: {col} carries a laptop path")

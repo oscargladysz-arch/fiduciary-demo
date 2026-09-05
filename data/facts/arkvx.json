@@ -107,6 +107,29 @@
       "reason": "no suspension language in 3.1 or 3.3 as of 2025-07-31",
       "status": "extracted-unverified"
     },
+    "dealing_cadence": {
+      "value": "quarterly",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'CADENCE: quarterly Rule 23c-3 repurchase offers', 'every actual offer to date has been, the 5% minimum'",
+      "status": "extracted-unverified"
+    },
+    "cap_period": {
+      "value": "quarter",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'CADENCE: quarterly Rule 23c-3 repurchase offers', 'every actual offer to date has been, the 5% minimum'",
+      "status": "extracted-unverified"
+    },
+    "repurchase_caps": {
+      "value": [
+        {
+          "pct": 5.0,
+          "period": "quarter"
+        }
+      ],
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'CADENCE: quarterly Rule 23c-3 repurchase offers', 'every actual offer to date has been, the 5% minimum'",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 2.9,
       "source_cell": "1.11",

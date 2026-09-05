@@ -61,7 +61,7 @@ const COLS = [
     if (f.value === null) return factCell(k, f);
     return factCell(k, { ...f, value: fmtEarly(f.value) });
   }],
-  ["cadence", "Dealing/yr", (k) => factCell(k, fact(k, "repurchase_cadence_per_year"))],
+  ["cadence", "Dealing", (k) => factCell(k, fact(k, "dealing_cadence"), esc)],
   ["cap", "Cap", (k) => factCell(k, fact(k, "repurchase_cap_pct"),
       (v) => v + "%")],
   ["gate", "Gate history", (k) => factCell(k, fact(k, "gate_history"),
@@ -223,8 +223,8 @@ const CMP_ROWS = [
   ["Expense ratio", "expense_ratio_pct", (v) => v.toFixed(2) + "%", null],
   ["Early repurchase", "early_repurchase",
     (v) => fmtEarly({ ...v, window: v.window ? `if ${v.window}` : "" }), null],
-  ["Dealing cadence", "repurchase_cadence_per_year", (v) => v + "×/yr", null],
-  ["Repurchase cap", "repurchase_cap_pct", (v) => v + "%", null],
+  ["Dealing", "dealing_cadence", (v) => v, null],
+  ["Repurchase caps", "repurchase_caps", (v) => v.map((c) => `${c.pct}% per ${c.period}`).join(" and "), null],
   ["Gate history", "gate_history", (v) => v ? "YES: prorated under stress" : "none identified",
     (v) => v === true],
   ["Tax form", "tax_form", (v) => v, (v) => v === "K-1"],

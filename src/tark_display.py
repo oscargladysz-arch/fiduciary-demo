@@ -102,11 +102,21 @@ def typed_headline(cid: str, fx: dict) -> str | None:
     if cid == "2.7" and "early_repurchase" in fx:
         return "early repurchase fee: " + fmt_early(g("early_repurchase"))
     if cid == "3.1":
+        # dealing cadence and cap period are two facts (R2-P0-5): jll_ipt deals
+        # daily under a quarterly cap, breit has a monthly and a quarterly cap
         parts = []
-        if g("repurchase_cadence_per_year") is not None:
+        dc = g("dealing_cadence")
+        if dc:
+            parts.append({"daily": "daily dealing", "monthly": "monthly dealing",
+                          "quarterly": "quarterly dealing", "exchange": "on-exchange dealing"}.get(dc, dc))
+        elif g("repurchase_cadence_per_year") is not None:
             parts.append(f"{g('repurchase_cadence_per_year')}x per year")
-        if g("repurchase_cap_pct") is not None:
-            base = BASE_LABEL.get(g("repurchase_cap_base"), g("repurchase_cap_base") or "")
+        base = BASE_LABEL.get(g("repurchase_cap_base"), g("repurchase_cap_base") or "")
+        caps = g("repurchase_caps")
+        if caps:
+            parts.append(" and ".join(f"{c['pct']:g}% cap per {c['period']}" for c in caps)
+                         + (f" on {base}" if base else ""))
+        elif g("repurchase_cap_pct") is not None:
             parts.append(f"{g('repurchase_cap_pct'):g}% cap" + (f" on {base}" if base else ""))
         if parts:
             return ", ".join(parts)

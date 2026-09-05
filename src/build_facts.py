@@ -450,11 +450,10 @@ MAPPING = {
         "early_repurchase": F({"present": False}, "2.7",
                               note="no fee. One-year holding period with "
                                    "death/disability exceptions"),
-        "repurchase_cadence_per_year": F(4, "3.1",
-                                         note="DAILY repurchase requests at "
-                                              "that day's NAV under a "
-                                              "quarterly 5% cap - the "
-                                              "cohort's most liquid plan"),
+        "repurchase_cadence_per_year": F(252, "3.1", status="computed",
+                                         note="daily repurchase requests per cell "
+                                              "3.1, trading-day convention, the "
+                                              "cap applies per quarter"),
         "repurchase_cap_pct": F(5.0, "3.1"),
         "repurchase_cap_base": F("nav", "3.1",
                                  note="combined NAV of all classes, prior "
@@ -613,7 +612,7 @@ COHORT_META = {k: (v["cohort"], v["depth"], v["membership_rationale"]) for k, v 
 for _key, _m in MAPPING.items():
     if _key == "sreit":
         _m["repurchase_program_status"] = F(
-            "suspended", "3.1",
+            "suspended", "3.1", since="April 29, 2026 amendment",
             note="April 29, 2026 amendment: 'no repurchase requests will be accepted' "
                  "except death, qualifying disability and accounts below $5,000")
     elif _m["wrapper_type"]["value"] in ("listed_cef", "listed_bdc"):
@@ -621,6 +620,78 @@ for _key, _m in MAPPING.items():
     else:
         _m["repurchase_program_status"] = null(
             f"no suspension language in 3.1 or 3.3 as of {AS_OF[_key]}", "3.1")
+
+# Dealing cadence and repurchase caps (R2-P0-5), typed from cell 3.1's own
+# words. The dealing cadence is how often a holder can deal (daily, monthly,
+# quarterly, or on an exchange). Each cap names the period it is measured
+# over, and a product may carry more than one cap. The two are separate facts
+# because jll_ipt takes repurchase requests daily under a quarterly cap and
+# breit carries a monthly cap and a quarterly cap at once. The engine takes
+# the binding annual figure from the cap list, never cadence * cap.
+# Row: (dealing cadence, cap period, caps as (pct, period) pairs, the words
+# of cell 3.1 that support them). An exchange-listed row carries None for the
+# cap period and the caps, with the reason below.
+_NO_FUND_CAP = "on-exchange liquidity with no fund-level cap"
+DEALING_TERMS = {
+    "hl_paf": ("quarterly", "quarter", [(5.0, "quarter")],
+               "'Quarterly tender offers', 'up to 5.00% of net assets'"),
+    "cliffwater_cclfx": ("quarterly", "quarter", [(5.0, "quarter")],
+                         "'up to five percent (5%) of outstanding shares, quarterly'"),
+    "dxyz": ("exchange", None, None,
+             "'daily on-exchange liquidity' and 'no fund-level repurchase program'"),
+    "kkr_kpec": ("quarterly", "quarter", [(5.0, "quarter")],
+                 "'Quarterly share repurchase plan: limited to 5.0% of aggregate NAV "
+                 "... per calendar quarter'"),
+    "breit": ("monthly", "month", [(2.0, "month"), (5.0, "quarter")],
+              "'Repurchase caps: 2% of aggregate NAV per MONTH, 5% per QUARTER'. "
+              "The monthly cap is the headline cap and the quarterly cap binds "
+              "over a year (2 * 12 = 24 versus 5 * 4 = 20)"),
+    "bcred": ("quarterly", "quarter", [(5.0, "quarter")],
+              "'CADENCE: quarterly tender offers at Board discretion', 'CAP: up to "
+              "5% of the NAV of Common Shares outstanding'"),
+    "pflex": ("quarterly", "quarter", [(5.0, "quarter")],
+              "'quarterly repurchase offers for between 5% and 25% of outstanding "
+              "Common Shares', 'currently expects 5% per quarter'"),
+    "ocic": ("quarterly", "quarter", [(5.0, "quarter")],
+             "'quarterly issuer tender offers', 'capped at 5.00% of outstanding "
+             "shares per quarter'"),
+    "cion_ares": ("quarterly", "quarter", [(5.0, "quarter")],
+                  "'quarterly repurchase offers of between 5% and 25% of outstanding "
+                  "shares', 'expects to offer only the 5% minimum each quarter'"),
+    "ares_pmf": ("quarterly", "quarter", [(5.0, "quarter")],
+                 "'quarterly repurchase offers of no more than 5% of the Fund's NET "
+                 "ASSETS'"),
+    "amg_pantheon": ("quarterly", "quarter", [(5.0, "quarter")],
+                     "'recommending quarterly offers', 'CAP: expected up to 5% per "
+                     "offer'"),
+    "sreit": ("monthly", "month", [(0.0, "month")],
+              "'Monthly share repurchase plan'. 0% for ordinary requests since the "
+              "April 29, 2026 amendment ('no repurchase requests will be accepted' "
+              "except death, qualifying disability and accounts below $5,000). Cap "
+              "history: 2% per month and 5% per quarter (2017), 0.33% and 1% (May "
+              "2024), 0.5% and 1.5% (June 2025)"),
+    "jll_ipt": ("daily", "quarter", [(5.0, "quarter")],
+                "'CADENCE: DAILY - stockholders may request repurchase ... any day at "
+                "that day's NAV per share', 'CAP: 5% of the combined NAV of all "
+                "classes per calendar quarter'"),
+    "ssss": ("exchange", None, None,
+             "'cadence: any trading day' and 'cap: none (market depth only)'"),
+    "arkvx": ("quarterly", "quarter", [(5.0, "quarter")],
+              "'CADENCE: quarterly Rule 23c-3 repurchase offers', 'every actual "
+              "offer to date has been, the 5% minimum'"),
+    "stepstone_spm": ("quarterly", "quarter", [(5.0, "quarter")],
+                      "'Quarterly tender offers: up to 5% of OUTSTANDING SHARES'"),
+}
+for _key, (_dc, _cp, _caps, _words) in DEALING_TERMS.items():
+    _m = MAPPING[_key]
+    _m["dealing_cadence"] = F(_dc, "3.1", note=f"cell 3.1: {_words}")
+    if _caps is None:
+        _m["cap_period"] = null(_NO_FUND_CAP, "3.1")
+        _m["repurchase_caps"] = null(_NO_FUND_CAP, "3.1")
+    else:
+        _m["cap_period"] = F(_cp, "3.1", note=f"cell 3.1: {_words}")
+        _m["repurchase_caps"] = F([{"pct": p, "period": per} for p, per in _caps],
+                                  "3.1", note=f"cell 3.1: {_words}")
 
 
 def years_between(d0: str, d1: str) -> float:

@@ -109,6 +109,24 @@
       "reason": "exchange-listed, no repurchase program",
       "status": "extracted-unverified"
     },
+    "dealing_cadence": {
+      "value": "exchange",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'daily on-exchange liquidity' and 'no fund-level repurchase program'",
+      "status": "extracted-unverified"
+    },
+    "cap_period": {
+      "value": null,
+      "source_cell": "3.1",
+      "reason": "on-exchange liquidity with no fund-level cap",
+      "status": "extracted-unverified"
+    },
+    "repurchase_caps": {
+      "value": null,
+      "source_cell": "3.1",
+      "reason": "on-exchange liquidity with no fund-level cap",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 3.6,
       "source_cell": "1.11",

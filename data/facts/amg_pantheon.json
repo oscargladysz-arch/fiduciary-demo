@@ -109,6 +109,29 @@
       "reason": "no suspension language in 3.1 or 3.3 as of 2026-03-31",
       "status": "extracted-unverified"
     },
+    "dealing_cadence": {
+      "value": "quarterly",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'recommending quarterly offers', 'CAP: expected up to 5% per offer'",
+      "status": "extracted-unverified"
+    },
+    "cap_period": {
+      "value": "quarter",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'recommending quarterly offers', 'CAP: expected up to 5% per offer'",
+      "status": "extracted-unverified"
+    },
+    "repurchase_caps": {
+      "value": [
+        {
+          "pct": 5.0,
+          "period": "quarter"
+        }
+      ],
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'recommending quarterly offers', 'CAP: expected up to 5% per offer'",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 11.5,
       "source_cell": "1.11",

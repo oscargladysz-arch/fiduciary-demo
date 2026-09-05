@@ -1464,3 +1464,28 @@ sreit, jll_ipt under the tech/media plan, product-independent views once),
   "Claude (spike 2026-07-09)" and "Claude (M6 pipeline)" are provenance
   written by earlier passes. They name no path or script and stay until
   the cells are re-extracted or re-owned (R2-P1-13).
+
+### 7.13 R2-P0-5: liquidity reason strings read the facts they cite
+- Two facts where one was conflated: `dealing_cadence` (daily, monthly,
+  quarterly, exchange) and `cap_period` (month, quarter, year), plus
+  `repurchase_caps`, a list of {pct, period} so breit carries both its
+  caps (2% per month and 5% per quarter). Every value quotes cell 3.1's
+  words in the fact note. jll_ipt's `repurchase_cadence_per_year` moves
+  from 4 to 252 (daily requests, trading-day convention, status computed),
+  its cap stays 5% per quarter.
+- Annual capacity is the binding figure, min over the caps of pct * periods
+  per year, never cadence * cap: breit 24 to 20, jll_ipt 20 (5 * 4, not
+  4 * 5), sreit 0 (suspended). No structural or scenario verdict moved.
+  breit under the consulting plan now prints THIN HEADROOM (13.7% of 20%
+  is 68.5%, over the 60% rule) where it printed adequate headroom.
+- The structural-gap sentence reads `repurchase_program_status` first:
+  sreit says "repurchases are suspended" and no cadence. Otherwise it says
+  the dealing cadence in words and the caps with their periods.
+- Citations are the cells the match read (the facts' source cells) plus
+  3.5 and 3.7 only when the product's cell is not n/a, never 3.9.
+- The JavaScript port reads the binding capacity from the match file and
+  yields null, never 0, when no cap is typed (audit item 27).
+- Merge note: the work was done by an agent in a worktree from commit
+  7e8ba68 and merged three-way into the tree after R2-P0-3. Only the code
+  and the plan files were taken. The data artifacts were regenerated here
+  by the producer chain, so they carry both tasks' changes.

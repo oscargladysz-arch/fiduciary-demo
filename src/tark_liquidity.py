@@ -1,5 +1,5 @@
 """
-Tark liquidity match, v2 (P1-16, P1-17). Two layers, never blurred.
+Tark liquidity match, v2 (P1-16, P1-17, R2-P0-5). Two layers, never blurred.
 
 structural_verdict, from typed facts only (data/facts/<product>.json,
 cells 3.1, 3.3, 2.7, and the registry's pricing class):
@@ -15,12 +15,19 @@ scenario_verdict, ILLUSTRATIVE and per plan, from the demand model:
   otherwise                               -> conditional
   (exchange-listed: aligned-mechanical, capacity is market depth)
 
+Annual capacity is the BINDING figure over the typed cap list: the smallest
+of pct * periods per year across every cap (breit: 2% per month and 5% per
+quarter give 24 and 20, so 20 binds). It is never dealing cadence * cap,
+because the dealing cadence and the cap period are separate facts (jll_ipt
+takes repurchase requests daily under a quarterly cap).
+
 No hand-typed wrapper profile exists any more. Every input names its cell,
 a null input names its reason, and the proration assumption is printed.
 """
 import json
 
-from tark_data import DATA, load_plan, load_products, plan_keys
+from tark_data import DATA, load_plan, load_product, load_products, plan_keys, status_kind
+from tark_display import BASE_LABEL
 
 ANCHOR_PLAN_KEY = "plan_tech_media"
 REGISTRY = json.loads((DATA / "registry.json").read_text())["products"]
@@ -31,7 +38,19 @@ SCENARIO = {"allocation_pct_of_plan": 5.0, "tail_annual_turnover_pct": 20.0,
 STRESS = {"tail_multiple": 2.0, "active_multiple": 1.5}
 THIN_HEADROOM_SHARE = 0.6
 REQUIRED = ("repurchase_cadence_per_year", "repurchase_cap_pct", "gate_history")
+# every typed fact the match reads. Their source cells are the match's
+# citations (plus 3.5 and 3.7 where the product's cell is not n/a)
+LIQUIDITY_FACTS = REQUIRED + ("repurchase_cap_base", "repurchase_program_status",
+                              "early_repurchase", "dealing_cadence", "cap_period",
+                              "repurchase_caps")
+PLAN_SIDE_CELLS = ("3.5", "3.7")
 VERDICTS = ("aligned-mechanical", "conditional", "conditional-weak", "misaligned", "partial")
+PERIODS_PER_YEAR = {"month": 12, "quarter": 4, "year": 1}
+PERIOD_ADJECTIVE = {"month": "monthly", "quarter": "quarterly", "year": "annual"}
+DEALING_NOUN = {"daily": "daily repurchase requests", "monthly": "monthly repurchases",
+                "quarterly": "quarterly offers"}
+SCHEDULE_H_ABSENT = ("Schedule H benefit-payment lines are not yet in the plan record. "
+                     "Demand uses the illustrative turnover sliders only.")
 
 
 def load_facts(key: str) -> dict:
@@ -51,18 +70,125 @@ def early_fee_text(f) -> str:
     return (" ".join(parts) or "present, terms not typed") + " (2.7)"
 
 
+# ---------------------------------------------------------------- capacity
+def binding_cap(caps) -> tuple[float | None, dict | None]:
+    """(annual capacity in % of the position, the cap that binds) from a
+    list of {pct, period} records. The binding figure is the smallest
+    pct * periods per year. None when the list is empty or not typed."""
+    if not caps:
+        return None, None
+    figs = [(c["pct"] * PERIODS_PER_YEAR[c["period"]], c) for c in caps
+            if isinstance(c, dict) and isinstance(c.get("pct"), (int, float))
+            and c.get("period") in PERIODS_PER_YEAR]
+    if not figs:
+        return None, None
+    fig, cap = min(figs, key=lambda t: t[0])
+    return float(fig), cap
+
+
+def caps_phrase(caps) -> str:
+    """'5% per quarter' or '2% per month and 5% per quarter'."""
+    return " and ".join(f"{c['pct']:g}% per {c['period']}" for c in caps)
+
+
+def capacity_from_facts(wf: dict) -> tuple[float | None, str]:
+    """(annual capacity % of the position or None, the capacity note) from
+    the typed cap list. A suspended program has 0% capacity whatever its
+    caps say. A null cap list yields None, never 0."""
+    if wf["exchange"]:
+        return None, "daily on-exchange liquidity. Capacity is market depth, not a fund cap"
+    caps = wf.get("caps")
+    if wf.get("program_status") == "suspended":
+        return 0.0, ("repurchases are suspended (cell 3.1): ordinary requests are not "
+                     "accepted. Capacity is 0% until the program reopens")
+    capacity, cap = binding_cap(caps)
+    if capacity is None:
+        reason = wf.get("null_reasons", {}).get("repurchase_caps")
+        return None, ("annual capacity not computable: the repurchase cap is not typed (3.1)"
+                      + (f", {reason}" if reason else ""))
+    base = wf["cap_base"]
+    if capacity == 0:
+        return 0.0, (f"repurchases closed (cell 3.1): {caps_phrase(caps)} on {base}. "
+                     "Capacity is 0% until the program reopens")
+    if len(caps) > 1:
+        head = (f"{caps_phrase(caps)} on {base}: the binding annual figure is "
+                f"{capacity:g}% of the position per year (the "
+                f"{PERIOD_ADJECTIVE[cap['period']]} cap)")
+    else:
+        head = (f"{caps_phrase(caps)} on {base}: at most {capacity:g}% of the "
+                "position per year")
+    return capacity, (head + ". This is a FUND-level cap shared by every holder, so the "
+                      "plan's position is served only while offers are not oversubscribed")
+
+
+# ------------------------------------------------------------ display text
+def dealing_clause(wf: dict) -> str:
+    """The clause the structural-gap sentence prints after 'whereas'. Reads
+    the program status first, then the dealing cadence in words, never a
+    per-year count."""
+    if wf.get("program_status") == "suspended":
+        return "repurchases are suspended (cell 3.1)"
+    dc = wf.get("dealing_cadence")
+    if dc not in ("daily", "monthly", "quarterly"):
+        return "this wrapper's dealing cadence is not typed (3.1)"
+    caps = wf.get("caps")
+    if not caps:
+        return f"this wrapper deals {dc}"
+    cap_words = (f"caps of {caps_phrase(caps)}" if len(caps) > 1
+                 else f"a {caps[0]['pct']:g}% cap per {caps[0]['period']}")
+    if dc == "daily":
+        return f"this wrapper deals daily but only within {cap_words} on {wf['cap_base']}"
+    return f"this wrapper deals {dc} with {cap_words} on {wf['cap_base']}"
+
+
+def dealing_label(wf: dict, since: str | None = None) -> str:
+    """Display-ready dealing terms for the site and the memo."""
+    if wf["exchange"]:
+        return "daily on-exchange dealing, no fund-level cap (3.1)"
+    if wf.get("program_status") == "suspended":
+        return "repurchases suspended" + (f" since the {since}" if since else "") + " (3.1)"
+    dc = wf.get("dealing_cadence")
+    if dc not in DEALING_NOUN:
+        return "dealing cadence not typed (3.1)"
+    caps = wf.get("caps")
+    if not caps:
+        return DEALING_NOUN[dc]
+    return (DEALING_NOUN[dc] + ", "
+            + " and ".join(f"{c['pct']:g}% cap per {c['period']}" for c in caps)
+            + f" on {wf['cap_base']}")
+
+
+def caps_label(wf: dict) -> str:
+    """Display-ready cap terms with the binding annual figure."""
+    if wf["exchange"]:
+        return "no fund-level cap, capacity is market depth"
+    caps = wf.get("caps")
+    capacity = wf.get("annual_capacity_pct")
+    if not caps or capacity is None:
+        return "repurchase cap not typed (3.1)"
+    if wf.get("program_status") == "suspended":
+        return f"{caps_phrase(caps)} for ordinary requests (suspended), 0% per year"
+    if len(caps) > 1:
+        return f"{caps_phrase(caps)}, binding {capacity:g}% per year"
+    return f"{caps_phrase(caps)}, {capacity:g}% per year"
+
+
 def wrapper_facts(key: str) -> dict:
     """The typed inputs the verdict reads, each with its cell, plus the
-    reason for every null."""
+    reason for every null, the binding annual capacity and display labels."""
     fx = load_facts(key)
     g = lambda n: fx[n].get("value")   # noqa: E731
-    names = REQUIRED + ("repurchase_cap_base", "repurchase_program_status",
-                        "early_repurchase", "wrapper_type")
-    return {
+    names = LIQUIDITY_FACTS + ("wrapper_type",)
+    raw_base = g("repurchase_cap_base")
+    wf = {
         "kind": g("wrapper_type"),
         "cadence_per_year": g("repurchase_cadence_per_year"),
+        "dealing_cadence": g("dealing_cadence"),
         "cap_pct": g("repurchase_cap_pct"),
-        "cap_base": (g("repurchase_cap_base") or "not typed").replace("_", " "),
+        "cap_period": g("cap_period"),
+        "caps": g("repurchase_caps"),
+        "cap_base": ("not typed" if raw_base is None
+                     else BASE_LABEL.get(raw_base, raw_base.replace("_", " "))),
         "exchange": REGISTRY[key]["pricing_class"] == "MARKET",
         "gate_history": g("gate_history"),
         "program_status": g("repurchase_program_status"),
@@ -70,7 +196,26 @@ def wrapper_facts(key: str) -> dict:
         "null_reasons": {n: fx[n].get("reason") for n in names
                          if g(n) is None and fx[n].get("reason")},
         "source_cell": ", ".join(sorted({fx[n]["source_cell"] for n in names})),
+        "cells_read": sorted({fx[n]["source_cell"] for n in LIQUIDITY_FACTS}),
     }
+    wf["annual_capacity_pct"] = capacity_from_facts(wf)[0]
+    wf["dealing_label"] = dealing_label(wf, fx["repurchase_program_status"].get("since"))
+    wf["caps_label"] = caps_label(wf)
+    return wf
+
+
+def citations(key: str, wf: dict, plan_key: str, plan: dict) -> list[str]:
+    """The cells the match actually read: the source cells of the typed
+    facts, plus the plan-side cells 3.5 and 3.7, in both cases only where
+    this product's cell is not n/a (a fact that is null against an n/a cell
+    is a documented absence, not evidence read). Never 3.9, which is
+    written from the match."""
+    cells = load_product(key)["cells"]
+    out = {c for c in set(wf["cells_read"]) | set(PLAN_SIDE_CELLS)
+           if c in cells and status_kind(str(cells[c].get("status", ""))) != "n/a"}
+    out.discard("3.9")
+    return sorted(out) + [f"plan: {plan_key}.json (Form 5500, plan year "
+                          f"{plan.get('plan_year', '?')})"]
 
 
 def structural_verdict(wf: dict) -> tuple[str, list[str], list[str]]:
@@ -120,7 +265,7 @@ def scenario_verdict(demand_pct: float, stressed_pct: float,
 def schedule_h_lines(plan: dict) -> tuple[list[str], list[str]]:
     """(scenario lines, structural lines) from the plan's Schedule H block
     (P1-18). Filed figures are used when present, with the model named.
-    Absent figures are said to be absent, with the plan file's reason."""
+    Absent figures are said to be absent."""
     fin = plan.get("financials", {})
     sh = plan.get("schedule_h") or {}
     boy = fin.get("net_assets_boy")
@@ -134,8 +279,7 @@ def schedule_h_lines(plan: dict) -> tuple[list[str], list[str]]:
                         f"rate applied to the position, {pct:.1f}% of the position per year, "
                         "shown beside the slider model above, not blended with it.")
     else:
-        scenario.append("Schedule H benefit-payment lines are not yet in the plan record. "
-                        "Demand uses the illustrative turnover sliders only.")
+        scenario.append(SCHEDULE_H_ABSENT)
     pc = sh.get("participant_contributions_2a1b") or {}
     if isinstance(pc.get("value"), (int, float)) and boy:
         scenario.append(f"Participant contributions (Schedule H line 2a(1)(B)) were "
@@ -182,9 +326,7 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
     verdict, s_reasons, missing = structural_verdict(wf)
     structural = list(s_reasons)
     if not wf["exchange"]:
-        cad = wf["cadence_per_year"]
-        dealing = (f"this wrapper deals {cad:g}x/year" if cad
-                   else "this wrapper's dealing cadence is not typed (3.1)")
+        dealing = dealing_clause(wf)
         if direction == "total":
             structural.insert(0, "STRUCTURAL GAP: a participant-directed 404(c) menu "
                                  "assumes daily pricing and daily participant liquidity, "
@@ -195,38 +337,20 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
             structural.insert(0, "STRUCTURAL GAP (narrowed): this plan is PARTIALLY "
                                  "participant-directed per its own Form 5500 codes (2H, no "
                                  "2G/404(c) code filed). A trustee-directed sleeve could "
-                                 "hold this wrapper directly, and the daily-menu constraint "
-                                 f"({dealing}) applies only to the participant-directed "
-                                 "portion (cell 3.5).")
+                                 "hold this wrapper directly (cell 3.5), and the daily-menu "
+                                 "constraint applies only to the participant-directed "
+                                 "portion, where the menu assumes daily liquidity whereas "
+                                 f"{dealing}.")
         else:
             structural.insert(0, "STRUCTURAL: plan direction codes do not show full "
                                  "participant direction, so DIA daily-menu framing may not "
-                                 f"bind. {dealing[0].upper()}{dealing[1:]} (cell 3.5).")
+                                 f"bind (cell 3.5). Either way, {dealing}.")
         if wf["early_fee"] != "none at fund level (2.7)":
             structural.append(f"Early repurchase economics: {wf['early_fee']}. Relevant "
                               "to participant-level churn (2.7).")
 
     # ---- layer 2: ILLUSTRATIVE scenario, per plan ----
-    if wf["exchange"]:
-        capacity = None
-        capacity_note = "daily on-exchange liquidity. Capacity is market depth, not a fund cap"
-    elif wf["cadence_per_year"] is None or wf["cap_pct"] is None:
-        capacity = None
-        capacity_note = ("annual capacity not computable: "
-                         + ", ".join(n for n in ("repurchase_cadence_per_year", "repurchase_cap_pct")
-                                     if wf[{"repurchase_cadence_per_year": "cadence_per_year",
-                                            "repurchase_cap_pct": "cap_pct"}[n]] is None)
-                         + " not typed (3.1)")
-    elif wf["cap_pct"] == 0:
-        capacity = 0.0
-        capacity_note = (f"repurchases closed (cell 3.1): {wf['cadence_per_year']:g}x per year "
-                         f"at 0% of {wf['cap_base']}. Capacity is 0% until the program reopens")
-    else:
-        capacity = wf["cadence_per_year"] * wf["cap_pct"]
-        capacity_note = (f"{wf['cadence_per_year']:g}x per year at {wf['cap_pct']:g}% of "
-                         f"{wf['cap_base']}: at most {capacity:g}% of the position per year. "
-                         "This is a FUND-level cap shared by every holder, so the plan's "
-                         "position is served only while offers are not oversubscribed")
+    capacity, capacity_note = capacity_from_facts(wf)
     scv = scenario_verdict(demand_pct, s_pct, capacity, wf["exchange"])
     scenario_reasons = [f"Capacity: {capacity_note}."]
     if capacity is not None:
@@ -240,7 +364,7 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
                            + ("Adequate headroom at this allocation if offers are not prorated."
                               if demand_pct <= THIN_HEADROOM_SHARE * capacity else
                               "THIN HEADROOM: demand consumes over 60% of wrapper capacity, so "
-                              "proration in any oversubscribed quarter would push the shortfall "
+                              "proration in any oversubscribed window would push the shortfall "
                               "into the next window."))
         scenario_reasons.append(demand_line)
     if wf["exchange"]:
@@ -295,8 +419,7 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
         "plan_inputs": {"net_assets": net,
                         "tail_share_pct": round(tail_share * 100, 1),
                         "separated_with_balances": part["separated_deferred_vested"]},
-        "citations": ["3.1", "3.3", "3.5", "3.7", "3.9", "2.7",
-                      f"plan: {plan_key}.json (Form 5500, plan year {a.get('plan_year', '?')})"],
+        "citations": citations(key, wf, plan_key, a),
     }
 
 

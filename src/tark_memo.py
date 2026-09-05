@@ -124,9 +124,10 @@ def _liquidity_section(doc: Document, m: dict | None, fdoc: dict, plan: dict) ->
     h = t.rows[0].cells
     h[0].text, h[1].text, h[2].text = "Wrapper fact", "Value", "Cell"
     rows = [("Wrapper", "wrapper_type", WRAPPER_LABEL.get(wf.get("kind"), wf.get("kind"))),
-            ("Dealing cadence per year", "repurchase_cadence_per_year", wf.get("cadence_per_year")),
-            ("Repurchase cap", "repurchase_cap_pct",
-             None if wf.get("cap_pct") is None else f"{wf['cap_pct']:g}% of {wf.get('cap_base') or 'a base not typed'}"),
+            ("Dealing terms", "dealing_cadence", wf.get("dealing_label")),
+            ("Repurchase caps", "repurchase_caps", wf.get("caps_label")),
+            ("Annual capacity (binding cap)", "repurchase_caps",
+             None if wf.get("annual_capacity_pct") is None else f"{wf['annual_capacity_pct']:g}% of the position per year"),
             ("Gating history", "gate_history",
              None if wf.get("gate_history") is None else ("yes, prorated under stress" if wf["gate_history"] else "none identified in the filings on record")),
             ("Repurchase program status", "repurchase_program_status", wf.get("program_status")),

@@ -63,12 +63,12 @@
       "field": "repurchase_cadence_per_year",
       "n": 3,
       "median": 12,
-      "min": 4,
-      "max": 12,
+      "min": 12,
+      "max": 252,
       "values": {
         "breit": 12,
         "sreit": 12,
-        "jll_ipt": 4
+        "jll_ipt": 252
       },
       "missing": {}
     },

@@ -960,8 +960,9 @@ export function viewLiquidity(root, state) {
       <div class="card"><h3>Wrapper facts</h3>
         <table class="grid" style="border:0;margin-top:8px">
           <tr><td>Kind</td><td class="num">${gloss(T.wrapper_labels[profile.kind] || profile.kind)}</td></tr>
-          <tr><td>Dealing cadence</td><td class="num">${profile.cadence_per_year}×/year</td></tr>
-          <tr><td>Cap</td><td class="num">${profile.cap_pct === null ? "—" : profile.cap_pct + "%"} of ${esc(profile.cap_base)}</td></tr>
+          <tr><td>Dealing terms</td><td>${esc(profile.dealing_label || "not typed (3.1)")}</td></tr>
+          <tr><td>Repurchase caps</td><td>${esc(profile.caps_label || "not typed (3.1)")}</td></tr>
+          <tr><td>Annual capacity</td><td class="num">${profile.annual_capacity_pct == null ? "not computable" : profile.annual_capacity_pct + "% of the position per year (binding cap)"}</td></tr>
           <tr><td>Exchange-listed</td><td class="num">${profile.exchange ? "yes" : "no"}</td></tr>
           <tr><td>Gating history</td><td class="num">${profile.gate_history === true ? "YES (3.3)"
             : profile.gate_history === false ? "none identified (3.3)" : `not typed: ${esc(profile.null_reasons.gate_history || "no reason recorded")}`}</td></tr>
@@ -1049,7 +1050,7 @@ export function viewLiquidity(root, state) {
     </tbody></table></div>
     <div class="cap" style="margin-top:4px">All columns ILLUSTRATIVE: parameter
       choices, not facts. Wrapper capacity ${profile.exchange ? "is market depth (listed)" :
-      (profile.cadence_per_year * profile.cap_pct).toFixed(0) + "%/yr (filed)"}.</div>`;
+      (profile.annual_capacity_pct == null ? "not computable" : profile.annual_capacity_pct.toFixed(0) + "%/yr (filed, binding cap)")}.</div>`;
   }
 
   const els = ["alloc", "tail", "act"].map((s) => root.querySelector("#s_" + s));
