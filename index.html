@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tark — Fiduciary Evaluation of Alternative Investments</title>
+<meta name="description" content="Six-factor fiduciary evaluation of alternative
+  investments for 401(k) plans — real filings, cited cells, benchmark selection
+  with a rejection log, and plan-level liquidity matches.">
+<link rel="stylesheet" href="app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%231f4e5f'/%3E%3Ctext x='8' y='12' font-size='11' font-family='Georgia' fill='white' text-anchor='middle'%3ET%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div id="frame">
+  <nav id="sidenav">
+    <div class="wordmark">TARK</div>
+    <div class="wordsub">Fiduciary evaluation — demo build</div>
+    <div id="navitems"></div>
+    <div class="nav-foot">All figures real and cited, or labeled ILLUSTRATIVE.
+      Plan sponsors anonymized on all surfaces (machine-enforced).
+      Nothing is marked verified until a human signs the evidence row.</div>
+  </nav>
+  <main id="main"><div class="content">
+    <div id="topbar"></div>
+    <div id="view"></div>
+  </div></main>
+</div>
+
+<aside id="drawer" aria-label="Citation">
+  <div class="dhead"><b class="dtitle">Source</b>
+    <button class="close" id="drawerclose" aria-label="Close">×</button></div>
+  <div class="dbody"></div>
+</aside>
+
+<script src="data.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
