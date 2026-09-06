@@ -1112,5 +1112,19 @@
         "arkvx"
       ]
     }
+  },
+  "affiliations": {
+    "what": "Provider entity to adviser entity keys. A benchmark candidate is affiliated with a fund only when its provider_key maps here to one of the fund's adviser_keys (R2-P0-2, audit round 2 item 2). No string matching: the substring test published false affiliations ('ares' inside 'ishares', 'ark' inside the venture composite). A peer composite has no provider entry: it is the evaluator's own construct and earns at most 1 of 2 on independence by rule, not by affiliation.",
+    "providers": {
+      "cliffwater": {
+        "adviser_keys": [
+          "cliffwater"
+        ],
+        "affiliated_products": [
+          "cliffwater_cclfx"
+        ],
+        "source": "data/registry.json products.cliffwater_cclfx.advisers (Cliffwater, from the fund name in data/products and cell 4.1). The Cliffwater Direct Lending Index is published by Cliffwater LLC, the adviser of the Cliffwater Corporate Lending Fund (candidate cdli, provider Cliffwater)."
+      }
+    }
   }
 }

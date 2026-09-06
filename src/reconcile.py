@@ -48,12 +48,19 @@ def squash(t: str) -> str:
 def main() -> int:
     B = bundle()
     prods = load_products()
-    bad: dict[str, list[str]] = {"expense": [], "mgmt": [], "pme": [], "verdict": []}
+    bad: dict[str, list[str]] = {"expense": [], "mgmt": [], "pme": [], "verdict": [], "scenario": []}
+    plans = sorted(p.stem for p in (DATA / "plans").glob("*.json"))
+    liq_text = (SITE / "series.js").read_text()
+    m_liq = re.search(r"^window\.TARK_LIQ = (.*);$", liq_text, re.M)
+    bundle_liq = json.loads(m_liq.group(1)) if m_liq else {}
+    n_memos = 0
     for k in prods:
         fx = json.loads((DATA / "facts" / f"{k}.json").read_text())["facts"]
         bfx = B["facts"][k]
         fbc = facts_by_cell(fx)
-        memo = squash(docx_text(SITE / "memos" / memo_name("plan_tech_media", k)))
+        memos = {pl: squash(docx_text(SITE / "memos" / memo_name(pl, k))) for pl in plans}
+        n_memos += len(memos)
+        memo = memos["plan_tech_media"]
         # ---- expense ratio: facts, bundle facts, the cell 2.3 headline, the memo typed line
         er = (fx.get("expense_ratio_pct") or {}).get("value")
         if bfx["expense_ratio_pct"]["value"] != er:
@@ -78,24 +85,61 @@ def main() -> int:
             base_label = BASE_LABEL.get(mb, mb or "a base not typed")
             if not (head == disp and f"{mf:.2f}%" in head and base_label in head and squash(f"{cid} {head}") in memo):
                 bad["mgmt"].append(f"{k}: {cid} headline {disp!r} vs facts {mf} on {mb} or memo")
-        # ---- KS-PME and Direct Alpha of the primary comparison
+        # ---- every computed comparison, named for its comparator (rule 12):
+        # KS-PME and Direct Alpha against a public market series, a relative
+        # wealth ratio against the peer composite. Artifact, bundle card, cell
+        # 1.8, the typed facts and every memo must agree, and no composite
+        # sentence may carry a PME name.
         sel = json.loads((DATA / "benchmarks" / f"{k}_selection.json").read_text())
-        comp = ((sel.get("primary") or {}).get("comparison") or {})
         bsel = B["benchmarks"].get(k) or {}
-        bcomp = ((bsel.get("primary") or {}).get("comparison") or {})
-        if comp:
-            ks, da = comp["ks_pme"], comp["direct_alpha_pct"]
-            c18 = prods[k]["cells"]["1.8"]["value"]
-            m = re.search(r"KS-PME ([0-9.]+) and Direct Alpha ([+-]?[0-9.]+)%/yr", c18)
-            if not (bcomp.get("ks_pme") == ks and bcomp.get("direct_alpha_pct") == da):
-                bad["pme"].append(f"{k}: bundle benchmark card {bcomp.get('ks_pme')} vs artifact {ks}")
-            if not (m and float(m.group(1)) == ks and float(m.group(2)) == da):
-                bad["pme"].append(f"{k}: cell 1.8 {m.groups() if m else None} vs artifact {ks} {da}")
-            if not (f"ks-pme {ks}" in memo and f"direct alpha {da}%/yr" in memo.replace("+", "")):
-                bad["pme"].append(f"{k}: memo lacks KS-PME {ks} or Direct Alpha {da}")
-            pme_fact = (fx.get("pme_primary") or {}).get("value")
-            if pme_fact != ks:
-                bad["pme"].append(f"{k}: facts pme_primary {pme_fact} vs artifact {ks}")
+        c18 = prods[k]["cells"]["1.8"]["value"]
+        c55 = prods[k]["cells"]["5.5"]["value"]
+        c56 = prods[k]["cells"]["5.6"]["value"]
+        for slot in ("primary", "secondary"):
+            s = sel.get(slot) or {}
+            comp = s.get("comparison") or {}
+            if not comp:
+                continue
+            bcomp = ((bsel.get(slot) or {}).get("comparison") or {})
+            cand = re.escape(s["candidate"])
+            if comp["kind"] == "series":
+                ks, da = comp["ks_pme"], comp["direct_alpha_pct"]
+                if not (bcomp.get("ks_pme") == ks and bcomp.get("direct_alpha_pct") == da
+                        and bcomp.get("statistic", "").startswith("KS-PME")):
+                    bad["pme"].append(f"{k} {slot}: bundle card {bcomp.get('ks_pme')} vs artifact {ks}")
+                m = re.search(cand + r": KS-PME ([0-9.]+) and Direct Alpha ([+-]?[0-9.]+)%/yr", c18)
+                if not (m and float(m.group(1)) == ks and float(m.group(2)) == da):
+                    bad["pme"].append(f"{k} {slot}: cell 1.8 {m.groups() if m else None} vs artifact {ks} {da}")
+                if not all(f"ks-pme {ks}" in mt and f"direct alpha {da}%/yr" in mt.replace("+", "")
+                           for mt in memos.values()):
+                    bad["pme"].append(f"{k} {slot}: a memo lacks KS-PME {ks} or Direct Alpha {da}")
+                if comp["fund_return_source"].lower() not in c18.lower() \
+                        or not all(comp["fund_return_source"].lower() in mt for mt in memos.values()):
+                    bad["pme"].append(f"{k} {slot}: fund return source not named in cell 1.8 or a memo")
+                if (fx.get("pme_public_proxy") or {}).get("value") != ks and slot == "primary":
+                    bad["pme"].append(f"{k}: facts pme_public_proxy {(fx.get('pme_public_proxy') or {}).get('value')} vs artifact {ks}")
+            else:
+                r = comp["relative_wealth_ratio"]
+                if not (bcomp.get("relative_wealth_ratio") == r and "ks_pme" not in bcomp
+                        and bcomp.get("statistic", "").startswith("relative wealth ratio")):
+                    bad["pme"].append(f"{k} {slot}: bundle card composite {bcomp.get('relative_wealth_ratio')} vs artifact {r}")
+                m = re.search(cand + r": relative wealth ratio ([0-9.]+)", c18)
+                if not (m and float(m.group(1)) == r):
+                    bad["pme"].append(f"{k} {slot}: cell 1.8 lacks relative wealth ratio {r}")
+                if not all(f"relative wealth ratio {r}" in mt and comp["alignment_note"].lower()[:60] in mt
+                           for mt in memos.values()):
+                    bad["pme"].append(f"{k} {slot}: a memo lacks relative wealth ratio {r} or the alignment note")
+                if (fx.get("peer_relative_wealth_ratio") or {}).get("value") != r:
+                    bad["pme"].append(f"{k}: facts peer_relative_wealth_ratio vs artifact {r}")
+                # the naming rule: no sentence about the composite carries a PME name
+                for cid, text in (("1.8", c18), ("5.5", c55), ("5.6", c56)):
+                    for sent in re.split(r"(?<=[.!?])\s+", text):
+                        if s["candidate"] in sent and re.search(r"KS-PME|Direct Alpha|\bPME\b", sent):
+                            bad["pme"].append(f"{k} cell {cid}: a composite sentence carries a PME name")
+                for pl, mt in memos.items():
+                    if re.search(r"ks-pme [0-9.]+ ?(?:vs|against)? ?(?:the )?peer", mt) or \
+                            re.search(r"peer composite[^.]{0,80}ks-pme", mt):
+                        bad["pme"].append(f"{k} {pl}: memo names a PME against the peer composite")
         # ---- structural liquidity verdict: facts, bundle, cell 3.9, four match files, memo
         sv = (fx.get("liquidity_structural_verdict") or {}).get("value")
         if sv:
@@ -106,16 +150,75 @@ def main() -> int:
             for mp in sorted((DATA / "liquidity").glob(f"*__{k}_match.json")):
                 if json.loads(mp.read_text())["verdict"] != sv:
                     bad["verdict"].append(f"{k}: {mp.name} verdict differs")
-            if f"structural liquidity verdict: {sv}" not in memo:
-                bad["verdict"].append(f"{k}: memo lacks the structural verdict {sv}")
+            for pl, mt in memos.items():
+                if f"structural liquidity verdict: {sv}" not in mt:
+                    bad["verdict"].append(f"{k}: {pl} memo lacks the structural verdict {sv}")
+            head39 = B["cell_display"][k]["3.9"]["headline"]
+            if head39 != f"structural verdict {sv}, plan-independent":
+                bad["verdict"].append(f"{k}: 3.9 headline {head39!r} is not the structural verdict alone")
+        # ---- ILLUSTRATIVE scenario verdict, per plan: facts, match file, bundle, cell 3.9 text, memo
+        by_plan = (fx.get("liquidity_verdict_by_plan") or {}).get("value") or {}
+        c39 = prods[k]["cells"]["3.9"]["value"]
+        for pl in plans:
+            mp = DATA / "liquidity" / f"{pl}__{k}_match.json"
+            if not mp.exists():
+                continue
+            mdoc = json.loads(mp.read_text())
+            scv = mdoc.get("scenario_verdict")
+            shown = scv or "not computable"
+            label = json.loads((DATA / "plans" / f"{pl}.json").read_text())["display_label"]
+            if by_plan and by_plan.get(pl) != scv:
+                bad["scenario"].append(f"{k} {pl}: facts {by_plan.get(pl)} vs match {scv}")
+            if bundle_liq and (bundle_liq.get(f"{pl}__{k}") or {}).get("scenario_verdict") != scv:
+                bad["scenario"].append(f"{k} {pl}: bundle match differs")
+            if f"{label}: {shown}" not in c39 or "ILLUSTRATIVE" not in c39.split("Scenario verdicts")[1][:20]:
+                bad["scenario"].append(f"{k} {pl}: cell 3.9 lacks the labeled scenario verdict {shown}")
+            if f"scenario verdict under {label.lower()} (illustrative): {shown}" not in memos[pl]:
+                bad["scenario"].append(f"{k} {pl}: memo lacks the ILLUSTRATIVE scenario verdict {shown} for its own plan")
     check("expense ratio agrees across facts, bundle, cell 2.3 headline and memo, all 16", not bad["expense"],
           "; ".join(bad["expense"][:4]))
     check("management fee rate and base agree across facts, bundle, cell 2.1 headline and memo, all 16",
           not bad["mgmt"], "; ".join(bad["mgmt"][:4]))
-    check("KS-PME and Direct Alpha agree across artifact, bundle card, cell 1.8, facts and memo",
-          not bad["pme"], "; ".join(bad["pme"][:4]))
-    check("structural liquidity verdict agrees across facts, bundle, cell 3.9, four match files and memo",
-          not bad["verdict"], "; ".join(bad["verdict"][:4]))
+    check("every comparison is named for its comparator (KS-PME vs a public proxy, relative wealth ratio vs the "
+          "peer composite) and agrees across artifact, bundle card, cell 1.8, facts and all memos, with the "
+          "fund return source named", not bad["pme"], "; ".join(bad["pme"][:4]))
+    check(f"structural liquidity verdict agrees across facts, bundle, cell 3.9 headline, four match files and "
+          f"all {n_memos} memos", not bad["verdict"], "; ".join(bad["verdict"][:4]))
+    check("ILLUSTRATIVE scenario verdict agrees per plan across facts, match file, bundle, cell 3.9 text and "
+          f"the plan's memo, always under its label ({n_memos} memos)", not bad["scenario"],
+          "; ".join(bad["scenario"][:4]))
+    # R2-P0-1 (rule 15): every EDGAR URL the drawer can link is the manifest's
+    # own URL for that product and accession, built from the product's CIK
+    import csv
+    man = {(r["product"], r["accession"]): r["url"]
+           for r in csv.DictReader(open(DATA / "manifest.csv", newline=""))}
+    ev_text = (SITE / "series.js").read_text()
+    m = re.search(r"^window\.TARK_EVIDENCE = (.*);$", ev_text, re.M)
+    evidence = json.loads(m.group(1)) if m else {}
+    bad_url, n_url = [], 0
+    for k, cells in evidence.items():
+        cik = int(prods[k]["cik"])
+        for cid, cell in cells.items():
+            for f in cell.get("edgar") or []:
+                n_url += 1
+                folder = f"/edgar/data/{cik}/{f['accession'].replace('-', '')}/"
+                if man.get((k, f["accession"])) != f["url"] or folder not in f["url"]:
+                    bad_url.append(f"{k} {cid}: {f['url']}")
+            acc = (cell.get("accession") or "").strip()
+            if acc and not acc.startswith("multiple (") and (k, acc) not in man:
+                bad_url.append(f"{k} {cid}: accession {acc} not in the manifest")
+    check(f"bundle: every EDGAR URL in the citation drawer is the manifest URL for that product and accession, "
+          f"built from the CIK ({n_url} links)", bool(evidence) and not bad_url, "; ".join(bad_url[:4]))
+    # R2-P0-4: no site headline or plain line stops at an abbreviation
+    from tark_display import ends_at_abbreviation
+    # a typed-fact headline is a fact, not a split sentence: an auditor named
+    # "Cohen & Company, Ltd." is complete
+    bad_head = [f"{k} {cid}: {d.get('headline', '')[-30:]!r}" for k, cells in B["cell_display"].items()
+                for cid, d in cells.items()
+                if (not d.get("typed") and ends_at_abbreviation(d.get("headline")))
+                or ends_at_abbreviation(d.get("plain"))]
+    check("headlines: no site headline or plain line ends at an abbreviation (v., L., U.S., p.m., No.)",
+          not bad_head, "; ".join(bad_head[:4]))
     print(f"\n{len(FAILS)} failure(s)." if FAILS else "\nAll surfaces reconcile.")
     return 1 if FAILS else 0
 

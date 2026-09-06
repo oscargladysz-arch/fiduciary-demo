@@ -450,11 +450,10 @@ MAPPING = {
         "early_repurchase": F({"present": False}, "2.7",
                               note="no fee. One-year holding period with "
                                    "death/disability exceptions"),
-        "repurchase_cadence_per_year": F(4, "3.1",
-                                         note="DAILY repurchase requests at "
-                                              "that day's NAV under a "
-                                              "quarterly 5% cap - the "
-                                              "cohort's most liquid plan"),
+        "repurchase_cadence_per_year": F(252, "3.1", status="computed",
+                                         note="daily repurchase requests per cell "
+                                              "3.1, trading-day convention, the "
+                                              "cap applies per quarter"),
         "repurchase_cap_pct": F(5.0, "3.1"),
         "repurchase_cap_base": F("nav", "3.1",
                                  note="combined NAV of all classes, prior "
@@ -607,13 +606,35 @@ _REG = json.loads((DATA / "registry.json").read_text())["products"]
 AS_OF = {k: v["as_of"] for k, v in _REG.items()}
 COHORT_META = {k: (v["cohort"], v["depth"], v["membership_rationale"]) for k, v in _REG.items()}
 
+# expense_ratio_pct basis (R2-P0-8, audit round 2 item 10): the headline
+# prints what the record holds, never "net" unless the note says net. Each
+# clause restates the fact's own note in reader words.
+EXPENSE_BASIS = {
+    "hl_paf": "net, including the incentive fee, AFFE excluded (FY2026, Class I)",
+    "cliffwater_cclfx": "before waivers, excluding interest expense (3.31% including interest, FY2026)",
+    "dxyz": "of average net assets (FY2025)",
+    "kkr_kpec": "GAAP total operating expenses including the 2.75% performance participation, not a 1940-Act ratio (FY2025, Class I)",
+    "bcred": "including the interest and financing cost of BDC leverage (FY2025, Class I)",
+    "pflex": "excluding interest expense (5.12% including reverse-repo interest), gross equals net, no waivers (FY2025, Institutional)",
+    "ocic": "net, including the interest and financing cost of BDC leverage (FY2025, Class I)",
+    "cion_ares": "excluding interest expense (6.90% including interest per the fee table), no contractual cap (FY2025, Class I)",
+    "ares_pmf": "gross, before a 0.03% waiver, including the 1.60% incentive-fee drag, AFFE excluded (FY2026, Class I)",
+    "amg_pantheon": "total annual expenses of the inception class, classes range 2.38% to 3.38%",
+    "ssss": "net operating expenses under internal management, the fee regime changed 2026-07-15 (FY2025)",
+    "arkvx": "net of waivers, 4.39% gross (FY2025)",
+    "stepstone_spm": "AFFE excluded (FY2026, Class I)",
+}
+for _k, _b in EXPENSE_BASIS.items():
+    assert MAPPING[_k]["expense_ratio_pct"]["value"] is not None, _k
+    MAPPING[_k]["expense_ratio_pct"]["basis"] = _b
+
 # repurchase_program_status (P1-17): "suspended" only where cell 3.1 or 3.3
 # carries suspension language. Everything else is null with the reason, so
 # nothing is ever "active" by default.
 for _key, _m in MAPPING.items():
     if _key == "sreit":
         _m["repurchase_program_status"] = F(
-            "suspended", "3.1",
+            "suspended", "3.1", since="April 29, 2026 amendment",
             note="April 29, 2026 amendment: 'no repurchase requests will be accepted' "
                  "except death, qualifying disability and accounts below $5,000")
     elif _m["wrapper_type"]["value"] in ("listed_cef", "listed_bdc"):
@@ -621,6 +642,78 @@ for _key, _m in MAPPING.items():
     else:
         _m["repurchase_program_status"] = null(
             f"no suspension language in 3.1 or 3.3 as of {AS_OF[_key]}", "3.1")
+
+# Dealing cadence and repurchase caps (R2-P0-5), typed from cell 3.1's own
+# words. The dealing cadence is how often a holder can deal (daily, monthly,
+# quarterly, or on an exchange). Each cap names the period it is measured
+# over, and a product may carry more than one cap. The two are separate facts
+# because jll_ipt takes repurchase requests daily under a quarterly cap and
+# breit carries a monthly cap and a quarterly cap at once. The engine takes
+# the binding annual figure from the cap list, never cadence * cap.
+# Row: (dealing cadence, cap period, caps as (pct, period) pairs, the words
+# of cell 3.1 that support them). An exchange-listed row carries None for the
+# cap period and the caps, with the reason below.
+_NO_FUND_CAP = "on-exchange liquidity with no fund-level cap"
+DEALING_TERMS = {
+    "hl_paf": ("quarterly", "quarter", [(5.0, "quarter")],
+               "'Quarterly tender offers', 'up to 5.00% of net assets'"),
+    "cliffwater_cclfx": ("quarterly", "quarter", [(5.0, "quarter")],
+                         "'up to five percent (5%) of outstanding shares, quarterly'"),
+    "dxyz": ("exchange", None, None,
+             "'daily on-exchange liquidity' and 'no fund-level repurchase program'"),
+    "kkr_kpec": ("quarterly", "quarter", [(5.0, "quarter")],
+                 "'Quarterly share repurchase plan: limited to 5.0% of aggregate NAV "
+                 "... per calendar quarter'"),
+    "breit": ("monthly", "month", [(2.0, "month"), (5.0, "quarter")],
+              "'Repurchase caps: 2% of aggregate NAV per MONTH, 5% per QUARTER'. "
+              "The monthly cap is the headline cap and the quarterly cap binds "
+              "over a year (2 * 12 = 24 versus 5 * 4 = 20)"),
+    "bcred": ("quarterly", "quarter", [(5.0, "quarter")],
+              "'CADENCE: quarterly tender offers at Board discretion', 'CAP: up to "
+              "5% of the NAV of Common Shares outstanding'"),
+    "pflex": ("quarterly", "quarter", [(5.0, "quarter")],
+              "'quarterly repurchase offers for between 5% and 25% of outstanding "
+              "Common Shares', 'currently expects 5% per quarter'"),
+    "ocic": ("quarterly", "quarter", [(5.0, "quarter")],
+             "'quarterly issuer tender offers', 'capped at 5.00% of outstanding "
+             "shares per quarter'"),
+    "cion_ares": ("quarterly", "quarter", [(5.0, "quarter")],
+                  "'quarterly repurchase offers of between 5% and 25% of outstanding "
+                  "shares', 'expects to offer only the 5% minimum each quarter'"),
+    "ares_pmf": ("quarterly", "quarter", [(5.0, "quarter")],
+                 "'quarterly repurchase offers of no more than 5% of the Fund's NET "
+                 "ASSETS'"),
+    "amg_pantheon": ("quarterly", "quarter", [(5.0, "quarter")],
+                     "'recommending quarterly offers', 'CAP: expected up to 5% per "
+                     "offer'"),
+    "sreit": ("monthly", "month", [(0.0, "month")],
+              "'Monthly share repurchase plan'. 0% for ordinary requests since the "
+              "April 29, 2026 amendment ('no repurchase requests will be accepted' "
+              "except death, qualifying disability and accounts below $5,000). Cap "
+              "history: 2% per month and 5% per quarter (2017), 0.33% and 1% (May "
+              "2024), 0.5% and 1.5% (June 2025)"),
+    "jll_ipt": ("daily", "quarter", [(5.0, "quarter")],
+                "'CADENCE: DAILY - stockholders may request repurchase ... any day at "
+                "that day's NAV per share', 'CAP: 5% of the combined NAV of all "
+                "classes per calendar quarter'"),
+    "ssss": ("exchange", None, None,
+             "'cadence: any trading day' and 'cap: none (market depth only)'"),
+    "arkvx": ("quarterly", "quarter", [(5.0, "quarter")],
+              "'CADENCE: quarterly Rule 23c-3 repurchase offers', 'every actual "
+              "offer to date has been, the 5% minimum'"),
+    "stepstone_spm": ("quarterly", "quarter", [(5.0, "quarter")],
+                      "'Quarterly tender offers: up to 5% of OUTSTANDING SHARES'"),
+}
+for _key, (_dc, _cp, _caps, _words) in DEALING_TERMS.items():
+    _m = MAPPING[_key]
+    _m["dealing_cadence"] = F(_dc, "3.1", note=f"cell 3.1: {_words}")
+    if _caps is None:
+        _m["cap_period"] = null(_NO_FUND_CAP, "3.1")
+        _m["repurchase_caps"] = null(_NO_FUND_CAP, "3.1")
+    else:
+        _m["cap_period"] = F(_cp, "3.1", note=f"cell 3.1: {_words}")
+        _m["repurchase_caps"] = F([{"pct": p, "period": per} for p, per in _caps],
+                                  "3.1", note=f"cell 3.1: {_words}")
 
 
 def years_between(d0: str, d1: str) -> float:
@@ -704,32 +797,56 @@ def main() -> None:
                 "reason": "liquidity match not yet run"}
         sel_path = DATA / "benchmarks" / f"{key}_selection.json"
         sel = json.loads(sel_path.read_text()) if sel_path.exists() else None
+        # the statistic is named for its comparator (R2-P0-6, rule 12): a PME
+        # only against a public market series, a relative wealth ratio against
+        # the peer composite, each from whichever slot carries that comparator
+        ENGINE_NULL = ("primary_benchmark_id", "selection_score", "pme_public_proxy",
+                       "pme_public_proxy_name", "direct_alpha_public_proxy", "peer_relative_wealth_ratio")
         if sel is None:
-            for fld in ("primary_benchmark_id", "selection_score",
-                        "pme_primary", "direct_alpha_primary"):
+            for fld in ENGINE_NULL:
                 facts[fld] = {"value": None, "source_cell": "1.8",
                               "status": "pending",
                               "reason": "engine selection not yet run for this product"}
         elif sel.get("primary"):
-            comp = sel["primary"].get("comparison") or {}
+            from tark_display import candidate_short
+            slots = [s for s in (sel.get("primary"), sel.get("secondary")) if s]
+            series_slot = next((s for s in slots if (s.get("comparison") or {}).get("kind") == "series"), None)
+            comp_slot = next((s for s in slots if (s.get("comparison") or {}).get("kind") == "composite"), None)
             facts["primary_benchmark_id"] = F(sel["primary"]["id"], "5.3",
                                               status="computed")
             facts["selection_score"] = F(sel["primary"]["score"], "5.3",
                                          status="computed")
-            if comp:
-                facts["pme_primary"] = F(comp.get("ks_pme"), "1.8", status="computed")
-                facts["direct_alpha_primary"] = F(comp.get("direct_alpha_pct"),
-                                                  "1.8", status="computed")
+            # .get throughout: the first facts pass of the producer runs before
+            # the benchmark step and may read an older artifact, which the
+            # facts-engine pass then overwrites
+            if series_slot:
+                c = series_slot["comparison"]
+                name = candidate_short(series_slot["id"])
+                note = (f"KS-PME vs {name} over {c.get('window')}, fund return source: "
+                        f"{c.get('fund_return_source', '')}")
+                facts["pme_public_proxy"] = F(c.get("ks_pme"), "1.8", status="computed", note=note)
+                facts["pme_public_proxy_name"] = F(name, "1.8", status="computed")
+                facts["direct_alpha_public_proxy"] = F(c.get("direct_alpha_pct"), "1.8", status="computed", note=note)
             else:
-                why = sel["primary"].get("comparison_note") or "comparison not computable"
-                for fld in ("pme_primary", "direct_alpha_primary"):
+                why = ((sel["primary"].get("comparison_note") or
+                        "no public market proxy comparison computable on held data"))
+                for fld in ("pme_public_proxy", "pme_public_proxy_name", "direct_alpha_public_proxy"):
                     facts[fld] = {"value": None, "source_cell": "1.8",
                                   "status": "computed", "reason": why}
+            if comp_slot:
+                c = comp_slot["comparison"]
+                facts["peer_relative_wealth_ratio"] = F(
+                    c.get("relative_wealth_ratio"), "1.8", status="computed",
+                    note=(f"relative wealth ratio vs {candidate_short(comp_slot['id'])} over {c.get('window')}, "
+                          "fund return source: filed fiscal-year returns. Not a public market equivalent"))
+            else:
+                facts["peer_relative_wealth_ratio"] = {
+                    "value": None, "source_cell": "1.8", "status": "computed",
+                    "reason": "no peer composite comparison in either slot for this product"}
         else:
             esc = ("engine escalation: no meaningful benchmark constructible "
                    "(see the selection artifact)")
-            for fld in ("primary_benchmark_id", "selection_score",
-                        "pme_primary", "direct_alpha_primary"):
+            for fld in ENGINE_NULL:
                 facts[fld] = {"value": None, "source_cell": "1.8",
                               "status": "computed", "reason": esc}
         doc = {"product_key": key, "cohort_id": cohort_id, "depth": depth,

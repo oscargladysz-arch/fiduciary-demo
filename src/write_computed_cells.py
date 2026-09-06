@@ -30,6 +30,12 @@ from pathlib import Path
 
 from tark_data import (CELLS, DATA, EVIDENCE_COLUMNS, load_evidence,
                        load_product, product_keys, record_as_of, status_kind)
+from tark_display import (COMPUTED_WRITER_LABEL, RUBRIC_LABEL, WRAPPER_LABEL, cohort_label,
+                          lane_label)
+
+
+def _fund_short(key: str) -> str:
+    return load_product(key)["fund_name"].split(" (")[0]
 
 WRITABLE_KINDS = ("computed", "n/a", "pending")
 
@@ -58,7 +64,7 @@ def cell_5_4(key: str) -> dict | None:
     cid, co = _cohort_for(key)
     if not co:
         return None
-    members = list(co["members"].keys())
+    members = [_fund_short(m) for m in co["members"].keys()]
     comp = co.get("composite") or {}
     if comp.get("refused"):
         comp_txt = f"Composite REFUSED: {comp.get('reason', '').rstrip('.')}."
@@ -69,18 +75,18 @@ def cell_5_4(key: str) -> dict | None:
                     "for years with 2 or more reporting members: "
                     + (years if years else "none, no year has 2 reporting members")
                     + ".")
-    wrappers = sorted({m["wrapper_type"] for m in co["members"].values()})
+    wrappers = sorted({WRAPPER_LABEL.get(m["wrapper_type"], m["wrapper_type"]) for m in co["members"].values()})
     n_cav = len(co.get("caveats") or [])
-    text = (f"Peer cohort {cid} (n={co['n']}: {', '.join(members)}). {comp_txt} "
+    text = (f"Peer cohort: {cohort_label(cid)} (n={co['n']}: {', '.join(members)}). {comp_txt} "
             f"Wrapper types in the cohort: {', '.join(wrappers)}. "
             f"Cross-wrapper differences are disclosed in the cohort caveat block "
-            f"({n_cav} caveat{'s' if n_cav != 1 else ''}). Membership rationales are "
-            f"in data/facts, exclusions in data/roster_decisions.md.")
+            f"({n_cav} caveat{'s' if n_cav != 1 else ''}). Membership rationales and "
+            "exclusions are in the roster decisions record.")
     note = analyst_note(key, "5.4")
     if note:
         text += f" Analyst note: {note}"
-    return {"value": text, "source": f"data/cohorts/{cid}.json",
-            "section": "members, composite and caveats blocks", "quote": ""}
+    return {"value": text, "source": f"cohort artifact ({cohort_label(cid)})",
+            "section": "members, composite and caveats", "quote": ""}
 
 
 def cell_2_9(key: str) -> dict | None:
@@ -100,14 +106,14 @@ def cell_2_9(key: str) -> dict | None:
                          ("repurchase cap", "repurchase_cap_pct")):
         pl = tark_cohort.percentile_of(key, cid, field, facts_by_key)
         parts.append(f"{label}: {pl['phrase'] if pl else 'fact unavailable for this member'}")
-    text = (f"Cohort placement ({cid}, R4 phrasing): " + " | ".join(parts)
-            + f". Stats and per-member values in data/cohorts/{cid}.json, "
-              f"membership rationales in data/facts.")
+    text = (f"Cohort placement ({cohort_label(cid)}): " + " | ".join(parts)
+            + ". Statistics and per-member values are in the cohort artifact, membership "
+              "rationales in the typed facts.")
     note = analyst_note(key, "2.9")
     if note:
         text += f" Analyst note: {note}"
-    return {"value": text, "source": f"data/cohorts/{cid}.json",
-            "section": "stats block (R4 phrasing by tark_cohort.percentile_of)",
+    return {"value": text, "source": f"cohort artifact ({cohort_label(cid)})",
+            "section": "statistics (mid-rank percentile phrasing)",
             "quote": ""}
 
 
@@ -121,15 +127,18 @@ def cell_5_6(key: str) -> dict | None:
     ma = sel.get("max_attainable")
     ma_txt = (f"Max attainable on held data {ma}/12." if ma is not None
               else "No candidate is eligible, so no maximum is attainable on held data.")
-    parts = [f"Benchmark suitability (rubric {sel.get('rubric_version', 'v2')}, engine output)."]
+    parts = [f"Benchmark suitability ({RUBRIC_LABEL})."]
     if sel.get("escalation"):
         parts.append(f"ESCALATED: {sel['escalation'].rstrip('.')}.")
     else:
         pr = sel["primary"]
         comp = pr.get("comparison") or {}
-        line = f"Primary {pr['candidate']} ({pr['lane']} lane) scored {pr['score']}/{pr['max']}"
-        if comp:
-            line += (f" with a {comp['kind']} comparison over {comp['window']}: "
+        line = f"Primary {pr['candidate']} ({lane_label(pr['lane'])}) scored {pr['score']}/{pr['max']}"
+        if comp and comp["kind"] == "composite":
+            line += (f" with a {comp['statistic']} over {comp['window']}: relative wealth ratio "
+                     f"{comp['relative_wealth_ratio']}, annualized excess return {comp['excess_return_pct']}%/yr")
+        elif comp:
+            line += (f" with a {comp['statistic']} over {comp['window']}: "
                      f"KS-PME {comp['ks_pme']}, Direct Alpha {comp['direct_alpha_pct']}%/yr")
             if comp.get("low_confidence"):
                 line += f" ({comp['low_confidence']})"
@@ -148,13 +157,13 @@ def cell_5_6(key: str) -> dict | None:
     elif sel.get("declared_none_reason"):
         parts.append(f"Declared benchmark: none ({sel['declared_none_reason']}).")
     parts.append(f"Rejected: {len(sel.get('rejected', []))} candidates, each with its reason in "
-                 "the ledger. Methodology: docs/benchmark_methodology.md.")
+                 "the ledger. The scoring rules are in the benchmark methodology document.")
     text = " ".join(parts)
     note = analyst_note(key, "5.6")
     if note:
         text += f" Analyst note: {note}"
-    return {"value": text, "source": f"data/benchmarks/{key}_selection.json",
-            "section": "primary, secondary, escalation, max_attainable, declared_benchmarks, rejected",
+    return {"value": text, "source": f"benchmark selection artifact ({_fund_short(key)})",
+            "section": "primary, secondary, escalation, maximum attainable, declared benchmarks, rejected",
             "quote": ""}
 
 
@@ -178,49 +187,60 @@ def _signed(x: float) -> str:
     return f"{x:+g}"
 
 
+def _slot_sentence(label: str, slot: dict) -> str:
+    """One sentence per slot, the statistic named for its comparator (rule
+    12): KS-PME and Direct Alpha only against a public market series, a
+    relative wealth ratio and an excess return against the peer composite."""
+    c = slot["comparison"]
+    if c["kind"] == "composite":
+        return (f"{label} {slot['candidate']}: relative wealth ratio {c['relative_wealth_ratio']} over "
+                f"{c['window']} ({c['window_note']}), fund growth {c['fund_growth_x']}x / peer composite growth "
+                f"{c['index_growth_x']}x on two-point flows, annualized excess return "
+                f"{_signed(c['excess_return_pct'])}%/yr, fund return source: {c['fund_return_source']}. "
+                f"{c['not_pme_note']} Alignment: {c['alignment_note'].rstrip('.')}.")
+    return (f"{label} {slot['candidate']}: KS-PME {c['ks_pme']} and Direct Alpha {_signed(c['direct_alpha_pct'])}%/yr "
+            f"over {c['window']} (series comparison" + (f", {c['window_note']}" if c.get("window_note") else "")
+            + f"), fund growth {c['fund_growth_x']}x vs proxy growth {c['index_growth_x']}x on two-point flows "
+            "(one contribution at the window start, one valuation at the end), fund return source: "
+            f"{c['fund_return_source']}. "
+            + ("The fund lagged the public proxy over this window." if c["ks_pme"] < 1
+               else "The fund led the public proxy over this window."))
+
+
 def cell_1_8(key: str) -> dict | None:
-    """Risk-adjusted metrics: the primary comparison of the selection artifact."""
+    """Risk-adjusted metrics: every computed comparison of the selection
+    artifact, each named for what it is."""
     sel = _selection(key)
     if not sel:
         return None
-    src = f"data/benchmarks/{key}_selection.json"
+    src = f"benchmark selection artifact ({_fund_short(key)})"
     if sel.get("escalation"):
         text = ("No KS-PME or Direct Alpha computable: " + sel["escalation"].rstrip(".")
                 + ". The escalation is documented in the selection artifact.")
         return {"value": text, "source": src, "section": "escalation", "quote": ""}
-    pr = sel["primary"]
-    comp = pr.get("comparison") or {}
-    if not comp:
+    slots = [(lab, sel.get(s)) for lab, s in (("Primary", "primary"), ("Secondary", "secondary"))
+             if sel.get(s) and sel[s].get("comparison")]
+    if not slots:
         return None
-    parts = [f"KS-PME {comp['ks_pme']} and Direct Alpha {_signed(comp['direct_alpha_pct'])}%/yr vs "
-             f"{pr['candidate']} over {comp['window']} ({comp['kind']} comparison"
-             + (f", {comp['window_note']}" if comp.get("window_note") else "") + ")."]
-    parts.append(f"Fund growth {comp['fund_growth_x']}x vs benchmark {comp['index_growth_x']}x on "
-                 "two-point flows (one contribution at the window start, one valuation at the end).")
-    parts.append("The fund lagged the benchmark over this window." if comp["ks_pme"] < 1
-                 else "The fund led the benchmark over this window.")
-    if comp.get("low_confidence"):
-        lc = comp["low_confidence"]
-        parts.append(lc[0].upper() + lc[1:].rstrip(".") + ".")
-    if comp.get("alignment_note"):
-        parts.append(comp["alignment_note"].rstrip(".") + ".")
-    sec = sel.get("secondary")
-    sc = (sec or {}).get("comparison") or {}
-    if sc:
-        parts.append(f"Secondary {sec['candidate']}: KS-PME {sc['ks_pme']}, Direct Alpha "
-                     f"{_signed(sc['direct_alpha_pct'])}%/yr over {sc['window']}.")
-    for slot in (comp, sc):
-        if slot.get("ks_pme_monthly_schedule") is not None:
-            parts.append(f"ILLUSTRATIVE monthly-schedule KS-PME {slot['ks_pme_monthly_schedule']} "
-                         f"({slot['schedule_contributions']} equal contributions), the two-point figure is primary.")
+    parts = [_slot_sentence(lab, s) for lab, s in slots]
+    for _, s in slots:
+        c = s["comparison"]
+        if c.get("low_confidence"):
+            lc = c["low_confidence"]
+            parts.append(lc[0].upper() + lc[1:].rstrip(".") + ".")
+    for _, s in slots:
+        c = s["comparison"]
+        if c.get("ks_pme_monthly_schedule") is not None:
+            parts.append(f"ILLUSTRATIVE monthly-schedule KS-PME {c['ks_pme_monthly_schedule']} vs {s['candidate']} "
+                         f"({c['schedule_contributions']} equal contributions), the two-point figure is primary.")
             break
-    parts.append("Window-sensitive: PME and alpha on appraisal-lagged NAVs move with the window "
+    parts.append("Window-sensitive: every figure on appraisal-lagged NAVs moves with the window "
                  "(methodology section 3).")
     text = " ".join(parts)
     note = analyst_note(key, "1.8")
     if note:
         text += f" Analyst note: {note}"
-    return {"value": text, "source": src, "section": "primary.comparison, secondary.comparison", "quote": ""}
+    return {"value": text, "source": src, "section": "primary and secondary comparisons", "quote": ""}
 
 
 def cell_1_9(key: str) -> dict | None:
@@ -231,9 +251,9 @@ def cell_1_9(key: str) -> dict | None:
     sw = (json.loads(sp.read_text()).get("stress_windows") or {}).get(key)
     if not sw:
         return None
-    src = "data/analytics/supplement.json"
+    src = "analytics supplement artifact (stress windows)"
     if "cy2022_rate_shock" in sw or "covid_feb_apr_2020" in sw:
-        parts = [f"Computed stress-window performance from {sw.get('series', 'the held series')} "
+        parts = ["Computed stress-window performance from the held daily series "
                  "(adjusted close, distributions reinvested)."]
         labels = (("cy2022_rate_shock", "CY2022 rate shock"), ("covid_feb_apr_2020", "COVID (Feb to Apr 2020)"))
         for k2, label in labels:
@@ -242,8 +262,8 @@ def cell_1_9(key: str) -> dict | None:
                 parts.append(f"{label}: total return {w['return_pct']}%, max drawdown {w['max_drawdown_pct']}%.")
         if sw.get("worst_peak_to_trough_full_history_pct") is not None:
             parts.append(f"Worst full-history peak-to-trough {sw['worst_peak_to_trough_full_history_pct']}%.")
-        return {"value": " ".join(parts), "source": src, "section": f"stress_windows.{key}", "quote": ""}
-    parts = [f"Stress observation from printed fiscal-year returns ({sw.get('series', 'data/series_annual')})."]
+        return {"value": " ".join(parts), "source": src, "section": "stress windows for this product", "quote": ""}
+    parts = ["Stress observation from the printed fiscal-year returns on record."]
     fy = sw.get("fy_spanning_2022_shock")
     if fy:
         parts.append(f"The fiscal year spanning the 2022 public-market drawdown (FY ending {fy['fy_end']}) "
@@ -255,7 +275,7 @@ def cell_1_9(key: str) -> dict | None:
         parts.append(sw["note"][0].upper() + sw["note"][1:].rstrip(".") + ".")
     parts.append("CAVEAT: annual appraisal-based figures cannot show intra-year drawdowns, so this is "
                  "a floor on the stress the wrapper absorbed, not a measure of it.")
-    return {"value": " ".join(parts), "source": src, "section": f"stress_windows.{key}", "quote": ""}
+    return {"value": " ".join(parts), "source": src, "section": "stress windows for this product", "quote": ""}
 
 
 def cell_3_8(key: str) -> dict | None:
@@ -263,8 +283,8 @@ def cell_3_8(key: str) -> dict | None:
     ms = _matches(key)
     if not ms:
         return None
-    src = f"data/liquidity/{ms[0][0]}__{key}_match.json"
-    section = "stressed_scenario and scenario across the four plan match files"
+    src = f"liquidity match artifacts ({_fund_short(key)}, four reference plans)"
+    section = "stressed scenario and scenario across the four plan match files"
     first = ms[0][2]
     if first["wrapper_facts"].get("exchange"):
         return {"value": ("Redemption stress test not applicable: the wrapper is exchange-traded with "
@@ -292,7 +312,7 @@ def cell_3_9(key: str) -> dict | None:
     if not ms:
         return None
     first = ms[0][2]
-    src = f"data/liquidity/{ms[0][0]}__{key}_match.json"
+    src = f"liquidity match artifacts ({_fund_short(key)}, four reference plans)"
     verdict = first["verdict"].upper()
     missing = first.get("missing_facts") or []
     head = (f"Structural liquidity verdict {verdict} (typed facts, cells 3.1, 3.3, 2.7, plan-independent"
@@ -304,7 +324,7 @@ def cell_3_9(key: str) -> dict | None:
     parts.append("Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts "
                  "and on the Liquidity view.")
     return {"value": " ".join(parts), "source": src,
-            "section": "verdict, scenario_verdict, missing_facts, structural_reasons across the four plan match files",
+            "section": "verdict, scenario verdict, missing facts and structural reasons across the four plan match files",
             "quote": ""}
 
 
@@ -313,19 +333,19 @@ def cell_5_3(key: str) -> dict | None:
     sel = _selection(key)
     if not sel:
         return None
-    src = f"data/benchmarks/{key}_selection.json"
-    parts = [f"Benchmark candidates evaluated by the engine (rubric {sel.get('rubric_version', 'v2')}, "
+    src = f"benchmark selection artifact ({_fund_short(key)})"
+    parts = [f"Benchmark candidates evaluated by the engine ({RUBRIC_LABEL}, "
              "threshold 7 of 12, strategy gate below 2 of 3 ineligible)."]
     if sel.get("escalation"):
         parts.append("ESCALATED: " + sel["escalation"].rstrip(".") + ".")
     else:
         pr = sel["primary"]
-        parts.append(f"PRIMARY {pr['candidate']} {pr['score']}/{pr['max']} ({pr['lane']} lane).")
+        parts.append(f"PRIMARY {pr['candidate']} {pr['score']}/{pr['max']} ({lane_label(pr['lane'])}).")
         sec = sel.get("secondary")
-        parts.append(f"SECONDARY {sec['candidate']} {sec['score']}/{sec['max']} ({sec['lane']} lane)."
+        parts.append(f"SECONDARY {sec['candidate']} {sec['score']}/{sec['max']} ({lane_label(sec['lane'])})."
                      if sec else f"No eligible secondary ({sel.get('secondary_note') or 'none'}).")
     for r in sel.get("rejected", []):
-        parts.append(f"REJECTED {r['candidate']} {r['score']}/{r['max']} ({r['lane']} lane): "
+        parts.append(f"REJECTED {r['candidate']} {r['score']}/{r['max']} ({lane_label(r['lane'])}): "
                      + r["rejection"].rstrip(".") + ".")
     decl = sel.get("declared_benchmarks") or []
     if decl:
@@ -333,37 +353,52 @@ def cell_5_3(key: str) -> dict | None:
     elif sel.get("declared_none_reason"):
         parts.append(f"Fund-declared benchmark: none ({sel['declared_none_reason']}).")
     return {"value": " ".join(parts), "source": src,
-            "section": "primary, secondary, rejected, declared_benchmarks", "quote": ""}
+            "section": "primary, secondary, rejected and declared benchmarks", "quote": ""}
 
 
 def cell_5_5(key: str) -> dict | None:
-    """PME inputs of the primary comparison, stated as the formula."""
+    """PME inputs of the public-proxy comparison, stated as the formula, and
+    the peer comparison's inputs stated as a ratio, never as a PME."""
     sel = _selection(key)
     if not sel:
         return None
-    src = f"data/benchmarks/{key}_selection.json"
+    src = f"benchmark selection artifact ({_fund_short(key)})"
     if sel.get("escalation"):
         return {"value": "No PME inputs constructible: " + sel["escalation"].rstrip(".") + ".",
                 "source": src, "section": "escalation", "quote": ""}
-    pr = sel["primary"]
-    comp = pr.get("comparison") or {}
-    if not comp:
+    slots = [(lab, sel.get(s)) for lab, s in (("primary", "primary"), ("secondary", "secondary"))
+             if sel.get(s) and sel[s].get("comparison")]
+    series = next(((lab, s) for lab, s in slots if s["comparison"]["kind"] == "series"), None)
+    comp = next(((lab, s) for lab, s in slots if s["comparison"]["kind"] == "composite"), None)
+    if not slots:
         return None
-    parts = [f"PME inputs (computed, primary comparison vs {pr['candidate']}): window {comp['window']} "
-             f"({comp['kind']} comparison" + (f", {comp['window_note']}" if comp.get("window_note") else "") + ")."]
-    parts.append(f"Fund growth {comp['fund_growth_x']}x vs benchmark growth {comp['index_growth_x']}x, "
-                 "flows = one contribution of 1 at the window start and the terminal growth at the end, "
-                 f"benchmark series {pr.get('series_id')}.")
-    parts.append(f"KS-PME {comp['ks_pme']} = fund growth / benchmark growth. Direct Alpha "
-                 f"{_signed(comp['direct_alpha_pct'])}%/yr is the annualized form of the same two flows "
-                 f"(fund {comp['fund_ann_pct']}%/yr vs benchmark {comp['index_ann_pct']}%/yr).")
-    if comp.get("alignment_note"):
-        parts.append(comp["alignment_note"].rstrip(".") + ".")
-    if comp.get("ks_pme_monthly_schedule") is not None:
-        parts.append(f"ILLUSTRATIVE monthly-schedule KS-PME {comp['ks_pme_monthly_schedule']} "
-                     f"({comp['schedule_contributions']} equal contributions at the window start and each "
-                     "month-end inside it, valued at the window end).")
-    return {"value": " ".join(parts), "source": src, "section": "primary.comparison", "quote": ""}
+    parts = []
+    if series:
+        lab, s = series
+        c = s["comparison"]
+        parts.append(f"PME inputs (computed, public market proxy {s['candidate']}, {lab} slot): window {c['window']} "
+                     f"(series comparison" + (f", {c['window_note']}" if c.get("window_note") else "") + ").")
+        parts.append(f"Fund growth {c['fund_growth_x']}x vs proxy growth {c['index_growth_x']}x, flows = one "
+                     "contribution of 1 at the window start and the terminal growth at the end, fund return "
+                     f"source: {c['fund_return_source']}.")
+        parts.append(f"KS-PME {c['ks_pme']} = fund growth / proxy growth. Direct Alpha "
+                     f"{_signed(c['direct_alpha_pct'])}%/yr is the annualized form of the same two flows "
+                     f"(fund {c['fund_ann_pct']}%/yr vs proxy {c['index_ann_pct']}%/yr).")
+        if c.get("ks_pme_monthly_schedule") is not None:
+            parts.append(f"ILLUSTRATIVE monthly-schedule KS-PME {c['ks_pme_monthly_schedule']} "
+                         f"({c['schedule_contributions']} equal contributions at the window start and each "
+                         "month-end inside it, valued at the window end).")
+    else:
+        parts.append("No public market proxy comparison is computable on held data, so no PME inputs exist "
+                     "for this product.")
+    if comp:
+        lab, s = comp
+        c = s["comparison"]
+        parts.append(f"Peer comparison inputs ({s['candidate']}, {lab} slot): relative wealth ratio "
+                     f"{c['relative_wealth_ratio']} = fund growth {c['fund_growth_x']}x / peer composite growth "
+                     f"{c['index_growth_x']}x over {c['window']}, fund return source: {c['fund_return_source']}. "
+                     f"{c['not_pme_note']} Alignment: {c['alignment_note'].rstrip('.')}.")
+    return {"value": " ".join(parts), "source": src, "section": "primary and secondary comparisons", "quote": ""}
 
 
 OWNED = {
@@ -398,7 +433,7 @@ def write_cell(key: str, cid: str, new: dict, as_of: str,
         "source": new["source"],
         "section": new.get("section", ""),
         "quote": new.get("quote", ""),
-        "extracted_by": f"src/write_computed_cells.py (as-of {as_of})",
+        "extracted_by": f"{COMPUTED_WRITER_LABEL} (as-of {as_of})",
         "verified_by": "",
     }
     changed = any(cell.get(k) != v for k, v in record.items())

@@ -42,10 +42,10 @@
       "status": "extracted-unverified"
     },
     "repurchase_cadence_per_year": {
-      "value": 4,
+      "value": 252,
       "source_cell": "3.1",
-      "note": "DAILY repurchase requests at that day's NAV under a quarterly 5% cap - the cohort's most liquid plan",
-      "status": "extracted-unverified"
+      "status": "computed",
+      "note": "daily repurchase requests per cell 3.1, trading-day convention, the cap applies per quarter"
     },
     "repurchase_cap_pct": {
       "value": 5.0,
@@ -112,6 +112,29 @@
       "reason": "no suspension language in 3.1 or 3.3 as of 2025-12-31",
       "status": "extracted-unverified"
     },
+    "dealing_cadence": {
+      "value": "daily",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'CADENCE: DAILY - stockholders may request repurchase ... any day at that day's NAV per share', 'CAP: 5% of the combined NAV of all classes per calendar quarter'",
+      "status": "extracted-unverified"
+    },
+    "cap_period": {
+      "value": "quarter",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'CADENCE: DAILY - stockholders may request repurchase ... any day at that day's NAV per share', 'CAP: 5% of the combined NAV of all classes per calendar quarter'",
+      "status": "extracted-unverified"
+    },
+    "repurchase_caps": {
+      "value": [
+        {
+          "pct": 5.0,
+          "period": "quarter"
+        }
+      ],
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'CADENCE: DAILY - stockholders may request repurchase ... any day at that day's NAV per share', 'CAP: 5% of the combined NAV of all classes per calendar quarter'",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 13.2,
       "source_cell": "1.11",
@@ -145,17 +168,29 @@
       "source_cell": "5.3",
       "status": "computed"
     },
-    "pme_primary": {
+    "pme_public_proxy": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
       "reason": "no computable fund return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
     },
-    "direct_alpha_primary": {
+    "pme_public_proxy_name": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
       "reason": "no computable fund return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
+    },
+    "direct_alpha_public_proxy": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "no computable fund return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "no peer composite comparison in either slot for this product"
     }
   }
 }

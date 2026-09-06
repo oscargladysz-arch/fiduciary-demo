@@ -32,7 +32,8 @@ from tark_data import (ADVISOR_COMPLETED, ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_C
                        DATA, FACTOR_PARAS, FACTORS, RULE, RULE_CITATION, authority,
                        cells_by_factor, coverage_summary, load_advisor, load_plan,
                        load_products, plan_keys, record_as_of, rule_ref, status_kind)
-from tark_display import _money as money, facts_by_cell, typed_headline
+from tark_display import (WRAPPER_LABEL, _money as money, display_path_free, facts_by_cell,
+                          typed_headline)
 
 SITE_MEMOS = Path(__file__).resolve().parents[1] / "site" / "memos"
 
@@ -59,9 +60,8 @@ KIND_LABEL = {"extracted": "extracted-unverified", "verified": "verified",
 EVIDENCED = tuple(KIND_LABEL)
 
 
-def first_sentence(value: str) -> str:
-    """The complete first sentence of a cell value, never cut mid-word."""
-    return re.split(r"(?<=[.!?])\s+", value.strip(), maxsplit=1)[0]
+# the abbreviation-aware splitter is shared with the site (R2-P0-4)
+from tark_display import ends_at_abbreviation, first_sentence  # noqa: E402,F401
 
 
 def _findings(product: dict, factor_label: str, fbc: dict) -> list[str]:
@@ -77,7 +77,7 @@ def _findings(product: dict, factor_label: str, fbc: dict) -> list[str]:
             th = typed_headline(cid, fbc.get(cid, {}))
             if th:
                 typed.append(f"{cid} {th}")
-            lines.append(f"{cid} {cell['element']} ({KIND_LABEL[kind]}): {first_sentence(v)}")
+            lines.append(f"{cid} {cell['element']} ({KIND_LABEL[kind]}): {first_sentence(display_path_free(v))}")
         elif kind == "n/a":
             reason = st.split(":", 1)[1].strip() if ":" in st else st[3:].strip(" -")
             na.append(f"{cid} {reason}")
@@ -110,7 +110,7 @@ def _fact_value(fdoc: dict, field: str):
 def _liquidity_section(doc: Document, m: dict | None, fdoc: dict, plan: dict) -> None:
     doc.add_heading("Product-to-plan liquidity match", level=1)
     if m is None:
-        doc.add_paragraph("No match file for this plan and product in data/liquidity/.")
+        doc.add_paragraph("No liquidity match artifact exists for this plan and product.")
         return
     doc.add_paragraph(f"Plan: {plan['display_label']}. {m['layers']}")
     doc.add_heading("Structural verdict (typed facts, plan-independent)", level=2)
@@ -122,10 +122,11 @@ def _liquidity_section(doc: Document, m: dict | None, fdoc: dict, plan: dict) ->
     t.style = "Table Grid"
     h = t.rows[0].cells
     h[0].text, h[1].text, h[2].text = "Wrapper fact", "Value", "Cell"
-    rows = [("Wrapper", "wrapper_type", wf.get("kind")),
-            ("Dealing cadence per year", "repurchase_cadence_per_year", wf.get("cadence_per_year")),
-            ("Repurchase cap", "repurchase_cap_pct",
-             None if wf.get("cap_pct") is None else f"{wf['cap_pct']:g}% of {wf.get('cap_base') or 'a base not typed'}"),
+    rows = [("Wrapper", "wrapper_type", WRAPPER_LABEL.get(wf.get("kind"), wf.get("kind"))),
+            ("Dealing terms", "dealing_cadence", wf.get("dealing_label")),
+            ("Repurchase caps", "repurchase_caps", wf.get("caps_label")),
+            ("Annual capacity (binding cap)", "repurchase_caps",
+             None if wf.get("annual_capacity_pct") is None else f"{wf['annual_capacity_pct']:g}% of the position per year"),
             ("Gating history", "gate_history",
              None if wf.get("gate_history") is None else ("yes, prorated under stress" if wf["gate_history"] else "none identified in the filings on record")),
             ("Repurchase program status", "repurchase_program_status", wf.get("program_status")),
@@ -270,7 +271,7 @@ def _scope_section(doc: Document) -> None:
         "computation from cited series. Every scenario figure is labeled ILLUSTRATIVE. "
         "Cells marked extracted-unverified were extracted by an agent and not yet "
         "verified by a person. "
-        + ("Verbatim regulatory text is in data/authority/ and quoted where cited."
+        + ("Verbatim regulatory text is in this build and quoted where cited."
            if authority else
            "Verbatim regulatory text is not in this build: the regulation is cited by "
            "Federal Register citation and RIN, not paraphrased."))
@@ -283,8 +284,8 @@ def _case_law_section(doc: Document, product: dict) -> None:
     kind = status_kind(st)
     v = (c.get("value") or "").strip()
     if kind in EVIDENCED and v:
-        doc.add_paragraph(f"Cell 5.7 ({KIND_LABEL[kind]}): {v}")
-        src = c.get("source") or c.get("source_doc") or ""
+        doc.add_paragraph(f"Cell 5.7 ({KIND_LABEL[kind]}): {display_path_free(v)}")
+        src = display_path_free(c.get("source") or c.get("source_doc") or "")
         if src:
             doc.add_paragraph(f"Source: {src}" + (f". Extracted: {c['extracted_by']}" if c.get("extracted_by") else ""))
     else:
@@ -297,7 +298,7 @@ def _case_law_section(doc: Document, product: dict) -> None:
 KIND_ORDER = (("structured", "structured"), ("extracted", "extracted-unverified"),
               ("verified", "verified"), ("computed", "computed"), ("partial", "partial"),
               ("fetched", "fetched"), ("na", "n/a"), ("pending", "pending"))
-RESOLVED_ONE = ("exact", "form_only", "accession_in_text")
+RESOLVED_ONE = ("exact", "form_only")
 
 
 def _citation_lines(refs: list[dict]) -> list[str]:
@@ -305,8 +306,7 @@ def _citation_lines(refs: list[dict]) -> list[str]:
     lines = []
     for r in refs:
         if r["match"] in RESOLVED_ONE:
-            tag = {"form_only": " (matched by form only: the single such filing held)",
-                   "accession_in_text": " (accession written in the citation, EDGAR folder URL)"
+            tag = {"form_only": " (matched by form only: the single such filing held)"
                    }.get(r["match"], "")
             lines.append(f"{r['form']} {r.get('filing_date', '')} accession {r['accession']} "
                          f"{r['url']}{tag}".replace("  ", " "))
@@ -349,7 +349,7 @@ def _provenance_section(doc: Document, key: str, product: dict, plan: dict) -> N
     cit = json.loads(cpath.read_text())["cells"] if cpath.exists() else {}
     doc.add_paragraph(
         "Each evidenced cell's source document as written in the evidence ledger, with "
-        "the SEC accession and EDGAR URL resolved offline against data/manifest.csv. "
+        "the SEC accession and EDGAR URL resolved against the filing manifest. "
         "Where no filing reference resolves, the row says accession not on record.")
     t = doc.add_table(rows=1, cols=3)
     t.style = "Table Grid"
@@ -361,7 +361,7 @@ def _provenance_section(doc: Document, key: str, product: dict, plan: dict) -> N
             lines = ["accession not on record: no filing reference in the source field"]
         row = t.add_row().cells
         row[0].text = cid
-        row[1].text = c.get("source") or ""
+        row[1].text = display_path_free(c.get("source") or "")
         _fill(row[2], lines)
     for row in t.rows:
         row.cells[0].width, row.cells[1].width, row.cells[2].width = Inches(0.5), Inches(2.4), Inches(3.6)
@@ -369,9 +369,9 @@ def _provenance_section(doc: Document, key: str, product: dict, plan: dict) -> N
     with open(DATA / "manifest.csv", newline="") as fh:
         held = sum(1 for r in csv.DictReader(fh) if r["product"] == key)
     doc.add_paragraph(
-        f"Data sources: SEC EDGAR filings ({held} held for this product in data/manifest.csv, "
-        "every row with its accession) and DOL EBSA Form 5500 data for the plan. "
-        f"{plan['anonymization_rule']}")
+        f"Data sources: SEC EDGAR filings ({held} held for this product in the filing manifest, "
+        "every row with its accession) and DOL EBSA Form 5500 data for the plan, shown under "
+        "its anonymized label.")
 
 
 def _set_letter(doc: Document) -> None:
@@ -430,7 +430,7 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
         doc.add_paragraph(para)
     doc.add_paragraph("Factor mapping basis: " + rule_ref("1.1", auth)["basis"] + ". "
                       + ("The verbatim paragraphs are quoted in the appendix." if auth["status"] == "fetched"
-                         else "Verbatim text: " + auth["note"] + ".")
+                         else auth["note"])
                       + " Cells " + " and ".join(ADVISOR_COMPLETED)
                       + " are advisor-completed under paragraph (l).")
 
@@ -444,7 +444,7 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
         "then the complete first sentence of every evidenced cell with its "
         "status, then the cells marked not applicable with the reason. The "
         "full sourced text, quote and document of every cell is in "
-        "data/evidence/ and on the site's Evaluation view.")
+        "the evidence ledger and on the site's Evaluation view.")
     table = doc.add_table(rows=1, cols=2)
     table.style = "Table Grid"
     hdr = table.rows[0].cells
@@ -465,12 +465,12 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
             doc.add_heading("ESCALATION: no meaningful benchmark "
                             "constructible", level=2)
             doc.add_paragraph(sel["escalation"])
+            # no legal conclusion (R2-P0-9, audit round 2 item 29): the memo
+            # states what the record holds and does not decide
             doc.add_paragraph(
-                "Under the proposal's own terms, a benchmark that is not "
-                "meaningful cannot support the comparison. Proceeding without "
-                "one documented here would undercut the safe harbor. "
-                "Recommended action: do not proceed pending the data steps "
-                "above. Retain this memo as the record of the determination.")
+                "No meaningful benchmark could be constructed from the data held. "
+                "The record cannot support the paragraph (k) comparison until one "
+                "is identified. This memo does not decide.")
         for slot, badge in (("primary", "Primary"), ("secondary", "Secondary")):
             s = sel.get(slot)
             if not s:
@@ -482,12 +482,28 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
                 doc.add_paragraph("Comparison not computable on held data: "
                                   f"{s['comparison_note']}. The candidate is scored on "
                                   "its own descriptors.")
-            if comp:
+            if comp and comp["kind"] == "composite":
+                # a peer composite is not a market series: the statistic is a
+                # relative wealth ratio, never a PME (R2-P0-6, rule 12)
+                doc.add_paragraph(
+                    f"Window {comp['window']} ({comp['window_note']}): fund {comp['fund_ann_pct']}%/yr "
+                    f"({comp['fund_return_source']}) vs peer composite {comp['index_ann_pct']}%/yr, "
+                    f"relative wealth ratio {comp['relative_wealth_ratio']}, annualized excess return "
+                    f"{comp['excess_return_pct']}%/yr. {comp['not_pme_note']} Disclosure: ratios on "
+                    "appraisal-lagged NAVs are window-sensitive and can be smoothing-flattered."
+                    + (f" {comp['low_confidence'][0].upper()}{comp['low_confidence'][1:]}."
+                       if comp.get("low_confidence") else ""))
+                doc.add_paragraph("Alignment: " + comp["alignment_note"].rstrip(".") + ".")
+                doc.add_paragraph(
+                    "Two-point comparison: one contribution at the window start and one valuation "
+                    "at the end, on the fund's fiscal year-end dates. The ratio is fund growth divided "
+                    "by the composite's growth over the same fiscal years.")
+            elif comp:
                 doc.add_paragraph(
                     f"Window {comp['window']}"
                     f"{(' (' + comp['window_note'] + ')') if comp.get('window_note') else ''}"
-                    f": fund {comp['fund_ann_pct']}%/yr "
-                    f"vs benchmark {comp['index_ann_pct']}%/yr, "
+                    f": fund {comp['fund_ann_pct']}%/yr ({comp['fund_return_source']}) "
+                    f"vs public proxy {comp['index_ann_pct']}%/yr, "
                     f"KS-PME {comp['ks_pme']}, Direct Alpha "
                     f"{comp['direct_alpha_pct']}%/yr. Disclosure: PME and "
                     "alpha computed on appraisal-lagged NAVs are "
@@ -544,7 +560,7 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
                 f"{fdoc.get('membership_rationale', '')}")
             v29 = p["cells"]["2.9"].get("value")
             if v29:
-                doc.add_paragraph(str(v29))
+                doc.add_paragraph(display_path_free(v29))
             comp = co.get("composite", {})
             if comp.get("refused"):
                 doc.add_paragraph("Cohort composite: REFUSED, "
@@ -553,9 +569,9 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
                 doc.add_paragraph(f"Caveat: {cv}", style="List Bullet")
             doc.add_paragraph(
                 "Cohort exclusion log: every candidate considered and not "
-                "admitted is recorded with its reason in "
-                "data/roster_decisions.md (rendered on the site's Cohorts "
-                "view). Membership is an argued judgment, not a tag.")
+                "admitted is recorded with its reason in the roster decisions "
+                "record (rendered on the site's Cohorts view). Membership is an "
+                "argued judgment, not a tag.")
 
     stated = _advisor_section(doc, key, plan_key, anchor)
     _recommendation_section(doc, sel, m, fdoc, anchor, stated)

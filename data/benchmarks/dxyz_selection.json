@@ -7,7 +7,7 @@
     "5.1"
   ],
   "rubric_version": "v2",
-  "rubric": "rubric v2: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
+  "rubric": "Tark benchmark rubric, 12 points: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
   "max_attainable": null,
   "declared_benchmarks": [
     {
@@ -36,11 +36,11 @@
       },
       "series_id": "spy",
       "reasons": [
-        "strategy_match 1/3: adjacent asset class sharing the dominant risk (us large cap for pre ipo listed cef)",
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (US large cap for pre-IPO holdings in a listed closed-end fund)",
         "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
         "investability 2/2: computable on held data (daily series)",
         "data_quality 2/2: daily series held",
-        "provider_independence 2/2: provider unaffiliated with the fund (SPDR / S&P DJI)"
+        "provider_independence 2/2: provider unaffiliated with the fund (SPDR / S&P DJI): the registry affiliation map ties it to none of the fund's advisers"
       ],
       "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     },
@@ -59,34 +59,34 @@
       },
       "series_id": "psp",
       "reasons": [
-        "strategy_match 1/3: adjacent asset class sharing the dominant risk (listed private equity for pre ipo listed cef)",
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (listed private equity for pre-IPO holdings in a listed closed-end fund)",
         "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
         "investability 2/2: computable on held data (daily series)",
         "data_quality 2/2: daily series held",
-        "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks)"
+        "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks): the registry affiliation map ties it to none of the fund's advisers"
       ],
       "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     },
     {
-      "candidate": "Peer cohort composite: venture without dxyz (arkvx, ssss)",
+      "candidate": "Peer composite, pre-IPO and venture cohort without Destiny Tech100 Inc (members: ARK Venture Fund, Neostellar Capital Corp.)",
       "id": "peer_venture",
       "lane": "C",
-      "score": 4,
+      "score": 3,
       "max": 12,
       "criteria": {
         "strategy_match": 2,
         "risk_liquidity_match": 0,
         "investability": 0,
         "data_quality": 0,
-        "provider_independence": 2
+        "provider_independence": 1
       },
       "series_id": "composite:venture",
       "reasons": [
-        "strategy_match 2/3: same asset class, different sub-strategy (late stage listed bdc vs pre ipo listed cef)",
+        "strategy_match 2/3: same asset class, different sub-strategy (late-stage growth in a listed BDC vs pre-IPO holdings in a listed closed-end fund)",
         "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
         "investability 0/2: composite refused, nothing to compute",
         "data_quality 0/2: cited, not computed",
-        "provider_independence 2/2: provider unaffiliated with the fund (constructed (Tark cohort engine, leave-one-out))"
+        "provider_independence 1/2: constructed by the evaluator from the roster, not a third-party index. A composite the evaluator built from a roster the evaluator chose is not an independent yardstick, so it earns at most 1 of 2"
       ],
       "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     },
@@ -105,11 +105,11 @@
       },
       "series_id": "cited:nasdaq_comp",
       "reasons": [
-        "strategy_match 1/3: adjacent asset class sharing the dominant risk (nasdaq composite for pre ipo listed cef)",
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (NASDAQ Composite for pre-IPO holdings in a listed closed-end fund)",
         "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
         "investability 0/2: index cited, series not held, not computable",
         "data_quality 0/2: cited, not computed",
-        "provider_independence 2/2: provider unaffiliated with the fund (Nasdaq)"
+        "provider_independence 2/2: provider unaffiliated with the fund (Nasdaq): the registry affiliation map ties it to none of the fund's advisers"
       ],
       "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     }

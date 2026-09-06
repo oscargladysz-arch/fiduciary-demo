@@ -83,6 +83,7 @@
       "value": 9.46,
       "source_cell": "2.3",
       "note": "FY2025 net operating expenses/avg net assets UNDER INTERNAL MANAGEMENT. The fee regime changed 2026-07-15, so forward ratios will differ (see 2.1/2.2)",
+      "basis": "net operating expenses under internal management, the fee regime changed 2026-07-15 (FY2025)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {
@@ -109,6 +110,24 @@
       "value": null,
       "source_cell": "3.1",
       "reason": "exchange-listed, no repurchase program",
+      "status": "extracted-unverified"
+    },
+    "dealing_cadence": {
+      "value": "exchange",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'cadence: any trading day' and 'cap: none (market depth only)'",
+      "status": "extracted-unverified"
+    },
+    "cap_period": {
+      "value": null,
+      "source_cell": "3.1",
+      "reason": "on-exchange liquidity with no fund-level cap",
+      "status": "extracted-unverified"
+    },
+    "repurchase_caps": {
+      "value": null,
+      "source_cell": "3.1",
+      "reason": "on-exchange liquidity with no fund-level cap",
       "status": "extracted-unverified"
     },
     "track_record_years": {
@@ -146,13 +165,25 @@
       "status": "computed",
       "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
     },
-    "pme_primary": {
+    "pme_public_proxy": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
       "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
     },
-    "direct_alpha_primary": {
+    "pme_public_proxy_name": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "direct_alpha_public_proxy": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "peer_relative_wealth_ratio": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",

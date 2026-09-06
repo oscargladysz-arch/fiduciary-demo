@@ -112,6 +112,33 @@
       "reason": "no suspension language in 3.1 or 3.3 as of 2025-12-31",
       "status": "extracted-unverified"
     },
+    "dealing_cadence": {
+      "value": "monthly",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'Repurchase caps: 2% of aggregate NAV per MONTH, 5% per QUARTER'. The monthly cap is the headline cap and the quarterly cap binds over a year (2 * 12 = 24 versus 5 * 4 = 20)",
+      "status": "extracted-unverified"
+    },
+    "cap_period": {
+      "value": "month",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'Repurchase caps: 2% of aggregate NAV per MONTH, 5% per QUARTER'. The monthly cap is the headline cap and the quarterly cap binds over a year (2 * 12 = 24 versus 5 * 4 = 20)",
+      "status": "extracted-unverified"
+    },
+    "repurchase_caps": {
+      "value": [
+        {
+          "pct": 2.0,
+          "period": "month"
+        },
+        {
+          "pct": 5.0,
+          "period": "quarter"
+        }
+      ],
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'Repurchase caps: 2% of aggregate NAV per MONTH, 5% per QUARTER'. The monthly cap is the headline cap and the quarterly cap binds over a year (2 * 12 = 24 versus 5 * 4 = 20)",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": null,
       "source_cell": "6.4",
@@ -145,15 +172,28 @@
       "source_cell": "5.3",
       "status": "computed"
     },
-    "pme_primary": {
+    "pme_public_proxy": {
       "value": 0.9064,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "KS-PME vs VNQ over 2022-12-31 to 2025-12-31, fund return source: filed fiscal-year returns"
+    },
+    "pme_public_proxy_name": {
+      "value": "VNQ",
       "source_cell": "1.8",
       "status": "computed"
     },
-    "direct_alpha_primary": {
+    "direct_alpha_public_proxy": {
       "value": -3.22,
       "source_cell": "1.8",
-      "status": "computed"
+      "status": "computed",
+      "note": "KS-PME vs VNQ over 2022-12-31 to 2025-12-31, fund return source: filed fiscal-year returns"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "no peer composite comparison in either slot for this product"
     }
   }
 }

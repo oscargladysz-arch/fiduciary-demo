@@ -12,3 +12,6 @@ data/census/raw/
 
 # local virtualenv
 .venv/
+
+# agent worktrees are never part of the record
+.claude/worktrees/

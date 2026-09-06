@@ -83,6 +83,7 @@
       "value": 7.0,
       "source_cell": "2.3",
       "note": "FY2025 Class I, INCLUDES interest/financing cost of BDC leverage - not like-for-like with unlevered '40-Act ratios",
+      "basis": "including the interest and financing cost of BDC leverage (FY2025, Class I)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {
@@ -109,6 +110,29 @@
       "value": null,
       "source_cell": "3.1",
       "reason": "no suspension language in 3.1 or 3.3 as of 2025-12-31",
+      "status": "extracted-unverified"
+    },
+    "dealing_cadence": {
+      "value": "quarterly",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'CADENCE: quarterly tender offers at Board discretion', 'CAP: up to 5% of the NAV of Common Shares outstanding'",
+      "status": "extracted-unverified"
+    },
+    "cap_period": {
+      "value": "quarter",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'CADENCE: quarterly tender offers at Board discretion', 'CAP: up to 5% of the NAV of Common Shares outstanding'",
+      "status": "extracted-unverified"
+    },
+    "repurchase_caps": {
+      "value": [
+        {
+          "pct": 5.0,
+          "period": "quarter"
+        }
+      ],
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'CADENCE: quarterly tender offers at Board discretion', 'CAP: up to 5% of the NAV of Common Shares outstanding'",
       "status": "extracted-unverified"
     },
     "track_record_years": {
@@ -140,19 +164,32 @@
       "status": "computed"
     },
     "selection_score": {
-      "value": 10,
+      "value": 9,
       "source_cell": "5.3",
       "status": "computed"
     },
-    "pme_primary": {
-      "value": 1.0798,
+    "pme_public_proxy": {
+      "value": 1.2378,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "KS-PME vs BKLN over 2021-01-07 to 2025-12-31, fund return source: filed fiscal-year returns"
+    },
+    "pme_public_proxy_name": {
+      "value": "BKLN",
       "source_cell": "1.8",
       "status": "computed"
     },
-    "direct_alpha_primary": {
-      "value": 1.55,
+    "direct_alpha_public_proxy": {
+      "value": 4.38,
       "source_cell": "1.8",
-      "status": "computed"
+      "status": "computed",
+      "note": "KS-PME vs BKLN over 2021-01-07 to 2025-12-31, fund return source: filed fiscal-year returns"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": 1.0798,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "relative wealth ratio vs private credit peer composite over FY2021 to FY2025, fund return source: filed fiscal-year returns. Not a public market equivalent"
     }
   }
 }

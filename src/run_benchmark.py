@@ -24,8 +24,10 @@ for key in PRODUCT_PROFILES:
             c = p["comparison"]
             print(f"            window {c['window']}: fund {c['fund_growth_x']}x "
                   f"({c['fund_ann_pct']}%/yr) vs index {c['index_growth_x']}x "
-                  f"({c['index_ann_pct']}%/yr), KS-PME {c['ks_pme']}, "
-                  f"Direct Alpha {c['direct_alpha_pct']}%/yr")
+                  f"({c['index_ann_pct']}%/yr), "
+                  + (f"relative wealth ratio {c['relative_wealth_ratio']}, excess return {c['excess_return_pct']}%/yr"
+                     if c.get("kind") == "composite" else
+                     f"KS-PME {c['ks_pme']}, Direct Alpha {c['direct_alpha_pct']}%/yr"))
     if sel["secondary"]:
         s = sel["secondary"]
         print(f"  SECONDARY {s['candidate']}  [{s['score']}/12]")

@@ -81,6 +81,7 @@
       "value": 2.38,
       "source_cell": "2.3",
       "note": "Class 4 (inception class) Total Annual Expenses. Classes range 2.38-3.38% (differ only by distribution/servicing)",
+      "basis": "total annual expenses of the inception class, classes range 2.38% to 3.38%",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {
@@ -107,6 +108,29 @@
       "value": null,
       "source_cell": "3.1",
       "reason": "no suspension language in 3.1 or 3.3 as of 2026-03-31",
+      "status": "extracted-unverified"
+    },
+    "dealing_cadence": {
+      "value": "quarterly",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'recommending quarterly offers', 'CAP: expected up to 5% per offer'",
+      "status": "extracted-unverified"
+    },
+    "cap_period": {
+      "value": "quarter",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'recommending quarterly offers', 'CAP: expected up to 5% per offer'",
+      "status": "extracted-unverified"
+    },
+    "repurchase_caps": {
+      "value": [
+        {
+          "pct": 5.0,
+          "period": "quarter"
+        }
+      ],
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'recommending quarterly offers', 'CAP: expected up to 5% per offer'",
       "status": "extracted-unverified"
     },
     "track_record_years": {
@@ -138,19 +162,32 @@
       "status": "computed"
     },
     "selection_score": {
-      "value": 10,
+      "value": 9,
       "source_cell": "5.3",
       "status": "computed"
     },
-    "pme_primary": {
-      "value": 0.8357,
+    "pme_public_proxy": {
+      "value": 1.5919,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "KS-PME vs PSP over 2019-03-31 to 2026-03-31, fund return source: filed fiscal-year returns"
+    },
+    "pme_public_proxy_name": {
+      "value": "PSP",
       "source_cell": "1.8",
       "status": "computed"
     },
-    "direct_alpha_primary": {
-      "value": -3.53,
+    "direct_alpha_public_proxy": {
+      "value": 6.87,
       "source_cell": "1.8",
-      "status": "computed"
+      "status": "computed",
+      "note": "KS-PME vs PSP over 2019-03-31 to 2026-03-31, fund return source: filed fiscal-year returns"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": 0.8357,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "relative wealth ratio vs evergreen PE peer composite over FY2022 to FY2026, fund return source: filed fiscal-year returns. Not a public market equivalent"
     }
   }
 }

@@ -61,7 +61,7 @@ const COLS = [
     if (f.value === null) return factCell(k, f);
     return factCell(k, { ...f, value: fmtEarly(f.value) });
   }],
-  ["cadence", "Dealing/yr", (k) => factCell(k, fact(k, "repurchase_cadence_per_year"))],
+  ["cadence", "Dealing", (k) => factCell(k, fact(k, "dealing_cadence"), esc)],
   ["cap", "Cap", (k) => factCell(k, fact(k, "repurchase_cap_pct"),
       (v) => v + "%")],
   ["gate", "Gate history", (k) => factCell(k, fact(k, "gate_history"),
@@ -70,10 +70,12 @@ const COLS = [
       (v) => v === "K-1")],
   ["big4", "Big-4 audit", (k) => factCell(k, fact(k, "big4"),
       (v) => v ? "yes" : "no")],
-  ["pme", "KS-PME", (k) => factCell(k, fact(k, "pme_primary"),
+  ["pme", "KS-PME vs public proxy", (k) => factCell(k, fact(k, "pme_public_proxy"),
       (v) => v.toFixed(4))],
-  ["alpha", "Direct Alpha", (k) => factCell(k, fact(k, "direct_alpha_primary"),
+  ["alpha", "Direct Alpha vs public proxy", (k) => factCell(k, fact(k, "direct_alpha_public_proxy"),
       (v) => v.toFixed(2) + "%/yr")],
+  ["peer", "Peer relative wealth ratio", (k) => factCell(k, fact(k, "peer_relative_wealth_ratio"),
+      (v) => v.toFixed(4))],
   ["score", "Engine score", (k) => factCell(k, fact(k, "selection_score"),
       (v) => v + "/12")],
   ["verdict", "Liquidity (structural)", (k) => {
@@ -88,8 +90,9 @@ const COLS = [
 const SORT_VAL = {
   fee: (k) => fact(k, "mgmt_fee_pct").value,
   ter: (k) => fact(k, "expense_ratio_pct").value,
-  pme: (k) => fact(k, "pme_primary").value,
-  alpha: (k) => fact(k, "direct_alpha_primary").value,
+  pme: (k) => fact(k, "pme_public_proxy").value,
+  alpha: (k) => fact(k, "direct_alpha_public_proxy").value,
+  peer: (k) => fact(k, "peer_relative_wealth_ratio").value,
   score: (k) => fact(k, "selection_score").value,
   track: (k) => fact(k, "track_record_years").value,
   aum: (k) => fact(k, "net_assets_usd").value,
@@ -111,9 +114,11 @@ function verifiedFactCounts() {
 
 export function viewScreener(root, state, setState) {
   const F = state; // filters live in state (all enum/number keys)
-  const sel = (id, label, opts) => `<span class="lbl">${label}</span>
+  // option values are record keys (they live in the URL state), the text a
+  // reader sees is the display label (R2-P0-3)
+  const sel = (id, label, opts, fmt = (o) => o) => `<span class="lbl">${label}</span>
     <select data-f="${id}"><option value="">any</option>
-      ${opts.map((o) => `<option value="${o}" ${F[id] === o ? "selected" : ""}>${esc(o)}</option>`).join("")}
+      ${opts.map((o) => `<option value="${o}" ${F[id] === o ? "selected" : ""}>${esc(fmt(o))}</option>`).join("")}
     </select>`;
 
   let rows = PRODUCTS.filter((k) => {
@@ -127,8 +132,8 @@ export function viewScreener(root, state, setState) {
     if (F.f_big4 === "yes" && fact(k, "big4").value !== true) return false;
     if (F.f_big4 === "no" && fact(k, "big4").value !== false) return false;
     if (F.f_verdict && fact(k, "liquidity_structural_verdict").value !== F.f_verdict) return false;
-    if (F.pme_min && !(fact(k, "pme_primary").value >= +F.pme_min)) return false;
-    if (F.pme_max && !(fact(k, "pme_primary").value <= +F.pme_max)) return false;
+    if (F.pme_min && !(fact(k, "pme_public_proxy").value >= +F.pme_min)) return false;
+    if (F.pme_max && !(fact(k, "pme_public_proxy").value <= +F.pme_max)) return false;
     return true;
   });
   if (F.f_vonly === "1") rows = rows.filter((k) =>
@@ -155,15 +160,15 @@ export function viewScreener(root, state, setState) {
       <div class="sub">Typed projections of evidenced cells. Every value clicks through
         to its citation, and gaps are honest, not blank.</div></div>
     <div class="filterbar">
-      ${sel("f_cohort", "cohort", Object.keys(T.cohorts))}
+      ${sel("f_cohort", "cohort", Object.keys(T.cohorts), (o) => T.cohorts[o].label)}
       ${sel("f_depth", "depth", ["full", "cohort"])}
-      ${sel("f_wrapper", "wrapper", Object.keys(WRAPPER_LABEL))}
-      ${sel("f_base", "fee base", Object.keys(BASE_LABEL).filter((b) => PRODUCTS.some((k) => fact(k, "mgmt_fee_base").value === b)))}
+      ${sel("f_wrapper", "wrapper", Object.keys(WRAPPER_LABEL), (o) => WRAPPER_LABEL[o])}
+      ${sel("f_base", "fee base", Object.keys(BASE_LABEL).filter((b) => PRODUCTS.some((k) => fact(k, "mgmt_fee_base").value === b)), (o) => BASE_LABEL[o])}
       ${sel("f_tax", "tax", ["1099", "K-1"])}
       ${sel("f_gate", "gate hist", ["yes", "no"])}
       ${sel("f_big4", "big-4", ["yes", "no"])}
       ${sel("f_verdict", "liquidity (structural)", ["aligned-mechanical", "conditional", "conditional-weak", "misaligned", "partial"])}
-      <span class="lbl">PME ≥</span><input type="number" step="0.05" style="width:70px" data-f="pme_min" value="${esc(F.pme_min || "")}">
+      <span class="lbl">KS-PME vs public proxy ≥</span><input type="number" step="0.05" style="width:70px" data-f="pme_min" value="${esc(F.pme_min || "")}">
       <span class="lbl">≤</span><input type="number" step="0.05" style="width:70px" data-f="pme_max" value="${esc(F.pme_max || "")}">
       <label class="lbl" style="cursor:pointer"><input type="checkbox" data-f="f_vonly" ${F.f_vonly === "1" ? "checked" : ""}> verified only</label>
       <details style="font-size:11px"><summary class="lbl" style="cursor:pointer">columns</summary>
@@ -221,17 +226,18 @@ const CMP_ROWS = [
   ["Expense ratio", "expense_ratio_pct", (v) => v.toFixed(2) + "%", null],
   ["Early repurchase", "early_repurchase",
     (v) => fmtEarly({ ...v, window: v.window ? `if ${v.window}` : "" }), null],
-  ["Dealing cadence", "repurchase_cadence_per_year", (v) => v + "×/yr", null],
-  ["Repurchase cap", "repurchase_cap_pct", (v) => v + "%", null],
+  ["Dealing", "dealing_cadence", (v) => v, null],
+  ["Repurchase caps", "repurchase_caps", (v) => v.map((c) => `${c.pct}% per ${c.period}`).join(" and "), null],
   ["Gate history", "gate_history", (v) => v ? "YES: prorated under stress" : "none identified",
     (v) => v === true],
   ["Tax form", "tax_form", (v) => v, (v) => v === "K-1"],
   ["Auditor", "auditor", (v) => v, null],
   ["Big-4", "big4", (v) => v ? "yes" : "no", null],
-  ["Primary benchmark", "primary_benchmark_id", (v) => v.toUpperCase(), null],
+  ["Primary benchmark", "primary_benchmark_id", (v) => T.candidate_short[v] || v, null],
   ["Engine score", "selection_score", (v) => v + "/12", null],
-  ["KS-PME (primary)", "pme_primary", (v) => v.toFixed(4), (v) => v < 1],
-  ["Direct Alpha", "direct_alpha_primary", (v) => v.toFixed(2) + "%/yr", (v) => v < 0],
+  ["KS-PME vs public proxy", "pme_public_proxy", (v) => v.toFixed(4), (v) => v < 1],
+  ["Direct Alpha vs public proxy", "direct_alpha_public_proxy", (v) => v.toFixed(2) + "%/yr", (v) => v < 0],
+  ["Peer relative wealth ratio", "peer_relative_wealth_ratio", (v) => v.toFixed(4), (v) => v < 1],
   ["Track record", "track_record_years", (v) => v + " yrs", null],
   ["Net assets", "net_assets_usd", (v) => money(v), null],
 ];
@@ -247,7 +253,7 @@ export function viewCompare(root, state, setState) {
     <button class="copylink" data-copylink>copy link</button>
     <span class="lbl" style="margin-left:10px">peer-suggest:</span>
     ${Object.keys(T.cohorts).map((c) =>
-      `<button class="citebtn" data-cmpcohort="${c}">vs ${esc(c)}</button>`).join(" ")}
+      `<button class="citebtn" data-cmpcohort="${c}">vs ${esc(T.cohorts[c].label)}</button>`).join(" ")}
   </div>`;
 
   // cross-wrapper caveats surface automatically when a comparison spans
@@ -429,9 +435,9 @@ export function viewVerification(root, state, setState) {
               </details></td></tr>`;
         }).join("")}
       </tbody></table></div>`).join("")}
-    <p class="cap footer-rule">Verification flips a row to 'verified' + signs
-      verified_by in data/evidence/*.csv AND the product JSON (humans only,
-      through src/verify_cell.py, which refuses an empty signer or date and any
+    <p class="cap footer-rule">Verification flips a row to 'verified' and signs
+      it in the evidence ledger and the product record (people only, through
+      Tark's verification step, which refuses an empty signer or date and any
       cell without a verbatim quote). The build and this site can never do this.</p>`;
   root.querySelectorAll("[data-goto-cell]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault(); setState({ view: "evaluation", product: a.dataset.gotoCell }); }));
@@ -449,9 +455,10 @@ export function viewVerification(root, state, setState) {
         out.hidden = true;
         return;
       }
-      out.textContent = `python src/verify_cell.py ${product} ${cid} --signer ${JSON.stringify(signer)} --date ${date}`;
+      out.textContent = JSON.stringify({ signature_request: "verify", product, cell: cid, signer, date,
+        note: "Tark's verification step checks the quote against the filing before it writes verified" }, null, 2);
       out.hidden = false;
-      msg.textContent = "run this in the repository as yourself, the site writes nothing";
+      msg.textContent = "signature request ready. Send it to Tark as yourself, the site writes nothing";
     });
   });
 }
@@ -725,7 +732,8 @@ export function viewCohorts(root, state, setState) {
     ["repurchase_cap_pct", "Cap %"], ["gate_history", "Gate history"],
     ["tax_form", "Tax form"], ["big4", "Big-4 audit"],
     ["track_record_years", "Track record (yrs)"],
-    ["pme_primary", "KS-PME (primary)"],
+    ["pme_public_proxy", "KS-PME vs public proxy"],
+    ["peer_relative_wealth_ratio", "Peer relative wealth ratio"],
   ];
   const cell = (k, field) => {
     const f = fact(k, field);
@@ -767,7 +775,7 @@ export function viewCohorts(root, state, setState) {
       <div class="sub">n=${C.n} · membership is an argued judgment: every
         rationale below, every exclusion logged. Cohorts:
         ${Object.keys(T.cohorts).map((c) =>
-          `<a href="#" data-cohort="${c}" style="margin-right:9px;${c === cid ? "font-weight:700" : ""}">${esc(c)}</a>`).join("")}</div></div>
+          `<a href="#" data-cohort="${c}" style="margin-right:9px;${c === cid ? "font-weight:700" : ""}">${esc(T.cohorts[c].label)}</a>`).join("")}</div></div>
     ${(C.caveats || []).length ? `<div class="banner amber"><b>Comparability caveats
       (assembled from the wrapper matrix):</b><ul style="margin:6px 0 0 18px">
       ${C.caveats.map((c) => `<li style="margin-bottom:4px">${esc(c)}</li>`).join("")}</ul></div>` : ""}
@@ -808,7 +816,7 @@ export function viewCohorts(root, state, setState) {
       if (!box) return;
       lineChart(box, {
         series: [{ points: comp.rows.map((r) => [`${r.year}-12-31`, r.composite_return_pct]),
-          label: `equal-weight composite (${cid})`, color: "#593380", width: 2, markers: true }],
+          label: `equal-weight composite (${C.label})`, color: "#593380", width: 2, markers: true }],
         height: 220, includeZero: true, yFormat: (v) => v.toFixed(0) + "%",
       });
     });

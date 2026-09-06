@@ -278,12 +278,12 @@ def verify(cid: str, ex: CellExtraction, docs: list[FilingText], model: str, tod
     if located:
         section = f"{section}, page {page}" if section else f"page {page}"
         status = "extracted-unverified"
-        extracted_by = f"src/ingest.py ({model}, {today}), quote located verbatim on page {page}"
+        extracted_by = f"Tark ingest ({model}, {today}), quote located verbatim on page {page}"
     else:
         why = ("cited document not among the held filings" if doc is None
                else "quote not located verbatim in the cited document")
         status = f"partial - {why}, value kept for a human check"
-        extracted_by = f"src/ingest.py ({model}, {today}), {why}"
+        extracted_by = f"Tark ingest ({model}, {today}), {why}"
     src = doc.label if doc else (ex.source_doc or "document not identified")
     record = {"element": CELLS[cid], "value": ex.value.strip(), "status": status,
               "source": src + (f", {section}" if section else ""), "section": section,
@@ -394,8 +394,10 @@ def main() -> int:
         return 1
     docs = []
     for r in rows:
+        if not r.get("local_path"):
+            continue    # a structured-dataset row names an accession, not a document on disk
         p = DATA.parent / r["local_path"] if not Path(r["local_path"]).is_absolute() else Path(r["local_path"])
-        if p.exists():
+        if p.is_file():
             docs.append(filing_text(p, doc_label(r)))
     if not docs:
         print("refused: manifest rows exist but no local filing text is on disk (data/raw is not in git)")

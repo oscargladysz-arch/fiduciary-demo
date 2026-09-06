@@ -45,11 +45,21 @@ check_true("perfect candidate scores 12 (3 + 3 + 2 + 2 + 2)", s["score"] == 12 a
 check_true("perfect candidate: every criterion at its maximum",
            s["criteria"] == {"strategy_match": 3, "risk_liquidity_match": 3, "investability": 2,
                              "data_quality": 2, "provider_independence": 2})
+import tark_benchmark as _tb
+_tb.AFFILIATIONS["acme indices"] = {"adviser_keys": ["acme"], "source": "synthetic test entry"}
 sa = score_candidate(prof, dict(perfect, provider="Acme Indices", provider_key="acme indices"))
-check_true("adviser-owned provider loses exactly the 2 independence points",
+del _tb.AFFILIATIONS["acme indices"]
+check_true("adviser-owned provider (per the affiliation map) loses exactly the 2 independence points",
            s["score"] - sa["score"] == 2 and sa["criteria"]["provider_independence"] == 0)
 check_true("independence zero is reasoned in the log",
            any("manufacturer-owned" in r for r in sa["reasons"]))
+# the same provider without a map entry is unaffiliated, whatever the strings share
+sa2 = score_candidate(prof, dict(perfect, provider="Acme Indices", provider_key="acme indices"))
+check_true("without a map entry the same provider name is unaffiliated: affiliation is never a substring match",
+           sa2["criteria"]["provider_independence"] == 2)
+sa3 = score_candidate(dict(prof, adviser_keys=["ind"], advisers=["Ind"]), perfect)
+check_true("a substring coincidence ('ind' inside 'indep') is not an affiliation",
+           sa3["criteria"]["provider_independence"] == 2)
 sq = score_candidate(prof, dict(perfect, series=None, data="licensed"))
 check_true("licensed index: investability 0 and data_quality 0, cited not computed",
            sq["criteria"]["investability"] == 0 and sq["criteria"]["data_quality"] == 0
@@ -70,11 +80,11 @@ check_true("mixed leverage regimes: risk drops to 2", sl["criteria"]["risk_liqui
 
 # --- property tests on real descriptors: move one input, one criterion moves ---
 cclfx = PRODUCT_PROFILES["cliffwater_cclfx"]
-bkln = next(c for c in menu_for("cliffwater_cclfx") if c["id"] == "bkln")
-base = score_candidate(cclfx, bkln)
-moved = score_candidate(dict(cclfx, adviser_keys=["invesco"], advisers=["Invesco"]), bkln)
-check_true("property: making the adviser the provider moves only provider_independence (2 to 0)",
-           base["score"] - moved["score"] == 2 and
+cdli_c = next(c for c in menu_for("cliffwater_cclfx") if c["id"] == "cdli")
+base = score_candidate(cclfx, cdli_c)
+moved = score_candidate(dict(cclfx, adviser_keys=["pimco"], advisers=["PIMCO"]), cdli_c)
+check_true("property: removing the mapped adviser affiliation moves only provider_independence (0 to 2)",
+           moved["score"] - base["score"] == 2 and
            {k: v for k, v in base["criteria"].items() if k != "provider_independence"}
            == {k: v for k, v in moved["criteria"].items() if k != "provider_independence"})
 pflex = PRODUCT_PROFILES["pflex"]
@@ -85,6 +95,42 @@ check_true("property: cdli is strategy 2 for a multi-sector fund and 3 once the 
 check_true("property: independence is per product (cdli 0 for cliffwater_cclfx, 2 for bcred)",
            score_candidate(cclfx, cdli)["criteria"]["provider_independence"] == 0
            and score_candidate(PRODUCT_PROFILES["bcred"], cdli)["criteria"]["provider_independence"] == 2)
+
+# --- R2-P0-2: affiliation is a fact from the registry map, never a substring ---
+from tark_benchmark import AFFILIATIONS
+urth_c = {**CANDIDATES["urth"], "id": "urth"}
+for _k in ("ares_pmf", "cion_ares"):
+    _s = score_candidate(PRODUCT_PROFILES[_k], urth_c)
+    check_true(f"{_k} x URTH: provider_independence 2/2 ('ares' inside 'ishares' is not an affiliation)",
+               _s["criteria"]["provider_independence"] == 2)
+_ark = PRODUCT_PROFILES["arkvx"]
+_pv = score_candidate(_ark, peer_candidate("peer_venture", "arkvx"))
+_ind = next(r for r in _pv["reasons"] if r.startswith("provider_independence"))
+check_true("arkvx x venture composite: the independence reason names no adviser and the evaluator's own "
+           "construct earns 1 of 2",
+           _pv["criteria"]["provider_independence"] == 1 and "constructed by the evaluator" in _ind
+           and not any(a.lower() in _ind.lower() for a in _ark["advisers"]))
+_bad_aff = []
+for _k, _pr in PRODUCT_PROFILES.items():
+    for _c in menu_for(_k) + [{**c, "id": cid} for cid, c in CANDIDATES.items()]:
+        _s = score_candidate(_pr, _c)
+        _said = any("published by the fund's own adviser" in r for r in _s["reasons"])
+        _mapped = _c.get("data") != "composite" and bool(
+            {a.strip() for a in (AFFILIATIONS.get(_c["provider_key"]) or {}).get("adviser_keys", [])}
+            & {a.strip() for a in _pr["adviser_keys"]})
+        _want = 1 if _c.get("data") == "composite" else (0 if _mapped else 2)
+        if _said != _mapped or _s["criteria"]["provider_independence"] != _want:
+            _bad_aff.append(f"{_k} x {_c['id']}")
+check_true("property: 'published by the fund's own adviser' appears only where the affiliation map says so, "
+           "composites earn 1, every product x every candidate"
+           + (": " + "; ".join(_bad_aff[:5]) if _bad_aff else ""), not _bad_aff)
+_known_pk = {c["provider_key"] for c in CANDIDATES.values()}
+_all_adv = {a.strip() for r in REGISTRY.values() for a in r["adviser_keys"]}
+check_true("affiliation map: Cliffwater is in it, every provider key is a candidate's, every adviser key is a "
+           "product's, every entry cites a source",
+           "cliffwater" in AFFILIATIONS and all(
+               pk in _known_pk and e.get("source") and e.get("adviser_keys") and set(e["adviser_keys"]) <= _all_adv
+               for pk, e in AFFILIATIONS.items()))
 
 # --- an off-menu pair scores through the same scorer (the lab's matrix) ---
 off = score_candidate(cclfx, {**CANDIDATES["spy"], "id": "spy"})
@@ -130,15 +176,25 @@ check_true("registry: every adviser key and declared benchmark name is a substri
 
 # --- selection behavior on real profiles ---
 sel_c = run_selection("cliffwater_cclfx")
-check_true("CCLFX primary is the leave-one-out peer composite (10/12), BKLN secondary (9/12)",
-           sel_c["primary"]["id"] == "peer_credit" and sel_c["primary"]["score"] == 10
+# repinned R2-P0-2: the composite earns 1 of 2 on independence (10 to 9), the
+# tie with BKLN at 9 is ordered on strategy_match
+check_true("CCLFX primary is the leave-one-out peer composite (9/12), BKLN secondary (9/12)",
+           sel_c["primary"]["id"] == "peer_credit" and sel_c["primary"]["score"] == 9
            and sel_c["secondary"]["id"] == "bkln" and sel_c["secondary"]["score"] == 9)
 check_true("CDLI rejected for cliffwater_cclfx with the adviser-owned reasoning",
            any(r["id"] == "cdli" and any("manufacturer-owned" in x for x in r["reasons"])
                for r in sel_c["rejected"]))
-check_true("CCLFX primary carries a computed composite comparison",
+check_true("CCLFX primary carries a computed composite comparison named a relative wealth ratio, never a PME",
            (sel_c["primary"].get("comparison") or {}).get("kind") == "composite"
-           and sel_c["primary"]["comparison"]["ks_pme"] > 0)
+           and sel_c["primary"]["comparison"]["relative_wealth_ratio"] > 0
+           and "ks_pme" not in sel_c["primary"]["comparison"]
+           and "direct_alpha_pct" not in sel_c["primary"]["comparison"]
+           and sel_c["primary"]["comparison"]["statistic"] == "relative wealth ratio vs peer composite"
+           and sel_c["primary"]["comparison"]["fund_return_source"] == "filed fiscal-year returns")
+check_true("CCLFX secondary (BKLN) is a KS-PME against a public market series with the Yahoo source named",
+           sel_c["secondary"]["comparison"]["kind"] == "series"
+           and sel_c["secondary"]["comparison"]["statistic"] == "KS-PME vs public market proxy"
+           and sel_c["secondary"]["comparison"]["fund_return_source"].startswith("Yahoo adjusted close"))
 sel_d = run_selection("dxyz")
 check_true("DXYZ returns NO primary (the flag path)", sel_d["primary"] is None)
 check_true("DXYZ escalates with a reasoned message",
@@ -150,9 +206,16 @@ check_true("ARKVX escalates computably: no candidate passes the gate at or above
            sel_a["primary"] is None and "strategy gate" in sel_a["escalation"]
            and "premium" not in sel_a["escalation"])
 sel_k = run_selection("kkr_kpec")
-check_true("kkr_kpec: PSP primary 9, peer composite secondary 8 with data_quality 0 (two overlapping years)",
-           sel_k["primary"]["id"] == "psp_k" and sel_k["secondary"]["id"] == "peer_kpec"
-           and sel_k["secondary"]["criteria"]["data_quality"] == 0)
+# repinned R2-P0-2: the composite (7, data_quality 0 on two overlapping years,
+# independence 1) is rejected and the Cambridge PE benchmark (7, cited) is the
+# secondary, ordered ahead on strategy_match
+_kpec_peer = next(r for r in sel_k["rejected"] if r["id"] == "peer_kpec")
+check_true("kkr_kpec: PSP primary 9, Cambridge PE secondary 7 (cited, no comparison), peer composite rejected "
+           "at 7 with data_quality 0 (two overlapping years) and independence 1",
+           sel_k["primary"]["id"] == "psp_k" and sel_k["secondary"]["id"] == "cambridge_pe_k"
+           and sel_k["secondary"]["score"] == 7 and sel_k["secondary"].get("comparison") is None
+           and _kpec_peer["score"] == 7 and _kpec_peer["criteria"]["data_quality"] == 0
+           and _kpec_peer["criteria"]["provider_independence"] == 1)
 sel_h = run_selection("hl_paf")
 check_true("hl_paf: declared S&P 500 and MSCI World are Lane A, scored, and fail the gate",
            {d["candidate_id"] for d in sel_h["declared_benchmarks"]} == {"spy", "urth"}
@@ -262,9 +325,17 @@ for sp in sorted(bench_dir.glob("*_selection.json")):
             d0, d1 = comp["window"].split(" to ")
             if not (ser[0][0] <= d0 < d1 <= ser[-1][0]):
                 outside.append(f"{key}/{slot}: {comp['window']} vs {ser[0][0]}..{ser[-1][0]}")
-        if abs(comp["ks_pme"] - comp["fund_growth_x"] / comp["index_growth_x"]) > 2e-3:
-            broken_identity.append(f"{key}/{slot}: {comp['ks_pme']} vs "
+        stat = comp["ks_pme"] if comp["kind"] == "series" else comp["relative_wealth_ratio"]
+        if abs(stat - comp["fund_growth_x"] / comp["index_growth_x"]) > 2e-3:
+            broken_identity.append(f"{key}/{slot}: {stat} vs "
                                    f"{comp['fund_growth_x']}/{comp['index_growth_x']}")
+        # rule 12: the keys and the statistic name follow the comparator
+        if comp["kind"] == "composite" and ("ks_pme" in comp or "direct_alpha_pct" in comp
+                                            or not comp["statistic"].startswith("relative wealth ratio")
+                                            or "PME" in json.dumps({k2: v for k2, v in comp.items() if k2 != "not_pme_note"})):
+            broken_identity.append(f"{key}/{slot}: composite comparison carries a PME name")
+        if comp["kind"] == "series" and not (comp["statistic"].startswith("KS-PME") and comp.get("fund_return_source")):
+            broken_identity.append(f"{key}/{slot}: series comparison lacks its statistic name or fund return source")
         if key in DISCLOSED_ANNUALIZED and comp.get("kind") == "series":
             if abs(comp["fund_ann_pct"] - DISCLOSED_ANNUALIZED[key]) > 0.005:
                 ann_bad.append(f"{key}/{slot}: disclosed {DISCLOSED_ANNUALIZED[key]} printed as {comp['fund_ann_pct']}")
@@ -284,7 +355,8 @@ for sp in sorted(bench_dir.glob("*_selection.json")):
             sched_bad.append(f"{key}/{slot}: schedule row malformed")
 check_true("every committed series comparison window lies inside its proxy's coverage"
            + (": " + "; ".join(outside) if outside else ""), not outside)
-check_true("two-point identity: KS-PME equals fund growth over index growth on every committed comparison"
+check_true("two-point identity: the statistic equals fund growth over comparator growth on every committed comparison, "
+           "and it is named for its comparator (rule 12)"
            + (": " + "; ".join(broken_identity) if broken_identity else ""), not broken_identity)
 check_true("annualized figures are the day count of the effective window (disclosed figures print as disclosed)"
            + (": " + "; ".join(ann_bad) if ann_bad else ""), not ann_bad)

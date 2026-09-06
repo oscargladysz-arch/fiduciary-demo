@@ -80,6 +80,7 @@
       "value": 4.53,
       "source_cell": "2.3",
       "note": "FY2025, of average net assets",
+      "basis": "of average net assets (FY2025)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {
@@ -107,6 +108,24 @@
       "value": null,
       "source_cell": "3.1",
       "reason": "exchange-listed, no repurchase program",
+      "status": "extracted-unverified"
+    },
+    "dealing_cadence": {
+      "value": "exchange",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'daily on-exchange liquidity' and 'no fund-level repurchase program'",
+      "status": "extracted-unverified"
+    },
+    "cap_period": {
+      "value": null,
+      "source_cell": "3.1",
+      "reason": "on-exchange liquidity with no fund-level cap",
+      "status": "extracted-unverified"
+    },
+    "repurchase_caps": {
+      "value": null,
+      "source_cell": "3.1",
+      "reason": "on-exchange liquidity with no fund-level cap",
       "status": "extracted-unverified"
     },
     "track_record_years": {
@@ -144,13 +163,25 @@
       "status": "computed",
       "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
     },
-    "pme_primary": {
+    "pme_public_proxy": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
       "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
     },
-    "direct_alpha_primary": {
+    "pme_public_proxy_name": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "direct_alpha_public_proxy": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+    },
+    "peer_relative_wealth_ratio": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",

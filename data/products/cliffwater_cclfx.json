@@ -77,22 +77,22 @@
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": "KS-PME 0.9756 and Direct Alpha -0.61%/yr vs Peer cohort composite: private_credit without cliffwater_cclfx (bcred, cion_ares, ocic, pflex) over FY2021 to FY2025 (composite comparison, 4 overlapping fiscal year(s) of 5 composite years). Fund growth 1.4945x vs benchmark 1.5318x on two-point flows (one contribution at the window start, one valuation at the end). The fund lagged the benchmark over this window. aligned by fiscal year-end year. Members' fiscal years end in month 06 (pflex), 12 (bcred, cion_ares, ocic), the fund's in month 03. Composite year(s) 2022 skipped: the fund has no whole fiscal year with that label (stub or partial period excluded). Secondary Senior loan investable proxy (BKLN, for Morningstar LSTA class): KS-PME 1.2532, Direct Alpha +3.22%/yr over 2019-06-05 to 2026-07-17. ILLUSTRATIVE monthly-schedule KS-PME 1.1224 (86 equal contributions), the two-point figure is primary. Window-sensitive: PME and alpha on appraisal-lagged NAVs move with the window (methodology section 3).",
+      "value": "Primary Peer composite, private credit cohort without Cliffwater Corporate Lending Fund (members: Blackstone Private Credit Fund, CION Ares Diversified Credit Fund, Blue Owl Credit Income Corp., PIMCO Flexible Credit Income Fund): relative wealth ratio 0.9756 over FY2021 to FY2025 (4 overlapping fiscal year(s) of 5 composite years), fund growth 1.4945x / peer composite growth 1.5318x on two-point flows, annualized excess return -0.61%/yr, fund return source: filed fiscal-year returns. Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought. Alignment: aligned by fiscal year-end year. Members' fiscal years end in month 06 (pflex), 12 (bcred, cion_ares, ocic), the fund's in month 03. Composite year(s) 2022 skipped: the fund has no whole fiscal year with that label (stub or partial period excluded). Secondary Senior loan investable proxy (BKLN, for Morningstar LSTA class): KS-PME 1.2532 and Direct Alpha +3.22%/yr over 2019-06-05 to 2026-07-17 (series comparison), fund growth 1.7165x vs proxy growth 1.3697x on two-point flows (one contribution at the window start, one valuation at the end), fund return source: Yahoo adjusted close, approximates NAV total return. The fund led the public proxy over this window. ILLUSTRATIVE monthly-schedule KS-PME 1.1224 vs Senior loan investable proxy (BKLN, for Morningstar LSTA class) (86 equal contributions), the two-point figure is primary. Window-sensitive: every figure on appraisal-lagged NAVs moves with the window (methodology section 3).",
       "status": "computed",
-      "source": "data/benchmarks/cliffwater_cclfx_selection.json",
-      "section": "primary.comparison, secondary.comparison",
+      "source": "benchmark selection artifact (Cliffwater Corporate Lending Fund)",
+      "section": "primary and secondary comparisons",
       "quote": "",
-      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
-      "value": "Computed stress-window performance from data/series/cclfx.csv (adjusted close, distributions reinvested). CY2022 rate shock: total return 2.05%, max drawdown -2.71%. COVID (Feb to Apr 2020): total return -1.18%, max drawdown -3.91%. Worst full-history peak-to-trough -3.91%.",
+      "value": "Computed stress-window performance from the held daily series (adjusted close, distributions reinvested). CY2022 rate shock: total return 2.05%, max drawdown -2.71%. COVID (Feb to Apr 2020): total return -1.18%, max drawdown -3.91%. Worst full-history peak-to-trough -3.91%.",
       "status": "computed",
-      "source": "data/analytics/supplement.json",
-      "section": "stress_windows.cliffwater_cclfx",
+      "source": "analytics supplement artifact (stress windows)",
+      "section": "stress windows for this product",
       "quote": "",
-      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "1.10": {
@@ -187,12 +187,12 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Cohort placement (private_credit, R4 phrasing): mgmt fee: 10th percentile of cohort (n=5), below the median of 1.25 | expense ratio (bases differ, see notes): 10th percentile of cohort (n=5), below the median of 3.76 | repurchase cap: 50th percentile of cohort (n=5), at the median of 5. Stats and per-member values in data/cohorts/private_credit.json, membership rationales in data/facts.",
+      "value": "Cohort placement (private credit cohort): mgmt fee: 10th percentile of cohort (n=5), below the median of 1.25 | expense ratio (bases differ, see notes): 10th percentile of cohort (n=5), below the median of 3.76 | repurchase cap: 50th percentile of cohort (n=5), at the median of 5. Statistics and per-member values are in the cohort artifact, membership rationales in the typed facts.",
       "status": "computed",
-      "source": "data/cohorts/private_credit.json",
-      "section": "stats block (R4 phrasing by tark_cohort.percentile_of)",
+      "source": "cohort artifact (private credit cohort)",
+      "section": "statistics (mid-rank percentile phrasing)",
       "quote": "",
-      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "2.10": {
@@ -227,7 +227,7 @@
     },
     "3.3": {
       "element": "Repurchase history",
-      "value": "STRUCTURED SERIES FETCHED: 8 quarterly N-23C3A filings (2024-07 to 2026-05) in data/raw/cliffwater_cclfx/",
+      "value": "STRUCTURED SERIES FETCHED: 8 quarterly N-23C3A filings (2024-07 to 2026-05) in the fund's raw filing folder",
       "status": "fetched-series, extraction pending"
     },
     "3.4": {
@@ -269,20 +269,20 @@
       "element": "Redemption stress test",
       "value": "ILLUSTRATIVE redemption stress test (computed for all four reference plans): tail turnover x2, active turnover x1.5 vs base scenario, default sliders allocation 5% of plan, tail turnover 20%/yr, active turnover 5%/yr. Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): stressed demand 26.4% of the position vs 20% annual wrapper capacity, EXCEEDS annual wrapper capacity. Unmet demand rolls into later windows (gating-equivalent outcome). US industrial manufacturer 401(k) plan (~$0.8B, OH): stressed demand 12.3% of the position vs 20% annual wrapper capacity, within wrapper capacity (12.3% vs 20%) IF offers are not prorated. US casual-dining restaurant group 401(k) plan (~$1.6B, FL): stressed demand 16.7% of the position vs 20% annual wrapper capacity, within wrapper capacity (16.7% vs 20%) IF offers are not prorated. US media/technology company 401(k) plan (~$570M, New York): stressed demand 19.2% of the position vs 20% annual wrapper capacity, within wrapper capacity (19.2% vs 20%) IF offers are not prorated. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
       "status": "computed",
-      "source": "data/liquidity/plan_consulting_alumni__cliffwater_cclfx_match.json",
-      "section": "stressed_scenario and scenario across the four plan match files",
+      "source": "liquidity match artifacts (Cliffwater Corporate Lending Fund, four reference plans)",
+      "section": "stressed scenario and scenario across the four plan match files",
       "quote": "",
-      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Structural liquidity verdict PARTIAL (typed facts, cells 3.1, 3.3, 2.7, plan-independent, facts missing: gate_history). Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): conditional-weak, US industrial manufacturer 401(k) plan (~$0.8B, OH): conditional, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): conditional, US media/technology company 401(k) plan (~$570M, New York): conditional. STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed). A trustee-directed sleeve could hold this wrapper directly, and the daily-menu constraint (this wrapper deals 4x/year) applies only to the participant-directed portion (cell 3.5). Facts missing for a structural verdict: gate_history (N-23C3A filings are offer NOTIFICATIONS, not results. Per-offer proration outcomes not yet evidenced). The verdict stays partial until they are typed from the filings. Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts and on the Liquidity view.",
+      "value": "Structural liquidity verdict PARTIAL (typed facts, cells 3.1, 3.3, 2.7, plan-independent, facts missing: gate_history). Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): conditional-weak, US industrial manufacturer 401(k) plan (~$0.8B, OH): conditional, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): conditional, US media/technology company 401(k) plan (~$570M, New York): conditional. STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed). A trustee-directed sleeve could hold this wrapper directly (cell 3.5), and the daily-menu constraint applies only to the participant-directed portion, where the menu assumes daily liquidity whereas this wrapper deals quarterly with a 5% cap per quarter on outstanding shares. Facts missing for a structural verdict: gate_history (N-23C3A filings are offer NOTIFICATIONS, not results. Per-offer proration outcomes not yet evidenced). The verdict stays partial until they are typed from the filings. Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts and on the Liquidity view.",
       "status": "computed",
-      "source": "data/liquidity/plan_consulting_alumni__cliffwater_cclfx_match.json",
-      "section": "verdict, scenario_verdict, missing_facts, structural_reasons across the four plan match files",
+      "source": "liquidity match artifacts (Cliffwater Corporate Lending Fund, four reference plans)",
+      "section": "verdict, scenario verdict, missing facts and structural reasons across the four plan match files",
       "quote": "",
-      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "4.1": {
@@ -337,7 +337,7 @@
     },
     "4.6": {
       "element": "NAV restatement history",
-      "value": "None identified: searched 'restat', 'error correction', and 'reprocess' across ccl_ncsr.txt (N-CSR FY2026), ccl_486bpos.txt (486BPOS 2025-07-29), ccl_424b3.txt (424B3 2025-08-12), ccl_n23c3a_20260508.txt (N-23C3A 2026-05-08), and grepped all 12 raw HTML/XML files under data/raw/cliffwater_cclfx/ (including the seven other N-23C3A filings and NPORT-P); the only 'restat' hits are 'Amended and Restated' document titles — the Agreement and Declaration of Trust as amended and restated September 15, 2021 (in the N-CSR, 486BPOS, and 424B3) plus, in the 486BPOS Part C exhibit list, the Amended and Restated By-Laws, the Amended and Restated Administration, Fund Accounting and Recordkeeping Agreement, and the Amended and Restated Expense Limitation and Reimbursement Agreement. No NAV restatement, error-correction, or reprocessing language found; the N-CSR's only 'misstatement' references are standard PCAOB auditor's-report boilerplate. Quote below is the Fund's NAV-calculation sentence (no restatement disclosure exists to quote).",
+      "value": "None identified: searched 'restat', 'error correction', and 'reprocess' across ccl_ncsr.txt (N-CSR FY2026), ccl_486bpos.txt (486BPOS 2025-07-29), ccl_424b3.txt (424B3 2025-08-12), ccl_n23c3a_20260508.txt (N-23C3A 2026-05-08), and grepped all 12 raw HTML/XML filings on disk for this fund (including the seven other N-23C3A filings and NPORT-P); the only 'restat' hits are 'Amended and Restated' document titles — the Agreement and Declaration of Trust as amended and restated September 15, 2021 (in the N-CSR, 486BPOS, and 424B3) plus, in the 486BPOS Part C exhibit list, the Amended and Restated By-Laws, the Amended and Restated Administration, Fund Accounting and Recordkeeping Agreement, and the Amended and Restated Expense Limitation and Reimbursement Agreement. No NAV restatement, error-correction, or reprocessing language found; the N-CSR's only 'misstatement' references are standard PCAOB auditor's-report boilerplate. Quote below is the Fund's NAV-calculation sentence (no restatement disclosure exists to quote).",
       "status": "extracted-unverified",
       "source": "486BPOS prospectus dated July 29, 2025, filed 2025-07-29",
       "section": "CALCULATION OF NET ASSET VALUE – GENERAL (absence search across all on-disk Cliffwater CCLFX filings)",
@@ -392,42 +392,42 @@
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": "Benchmark candidates evaluated by the engine (rubric v2, threshold 7 of 12, strategy gate below 2 of 3 ineligible). PRIMARY Peer cohort composite: private_credit without cliffwater_cclfx (bcred, cion_ares, ocic, pflex) 10/12 (C lane). SECONDARY Senior loan investable proxy (BKLN, for Morningstar LSTA class) 9/12 (B lane). REJECTED Cliffwater Direct Lending Index (CDLI) 5/12 (B lane): score 5/12 below primary threshold 7. Fund-declared benchmark: none (cell 5.1: the fund expressly declares no designated performance benchmark).",
+      "value": "Benchmark candidates evaluated by the engine (Tark benchmark rubric, 12 points, threshold 7 of 12, strategy gate below 2 of 3 ineligible). PRIMARY Peer composite, private credit cohort without Cliffwater Corporate Lending Fund (members: Blackstone Private Credit Fund, CION Ares Diversified Credit Fund, Blue Owl Credit Income Corp., PIMCO Flexible Credit Income Fund) 9/12 (peer composite constructed by the evaluator). SECONDARY Senior loan investable proxy (BKLN, for Morningstar LSTA class) 9/12 (third-party index or investable proxy). REJECTED Cliffwater Direct Lending Index (CDLI) 5/12 (third-party index or investable proxy): score 5/12 below primary threshold 7. Fund-declared benchmark: none (cell 5.1: the fund expressly declares no designated performance benchmark).",
       "status": "computed",
-      "source": "data/benchmarks/cliffwater_cclfx_selection.json",
-      "section": "primary, secondary, rejected, declared_benchmarks",
+      "source": "benchmark selection artifact (Cliffwater Corporate Lending Fund)",
+      "section": "primary, secondary, rejected and declared benchmarks",
       "quote": "",
-      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort private_credit (n=5: cliffwater_cclfx, bcred, pflex, cion_ares, ocic). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2021 (n=5), 2022 (n=5), 2023 (n=5), 2024 (n=5), 2025 (n=5). Wrapper types in the cohort: interval_23c3, nontraded_bdc. Cross-wrapper differences are disclosed in the cohort caveat block (3 caveats). Membership rationales are in data/facts, exclusions in data/roster_decisions.md.",
+      "value": "Peer cohort: private credit cohort (n=5: Cliffwater Corporate Lending Fund, Blackstone Private Credit Fund, PIMCO Flexible Credit Income Fund, CION Ares Diversified Credit Fund, Blue Owl Credit Income Corp.). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2021 (n=5), 2022 (n=5), 2023 (n=5), 2024 (n=5), 2025 (n=5). Wrapper types in the cohort: interval fund (Rule 23c-3), non-traded BDC. Cross-wrapper differences are disclosed in the cohort caveat block (3 caveats). Membership rationales and exclusions are in the roster decisions record.",
       "status": "computed",
-      "source": "data/cohorts/private_credit.json",
-      "section": "members, composite and caveats blocks",
+      "source": "cohort artifact (private credit cohort)",
+      "section": "members, composite and caveats",
       "quote": "",
-      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": "PME inputs (computed, primary comparison vs Peer cohort composite: private_credit without cliffwater_cclfx (bcred, cion_ares, ocic, pflex)): window FY2021 to FY2025 (composite comparison, 4 overlapping fiscal year(s) of 5 composite years). Fund growth 1.4945x vs benchmark growth 1.5318x, flows = one contribution of 1 at the window start and the terminal growth at the end, benchmark series composite:private_credit. KS-PME 0.9756 = fund growth / benchmark growth. Direct Alpha -0.61%/yr is the annualized form of the same two flows (fund 10.57%/yr vs benchmark 11.25%/yr). aligned by fiscal year-end year. Members' fiscal years end in month 06 (pflex), 12 (bcred, cion_ares, ocic), the fund's in month 03. Composite year(s) 2022 skipped: the fund has no whole fiscal year with that label (stub or partial period excluded).",
+      "value": "PME inputs (computed, public market proxy Senior loan investable proxy (BKLN, for Morningstar LSTA class), secondary slot): window 2019-06-05 to 2026-07-17 (series comparison). Fund growth 1.7165x vs proxy growth 1.3697x, flows = one contribution of 1 at the window start and the terminal growth at the end, fund return source: Yahoo adjusted close, approximates NAV total return. KS-PME 1.2532 = fund growth / proxy growth. Direct Alpha +3.22%/yr is the annualized form of the same two flows (fund 7.89%/yr vs proxy 4.52%/yr). ILLUSTRATIVE monthly-schedule KS-PME 1.1224 (86 equal contributions at the window start and each month-end inside it, valued at the window end). Peer comparison inputs (Peer composite, private credit cohort without Cliffwater Corporate Lending Fund (members: Blackstone Private Credit Fund, CION Ares Diversified Credit Fund, Blue Owl Credit Income Corp., PIMCO Flexible Credit Income Fund), primary slot): relative wealth ratio 0.9756 = fund growth 1.4945x / peer composite growth 1.5318x over FY2021 to FY2025, fund return source: filed fiscal-year returns. Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought. Alignment: aligned by fiscal year-end year. Members' fiscal years end in month 06 (pflex), 12 (bcred, cion_ares, ocic), the fund's in month 03. Composite year(s) 2022 skipped: the fund has no whole fiscal year with that label (stub or partial period excluded).",
       "status": "computed",
-      "source": "data/benchmarks/cliffwater_cclfx_selection.json",
-      "section": "primary.comparison",
+      "source": "benchmark selection artifact (Cliffwater Corporate Lending Fund)",
+      "section": "primary and secondary comparisons",
       "quote": "",
-      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": "Benchmark suitability (rubric v2, engine output). Primary Peer cohort composite: private_credit without cliffwater_cclfx (bcred, cion_ares, ocic, pflex) (C lane) scored 10/12 with a composite comparison over FY2021 to FY2025: KS-PME 0.9756, Direct Alpha -0.61%/yr. Secondary Senior loan investable proxy (BKLN, for Morningstar LSTA class) scored 9/12. Max attainable on held data 10/12. Declared benchmark: none (cell 5.1: the fund expressly declares no designated performance benchmark). Rejected: 1 candidates, each with its reason in the ledger. Methodology: docs/benchmark_methodology.md.",
+      "value": "Benchmark suitability (Tark benchmark rubric, 12 points). Primary Peer composite, private credit cohort without Cliffwater Corporate Lending Fund (members: Blackstone Private Credit Fund, CION Ares Diversified Credit Fund, Blue Owl Credit Income Corp., PIMCO Flexible Credit Income Fund) (peer composite constructed by the evaluator) scored 9/12 with a relative wealth ratio vs peer composite over FY2021 to FY2025: relative wealth ratio 0.9756, annualized excess return -0.61%/yr. Secondary Senior loan investable proxy (BKLN, for Morningstar LSTA class) scored 9/12. Max attainable on held data 9/12. Declared benchmark: none (cell 5.1: the fund expressly declares no designated performance benchmark). Rejected: 1 candidates, each with its reason in the ledger. The scoring rules are in the benchmark methodology document.",
       "status": "computed",
-      "source": "data/benchmarks/cliffwater_cclfx_selection.json",
-      "section": "primary, secondary, escalation, max_attainable, declared_benchmarks, rejected",
+      "source": "benchmark selection artifact (Cliffwater Corporate Lending Fund)",
+      "section": "primary, secondary, escalation, maximum attainable, declared benchmarks, rejected",
       "quote": "",
-      "extracted_by": "src/write_computed_cells.py (as-of 2026-09-04)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.7": {

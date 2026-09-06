@@ -6,33 +6,37 @@
     "5.1"
   ],
   "rubric_version": "v2",
-  "rubric": "rubric v2: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
-  "max_attainable": 10,
+  "rubric": "Tark benchmark rubric, 12 points: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
+  "max_attainable": 9,
   "declared_benchmarks": [],
   "declared_none_reason": "cell 5.1: documented absence, zero index references",
   "primary": {
-    "candidate": "Peer cohort composite: private_credit without bcred (cion_ares, cliffwater_cclfx, ocic, pflex)",
+    "candidate": "Peer composite, private credit cohort without Blackstone Private Credit Fund (members: CION Ares Diversified Credit Fund, Cliffwater Corporate Lending Fund, Blue Owl Credit Income Corp., PIMCO Flexible Credit Income Fund)",
     "id": "peer_credit",
     "lane": "C",
-    "score": 10,
+    "score": 9,
     "max": 12,
     "criteria": {
       "strategy_match": 3,
       "risk_liquidity_match": 2,
       "investability": 2,
       "data_quality": 1,
-      "provider_independence": 2
+      "provider_independence": 1
     },
     "series_id": "composite:private_credit",
     "reasons": [
-      "strategy_match 3/3: same asset class and sub-strategy (private_credit / direct_lending)",
+      "strategy_match 3/3: same asset class and sub-strategy (private credit / direct lending)",
       "risk_liquidity_match 2/3: NAV-class series, members span more than one leverage regime",
       "investability 2/2: computable on held data (cohort composite from filings)",
       "data_quality 1/2: annual composite with 5 overlapping fiscal years",
-      "provider_independence 2/2: provider unaffiliated with the fund (constructed (Tark cohort engine, leave-one-out))"
+      "provider_independence 1/2: constructed by the evaluator from the roster, not a third-party index. A composite the evaluator built from a roster the evaluator chose is not an independent yardstick, so it earns at most 1 of 2"
     ],
     "comparison": {
       "kind": "composite",
+      "statistic": "relative wealth ratio vs peer composite",
+      "comparator_kind": "appraisal-based peer composite constructed by the evaluator, not a market series",
+      "fund_return_source": "filed fiscal-year returns",
+      "not_pme_note": "Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought.",
       "window": "FY2021 to FY2025",
       "window_note": "5 overlapping fiscal year(s) of 5 composite years",
       "fund_window": "FY2021 to FY2025",
@@ -96,8 +100,8 @@
       ],
       "fund_growth_x": 1.5998,
       "index_growth_x": 1.4815,
-      "ks_pme": 1.0798,
-      "direct_alpha_pct": 1.55,
+      "relative_wealth_ratio": 1.0798,
+      "excess_return_pct": 1.55,
       "fund_ann_pct": 9.85,
       "index_ann_pct": 8.18,
       "low_confidence": null
@@ -194,10 +198,13 @@
       "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
       "investability 2/2: computable on held data (daily series)",
       "data_quality 2/2: daily series held",
-      "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Morningstar LSTA class)"
+      "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Morningstar LSTA class): the registry affiliation map ties it to none of the fund's advisers"
     ],
     "comparison": {
       "kind": "series",
+      "statistic": "KS-PME vs public market proxy",
+      "comparator_kind": "public market series (exchange-traded proxy, Yahoo adjusted close)",
+      "fund_return_source": "filed fiscal-year returns",
       "window": "2021-01-07 to 2025-12-31",
       "window_note": "",
       "fund_window": "2021-01-07 to 2025-12-31",
@@ -227,13 +234,13 @@
       },
       "series_id": "cited:cdli",
       "reasons": [
-        "strategy_match 3/3: same asset class and sub-strategy (private_credit / direct_lending)",
+        "strategy_match 3/3: same asset class and sub-strategy (private credit / direct lending)",
         "risk_liquidity_match 2/3: NAV-class series, quarterly observations vs the fund's annual return data and an index, not a fund set, so leverage regime is not comparable",
         "investability 0/2: index cited, series not held, not computable",
         "data_quality 0/2: cited, not computed",
-        "provider_independence 2/2: provider unaffiliated with the fund (Cliffwater)"
+        "provider_independence 2/2: provider unaffiliated with the fund (Cliffwater): the registry affiliation map ties it to none of the fund's advisers"
       ],
-      "rejection": "outranked: score 7/12 vs primary 10/12 and secondary 9/12 (only two slots). Retained in log as viable alternate"
+      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 9/12 (only two slots). Retained in log as viable alternate"
     }
   ],
   "secondary_note": null,

@@ -1235,3 +1235,409 @@ detail with EDGAR links rides there, total payload 2,283,031 against
 the 2,400,000 cap), census chunk 303,113 bytes, 128 build-side
 documents. Record totals unchanged since P1 exit. Not green here and
 therefore P3 stays a plan: P2-3 and P2-4 (decision 6.24).
+
+## 7. Round 2 (2026-09)
+
+Specification: `docs/GAP_ANALYSIS_2026-09-05.md` (46 findings, every one
+reproduced by the auditor on the live site, recomputed from `data/`, or
+checked live against EDGAR and the Federal Register API). Where the round-2
+brief and the audit disagree on a detail, the audit wins and the
+discrepancy is written here. Entries 7.1 and 7.2 were decided by Oscar on
+2026-09-05 and are not defaults. Entries 7.3 to 7.6 are defaults taken by
+the engineer and reversible by Oscar. Later entries are appended as the
+work lands, each with its task id.
+
+### 7.1 Decided: benchmark architecture v3, Slot K and Slot G
+Every card, memo and record carries two explicit comparisons that satisfy
+different paragraphs of the rule and are named as such. Slot K, "Meaningful
+benchmark (paragraph (k))": the fund's declared benchmark (Lane A),
+exchange-traded strategy proxies (Lane B) and published strategy indices
+(Lane P: CDLI, NFI-ODCE, Cambridge, Burgiss, LSTA, Credit Suisse Leveraged
+Loan). A candidate with a public market price series gets a PME. A
+candidate with an appraisal-based published series gets a relative wealth
+ratio and an excess return on calendar-quarter aligned periods. A candidate
+that is cited but not held gets no number and says so. Slot G, "Peer
+comparison (paragraphs (g) and (h))": the cohort, members side by side over
+identical calendar periods with n per period, an equal-weight composite
+only where every member has the period, a relative wealth ratio for the
+fund versus that composite, a survivorship sentence and a heterogeneity
+sentence. Slot G is never "the benchmark" and never a PME. Not reopened in
+this engagement. Implemented in R2-P1-A.
+
+### 7.2 Decided: acquire the public CDLI and NFI-ODCE headline series
+Oscar's instruction: whatever makes the product most usable. CDLI quarterly
+headline returns from Cliffwater's published index page and NFI-ODCE
+quarterly headline returns from NCREIF's published releases, each with a
+manifest row (URL, fetch date, license note), into
+`data/series_quarterly/idx_cdli.csv` and `idx_odce.csv`. If a source forbids
+automated access, download once by hand and record the URL and date.
+Cambridge and Burgiss stay cite-only until a license exists. If a public
+series turns out to be unavailable without a license, the report says so
+and the cite-only path stays. The composite is never substituted.
+Constraint recorded on 2026-09-05: the build container reaches neither
+cliffwaterdirectlendingindex.com nor ncreif.org (CONNECT 403 at the egress
+proxy, section 7.8), so the fetch runs on a networked machine in R2-P1-1.
+
+### 7.3 Default: demo script v8 for Tuesday speaks no composite number
+v8 speaks no composite number and no PME number without the data-source
+caveat ("Yahoo adjusted close, approximates NAV total return"). BKLN and PSP
+comparisons are spoken with that caveat. The sreit misaligned verdict is
+spoken. The Authority panel is opened only if the verbatim rule text is in
+the build. The closing table is re-derived and Tier 1 of the verification
+queue is re-derived from it. Reverse by: edit `docs/demo_script.md`.
+
+### 7.4 Default: the verification gate admits a human signature (rule 16)
+The invariant "verified = 0" is replaced in R2-P2-1 by "every verified row
+has a signer that is not a script, an ISO date, and was written by
+`verify_cell.py` (a marker in `verified_by`)". Zero is the current count,
+pinned as a snapshot that any signature may move. Until R2-P2-1 lands the
+existing pin stays, and no cell is signed by anyone in this engagement.
+
+### 7.5 Default: sponsor identity leaves tracked files in R2-P3-2, no history rewrite
+`identity_private` blocks move to an untracked encrypted file or a private
+repository read by `src/tark_anon.py` at build time. Git history still
+contains the blocks. A history purge is a separate decision for Oscar and
+is not taken here.
+
+### 7.6 Default: the service stays local-only for October
+Bearer-token authentication from the environment, CORS restricted to the
+site origin, each job in a temporary clone producing a patch a human
+applies, a job table with status, a failed job never marking the census
+entity evaluated. Not hosted unless Oscar decides otherwise.
+
+### 7.7 Discrepancy: branch name
+The brief names `remediation-r2-2026-09`. The session harness assigns
+`claude/tark-round-2-audit-jl9q4q` and forbids pushing elsewhere. Work is
+on the assigned branch. Oscar can rename or re-point the pull request.
+
+### 7.8 Environment facts that constrain round 2 (2026-09-05)
+Blocked at the egress proxy (CONNECT 403): `www.sec.gov`, `data.sec.gov`,
+`www.federalregister.gov`, `query1.finance.yahoo.com`,
+`www.cliffwaterdirectlendingindex.com`, `www.ncreif.org`,
+`askebsa.dol.gov`, `www.supremecourt.gov`, `oscargladysz-arch.github.io`.
+Open: `api.github.com`, PyPI, the Anthropic API host. No
+`ANTHROPIC_API_KEY`. `data/raw/` absent. Consequences, each recorded where
+it bites: the HTTP 200 check of the Tier 1 EDGAR URLs (R2-P0-10) cannot run
+from this container and is recorded as such in `docs/DEPLOY_LOG.md` for a
+person on a networked machine, the CDLI and ODCE fetch (R2-P1-1), the
+Schedule H bulk file (R2-P1-10), the case-law documents (R2-P1-14), the
+authority text (R2-P1-16), calibration and the 17th product (R2-P2-7,
+R2-P2-8) all need a networked machine. Nothing is faked in their place.
+Playwright: the venv pins 1.56.0 to match the shipped Chromium build 1194.
+
+### 7.9 Baseline recorded 2026-09-05 (before any round-2 change)
+Branch `claude/tark-round-2-audit-jl9q4q` at `4519e61` (main `3d158ff` plus
+the round-2 audit document). `sh hooks/pre-commit`: 18 gates, exit 0, 849
+`[PASS]` lines plus the validators' `[ok]` lines, wall time 107 seconds
+(1m47s real, of which the frontend gate is about 70 seconds). The audit
+counted 657 + 216 checks with a different convention (per-gate printed
+counts). Record totals: 406 extracted-unverified, 205 n/a, 161 computed,
+75 partial, 16 fetched, 1 structured, 0 verified, 0 pending, 864 cells.
+Bundle: `site/data.js` 1,035,854 bytes, census chunk 303,090 bytes, 64
+memos and 64 packets. Screenshots: `docs/screenshots/baseline_r2/`, the
+same 42 views as `docs/screenshots/after_2026-09/` (hl_paf, cion_ares,
+sreit, jll_ipt under the tech/media plan, product-independent views once),
+8.5 MB.
+
+### 7.10 R2-P0-1: accessions come from the manifest, and only from it
+- The eight hl_paf citations (cells 1.1, 1.2, 2.1, 2.3, 2.7, 3.6, 4.2, 4.5)
+  wrote `0001213900-26-054176*` (the July spike placeholder, HTTP 404 on
+  EDGAR per the audit). The manifest's N-CSR filed 2026-06-09 for CIK
+  1803491 is `0001213900-26-066804` (primary document
+  `ea0291054-01_ncsr.htm`). The citation text and the product JSON source
+  now carry the manifest accession. Eight source_doc and eight accession
+  cells are allowlisted with the reason, and the eight accession changes
+  are in the corrections table (old 054176, new 066804, cause "R2-P0-1:
+  July spike placeholder accession"). No value, quote or status moved.
+- The resolver's `accession_in_text` match type is retired. An accession
+  written in a citation resolves only when the manifest holds it for that
+  product. When the manifest holds a filing of that form on the written
+  date and the written number differs, the manifest row resolves the
+  reference and the row carries a `conflict` field that the invariants
+  gate fails on. A written number the manifest does not hold resolves
+  nothing and gets no URL. `validate_accessions` refuses an accession in
+  the accession column or in any citation text that is not a manifest row
+  for the product (the "or written in its citation" escape is gone).
+- The accession column of every evidence row is now a watched number in
+  the corrections log (surface: citation drawer EDGAR link, memo
+  provenance table, packet provenance), so a changed accession is logged
+  like a changed figure.
+- The one other `accession_in_text` reference, cion_ares 4.6 (the N-CEN
+  structured-dataset flag, status structured, T1), cites
+  `0001049169-26-000801`. That accession is the census record's `ncen.ref`
+  for CIK 1678124 (period 31-DEC-2025) from the SEC N-CEN structured
+  dataset. The manifest gains a row for it (doc_set
+  `structured_dataset_ncen`, form N-CEN, URL the EDGAR folder built from
+  the CIK and the accession). Its filing date and primary document are not
+  in the record and are left empty rather than guessed, and no document is
+  held on disk (local_path empty). The ingest reads only manifest rows that
+  name a local file. The URL was not HTTP-checked from this container
+  (section 7.8). Reverse by: delete the row, and the cell's accession column
+  empties with the reason "not a manifest row".
+- "Every EDGAR URL in the bundle is built from the product's CIK and a
+  manifest accession" is asserted twice: in `test_invariants` over
+  `data/citations/` (the bundle's only source of EDGAR links, before the
+  build) and in `reconcile` over the built `TARK_EVIDENCE` chunk (after the
+  build). The invariants gate runs before `build_site` in the hook, so the
+  bundle itself can only be checked after it.
+- The local `origin/main` ref was stale at baseline (3d9b93e, the
+  pre-merge main), so the immutability and corrections gates at baseline
+  diffed against round 1's base. After `git fetch origin main` the ref is
+  `4519e61` (main after PR #1 plus the audit upload), and both gates are
+  re-run against it: the round-1 rows stay in the table as history, the
+  round-2 rows are attributed to their task ids.
+
+### 7.11 R2-P0-2: affiliation is a fact from a map, and a composite is not a third party
+- `provider_independence` no longer tests substrings. `data/registry.json`
+  gains an `affiliations.providers` block: provider entity key to adviser
+  entity keys, each entry cited to the registry's adviser entries. Today
+  it holds one entry, Cliffwater (publisher of CDLI, adviser of
+  cliffwater_cclfx). Nothing else is affiliated. "Published by the fund's
+  own adviser" is written only where the map says so, and a property test
+  over every product and every candidate asserts it.
+- A peer composite is never "published by" anyone. Its independence reason
+  reads "constructed by the evaluator from the roster, not a third-party
+  index" and it earns 1 of 2: a construct the evaluator built from a
+  roster the evaluator chose is not an independent yardstick.
+- Consequence, recomputed and repinned (rule 6, cause named in the
+  commit): every composite loses one point. cliffwater_cclfx, bcred, ocic
+  and the four evergreen-PE funds keep the composite as primary at 9
+  (tied with BKLN or PSP at 9, ordered on strategy_match). pflex and
+  cion_ares move to BKLN as primary (9) with the composite secondary (8).
+  kkr_kpec's secondary moves from the composite (7, data_quality 0) to
+  the Cambridge PE benchmark (7, licensed and not held, no computable
+  comparison), ordered ahead on strategy_match. The tie wording
+  ("outranked") is audit item 18 and is R2-P1-2. The expected-outcome
+  table in `docs/benchmark_methodology.md` section 9 is repinned from the
+  engine's recomputation and says so. Every changed number is in the
+  corrections table under the R2-P0-2 cause.
+- Not tuned: a cited index taking kkr_kpec's secondary slot is the rubric's
+  arithmetic on today's data, and the slot says the comparison is not
+  computable. Slot K and Slot G (decision 7.1) replace this rubric in
+  R2-P1-A.
+
+### 7.12 R2-P0-3: nothing a developer would say reaches a surface or a document
+- `src/tark_display.py` holds the maintained list `SURFACE_FORBIDDEN`
+  (case-insensitive patterns) and `src/test_surfaces.py` (new gate, after
+  `reconcile` in the hook) scans the built bundle's displayable strings,
+  every rendered view including the Authority panel, the citation drawer,
+  the three forms with their outputs and the census entity detail, and
+  every generated docx. The list only grows.
+- The brief's token `run ` is implemented as the developer-instruction
+  sense (`run python`, `run src/`, `run the hook`) because the bare token
+  appears in ordinary English inside immutable T2 evidence: "tenders run
+  contemporaneously" (amg_pantheon 3.2), "offers have run every quarter"
+  (cion_ares 3.3), "searches run on stripped text" (bcred 5.1, breit 5.1),
+  "expenses run through" (jll_ipt 2.3). None of these is an instruction.
+- Internal keys render through display maps (`STRATEGY_LABEL`,
+  `COHORT_LABEL`, `LANE_LABEL`, `ASSET_CLASS_LABEL`, `SUB_STRATEGY_LABEL`,
+  `CANDIDATE_SHORT`, `RUBRIC_LABEL`) shared by the engine, the writer, the
+  memo, the packet and the JS through the bundle. Product keys
+  (`hl_paf`, `cliffwater_cclfx`) are the record's own identifiers, appear
+  in file names and in the demo script, and are not on the forbidden list.
+  Prose written for a reader uses fund short names instead.
+- Computed cells no longer cite a repository path as their source or a
+  script path as their extractor. The source names the artifact kind and
+  the fund or cohort ("benchmark selection artifact (Hamilton Lane Private
+  Assets Fund)"), the extractor is "Tark computed-cells writer (as-of
+  date)". The artifact files are unchanged and the writer's producer
+  functions name them. 18 T2 citations carried "(raw: data/raw/...)"
+  locators and 3 T2 values carried a repository folder inside workflow
+  prose. The locators are removed (the manifest local_path and the
+  citations record carry the file), each row allowlisted with the reason.
+  No value figure, quote or status changed.
+- The Authority panel and the memo print one sentence while the verbatim
+  text is absent: "The verbatim text of paragraphs (g) to (l) is not yet
+  in this build. The Federal Register document is linked above." The
+  Schedule H sentence is "Schedule H benefit-payment lines are not yet in
+  the plan record. Demand uses the illustrative turnover sliders only."
+  The plan files' null reasons lose the environment excuse.
+- The `anonymization_rule` string is no longer printed anywhere. The plan
+  is shown under its anonymized label and the memo says so.
+- The three browser forms no longer print a command line or a "save as
+  <path>" comment. Each prints valid JSON (or, for verification, a
+  signature request naming the product, cell, signer and date) and one
+  sentence: send it to Tark to record it. Downloadable files and a copy
+  button are R2-P2-3. The census entity card no longer prints an ingest
+  command: it names the CIK and says that Tark runs the evaluation.
+- Not changed in P0: extractor strings on protected T2 rows such as
+  "Claude (spike 2026-07-09)" and "Claude (M6 pipeline)" are provenance
+  written by earlier passes. They name no path or script and stay until
+  the cells are re-extracted or re-owned (R2-P1-13).
+
+### 7.13 R2-P0-5: liquidity reason strings read the facts they cite
+- Two facts where one was conflated: `dealing_cadence` (daily, monthly,
+  quarterly, exchange) and `cap_period` (month, quarter, year), plus
+  `repurchase_caps`, a list of {pct, period} so breit carries both its
+  caps (2% per month and 5% per quarter). Every value quotes cell 3.1's
+  words in the fact note. jll_ipt's `repurchase_cadence_per_year` moves
+  from 4 to 252 (daily requests, trading-day convention, status computed),
+  its cap stays 5% per quarter.
+- Annual capacity is the binding figure, min over the caps of pct * periods
+  per year, never cadence * cap: breit 24 to 20, jll_ipt 20 (5 * 4, not
+  4 * 5), sreit 0 (suspended). No structural or scenario verdict moved.
+  breit under the consulting plan now prints THIN HEADROOM (13.7% of 20%
+  is 68.5%, over the 60% rule) where it printed adequate headroom.
+- The structural-gap sentence reads `repurchase_program_status` first:
+  sreit says "repurchases are suspended" and no cadence. Otherwise it says
+  the dealing cadence in words and the caps with their periods.
+- Citations are the cells the match read (the facts' source cells) plus
+  3.5 and 3.7 only when the product's cell is not n/a, never 3.9.
+- The JavaScript port reads the binding capacity from the match file and
+  yields null, never 0, when no cap is typed (audit item 27).
+- Merge note: the work was done by an agent in a worktree from commit
+  7e8ba68 and merged three-way into the tree after R2-P0-3. Only the code
+  and the plan files were taken. The data artifacts were regenerated here
+  by the producer chain, so they carry both tasks' changes.
+
+### 7.14 R2-P0-4: one sentence splitter, abbreviation-aware, shared by the site and the memo
+- `tark_display.first_sentence` replaces the two "period followed by
+  whitespace" splitters (`tark_memo.first_sentence` and the inline split
+  in `cell_display`). It does not end a sentence after a listed
+  abbreviation (v., vs., Mr., Ms., No., Inc., Corp., L.P., LLC., p.m.,
+  a.m., incl., excl., approx., i.e., e.g., St., Ste., U.S., et al., month
+  abbreviations and a few more), after a single capital initial
+  ("Stephen L."), after a dotted acronym of any length ("L.L.C."), or
+  inside an open parenthesis or bracket. A number followed by a period
+  ("at the median of 5.") is a sentence end.
+- The typed-fact headline is preferred wherever a fact cites the cell, as
+  before. The splitter is only the fallback.
+- The audit named 63 pairs from its own abbreviation list. The gate pins
+  the pairs where the old splitter and the new one differ on today's
+  record (the regression set), asserts the audit's examples by name
+  (every product's 5.7 "Anderson v.", hl_paf 1.11 "Stephen L.",
+  amg_pantheon 3.2 and cliffwater_cclfx 3.2 "p.m.", bcred 4.6 and jll_ipt
+  4.6 "Supplement No.", bcred 6.2 "U.S.", cion_ares 6.5 and jll_ipt 6.5
+  "Inc."), and asserts that no findings row in any of the 64 memos and no
+  headline or plain line in the bundle ends at an abbreviation.
+
+### 7.15 R2-P0-7: the 3.9 headline is the structural layer alone
+- `typed_headline` for cell 3.9 prints "structural verdict <verdict>,
+  plan-independent" from the `liquidity_structural_verdict` fact. The
+  per-plan scenario verdicts are ILLUSTRATIVE and appear only inside the
+  cell text and the memo under that label, never as a headline (audit
+  round 2 item 9). The Plans view says the selected plan drives the
+  illustrative scenario layer and the structural verdict is
+  plan-independent (done in R2-P0-3).
+- `reconcile` now reads all 64 memos, not the tech plan's 16, and checks
+  both layers: the structural verdict across facts, bundle, the 3.9
+  headline, the four match files and every memo, and the scenario verdict
+  per plan across facts, match file, bundle, the 3.9 cell text and that
+  plan's own memo, always under the ILLUSTRATIVE label.
+
+### 7.16 R2-P0-8: the expense ratio is labeled by its basis
+- Every typed `expense_ratio_pct` fact carries a `basis` clause (in
+  `build_facts.EXPENSE_BASIS`) that restates the fact's own note in reader
+  words: cliffwater_cclfx "before waivers, excluding interest expense
+  (3.31% including interest, FY2026)", cion_ares and pflex "excluding
+  interest expense", bcred and ocic "including the interest and financing
+  cost of BDC leverage", ares_pmf "gross, before a 0.03% waiver", hl_paf
+  "net, including the incentive fee, AFFE excluded", kkr_kpec "GAAP total
+  operating expenses including the 2.75% performance participation, not a
+  1940-Act ratio".
+- The 2.3 headline, the Fee Matrix chip and the memo's typed line print
+  "<x>% expense ratio, <basis>". The word "net" appears only where the
+  basis says net (audit round 2 item 10). The Fee Matrix bar chart's
+  absence note no longer calls the missing line "net".
+- Demo script v8 speaks Cliffwater's 1.36% as an expense ratio before
+  waivers and excluding interest, never as a net expense ratio.
+
+### 7.17 R2-P0-9: the memo does not decide, and says nothing the rule text does not say
+- The twelve escalated memos said "Under the proposal's own terms ...
+  would undercut the safe harbor. Recommended action: do not proceed" two
+  sections above "This memo does not decide" (audit round 2 item 29).
+  The paragraph now reads: "No meaningful benchmark could be constructed
+  from the data held. The record cannot support the paragraph (k)
+  comparison until one is identified. This memo does not decide."
+- The memo gate fails on "undercut", "do not proceed", "cannot support
+  the safe harbor", "satisfies the safe harbor", "recommended action:",
+  "under the proposal's own terms", and, while the verbatim rule text is
+  not in the build, on any sentence of the form "the rule requires",
+  "required by the proposal" or "to qualify for the safe harbor", in all
+  64 memos. The packets are screened for the same conclusion phrases.
+
+### 7.18 R2-P0-6: a statistic is named for what its comparator is
+- The composite comparison in the selection artifact no longer carries
+  `ks_pme` or `direct_alpha_pct`. It carries `relative_wealth_ratio` (fund
+  growth / composite growth over the overlapping fiscal years, the same
+  arithmetic as before) and `excess_return_pct` (its annualized form),
+  `statistic` "relative wealth ratio vs peer composite", `comparator_kind`,
+  `fund_return_source` "filed fiscal-year returns" and a not-PME note.
+  Every series comparison carries `statistic` "KS-PME vs public market
+  proxy" and its `fund_return_source` (Yahoo adjusted close approximating
+  NAV total return, filed fiscal-year returns, or the disclosed annualized
+  figure). The renamed fields are watched by the corrections log, so the
+  old composite `ks_pme` rows show as retired under the R2-P0-6 cause. No
+  figure changed (audit round 2 items 7, 8, 11).
+- Facts: `pme_primary` and `direct_alpha_primary` are retired. In their
+  place `pme_public_proxy`, `pme_public_proxy_name` and
+  `direct_alpha_public_proxy` come from whichever slot holds a public
+  market series, and `peer_relative_wealth_ratio` from whichever slot
+  holds the composite. The Screener column "KS-PME" becomes two columns,
+  "KS-PME vs public proxy" and "Peer relative wealth ratio", each sortable
+  on its own kind, so the sort is no longer meaningless (audit item 8).
+- Cell 1.8 states each slot in one sentence named for its comparator, the
+  "lagged" and "led" sentence appears only for a public proxy, the fund
+  return source is named on every window, and the composite's alignment
+  note is printed verbatim in the cell, on the card and in the memo's
+  benchmark section (audit item 32). Cell 5.5 states PME inputs only for
+  the public proxy and the composite's inputs as a ratio.
+- The card prints one fund return per slot with its source named ("Fund,
+  filed fiscal-year returns" beside the composite, "Fund, Yahoo adjusted
+  close" beside BKLN), so two fund returns on one card are explained
+  (audit item 7). The composite card's statistic labels are "Relative
+  wealth ratio vs peer composite" and "Excess return vs peer composite".
+- Gates: the benchmark gate asserts the keys and names per kind and the
+  two-point identity on the right statistic. The reconcile gate ties every
+  computed comparison across artifact, bundle card, cell 1.8, facts and
+  all 64 memos, requires the fund return source on each, and fails on any
+  composite sentence in cells 1.8, 5.5 or 5.6 or in a memo that carries a
+  PME name. The frontend gate checks the composite card labels and the
+  two Screener columns.
+- The composite's own number (cclfx 0.9756 on fiscal-year labels) stays
+  on the surfaces under its honest name until R2-P1-3 recomputes it on
+  calendar-aligned periods. Demo script v8 does not speak it.
+
+### 7.19 R2-P0-10: the recorded redeploy, and what the demo says on Tuesday
+- Demo script v8 (`docs/demo_script.md`) speaks no peer-composite number,
+  speaks the BKLN KS-PME only with "Yahoo adjusted close, approximates NAV
+  total return", names the Cliffwater 1.36% by its basis (before waivers,
+  excluding interest expense, 3.31% including interest), leaves the
+  Authority panel closed because the verbatim text is not in this build,
+  and re-derives its closing table from the record at this commit. Tier 1
+  of `docs/verification_queue.md` is re-derived from that table: the same
+  ten cells, with descriptions that match the surfaces.
+- The script ends with a machine-read "Surface checks" block (view,
+  product, plan, on-screen text). The frontend gate renders each view and
+  fails when a spoken text is not on it, and fails if a composite ratio
+  appears in the spoken part. The docs gate ties the script version to the
+  queue and the runbook. "The screen is right and the script is stale" is
+  now enforced rather than hoped.
+- The queue keeps its row format, a dash glyph between the cell id and the
+  description. Rule 9 (no em dashes in documents) yields here because the
+  queue parser reads that glyph and the copy gate exempts the file for that
+  reason. Changing the separator is a
+  parser change, not a copy fix, and is deferred to R2-P3 with the CI work.
+- `src/check_edgar_urls.py` is the pre-deploy HTTP 200 check the audit
+  asked for (rule 15). It is not a hook gate because the build container
+  does not reach sec.gov (exit 2 here, "unreachable (ProxyError)" on every
+  URL). It lists 13 Tier 1 citation rows over 9 distinct URLs. A person on a
+  networked machine runs it before Tuesday and the result goes into
+  `docs/DEPLOY_LOG.md`.
+- The deploy goes to `gh-pages` from the branch head, not from `main`,
+  because the brief orders the redeploy inside R2-P0-10 and the sends are
+  Tuesday 10:02am, while merging the pull request is Oscar's call. The tree
+  deployed is the tree the pull request carries, so a redeploy from `main`
+  after the merge is a no-op on content. The runbook's old sentence "only
+  from a green main after the pull request is merged" is replaced by "only
+  from a green hook run on the exact commit, recorded in the deploy log".
+- Screenshots: `docs/screenshots/after_r2/`, the same 42 views as the
+  baseline set, shot from the deployed build for the runbook's fallback
+  plan. Round 1's two sets stay for history.
+- Deploy mechanics: the session's permission policy refused the runbook's
+  orphan-branch force-push. The deploy was made instead as a normal commit
+  on top of the existing `gh-pages` history (all prior files removed, the
+  built `site/` copied in, `.nojekyll` kept), verified by a recursive diff
+  against `site/`, and pushed without force (`94bf391..d74e91c`). The
+  runbook recipe stands for a person with force-push rights. Either form
+  yields the same tree.

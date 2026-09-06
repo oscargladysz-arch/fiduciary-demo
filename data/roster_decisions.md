@@ -4,16 +4,16 @@ Rule R1: no product enters the registry without live EDGAR verification —
 CIK resolves, filing profile matches the expected wrapper, and a current
 prospectus/annual exists. Rule R3: every membership reasoned; every candidate
 considered and excluded logged here with its reason. This file must mention
-every registry key (enforced by src/test_docs.py).
+every registry key (a gate enforces it).
 
 ## Cohorts as landed
 
-| cohort_id | members | n | note |
+| cohort | members | n | note |
 |---|---|---|---|
-| private_credit | cliffwater_cclfx (full), bcred, pflex, cion_ares, ocic | 5 | deliberately cross-wrapper: interval fund + non-traded BDC. cion_ares and ocic joined via the census promotion pipeline (2026-08-25, see below) |
-| evergreen_pe | hl_paf (full), stepstone_spm (full), kkr_kpec (full), ares_pmf, amg_pantheon | 5 | includes kkr_kpec under the authorized fallback (below) |
-| nontraded_reit | breit (full), sreit, jll_ipt | 3 | |
-| venture | dxyz (full), ssss, arkvx | 3 | listed CEF + listed BDC + interval fund — premium/discount comparability is the point |
+| private credit | cliffwater_cclfx (full), bcred, pflex, cion_ares, ocic | 5 | deliberately cross-wrapper: interval fund + non-traded BDC. cion_ares and ocic joined via the census promotion pipeline (2026-08-25, see below) |
+| evergreen private equity | hl_paf (full), stepstone_spm (full), kkr_kpec (full), ares_pmf, amg_pantheon | 5 | includes kkr_kpec under the authorized fallback (below) |
+| non-traded real estate | breit (full), sreit, jll_ipt | 3 | |
+| pre-IPO and venture | dxyz (full), ssss, arkvx | 3 | listed CEF + listed BDC + interval fund — premium/discount comparability is the point |
 
 Roster: 6 full-depth + 8 cohort-depth + 2 census promotions = **16 products**
 (vs the 18 aspiration, see "Depth discipline" below).
@@ -73,7 +73,7 @@ Roster: 6 full-depth + 8 cohort-depth + 2 census promotions = **16 products**
   member was judged worse than full depth on three (R2 bandwidth
   discipline). Next-wave candidate.
 - **Variant Alternative Income (NICHX)** — CIK 1736510 verified. Excluded
-  from private_credit: strategy is niche alternative income (royalties,
+  from private credit: strategy is niche alternative income (royalties,
   litigation finance, specialty), not direct corporate lending — a
   strategy-tag mismatch, not a data problem.
 - **FS Specialty Lending** — not admitted: private-credit cohort filled by
@@ -99,7 +99,7 @@ A pure '34-Act PE-conglomerate cohort is impossible from public data: the
 structural twins (BXPE, Apollo AAA) are Reg D vehicles with no public
 filings, and the one verified adjacent candidate (SPRING) is a different
 wrapper AND a different strategy stage. kkr_kpec therefore joins
-**evergreen_pe** as a cross-wrapper member (n=5): same economic exposure
+the **evergreen private equity** cohort as a cross-wrapper member (n=5): same economic exposure
 class (diversified private-equity portfolios in perpetual wrappers), with
 these caveats carried by the cohort caveat matrix: '34-Act conglomerate of
 CONTROLLED operating companies vs '40-Act funds-of-funds; K-1 vs 1099;
@@ -111,14 +111,14 @@ An honest mixed cohort beats fake twins.
 The menu's per-cohort arithmetic yields 8 verified new members with every
 cohort at n≥3 (evergreen at n=5). Admitting alternates to reach 18 would
 have spread cohort-tier extraction thinner without changing any cohort's
-statistical honesty (R4 phrasing gates bind at n=3 and n=5 either way).
+statistical honesty (the percentile phrasing rules bind at n=3 and n=5 either way).
 Choice: 14 products fully landed over 18 partially landed, per the
 mission's own priority rule. The four next-wave candidates above are
 verified leads for the next roster pass.
 
 ## Census promotions (2026-08-25) — 14 → 16 via the T1 pipeline
 
-Both promotions ran through `src/promote.py` against the census universe
+Both promotions ran through the promotion step against the census universe
 (3,599 enumerated wrappers): R1 identity verified against live SEC
 submissions, 54-cell scaffold with census-answerable cells prefilled at
 status `structured`, then cohort-tier extraction from primary filings.
@@ -130,7 +130,7 @@ R1: live submissions name "Blue Owl Credit Income Corp."; former name
 record — same CIK, continuous filing history since 2020). Census T1 class:
 bdc (Form N-54A election), unlisted, with 46 SC TO-I tender filings
 2021-08→2026-07 — a perpetual-life non-traded BDC running quarterly
-tenders. Admission rationale (R3): the private_credit cohort's non-traded
+tenders. Admission rationale (R3): the private credit cohort's non-traded
 BDC seat was held by bcred alone; OCIC is the closest structural twin in
 the wrapper (perpetual non-traded BDC, quarterly 13e-4 tenders, direct
 lending) and was already logged as a verified next-wave lead in the cohort
@@ -141,7 +141,7 @@ mission. Depth: cohort.
 R1: live submissions name matches; no former names. Census T1 class:
 interval_23c3 (39 Form N-23C3A filings 2017→2026-06, self-classified
 "Interval Fund" in N-CEN — crosscheck agreement). Admission rationale
-(R3): joins private_credit as its fourth interval-wrapper member; its
+(R3): joins private credit as its fourth interval-wrapper member; its
 dual-adviser structure (CION Investment Management + Ares Capital
 Management sub-adviser) and multi-sector credit mandate widen the cohort's
 mandate axis the same way pflex does, and the fund publishes daily
@@ -149,5 +149,5 @@ class-level NAV under public tickers (Class A CADEX, Class C CADCX,
 Class I CADUX — the evaluation uses Class I) at material scale.
 Depth: cohort.
 
-Both funds' cohort membership carries the standing private_credit caveat
+Both funds' cohort membership carries the standing private credit caveat
 matrix (wrapper differences: BDC-tender vs interval-23c3 obligations).

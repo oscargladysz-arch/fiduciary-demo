@@ -181,7 +181,7 @@ check("JSON and CSV agree on value, source, quote, status and extractor for ever
           and csv_rows[o.cid]["extracted_by"] == prod["cells"][o.cid]["extracted_by"]
           for o in outcomes if o.record))
 check("extractor names the script, the model and the date, never a person",
-      all(o.record["extracted_by"].startswith("src/ingest.py (mock-model, 2026-09-04)") for o in outcomes if o.record))
+      all(o.record["extracted_by"].startswith("Tark ingest (mock-model, 2026-09-04)") for o in outcomes if o.record))
 check("the documents ride as a cached prefix and the system prompt forbids inference",
       all(c["messages"][0]["content"][0].get("cache_control") == {"type": "ephemeral"} for c in calls)
       and "never infer" in calls[0]["system"].lower())

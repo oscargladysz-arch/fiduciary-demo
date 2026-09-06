@@ -159,7 +159,7 @@ export function openCite(rec, title) {
       <div class="v">${esc(rec.extracted_by || "—")}</div></div>
     <div class="f"><div class="k">Human verification</div>
       <div class="v">${rec.verified_by ? esc(rec.verified_by)
-        : "pending: a human verifies rows in data/evidence/*.csv and flips status to verified"}</div></div>`;
+        : "pending: a person verifies the row through Tark's verification step, which flips the status to verified"}</div></div>`;
   d.classList.add("open");
 }
 window.addEventListener("click", (e) => {
@@ -250,13 +250,14 @@ export function viewPlans(root, state, setState) {
   root.innerHTML = `
     <div class="viewhead"><h1>Reference Plans</h1>
       <div class="sub">Four real 401(k) plans from public Form 5500 filings. The
-        selected plan drives every liquidity verdict.</div></div>
+        selected plan drives the illustrative scenario layer. The structural verdict is
+        plan-independent.</div></div>
     <div class="cardgrid g2">${cards}</div>
     <details class="planform" data-plan-form>
       <summary class="cap">Add your plan (anonymized label required, the site writes nothing)</summary>
       <p class="cap">The intake stores no sponsor identity. Describe the plan (industry, size,
         state) and confirm the label names no sponsor. Derived figures are recomputed from
-        the primitives by src/plan_intake.py, never taken from this form.</p>
+        the primitives by Tark's intake step, never taken from this form.</p>
       <div class="formgrid">
         <label class="cap">Anonymized label<input data-f="display_label" type="text" placeholder="US regional hospital 403(b) plan (~$400M, OH)"></label>
         <label class="cap">Plan year<input data-f="plan_year" type="text" placeholder="2024-01-01 to 2024-12-31"></label>
@@ -276,7 +277,7 @@ export function viewPlans(root, state, setState) {
       <span class="cap" data-plan-msg></span>
       <pre class="cmd" data-plan-patch hidden></pre>
     </details>
-    <p class="cap footer-rule">${esc(T.plans[state.plan].anonymization_rule)}</p>`;
+    <p class="cap footer-rule">Each plan is shown under its anonymized label. No sponsor name appears on any surface.</p>`;
   root.querySelectorAll("[data-plan]").forEach((c) =>
     c.addEventListener("click", () => setState({ plan: c.dataset.plan })));
   wirePlanForm(root);
@@ -309,9 +310,9 @@ function wirePlanForm(root) {
     doc.anonymization_label = label;
     doc.derived_preview = { avg_balance_per_account: Math.round(doc.net_assets_eoy / doc.with_account_balances),
       liquidity_tail_pct: Math.round(doc.separated_deferred_vested / doc.with_account_balances * 1000) / 10 };
-    out.textContent = "# save as intake.json, then python src/plan_intake.py intake.json\n" + JSON.stringify(doc, null, 2);
+    out.textContent = JSON.stringify(doc, null, 2);
     out.hidden = false;
-    msg.textContent = "intake file ready, the CLI recomputes the derived figures and validates before writing";
+    msg.textContent = "intake file ready. Send this file to Tark to record the plan. Tark recomputes the derived figures and validates before anything enters the record";
   });
 }
 
@@ -409,7 +410,7 @@ export function viewEvaluation(root, state) {
         · <span data-advisor-count>advisor-stated for this plan: ${advisorStated(key, state.plan)} of ${T.advisor_cells.length}</span>
         ${T.facts_meta && T.facts_meta[key] ? `
           · <span class="chip ${T.facts_meta[key].depth === "full" ? "extracted" : "wrapper"}">${T.facts_meta[key].depth} depth</span>
-          · <a href="#" onclick="window.tarkSetState({view:'cohorts',cohort:'${esc(T.facts_meta[key].cohort_id)}'});return false">view cohort: ${esc(T.facts_meta[key].cohort_id)}</a>` : ""}
+          · <a href="#" onclick="window.tarkSetState({view:'cohorts',cohort:'${esc(T.facts_meta[key].cohort_id)}'});return false">view cohort: ${esc(T.cohorts[T.facts_meta[key].cohort_id]?.label || T.facts_meta[key].cohort_id)}</a>` : ""}
       </div></div>
     <div class="chartbox" style="margin-bottom:4px"><div id="prodchart"></div>
       <div class="chartnote" id="prodchartnote"></div></div>
@@ -471,10 +472,9 @@ function wireAdvisorForms(root, key, plan) {
       const doc = { ...existing, plan, product: key, not_evidence: T.advisor_not_evidence,
         cells: { ...existing.cells, [cid]: { value, signer, date,
           status: `advisor-stated - ${signer}, ${date}` } } };
-      out.textContent = `# save as data/advisor/${plan}__${key}.json, then python src/validate_data.py\n`
-        + JSON.stringify(doc, null, 2);
+      out.textContent = JSON.stringify(doc, null, 2);
       out.hidden = false;
-      msg.textContent = "patch ready, copy it into the repository (the site itself writes nothing)";
+      msg.textContent = "statement file ready. Send this file to Tark to record it (the site itself writes nothing)";
     });
   });
 }
@@ -500,11 +500,24 @@ export function viewBenchmarks(root, state, setState) {
       <h3>${esc(s.candidate)}</h3>
       <div class="num" style="font-size:15px;margin-top:2px">${s.score}/${s.max}</div>
       <div class="scorebar"><div class="fill" style="width:${s.score / s.max * 100}%"></div></div>
-      ${comp ? `<div class="statrow">
+      ${comp && comp.kind === "composite" ? `<div class="statrow" data-stat-kind="composite">
+        ${stat("Relative wealth ratio vs peer composite", comp.relative_wealth_ratio)}
+        ${stat("Excess return vs peer composite", `${comp.excess_return_pct}%<small>/yr</small>`)}
+        ${stat("Fund, filed fiscal-year returns", `${comp.fund_ann_pct}%<small>/yr</small>`)}
+        ${stat("Peer composite", `${comp.index_ann_pct}%<small>/yr</small>`)}
+      </div>
+      <div class="cap">${esc(comp.not_pme_note)} The ${gloss("relative wealth ratio")} is the fund's
+        growth divided by the composite's over the same fiscal years, on two-point flows (one
+        contribution at the window start, one valuation at the end). Fund return source:
+        ${esc(comp.fund_return_source)}.
+        <span class="num">(${esc(comp.window)}${comp.window_note ? `, ${esc(comp.window_note)}` : ""})</span>
+        ${comp.low_confidence ? ` <span class="chip illustrative">${esc(comp.low_confidence)}</span>` : ""}
+        <span data-alignment-note>Alignment: ${esc(comp.alignment_note)}.</span></div>`
+      : comp ? `<div class="statrow" data-stat-kind="series">
         ${stat("KS-PME", comp.ks_pme)}
         ${stat("Direct Alpha", `${comp.direct_alpha_pct}%<small>/yr</small>`)}
-        ${stat("Fund", `${comp.fund_ann_pct}%<small>/yr</small>`)}
-        ${stat("Benchmark", `${comp.index_ann_pct}%<small>/yr</small>`)}
+        ${stat(`Fund, ${(comp.fund_return_source || "source not named").split(",")[0]}`, `${comp.fund_ann_pct}%<small>/yr</small>`)}
+        ${stat("Public proxy", `${comp.index_ann_pct}%<small>/yr</small>`)}
         ${comp.ks_pme_monthly_schedule != null
           ? stat("KS-PME, monthly schedule", `${comp.ks_pme_monthly_schedule} <span class="chip illustrative">ILLUSTRATIVE</span>`)
           : ""}
@@ -513,15 +526,15 @@ export function viewBenchmarks(root, state, setState) {
         valuation at the end. ${gloss("Direct Alpha")} is the annualized form of the same
         two flows.${comp.ks_pme_monthly_schedule != null
           ? ` The monthly-schedule figure is ${esc(comp.schedule_note)}` : ""}
+        Fund return source: ${esc(comp.fund_return_source)}.
         ${gloss("KS-PME")} and ${gloss("Direct Alpha")} on
         appraisal-lagged NAVs are window-sensitive, disclosed, and explorable:
         <a href="#" data-goto="pme">move the window yourself →</a>
         <span class="num">(${esc(comp.window)}${comp.window_note ? `, ${esc(comp.window_note)}` : ""})</span>
-        ${comp.low_confidence ? ` <span class="chip illustrative">${esc(comp.low_confidence)}</span>` : ""}
-        ${comp.alignment_note ? ` <span>Lane C composite, ${esc(comp.alignment_note)}.</span>` : ""}</div>`
+        ${comp.low_confidence ? ` <span class="chip illustrative">${esc(comp.low_confidence)}</span>` : ""}</div>`
       : s.comparison_note ? `<div class="cap">Comparison not computable on held data: ${esc(s.comparison_note)}.${
           s.comparison_note.includes("proxy series")
-            ? " Refetch the proxy series over a longer window (src/fetch_series.py) to compute it."
+            ? " A proxy series covering the fund's window would make it computable."
             : " The candidate is scored on its own descriptors. A comparison needs a fund return series the filings do not print."}</div>` : ""}
       <details style="margin-top:10px"><summary class="cap" style="cursor:pointer">Scoring rationale</summary>
         <ul style="margin:8px 0 0 18px; font-size:12.5px">
@@ -531,7 +544,7 @@ export function viewBenchmarks(root, state, setState) {
 
   const rejRows = sel.rejected.map((r, i) => `<tr>
       <td class="entryno">${String(i + 1).padStart(2, "0")}</td>
-      <td>${esc(r.candidate)}</td><td class="num">${esc(r.lane)}</td>
+      <td>${esc(r.candidate)}</td><td>${esc(T.lane_labels[r.lane] || r.lane)}</td>
       <td class="num">${r.score}/${r.max}</td>
       <td>${esc(r.rejection)}
         <div class="cap" style="margin-top:5px">${r.reasons.map(esc).join(" · ")}</div>
@@ -539,8 +552,9 @@ export function viewBenchmarks(root, state, setState) {
 
   root.innerHTML = `
     <div class="viewhead"><h1>Benchmark Selection</h1>
-      <div class="sub">${esc(p.fund_name)} · ${esc(sel.strategy)} · lanes A, B and C,
-        rubric v2 (12 points, strategy gate below 2), threshold ${T.min_primary_score}/12,
+      <div class="sub">${esc(p.fund_name)} · ${esc(T.strategy_labels[sel.strategy] || sel.strategy)} · three lanes
+        (fund-declared, third-party, peer composite), ${esc(T.rubric_label)} (strategy gate below 2),
+        threshold ${T.min_primary_score}/12,
         max attainable on held data ${sel.max_attainable == null ? "none eligible" : `${sel.max_attainable}/12`},
         and every rejection on the record.</div></div>
     <div class="cap" style="margin:6px 0 10px">${sel.declared_benchmarks && sel.declared_benchmarks.length
@@ -733,7 +747,7 @@ export function viewPme(root, state, setState) {
   }
   if (notComputable) {
     root.querySelector("#pmenote").textContent =
-      `Comparison not computable on held data: ${notComputable}. Refetch the proxy series over a longer window (src/fetch_series.py) to compute it.`;
+      `Comparison not computable on held data: ${notComputable}. A proxy series covering the fund's window would make it computable.`;
     slider.disabled = true;
     return;
   }
@@ -809,7 +823,7 @@ export function viewPme(root, state, setState) {
       (hasFy ? "Fund line compounds disclosed fiscal-year returns (fiscal-step windows: annual is the honest granularity). "
         : isAnnual ? "Single disclosed ITD figure: window fixed to the disclosure period. "
         : "Fund growth daily-anchored. Lines month-end sampled for drawing. ")
-      + "Same code path as the Python engine (parity-tested).";
+      + "Same code path as the engine (parity-tested).";
     renderTables();
   }
 
@@ -958,9 +972,10 @@ export function viewLiquidity(root, state) {
       </div>
       <div class="card"><h3>Wrapper facts</h3>
         <table class="grid" style="border:0;margin-top:8px">
-          <tr><td>Kind</td><td class="num">${gloss(profile.kind.replace(/_/g, " "))}</td></tr>
-          <tr><td>Dealing cadence</td><td class="num">${profile.cadence_per_year}×/year</td></tr>
-          <tr><td>Cap</td><td class="num">${profile.cap_pct === null ? "—" : profile.cap_pct + "%"} of ${esc(profile.cap_base)}</td></tr>
+          <tr><td>Kind</td><td class="num">${gloss(T.wrapper_labels[profile.kind] || profile.kind)}</td></tr>
+          <tr><td>Dealing terms</td><td>${esc(profile.dealing_label || "not typed (3.1)")}</td></tr>
+          <tr><td>Repurchase caps</td><td>${esc(profile.caps_label || "not typed (3.1)")}</td></tr>
+          <tr><td>Annual capacity</td><td class="num">${profile.annual_capacity_pct == null ? "not computable" : profile.annual_capacity_pct + "% of the position per year (binding cap)"}</td></tr>
           <tr><td>Exchange-listed</td><td class="num">${profile.exchange ? "yes" : "no"}</td></tr>
           <tr><td>Gating history</td><td class="num">${profile.gate_history === true ? "YES (3.3)"
             : profile.gate_history === false ? "none identified (3.3)" : `not typed: ${esc(profile.null_reasons.gate_history || "no reason recorded")}`}</td></tr>
@@ -1048,7 +1063,7 @@ export function viewLiquidity(root, state) {
     </tbody></table></div>
     <div class="cap" style="margin-top:4px">All columns ILLUSTRATIVE: parameter
       choices, not facts. Wrapper capacity ${profile.exchange ? "is market depth (listed)" :
-      (profile.cadence_per_year * profile.cap_pct).toFixed(0) + "%/yr (filed)"}.</div>`;
+      (profile.annual_capacity_pct == null ? "not computable" : profile.annual_capacity_pct.toFixed(0) + "%/yr (filed, binding cap)")}.</div>`;
   }
 
   const els = ["alloc", "tail", "act"].map((s) => root.querySelector("#s_" + s));
@@ -1129,7 +1144,7 @@ export function viewFees(root) {
       return { text: `${pct.toFixed(2)}% on ${BASES[base] || base || "a base not typed"}`, badge };
     }
     if (cid === "2.2") { const v = val(k, "incentive_fee"); return { text: v === null ? kind : fmtIncentive(v), badge: "" }; }
-    if (cid === "2.3") { const v = val(k, "expense_ratio_pct"); return { text: v === null ? kind : `${v.toFixed(2)}% net expense ratio`, badge: "" }; }
+    if (cid === "2.3") { const v = val(k, "expense_ratio_pct"); return { text: v === null ? kind : (T.cell_display[k]["2.3"]?.typed ? T.cell_display[k]["2.3"].headline : `${v.toFixed(2)}% expense ratio`), badge: "" }; }
     if (cid === "2.4") {
       const v = val(k, "affe");
       if (v === null) return { text: kind, badge: "" };
@@ -1163,13 +1178,13 @@ export function viewFees(root) {
       <span class="cap">${gloss(label)}</span></td>${tds}</tr>`;
   }).join("");
 
-  // bars: the typed net expense ratio, or an explicit absence with its reason
+  // bars: the typed expense ratio (each with its own basis), or an explicit absence with its reason
   const items = keys.map((k) => {
     const f = fact(k, "expense_ratio_pct");
     return { product: k, label: T.products[k].fund_name.split(" (")[0],
       value: f && f.value !== null ? f.value : null,
       color: f && f.value !== null ? "#593380" : "#837b8e",
-      note: f && f.value !== null ? "" : `no comparable net expense ratio line: ${f?.reason || "not typed"}` };
+      note: f && f.value !== null ? "" : `no comparable expense ratio line: ${f?.reason || "not typed"}` };
   });
   const missing = items.filter((i) => i.value === null).map((i) => i.label);
 
@@ -1221,7 +1236,7 @@ function nslrPanel(root) {
         persistent DISCOUNT. Two listed venture vehicles, two opposite gaps,
         one conclusion: the market price is not the portfolio. This is why the
         engine escalates BOTH rather than benchmarking either price
-        (data/analytics/supplement.json ssss_premium and both selection
+        (the analytics supplement's premium decomposition and both selection
         artifacts).</div></div>`;
   lineChart(box.querySelector("#nslrchart"), {
     series: [
@@ -1308,7 +1323,7 @@ export function viewDesmooth(root, state) {
                basis: `monthly returns from ${d.label}`,
                price: d.price_series,
                committed: m
-                 ? `pipeline: rho ${m.lag1_autocorr_rho}, observed ${m.ann_vol_observed_pct}% → de-smoothed ${m.ann_vol_desmoothed_pct}% (data/analytics/metrics.json)`
+                 ? `pipeline: rho ${m.lag1_autocorr_rho}, observed ${m.ann_vol_observed_pct}% → de-smoothed ${m.ann_vol_desmoothed_pct}% (the analytics metrics artifact)`
                  : "no committed pipeline diagnostic for this series yet (live recompute only)" };
     };
   }
@@ -1320,7 +1335,7 @@ export function viewDesmooth(root, state) {
                dates: pts.map(([d]) => d),
                basis: "monthly NAV path as PRINTED in the 10-K (distributions excluded, appraisal-process diagnostic)",
                price: false,
-               committed: `pipeline: rho ${bd.lag1_autocorr_rho}, observed ${bd.nav_path_ann_vol_pct}% → de-smoothed ${bd.desmoothed_ann_vol_pct}% (data/analytics/supplement.json)` };
+               committed: `pipeline: rho ${bd.lag1_autocorr_rho}, observed ${bd.nav_path_ann_vol_pct}% → de-smoothed ${bd.desmoothed_ann_vol_pct}% (the analytics supplement artifact)` };
     };
   }
   const UNAVAILABLE_REASON = (k) =>

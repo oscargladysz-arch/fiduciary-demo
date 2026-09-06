@@ -27,7 +27,9 @@ from pathlib import Path
 from tark_analytics import (_level_on, cumulative_growth, direct_alpha,
                             effective_window, ks_pme, monthly_schedule_flows,
                             year_frac)
-from tark_data import DATA, load_series
+from tark_data import DATA, load_products, load_series
+from tark_display import (RUBRIC_LABEL, asset_label, candidate_short, cohort_label,
+                          sub_label)
 
 MIN_PRIMARY_SCORE = 7
 RUBRIC_MAX = 12
@@ -42,11 +44,18 @@ def low_confidence(window_years: float, unit: str = "year") -> str | None:
     n = round(window_years, 2)
     shown = f"{int(n)}" if float(n).is_integer() else f"{n}"
     return f"low confidence: {shown}-{unit} window, shorter than {int(LOW_CONFIDENCE_YEARS)} years"
-RUBRIC_CAPTION = ("rubric v2: strategy match 3 (gate below 2), risk/liquidity match 3, "
+RUBRIC_CAPTION = (f"{RUBRIC_LABEL}: strategy match 3 (gate below 2), risk/liquidity match 3, "
                   "investability 2, data quality 2, provider independence 2, "
                   f"threshold {MIN_PRIMARY_SCORE}/{RUBRIC_MAX}")
+# fund short names for anything a surface prints (never a product key)
+FUND_SHORT = {k: p["fund_name"].split(" (")[0] for k, p in load_products().items()}
 
-REGISTRY = json.loads((DATA / "registry.json").read_text())["products"]
+_REGISTRY_DOC = json.loads((DATA / "registry.json").read_text())
+REGISTRY = _REGISTRY_DOC["products"]
+# provider entity -> adviser entity keys (R2-P0-2). A candidate is affiliated
+# with a fund only when this map says so. Never a string match: "ares" inside
+# "ishares blackrock msci" published a false affiliation on the live site.
+AFFILIATIONS: dict[str, dict] = (_REGISTRY_DOC.get("affiliations") or {}).get("providers", {})
 # return inputs live in the registry (P2-1). Exposed for the site build and tests.
 RETURN_INPUTS = {k: r["return_inputs"] for k, r in REGISTRY.items() if r.get("return_inputs")}
 
@@ -214,10 +223,13 @@ def peer_candidate(peer_id: str, subject: str) -> dict:
             "asset_class": _mode([r["asset_class"] for r in regs.values()]) if regs else "none",
             "sub_strategy": _mode([r["sub_strategy"] for r in regs.values()]) if regs else "none",
             "leverage_regimes": sorted({r["leverage_regime"] for r in regs.values()}),
-            "name": f"Peer cohort composite: {cohort} without {subject} ({', '.join(members)})"}
+            "name": (f"Peer composite, {cohort_label(cohort)} without "
+                     f"{FUND_SHORT.get(subject, subject)} (members: "
+                     + ", ".join(FUND_SHORT.get(m, m) for m in members) + ")")}
     if len(members) < 3:
-        return {**base, "refused": f"fewer than 3 members remain after leaving {subject} out "
-                                    f"({len(members)}: {', '.join(members)})"}
+        return {**base, "refused": (f"fewer than 3 members remain after leaving "
+                                    f"{FUND_SHORT.get(subject, subject)} out ({len(members)}: "
+                                    + ", ".join(FUND_SHORT.get(m, m) for m in members) + ")")}
     classes = {r["pricing_class"] for r in regs.values()}
     if len(classes) > 1:
         return {**base, "refused": "members' pricing bases are heterogeneous (market price vs "
@@ -264,7 +276,7 @@ def menu_for(key: str) -> list[dict]:
 # tests): Lane B and C entries as dicts
 STRATEGY_MENU: dict[str, list[dict]] = {
     strat: [{**CANDIDATES[c], "id": c} if c in CANDIDATES else
-            {"id": c, "name": f"Peer cohort composite ({PEER_COHORT[c]}, leave-one-out)",
+            {"id": c, "name": f"Peer composite ({cohort_label(PEER_COHORT[c])}, leave-one-out)",
              "lane": "C", "series": None, "data": "composite"}
             for c in ids]
     for strat, ids in STRATEGY_MENU_IDS.items()}
@@ -275,18 +287,19 @@ def strategy_match(prof: dict, cand: dict) -> tuple[int, str]:
     pac, psub = prof["asset_class"], prof["sub_strategy"]
     cac, csub = cand["asset_class"], cand["sub_strategy"]
     if cac == pac and (csub == psub or csub in PRIVATE_INDEX_SUBS):
-        return 3, (f"same asset class and sub-strategy ({pac} / {psub})" if csub == psub
-                   else f"a private {pac.replace('_', ' ')} index for a {psub.replace('_', ' ')} fund")
+        return 3, (f"same asset class and sub-strategy ({asset_label(pac)} / {sub_label(psub)})"
+                   if csub == psub else
+                   f"a {sub_label(csub)} of {asset_label(pac)} for a {sub_label(psub)} fund")
     if FAMILY.get(cac) == FAMILY.get(pac):
-        return 2, (f"same asset class, different sub-strategy ({csub.replace('_', ' ')} vs "
-                   f"{psub.replace('_', ' ')})" if cac == pac else
-                   f"the public-market version of the asset class ({csub.replace('_', ' ')} "
-                   f"for {psub.replace('_', ' ')})")
+        return 2, (f"same asset class, different sub-strategy ({sub_label(csub)} vs "
+                   f"{sub_label(psub)})" if cac == pac else
+                   f"the public-market version of the asset class ({sub_label(csub)} "
+                   f"for {sub_label(psub)})")
     if (FAMILY.get(pac) in ("private_equity", "venture") and cac == "public_equity") or \
             (pac == "venture" and cac == "listed_private_equity"):
-        return 1, (f"adjacent asset class sharing the dominant risk ({csub.replace('_', ' ')} "
-                   f"for {psub.replace('_', ' ')})")
-    return 0, f"unrelated asset class ({cac.replace('_', ' ')} for {pac.replace('_', ' ')})"
+        return 1, (f"adjacent asset class sharing the dominant risk ({sub_label(csub)} "
+                   f"for {sub_label(psub)})")
+    return 0, f"unrelated asset class ({asset_label(cac)} for {asset_label(pac)})"
 
 
 def _held_cadence(prof: dict) -> str:
@@ -341,13 +354,24 @@ def data_quality(cand: dict, overlap_years: int | None) -> tuple[int, str]:
 
 
 def provider_independence(prof: dict, cand: dict) -> tuple[int, str]:
-    pk = cand["provider_key"].lower()
-    hits = [a for a in prof["adviser_keys"] if a.strip() and (a.strip() in pk or pk in a.strip())]
+    """0, 1 or 2. 0 when the registry's affiliation map ties the candidate's
+    provider entity to one of the fund's adviser entities. 1 for a peer
+    composite: the evaluator built it from a roster the evaluator chose, so
+    it is not a third-party yardstick whatever its members. 2 for an
+    unaffiliated third party. Affiliation is a fact read from the map,
+    never a string match (R2-P0-2)."""
+    if cand.get("data") == "composite":
+        return 1, ("constructed by the evaluator from the roster, not a third-party index. A "
+                   "composite the evaluator built from a roster the evaluator chose is not an "
+                   "independent yardstick, so it earns at most 1 of 2")
+    affiliated = {a.strip() for a in (AFFILIATIONS.get(cand["provider_key"]) or {}).get("adviser_keys", [])}
+    hits = [a.strip() for a in prof["adviser_keys"] if a.strip() in affiliated]
     if hits:
-        return 0, (f"index published by the fund's own adviser ({', '.join(prof['advisers'])}). "
-                   "A manufacturer-owned yardstick sits poorly with the rule's conflict-free "
-                   "ethos, so it is usable as secondary color only")
-    return 2, f"provider unaffiliated with the fund ({cand['provider']})"
+        return 0, (f"index published by the fund's own adviser ({', '.join(prof['advisers'])}) per the "
+                   "registry affiliation map. A manufacturer-owned yardstick is not an independent "
+                   "comparator, so it is usable as secondary color only")
+    return 2, (f"provider unaffiliated with the fund ({cand['provider']}): the registry affiliation "
+               "map ties it to none of the fund's advisers")
 
 
 def _overlap_years(prof: dict, cand: dict) -> tuple[list[str], dict[str, tuple[str, float]]]:
@@ -481,8 +505,19 @@ def comparison_stats(profile: dict, cand: dict) -> dict | None:
     if years is None:
         years = year_frac(d0, d1)
     flows = [(d0, -1.0), (d1, f_growth)]
+    # the fund side of a public-proxy comparison comes from one of three
+    # sources, named on every surface that prints the return (R2-P0-6)
+    if profile.get("series"):
+        source = "Yahoo adjusted close, approximates NAV total return"
+    elif profile.get("fy_returns"):
+        source = "filed fiscal-year returns"
+    else:
+        source = "disclosed annualized figure (cell 1.2)"
     return {
         "kind": "series",
+        "statistic": "KS-PME vs public market proxy",
+        "comparator_kind": "public market series (exchange-traded proxy, Yahoo adjusted close)",
+        "fund_return_source": source,
         "window": f"{d0} to {d1}",
         "window_note": note,
         "fund_window": f"{fund_window[0]} to {fund_window[1]}",
@@ -537,8 +572,18 @@ def composite_comparison(profile: dict, cand: dict) -> dict | None:
              + (f", the fund's in month {subject_m}" if diff else ", the same month as the fund's")
              + (f". Composite year(s) {', '.join(skipped)} skipped: the fund has no whole fiscal year "
                 "with that label (stub or partial period excluded)" if skipped else ""))
+    # a peer composite is appraisal-based and cannot be bought, so the
+    # statistic is a relative wealth ratio (fund growth / composite growth
+    # over the same fiscal years) and an annualized excess return. It is
+    # never called a PME (R2-P0-6, rule 12, audit round 2 item 11).
+    ratio = f_growth / i_growth
     return {
         "kind": "composite",
+        "statistic": "relative wealth ratio vs peer composite",
+        "comparator_kind": "appraisal-based peer composite constructed by the evaluator, not a market series",
+        "fund_return_source": "filed fiscal-year returns",
+        "not_pme_note": ("Not a public market equivalent: the peer composite is appraisal-based, "
+                         "constructed by the evaluator and cannot be bought."),
         "window": f"FY{years[0]} to FY{years[-1]}",
         "window_note": f"{len(years)} overlapping fiscal year(s) of {len(cand['rows'])} composite years",
         "fund_window": f"FY{min(fund)} to FY{max(fund)}",
@@ -547,8 +592,8 @@ def composite_comparison(profile: dict, cand: dict) -> dict | None:
         "composite_rows": [comp_by_year[y] for y in years],
         "fund_growth_x": round(f_growth, 4),
         "index_growth_x": round(i_growth, 4),
-        "ks_pme": round(ks_pme(flows, levels), 4),
-        "direct_alpha_pct": round((direct_alpha(flows, levels) or 0) * 100, 2),
+        "relative_wealth_ratio": round(ratio, 4),
+        "excess_return_pct": round((ratio ** (1 / yrs) - 1) * 100, 2),
         "fund_ann_pct": round((f_growth ** (1 / yrs) - 1) * 100, 2),
         "index_ann_pct": round((i_growth ** (1 / yrs) - 1) * 100, 2),
         "low_confidence": low_confidence(len(years), "fiscal-year"),
@@ -638,7 +683,7 @@ def run_selection(product_key: str) -> dict:
                 "next: public NAV series (quarterly filings) plus a premium/NAV "
                 "decomposition before any comparator is defensible.")
         else:
-            failed = "; ".join(f"{r['id']} {r['score']}/12 ({r['rejection'].split(' (')[0]})"
+            failed = "; ".join(f"{candidate_short(r['id'])} {r['score']}/12 ({r['rejection'].split(' (')[0]})"
                                for r in rejected)
             result["escalation"] = (
                 "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from held data: no candidate passes "

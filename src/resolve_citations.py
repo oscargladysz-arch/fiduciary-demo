@@ -36,7 +36,7 @@ WORKFLOW_RE = re.compile(r"\b(?:searched|searches|pulled|accessed|retrieved|run 
 SET_RE = re.compile(r"\s+(?:filings|notices)\b")
 ACC_RE = re.compile(r"\b(\d{10}-\d{2}-\d{6})\b")
 SPLIT_RE = re.compile(r";|\s\+\s")
-RESOLVED = ("exact", "range", "set", "form_only", "accession_in_text")
+RESOLVED = ("exact", "range", "set", "form_only")
 
 
 def manifest() -> list[dict]:
@@ -89,15 +89,26 @@ def resolve(product: str, cik: str, ref: dict, rows: list[dict]) -> dict:
     out = {"text": ref["text"], "form": form}
     held = [r for r in rows if r["product"] == product and (form == "*" or r["form"] == form)]
     if ref["accessions"]:
+        # R2-P0-1 (rule 15): the manifest wins. A filing of this form held on
+        # the written date resolves the reference, and a number written in the
+        # text that disagrees with it is flagged for the validator, never
+        # used. A written number that matches no manifest row for the product
+        # resolves nothing and gets no URL (the July placeholder accession
+        # reached the live drawer as a 404 this way).
         acc = ref["accessions"][0]
-        same = [r for r in held if r["accession"] == acc]
+        dated = [r for r in held if r["filing_date"] in (ref["filed"] or ref["dates"])]
+        if len(dated) == 1 and dated[0]["accession"] != acc:
+            return {**out, "match": "exact", **_row(dated[0]), "text_accession": acc,
+                    "conflict": (f"the citation writes accession {acc} but the manifest's {form} "
+                                 f"filed {dated[0]['filing_date']} is {dated[0]['accession']}. "
+                                 "A validator error, not a resolution")}
+        same = [r for r in rows if r["product"] == product and r["accession"] == acc]
         if same:
             return {**out, "match": "exact", **_row(same[0])}
-        folder = acc.replace("-", "")
-        return {**out, "match": "accession_in_text", "accession": acc,
-                "url": f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{folder}/",
-                "reason": "accession written in the citation, filing not in data/manifest.csv, "
-                          "the URL is the EDGAR archive folder for that accession"}
+        return {**out, "match": "unresolved", "text_accession": acc,
+                "reason": (f"accession {acc} is written in the citation but is not a manifest row "
+                           "for this product. No URL is built from an accession the manifest does "
+                           "not hold")}
     if not held:
         return {**out, "match": "unresolved",
                 "reason": f"no {form} filing for this product in data/manifest.csv"}
@@ -140,6 +151,7 @@ def run() -> dict:
     out_dir.mkdir(exist_ok=True)
     totals: Counter = Counter()
     unresolved: list[dict] = []
+    conflicts: list[dict] = []
     for key in product_keys():
         cells = {}
         for ev in load_evidence(key):
@@ -152,20 +164,24 @@ def run() -> dict:
                 totals[r["match"]] += 1
                 if r["match"] in ("unresolved", "ambiguous"):
                     unresolved.append({"product": key, "cell": ev["cell_id"], **r})
+                if r.get("conflict"):
+                    conflicts.append({"product": key, "cell": ev["cell_id"], **r})
         doc = {"product": key,
                "what": ("filing references in the evidence CSV resolved against data/manifest.csv, "
                         "offline. exact: form and filed date (or written accession) match one held "
                         "filing. range: every held filing of that form between the two written "
                         "dates. set: every held filing of that form when the citation names them "
-                        "as a plural with no date. form_only: no date written, one such filing held. accession_in_text: "
-                        "the citation carries its own accession, not a held filing, URL is the "
-                        "EDGAR folder. ambiguous and unresolved: stated reason, no accession invented"),
+                        "as a plural with no date. form_only: no date written, one such filing held. "
+                        "An accession written in the citation resolves only when the manifest holds "
+                        "it for this product, and one that disagrees with the manifest's filing on "
+                        "the written date is a conflict for the validator. ambiguous and unresolved: "
+                        "stated reason, no accession invented"),
                "cells": cells,
                "counts": dict(Counter(r["match"] for res in cells.values() for r in res))}
         (out_dir / f"{key}.json").write_text(json.dumps(doc, indent=2))
     summary = {"what": "offline accession resolution over every evidence row that names a filing",
                "references": sum(totals.values()), "counts": dict(totals),
-               "unresolved": unresolved}
+               "unresolved": unresolved, "conflicts": conflicts}
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2))
     return summary
 
@@ -175,3 +191,5 @@ if __name__ == "__main__":
     print(f"references {s['references']}: " + ", ".join(f"{k} {v}" for k, v in sorted(s["counts"].items())))
     for u in s["unresolved"][:12]:
         print(f"  {u['product']:18s} {u['cell']:5s} {u['match']:11s} {u['reason'][:80]}")
+    for c in s.get("conflicts", []):
+        print(f"  CONFLICT {c['product']:18s} {c['cell']:5s} {c['conflict'][:90]}")

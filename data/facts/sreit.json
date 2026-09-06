@@ -109,7 +109,31 @@
     "repurchase_program_status": {
       "value": "suspended",
       "source_cell": "3.1",
+      "since": "April 29, 2026 amendment",
       "note": "April 29, 2026 amendment: 'no repurchase requests will be accepted' except death, qualifying disability and accounts below $5,000",
+      "status": "extracted-unverified"
+    },
+    "dealing_cadence": {
+      "value": "monthly",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'Monthly share repurchase plan'. 0% for ordinary requests since the April 29, 2026 amendment ('no repurchase requests will be accepted' except death, qualifying disability and accounts below $5,000). Cap history: 2% per month and 5% per quarter (2017), 0.33% and 1% (May 2024), 0.5% and 1.5% (June 2025)",
+      "status": "extracted-unverified"
+    },
+    "cap_period": {
+      "value": "month",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'Monthly share repurchase plan'. 0% for ordinary requests since the April 29, 2026 amendment ('no repurchase requests will be accepted' except death, qualifying disability and accounts below $5,000). Cap history: 2% per month and 5% per quarter (2017), 0.33% and 1% (May 2024), 0.5% and 1.5% (June 2025)",
+      "status": "extracted-unverified"
+    },
+    "repurchase_caps": {
+      "value": [
+        {
+          "pct": 0.0,
+          "period": "month"
+        }
+      ],
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'Monthly share repurchase plan'. 0% for ordinary requests since the April 29, 2026 amendment ('no repurchase requests will be accepted' except death, qualifying disability and accounts below $5,000). Cap history: 2% per month and 5% per quarter (2017), 0.33% and 1% (May 2024), 0.5% and 1.5% (June 2025)",
       "status": "extracted-unverified"
     },
     "track_record_years": {
@@ -145,15 +169,28 @@
       "source_cell": "5.3",
       "status": "computed"
     },
-    "pme_primary": {
+    "pme_public_proxy": {
       "value": 0.9453,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "KS-PME vs VNQ over 2024-12-31 to 2025-12-31, fund return source: filed fiscal-year returns"
+    },
+    "pme_public_proxy_name": {
+      "value": "VNQ",
       "source_cell": "1.8",
       "status": "computed"
     },
-    "direct_alpha_primary": {
+    "direct_alpha_public_proxy": {
       "value": -5.47,
       "source_cell": "1.8",
-      "status": "computed"
+      "status": "computed",
+      "note": "KS-PME vs VNQ over 2024-12-31 to 2025-12-31, fund return source: filed fiscal-year returns"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": null,
+      "source_cell": "1.8",
+      "status": "computed",
+      "reason": "no peer composite comparison in either slot for this product"
     }
   }
 }

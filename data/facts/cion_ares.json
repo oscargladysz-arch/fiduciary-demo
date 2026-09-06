@@ -81,6 +81,7 @@
       "value": 3.76,
       "source_cell": "2.3",
       "note": "FY2025 actual Class I EXCLUDING interest expense. Prospectus fee-table totals 6.90% (I) to 7.74% (C) including 3.14% interest. No contractual cap: discretionary expense support only, $0 paid FY2025",
+      "basis": "excluding interest expense (6.90% including interest per the fee table), no contractual cap (FY2025, Class I)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {
@@ -108,6 +109,29 @@
       "reason": "no suspension language in 3.1 or 3.3 as of 2025-12-31",
       "status": "extracted-unverified"
     },
+    "dealing_cadence": {
+      "value": "quarterly",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'quarterly repurchase offers of between 5% and 25% of outstanding shares', 'expects to offer only the 5% minimum each quarter'",
+      "status": "extracted-unverified"
+    },
+    "cap_period": {
+      "value": "quarter",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'quarterly repurchase offers of between 5% and 25% of outstanding shares', 'expects to offer only the 5% minimum each quarter'",
+      "status": "extracted-unverified"
+    },
+    "repurchase_caps": {
+      "value": [
+        {
+          "pct": 5.0,
+          "period": "quarter"
+        }
+      ],
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'quarterly repurchase offers of between 5% and 25% of outstanding shares', 'expects to offer only the 5% minimum each quarter'",
+      "status": "extracted-unverified"
+    },
     "track_record_years": {
       "value": 8.9,
       "source_cell": "1.11",
@@ -132,7 +156,7 @@
       "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
     },
     "primary_benchmark_id": {
-      "value": "peer_credit",
+      "value": "bkln",
       "source_cell": "5.3",
       "status": "computed"
     },
@@ -141,15 +165,28 @@
       "source_cell": "5.3",
       "status": "computed"
     },
-    "pme_primary": {
-      "value": 0.9461,
+    "pme_public_proxy": {
+      "value": 1.1374,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "KS-PME vs BKLN over 2018-07-18 to 2026-07-17, fund return source: Yahoo adjusted close, approximates NAV total return"
+    },
+    "pme_public_proxy_name": {
+      "value": "BKLN",
       "source_cell": "1.8",
       "status": "computed"
     },
-    "direct_alpha_primary": {
-      "value": -1.1,
+    "direct_alpha_public_proxy": {
+      "value": 1.62,
       "source_cell": "1.8",
-      "status": "computed"
+      "status": "computed",
+      "note": "KS-PME vs BKLN over 2018-07-18 to 2026-07-17, fund return source: Yahoo adjusted close, approximates NAV total return"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": 0.9461,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "relative wealth ratio vs private credit peer composite over FY2021 to FY2025, fund return source: filed fiscal-year returns. Not a public market equivalent"
     }
   }
 }

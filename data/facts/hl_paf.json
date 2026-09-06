@@ -81,6 +81,7 @@
       "value": 3.4,
       "source_cell": "2.3",
       "note": "FY2026 net, incl. incentive-fee drag, AFFE excluded",
+      "basis": "net, including the incentive fee, AFFE excluded (FY2026, Class I)",
       "status": "extracted-unverified"
     },
     "net_assets_usd": {
@@ -107,6 +108,29 @@
       "value": null,
       "source_cell": "3.1",
       "reason": "no suspension language in 3.1 or 3.3 as of 2026-03-31",
+      "status": "extracted-unverified"
+    },
+    "dealing_cadence": {
+      "value": "quarterly",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'Quarterly tender offers', 'up to 5.00% of net assets'",
+      "status": "extracted-unverified"
+    },
+    "cap_period": {
+      "value": "quarter",
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'Quarterly tender offers', 'up to 5.00% of net assets'",
+      "status": "extracted-unverified"
+    },
+    "repurchase_caps": {
+      "value": [
+        {
+          "pct": 5.0,
+          "period": "quarter"
+        }
+      ],
+      "source_cell": "3.1",
+      "note": "cell 3.1: 'Quarterly tender offers', 'up to 5.00% of net assets'",
       "status": "extracted-unverified"
     },
     "track_record_years": {
@@ -138,19 +162,32 @@
       "status": "computed"
     },
     "selection_score": {
-      "value": 10,
+      "value": 9,
       "source_cell": "5.3",
       "status": "computed"
     },
-    "pme_primary": {
-      "value": 1.0693,
+    "pme_public_proxy": {
+      "value": 1.9565,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "KS-PME vs PSP over 2021-03-31 to 2026-03-31, fund return source: filed fiscal-year returns"
+    },
+    "pme_public_proxy_name": {
+      "value": "PSP",
       "source_cell": "1.8",
       "status": "computed"
     },
-    "direct_alpha_primary": {
-      "value": 1.35,
+    "direct_alpha_public_proxy": {
+      "value": 14.37,
       "source_cell": "1.8",
-      "status": "computed"
+      "status": "computed",
+      "note": "KS-PME vs PSP over 2021-03-31 to 2026-03-31, fund return source: filed fiscal-year returns"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": 1.0693,
+      "source_cell": "1.8",
+      "status": "computed",
+      "note": "relative wealth ratio vs evergreen PE peer composite over FY2022 to FY2026, fund return source: filed fiscal-year returns. Not a public market equivalent"
     }
   }
 }

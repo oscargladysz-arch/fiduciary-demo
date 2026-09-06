@@ -94,6 +94,10 @@ FACTOR_PARAS = {"1": "g", "2": "h", "3": "i", "4": "j", "5": "k", "6": "l"}
 ADVISOR_COMPLETED = ("6.6", "6.8")
 MAPPING_BASIS = ("factor order per the 2026-09-03 audit's check of 91 FR 16088, "
                  "paragraphs (g) to (l) of proposed 29 CFR 2550.404a-6")
+# the one sentence every surface prints while the verbatim text is absent
+# (R2-P0-3): no instruction, no script name, no environment excuse
+NOT_FETCHED_SENTENCE = ("The verbatim text of paragraphs (g) to (l) is not yet in this build. "
+                        "The Federal Register document is linked above.")
 
 
 def parse_authority(text: str) -> dict[str, list[str]]:
@@ -118,13 +122,10 @@ def authority() -> dict:
     d = DATA / "authority"
     files = sorted(d.glob("*_proposed.md")) if d.exists() else []
     if not files:
-        return {"status": "not fetched",
-                "note": ("verbatim regulatory text not yet fetched into this build: run "
-                         "python src/fetch_authority.py on a machine that reaches "
-                         "federalregister.gov"),
+        return {"status": "not fetched", "note": NOT_FETCHED_SENTENCE,
                 "file": None, "paragraphs": None}
     paras = parse_authority(files[0].read_text())
-    return {"status": "fetched", "note": f"verbatim Federal Register text in {files[0].relative_to(BASE)}",
+    return {"status": "fetched", "note": "verbatim Federal Register text is in this build",
             "file": str(files[0].relative_to(BASE)), "paragraphs": paras}
 
 
@@ -135,7 +136,7 @@ def rule_ref(cid: str, auth: dict | None = None) -> dict:
     letter = FACTOR_PARAS[cid.split(".")[0]]
     verbatim = auth["status"] == "fetched"
     return {"para": f"({letter})",
-            "basis": MAPPING_BASIS + (", verbatim text in " + auth["file"] if verbatim
+            "basis": MAPPING_BASIS + (", verbatim text in this build" if verbatim
                                       else ", verbatim text not in this build"),
             "verbatim": verbatim,
             "advisor_completed": cid in ADVISOR_COMPLETED}
@@ -606,6 +607,13 @@ def coverage_totals() -> dict:
 FACT_OK_STATUS = ("extracted", "verified", "computed", "fetched",
                   "structured")
 
+# string facts with a closed vocabulary (R2-P0-5): a value outside it is a
+# transcription error, not a new kind of wrapper
+FACT_ENUMS = {
+    "dealing_cadence": ("daily", "monthly", "quarterly", "exchange"),
+    "cap_period": ("month", "quarter", "year"),
+}
+
 
 def _num_forms(v) -> set[str]:
     if isinstance(v, float):
@@ -646,11 +654,34 @@ def validate_facts() -> list[str]:
                     and f.get("status") != "computed"):
                 errs.append(f"facts:{key}:{field}: cites cell {sc} whose "
                             f"status is '{cell.get('status')}'")
+            v = f["value"]
+            # closed vocabularies and the shape of the cap list are checked
+            # whatever the status: a computed or approximate fact is still
+            # spelled from the same vocabulary
+            if field in FACT_ENUMS and v not in FACT_ENUMS[field]:
+                errs.append(f"facts:{key}:{field}: value {v!r} is not one of "
+                            f"{FACT_ENUMS[field]}")
+            if field == "repurchase_caps":
+                if not isinstance(v, list) or not v:
+                    errs.append(f"facts:{key}:{field}: must be a non-empty list of "
+                                "{pct, period} records")
+                else:
+                    for i, item in enumerate(v):
+                        if (not isinstance(item, dict)
+                                or not isinstance(item.get("pct"), (int, float))
+                                or isinstance(item.get("pct"), bool)
+                                or item.get("period") not in FACT_ENUMS["cap_period"]):
+                            errs.append(f"facts:{key}:{field}[{i}]: each cap is "
+                                        "{pct: number, period: month|quarter|year}")
+                    periods = {item.get("period") for item in v if isinstance(item, dict)}
+                    cp = (doc["facts"].get("cap_period") or {}).get("value")
+                    if cp is not None and cp not in periods:
+                        errs.append(f"facts:{key}:cap_period: {cp!r} is not the period "
+                                    f"of any cap in repurchase_caps {sorted(periods)}")
             if f.get("approx") or f.get("status") == "computed":
                 continue
             text = str(cell.get("value") or "")
             checks = []
-            v = f["value"]
             if isinstance(v, float):
                 checks.append((field, v))
             elif isinstance(v, int) and not isinstance(v, bool) and v >= 1000:
@@ -658,6 +689,12 @@ def validate_facts() -> list[str]:
             elif isinstance(v, dict):
                 checks += [(f"{field}.{k}", x) for k, x in v.items()
                            if isinstance(x, float)]
+            elif isinstance(v, list):
+                # a list of records is checked item by item the same way
+                for i, item in enumerate(v):
+                    if isinstance(item, dict):
+                        checks += [(f"{field}[{i}].{k}", x) for k, x in item.items()
+                                   if isinstance(x, float)]
             for label, num in checks:
                 if not any(s in text for s in _num_forms(num)):
                     errs.append(f"facts:{key}:{label}: value {num} not found "

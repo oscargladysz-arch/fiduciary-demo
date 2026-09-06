@@ -128,8 +128,8 @@ def render_roster():
             "note": p.get("note", p.get("identity_note", "")),
         })
     st.dataframe(rows, width="stretch", hide_index=True)
-    st.caption("Coverage per status kind from tark_data.coverage_summary, the "
-               "same function the static site and `python src/coverage.py` use.")
+    st.caption("Coverage per status kind from the record's one coverage formula, "
+               "the same one the static site uses.")
 
 
 # ----------------------------------------------------------- evaluation view
@@ -195,8 +195,12 @@ def render_benchmark():
             c1, c2, c3, c4 = st.columns(4)
             c1.metric("Fund (ann.)", f"{comp['fund_ann_pct']}%/yr")
             c2.metric("Benchmark (ann.)", f"{comp['index_ann_pct']}%/yr")
-            c3.metric("KS-PME", f"{comp['ks_pme']}")
-            c4.metric("Direct Alpha", f"{comp['direct_alpha_pct']}%/yr")
+            if comp.get("kind") == "composite":
+                c3.metric("Relative wealth ratio vs peer composite", f"{comp['relative_wealth_ratio']}")
+                c4.metric("Excess return vs peer composite", f"{comp['excess_return_pct']}%/yr")
+            else:
+                c3.metric("KS-PME", f"{comp['ks_pme']}")
+                c4.metric("Direct Alpha", f"{comp['direct_alpha_pct']}%/yr")
             st.caption(f"Window {comp['window']}"
                        f"{(' (' + comp['window_note'] + ')') if comp.get('window_note') else ''}"
                        f". PME and alpha on "
@@ -220,7 +224,7 @@ def render_benchmark():
         st.download_button("Download decision memo (.docx)", memo.read_bytes(),
                            file_name=memo.name, key="memo_dl")
     else:
-        st.caption("Decision memo not built yet: run python src/build_site.py.")
+        st.caption("The decision memo for this plan and product has not been built yet.")
 
 
 def render_liquidity():

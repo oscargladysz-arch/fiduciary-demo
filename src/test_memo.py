@@ -54,7 +54,7 @@ check("liquidity match section is plan-specific (consulting memo carries the thi
 
 import re  # noqa: E402
 from tark_data import status_kind  # noqa: E402
-from tark_display import facts_by_cell, typed_headline  # noqa: E402
+from tark_display import display_path_free, facts_by_cell, typed_headline  # noqa: E402
 from tark_memo import EVIDENCED, first_sentence  # noqa: E402
 import json  # noqa: E402
 
@@ -74,7 +74,7 @@ for k, prod in prods.items():
     for cid, cell in prod["cells"].items():
         v = (cell.get("value") or "").strip()
         if status_kind(cell.get("status", "")) in EVIDENCED and v:
-            if squash(first_sentence(v)) not in t:
+            if squash(first_sentence(display_path_free(v))) not in t:
                 missing.append(f"{k} {cid}")
             th = typed_headline(cid, fbc.get(cid, {}))
             if th and squash(th) not in t:
@@ -87,6 +87,50 @@ check("findings: every typed-fact headline the site shows is in the memo", not t
 if typed_missing:
     print("   missing:", "; ".join(typed_missing[:8]))
 check("findings: no ellipsis cut anywhere in the memos", not cut)
+
+# R2-P0-4: the abbreviation-aware splitter (audit round 2 item 4). The old
+# "period then whitespace" splitter cut "Anderson v." on all 16 products and
+# "Stephen L." on hl_paf 1.11. The regression set is every cell where the two
+# splitters differ today, and the audit's named examples must be inside it.
+from tark_display import ends_at_abbreviation  # noqa: E402
+_naive = lambda v: re.split(r"(?<=[.!?])\s+", v.strip(), maxsplit=1)[0]  # noqa: E731
+_reg = {(k, cid) for k, prod in prods.items() for cid, c in prod["cells"].items()
+        if (c.get("value") or "").strip() and status_kind(c.get("status", "")) != "n/a"
+        and _naive(c["value"]) != first_sentence(c["value"])}
+_named = {(k, "5.7") for k in prods} | {("cliffwater_cclfx", "1.11"), ("amg_pantheon", "3.2"),
+                                        ("cliffwater_cclfx", "3.2"), ("bcred", "4.6"), ("jll_ipt", "4.6"),
+                                        ("bcred", "6.2"), ("cion_ares", "6.5"), ("jll_ipt", "6.5"),
+                                        ("dxyz", "6.3"), ("breit", "2.7"), ("arkvx", "6.5")}
+check(f"splitter: the audit's abbreviation cuts (Anderson v. on all 16, Stephen L., p.m., Supplement No., U.S., "
+      f"Inc., Mr., i.e., St.) are in the regression set of {len(_reg)} cells where the old splitter cut short",
+      _named <= _reg)
+if not _named <= _reg:
+    print("   missing:", sorted(_named - _reg))
+_unit = {"Anderson v. Intel Corp. Investment Policy Committee, No. 25-498. Next.":
+         "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498.",
+         "Portfolio manager Stephen L. Nesbitt since inception. Next.": "Portfolio manager Stephen L. Nesbitt since inception.",
+         "Tenders due 11:59 p.m. ET 2026-08-28. Next.": "Tenders due 11:59 p.m. ET 2026-08-28.",
+         "STRATEGY: U.S. middle-market loans (incl. unitranche). Next.": "STRATEGY: U.S. middle-market loans (incl. unitranche).",
+         "Adviser ARK Investment Management LLC (St. Petersburg, FL). Next.": "Adviser ARK Investment Management LLC (St. Petersburg, FL).",
+         "At the median of 5. Next sentence.": "At the median of 5."}
+check("splitter: unit cases (v., initial, p.m., U.S., incl., parenthesis, a number is a sentence end)",
+      all(first_sentence(k) == v for k, v in _unit.items()))
+_abbr_rows = []
+for pl in plan_keys():
+    for k in prods:
+        _d = Document(OUT / memo_name(pl, k))
+        for _t in _d.tables:
+            for _row in _t.rows:
+                for _c in _row.cells:
+                    for _para in _c.paragraphs:
+                        _txt = _para.text.strip()
+                        if re.match(r"^\d+\.\d+ .*\((?:extracted-unverified|computed|partial|verified|structured)\): ",
+                                    _txt) and ends_at_abbreviation(_txt):
+                            _abbr_rows.append(f"{pl} {k}: {_txt[-40:]}")
+check("findings: no row in any of the 64 memos ends at an abbreviation (v., L., U.S., p.m., No., Inc.)",
+      not _abbr_rows)
+if _abbr_rows:
+    print("   rows:", "; ".join(_abbr_rows[:6]))
 
 # P1-21: the four sections, in every plan x product memo
 SECTIONS = ("product-to-plan liquidity match", "structural verdict (typed facts, plan-independent)",
@@ -152,7 +196,7 @@ for k in prods:
         if status_kind(prods[k]["cells"][cid].get("status", "")) not in EVIDENCED:
             continue
         for r in refs:
-            accs = [r["accession"]] if r["match"] in ("exact", "form_only", "accession_in_text") \
+            accs = [r["accession"]] if r["match"] in ("exact", "form_only") \
                 else [f["accession"] for f in r.get("filings", [])]
             for a in accs:
                 if a.lower() not in t or r.get("url", r.get("filings", [{}])[0].get("url", "")).lower() not in t:
@@ -212,9 +256,23 @@ for pl in plan_keys():
             _rb_bad.append(f"{pl} {k}: regulatory basis incomplete")
         if "safe harbor attaches" in t or "the proposal requires comparison" in t:
             _rb_bad.append(f"{pl} {k}: paraphrase of the regulation")
-        if authority()["status"] != "fetched" and "not yet fetched into this build" not in t:
+        # R2-P0-9: no legal conclusion and, while the rule text is not in the
+        # build, no sentence that states what the rule requires
+        for phrase in ("undercut", "do not proceed", "cannot support the safe harbor",
+                       "satisfies the safe harbor", "would defeat the safe harbor",
+                       "recommended action:", "under the proposal's own terms"):
+            if phrase in t:
+                _rb_bad.append(f"{pl} {k}: legal conclusion phrase {phrase!r}")
+        if authority()["status"] != "fetched":
+            for rx in (r"\bthe (?:rule|proposal|regulation|safe harbor) (?:requires|mandates|demands|obliges|calls for)\b",
+                       r"\brequired by the (?:rule|proposal|regulation)\b",
+                       r"\bto (?:qualify for|earn|keep|preserve) the safe harbor\b"):
+                if re.search(rx, t):
+                    _rb_bad.append(f"{pl} {k}: states what the rule requires while the text is not in the build ({rx})")
+        if authority()["status"] != "fetched" and "not yet in this build" not in t:
             _rb_bad.append(f"{pl} {k}: verbatim-text status missing")
-check("regulatory basis: citation, links, paragraph mapping and basis in all 64, no paraphrase", not _rb_bad)
+check("regulatory basis: citation, links, paragraph mapping and basis in all 64, no paraphrase, no legal "
+      "conclusion, no statement of what the rule requires while its text is absent", not _rb_bad)
 if _rb_bad:
     print("   bad:", "; ".join(_rb_bad[:4]))
 
@@ -260,6 +318,9 @@ for pl in plan_keys():
             _pk_bad.append(f"{pl} {k}: exhibits")
         if "verified cells have been independently" in t:
             _pk_bad.append(f"{pl} {k}: verified sentence")
+        if any(ph in t for ph in ("undercut", "do not proceed", "cannot support the safe harbor",
+                                  "satisfies the safe harbor", "recommended action:")):
+            _pk_bad.append(f"{pl} {k}: legal conclusion phrase")
 check("packets: anonymized, own plan, both verdicts from the match file, exhibits, no decision, all 64", not _pk_bad)
 if _pk_bad:
     print("   bad:", "; ".join(_pk_bad[:5]))

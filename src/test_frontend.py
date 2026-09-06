@@ -160,10 +160,19 @@ else:
 check("facts bundle: every field cites a real cell", all(
     f.get("source_cell") in bundle["products"][k]["cells"]
     for k in PRODUCTS for f in bundle["facts"][k].values()))
-check("facts bundle: pme_primary mirrors selection artifact", all(
-    bundle["facts"][k]["pme_primary"]["value"] ==
-    ((bundle["benchmarks"][k].get("primary") or {}).get("comparison") or {}).get("ks_pme")
+def _slot_of_kind(k, kind):
+    sel = bundle["benchmarks"].get(k) or {}
+    return next((s["comparison"] for s in (sel.get("primary"), sel.get("secondary"))
+                 if s and (s.get("comparison") or {}).get("kind") == kind), None)
+check("facts bundle: pme_public_proxy mirrors the public-proxy slot and peer_relative_wealth_ratio the composite "
+      "slot of the selection artifact (rule 12)", all(
+    bundle["facts"][k]["pme_public_proxy"]["value"] == (_slot_of_kind(k, "series") or {}).get("ks_pme")
+    and bundle["facts"][k]["peer_relative_wealth_ratio"]["value"]
+    == (_slot_of_kind(k, "composite") or {}).get("relative_wealth_ratio")
     for k in PRODUCTS if bundle["benchmarks"].get(k, {}).get("primary")))
+check("benchmarks bundle: no composite comparison carries a PME key or name", all(
+    "ks_pme" not in comp and "direct_alpha_pct" not in comp and comp["statistic"].startswith("relative wealth ratio")
+    for k in PRODUCTS for comp in [_slot_of_kind(k, "composite")] if comp))
 sm = json.loads((SITE / "series.js").read_text().split("\n")[2][len("window.TARK_LAB = "):-1])
 check("lab matrix: every product x proxy pair carries a real v2 score, criteria and eligibility",
       all(isinstance(v["score"], int) and set(v["criteria"]) == {"strategy_match", "risk_liquidity_match",
@@ -356,6 +365,24 @@ with sync_playwright() as pw:
     check("plans: liquidity tail 1,847 rendered", "1,847" in t)
     t = view_text("benchmarks", product="cliffwater_cclfx")
     check("benchmark cclfx: KS-PME 1.2532 on screen", "1.2532" in t)
+    # R2-P0-6: the composite card is named a relative wealth ratio and never a PME,
+    # the public-proxy card keeps KS-PME, each names its fund return source
+    # stat labels render uppercase through CSS and inner_text follows, so the
+    # label tokens are compared case-folded and the PME names case-sensitively
+    _comp_card = page.locator('[data-stat-kind="composite"]').first
+    _card_html = page.locator('.cardgrid .card', has=_comp_card).first.inner_text()
+    _card_low = _card_html.lower()
+    check("benchmark cclfx: the composite card reads relative wealth ratio, names the filed fiscal-year source "
+          "and the alignment note, and carries no PME name",
+          "relative wealth ratio vs peer composite" in _card_low and "filed fiscal-year returns" in _card_low
+          and "Alignment:" in _card_html and "KS-PME" not in _card_html and "Direct Alpha" not in _card_html
+          and "pme" not in _card_low.replace("public market equivalent", ""))
+    _ser_card = page.locator('.cardgrid .card', has=page.locator('[data-stat-kind="series"]')).first.inner_text()
+    check("benchmark cclfx: the public-proxy card keeps KS-PME and names the Yahoo adjusted close source",
+          "KS-PME" in _ser_card and "yahoo adjusted close" in _ser_card.lower())
+    _scr = view_text("screener")
+    check("screener: the PME column is split into KS-PME vs public proxy and peer relative wealth ratio",
+          "KS-PME vs public proxy" in _scr and "Peer relative wealth ratio" in _scr)
     tl = t.lower()   # stat labels render uppercase (CSS), inner_text follows
     check("benchmark cclfx: monthly-schedule row labeled ILLUSTRATIVE, two-point stated primary",
           "monthly schedule" in tl and "illustrative" in tl and "two-point figure is primary" in tl
@@ -857,9 +884,10 @@ with sync_playwright() as pw:
     page.evaluate("() => window.tarkSetState({view: 'census', c_cik: '1467631'})")
     page.wait_for_selector("#view [data-back]", timeout=15000)
     t = page.locator("#view").inner_text()
-    check("census entity (unevaluated): the ingest command with this CIK is copyable",
-          "python src/ingest.py 1467631 --key " in t and page.locator("[data-copycmd]").count() == 1
-          and page.locator("[data-cmd]").inner_text().startswith("python src/ingest.py 1467631"))
+    check("census entity (unevaluated): an evaluation request naming this CIK is copyable, no command line",
+          "Evaluate CIK 1467631" in t and page.locator("[data-copycmd]").count() == 1
+          and page.locator("[data-cmd]").inner_text().startswith("Evaluate CIK 1467631")
+          and "python" not in t and "src/" not in t)
     check("census entity (unevaluated): no service connected to this build, no button, no job state",
           (bundle.get("service_url") is None) == ("No evaluation service is connected" in t)
           and page.locator("[data-evaluate]").count() == (0 if bundle.get("service_url") is None else 1)
@@ -1119,7 +1147,7 @@ with sync_playwright() as pw:
     pf.locator('[data-f="anonymization_label"]').check()
     pf.locator("[data-plan-make]").click()
     try:
-        intake_doc = json.loads(pf.locator("[data-plan-patch]").inner_text().split("\n", 1)[1])
+        intake_doc = json.loads(pf.locator("[data-plan-patch]").inner_text())
     except Exception:  # noqa: BLE001
         intake_doc = {}
     check("plan intake: the file carries the label, the confirmation, the codes upper-cased and a derived preview",
@@ -1145,9 +1173,12 @@ with sync_playwright() as pw:
     vf.locator('[data-f="signer"]').fill("A. Person, committee chair")
     vf.locator('[data-f="date"]').fill("2026-09-04")
     vf.locator("[data-verify-make]").click()
-    check("verification: the command names the product, cell, signer and date, nothing is written by the site",
-          vf.locator("[data-verify-cmd]").inner_text()
-          == f"python src/verify_cell.py {order[0].replace(':', ' ')} --signer \"A. Person, committee chair\" --date 2026-09-04"
+    _req = json.loads(vf.locator("[data-verify-cmd]").inner_text())
+    check("verification: the signature request names the product, cell, signer and date, no command line, "
+          "nothing is written by the site",
+          _req.get("signature_request") == "verify"
+          and f"{_req.get('product')}:{_req.get('cell')}" == order[0]
+          and _req.get("signer") == "A. Person, committee chair" and _req.get("date") == "2026-09-04"
           and "writes nothing" in vf.locator("[data-verify-msg]").inner_text())
 
     # ---------- P1-26: authority panel and rule references ----------
@@ -1162,7 +1193,7 @@ with sync_playwright() as pw:
           and bundle["rule"]["docket"] in auth_t)
     check("authority panel: verbatim status is the build's, never text from memory",
           page.locator("#auth_status").inner_text() == bundle["rule"]["authority"]["status"]
-          and (bundle["rule"]["authority"]["status"] == "fetched" or "not yet fetched" in auth_t))
+          and (bundle["rule"]["authority"]["status"] == "fetched" or "not yet in this build" in auth_t))
     check("authority panel: scope sentence (selection, not monitoring) and advisor-completed cells",
           "Monitoring is not documented here" in auth_t and "6.6 and 6.8" in auth_t)
     ev_t = view_text("evaluation", product="hl_paf")
@@ -1189,11 +1220,11 @@ with sync_playwright() as pw:
         patch_text = form.locator("[data-advisor-patch]").inner_text()
         cid = form.get_attribute("data-advisor-form")
         try:
-            patch = json.loads(patch_text.split("\n", 1)[1])
+            patch = json.loads(patch_text)
         except Exception:  # noqa: BLE001
             patch = {}
-        check("advisor form: the patch is the exact file for this plan and product, signed and dated",
-              patch_text.startswith("# save as data/advisor/plan_tech_media__hl_paf.json")
+        check("advisor form: the output is valid JSON for this plan and product, signed and dated, no comment line",
+              patch_text.startswith("{")
               and patch.get("plan") == "plan_tech_media" and patch.get("product") == "hl_paf"
               and patch.get("cells", {}).get(cid, {}).get("signer") == "A. Person, committee chair"
               and patch["cells"][cid]["status"].startswith("advisor-stated - A. Person")
@@ -1304,6 +1335,41 @@ with sync_playwright() as pw:
             t1_bad.append(f"{it['product']} {it['cell']}")
     check(f"Tier 1 manual check, automated: drawer document, quote and accession equal the CSV for all {len(tier1)} cells "
           "(EDGAR HTTP status cannot be checked from this container)", bool(tier1) and not t1_bad, "; ".join(t1_bad))
+
+    # ---------- VERIFY 7: the demo script speaks only what is on screen (R2-P0-10)
+    # docs/demo_script.md ends with a "## Surface checks" block, one line per
+    # spoken text: view | product | plan | text. Every text must render on
+    # that view under that plan (case-folded: stat labels render uppercase).
+    # A drawer row names the cell in the plan column and reads the citation
+    # drawer of that cell on the Evaluation view.
+    _script = (BASE / "docs" / "demo_script.md").read_text()
+    check("demo script: the title carries a version and the queue's Tier 1 names the same one",
+          bool(re.search(r"Demo Script v(\d+)", _script))
+          and re.search(r"Demo Script v(\d+)", _script).group(1)
+          == (re.search(r"demo_script\.md` \(v(\d+)\)", (BASE / "docs" / "verification_queue.md").read_text()) or re.match(r"(x)", "x")).group(1))
+    _blk = _script.split("## Surface checks", 1)
+    _rows = []
+    if len(_blk) == 2:
+        for _line in _blk[1].splitlines():
+            _mm = re.match(r"-\s+(\w+)\s*\|\s*(\S+)\s*\|\s*(\S+)\s*\|\s*(.+?)\s*$", _line.strip())
+            if _mm:
+                _rows.append(_mm.groups())
+    _fold = lambda t: re.sub(r"\s+", " ", t).strip().lower()  # noqa: E731
+    _miss = []
+    for _view, _product, _plan, _token in _rows:
+        if _view == "drawer":
+            view_text("evaluation", product=_product)
+            page.locator(f'[data-cite][data-cid="{_plan}"]').first.click()
+            _body = page.locator("#drawer .dbody").inner_text()
+            page.evaluate("() => { document.getElementById('drawer').classList.remove('open'); }")
+        else:
+            _body = view_text(_view, plan=_plan, product=("hl_paf" if _product == "-" else _product))
+        if _fold(_token) not in _fold(_body):
+            _miss.append(f"{_view}/{_product}/{_plan}: {_token}")
+    check(f"demo script: all {len(_rows)} surface-check texts render on the named view under the named plan",
+          len(_rows) >= 20 and not _miss, "; ".join(_miss[:6]))
+    check("demo script: no peer-composite ratio is spoken (decision 7.3)",
+          not re.search(r"\b0\.97\d\d\b|\b1\.06\d\d\b|relative wealth ratio (?:of )?\d", _script.split("## Numbers this script speaks")[0]))
 
     # ---------- VERIFY 5: mobile (390 px) and print renders of Roster, Evaluation, Benchmarks
     mobile = browser.new_page(viewport={"width": 390, "height": 844})
