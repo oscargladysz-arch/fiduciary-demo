@@ -22,7 +22,7 @@ from datetime import date
 from pathlib import Path
 
 from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
-from tark_display import (BASE_LABEL, CANDIDATE_SHORT, LANE_LABEL, RUBRIC_LABEL, STRATEGY_LABEL,
+from tark_display import (SLOT_LABELS, BASE_LABEL, CANDIDATE_SHORT, LANE_LABEL, RUBRIC_LABEL, STRATEGY_LABEL,
                           WRAPPER_LABEL, cell_display, display_path_free, facts_by_cell)
 from tark_memo import write_all
 from tark_packet import write_all_packets
@@ -44,7 +44,9 @@ GLOSSARY = {
     "PME": "Did the fund beat simply buying an index with the same cash, at the same times? Above 1.0 = yes. (Kaplan-Schoar Public Market Equivalent)",
     "KS-PME": "Did the fund beat simply buying an index with the same cash, at the same times? Above 1.0 = yes. (Kaplan-Schoar Public Market Equivalent)",
     "Direct Alpha": "The fund's yearly edge over the index, as a percentage. Zero = index-like. (Gredil/Griffiths/Stucke annualized excess IRR)",
-    "relative wealth ratio": "The fund's cumulative growth divided by the peer composite's over the same fiscal years. Above 1.0 = the fund grew more. Not a PME: the composite is appraisal-based, built by the evaluator, and cannot be bought.",
+    "relative wealth ratio": "The fund's cumulative growth divided by the comparator's over identical periods. Above 1.0 = the fund grew more. Not a PME: the comparator is appraisal-based and cannot be bought.",
+    "meaningful benchmark": "The paragraph (k) comparison: the highest-scoring independent public index, exchange-traded proxy or published strategy index for the fund's strategy. A PME only when the comparator is a public market series.",
+    "peer comparison": "The paragraph (g) and (h) comparison: the cohort side by side over identical periods with n per period, and an equal-weight composite only where every peer reports the period. Never the benchmark, never a PME.",
     "AFFE": "Fees of the funds this fund invests in, passed through to you on top of its own fees. (Acquired Fund Fees & Expenses)",
     "TER": "Everything the fund charges in a year as a percent of assets. (Total Expense Ratio)",
     "Rule 23c-3": "The SEC rule forcing an interval fund to offer buybacks on a fixed schedule - liquidity by law, not by choice.",
@@ -199,6 +201,28 @@ def daily_series_map() -> dict:
     return out
 
 
+def _cohort_bundle(doc: dict) -> dict:
+    """The cohort artifact for the bundle: the composite rows keep label,
+    period, n, members and the composite return (the chart and the n table),
+    the per-member returns stay in the record and on the Slot G card."""
+    comp = dict(doc.get("composite") or {})
+    if comp.get("rows"):
+        comp["rows"] = [{k: v for k, v in r.items() if k != "returns"} for r in comp["rows"]]
+    return {**doc, "composite": comp}
+
+
+def compact_series(series: list) -> dict:
+    """Transport encoding of a daily series: the first date, day offsets from
+    it and the values. main.js expands it back to [[date, value], ...] the
+    moment the chunk loads, so every consumer sees the same array as before
+    and the lab's parity with the engine is unchanged."""
+    from datetime import date
+    base = date.fromisoformat(series[0][0])
+    return {"base": series[0][0],
+            "d": [(date.fromisoformat(d) - base).days for d, _ in series],
+            "v": [v for _, v in series]}
+
+
 def pme_profiles() -> dict:
     """Analysis Lab profiles for EVERY product with a recomputable return
     input: a daily series, a fiscal-year return list, or a disclosed
@@ -214,14 +238,19 @@ def pme_profiles() -> dict:
         strategy = merged["strategy"]
         proxy = STRATEGY_DEFAULT_PROXY[strategy]
         sel_path = DATA / "benchmarks" / f"{key}_selection.json"
+        slot_g = None
         if sel_path.exists():
             sel = json.loads(sel_path.read_text())
-            if sel.get("primary"):
-                cand = next((c for c in menu_for(key)
-                             if c["id"] == sel["primary"]["id"]), None)
-                if cand and cand.get("series") in PROXY_LIBRARY:
-                    proxy = cand["series"]
+            # the lab opens on the engine's own comparison (R2-P1-8): Slot K's
+            # series when it is held, else the reference public series
+            picked = (sel.get("slot_k") or {}).get("selected")
+            if not (picked and picked.get("comparison")):
+                picked = sel.get("reference_comparison")
+            if picked and picked.get("series_id") in PROXY_LIBRARY:
+                proxy = picked["series_id"]
+            slot_g = sel.get("slot_g")
         entry: dict = {"default_proxy": proxy}
+        # Slot G is read by the lab from the benchmarks bundle (one copy)
         if key in daily:
             entry.update({"fund_series": daily[key]["series"], "granularity": "monthly"})
             if daily[key]["price_series"]:
@@ -268,12 +297,15 @@ def swap_matrix() -> dict:
             sm = s["criteria"]["strategy_match"]
             decoupled = bool(prof.get("price_nav_decoupled"))
             gate = sm >= 2
-            eligible = gate and s["score"] >= MIN_PRIMARY_SCORE and not decoupled
+            independent = s["criteria"]["provider_independence"] == 2
+            eligible = gate and independent and s["score"] >= MIN_PRIMARY_SCORE and not decoupled
             if decoupled:
                 verdict = ("not eligible: the fund's price is decoupled from its NAV, so no "
                            "proxy benchmarks the portfolio")
             elif not gate:
                 verdict = f"not eligible: fails the strategy gate (strategy_match {sm}/3)"
+            elif not independent:
+                verdict = "not eligible: the provider is affiliated with the fund's adviser"
             elif s["score"] < MIN_PRIMARY_SCORE:
                 verdict = (f"not eligible: {s['score']}/{s['max']} is below the "
                            f"{MIN_PRIMARY_SCORE}/{s['max']} threshold")
@@ -493,11 +525,59 @@ def main() -> None:
 
     benchmarks = {}
     for f in sorted((DATA / "benchmarks").glob("*_selection.json")):
-        benchmarks[f.stem.replace("_selection", "")] = json.loads(f.read_text())
+        sel = json.loads(f.read_text())
+        # the bundle copy drops what no view reads (the composite's per-period
+        # rows duplicate the table, the per-member basis and kind maps are in
+        # the record for the memo): the record file keeps everything
+        g = sel.get("slot_g") or {}
+        if g:
+            g.pop("member_period_kind", None)
+            g.pop("member_source", None)
+            (g.get("composite") or {}).pop("rows", None)
+            (g.get("composite") or {}).pop("periods", None)
+            # the side-by-side table ships its column names once and each
+            # row's values in that order (the record keeps the keyed form)
+            if g.get("table"):
+                cols = list(g["table"][0]["returns"].keys())
+                g["columns"] = cols
+                for r in g["table"]:
+                    r["values"] = [r["returns"].get(c) for c in cols]
+                    r.pop("returns", None)
+                    r.pop("period_kind", None)
+        # the rubric caption ships once (rubric_caption) and the per-criterion
+        # integers are printed through the reasons, which every card carries
+        sel.pop("rubric", None)
+        for x in [sel["slot_k"].get("selected")] + sel.get("rejected", []):
+            if x:
+                x.pop("criteria", None)
+                x.pop("comparator_kind", None)
+        benchmarks[f.stem.replace("_selection", "")] = sel
 
     liquidity = {}
+    # what every match repeats verbatim rides the chunk once and is
+    # re-attached to each match by main.js on load (tarkMergeLazy): the
+    # wrapper facts are plan-independent (the same object under all four
+    # plans) and the stress-assumption sentence is one constant. The
+    # record's "reasons" list (structural_reasons + scenario_reasons
+    # verbatim), the memo-only "layers" note, the filed_outflow block (its
+    # rate and plan year ride plan_inputs, its words ride scenario_reasons)
+    # and the fund_capacity basis note are not read by any view. None of
+    # this changes a figure or a sentence a view prints.
+    liquidity_shared = {"wrapper_facts": {}, "stress_assumptions": None}
     for f in sorted((DATA / "liquidity").glob("*__*_match.json")):
-        liquidity[f.stem.replace("_match", "")] = json.loads(f.read_text())
+        mdoc = json.loads(f.read_text())
+        for drop in ("reasons", "layers", "filed_outflow"):
+            mdoc.pop(drop, None)
+        wf = mdoc.pop("wrapper_facts")
+        prev = liquidity_shared["wrapper_facts"].setdefault(mdoc["product"], wf)
+        if prev != wf:
+            raise SystemExit(f"{f.name}: wrapper facts differ across plans, the bundle cannot share them")
+        sa = mdoc["stressed_scenario"].pop("assumptions", None)
+        if liquidity_shared["stress_assumptions"] not in (None, sa):
+            raise SystemExit(f"{f.name}: stress assumptions differ across matches")
+        liquidity_shared["stress_assumptions"] = sa
+        (mdoc.get("scenario", {}).get("fund_capacity") or {}).pop("basis", None)
+        liquidity[f.stem.replace("_match", "")] = mdoc
 
     products = load_products()
     facts = {}
@@ -544,7 +624,8 @@ def main() -> None:
     # first paint ships element, value, status and verifier per cell. The
     # citation-drawer detail (source, section, quote, extractor) rides in the
     # lazy chunk as TARK_EVIDENCE and is merged into products on load.
-    FIRST_PAINT_FIELDS = ("element", "value", "status", "verified_by")
+    # the element label rides once per cell id in cell_labels, not per product
+    FIRST_PAINT_FIELDS = ("value", "status", "verified_by")
     DETAIL_FIELDS = ("source", "section", "quote", "extracted_by")
     # repository paths inside the record render as reader labels (R2-P0-3)
     evidence_detail = {k: {cid: {f: display_path_free(c.get(f, "")) for f in DETAIL_FIELDS}
@@ -602,6 +683,10 @@ def main() -> None:
         "lane_labels": LANE_LABEL,
         "candidate_short": CANDIDATE_SHORT,
         "rubric_label": RUBRIC_LABEL,
+        "slot_labels": SLOT_LABELS,
+        # one label per cell id: the bundle's product cells carry no element
+        # string, the views read this map (55 entries instead of 880 copies)
+        "cell_labels": dict(CELLS),
         "cell_display": display,
         "factor_rollups": rollups,
         "glossary": GLOSSARY,
@@ -630,7 +715,7 @@ def main() -> None:
         # chart/lab views) to keep the first-paint bundle inside the perf
         # budget; window.TARK.series is merged in by ensureSeries()
         "series": None,
-        "cohorts": {p.stem: json.loads(p.read_text())
+        "cohorts": {p.stem: _cohort_bundle(json.loads(p.read_text()))
                     for p in sorted((DATA / "cohorts").glob("*.json"))
                     if p.stem != "caveat_matrix"},
         "facts_meta": {p.stem: {k: json.loads(p.read_text())[k]
@@ -662,7 +747,7 @@ def main() -> None:
     bundle["packets"] = sorted(m.stem.replace("_committee_packet", "") for m in packet_paths)
     memo_paths = memo_paths + packet_paths
 
-    series_payload = json.dumps({
+    series_payload = json.dumps({k: compact_series(v) for k, v in {
         "dxyz_daily": [[d, round(v, 4)] for d, v in load_series("dxyz", "close")],
         "cclfx": daily_series("cclfx"),
         "pflex": daily_series("pflex"),
@@ -674,7 +759,7 @@ def main() -> None:
         "urth": daily_series("urth"),
         "spy": daily_series("spy"),
         "vnq": daily_series("vnq"),
-    }, separators=(",", ":"))
+    }.items()}, separators=(",", ":"))
 
     census_payload = census_chunk()
     payload = json.dumps(bundle, separators=(",", ":"))
@@ -699,7 +784,10 @@ def main() -> None:
         + "window.TARK_LIQ = "
         + json.dumps(liquidity, separators=(",", ":")) + ";\n"
         + "window.TARK_LAB = " + lab_payload + ";\n"
-        + "window.TARK_EVIDENCE = " + evidence_payload + ";\n")
+        + "window.TARK_EVIDENCE = " + evidence_payload + ";\n"
+        # last, so the gates that read the chunk lines by position keep theirs
+        + "window.TARK_LIQ_SHARED = "
+        + json.dumps(liquidity_shared, separators=(",", ":")) + ";\n")
     (SITE / "census.data.js").write_text("window.TARK_CENSUS = "
                                          + census_payload + ";\n")
 

@@ -136,12 +136,21 @@ def typed_headline(cid: str, fx: dict) -> str | None:
         return f"inception {g('inception')}" + (f", {yrs:g} years" if yrs is not None else "")
     if cid == "6.1" and g("wrapper_type"):
         return WRAPPER_LABEL.get(g("wrapper_type"), g("wrapper_type"))
-    if cid == "1.8" and (g("pme_public_proxy") is not None or g("peer_relative_wealth_ratio") is not None):
+    if cid == "1.12" and "peer_relative_wealth_ratio" in fx:
+        v = g("peer_relative_wealth_ratio")
+        return (f"peer relative wealth ratio {v:.2f}, not a benchmark" if v is not None
+                else "peer composite refused, table only")
+    if cid == "1.8" and (g("pme_public_proxy") is not None or g("slot_k_relative_wealth_ratio") is not None):
+        # the meaningful-benchmark slot's own statistic first, the reference
+        # comparison named as such when Slot K carries no number (decision 7.21)
         parts = []
+        if g("slot_k_relative_wealth_ratio") is not None:
+            parts.append(f"relative wealth ratio {g('slot_k_relative_wealth_ratio'):.2f} vs the published index")
         if g("pme_public_proxy") is not None:
-            parts.append(f"KS-PME {g('pme_public_proxy'):.2f} vs {g('pme_public_proxy_name') or 'public proxy'}")
-        if g("peer_relative_wealth_ratio") is not None:
-            parts.append(f"peer relative wealth ratio {g('peer_relative_wealth_ratio'):.2f}")
+            note = (fx.get("pme_public_proxy", {}).get("note") or "")
+            ref = "reference comparison" in note
+            parts.append(f"KS-PME {g('pme_public_proxy'):.2f} vs {g('pme_public_proxy_name') or 'public proxy'}"
+                         + (" (reference, not the benchmark)" if ref else ""))
         return ", ".join(parts)
     if cid == "5.3" and g("primary_benchmark_id"):
         sc = g("selection_score")
@@ -231,7 +240,9 @@ def cell_display(cell: dict, cid: str = "", fx: dict | None = None) -> dict:
     else:
         cut = sentence[:137]
         headline = cut[: cut.rfind(" ")].rstrip(" ,;:") + "…" if " " in cut else cut + "…"
-    return {"headline": headline, "plain": plain, "typed": False}
+    # no "typed" key when false: the views read a missing key as false and
+    # the bundle saves 880 copies of the flag
+    return {"headline": headline, "plain": plain}
 
 
 # ------------------------------------------------------------ R2-P0-3 maps
@@ -253,9 +264,9 @@ COHORT_LABEL = {
     "venture": "pre-IPO and venture cohort",
 }
 LANE_LABEL = {
-    "A": "fund-declared benchmark",
-    "B": "third-party index or investable proxy",
-    "C": "peer composite constructed by the evaluator",
+    "A": "fund-declared benchmark or SEC-required comparator",
+    "B": "exchange-traded strategy proxy",
+    "P": "published strategy index",
 }
 ASSET_CLASS_LABEL = {
     "private_credit": "private credit", "public_credit": "public credit",
@@ -279,18 +290,21 @@ SUB_STRATEGY_LABEL = {
 # short display names for benchmark candidate ids (the long names live in
 # the engine's CANDIDATES table and on the composite candidate itself)
 CANDIDATE_SHORT = {
-    "bkln": "BKLN", "cdli": "CDLI", "csll": "CSLLI", "psp": "PSP", "psp_k": "PSP", "psp_v": "PSP",
+    "bkln": "BKLN", "cdli": "CDLI", "csll": "CSLLI", "lsta": "Morningstar LSTA Leveraged Loan",
+    "bbg_agg": "Bloomberg US Aggregate", "ice_bofa_hy": "ICE BofA US High Yield",
+    "psp": "PSP", "psp_k": "PSP", "psp_v": "PSP",
     "urth": "URTH", "urth_k": "URTH", "spy": "SPY", "nasdaq_comp": "NASDAQ Composite",
     "cambridge_pe": "Cambridge PE benchmark", "cambridge_pe_k": "Cambridge PE benchmark",
-    "cambridge_re": "Cambridge RE benchmark", "vnq": "VNQ", "odce": "NFI-ODCE",
-    "peer_credit": "private credit peer composite", "peer_evergreen": "evergreen PE peer composite",
-    "peer_kpec": "evergreen PE peer composite", "peer_reit": "non-traded REIT peer composite",
-    "peer_venture": "venture peer composite",
+    "vnq": "VNQ", "odce": "NFI-ODCE",
 }
+SLOT_LABELS = {"slot_k": "Meaningful benchmark (paragraph (k))",
+               "slot_g": "Peer comparison (paragraphs (g) and (h))"}
 RUBRIC_LABEL = "Tark benchmark rubric, 12 points"
 COMPUTED_WRITER_LABEL = "Tark computed-cells writer"
-SCHEDULE_H_ABSENT_SENTENCE = ("Schedule H benefit-payment lines are not yet in the plan record. "
-                              "Demand uses the illustrative turnover sliders only.")
+SCHEDULE_H_ABSENT_SENTENCE = ("Schedule H benefit-payment line 2e is not yet in the plan record. "
+                              "The filed outflow proxy (total expenses less administrative "
+                              "expenses over beginning net assets) stands in for it as the base "
+                              "demand, and the turnover sliders are the stress around it.")
 
 
 def strategy_label(key: str) -> str:
