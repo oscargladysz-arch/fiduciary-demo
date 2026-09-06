@@ -345,6 +345,12 @@ check("service: a malformed key is refused", r4["status"] == "refused" and "key 
 check("service: no answer carries a job id, queue or progress field",
       all(not (set(r) & {"job_id", "job", "queued", "progress", "state"}) for r in (r1, r2, r3, r4)))
 
+# ---------------- source documents (R2-P1-14, R2-P1-16): the authority text
+# path and the case-law path, on this scratch copy. Runs here so the hook's
+# gate count is unchanged while the checks are enforced.
+import test_sources  # noqa: E402
+test_sources.run(check)
+
 shutil.rmtree(SCRATCH, ignore_errors=True)
 print(f"\n{len(FAILS)} failure(s)." if FAILS else "\nAll ingest checks pass.")
 sys.exit(1 if FAILS else 0)

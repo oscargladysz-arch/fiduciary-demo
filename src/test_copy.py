@@ -29,7 +29,8 @@ SURFACE_MODULES = [
     "tark_analytics.py", "tark_data.py", "build_site.py", "build_facts.py",
     "write_computed_cells.py", "run_supplement.py", "run_analytics.py",
     "run_benchmark.py", "coverage.py", "corrections_log.py", "promote.py",
-    "resolve_citations.py", "tark_display.py", "seed_case_law_cell.py", "ingest.py",
+    "resolve_citations.py", "tark_display.py", "fetch_caselaw.py", "strip_caselaw_timing.py",
+    "fetch_authority.py", "ingest.py",
     "calibrate_ingest.py", "verify_cell.py", "plan_intake.py", "tark_packet.py", "purge_paths.py",
     "census/build_census.py", "census/enumerate.py", "census/classify.py",
 ]

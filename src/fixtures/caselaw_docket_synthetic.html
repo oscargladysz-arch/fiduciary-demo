@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!--
+  SYNTHETIC TEST FIXTURE. This is NOT a Supreme Court docket page. The
+  docket number, the parties, the dates and every entry below were invented
+  for src/test_sources.py to exercise the page shape src/fetch_caselaw.py
+  parses: a title block, a lower-court block, a link to a questions
+  presented document, and a proceedings table of dated rows. Nothing here
+  may be quoted as a fact about any case.
+-->
+<html>
+<head><title>Synthetic docket fixture 00-0000</title>
+<style>td { padding: 2px; }</style>
+<script>var fixture = "ignored by the text extractor";</script>
+</head>
+<body>
+<div id="docketinfo">
+  <span class="label">No.</span> <span class="value">00-0000</span>
+  <table>
+    <tr><td>Title:</td><td>Synthetic Petitioner, et al., Petitioners v. Synthetic Respondent Committee, et al.</td></tr>
+    <tr><td>Docketed:</td><td>January 2, 2001</td></tr>
+    <tr><td>Lower Ct:</td><td>Synthetic Court of Appeals for the Zeroth Circuit</td></tr>
+    <tr><td>Case Numbers:</td><td>(00-00000)</td></tr>
+    <tr><td>Decision Date:</td><td>June 1, 2000</td></tr>
+  </table>
+  <div class="links">
+    <a href="/qp/00-00000qp.txt">Questions Presented</a>
+    <a href="/other/00-0000_unrelated.pdf">Unrelated document</a>
+  </div>
+</div>
+<table id="proceedings">
+  <tr><th>Date</th><th>Proceedings and Orders</th></tr>
+  <tr><td>Jan 02 2001</td><td>Petition for a writ of certiorari filed. (Response due February 5, 2001)</td></tr>
+  <tr><td>Feb 05 2001</td><td>Brief of respondents in opposition filed.</td></tr>
+  <tr><td>Feb 20 2001</td><td>Reply of petitioners filed.</td></tr>
+  <tr><td>Mar 01 2001</td><td>DISTRIBUTED for Conference of 3/16/2001.</td></tr>
+  <tr><td>Mar 19 2001</td><td>Petition GRANTED.</td></tr>
+  <tr><td>Apr 30 2001</td><td>Brief of petitioners filed.</td></tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,11 @@
+SYNTHETIC TEST FIXTURE. This is NOT a questions presented document of any
+court. The question below was invented for src/test_sources.py.
+
+No. 00-0000
+
+QUESTION PRESENTED
+
+Whether this synthetic fixture question, which is wrapped over
+several lines the way an extracted PDF page is, and which is not the
+question presented in any real case, is carried into cell 5.7 word for
+word with its wrapping collapsed to single spaces?

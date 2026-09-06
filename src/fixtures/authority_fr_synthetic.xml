@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SYNTHETIC TEST FIXTURE. This is NOT the text of 91 FR 16088 and NOT the
+  text of proposed 29 CFR 2550.404a-6. Every sentence below was written for
+  src/test_sources.py to exercise the Federal Register full-text XML shape
+  that src/fetch_authority.py parses: a PRORULE with a preamble, several
+  SECTION elements, flat P elements for every paragraph level, italic E
+  elements, paragraphs wrapped over several lines, and roman sub-paragraphs
+  (i), (ii), (v) that must not be mistaken for top-level letters.
+  Only the section number is real, because the parser locates the section
+  by it. Nothing here may be quoted as the rule.
+-->
+<PRORULE>
+  <PREAMB>
+    <AGENCY TYPE="F">SYNTHETIC FIXTURE AGENCY</AGENCY>
+    <SUBAGY>Synthetic Fixture Administration</SUBAGY>
+    <CFR>29 CFR Part 2550</CFR>
+    <RIN>RIN 0000-ZZ99</RIN>
+    <SUBJECT>Synthetic Fixture Rule (not the Federal Register text)</SUBJECT>
+    <AGY>
+      <HD SOURCE="HED">AGENCY:</HD>
+      <P>Synthetic Fixture Administration, a fixture, not an agency.</P>
+    </AGY>
+    <ACT>
+      <HD SOURCE="HED">ACTION:</HD>
+      <P>Fixture. This preamble paragraph must never appear in the output.</P>
+    </ACT>
+  </PREAMB>
+  <SUPLINF>
+    <HD SOURCE="HED">SUPPLEMENTARY INFORMATION:</HD>
+    <P>(g) A preamble paragraph that starts with a letter marker and must
+      still be ignored, because it is outside the section.</P>
+  </SUPLINF>
+  <REGTEXT PART="2550" TITLE="29">
+    <AMDPAR>1. Fixture amendatory instruction for a decoy section.</AMDPAR>
+    <SECTION>
+      <SECTNO>§ 2550.404a-5</SECTNO>
+      <SUBJECT>Decoy fixture section before the target.</SUBJECT>
+      <P>(a) Decoy fixture text of a different section.</P>
+      <P>(g) Decoy fixture paragraph (g) of a different section, never selected.</P>
+    </SECTION>
+    <AMDPAR>2. Fixture amendatory instruction for the target section.</AMDPAR>
+    <SECTION>
+      <SECTNO>§ 2550.404a-6</SECTNO>
+      <SUBJECT>Synthetic fixture section (not the proposed rule).</SUBJECT>
+      <P>(a) <E T="03">Fixture heading (a).</E> This synthetic sentence stands in for
+        paragraph (a), which the fetcher does not select.</P>
+      <P>(1) Fixture sub-paragraph (a)(1), not selected.</P>
+      <P>(b) Fixture paragraph (b), not selected.</P>
+      <P>(c) Fixture paragraph (c), not selected.</P>
+      <P>(d) Fixture paragraph (d), not selected.</P>
+      <P>(e) Fixture paragraph (e), not selected.</P>
+      <P>(f) Fixture paragraph (f), not selected. It ends right before the
+        selected range.</P>
+      <P>(g) <E T="03">Fixture heading (g).</E> This synthetic sentence stands in for
+        the text of paragraph (g) and is wrapped over three lines in the XML,
+        as long paragraphs are, so the writer must join it into one line.</P>
+      <P>(1) Fixture sub-paragraph (g)(1) with a section symbol, § 0.0, and
+        “curly quotes” that must survive byte for byte.</P>
+      <P>(2) Fixture sub-paragraph (g)(2) introduces roman items:</P>
+      <P>(i) Fixture roman item (g)(2)(i). Because it starts with (i) it looks
+        like top-level paragraph (i), and it is not.</P>
+      <P>(ii) Fixture roman item (g)(2)(ii).</P>
+      <P>(iii) Fixture roman item (g)(2)(iii) with a nested capital item:</P>
+      <P>(A) Fixture capital item (g)(2)(iii)(A).</P>
+      <P>(B) Fixture capital item (g)(2)(iii)(B).</P>
+      <P>(3) Fixture sub-paragraph (g)(3), the last of (g).</P>
+      <P>(h) <E T="03">Fixture heading (h).</E> Synthetic text of paragraph (h).</P>
+      <P>(1) Fixture sub-paragraph (h)(1).</P>
+      <P>(2) Fixture sub-paragraph (h)(2) whose roman items sit immediately
+        before the real paragraph (i):</P>
+      <P>(i) Fixture roman item (h)(2)(i). The next paragraph starts with (ii),
+        so this one is a sub-paragraph of (h).</P>
+      <P>(ii) Fixture roman item (h)(2)(ii), the last text of (h).</P>
+      <P>(i) <E T="03">Fixture heading (i).</E> Synthetic text of the real
+        top-level paragraph (i). Its first sub-paragraph is numbered, not roman.</P>
+      <P>(1) Fixture sub-paragraph (i)(1).</P>
+      <P>(2) Fixture sub-paragraph (i)(2).</P>
+      <P>(j) <E T="03">Fixture heading (j).</E> Synthetic text of paragraph (j).</P>
+      <P>(1) Fixture sub-paragraph (j)(1) with roman items:</P>
+      <P>(i) Fixture roman item (j)(1)(i).</P>
+      <P>(ii) Fixture roman item (j)(1)(ii).</P>
+      <P>(k) <E T="03">Fixture heading (k).</E> Synthetic text of paragraph (k)
+        with six roman items so that (v) is exercised.</P>
+      <P>(1) Fixture sub-paragraph (k)(1):</P>
+      <P>(i) Fixture roman item (k)(1)(i).</P>
+      <P>(ii) Fixture roman item (k)(1)(ii).</P>
+      <P>(iii) Fixture roman item (k)(1)(iii).</P>
+      <P>(iv) Fixture roman item (k)(1)(iv).</P>
+      <P>(v) Fixture roman item (k)(1)(v). It starts with (v) and is not a
+        top-level letter.</P>
+      <P>(vi) Fixture roman item (k)(1)(vi).</P>
+      <P>(2) Fixture sub-paragraph (k)(2), the last of (k).</P>
+      <P>(l) <E T="03">Fixture heading (l).</E> Synthetic text of paragraph (l),
+        the last selected letter.</P>
+      <P>(1) Fixture sub-paragraph (l)(1).</P>
+      <P>(2) Fixture sub-paragraph (l)(2), the last selected paragraph.</P>
+      <P>(m) Fixture paragraph (m), after the selected range, never selected.</P>
+      <P>(1) Fixture sub-paragraph (m)(1), never selected.</P>
+    </SECTION>
+    <SECTION>
+      <SECTNO>§ 2550.404a-7</SECTNO>
+      <SUBJECT>Decoy fixture section after the target.</SUBJECT>
+      <P>(g) Decoy fixture paragraph (g) of a later section, never selected.</P>
+    </SECTION>
+  </REGTEXT>
+</PRORULE>
