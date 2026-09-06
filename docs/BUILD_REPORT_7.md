@@ -126,7 +126,7 @@ frontend gate on every run.
 Started 2026-09-06 after R2-P0 merged into `main` (`eb6242d`) and the live
 site carried the Tuesday cut (decision 7.20). Not deployed: the Tuesday cut
 stays live until the sends, and R2-P1 goes out from a recorded run after
-it. The commit hashes are in section 10.
+it. The commit hashes are in section 11.
 
 | task | what changed | decision |
 |---|---|---|
@@ -201,3 +201,20 @@ runbook in its header.
 - `test_frontend`: both slot cards on every product, tie chips, the lab's default equals the artifact, the demo script's 48 surface rows, the spoken peer ratio only as the labeled peer comparison and equal to the artifact.
 - `test_ingest`: the sources gate (authority round trip, case-law fetch on fixtures, the strip on a synthetic sentence).
 - `corrections_log`: watches every owned cell (17), the v3 slots, the reference and declared comparisons, and takes `--only` so each write carries the cause of the task that moved the number.
+
+## 11. R2-P1 commits
+
+One commit per task group, all made after the full hook passed on the final
+tree of the series (2026-09-06 18:36:55 to 18:39:51 UTC, 19 gates, exit 0,
+1,027 PASS lines, 176 s). Where a file carries the hunks of more than one
+task the message says so.
+
+| commit | tasks |
+|---|---|
+| `e80250f` | R2-P1-1 |
+| `ae8413a` | R2-P1-2, R2-P1-3, R2-P1-4, R2-P1-5, R2-P1-6, R2-P1-7, R2-P1-9 (and the regenerated record files of every R2-P1 task) |
+| `68eeb78` | R2-P1-8 (and the liquidity view hunks of R2-P1-10 and R2-P1-11) |
+| `2d6a80f` | R2-P1-10, R2-P1-11, R2-P1-12 |
+| `e6a2816` | R2-P1-13, R2-P1-15 |
+| `99d77d1` | R2-P1-14, R2-P1-16 |
+| `12c4fd2` | R2-P1 close: decisions, demo script v9, queue, runbook, this report, corrections table |
