@@ -182,32 +182,43 @@ def render_benchmark():
                + (f" · max attainable on held data {sel['max_attainable']}/12"
                   if sel.get("max_attainable") is not None else ""))
 
-    if sel["escalation"]:
-        st.error(sel["escalation"])
+    sk = sel["slot_k"]
+    if sk.get("escalation"):
+        st.error(sk["escalation"])
 
-    for slot, badge in (("primary", "PRIMARY"), ("secondary", "SECONDARY")):
-        s = sel.get(slot)
-        if not s:
-            continue
-        st.markdown(f"### {badge}: {s['candidate']} ({s['score']}/{s['max']})")
+    slots = []
+    if sk.get("selected"):
+        slots.append((sk["label"], sk["selected"], "the benchmark"))
+    if sel.get("reference_comparison"):
+        ref = sel["reference_comparison"]
+        slots.append(("Reference comparison, not the meaningful benchmark", ref, "the public series"))
+    g = sel.get("slot_g")
+    if g:
+        slots.append((g["label"], {"candidate": g["composite"].get("candidate") or g["cohort_label"],
+                                   "score": None, "comparison": g["composite"] if g["composite"]["status"] == "computed" else None,
+                                   "comparison_note": g["composite"].get("reason"),
+                                   "reasons": [g["survivorship_note"], g["heterogeneity_note"]]}, "the peer composite"))
+    for badge, s, comparator in slots:
+        st.markdown(f"### {badge}: {s['candidate']}" + (f" ({s['score']}/{s.get('max', 12)})" if s.get("score") is not None else ""))
         comp = s.get("comparison")
         if comp:
             c1, c2, c3, c4 = st.columns(4)
             c1.metric("Fund (ann.)", f"{comp['fund_ann_pct']}%/yr")
-            c2.metric("Benchmark (ann.)", f"{comp['index_ann_pct']}%/yr")
-            if comp.get("kind") == "composite":
-                c3.metric("Relative wealth ratio vs peer composite", f"{comp['relative_wealth_ratio']}")
-                c4.metric("Excess return vs peer composite", f"{comp['excess_return_pct']}%/yr")
+            c2.metric(f"{comparator[0].upper()}{comparator[1:]} (ann.)", f"{comp['index_ann_pct']}%/yr")
+            if comp.get("kind") != "series":
+                c3.metric("Relative wealth ratio", f"{comp['relative_wealth_ratio']}")
+                c4.metric("Excess return", f"{comp['excess_return_pct']}%/yr")
             else:
                 c3.metric("KS-PME", f"{comp['ks_pme']}")
                 c4.metric("Direct Alpha", f"{comp['direct_alpha_pct']}%/yr")
             st.caption(f"Window {comp['window']}"
                        f"{(' (' + comp['window_note'] + ')') if comp.get('window_note') else ''}"
-                       f". PME and alpha on "
-                       f"appraisal-lagged NAVs are window-sensitive and can be "
-                       f"smoothing-flattered (disclosed per methodology §3).")
+                       f". Figures on appraisal-lagged NAVs are window-sensitive and can be "
+                       f"smoothing-flattered (disclosed per methodology).")
+        elif s.get("comparison_note"):
+            st.caption(f"No comparison computed: {s['comparison_note']}")
         with st.expander("Scoring rationale"):
-            for r in s["reasons"]:
+            for r in s.get("reasons") or []:
                 st.markdown(f"- {r}")
 
     st.markdown("### Rejection log")

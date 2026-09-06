@@ -58,6 +58,7 @@
       "value": false,
       "source_cell": "3.3",
       "note": "FY2025 offers undersubscribed (max 4.32% tendered vs 5% cap)",
+      "evidence_phrase": "Every tendered share was repurchased",
       "status": "extracted-unverified"
     },
     "tax_form": {
@@ -73,6 +74,7 @@
     "big4": {
       "value": true,
       "source_cell": "4.5",
+      "evidence_phrase": "PricewaterhouseCoopers LLP",
       "status": "extracted-unverified"
     },
     "expense_ratio_pct": {
@@ -113,12 +115,14 @@
       "value": "quarterly",
       "source_cell": "3.1",
       "note": "cell 3.1: 'quarterly repurchase offers for between 5% and 25% of outstanding Common Shares', 'currently expects 5% per quarter'",
+      "evidence_phrase": "quarterly repurchase offers",
       "status": "extracted-unverified"
     },
     "cap_period": {
       "value": "quarter",
       "source_cell": "3.1",
       "note": "cell 3.1: 'quarterly repurchase offers for between 5% and 25% of outstanding Common Shares', 'currently expects 5% per quarter'",
+      "evidence_phrase": "5% per quarter",
       "status": "extracted-unverified"
     },
     "repurchase_caps": {
@@ -146,22 +150,22 @@
     },
     "liquidity_verdict_by_plan": {
       "value": {
-        "plan_consulting_alumni": "conditional-weak",
+        "plan_consulting_alumni": "conditional",
         "plan_manufacturer_union": "conditional",
         "plan_restaurant_hourly": "conditional",
-        "plan_tech_media": "conditional"
+        "plan_tech_media": "conditional-weak"
       },
       "source_cell": "3.9",
       "status": "computed",
       "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
     },
     "primary_benchmark_id": {
-      "value": "bkln",
+      "value": "cdli",
       "source_cell": "5.3",
       "status": "computed"
     },
     "selection_score": {
-      "value": 9,
+      "value": 8,
       "source_cell": "5.3",
       "status": "computed"
     },
@@ -169,7 +173,7 @@
       "value": 1.1089,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "KS-PME vs BKLN over 2018-07-18 to 2026-07-17, fund return source: Yahoo adjusted close, approximates NAV total return"
+      "note": "KS-PME vs BKLN over 2018-07-18 to 2026-07-17 (reference comparison, not the meaningful benchmark), fund return source: Yahoo adjusted close, approximates NAV total return"
     },
     "pme_public_proxy_name": {
       "value": "BKLN",
@@ -180,13 +184,19 @@
       "value": 1.3,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "KS-PME vs BKLN over 2018-07-18 to 2026-07-17, fund return source: Yahoo adjusted close, approximates NAV total return"
+      "note": "KS-PME vs BKLN over 2018-07-18 to 2026-07-17 (reference comparison, not the meaningful benchmark), fund return source: Yahoo adjusted close, approximates NAV total return"
     },
-    "peer_relative_wealth_ratio": {
-      "value": 0.9799,
+    "slot_k_relative_wealth_ratio": {
+      "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "relative wealth ratio vs private credit peer composite over FY2021 to FY2025, fund return source: filed fiscal-year returns. Not a public market equivalent"
+      "reason": "the meaningful benchmark is not a held appraisal-based series"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": 0.8757,
+      "source_cell": "1.12",
+      "status": "computed",
+      "note": "relative wealth ratio vs the peer composite over 2021 to 2025 (n=4), fund return source: Yahoo adjusted close, approximates NAV total return. Not a public market equivalent"
     }
   }
 }

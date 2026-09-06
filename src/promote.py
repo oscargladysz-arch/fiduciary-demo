@@ -6,7 +6,7 @@ What it does (and what it refuses to do):
   1. R1 identity verification aid: pulls the entity's live SEC submissions
      JSON, cross-checks name/CIK against the census record, and prints the
      identity block (former names included) for the roster decision.
-  2. Scaffolds data/products/<key>.json with the canonical 54 cells and the
+  2. Scaffolds data/products/<key>.json with the canonical 55 cells and the
      paired data/evidence/<key>_evidence.csv (same cells, same statuses).
   3. Prefills ONLY the cells the census fully answers, with status
      'structured' and census provenance (C1/C3):
@@ -109,7 +109,7 @@ def main() -> int:
               "data/roster_decisions.md.")
     print("=" * 64)
 
-    # ---- scaffold: 54 canonical cells, census-answerable prefills ----
+    # ---- scaffold: 55 canonical cells, census-answerable prefills ----
     cells = {cid: blank_cell(el) for cid, el in CELLS.items()}
     nc = rec.get("ncen")
     if nc:

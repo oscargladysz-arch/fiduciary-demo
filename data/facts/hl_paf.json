@@ -60,6 +60,7 @@
       "value": null,
       "source_cell": "3.3",
       "reason": "offer continuity since Q2-2021 evidenced. Per-offer proration incidence not printed in on-disk filings",
+      "evidence_phrase": "NOT PRINTED: shares tendered-but-not-accepted",
       "status": "extracted-unverified"
     },
     "tax_form": {
@@ -75,6 +76,7 @@
     "big4": {
       "value": false,
       "source_cell": "4.5",
+      "evidence_phrase": "Cohen & Company, Ltd.",
       "status": "extracted-unverified"
     },
     "expense_ratio_pct": {
@@ -114,12 +116,14 @@
       "value": "quarterly",
       "source_cell": "3.1",
       "note": "cell 3.1: 'Quarterly tender offers', 'up to 5.00% of net assets'",
+      "evidence_phrase": "Quarterly tender offers",
       "status": "extracted-unverified"
     },
     "cap_period": {
       "value": "quarter",
       "source_cell": "3.1",
       "note": "cell 3.1: 'Quarterly tender offers', 'up to 5.00% of net assets'",
+      "evidence_phrase": "up to 5.00% of net assets",
       "status": "extracted-unverified"
     },
     "repurchase_caps": {
@@ -147,17 +151,17 @@
     },
     "liquidity_verdict_by_plan": {
       "value": {
-        "plan_consulting_alumni": "conditional-weak",
+        "plan_consulting_alumni": "conditional",
         "plan_manufacturer_union": "conditional",
         "plan_restaurant_hourly": "conditional",
-        "plan_tech_media": "conditional"
+        "plan_tech_media": "conditional-weak"
       },
       "source_cell": "3.9",
       "status": "computed",
       "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
     },
     "primary_benchmark_id": {
-      "value": "peer_evergreen",
+      "value": "cambridge_pe",
       "source_cell": "5.3",
       "status": "computed"
     },
@@ -170,7 +174,7 @@
       "value": 1.9565,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "KS-PME vs PSP over 2021-03-31 to 2026-03-31, fund return source: filed fiscal-year returns"
+      "note": "KS-PME vs PSP over 2021-03-31 to 2026-03-31 (reference comparison, not the meaningful benchmark), fund return source: filed fiscal-year returns"
     },
     "pme_public_proxy_name": {
       "value": "PSP",
@@ -181,13 +185,19 @@
       "value": 14.37,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "KS-PME vs PSP over 2021-03-31 to 2026-03-31, fund return source: filed fiscal-year returns"
+      "note": "KS-PME vs PSP over 2021-03-31 to 2026-03-31 (reference comparison, not the meaningful benchmark), fund return source: filed fiscal-year returns"
     },
-    "peer_relative_wealth_ratio": {
-      "value": 1.0693,
+    "slot_k_relative_wealth_ratio": {
+      "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "relative wealth ratio vs evergreen PE peer composite over FY2022 to FY2026, fund return source: filed fiscal-year returns. Not a public market equivalent"
+      "reason": "the meaningful benchmark is not a held appraisal-based series"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": null,
+      "source_cell": "1.12",
+      "status": "computed",
+      "reason": "peer composite refused: members report on different year ends and no member has a series that builds a common calendar period (StepStone Private Markets fiscal years to month 03, KKR Private Equity Conglomerate LLC calendar years, Ares Private Markets Fund fiscal years to month 03, AMG Pantheon Fund, LLC fiscal years to month 03, Hamilton Lane Private Assets Fund fiscal years to month 03). A composite needs identical start and end dates for every member"
     }
   }
 }

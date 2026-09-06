@@ -63,7 +63,8 @@ IDENTIFIER_KEYS = {
     "source_cells", "primary_benchmark_id", "sub_strategy", "asset_class", "wrapper_type",
     "pricing_class", "leverage_regime", "nav_cadence", "rubric_version", "lane", "local_path",
     "url", "fr_url", "docket_url", "file", "generated", "fund_series", "default_proxy",
-    "proxy", "service_url", "ref", "status", "kind",
+    "proxy", "service_url", "ref", "status", "kind", "type", "declared_type", "published_id",
+    "period", "periods", "period_kind", "member_period_kind", "ties", "cohort_label_id",
     "cls_codes",   # the census wire format's code-to-class table, decoded by the view
 }
 

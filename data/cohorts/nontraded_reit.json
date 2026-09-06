@@ -102,19 +102,67 @@
   },
   "composite": {
     "refused": false,
-    "granularity": "annual (fiscal years as filed, with year-end months that differ across members and are disclosed per row)",
-    "weighting": "equal-weight across members reporting that year",
     "rows": [
       {
-        "year": "2025",
-        "composite_return_pct": 2.85,
+        "period": "2023-12-31",
+        "label": "2023",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "members": [
+          "breit"
+        ],
+        "returns": {
+          "breit": -0.5,
+          "sreit": null,
+          "jll_ipt": null
+        },
+        "composite_return_pct": null
+      },
+      {
+        "period": "2024-12-31",
+        "label": "2024",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "members": [
+          "breit"
+        ],
+        "returns": {
+          "breit": 2.0,
+          "sreit": null,
+          "jll_ipt": null
+        },
+        "composite_return_pct": null
+      },
+      {
+        "period": "2025-12-31",
+        "label": "2025",
+        "period_kind": "calendar_year",
         "n": 2,
         "members": [
           "breit",
           "sreit"
-        ]
+        ],
+        "returns": {
+          "breit": 8.1,
+          "sreit": -2.4,
+          "jll_ipt": null
+        },
+        "composite_return_pct": null
       }
-    ]
+    ],
+    "member_source": {
+      "breit": "filed calendar-year returns (December fiscal year)",
+      "sreit": "filed calendar-year returns (December fiscal year)",
+      "jll_ipt": null
+    },
+    "member_period_kind": {
+      "breit": "calendar_year",
+      "sreit": "calendar_year",
+      "jll_ipt": "none"
+    },
+    "granularity": "mixed year ends: no common period, composite returns not formed",
+    "weighting": "equal-weight, only over periods every member reports on the same basis",
+    "composite_refused_reason": "members report on different year ends (breit: calendar years, sreit: calendar years, jll_ipt: no period returns), so no equal-weight composite return is formed. The table shows each member's own periods with n"
   },
   "caveats": [
     "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing. Volatility and drawdown comparisons inherit that difference (see de-smoothing lab). [typed per product: breit: monthly, jll_ipt: daily, sreit: monthly]"

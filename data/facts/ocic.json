@@ -60,6 +60,7 @@
       "value": null,
       "source_cell": "3.3",
       "reason": "12 consecutive quarterly tenders completed FY2023-FY2025 with no disclosed suspension, BUT tendered-vs-repurchased counts are never disclosed - proration cannot be ruled out from public filings, so a clean False would overclaim",
+      "evidence_phrase": "does not disclose shares TENDERED versus repurchased",
       "status": "partial"
     },
     "tax_form": {
@@ -75,6 +76,7 @@
     "big4": {
       "value": true,
       "source_cell": "4.5",
+      "evidence_phrase": "KPMG LLP",
       "status": "extracted-unverified"
     },
     "expense_ratio_pct": {
@@ -116,12 +118,14 @@
       "value": "quarterly",
       "source_cell": "3.1",
       "note": "cell 3.1: 'quarterly issuer tender offers', 'capped at 5.00% of outstanding shares per quarter'",
+      "evidence_phrase": "quarterly issuer tender offers",
       "status": "extracted-unverified"
     },
     "cap_period": {
       "value": "quarter",
       "source_cell": "3.1",
       "note": "cell 3.1: 'quarterly issuer tender offers', 'capped at 5.00% of outstanding shares per quarter'",
+      "evidence_phrase": "per quarter",
       "status": "extracted-unverified"
     },
     "repurchase_caps": {
@@ -149,17 +153,17 @@
     },
     "liquidity_verdict_by_plan": {
       "value": {
-        "plan_consulting_alumni": "conditional-weak",
+        "plan_consulting_alumni": "conditional",
         "plan_manufacturer_union": "conditional",
         "plan_restaurant_hourly": "conditional",
-        "plan_tech_media": "conditional"
+        "plan_tech_media": "conditional-weak"
       },
       "source_cell": "3.9",
       "status": "computed",
       "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
     },
     "primary_benchmark_id": {
-      "value": "peer_credit",
+      "value": "cdli",
       "source_cell": "5.3",
       "status": "computed"
     },
@@ -172,7 +176,7 @@
       "value": 1.1541,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "KS-PME vs BKLN over 2021-01-01 to 2025-12-31, fund return source: filed fiscal-year returns"
+      "note": "KS-PME vs BKLN over 2021-01-01 to 2025-12-31 (reference comparison, not the meaningful benchmark), fund return source: filed calendar-year returns (December fiscal year)"
     },
     "pme_public_proxy_name": {
       "value": "BKLN",
@@ -183,13 +187,19 @@
       "value": 2.91,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "KS-PME vs BKLN over 2021-01-01 to 2025-12-31, fund return source: filed fiscal-year returns"
+      "note": "KS-PME vs BKLN over 2021-01-01 to 2025-12-31 (reference comparison, not the meaningful benchmark), fund return source: filed calendar-year returns (December fiscal year)"
     },
-    "peer_relative_wealth_ratio": {
-      "value": 0.9973,
+    "slot_k_relative_wealth_ratio": {
+      "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "relative wealth ratio vs private credit peer composite over FY2021 to FY2025, fund return source: filed fiscal-year returns. Not a public market equivalent"
+      "reason": "the meaningful benchmark is not a held appraisal-based series"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": 1.0127,
+      "source_cell": "1.12",
+      "status": "computed",
+      "note": "relative wealth ratio vs the peer composite over 2021 to 2025 (n=4), fund return source: filed calendar-year returns (December fiscal year). Not a public market equivalent"
     }
   }
 }

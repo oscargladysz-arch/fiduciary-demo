@@ -22,7 +22,18 @@
       "adviser_keys": [
         "cliffwater"
       ],
-      "declared_benchmarks": [],
+      "declared_benchmarks": [
+        {
+          "name": "Morningstar LSTA US Leveraged Loan",
+          "candidate": "lsta",
+          "type": "sec_required_comparator"
+        },
+        {
+          "name": "Bloomberg US Aggregate",
+          "candidate": "bbg_agg",
+          "type": "sec_required_comparator"
+        }
+      ],
       "source_cells": [
         "5.1",
         "1.1",
@@ -33,7 +44,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
@@ -79,7 +90,13 @@
       "adviser_keys": [
         "pimco"
       ],
-      "declared_benchmarks": [],
+      "declared_benchmarks": [
+        {
+          "name": "ICE BofA US High Yield Index",
+          "candidate": "ice_bofa_hy",
+          "type": "sec_required_comparator"
+        }
+      ],
       "source_cells": [
         "5.1",
         "1.1",
@@ -90,7 +107,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
@@ -138,7 +155,8 @@
       "declared_benchmarks": [
         {
           "name": "Credit Suisse Leveraged Loan Index",
-          "candidate": "csll"
+          "candidate": "csll",
+          "type": "sec_required_comparator"
         }
       ],
       "source_cells": [
@@ -151,7 +169,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets derived from the filings held in data/manifest.csv",
@@ -173,7 +191,8 @@
         "repurchase_history": [
           "N-23C3A"
         ]
-      }
+      },
+      "declared_none_reason": "cell 5.1: the index is named in the annual report's required performance presentation as the broad-based securities market index, not as a benchmark the fund is managed to"
     },
     "bcred": {
       "cohort": "private_credit",
@@ -204,7 +223,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
@@ -280,7 +299,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/private_credit.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets derived from the filings held in data/manifest.csv",
@@ -344,11 +363,13 @@
       "declared_benchmarks": [
         {
           "name": "S&P 500 Index",
-          "candidate": "spy"
+          "candidate": "spy",
+          "type": "sec_required_comparator"
         },
         {
           "name": "MSCI World Index",
-          "candidate": "urth"
+          "candidate": "urth",
+          "type": "sec_required_comparator"
         }
       ],
       "source_cells": [
@@ -360,7 +381,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
@@ -405,7 +426,8 @@
           "self_declared": "S&P 500 Index and MSCI World Index (N-CSR Fund Performance)"
         },
         "provenance": "Class I fiscal-year total returns FY2022 to FY2026 from the N-CSR financial highlights (cell 1.2), moved from engine code to this file in P1-7, 5.1: stated comparators S&P 500 and MSCI World"
-      }
+      },
+      "declared_none_reason": "cell 5.1: comparators stated in the shareholder report's performance presentation, no benchmark the fund is managed to"
     },
     "stepstone_spm": {
       "cohort": "evergreen_pe",
@@ -417,7 +439,7 @@
       "nav_cadence": "monthly",
       "leverage_regime": "1940-Act asset-coverage limits",
       "held_returns": {
-        "kind": "aatr_5yr"
+        "kind": "fy_returns"
       },
       "price_nav_decoupled": false,
       "advisers": [
@@ -429,7 +451,8 @@
       "declared_benchmarks": [
         {
           "name": "MSCI World Index",
-          "candidate": "urth"
+          "candidate": "urth",
+          "type": "declared"
         }
       ],
       "source_cells": [
@@ -441,7 +464,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
@@ -471,14 +494,19 @@
       },
       "return_inputs": {
         "profile": {
-          "aatr_5yr": 0.1292,
+          "fy_returns": [
+            0.2943,
+            0.0823,
+            0.1379,
+            0.1076,
+            0.1047
+          ],
           "fy_window": [
             "2021-03-31",
             "2026-03-31"
-          ],
-          "self_declared": "MSCI World Index"
+          ]
         },
-        "provenance": "Five-year annualized total return 12.92% at 3/31/2026 (cell 1.2), moved from engine code to this file in P1-7, 5.1: stated primary benchmark MSCI World Index"
+        "provenance": "Class I fiscal-year total returns FY2022 to FY2026 from the N-CSR filed 2026-06-09 Consolidated Financial Highlights (cells 1.1 and 1.2, data/series_annual/stepstone_spm.csv). One basis per product (R2-P1-6): replaces the five-year annualized 12.92% figure, which stays in cell 1.2 as evidence"
       }
     },
     "ares_pmf": {
@@ -503,7 +531,8 @@
       "declared_benchmarks": [
         {
           "name": "MSCI World Index",
-          "candidate": "urth"
+          "candidate": "urth",
+          "type": "sec_required_comparator"
         }
       ],
       "source_cells": [
@@ -515,7 +544,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
@@ -554,7 +583,8 @@
           ]
         },
         "provenance": "Class I FY total returns from N-CSR FY2026 highlights (cell 1.2), commencement 2022-04-01"
-      }
+      },
+      "declared_none_reason": "cell 5.1: broad-based comparison index of the shareholder report's required presentation, no benchmark the fund is managed to"
     },
     "amg_pantheon": {
       "cohort": "evergreen_pe",
@@ -579,7 +609,8 @@
       "declared_benchmarks": [
         {
           "name": "MSCI World Index",
-          "candidate": "urth"
+          "candidate": "urth",
+          "type": "sec_required_comparator"
         }
       ],
       "source_cells": [
@@ -591,7 +622,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
@@ -636,7 +667,8 @@
           ]
         },
         "provenance": "FY total returns x10 from N-CSR FY2026 highlights (cell 1.2), Fund inception 2014-09-30"
-      }
+      },
+      "declared_none_reason": "cell 5.1: comparison index of the annual report's required performance presentation, no benchmark the fund is managed to"
     },
     "kkr_kpec": {
       "cohort": "evergreen_pe",
@@ -648,7 +680,7 @@
       "nav_cadence": "monthly",
       "leverage_regime": "no 1940-Act leverage limits (34-Act conglomerate)",
       "held_returns": {
-        "kind": "aatr"
+        "kind": "fy_returns"
       },
       "price_nav_decoupled": false,
       "advisers": [
@@ -667,7 +699,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/evergreen_pe.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
@@ -691,15 +723,16 @@
       },
       "return_inputs": {
         "profile": {
-          "aatr": 0.1294,
-          "aatr_years": 2.334,
-          "fy_window": [
-            "2023-09-01",
-            "2025-12-31"
+          "fy_returns": [
+            0.1182,
+            0.1614
           ],
-          "self_declared": null
+          "fy_window": [
+            "2023-12-31",
+            "2025-12-31"
+          ]
         },
-        "provenance": "Class I Transactional NAV Total Return, inception-to-date annualized 12.94% at 12/31/2025, class inception 2023-09-01 - cell 1.2 (10-K 2026-03-26 MD&A table), 5.1: no self-declared benchmark (documented absence)"
+        "provenance": "Class I GAAP-NAV total returns for calendar 2024 and 2025 from the FY2025 10-K Note 10 Financial Highlights (cell 1.1, data/series_annual/kkr_kpec.csv); the 2023 period from commencement is partial and excluded. One basis per product (R2-P1-6): replaces the transactional-NAV inception-to-date 12.94% figure, which stays in cell 1.2 as evidence"
       }
     },
     "breit": {
@@ -731,7 +764,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/nontraded_reit.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
@@ -798,7 +831,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/nontraded_reit.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
@@ -861,7 +894,13 @@
       "declared_benchmarks": [
         {
           "name": "NFI-ODCE",
-          "candidate": "odce"
+          "candidate": "odce",
+          "type": "declared"
+        },
+        {
+          "name": "S&P 500",
+          "candidate": "spy",
+          "type": "sec_required_comparator"
         }
       ],
       "source_cells": [
@@ -873,7 +912,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/nontraded_reit.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
@@ -920,7 +959,8 @@
       "declared_benchmarks": [
         {
           "name": "NASDAQ Composite Index",
-          "candidate": "nasdaq_comp"
+          "candidate": "nasdaq_comp",
+          "type": "declared"
         }
       ],
       "source_cells": [
@@ -933,7 +973,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/venture.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
@@ -984,7 +1024,8 @@
       "declared_benchmarks": [
         {
           "name": "S&P 500",
-          "candidate": "spy"
+          "candidate": "spy",
+          "type": "sec_required_comparator"
         }
       ],
       "source_cells": [
@@ -996,7 +1037,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/venture.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",
@@ -1018,7 +1059,8 @@
         "quarterly_report": [
           "10-Q"
         ]
-      }
+      },
+      "declared_none_reason": "cell 5.1: the 10-K performance graph compares against indices with a printed statement that no appropriate strategy-matched index exists"
     },
     "arkvx": {
       "cohort": "venture",
@@ -1040,7 +1082,18 @@
       "adviser_keys": [
         "ark "
       ],
-      "declared_benchmarks": [],
+      "declared_benchmarks": [
+        {
+          "name": "S&P 500 Index",
+          "candidate": "spy",
+          "type": "sec_required_comparator"
+        },
+        {
+          "name": "MSCI World (Net) Index",
+          "candidate": "urth",
+          "type": "sec_required_comparator"
+        }
+      ],
       "source_cells": [
         "1.2",
         "5.1"
@@ -1050,7 +1103,7 @@
         "sub_strategy": "cohort membership rationale (data/cohorts/venture.json)",
         "nav_cadence": "cell 4.1",
         "leverage_regime": "data/cohorts/caveat_matrix.json wrapper_attributes",
-        "declared_benchmarks": "cell 5.1",
+        "declared_benchmarks": "cell 5.1, typed 'declared' where the filing names the index as the fund's benchmark and 'sec_required_comparator' where it appears only in a required performance presentation (decision 7.21)",
         "advisers": "fund_name in data/products, cell 4.1 where it names the adviser",
         "price_nav_decoupled": "cells 1.10 and 4.7",
         "filings": "document sets to fetch per product (moved from src/fetch_edgar.py)",

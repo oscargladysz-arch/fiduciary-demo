@@ -60,6 +60,7 @@
       "value": false,
       "source_cell": "3.3",
       "note": "no redemption right exists to gate",
+      "evidence_phrase": "no investor redemption right to gate",
       "status": "extracted-unverified"
     },
     "tax_form": {
@@ -77,6 +78,7 @@
       "value": false,
       "source_cell": "4.5",
       "note": "the venture cohort's only non-Big-4 audit",
+      "evidence_phrase": "CBIZ CPAs P.C.",
       "status": "extracted-unverified"
     },
     "expense_ratio_pct": {
@@ -116,6 +118,7 @@
       "value": "exchange",
       "source_cell": "3.1",
       "note": "cell 3.1: 'cadence: any trading day' and 'cap: none (market depth only)'",
+      "evidence_phrase": "any trading day",
       "status": "extracted-unverified"
     },
     "cap_period": {
@@ -155,13 +158,13 @@
     },
     "primary_benchmark_id": {
       "value": null,
-      "source_cell": "1.8",
+      "source_cell": "5.3",
       "status": "computed",
       "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
     },
     "selection_score": {
       "value": null,
-      "source_cell": "1.8",
+      "source_cell": "5.3",
       "status": "computed",
       "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
     },
@@ -169,25 +172,31 @@
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE for this pre-IPO and venture fund: its price is premium-driven and decoupled from NAV, so every candidate benchmarks the premium, not the portfolio. Required next: a NAV series from the filings and a premium to NAV decomposition before any comparator is defensible."
     },
     "pme_public_proxy_name": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE for this pre-IPO and venture fund: its price is premium-driven and decoupled from NAV, so every candidate benchmarks the premium, not the portfolio. Required next: a NAV series from the filings and a premium to NAV decomposition before any comparator is defensible."
     },
     "direct_alpha_public_proxy": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE for this pre-IPO and venture fund: its price is premium-driven and decoupled from NAV, so every candidate benchmarks the premium, not the portfolio. Required next: a NAV series from the filings and a premium to NAV decomposition before any comparator is defensible."
     },
-    "peer_relative_wealth_ratio": {
+    "slot_k_relative_wealth_ratio": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+      "reason": "the meaningful benchmark is not a held appraisal-based series"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": null,
+      "source_cell": "1.12",
+      "status": "computed",
+      "reason": "peer composite refused: fewer than 3 peers remain after leaving Neostellar Capital Corp. out (2: Destiny Tech100 Inc, ARK Venture Fund)"
     }
   }
 }

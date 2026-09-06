@@ -138,19 +138,28 @@ comp_mix = tc.composite("_toymix")
 check("heterogeneous pricing basis: composite REFUSED",
       comp_mix["refused"] is True and "refused" in comp_mix["reason"])
 
-# arithmetic on injected annual returns: monkeypatch _annual_returns
-_orig = tc._annual_returns
-tc._annual_returns = lambda k: {"a": {"2024": 0.10, "2025": 0.20},
-                                "b": {"2024": 0.20, "2025": 0.00},
-                                "c": {"2025": 0.40}}.get(k, {})
+# arithmetic on injected period returns: monkeypatch the shared member table
+# (tark_periods) the composite reads. Members a and b report calendar 2024
+# and 2025, c reports 2025 only, so 2025 is the one period every member
+# reports and the only one with a composite return (rule 14).
+import tark_periods as _tp
+_orig = _tp.member_period_returns
+def _fake(key, reg=None):
+    per = {"a": {"2024": 0.10, "2025": 0.20}, "b": {"2024": 0.20, "2025": 0.00}, "c": {"2025": 0.40}}.get(key, {})
+    return {"period_kind": "calendar_year", "basis": "fy_returns", "source": "test", "fy_end_month": "12",
+            "periods": {f"{y}-12-31": {"start": f"{int(y) - 1}-12-31", "end": f"{y}-12-31", "return": r, "label": y}
+                        for y, r in per.items()}}
+_tp.member_period_returns = _fake
 comp = tc.composite("_toy3")
-tc._annual_returns = _orig
-rows = {r["year"]: r for r in comp["rows"]}
-check("composite 2024 = mean(10,20) = 15.0, n=2",
-      rows["2024"]["composite_return_pct"] == 15.0 and rows["2024"]["n"] == 2)
-check("composite 2025 = mean(20,0,40) = 20.0, n=3",
+_tp.member_period_returns = _orig
+rows = {r["label"]: r for r in comp["rows"]}
+check("composite 2024: two of three members report, n=2, no composite return is formed",
+      rows["2024"]["n"] == 2 and rows["2024"]["composite_return_pct"] is None
+      and rows["2024"]["returns"] == {"a": 10.0, "b": 20.0, "c": None})
+check("composite 2025 = mean(20,0,40) = 20.0, n=3, every member reports",
       rows["2025"]["composite_return_pct"] == 20.0 and rows["2025"]["n"] == 3)
-check("composite discloses weighting", "equal-weight" in comp["weighting"])
+check("composite discloses weighting and the calendar-year granularity",
+      "equal-weight" in comp["weighting"] and "calendar years" in comp["granularity"])
 
 # cleanup injected cohorts
 for k in ("_toy3", "_toy5", "_toymix"):

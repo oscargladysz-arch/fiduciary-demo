@@ -1,272 +1,358 @@
 {
   "product": "stepstone_spm",
   "strategy": "private_equity_evergreen",
+  "cohort": "evergreen_pe",
   "source_cells": [
     "1.2",
     "5.1"
   ],
-  "rubric_version": "v2",
-  "rubric": "Tark benchmark rubric, 12 points: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
-  "max_attainable": 9,
-  "declared_benchmarks": [
-    {
-      "name": "MSCI World Index",
-      "candidate_id": "urth",
-      "cell": "5.1",
-      "status": "held, scored 8/12, fails the strategy gate (strategy_match 1/3)"
-    }
-  ],
-  "declared_none_reason": null,
-  "primary": {
-    "candidate": "Peer composite, evergreen private equity cohort without StepStone Private Markets (members: AMG Pantheon Fund, LLC, Ares Private Markets Fund, Hamilton Lane Private Assets Fund, KKR Private Equity Conglomerate LLC)",
-    "id": "peer_evergreen",
-    "lane": "C",
-    "score": 9,
-    "max": 12,
-    "criteria": {
-      "strategy_match": 3,
-      "risk_liquidity_match": 2,
-      "investability": 2,
-      "data_quality": 1,
-      "provider_independence": 1
-    },
-    "series_id": "composite:evergreen_pe",
-    "reasons": [
-      "strategy_match 3/3: same asset class and sub-strategy (private equity / evergreen private equity)",
-      "risk_liquidity_match 2/3: NAV-class series, members span more than one leverage regime",
-      "investability 2/2: computable on held data (cohort composite from filings)",
-      "data_quality 1/2: annual composite with 5 overlapping fiscal years",
-      "provider_independence 1/2: constructed by the evaluator from the roster, not a third-party index. A composite the evaluator built from a roster the evaluator chose is not an independent yardstick, so it earns at most 1 of 2"
-    ],
-    "comparison": {
-      "kind": "composite",
-      "statistic": "relative wealth ratio vs peer composite",
-      "comparator_kind": "appraisal-based peer composite constructed by the evaluator, not a market series",
-      "fund_return_source": "filed fiscal-year returns",
-      "not_pme_note": "Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought.",
-      "window": "FY2022 to FY2026",
-      "window_note": "5 overlapping fiscal year(s) of 5 composite years",
-      "fund_window": "FY2022 to FY2026",
-      "window_years": 5.0,
-      "alignment_note": "aligned by fiscal year-end year. Members' fiscal years end in month 03 (amg_pantheon, ares_pmf, hl_paf), 12 (kkr_kpec), the fund's in month 03",
-      "composite_rows": [
-        {
-          "year": "2022",
-          "composite_return_pct": 19.56,
-          "n": 2,
-          "members": [
-            "amg_pantheon",
-            "hl_paf"
-          ]
-        },
-        {
-          "year": "2023",
-          "composite_return_pct": 10.61,
-          "n": 3,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf"
-          ]
-        },
-        {
-          "year": "2024",
-          "composite_return_pct": 13.42,
-          "n": 4,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf",
-            "kkr_kpec"
-          ]
-        },
-        {
-          "year": "2025",
-          "composite_return_pct": 14.69,
-          "n": 4,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf",
-            "kkr_kpec"
-          ]
-        },
-        {
-          "year": "2026",
-          "composite_return_pct": 11.09,
-          "n": 3,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf"
-          ]
-        }
-      ],
-      "fund_growth_x": 1.9504,
-      "index_growth_x": 1.911,
-      "relative_wealth_ratio": 1.0206,
-      "excess_return_pct": 0.41,
-      "fund_ann_pct": 14.3,
-      "index_ann_pct": 13.83,
-      "low_confidence": null
-    },
-    "composite": {
-      "cohort": "evergreen_pe",
-      "members": [
-        "amg_pantheon",
-        "ares_pmf",
-        "hl_paf",
-        "kkr_kpec"
-      ],
-      "rows": [
-        {
-          "year": "2022",
-          "composite_return_pct": 19.56,
-          "n": 2,
-          "members": [
-            "amg_pantheon",
-            "hl_paf"
-          ]
-        },
-        {
-          "year": "2023",
-          "composite_return_pct": 10.61,
-          "n": 3,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf"
-          ]
-        },
-        {
-          "year": "2024",
-          "composite_return_pct": 13.42,
-          "n": 4,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf",
-            "kkr_kpec"
-          ]
-        },
-        {
-          "year": "2025",
-          "composite_return_pct": 14.69,
-          "n": 4,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf",
-            "kkr_kpec"
-          ]
-        },
-        {
-          "year": "2026",
-          "composite_return_pct": 11.09,
-          "n": 3,
-          "members": [
-            "amg_pantheon",
-            "ares_pmf",
-            "hl_paf"
-          ]
-        }
-      ],
-      "fye_months": {
-        "amg_pantheon": "03",
-        "ares_pmf": "03",
-        "hl_paf": "03",
-        "kkr_kpec": "12"
-      },
-      "weighting": "equal-weight across members reporting that fiscal year, aligned by fiscal year-end year. Stub and partial periods excluded"
-    }
+  "rubric_version": "v3",
+  "rubric": "Tark benchmark rubric, 12 points: strategy match 3 (gate below 2), risk/liquidity match 3, provider independence 2 (an affiliated provider is ineligible), data held 2, pricing basis match 2, threshold 7/12",
+  "basis": {
+    "kind": "fy_returns",
+    "label": "filed fiscal-year returns"
   },
-  "secondary": {
-    "candidate": "Listed private equity investable proxy (PSP)",
-    "id": "psp",
-    "lane": "B",
-    "score": 9,
-    "max": 12,
-    "criteria": {
-      "strategy_match": 2,
-      "risk_liquidity_match": 1,
-      "investability": 2,
-      "data_quality": 2,
-      "provider_independence": 2
-    },
-    "series_id": "psp",
-    "reasons": [
-      "strategy_match 2/3: the public-market version of the asset class (listed private equity for evergreen private equity)",
-      "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
-      "investability 2/2: computable on held data (daily series)",
-      "data_quality 2/2: daily series held",
-      "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks): the registry affiliation map ties it to none of the fund's advisers"
-    ],
-    "comparison": {
-      "kind": "series",
-      "statistic": "KS-PME vs public market proxy",
-      "comparator_kind": "public market series (exchange-traded proxy, Yahoo adjusted close)",
-      "fund_return_source": "disclosed annualized figure (cell 1.2)",
-      "window": "2021-03-31 to 2026-03-31",
-      "window_note": "",
-      "fund_window": "2021-03-31 to 2026-03-31",
-      "window_years": 5.0,
-      "fund_growth_x": 1.8359,
-      "index_growth_x": 1.0419,
-      "ks_pme": 1.762,
-      "direct_alpha_pct": 12.0,
-      "fund_ann_pct": 12.92,
-      "index_ann_pct": 0.83,
-      "low_confidence": null
-    }
-  },
-  "rejected": [
-    {
-      "candidate": "MSCI World investable proxy (URTH)",
-      "id": "urth",
-      "lane": "A",
-      "score": 8,
-      "max": 12,
-      "criteria": {
-        "strategy_match": 1,
-        "risk_liquidity_match": 1,
-        "investability": 2,
-        "data_quality": 2,
-        "provider_independence": 2
-      },
-      "series_id": "urth",
-      "reasons": [
-        "strategy_match 1/3: adjacent asset class sharing the dominant risk (global equity for evergreen private equity)",
-        "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
-        "investability 2/2: computable on held data (daily series)",
-        "data_quality 2/2: daily series held",
-        "provider_independence 2/2: provider unaffiliated with the fund (iShares / MSCI): the registry affiliation map ties it to none of the fund's advisers"
-      ],
-      "rejection": "rejected: strategy gate (score 8/12 but strategy_match 1/3)"
-    },
-    {
+  "slot_k": {
+    "label": "Meaningful benchmark (paragraph (k))",
+    "selected": {
       "candidate": "Cambridge Associates US PE benchmark",
       "id": "cambridge_pe",
-      "lane": "B",
-      "score": 7,
+      "lane": "P",
+      "declared_type": null,
+      "score": 9,
       "max": 12,
       "criteria": {
         "strategy_match": 3,
         "risk_liquidity_match": 2,
-        "investability": 0,
-        "data_quality": 0,
-        "provider_independence": 2
+        "provider_independence": 2,
+        "data_held": 0,
+        "pricing_basis_match": 2
       },
+      "held": false,
+      "comparator_kind": "appraisal-based published series",
       "series_id": "cited:cambridge_pe",
       "reasons": [
         "strategy_match 3/3: a private-market index of private equity for a evergreen private equity fund",
-        "risk_liquidity_match 2/3: NAV-class series, quarterly observations vs the fund's annual return data and an index, not a fund set, so leverage regime is not comparable",
-        "investability 0/2: licensed data not held (no subscription), candidate can be cited, not computed",
-        "data_quality 0/2: cited, not computed",
-        "provider_independence 2/2: provider unaffiliated with the fund (Cambridge Associates): the registry affiliation map ties it to none of the fund's advisers"
+        "risk_liquidity_match 2/3: appraisal-based index without a dealing mechanism of its own against a NAV fund (quarterly dealing at NAV under 5% cap per quarter): the pricing process matches, the liquidity terms cannot",
+        "provider_independence 2/2: provider unaffiliated with the fund (Cambridge Associates): the registry affiliation map ties it to none of the fund's advisers",
+        "data_held 0/2: licensed series not held (no subscription): the candidate is cited, not computed",
+        "pricing_basis_match 2/2: both appraisal-based NAV series"
       ],
-      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 9/12 (only two slots). Retained in log as viable alternate"
+      "comparison": null,
+      "comparison_note": "cited, series not in the record: no comparison computed"
+    },
+    "escalation": null,
+    "max_attainable": 9,
+    "ties": []
+  },
+  "slot_g": {
+    "label": "Peer comparison (paragraphs (g) and (h))",
+    "cohort": "evergreen_pe",
+    "cohort_label": "evergreen private equity cohort",
+    "members": [
+      "hl_paf",
+      "kkr_kpec",
+      "ares_pmf",
+      "amg_pantheon"
+    ],
+    "member_names": [
+      "Hamilton Lane Private Assets Fund",
+      "KKR Private Equity Conglomerate LLC",
+      "Ares Private Markets Fund",
+      "AMG Pantheon Fund, LLC"
+    ],
+    "member_source": {
+      "Hamilton Lane Private Assets Fund": "filed fiscal-year returns",
+      "KKR Private Equity Conglomerate LLC": "filed calendar-year returns (December fiscal year)",
+      "Ares Private Markets Fund": "filed fiscal-year returns",
+      "AMG Pantheon Fund, LLC": "filed fiscal-year returns",
+      "StepStone Private Markets": "filed fiscal-year returns"
+    },
+    "member_period_kind": {
+      "Hamilton Lane Private Assets Fund": "fiscal_year",
+      "KKR Private Equity Conglomerate LLC": "calendar_year",
+      "Ares Private Markets Fund": "fiscal_year",
+      "AMG Pantheon Fund, LLC": "fiscal_year",
+      "StepStone Private Markets": "fiscal_year"
+    },
+    "table": [
+      {
+        "period": "2017-03-31",
+        "label": "FY2017 (year to 2017-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 1,
+        "returns": {
+          "Hamilton Lane Private Assets Fund": null,
+          "KKR Private Equity Conglomerate LLC": null,
+          "Ares Private Markets Fund": null,
+          "AMG Pantheon Fund, LLC": 14.27,
+          "StepStone Private Markets": null
+        }
+      },
+      {
+        "period": "2018-03-31",
+        "label": "FY2018 (year to 2018-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 1,
+        "returns": {
+          "Hamilton Lane Private Assets Fund": null,
+          "KKR Private Equity Conglomerate LLC": null,
+          "Ares Private Markets Fund": null,
+          "AMG Pantheon Fund, LLC": 14.26,
+          "StepStone Private Markets": null
+        }
+      },
+      {
+        "period": "2019-03-31",
+        "label": "FY2019 (year to 2019-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 1,
+        "returns": {
+          "Hamilton Lane Private Assets Fund": null,
+          "KKR Private Equity Conglomerate LLC": null,
+          "Ares Private Markets Fund": null,
+          "AMG Pantheon Fund, LLC": 10.11,
+          "StepStone Private Markets": null
+        }
+      },
+      {
+        "period": "2020-03-31",
+        "label": "FY2020 (year to 2020-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 1,
+        "returns": {
+          "Hamilton Lane Private Assets Fund": null,
+          "KKR Private Equity Conglomerate LLC": null,
+          "Ares Private Markets Fund": null,
+          "AMG Pantheon Fund, LLC": 4.15,
+          "StepStone Private Markets": null
+        }
+      },
+      {
+        "period": "2021-03-31",
+        "label": "FY2021 (year to 2021-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 1,
+        "returns": {
+          "Hamilton Lane Private Assets Fund": null,
+          "KKR Private Equity Conglomerate LLC": null,
+          "Ares Private Markets Fund": null,
+          "AMG Pantheon Fund, LLC": 35.72,
+          "StepStone Private Markets": null
+        }
+      },
+      {
+        "period": "2022-03-31",
+        "label": "FY2022 (year to 2022-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 3,
+        "returns": {
+          "Hamilton Lane Private Assets Fund": 20.77,
+          "KKR Private Equity Conglomerate LLC": null,
+          "Ares Private Markets Fund": null,
+          "AMG Pantheon Fund, LLC": 18.36,
+          "StepStone Private Markets": 29.43
+        }
+      },
+      {
+        "period": "2023-03-31",
+        "label": "FY2023 (year to 2023-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 4,
+        "returns": {
+          "Hamilton Lane Private Assets Fund": 16.1,
+          "KKR Private Equity Conglomerate LLC": null,
+          "Ares Private Markets Fund": 9.27,
+          "AMG Pantheon Fund, LLC": 6.45,
+          "StepStone Private Markets": 8.23
+        }
+      },
+      {
+        "period": "2024-03-31",
+        "label": "FY2024 (year to 2024-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 4,
+        "returns": {
+          "Hamilton Lane Private Assets Fund": 12.68,
+          "KKR Private Equity Conglomerate LLC": null,
+          "Ares Private Markets Fund": 17.1,
+          "AMG Pantheon Fund, LLC": 12.08,
+          "StepStone Private Markets": 13.79
+        }
+      },
+      {
+        "period": "2024-12-31",
+        "label": "2024",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Hamilton Lane Private Assets Fund": null,
+          "KKR Private Equity Conglomerate LLC": 11.82,
+          "Ares Private Markets Fund": null,
+          "AMG Pantheon Fund, LLC": null,
+          "StepStone Private Markets": null
+        }
+      },
+      {
+        "period": "2025-03-31",
+        "label": "FY2025 (year to 2025-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 4,
+        "returns": {
+          "Hamilton Lane Private Assets Fund": 12.59,
+          "KKR Private Equity Conglomerate LLC": null,
+          "Ares Private Markets Fund": 19.95,
+          "AMG Pantheon Fund, LLC": 10.07,
+          "StepStone Private Markets": 10.76
+        }
+      },
+      {
+        "period": "2025-12-31",
+        "label": "2025",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Hamilton Lane Private Assets Fund": null,
+          "KKR Private Equity Conglomerate LLC": 16.14,
+          "Ares Private Markets Fund": null,
+          "AMG Pantheon Fund, LLC": null,
+          "StepStone Private Markets": null
+        }
+      },
+      {
+        "period": "2026-03-31",
+        "label": "FY2026 (year to 2026-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 4,
+        "returns": {
+          "Hamilton Lane Private Assets Fund": 14.6,
+          "KKR Private Equity Conglomerate LLC": null,
+          "Ares Private Markets Fund": 9.58,
+          "AMG Pantheon Fund, LLC": 9.1,
+          "StepStone Private Markets": 10.47
+        }
+      }
+    ],
+    "survivorship_note": "The cohort is the roster's 5 surviving, still-filing products. Funds that closed, merged, or stopped filing are not in it, so any composite carries survivorship bias in the fund's favor. Membership rationales and exclusions are in the roster record.",
+    "heterogeneity_note": "Members span 2 wrapper types (non-traded LLC ('34 Act), tender-offer fund) and 2 leverage regimes (1940-Act asset-coverage limits, no 1940-Act leverage limits (34-Act conglomerate)). Fee bases, leverage and exit rights are not like-for-like, so the comparison is a history of similar investments, not a like-for-like index.",
+    "composite": {
+      "n_peers": 4,
+      "weighting": "equal-weight across peers, only over periods every peer reports",
+      "statistic": "relative wealth ratio vs peer composite",
+      "not_pme_note": "Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought.",
+      "status": "refused",
+      "reason": "members report on different year ends and no member has a series that builds a common calendar period (Hamilton Lane Private Assets Fund fiscal years to month 03, KKR Private Equity Conglomerate LLC calendar years, Ares Private Markets Fund fiscal years to month 03, AMG Pantheon Fund, LLC fiscal years to month 03, StepStone Private Markets fiscal years to month 03). A composite needs identical start and end dates for every member",
+      "candidate": "Peer composite, evergreen private equity cohort without StepStone Private Markets",
+      "kind": "composite"
+    }
+  },
+  "reference_comparison": {
+    "candidate": "Listed private equity investable proxy (PSP)",
+    "id": "psp",
+    "score": 8,
+    "max": 12,
+    "series_id": "psp",
+    "comparison": {
+      "kind": "series",
+      "statistic": "KS-PME vs public market proxy",
+      "comparator_kind": "public market series (exchange-traded proxy, Yahoo adjusted close)",
+      "fund_return_source": "filed fiscal-year returns",
+      "window": "2021-03-31 to 2026-03-31",
+      "window_note": "",
+      "fund_window": "2021-03-31 to 2026-03-31",
+      "window_years": 5.0,
+      "fund_growth_x": 1.9504,
+      "index_growth_x": 1.0419,
+      "ks_pme": 1.8718,
+      "direct_alpha_pct": 13.36,
+      "fund_ann_pct": 14.3,
+      "index_ann_pct": 0.83,
+      "low_confidence": null
+    },
+    "note": "reference comparison on the highest-ranked held public market series: not the meaningful benchmark"
+  },
+  "declared": [
+    {
+      "name": "MSCI World Index",
+      "candidate_id": "urth",
+      "cell": "5.1",
+      "type": "declared",
+      "type_label": "declared benchmark",
+      "held": true,
+      "status": "held, scored 7/12, fails the strategy gate (strategy_match 1/3)",
+      "comparison": {
+        "kind": "series",
+        "statistic": "KS-PME vs public market proxy",
+        "comparator_kind": "public market series (exchange-traded proxy, Yahoo adjusted close)",
+        "fund_return_source": "filed fiscal-year returns",
+        "window": "2021-03-31 to 2026-03-31",
+        "window_note": "",
+        "fund_window": "2021-03-31 to 2026-03-31",
+        "window_years": 5.0,
+        "fund_growth_x": 1.9504,
+        "index_growth_x": 1.6459,
+        "ks_pme": 1.185,
+        "direct_alpha_pct": 3.45,
+        "fund_ann_pct": 14.3,
+        "index_ann_pct": 10.48,
+        "low_confidence": null
+      },
+      "comparison_note": null
     }
   ],
-  "secondary_note": null,
-  "escalation": null
+  "declared_none_reason": null,
+  "rejected": [
+    {
+      "candidate": "Listed private equity investable proxy (PSP)",
+      "id": "psp",
+      "lane": "B",
+      "declared_type": null,
+      "score": 8,
+      "max": 12,
+      "criteria": {
+        "strategy_match": 2,
+        "risk_liquidity_match": 1,
+        "provider_independence": 2,
+        "data_held": 2,
+        "pricing_basis_match": 1
+      },
+      "held": true,
+      "comparator_kind": "public market series",
+      "series_id": "psp",
+      "reasons": [
+        "strategy_match 2/3: the public-market version of the asset class (listed private equity for evergreen private equity)",
+        "risk_liquidity_match 1/3: daily-liquid market series against a semi-liquid NAV fund (quarterly dealing at NAV under 5% cap per quarter): volatility and liquidity regimes differ, the PME construct exists for exactly this comparison",
+        "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks): the registry affiliation map ties it to none of the fund's advisers",
+        "data_held 2/2: daily public market series held (exchange-traded proxy, Yahoo adjusted close)",
+        "pricing_basis_match 1/2: a market-priced series standing in for an appraisal-based fund: comparable only through a PME, which is window-sensitive on appraisal-lagged NAVs"
+      ],
+      "rejection": "ranked below the selected candidate: 8/12 vs 9/12 for Cambridge PE benchmark"
+    },
+    {
+      "candidate": "MSCI World investable proxy (URTH)",
+      "id": "urth",
+      "lane": "A",
+      "declared_type": "declared",
+      "score": 7,
+      "max": 12,
+      "criteria": {
+        "strategy_match": 1,
+        "risk_liquidity_match": 1,
+        "provider_independence": 2,
+        "data_held": 2,
+        "pricing_basis_match": 1
+      },
+      "held": true,
+      "comparator_kind": "public market series",
+      "series_id": "urth",
+      "reasons": [
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (global equity for evergreen private equity)",
+        "risk_liquidity_match 1/3: daily-liquid market series against a semi-liquid NAV fund (quarterly dealing at NAV under 5% cap per quarter): volatility and liquidity regimes differ, the PME construct exists for exactly this comparison",
+        "provider_independence 2/2: provider unaffiliated with the fund (iShares / MSCI): the registry affiliation map ties it to none of the fund's advisers",
+        "data_held 2/2: daily public market series held (exchange-traded proxy, Yahoo adjusted close)",
+        "pricing_basis_match 1/2: a market-priced series standing in for an appraisal-based fund: comparable only through a PME, which is window-sensitive on appraisal-lagged NAVs"
+      ],
+      "rejection": "rejected: strategy gate (score 7/12 but strategy_match 1/3)"
+    }
+  ]
 }

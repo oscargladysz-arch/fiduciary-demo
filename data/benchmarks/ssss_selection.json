@@ -1,95 +1,246 @@
 {
   "product": "ssss",
   "strategy": "preipo_venture",
+  "cohort": "venture",
   "source_cells": [
     "1.10",
     "5.1"
   ],
-  "rubric_version": "v2",
-  "rubric": "Tark benchmark rubric, 12 points: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
-  "max_attainable": null,
-  "declared_benchmarks": [
+  "rubric_version": "v3",
+  "rubric": "Tark benchmark rubric, 12 points: strategy match 3 (gate below 2), risk/liquidity match 3, provider independence 2 (an affiliated provider is ineligible), data held 2, pricing basis match 2, threshold 7/12",
+  "basis": {
+    "kind": "series",
+    "label": "Yahoo adjusted close, approximates NAV total return (NSLR)"
+  },
+  "slot_k": {
+    "label": "Meaningful benchmark (paragraph (k))",
+    "selected": null,
+    "escalation": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE for this pre-IPO and venture fund: its price is premium-driven and decoupled from NAV, so every candidate benchmarks the premium, not the portfolio. Required next: a NAV series from the filings and a premium to NAV decomposition before any comparator is defensible.",
+    "max_attainable": null,
+    "ties": []
+  },
+  "slot_g": {
+    "label": "Peer comparison (paragraphs (g) and (h))",
+    "cohort": "venture",
+    "cohort_label": "pre-IPO and venture cohort",
+    "members": [
+      "dxyz",
+      "arkvx"
+    ],
+    "member_names": [
+      "Destiny Tech100 Inc",
+      "ARK Venture Fund"
+    ],
+    "member_source": {
+      "Destiny Tech100 Inc": "Yahoo adjusted close, approximates NAV total return",
+      "ARK Venture Fund": "Yahoo adjusted close, approximates NAV total return",
+      "Neostellar Capital Corp.": "Yahoo adjusted close, approximates NAV total return"
+    },
+    "member_period_kind": {
+      "Destiny Tech100 Inc": "calendar_year",
+      "ARK Venture Fund": "calendar_year",
+      "Neostellar Capital Corp.": "calendar_year"
+    },
+    "table": [
+      {
+        "period": "2017-12-31",
+        "label": "2017",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "ARK Venture Fund": null,
+          "Neostellar Capital Corp.": 8.35
+        }
+      },
+      {
+        "period": "2018-12-31",
+        "label": "2018",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "ARK Venture Fund": null,
+          "Neostellar Capital Corp.": -4.22
+        }
+      },
+      {
+        "period": "2019-12-31",
+        "label": "2019",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "ARK Venture Fund": null,
+          "Neostellar Capital Corp.": 31.56
+        }
+      },
+      {
+        "period": "2020-12-31",
+        "label": "2020",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "ARK Venture Fund": null,
+          "Neostellar Capital Corp.": 116.63
+        }
+      },
+      {
+        "period": "2021-12-31",
+        "label": "2021",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "ARK Venture Fund": null,
+          "Neostellar Capital Corp.": 72.61
+        }
+      },
+      {
+        "period": "2022-12-31",
+        "label": "2022",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "ARK Venture Fund": null,
+          "Neostellar Capital Corp.": -70.31
+        }
+      },
+      {
+        "period": "2023-12-31",
+        "label": "2023",
+        "period_kind": "calendar_year",
+        "n": 2,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "ARK Venture Fund": 61.25,
+          "Neostellar Capital Corp.": 3.68
+        }
+      },
+      {
+        "period": "2024-12-31",
+        "label": "2024",
+        "period_kind": "calendar_year",
+        "n": 2,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "ARK Venture Fund": 6.69,
+          "Neostellar Capital Corp.": 49.24
+        }
+      },
+      {
+        "period": "2025-12-31",
+        "label": "2025",
+        "period_kind": "calendar_year",
+        "n": 3,
+        "returns": {
+          "Destiny Tech100 Inc": -47.96,
+          "ARK Venture Fund": 55.68,
+          "Neostellar Capital Corp.": 69.91
+        }
+      }
+    ],
+    "survivorship_note": "The cohort is the roster's 3 surviving, still-filing products. Funds that closed, merged, or stopped filing are not in it, so any composite carries survivorship bias in the fund's favor. Membership rationales and exclusions are in the roster record.",
+    "heterogeneity_note": "Members span 3 wrapper types (interval fund (Rule 23c-3), listed BDC, listed closed-end fund) and 2 leverage regimes (1940-Act asset-coverage limits, BDC 150% asset-coverage regime). Fee bases, leverage and exit rights are not like-for-like, so the comparison is a history of similar investments, not a like-for-like index.",
+    "composite": {
+      "n_peers": 2,
+      "weighting": "equal-weight across peers, only over periods every peer reports",
+      "statistic": "relative wealth ratio vs peer composite",
+      "not_pme_note": "Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought.",
+      "status": "refused",
+      "reason": "fewer than 3 peers remain after leaving Neostellar Capital Corp. out (2: Destiny Tech100 Inc, ARK Venture Fund)",
+      "candidate": "Peer composite, pre-IPO and venture cohort without Neostellar Capital Corp.",
+      "kind": "composite"
+    }
+  },
+  "reference_comparison": null,
+  "declared": [
     {
       "name": "S&P 500",
       "candidate_id": "spy",
       "cell": "5.1",
-      "status": "held, scored 7/12, fails the strategy gate (strategy_match 1/3)"
+      "type": "sec_required_comparator",
+      "type_label": "SEC-required comparator",
+      "held": true,
+      "status": "held, scored 7/12, fund price decoupled from NAV",
+      "comparison": {
+        "kind": "series",
+        "statistic": "KS-PME vs public market proxy",
+        "comparator_kind": "public market series (exchange-traded proxy, Yahoo adjusted close)",
+        "fund_return_source": "Yahoo adjusted close, approximates NAV total return",
+        "window": "2018-07-18 to 2026-07-17",
+        "window_note": "clipped: proxy series begins 2018-07-18, proxy series ends 2026-07-17",
+        "fund_window": "2016-08-15 to 2026-08-14",
+        "window_years": 8.0,
+        "fund_growth_x": 3.0771,
+        "index_growth_x": 2.987,
+        "ks_pme": 1.0302,
+        "direct_alpha_pct": 0.37,
+        "fund_ann_pct": 15.09,
+        "index_ann_pct": 14.66,
+        "low_confidence": null,
+        "ks_pme_monthly_schedule": 1.1346,
+        "schedule_contributions": 97,
+        "schedule_note": "ILLUSTRATIVE: 97 equal contributions, at the window start and each month-end inside it, valued at the window end. The two-point figure is primary."
+      },
+      "comparison_note": null
     }
   ],
-  "declared_none_reason": null,
-  "primary": null,
-  "secondary": null,
+  "declared_none_reason": "cell 5.1: the 10-K performance graph compares against indices with a printed statement that no appropriate strategy-matched index exists",
   "rejected": [
-    {
-      "candidate": "S&P 500 investable proxy (SPY)",
-      "id": "spy",
-      "lane": "A",
-      "score": 7,
-      "max": 12,
-      "criteria": {
-        "strategy_match": 1,
-        "risk_liquidity_match": 0,
-        "investability": 2,
-        "data_quality": 2,
-        "provider_independence": 2
-      },
-      "series_id": "spy",
-      "reasons": [
-        "strategy_match 1/3: adjacent asset class sharing the dominant risk (US large cap for late-stage growth in a listed BDC)",
-        "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
-        "investability 2/2: computable on held data (daily series)",
-        "data_quality 2/2: daily series held",
-        "provider_independence 2/2: provider unaffiliated with the fund (SPDR / S&P DJI): the registry affiliation map ties it to none of the fund's advisers"
-      ],
-      "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
-    },
     {
       "candidate": "Listed private equity investable proxy (PSP)",
       "id": "psp_v",
       "lane": "B",
+      "declared_type": null,
       "score": 7,
       "max": 12,
       "criteria": {
         "strategy_match": 1,
         "risk_liquidity_match": 0,
-        "investability": 2,
-        "data_quality": 2,
-        "provider_independence": 2
+        "provider_independence": 2,
+        "data_held": 2,
+        "pricing_basis_match": 2
       },
+      "held": true,
+      "comparator_kind": "public market series",
       "series_id": "psp",
       "reasons": [
         "strategy_match 1/3: adjacent asset class sharing the dominant risk (listed private equity for late-stage growth in a listed BDC)",
-        "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
-        "investability 2/2: computable on held data (daily series)",
-        "data_quality 2/2: daily series held",
-        "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks): the registry affiliation map ties it to none of the fund's advisers"
+        "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process (fund terms: exchange-traded, continuous dealing at the market price)",
+        "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Red Rocks): the registry affiliation map ties it to none of the fund's advisers",
+        "data_held 2/2: daily public market series held (exchange-traded proxy, Yahoo adjusted close)",
+        "pricing_basis_match 2/2: both market-priced series"
       ],
       "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     },
     {
-      "candidate": "Peer composite, pre-IPO and venture cohort without Neostellar Capital Corp. (members: ARK Venture Fund, Destiny Tech100 Inc)",
-      "id": "peer_venture",
-      "lane": "C",
-      "score": 3,
+      "candidate": "S&P 500 investable proxy (SPY)",
+      "id": "spy",
+      "lane": "A",
+      "declared_type": "sec_required_comparator",
+      "score": 7,
       "max": 12,
       "criteria": {
-        "strategy_match": 2,
+        "strategy_match": 1,
         "risk_liquidity_match": 0,
-        "investability": 0,
-        "data_quality": 0,
-        "provider_independence": 1
+        "provider_independence": 2,
+        "data_held": 2,
+        "pricing_basis_match": 2
       },
-      "series_id": "composite:venture",
+      "held": true,
+      "comparator_kind": "public market series",
+      "series_id": "spy",
       "reasons": [
-        "strategy_match 2/3: same asset class, different sub-strategy (pre-IPO holdings in a listed closed-end fund vs late-stage growth in a listed BDC)",
-        "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process",
-        "investability 0/2: composite refused, nothing to compute",
-        "data_quality 0/2: cited, not computed",
-        "provider_independence 1/2: constructed by the evaluator from the roster, not a third-party index. A composite the evaluator built from a roster the evaluator chose is not an independent yardstick, so it earns at most 1 of 2"
+        "strategy_match 1/3: adjacent asset class sharing the dominant risk (US large cap for late-stage growth in a listed BDC)",
+        "risk_liquidity_match 0/3: fund price is premium-driven and decoupled from NAV, no candidate matches that risk process (fund terms: exchange-traded, continuous dealing at the market price)",
+        "provider_independence 2/2: provider unaffiliated with the fund (SPDR / S&P DJI): the registry affiliation map ties it to none of the fund's advisers",
+        "data_held 2/2: daily public market series held (exchange-traded proxy, Yahoo adjusted close)",
+        "pricing_basis_match 2/2: both market-priced series"
       ],
       "rejection": "fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio"
     }
-  ],
-  "secondary_note": null,
-  "escalation": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from available data. Required next: public NAV series (quarterly filings) plus a premium/NAV decomposition before any comparator is defensible."
+  ]
 }

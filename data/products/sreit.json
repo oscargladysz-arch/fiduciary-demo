@@ -77,10 +77,10 @@
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": "Primary Listed REIT investable proxy (VNQ): KS-PME 0.9453 and Direct Alpha -5.47%/yr over 2024-12-31 to 2025-12-31 (series comparison), fund growth 0.976x vs proxy growth 1.0325x on two-point flows (one contribution at the window start, one valuation at the end), fund return source: filed fiscal-year returns. The fund lagged the public proxy over this window. Low confidence: 1-year window, shorter than 3 years. Window-sensitive: every figure on appraisal-lagged NAVs moves with the window (methodology section 3).",
+      "value": "Meaningful benchmark (paragraph (k)), NCREIF Fund Index - ODCE (private core RE) scored 9/12: no comparison computed (cited, series not in the record: no comparison computed). Reference comparison on the highest-ranked held public market series, not the meaningful benchmark, Listed REIT investable proxy (VNQ): KS-PME 0.9453 and Direct Alpha -5.47%/yr over 2024-12-31 to 2025-12-31 (series comparison), fund growth 0.976x vs proxy growth 1.0325x on two-point flows (one contribution at the window start, one valuation at the end), fund return source: filed calendar-year returns (December fiscal year). The fund lagged the public proxy over this window. Declared benchmark: none (cell 5.1: SREIT declares no benchmark index anywhere in the FY2025 10-K). Low confidence: 1-year window, shorter than 3 years. Return basis for every comparison: filed calendar-year returns (December fiscal year). The peer comparison (paragraphs (g) and (h)) is cell 1.12, never a PME. Window-sensitive: every figure on appraisal-lagged NAVs moves with the window (methodology section 3).",
       "status": "computed",
       "source": "benchmark selection artifact (Starwood Real Estate Income Trust, Inc.)",
-      "section": "primary and secondary comparisons",
+      "section": "meaningful benchmark, reference and declared comparisons",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
@@ -113,6 +113,16 @@
       "section": "Item 1 Business - General Description; Item 10 Directors and Executive Officers (bios); Signatures",
       "quote": "Nora Creedon has served as our Chief Executive Officer and President since July 2025 and as a member of our board of directors since November 2025.",
       "extracted_by": "Claude Code (2026-08-14)",
+      "verified_by": ""
+    },
+    "1.12": {
+      "element": "Peer comparison (paragraphs (g) and (h))",
+      "value": "Peer comparison (paragraphs (g) and (h)): non-traded real estate cohort, peers Blackstone Real Estate Income Trust Inc, JLL Income Property Trust, Inc., fund return basis filed calendar-year returns (December fiscal year). Composite REFUSED: fewer than 3 peers remain after leaving Starwood Real Estate Income Trust, Inc. out (2: Blackstone Real Estate Income Trust Inc, JLL Income Property Trust, Inc.). Side by side, every period any member reports, columns in this order: Blackstone Real Estate Income Trust Inc, JLL Income Property Trust, Inc., Starwood Real Estate Income Trust, Inc.. n = members reporting. 2023 (n=1): -0.5% / n/a / n/a | 2024 (n=1): 2% / n/a / n/a | 2025 (n=2): 8.1% / n/a / -2.4%. The cohort is the roster's 3 surviving, still-filing products. Funds that closed, merged, or stopped filing are not in it, so any composite carries survivorship bias in the fund's favor. Membership rationales and exclusions are in the roster record. Members span one wrapper type (non-traded REIT) and one leverage regime (charter-level borrowing limits, no 1940-Act coverage test). Fee bases, leverage and exit rights are not like-for-like, so the comparison is a history of similar investments, not a like-for-like index.",
+      "status": "computed",
+      "source": "benchmark selection artifact (Starwood Real Estate Income Trust, Inc.)",
+      "section": "peer comparison: member table, composite or refusal, survivorship, heterogeneity",
+      "quote": "",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "2.1": {
@@ -277,17 +287,17 @@
     },
     "3.7": {
       "element": "Plan participant liquidity demand",
-      "value": "Structural: SREIT filings disclose fund-side liquidity only (3.1/3.3/3.4). Participant-level demand (separated-with-balance counts, payout elections) is plan data outside any SREIT document.",
-      "status": "n/a - plan-side workflow: participant liquidity demand comes from a specific plan's Form 5500/recordkeeper census, resolved per plan engagement, not from product filings",
-      "source": "n/a - plan-engagement workflow",
-      "section": "n/a",
+      "value": "Plan participant liquidity demand is computed per reference plan from the plan's own Form 5500 record (participants with account balances, separated participants with balances as the near-term liquidity tail, active participants, retirees in pay status, and the filed outflow proxy from Schedule H totals), for each of the 4 reference plans. The figures appear in the decision memo and the Liquidity view for the plan being evaluated. This product record holds no plan's counts, so a memo for one plan never carries another plan's numbers.",
+      "status": "computed",
+      "source": "plan records on file (Form 5500), read per plan by the liquidity match",
+      "section": "participant counts and filed outflow proxy, per plan",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-14)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "3.8": {
       "element": "Redemption stress test",
-      "value": "ILLUSTRATIVE redemption stress test (computed for all four reference plans): tail turnover x2, active turnover x1.5 vs base scenario, default sliders allocation 5% of plan, tail turnover 20%/yr, active turnover 5%/yr. Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): stressed demand 26.4% of the position vs 0% annual wrapper capacity, EXCEEDS annual wrapper capacity. Unmet demand rolls into later windows (gating-equivalent outcome). US industrial manufacturer 401(k) plan (~$0.8B, OH): stressed demand 12.3% of the position vs 0% annual wrapper capacity, EXCEEDS annual wrapper capacity. Unmet demand rolls into later windows (gating-equivalent outcome). US casual-dining restaurant group 401(k) plan (~$1.6B, FL): stressed demand 16.7% of the position vs 0% annual wrapper capacity, EXCEEDS annual wrapper capacity. Unmet demand rolls into later windows (gating-equivalent outcome). US media/technology company 401(k) plan (~$570M, New York): stressed demand 19.2% of the position vs 0% annual wrapper capacity, EXCEEDS annual wrapper capacity. Unmet demand rolls into later windows (gating-equivalent outcome). Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
+      "value": "ILLUSTRATIVE redemption stress test (computed for all four reference plans): base demand is each plan's filed outflow proxy (Schedule H, total expenses less administrative expenses over beginning net assets), stressed demand is the filed outflow proxy plus the increment the sliders add under stress (tail turnover x2, active turnover x1.5 over the slider assumption), default sliders allocation 5% of plan, tail turnover 20%/yr, active turnover 5%/yr. Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): filed outflow proxy 6.5% of the position per year, slider assumption 13.7%, stressed demand 19.2% vs 0% annual wrapper capacity, EXCEEDS annual wrapper capacity (19.2% vs 0%). Unmet demand rolls into later windows (gating-equivalent outcome). US industrial manufacturer 401(k) plan (~$0.8B, OH): filed outflow proxy 11.5% of the position per year, slider assumption 7.2%, stressed demand 16.6% vs 0% annual wrapper capacity, EXCEEDS annual wrapper capacity (16.6% vs 0%). Unmet demand rolls into later windows (gating-equivalent outcome). US casual-dining restaurant group 401(k) plan (~$1.6B, FL): filed outflow proxy 10.8% of the position per year, slider assumption 9.2%, stressed demand 18.2% vs 0% annual wrapper capacity, EXCEEDS annual wrapper capacity (18.2% vs 0%). Unmet demand rolls into later windows (gating-equivalent outcome). US media/technology company 401(k) plan (~$570M, New York): filed outflow proxy 11.7% of the position per year, slider assumption 10.4%, stressed demand 20.5% vs 0% annual wrapper capacity, EXCEEDS annual wrapper capacity (20.5% vs 0%). Unmet demand rolls into later windows (gating-equivalent outcome). Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
       "status": "computed",
       "source": "liquidity match artifacts (Starwood Real Estate Income Trust, Inc., four reference plans)",
       "section": "stressed scenario and scenario across the four plan match files",
@@ -297,7 +307,7 @@
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Structural liquidity verdict MISALIGNED (typed facts, cells 3.1, 3.3, 2.7, plan-independent). Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): misaligned, US industrial manufacturer 401(k) plan (~$0.8B, OH): misaligned, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): misaligned, US media/technology company 401(k) plan (~$570M, New York): misaligned. STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed). A trustee-directed sleeve could hold this wrapper directly (cell 3.5), and the daily-menu constraint applies only to the participant-directed portion, where the menu assumes daily liquidity whereas repurchases are suspended (cell 3.1). Repurchase program suspended (cell 3.1): ordinary repurchase requests are not accepted, so participant liquidity depends on the program reopening. Capacity is 0%. Gating precedent on top (3.3). Early repurchase economics: 5% if held < 1 year (2.7). Relevant to participant-level churn (2.7). Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts and on the Liquidity view.",
+      "value": "Structural liquidity verdict MISALIGNED (typed facts, cells 3.1, 3.3, 2.7, plan-independent). Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): misaligned, US industrial manufacturer 401(k) plan (~$0.8B, OH): misaligned, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): misaligned, US media/technology company 401(k) plan (~$570M, New York): misaligned. Base demand is each plan's filed outflow proxy (Schedule H), the sliders set the stress. STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed). A trustee-directed sleeve could hold this wrapper directly (cell 3.5), and the daily-menu constraint applies only to the participant-directed portion, where the menu assumes daily liquidity whereas repurchases are suspended (cell 3.1). Repurchase program suspended (cell 3.1): ordinary repurchase requests are not accepted, so participant liquidity depends on the program reopening. Capacity is 0%. Gating precedent on top (3.3). Early repurchase economics: 5% if held < 1 year (2.7). Relevant to participant-level churn (2.7). Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts and on the Liquidity view.",
       "status": "computed",
       "source": "liquidity match artifacts (Starwood Real Estate Income Trust, Inc., four reference plans)",
       "section": "verdict, scenario verdict, missing facts and structural reasons across the four plan match files",
@@ -417,17 +427,17 @@
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": "Benchmark candidates evaluated by the engine (Tark benchmark rubric, 12 points, threshold 7 of 12, strategy gate below 2 of 3 ineligible). PRIMARY Listed REIT investable proxy (VNQ) 9/12 (third-party index or investable proxy). SECONDARY NCREIF Fund Index - ODCE (private core RE) 7/12 (third-party index or investable proxy). REJECTED Cambridge Associates Real Estate benchmark 7/12 (third-party index or investable proxy): outranked: score 7/12 vs primary 9/12 and secondary 7/12 (only two slots). Retained in log as viable alternate. REJECTED Peer composite, non-traded real estate cohort without Starwood Real Estate Income Trust, Inc. (members: Blackstone Real Estate Income Trust Inc, JLL Income Property Trust, Inc.) 3/12 (peer composite constructed by the evaluator): score 3/12 below primary threshold 7. Fund-declared benchmark: none (cell 5.1: SREIT declares no benchmark index anywhere in the FY2025 10-K).",
+      "value": "Candidates evaluated for the meaningful-benchmark slot, paragraph (k) (Tark benchmark rubric, 12 points, threshold 7 of 12, strategy gate below 2 of 3 ineligible, an index published by the fund's own adviser ineligible). SELECTED NCREIF Fund Index - ODCE (private core RE) 9/12 (published strategy index, cited, series not in the record). REJECTED Listed REIT investable proxy (VNQ) 8/12 (exchange-traded strategy proxy): ranked below the selected candidate: 8/12 vs 9/12 for NFI-ODCE. Declared benchmark: none (cell 5.1: SREIT declares no benchmark index anywhere in the FY2025 10-K). The peer cohort is not a candidate here: it is the paragraph (g) and (h) comparison in cell 1.12.",
       "status": "computed",
       "source": "benchmark selection artifact (Starwood Real Estate Income Trust, Inc.)",
-      "section": "primary, secondary, rejected and declared benchmarks",
+      "section": "selected, tied, rejected and declared candidates",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort: non-traded real estate cohort (n=3: Blackstone Real Estate Income Trust Inc, Starwood Real Estate Income Trust, Inc., JLL Income Property Trust, Inc.). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2025 (n=2). Wrapper types in the cohort: non-traded REIT. Cross-wrapper differences are disclosed in the cohort caveat block (1 caveat). Membership rationales and exclusions are in the roster decisions record.",
+      "value": "Peer cohort: non-traded real estate cohort (n=3: Blackstone Real Estate Income Trust Inc, Starwood Real Estate Income Trust, Inc., JLL Income Property Trust, Inc.). No composite return is formed: members report on different year ends (breit: calendar years, sreit: calendar years, jll_ipt: no period returns), so no equal-weight composite return is formed. The table shows each member's own periods with n. Periods on record, n = members reporting: 2023 (n=1), 2024 (n=1), 2025 (n=2). Wrapper types in the cohort: non-traded REIT. Cross-wrapper differences are disclosed in the cohort caveat block (1 caveat). Membership rationales and exclusions are in the roster decisions record.",
       "status": "computed",
       "source": "cohort artifact (non-traded real estate cohort)",
       "section": "members, composite and caveats",
@@ -437,31 +447,31 @@
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": "PME inputs (computed, public market proxy Listed REIT investable proxy (VNQ), primary slot): window 2024-12-31 to 2025-12-31 (series comparison). Fund growth 0.976x vs proxy growth 1.0325x, flows = one contribution of 1 at the window start and the terminal growth at the end, fund return source: filed fiscal-year returns. KS-PME 0.9453 = fund growth / proxy growth. Direct Alpha -5.47%/yr is the annualized form of the same two flows (fund -2.4%/yr vs proxy 3.25%/yr).",
+      "value": "PME inputs (computed, public market series Listed REIT investable proxy (VNQ), reference comparison, not the meaningful benchmark): window 2024-12-31 to 2025-12-31 (series comparison). Fund growth 0.976x vs proxy growth 1.0325x, flows = one contribution of 1 at the window start and the terminal growth at the end, fund return source: filed calendar-year returns (December fiscal year). KS-PME 0.9453 = fund growth / proxy growth. Direct Alpha -5.47%/yr is the annualized form of the same two flows (fund -2.4%/yr vs proxy 3.25%/yr). Meaningful benchmark NCREIF Fund Index - ODCE (private core RE): no inputs, cited, series not in the record: no comparison computed. Peer comparison inputs: composite refused (fewer than 3 peers remain after leaving Starwood Real Estate Income Trust, Inc. out (2: Blackstone Real Estate Income Trust Inc, JLL Income Property Trust, Inc.)), see cell 1.12.",
       "status": "computed",
       "source": "benchmark selection artifact (Starwood Real Estate Income Trust, Inc.)",
-      "section": "primary and secondary comparisons",
+      "section": "meaningful benchmark, reference and peer comparison inputs",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": "Benchmark suitability (Tark benchmark rubric, 12 points). Primary Listed REIT investable proxy (VNQ) (third-party index or investable proxy) scored 9/12 with a KS-PME vs public market proxy over 2024-12-31 to 2025-12-31: KS-PME 0.9453, Direct Alpha -5.47%/yr (low confidence: 1-year window, shorter than 3 years). Secondary NCREIF Fund Index - ODCE (private core RE) scored 7/12. Max attainable on held data 9/12. Declared benchmark: none (cell 5.1: SREIT declares no benchmark index anywhere in the FY2025 10-K). Rejected: 2 candidates, each with its reason in the ledger. The scoring rules are in the benchmark methodology document.",
+      "value": "Benchmark suitability (Tark benchmark rubric, 12 points). Meaningful benchmark (paragraph (k)): NCREIF Fund Index - ODCE (private core RE) (published strategy index) scored 9/12, no comparison computed (cited, series not in the record: no comparison computed). Reference comparison (not the meaningful benchmark): Listed REIT investable proxy (VNQ), KS-PME 0.9453 over 2024-12-31 to 2025-12-31, fund return source: filed calendar-year returns (December fiscal year). Max attainable by an eligible candidate on held data 9/12. Declared benchmark: none (cell 5.1: SREIT declares no benchmark index anywhere in the FY2025 10-K). Peer comparison (cell 1.12): composite refused, fewer than 3 peers remain after leaving Starwood Real Estate Income Trust, Inc. out (2: Blackstone Real Estate Income Trust Inc, JLL Income Property Trust, Inc.). Not selected: 1 candidates, each with its reason in the ledger. The scoring rules are in the benchmark methodology document.",
       "status": "computed",
       "source": "benchmark selection artifact (Starwood Real Estate Income Trust, Inc.)",
-      "section": "primary, secondary, escalation, maximum attainable, declared benchmarks, rejected",
+      "section": "meaningful benchmark, reference, maximum attainable, declared benchmarks, peer comparison",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.7": {
       "element": "Case-law tracker",
-      "value": "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498 (U.S.). Certiorari granted 2026-01-16 per the Supreme Court docket listing. Question presented, per the docket as relayed in search-result snippets: whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary breached the duty of prudence requires alleging a meaningful benchmark. The Ninth Circuit had required plaintiffs to identify a comparable alternative giving a sound basis for comparison, a meaningful benchmark. Argument is listed for the October 2026 term and had not been held as of 2026-09-04. No holding exists yet, and this cell draws no consequence for the evaluation. Status partial: assembled from the docket listing and search snippets, not from the source documents, which this build could not fetch.",
+      "value": "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498 (U.S.). Certiorari granted 2026-01-16 per the Supreme Court docket listing. Question presented, per the docket as relayed in search-result snippets: whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary breached the duty of prudence requires alleging a meaningful benchmark. The Ninth Circuit had required plaintiffs to identify a comparable alternative giving a sound basis for comparison, a meaningful benchmark. No holding exists yet, and this cell draws no consequence for the evaluation. Status partial: assembled from the docket listing and search snippets, not from the source documents, which this build could not fetch.",
       "status": "partial - search snippets and docket listing only, source documents not fetched in this build",
       "source": "Supreme Court docket 25-498, https://www.supremecourt.gov/docket/docketfiles/html/public/25-498.html (grant date). SCOTUSblog case page, https://www.scotusblog.com/cases/anderson-v-intel-corp-investment-policy-comm/ and CRS Legal Sidebar LSB11396, https://www.congress.gov/crs-product/LSB11396 (question presented, argument term). Accessed 2026-09-04 through web-search snippets only.",
       "section": "docket listing and search-result snippets (question presented, argument scheduling)",
-      "quote": "search snippet, not the source document: \"whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary failed to use the requisite 'care, skill, prudence, or diligence' under the circumstances and thus breached ERISA's duty of prudence when investing plan assets requires alleging a 'meaningful benchmark'\" and \"The case is scheduled for argument before the Supreme Court of the United States during the court's October 2026-2027 term.\"",
+      "quote": "search snippet, not the source document: \"whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary failed to use the requisite 'care, skill, prudence, or diligence' under the circumstances and thus breached ERISA's duty of prudence when investing plan assets requires alleging a 'meaningful benchmark'\"",
       "extracted_by": "Claude Code (WebSearch snippet, 2026-09-04)",
       "verified_by": ""
     },

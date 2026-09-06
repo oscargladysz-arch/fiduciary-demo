@@ -124,48 +124,66 @@
   },
   "composite": {
     "refused": false,
-    "granularity": "annual (fiscal years as filed, with year-end months that differ across members and are disclosed per row)",
-    "weighting": "equal-weight across members reporting that year",
     "rows": [
       {
-        "year": "2021",
-        "composite_return_pct": 12.84,
-        "n": 5,
+        "period": "2018-12-31",
+        "label": "2018",
+        "period_kind": "calendar_year",
+        "n": 2,
         "members": [
-          "bcred",
           "cion_ares",
-          "cliffwater_cclfx",
-          "ocic",
           "pflex"
-        ]
+        ],
+        "returns": {
+          "cliffwater_cclfx": null,
+          "bcred": null,
+          "pflex": 2.86,
+          "cion_ares": 4.45,
+          "ocic": null
+        },
+        "composite_return_pct": null
       },
       {
-        "year": "2022",
-        "composite_return_pct": -0.4,
-        "n": 5,
+        "period": "2019-12-31",
+        "label": "2019",
+        "period_kind": "calendar_year",
+        "n": 2,
         "members": [
-          "bcred",
           "cion_ares",
-          "cliffwater_cclfx",
-          "ocic",
           "pflex"
-        ]
+        ],
+        "returns": {
+          "cliffwater_cclfx": null,
+          "bcred": null,
+          "pflex": 10.63,
+          "cion_ares": 9.5,
+          "ocic": null
+        },
+        "composite_return_pct": null
       },
       {
-        "year": "2023",
-        "composite_return_pct": 9.86,
-        "n": 5,
+        "period": "2020-12-31",
+        "label": "2020",
+        "period_kind": "calendar_year",
+        "n": 3,
         "members": [
-          "bcred",
           "cion_ares",
           "cliffwater_cclfx",
-          "ocic",
           "pflex"
-        ]
+        ],
+        "returns": {
+          "cliffwater_cclfx": 5.39,
+          "bcred": null,
+          "pflex": 4.29,
+          "cion_ares": 2.79,
+          "ocic": null
+        },
+        "composite_return_pct": null
       },
       {
-        "year": "2024",
-        "composite_return_pct": 11.97,
+        "period": "2021-12-31",
+        "label": "2021",
+        "period_kind": "calendar_year",
         "n": 5,
         "members": [
           "bcred",
@@ -173,11 +191,20 @@
           "cliffwater_cclfx",
           "ocic",
           "pflex"
-        ]
+        ],
+        "returns": {
+          "cliffwater_cclfx": 10.38,
+          "bcred": 12.6,
+          "pflex": 11.29,
+          "cion_ares": 9.21,
+          "ocic": 4.3
+        },
+        "composite_return_pct": 9.56
       },
       {
-        "year": "2025",
-        "composite_return_pct": 9.83,
+        "period": "2022-12-31",
+        "label": "2022",
+        "period_kind": "calendar_year",
         "n": 5,
         "members": [
           "bcred",
@@ -185,9 +212,96 @@
           "cliffwater_cclfx",
           "ocic",
           "pflex"
-        ]
+        ],
+        "returns": {
+          "cliffwater_cclfx": 2.05,
+          "bcred": 3.6,
+          "pflex": -15.36,
+          "cion_ares": -2.85,
+          "ocic": 5.2
+        },
+        "composite_return_pct": -1.47
+      },
+      {
+        "period": "2023-12-31",
+        "label": "2023",
+        "period_kind": "calendar_year",
+        "n": 5,
+        "members": [
+          "bcred",
+          "cion_ares",
+          "cliffwater_cclfx",
+          "ocic",
+          "pflex"
+        ],
+        "returns": {
+          "cliffwater_cclfx": 12.66,
+          "bcred": 14.4,
+          "pflex": 9.25,
+          "cion_ares": 12.99,
+          "ocic": 13.5
+        },
+        "composite_return_pct": 12.56
+      },
+      {
+        "period": "2024-12-31",
+        "label": "2024",
+        "period_kind": "calendar_year",
+        "n": 5,
+        "members": [
+          "bcred",
+          "cion_ares",
+          "cliffwater_cclfx",
+          "ocic",
+          "pflex"
+        ],
+        "returns": {
+          "cliffwater_cclfx": 12.62,
+          "bcred": 11.0,
+          "pflex": 15.27,
+          "cion_ares": 10.39,
+          "ocic": 11.5
+        },
+        "composite_return_pct": 12.16
+      },
+      {
+        "period": "2025-12-31",
+        "label": "2025",
+        "period_kind": "calendar_year",
+        "n": 5,
+        "members": [
+          "bcred",
+          "cion_ares",
+          "cliffwater_cclfx",
+          "ocic",
+          "pflex"
+        ],
+        "returns": {
+          "cliffwater_cclfx": 8.92,
+          "bcred": 8.0,
+          "pflex": 12.2,
+          "cion_ares": 7.69,
+          "ocic": 7.9
+        },
+        "composite_return_pct": 8.94
       }
-    ]
+    ],
+    "member_source": {
+      "cliffwater_cclfx": "Yahoo adjusted close, approximates NAV total return",
+      "bcred": "filed calendar-year returns (December fiscal year)",
+      "pflex": "Yahoo adjusted close, approximates NAV total return",
+      "cion_ares": "Yahoo adjusted close, approximates NAV total return",
+      "ocic": "filed calendar-year returns (December fiscal year)"
+    },
+    "member_period_kind": {
+      "cliffwater_cclfx": "calendar_year",
+      "bcred": "calendar_year",
+      "pflex": "calendar_year",
+      "cion_ares": "calendar_year",
+      "ocic": "calendar_year"
+    },
+    "granularity": "calendar years, identical start and end dates for every member",
+    "weighting": "equal-weight, only over periods every member reports on the same basis"
   },
   "caveats": [
     "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds. Fee bases and return volatility are not like-for-like. [typed per product: bcred: BDC 150% asset-coverage regime, cion_ares: 1940-Act asset-coverage limits, cliffwater_cclfx: 1940-Act asset-coverage limits, ocic: BDC 150% asset-coverage regime, pflex: 1940-Act asset-coverage limits]",

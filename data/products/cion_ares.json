@@ -67,20 +67,20 @@
     },
     "1.7": {
       "element": "De-smoothed volatility",
-      "value": "Geltner de-smoothed ann vol 6.57% vs raw 6.07% (lag-1 rho 0.075) on monthly points of the daily Class I NAV (CADUX, 2017-07-31 to 2026-08-24). Mild lag-1 smoothing signature.",
+      "value": "De-smoothed (Geltner AR1) annualized volatility 6.57% vs 6.07% observed (lag-1 autocorrelation rho 0.075, n=109 monthly returns of the held daily series CADUX, Yahoo adjusted close, approximates NAV total return with distributions reinvested). Reading: mild lag-1 smoothing, the de-smoothed figure is the better estimate of the holdings' volatility. The method and its limits are in the methodology's window-sensitivity section.",
       "status": "computed",
-      "source": "data/series/cadux.csv (monthly resample)",
-      "section": "tark_analytics.desmooth_geltner",
+      "source": "analytics supplement artifact (series diagnostics)",
+      "section": "series diagnostics for this product",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-25)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": "Primary Senior loan investable proxy (BKLN, for Morningstar LSTA class): KS-PME 1.1374 and Direct Alpha +1.62%/yr over 2018-07-18 to 2026-07-17 (series comparison, clipped: proxy series begins 2018-07-18, proxy series ends 2026-07-17), fund growth 1.6029x vs proxy growth 1.4092x on two-point flows (one contribution at the window start, one valuation at the end), fund return source: Yahoo adjusted close, approximates NAV total return. The fund led the public proxy over this window. Secondary Peer composite, private credit cohort without CION Ares Diversified Credit Fund (members: Blackstone Private Credit Fund, Cliffwater Corporate Lending Fund, Blue Owl Credit Income Corp., PIMCO Flexible Credit Income Fund): relative wealth ratio 0.9461 over FY2021 to FY2025 (5 overlapping fiscal year(s) of 5 composite years), fund growth 1.4445x / peer composite growth 1.5267x on two-point flows, annualized excess return -1.1%/yr, fund return source: filed fiscal-year returns. Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought. Alignment: aligned by fiscal year-end year. Members' fiscal years end in month 03 (cliffwater_cclfx), 06 (pflex), 12 (bcred, ocic), the fund's in month 12. ILLUSTRATIVE monthly-schedule KS-PME 1.0508 vs Senior loan investable proxy (BKLN, for Morningstar LSTA class) (97 equal contributions), the two-point figure is primary. Window-sensitive: every figure on appraisal-lagged NAVs moves with the window (methodology section 3).",
+      "value": "Meaningful benchmark (paragraph (k)), Cliffwater Direct Lending Index (CDLI) scored 8/12: no comparison computed (cited, series not in the record: no comparison computed). Reference comparison on the highest-ranked held public market series, not the meaningful benchmark, Senior loan investable proxy (BKLN, for Morningstar LSTA class): KS-PME 1.1374 and Direct Alpha +1.62%/yr over 2018-07-18 to 2026-07-17 (series comparison, clipped: proxy series begins 2018-07-18, proxy series ends 2026-07-17), fund growth 1.6029x vs proxy growth 1.4092x on two-point flows (one contribution at the window start, one valuation at the end), fund return source: Yahoo adjusted close, approximates NAV total return. The fund led the public proxy over this window. SEC-required comparator Credit Suisse Leveraged Loan Index (cell 5.1): cited, not held, scored 6/12, below the threshold. No comparison: cited, series not in the record: no comparison computed. ILLUSTRATIVE monthly-schedule KS-PME 1.0508 vs Senior loan investable proxy (BKLN, for Morningstar LSTA class) (97 equal contributions), the two-point figure is primary. Return basis for every comparison: Yahoo adjusted close, approximates NAV total return (CADUX). The peer comparison (paragraphs (g) and (h)) is cell 1.12, never a PME. Window-sensitive: every figure on appraisal-lagged NAVs moves with the window (methodology section 3).",
       "status": "computed",
       "source": "benchmark selection artifact (CION Ares Diversified Credit Fund)",
-      "section": "primary and secondary comparisons",
+      "section": "meaningful benchmark, reference and declared comparisons",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
@@ -113,6 +113,16 @@
       "section": "Note 1 Organization; Report of Independent Registered Public Accounting Firm; Item 13 Portfolio Managers; Letter to Shareholders",
       "quote": "the period from January 26, 2017 (commencement of operations) to October 31, 2017 ... The Fund was organized as a Delaware statutory trust on June 21, 2016.",
       "extracted_by": "Claude Code (2026-08-25)",
+      "verified_by": ""
+    },
+    "1.12": {
+      "element": "Peer comparison (paragraphs (g) and (h))",
+      "value": "Peer comparison (paragraphs (g) and (h)): private credit cohort, peers Cliffwater Corporate Lending Fund, Blackstone Private Credit Fund, PIMCO Flexible Credit Income Fund, Blue Owl Credit Income Corp., fund return basis Yahoo adjusted close, approximates NAV total return (CADUX). Equal-weight peer composite over 2021 to 2025 (n=4 peers in every period, identical start and end dates): relative wealth ratio 0.9503 = fund growth 1.4251x / composite growth 1.4997x, annualized excess return -1.01%/yr (fund 7.34%/yr vs composite 8.44%/yr). Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought. Alignment: 5 calendar-year period(s) with identical start and end dates for every member (2020-12-31 to 2025-12-31), n=4 peers in every period. Member return sources: Cliffwater Corporate Lending Fund: Yahoo adjusted close, approximates NAV total return; Blackstone Private Credit Fund: filed calendar-year returns (December fiscal year); PIMCO Flexible Credit Income Fund: Yahoo adjusted close, approximates NAV total return; Blue Owl Credit Income Corp.: filed calendar-year returns (December fiscal year). Side by side, every period any member reports, columns in this order: Cliffwater Corporate Lending Fund, Blackstone Private Credit Fund, PIMCO Flexible Credit Income Fund, Blue Owl Credit Income Corp., CION Ares Diversified Credit Fund. n = members reporting. 2018 (n=2): n/a / n/a / 2.86% / n/a / 4.45% | 2019 (n=2): n/a / n/a / 10.63% / n/a / 9.5% | 2020 (n=3): 5.39% / n/a / 4.29% / n/a / 2.79% | 2021 (n=5): 10.38% / 12.6% / 11.29% / 4.3% / 9.21% | 2022 (n=5): 2.05% / 3.6% / -15.36% / 5.2% / -2.85% | 2023 (n=5): 12.66% / 14.4% / 9.25% / 13.5% / 12.99% | 2024 (n=5): 12.62% / 11% / 15.27% / 11.5% / 10.39% | 2025 (n=5): 8.92% / 8% / 12.2% / 7.9% / 7.69%. The cohort is the roster's 5 surviving, still-filing products. Funds that closed, merged, or stopped filing are not in it, so any composite carries survivorship bias in the fund's favor. Membership rationales and exclusions are in the roster record. Members span 2 wrapper types (interval fund (Rule 23c-3), non-traded BDC) and 2 leverage regimes (1940-Act asset-coverage limits, BDC 150% asset-coverage regime). Fee bases, leverage and exit rights are not like-for-like, so the comparison is a history of similar investments, not a like-for-like index.",
+      "status": "computed",
+      "source": "benchmark selection artifact (CION Ares Diversified Credit Fund)",
+      "section": "peer comparison: member table, composite or refusal, survivorship, heterogeneity",
+      "quote": "",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "2.1": {
@@ -277,17 +287,17 @@
     },
     "3.7": {
       "element": "Plan participant liquidity demand",
-      "value": "Structural: filings disclose fund-side liquidity only; participant liquidity demand comes from plan recordkeeping data (modeled per plan in the liquidity engine from public 5500 inputs; see 3.8/3.9 artifacts).",
-      "status": "n/a - plan-side workflow",
-      "source": "data/liquidity/ (per-plan inputs)",
-      "section": "",
+      "value": "Plan participant liquidity demand is computed per reference plan from the plan's own Form 5500 record (participants with account balances, separated participants with balances as the near-term liquidity tail, active participants, retirees in pay status, and the filed outflow proxy from Schedule H totals), for each of the 4 reference plans. The figures appear in the decision memo and the Liquidity view for the plan being evaluated. This product record holds no plan's counts, so a memo for one plan never carries another plan's numbers.",
+      "status": "computed",
+      "source": "plan records on file (Form 5500), read per plan by the liquidity match",
+      "section": "participant counts and filed outflow proxy, per plan",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-25)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "3.8": {
       "element": "Redemption stress test",
-      "value": "ILLUSTRATIVE redemption stress test (computed for all four reference plans): tail turnover x2, active turnover x1.5 vs base scenario, default sliders allocation 5% of plan, tail turnover 20%/yr, active turnover 5%/yr. Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): stressed demand 26.4% of the position vs 20% annual wrapper capacity, EXCEEDS annual wrapper capacity. Unmet demand rolls into later windows (gating-equivalent outcome). US industrial manufacturer 401(k) plan (~$0.8B, OH): stressed demand 12.3% of the position vs 20% annual wrapper capacity, within wrapper capacity (12.3% vs 20%) IF offers are not prorated. US casual-dining restaurant group 401(k) plan (~$1.6B, FL): stressed demand 16.7% of the position vs 20% annual wrapper capacity, within wrapper capacity (16.7% vs 20%) IF offers are not prorated. US media/technology company 401(k) plan (~$570M, New York): stressed demand 19.2% of the position vs 20% annual wrapper capacity, within wrapper capacity (19.2% vs 20%) IF offers are not prorated. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
+      "value": "ILLUSTRATIVE redemption stress test (computed for all four reference plans): base demand is each plan's filed outflow proxy (Schedule H, total expenses less administrative expenses over beginning net assets), stressed demand is the filed outflow proxy plus the increment the sliders add under stress (tail turnover x2, active turnover x1.5 over the slider assumption), default sliders allocation 5% of plan, tail turnover 20%/yr, active turnover 5%/yr. Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): filed outflow proxy 6.5% of the position per year, slider assumption 13.7%, stressed demand 19.2% vs 20% annual wrapper capacity, within wrapper capacity (19.2% vs 20%) IF offers are not prorated. US industrial manufacturer 401(k) plan (~$0.8B, OH): filed outflow proxy 11.5% of the position per year, slider assumption 7.2%, stressed demand 16.6% vs 20% annual wrapper capacity, within wrapper capacity (16.6% vs 20%) IF offers are not prorated. US casual-dining restaurant group 401(k) plan (~$1.6B, FL): filed outflow proxy 10.8% of the position per year, slider assumption 9.2%, stressed demand 18.2% vs 20% annual wrapper capacity, within wrapper capacity (18.2% vs 20%) IF offers are not prorated. US media/technology company 401(k) plan (~$570M, New York): filed outflow proxy 11.7% of the position per year, slider assumption 10.4%, stressed demand 20.5% vs 20% annual wrapper capacity, EXCEEDS annual wrapper capacity (20.5% vs 20%). Unmet demand rolls into later windows (gating-equivalent outcome). Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
       "status": "computed",
       "source": "liquidity match artifacts (CION Ares Diversified Credit Fund, four reference plans)",
       "section": "stressed scenario and scenario across the four plan match files",
@@ -297,7 +307,7 @@
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Structural liquidity verdict CONDITIONAL (typed facts, cells 3.1, 3.3, 2.7, plan-independent). Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): conditional-weak, US industrial manufacturer 401(k) plan (~$0.8B, OH): conditional, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): conditional, US media/technology company 401(k) plan (~$570M, New York): conditional. STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed). A trustee-directed sleeve could hold this wrapper directly (cell 3.5), and the daily-menu constraint applies only to the participant-directed portion, where the menu assumes daily liquidity whereas this wrapper deals quarterly with a 5% cap per quarter on outstanding shares. Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts and on the Liquidity view.",
+      "value": "Structural liquidity verdict CONDITIONAL (typed facts, cells 3.1, 3.3, 2.7, plan-independent). Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): conditional, US industrial manufacturer 401(k) plan (~$0.8B, OH): conditional, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): conditional, US media/technology company 401(k) plan (~$570M, New York): conditional-weak. Base demand is each plan's filed outflow proxy (Schedule H), the sliders set the stress. STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed). A trustee-directed sleeve could hold this wrapper directly (cell 3.5), and the daily-menu constraint applies only to the participant-directed portion, where the menu assumes daily liquidity whereas this wrapper deals quarterly with a 5% cap per quarter on outstanding shares. Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts and on the Liquidity view.",
       "status": "computed",
       "source": "liquidity match artifacts (CION Ares Diversified Credit Fund, four reference plans)",
       "section": "verdict, scenario verdict, missing facts and structural reasons across the four plan match files",
@@ -377,12 +387,12 @@
     },
     "4.8": {
       "element": "Smoothing diagnostics",
-      "value": "SMOOTHING DIAGNOSTICS (computed from daily Class I NAV): monthly lag-1 autocorr 0.075; raw ann vol 6.07% vs de-smoothed 6.57%; max drawdown on monthly NAV path -15.48%. 78.8% Level 3 book with the Adviser as valuation designee (4.2/4.3) is the structural context for these numbers.",
+      "value": "Smoothing diagnostics: lag-1 autocorrelation rho 0.075 on n=109 monthly returns of CADUX (Yahoo adjusted close, approximates NAV total return with distributions reinvested), observed annualized volatility 6.07% vs de-smoothed 6.57%. Other measured NAV series in the record, same statistic: ARK Venture Fund -0.026, Cliffwater Corporate Lending Fund 0.139, PIMCO Flexible Credit Income Fund 0.124, Blackstone Real Estate Income Trust Inc 0.483 (printed monthly NAV path).",
       "status": "computed",
-      "source": "data/series/cadux.csv (monthly resample)",
-      "section": "tark_analytics: lag1_autocorr/ann_vol/max_drawdown",
+      "source": "analytics supplement artifact (series diagnostics)",
+      "section": "lag-1 autocorrelation across the measured series",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-25)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "4.9": {
@@ -417,17 +427,17 @@
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": "Benchmark candidates evaluated by the engine (Tark benchmark rubric, 12 points, threshold 7 of 12, strategy gate below 2 of 3 ineligible). PRIMARY Senior loan investable proxy (BKLN, for Morningstar LSTA class) 9/12 (third-party index or investable proxy). SECONDARY Peer composite, private credit cohort without CION Ares Diversified Credit Fund (members: Blackstone Private Credit Fund, Cliffwater Corporate Lending Fund, Blue Owl Credit Income Corp., PIMCO Flexible Credit Income Fund) 8/12 (peer composite constructed by the evaluator). REJECTED Cliffwater Direct Lending Index (CDLI) 6/12 (third-party index or investable proxy): score 6/12 below primary threshold 7. REJECTED Credit Suisse Leveraged Loan Index (CSLLI) 5/12 (fund-declared benchmark): score 5/12 below primary threshold 7. Fund-declared (cell 5.1): Credit Suisse Leveraged Loan Index (cited, not held, scored 5/12, below the threshold).",
+      "value": "Candidates evaluated for the meaningful-benchmark slot, paragraph (k) (Tark benchmark rubric, 12 points, threshold 7 of 12, strategy gate below 2 of 3 ineligible, an index published by the fund's own adviser ineligible). SELECTED Cliffwater Direct Lending Index (CDLI) 8/12 (published strategy index, cited, series not in the record). TIED Senior loan investable proxy (BKLN, for Morningstar LSTA class) 8/12 (exchange-traded strategy proxy): tied: tied on score, ordered by strategy_match, then risk_liquidity_match, then data held, then alphabetical (score 8/12, selected CDLI). REJECTED Credit Suisse Leveraged Loan Index (CSLLI) 6/12 (fund-declared benchmark or SEC-required comparator): score 6/12 below the threshold 7/12. REJECTED Morningstar LSTA US Leveraged Loan Index 6/12 (published strategy index): score 6/12 below the threshold 7/12. SEC-required comparator Credit Suisse Leveraged Loan Index (cell 5.1): cited, not held, scored 6/12, below the threshold. No comparison: cited, series not in the record: no comparison computed. The peer cohort is not a candidate here: it is the paragraph (g) and (h) comparison in cell 1.12.",
       "status": "computed",
       "source": "benchmark selection artifact (CION Ares Diversified Credit Fund)",
-      "section": "primary, secondary, rejected and declared benchmarks",
+      "section": "selected, tied, rejected and declared candidates",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.4": {
       "element": "Peer universe & returns",
-      "value": "Peer cohort: private credit cohort (n=5: Cliffwater Corporate Lending Fund, Blackstone Private Credit Fund, PIMCO Flexible Credit Income Fund, CION Ares Diversified Credit Fund, Blue Owl Credit Income Corp.). Equal-weight annual composite on printed fiscal-year returns for years with 2 or more reporting members: 2021 (n=5), 2022 (n=5), 2023 (n=5), 2024 (n=5), 2025 (n=5). Wrapper types in the cohort: interval fund (Rule 23c-3), non-traded BDC. Cross-wrapper differences are disclosed in the cohort caveat block (3 caveats). Membership rationales and exclusions are in the roster decisions record.",
+      "value": "Peer cohort: private credit cohort (n=5: Cliffwater Corporate Lending Fund, Blackstone Private Credit Fund, PIMCO Flexible Credit Income Fund, CION Ares Diversified Credit Fund, Blue Owl Credit Income Corp.). Member table on calendar years, identical start and end dates for every member, equal-weight, only over periods every member reports on the same basis: 2021 (n=5, composite 9.56%), 2022 (n=5, composite -1.47%), 2023 (n=5, composite 12.56%), 2024 (n=5, composite 12.16%), 2025 (n=5, composite 8.94%). The fund's own leave-one-out comparison is cell 1.12. Wrapper types in the cohort: interval fund (Rule 23c-3), non-traded BDC. Cross-wrapper differences are disclosed in the cohort caveat block (3 caveats). Membership rationales and exclusions are in the roster decisions record.",
       "status": "computed",
       "source": "cohort artifact (private credit cohort)",
       "section": "members, composite and caveats",
@@ -437,31 +447,31 @@
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": "PME inputs (computed, public market proxy Senior loan investable proxy (BKLN, for Morningstar LSTA class), primary slot): window 2018-07-18 to 2026-07-17 (series comparison, clipped: proxy series begins 2018-07-18, proxy series ends 2026-07-17). Fund growth 1.6029x vs proxy growth 1.4092x, flows = one contribution of 1 at the window start and the terminal growth at the end, fund return source: Yahoo adjusted close, approximates NAV total return. KS-PME 1.1374 = fund growth / proxy growth. Direct Alpha +1.62%/yr is the annualized form of the same two flows (fund 6.08%/yr vs proxy 4.38%/yr). ILLUSTRATIVE monthly-schedule KS-PME 1.0508 (97 equal contributions at the window start and each month-end inside it, valued at the window end). Peer comparison inputs (Peer composite, private credit cohort without CION Ares Diversified Credit Fund (members: Blackstone Private Credit Fund, Cliffwater Corporate Lending Fund, Blue Owl Credit Income Corp., PIMCO Flexible Credit Income Fund), secondary slot): relative wealth ratio 0.9461 = fund growth 1.4445x / peer composite growth 1.5267x over FY2021 to FY2025, fund return source: filed fiscal-year returns. Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought. Alignment: aligned by fiscal year-end year. Members' fiscal years end in month 03 (cliffwater_cclfx), 06 (pflex), 12 (bcred, ocic), the fund's in month 12.",
+      "value": "PME inputs (computed, public market series Senior loan investable proxy (BKLN, for Morningstar LSTA class), reference comparison, not the meaningful benchmark): window 2018-07-18 to 2026-07-17 (series comparison, clipped: proxy series begins 2018-07-18, proxy series ends 2026-07-17). Fund growth 1.6029x vs proxy growth 1.4092x, flows = one contribution of 1 at the window start and the terminal growth at the end, fund return source: Yahoo adjusted close, approximates NAV total return. KS-PME 1.1374 = fund growth / proxy growth. Direct Alpha +1.62%/yr is the annualized form of the same two flows (fund 6.08%/yr vs proxy 4.38%/yr). ILLUSTRATIVE monthly-schedule KS-PME 1.0508 (97 equal contributions at the window start and each month-end inside it, valued at the window end). Meaningful benchmark Cliffwater Direct Lending Index (CDLI): no inputs, cited, series not in the record: no comparison computed. Peer comparison inputs (cell 1.12, Peer composite, private credit cohort without CION Ares Diversified Credit Fund): relative wealth ratio 0.9503 = fund growth 1.4251x / peer composite growth 1.4997x over 2021 to 2025, fund return source: Yahoo adjusted close, approximates NAV total return. Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought.",
       "status": "computed",
       "source": "benchmark selection artifact (CION Ares Diversified Credit Fund)",
-      "section": "primary and secondary comparisons",
+      "section": "meaningful benchmark, reference and peer comparison inputs",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": "Benchmark suitability (Tark benchmark rubric, 12 points). Primary Senior loan investable proxy (BKLN, for Morningstar LSTA class) (third-party index or investable proxy) scored 9/12 with a KS-PME vs public market proxy over 2018-07-18 to 2026-07-17: KS-PME 1.1374, Direct Alpha 1.62%/yr. Secondary Peer composite, private credit cohort without CION Ares Diversified Credit Fund (members: Blackstone Private Credit Fund, Cliffwater Corporate Lending Fund, Blue Owl Credit Income Corp., PIMCO Flexible Credit Income Fund) scored 8/12. Max attainable on held data 9/12. Fund-declared benchmark(s) (cell 5.1): Credit Suisse Leveraged Loan Index: cited, not held, scored 5/12, below the threshold. Rejected: 2 candidates, each with its reason in the ledger. The scoring rules are in the benchmark methodology document.",
+      "value": "Benchmark suitability (Tark benchmark rubric, 12 points). Meaningful benchmark (paragraph (k)): Cliffwater Direct Lending Index (CDLI) (published strategy index) scored 8/12, no comparison computed (cited, series not in the record: no comparison computed). Tied on score: Senior loan investable proxy (BKLN, for Morningstar LSTA class), ordered by strategy_match, then risk_liquidity_match, then data held, then alphabetical. Reference comparison (not the meaningful benchmark): Senior loan investable proxy (BKLN, for Morningstar LSTA class), KS-PME 1.1374 over 2018-07-18 to 2026-07-17, fund return source: Yahoo adjusted close, approximates NAV total return. Max attainable by an eligible candidate on held data 8/12. SEC-required comparator Credit Suisse Leveraged Loan Index (cell 5.1): cited, not held, scored 6/12, below the threshold. No comparison: cited, series not in the record: no comparison computed. Peer comparison (cell 1.12): relative wealth ratio 0.9503 vs the equal-weight peer composite over 2021 to 2025 (n=4), not a benchmark. Not selected: 3 candidates, each with its reason in the ledger. The scoring rules are in the benchmark methodology document.",
       "status": "computed",
       "source": "benchmark selection artifact (CION Ares Diversified Credit Fund)",
-      "section": "primary, secondary, escalation, maximum attainable, declared benchmarks, rejected",
+      "section": "meaningful benchmark, reference, maximum attainable, declared benchmarks, peer comparison",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.7": {
       "element": "Case-law tracker",
-      "value": "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498 (U.S.). Certiorari granted 2026-01-16 per the Supreme Court docket listing. Question presented, per the docket as relayed in search-result snippets: whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary breached the duty of prudence requires alleging a meaningful benchmark. The Ninth Circuit had required plaintiffs to identify a comparable alternative giving a sound basis for comparison, a meaningful benchmark. Argument is listed for the October 2026 term and had not been held as of 2026-09-04. No holding exists yet, and this cell draws no consequence for the evaluation. Status partial: assembled from the docket listing and search snippets, not from the source documents, which this build could not fetch.",
+      "value": "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498 (U.S.). Certiorari granted 2026-01-16 per the Supreme Court docket listing. Question presented, per the docket as relayed in search-result snippets: whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary breached the duty of prudence requires alleging a meaningful benchmark. The Ninth Circuit had required plaintiffs to identify a comparable alternative giving a sound basis for comparison, a meaningful benchmark. No holding exists yet, and this cell draws no consequence for the evaluation. Status partial: assembled from the docket listing and search snippets, not from the source documents, which this build could not fetch.",
       "status": "partial - search snippets and docket listing only, source documents not fetched in this build",
       "source": "Supreme Court docket 25-498, https://www.supremecourt.gov/docket/docketfiles/html/public/25-498.html (grant date). SCOTUSblog case page, https://www.scotusblog.com/cases/anderson-v-intel-corp-investment-policy-comm/ and CRS Legal Sidebar LSB11396, https://www.congress.gov/crs-product/LSB11396 (question presented, argument term). Accessed 2026-09-04 through web-search snippets only.",
       "section": "docket listing and search-result snippets (question presented, argument scheduling)",
-      "quote": "search snippet, not the source document: \"whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary failed to use the requisite 'care, skill, prudence, or diligence' under the circumstances and thus breached ERISA's duty of prudence when investing plan assets requires alleging a 'meaningful benchmark'\" and \"The case is scheduled for argument before the Supreme Court of the United States during the court's October 2026-2027 term.\"",
+      "quote": "search snippet, not the source document: \"whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary failed to use the requisite 'care, skill, prudence, or diligence' under the circumstances and thus breached ERISA's duty of prudence when investing plan assets requires alleging a 'meaningful benchmark'\"",
       "extracted_by": "Claude Code (WebSearch snippet, 2026-09-04)",
       "verified_by": ""
     },
