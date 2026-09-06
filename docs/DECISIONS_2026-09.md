@@ -1850,3 +1850,16 @@ assumption as three separate numbers (7.24). Tier 1 of the verification
 queue adds the two return-series cells the spoken figures read (cclfx 1.1,
 hl_paf 1.2). The Authority panel stays closed until the rule text is in the
 build. Reverse by: edit the demo script and re-derive Tier 1.
+
+### 7.28 R2-P1 merged, not deployed, two calls open
+Pull request 3 merged into `main` as `3ac2e9c` on 2026-09-06 (eight
+task-tagged commits, `e80250f` to `ef64112`). The working branch is
+restarted from that merge. The live site is still the Tuesday cut
+(`d74e91c`, deploy entry 1), so the surfaces this branch describes are not
+what a visitor sees until a recorded run deploys them. Two calls are
+Oscar's: whether Tuesday runs on the live cut with the v8 script (in the
+history at `0d37757`) or on a deploy of R2-P1 with v9 after the EDGAR check
+passes on a networked machine, and when the three networked fetches
+(published index series, authority text, case-law documents) run. Until
+they run, nothing describes them as done, and the cards for CDLI, NFI-ODCE
+and the Cambridge benchmark say the series is not in the record.
