@@ -12,7 +12,8 @@ docs/crosscheck_report.md:
 
 Watched numbers: benchmark selections (slots, scores, comparison figures,
 escalation), typed facts, liquidity verdicts per plan, fee_percentile bars,
-the engine-owned cells (1.8, 1.9, 2.9, 3.8, 3.9, 5.3, 5.4, 5.5, 5.6, 5.7),
+the engine-owned cells (1.6, 1.7, 1.8, 1.9, 1.10, 1.12, 2.9, 3.7, 3.8, 3.9, 4.7, 4.8,
+5.3, 5.4, 5.5, 5.6, 5.7),
 and the accession column of every evidence row.
 
 Commands:
@@ -42,8 +43,8 @@ CORR_BEGIN = "<!-- tark:corrections-2026-09:begin -->"
 CORR_END = "<!-- tark:corrections-2026-09:end -->"
 ALLOW_BEGIN = "<!-- tark:evidence-allowlist:begin -->"
 ALLOW_END = "<!-- tark:evidence-allowlist:end -->"
-OWNED_CELLS = ("1.8", "1.9", "2.9", "3.8", "3.9", "5.3", "5.4", "5.5",
-               "5.6", "5.7")
+OWNED_CELLS = ("1.6", "1.7", "1.8", "1.9", "1.10", "1.12", "2.9", "3.7", "3.8", "3.9",
+               "4.7", "4.8", "5.3", "5.4", "5.5", "5.6", "5.7")
 SURFACES = {
     "selection": "benchmark card, screener PME column, cell 1.8, memo",
     "facts": "screener, compare, fee matrix, memo findings",
@@ -105,17 +106,37 @@ def collect(tree: Tree) -> dict[tuple[str, str], str]:
     for rel in tree.files("data/benchmarks", "_selection.json"):
         key = Path(rel).name.replace("_selection.json", "")
         sel = tree.json(rel) or {}
-        for slot in ("primary", "secondary"):
-            s = sel.get(slot)
+        FIELDS = ("window", "ks_pme", "direct_alpha_pct", "relative_wealth_ratio",
+                  "excess_return_pct", "statistic", "fund_return_source", "fund_ann_pct",
+                  "index_ann_pct", "fund_growth_x", "index_growth_x",
+                  "ks_pme_monthly_schedule")
+        # v3 artifacts (slot_k, slot_g, reference and declared comparisons) and
+        # the v2 shape they replaced (primary, secondary) are both read, so a
+        # diff across the architecture change lists every moved number
+        slots: dict[str, dict | None] = {}
+        if "slot_k" in sel:
+            sk = sel["slot_k"] or {}
+            slots["slot_k"] = sk.get("selected")
+            slots["reference"] = sel.get("reference_comparison")
+            g = ((sel.get("slot_g") or {}).get("composite") or {})
+            slots["slot_g"] = {"id": g.get("candidate"), "score": None, "comparison": g} if g else None
+            for d in sel.get("declared") or []:
+                slots[f"declared.{d['candidate_id']}"] = {"id": d["candidate_id"], "score": None,
+                                                          "comparison": d.get("comparison"),
+                                                          "type": d.get("type")}
+            out[(key, "selection.escalation")] = canon(bool(sk.get("escalation")))
+        else:
+            slots["primary"] = sel.get("primary")
+            slots["secondary"] = sel.get("secondary")
+            out[(key, "selection.escalation")] = canon(bool(sel.get("escalation")))
+        for slot, s in slots.items():
             out[(key, f"selection.{slot}.id")] = canon(s["id"] if s else None)
-            out[(key, f"selection.{slot}.score")] = canon(s["score"] if s else None)
+            out[(key, f"selection.{slot}.score")] = canon(s.get("score") if s else None)
+            if s and s.get("type"):
+                out[(key, f"selection.{slot}.type")] = canon(s["type"])
             comp = (s or {}).get("comparison") or {}
-            for f in ("window", "ks_pme", "direct_alpha_pct", "relative_wealth_ratio",
-                      "excess_return_pct", "statistic", "fund_return_source", "fund_ann_pct",
-                      "index_ann_pct", "fund_growth_x", "index_growth_x",
-                      "ks_pme_monthly_schedule"):
+            for f in FIELDS:
                 out[(key, f"selection.{slot}.{f}")] = canon(comp.get(f))
-        out[(key, "selection.escalation")] = canon(bool(sel.get("escalation")))
         out[(key, "selection.rejected")] = canon(
             sorted(f"{r['id']}:{r['score']}" for r in sel.get("rejected", [])))
     for rel in tree.files("data/facts", ".json"):
@@ -220,8 +241,14 @@ def cmd_write(a) -> int:
     text = REPORT.read_text()
     have = {(r["product"], r["field"], r["new_sha"]) for r in corr_rows(text)}
     added = []
+    import re as _re
+    only = _re.compile(a.only) if getattr(a, "only", None) else None
     for p, f, o, n in diffs(a.base, a.head):
         if (p, f, sha8(n)) in have:
+            continue
+        # --only narrows one write to the fields a task changed, so each
+        # row carries the cause of the task that moved it
+        if only and not only.search(f):
             continue
         added.append(f"| {p} | {f} | {short(o)} | {short(n)} | {sha8(n)} | "
                      f"{a.cause} | {surfaces_for(f)} | {record_as_of()} |")
@@ -278,6 +305,8 @@ def main() -> int:
             s.add_argument("--head", default=None)
         if name == "write":
             s.add_argument("--cause", required=True)
+            s.add_argument("--only", default=None,
+                           help="regex over the field name: log only the matching changed values")
     s = sub.add_parser("allow")
     for f in ("product", "cell", "column", "reason"):
         s.add_argument(f"--{f}", required=True)

@@ -74,7 +74,9 @@ for k, prod in prods.items():
     for cid, cell in prod["cells"].items():
         v = (cell.get("value") or "").strip()
         if status_kind(cell.get("status", "")) in EVIDENCED and v:
-            if squash(first_sentence(display_path_free(v))) not in t:
+            # 3.7, 3.8 and 3.9 print the memo's own plan's sentence instead of
+            # the record's plan-independent one (R2-P1-13), checked below
+            if cid not in ("3.7", "3.8", "3.9") and squash(first_sentence(display_path_free(v))) not in t:
                 missing.append(f"{k} {cid}")
             th = typed_headline(cid, fbc.get(cid, {}))
             if th and squash(th) not in t:
@@ -89,8 +91,8 @@ if typed_missing:
 check("findings: no ellipsis cut anywhere in the memos", not cut)
 
 # R2-P0-4: the abbreviation-aware splitter (audit round 2 item 4). The old
-# "period then whitespace" splitter cut "Anderson v." on all 16 products and
-# "Stephen L." on hl_paf 1.11. The regression set is every cell where the two
+# "period then whitespace" splitter cut the case caption at "v." on all 16
+# products (cell 5.7) and "Stephen L." on hl_paf 1.11. The regression set is every cell where the two
 # splitters differ today, and the audit's named examples must be inside it.
 from tark_display import ends_at_abbreviation  # noqa: E402
 _naive = lambda v: re.split(r"(?<=[.!?])\s+", v.strip(), maxsplit=1)[0]  # noqa: E731
@@ -101,13 +103,13 @@ _named = {(k, "5.7") for k in prods} | {("cliffwater_cclfx", "1.11"), ("amg_pant
                                         ("cliffwater_cclfx", "3.2"), ("bcred", "4.6"), ("jll_ipt", "4.6"),
                                         ("bcred", "6.2"), ("cion_ares", "6.5"), ("jll_ipt", "6.5"),
                                         ("dxyz", "6.3"), ("breit", "2.7"), ("arkvx", "6.5")}
-check(f"splitter: the audit's abbreviation cuts (Anderson v. on all 16, Stephen L., p.m., Supplement No., U.S., "
+check(f"splitter: the audit's abbreviation cuts (the caption's v. on all 16, Stephen L., p.m., Supplement No., U.S., "
       f"Inc., Mr., i.e., St.) are in the regression set of {len(_reg)} cells where the old splitter cut short",
       _named <= _reg)
 if not _named <= _reg:
     print("   missing:", sorted(_named - _reg))
-_unit = {"Anderson v. Intel Corp. Investment Policy Committee, No. 25-498. Next.":
-         "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498.",
+_unit = {"Doe v. Roe Corp. Investment Committee, No. 00-000. Next.":
+         "Doe v. Roe Corp. Investment Committee, No. 00-000.",
          "Portfolio manager Stephen L. Nesbitt since inception. Next.": "Portfolio manager Stephen L. Nesbitt since inception.",
          "Tenders due 11:59 p.m. ET 2026-08-28. Next.": "Tenders due 11:59 p.m. ET 2026-08-28.",
          "STRATEGY: U.S. middle-market loans (incl. unitranche). Next.": "STRATEGY: U.S. middle-market loans (incl. unitranche).",
@@ -209,19 +211,28 @@ if acc_missing:
     print("   missing:", "; ".join(acc_missing[:6]))
 check("provenance: cells without a resolvable filing say accession not on record", not_on_record > 0)
 
-# P1-23: case law from cell 5.7 (partial, snippets only), never a holding
+# P1-23, R2-P1-14: case law comes from cell 5.7 alone. The memo carries the
+# cell under its status kind and the cell's own first sentence, states no
+# holding of the Court, and the cell is never verified. No case-law text is
+# written here: the record is the only source.
+from tark_memo import KIND_LABEL as _KL  # noqa: E402
 cl_bad = []
 for pl in plan_keys():
     for k in prods:
         t = squash(memo_text(pl, k))
-        if not ("cell 5.7 (partial)" in t and "no holding exists yet" in t
-                and "search snippets" in t and "no. 25-498" in t):
+        c57 = prods[k]["cells"]["5.7"]
+        kind = status_kind(c57["status"])
+        lead = squash(first_sentence(display_path_free(c57["value"])).lower())
+        if not (f"cell 5.7 ({_KL[kind]})" in t and lead in t
+                and "the court held" not in t and "holding of the court" not in t):
             cl_bad.append(f"{pl} {k}")
-check("case law: every memo carries cell 5.7 as partial with no holding claimed", not cl_bad)
+check("case law: every memo carries cell 5.7 under its status kind with the cell's own first sentence "
+      "and states no holding of the Court", not cl_bad)
 if cl_bad:
     print("   bad:", "; ".join(cl_bad[:4]))
-check("cell 5.7 is partial for every product, never extracted or verified",
-      all(status_kind(p_["cells"]["5.7"]["status"]) == "partial" for p_ in prods.values()))
+check("cell 5.7 is partial or extracted-unverified for every product, never verified, and identical across products",
+      all(status_kind(p_["cells"]["5.7"]["status"]) in ("partial", "extracted") for p_ in prods.values())
+      and len({p_["cells"]["5.7"]["value"] for p_ in prods.values()}) == 1)
 check("cell 5.6 is computed for every product with a selection artifact",
       all(status_kind(p_["cells"]["5.6"]["status"]) == "computed" for p_ in prods.values()))
 
@@ -324,6 +335,70 @@ for pl in plan_keys():
 check("packets: anonymized, own plan, both verdicts from the match file, exhibits, no decision, all 64", not _pk_bad)
 if _pk_bad:
     print("   bad:", "; ".join(_pk_bad[:5]))
+
+# R2-P1-13 and R2-P1-15: no plan in another plan's document. Every memo and
+# every packet (64 each) is read for another plan's label, another plan's
+# participant counts (any count of 1,000 or more, comma-formatted, from the
+# plan records) and another plan's match file name. The memo's own 3.7 line
+# carries its own plan's counts. No packet headline cell is a status word.
+# The structured sentence appears only where the product has a structured cell.
+from docx import Document as _Doc  # noqa: E402
+_plans = {pl: load_plan(pl) for pl in plan_keys()}
+def _counts(pl):
+    # the counts the 3.7 line prints: accounts, the separated tail, active,
+    # retirees (a total-at-start figure is not printed anywhere)
+    part = _plans[pl].get("participants") or {}
+    return {f"{part[f]:,.0f}" for f in ("with_account_balances", "separated_deferred_vested", "active_eoy", "retired_receiving")
+            if isinstance(part.get(f), (int, float)) and part[f] >= 1000}
+_leak_bad, _own_bad, _head_bad, _struct_bad = [], [], [], []
+_STATUS_WORDS = {"extracted", "extracted-unverified", "computed", "partial", "structured", "verified", "pending", "n/a"}
+for pl in plan_keys():
+    others = [o for o in plan_keys() if o != pl]
+    for k in prods:
+        for kind, path in (("memo", OUT / memo_name(pl, k)), ("packet", POUT / packet_name(pl, k))):
+            t_raw = text_of(path)
+            t = squash(t_raw)
+            for o in others:
+                if _plans[o]["display_label"].lower() in t:
+                    _leak_bad.append(f"{pl} {k} {kind}: label of {o}")
+                for c in _counts(o) - _counts(pl):
+                    if c in t_raw:
+                        _leak_bad.append(f"{pl} {k} {kind}: count {c} of {o}")
+                if f"{o}__" in t:
+                    _leak_bad.append(f"{pl} {k} {kind}: match file of {o}")
+            if kind == "memo":
+                own = _counts(pl)
+                if not all(c in t_raw for c in own):
+                    _own_bad.append(f"{pl} {k}: own counts missing from the 3.7 line")
+                if "3.7 plan participant liquidity demand (computed, this plan)" not in t:
+                    _own_bad.append(f"{pl} {k}: 3.7 not marked as this plan's")
+                has_struct = any(status_kind(c_.get("status", "")) == "structured" for c_ in prods[k]["cells"].values())
+                if ("cells marked structured" in t) != has_struct:
+                    _struct_bad.append(f"{pl} {k}: structured sentence {'present' if not has_struct else 'absent'}")
+            else:
+                d = _Doc(str(path))
+                for tb in d.tables:
+                    if tb.rows[0].cells[1].text.strip().lower() == "typed headline":
+                        for r in tb.rows[1:]:
+                            if r.cells[1].text.strip().lower() in _STATUS_WORDS:
+                                _head_bad.append(f"{pl} {k}: {r.cells[0].text[:8]} headline is a status word")
+check("no memo or packet carries another plan's label, participant counts or match file (64 memos, 64 packets)",
+      not _leak_bad)
+if _leak_bad:
+    print("   bad:", "; ".join(_leak_bad[:6]))
+check("every memo's 3.7 line carries its own plan's counts and is marked as this plan's", not _own_bad)
+if _own_bad:
+    print("   bad:", "; ".join(_own_bad[:4]))
+check("no packet prints a status word where a typed headline belongs", not _head_bad)
+if _head_bad:
+    print("   bad:", "; ".join(_head_bad[:4]))
+check("the structured-cells sentence appears only where the product has a structured cell", not _struct_bad)
+if _struct_bad:
+    print("   bad:", "; ".join(_struct_bad[:4]))
+check("packet: Exhibit B is not an empty heading (the liquidity section sits directly under it)",
+      all("exhibit b. liquidity match for this plan product-to-plan liquidity match" not in squash(text_of(POUT / packet_name(pl, k)))
+          and "exhibit b. liquidity match for this plan plan:" in squash(text_of(POUT / packet_name(pl, k)))
+          for pl in plan_keys() for k in prods if matches.get((pl, k))))
 
 keys = ["breit","cliffwater_cclfx","dxyz","hl_paf","kkr_kpec","stepstone_spm"]
 texts = {}
