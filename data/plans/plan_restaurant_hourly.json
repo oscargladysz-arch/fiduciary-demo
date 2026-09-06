@@ -54,6 +54,37 @@
       "value": null,
       "reason": "the Form 5500 does not code a QDIA election. The plan document or the 404a-5 participant disclosure does, and neither is in the record",
       "source": "plan document or 404a-5 participant fee disclosure"
+    },
+    "filed_outflow_proxy": {
+      "value": 10.75,
+      "unit": "percent of beginning-of-year net assets, per plan year",
+      "formula": "(total expenses minus total administrative expenses) / net assets at the beginning of the plan year * 100",
+      "inputs": {
+        "tot_expenses": {
+          "value": 149669956.0,
+          "meaning": "total expenses, Schedule H"
+        },
+        "tot_admin_expenses": {
+          "value": 1621511.0,
+          "meaning": "total administrative expenses, Schedule H"
+        },
+        "net_assets_boy": {
+          "value": 1376802027.0,
+          "meaning": "net assets at the beginning of the plan year, Schedule H"
+        }
+      },
+      "plan_year": "2024-05-01 to 2025-04-30",
+      "source": {
+        "files": [
+          "f_5500_2024_latest.csv",
+          "F_SCH_H_2024_latest.csv"
+        ],
+        "publisher": "DOL EBSA Form 5500 FOIA bulk files (2024 Latest)",
+        "url": "https://askebsa.dol.gov/FOIA%20Files/2024/Latest/",
+        "pulled": "2026-08-09"
+      },
+      "what": "a proxy for the plan's filed outflow rate while Schedule H line 2e (benefit payments) is not in the record. Total expenses less administrative expenses is an upper bound on benefit payments, because the remainder also holds the non-administrative expense lines the schedule reports besides benefits. The inputs are the financials block of this record, whose source is the source block above",
+      "used_as": "the base demand of the liquidity scenario layer: this rate applied to the plan's position in a product, compared with the wrapper's annual repurchase capacity. The turnover sliders are the stress around it, never the base"
     }
   },
   "derived": {
@@ -64,8 +95,9 @@
   "dictionary_cells": {
     "3.7 participant liquidity demand": "high-turnover hourly workforce: 197,946 active participants vs only 43,129 accounts with balances - most actives hold no balance yet; separated tail 12,176 (28.2% of accounts); small average balances and frequent cash-outs dominate flows",
     "plan_profile (cross-cutting)": "filled by this file",
-    "3.7 filed outflows (schedule_h.benefit_payments_2e)": "when typed, the liquidity match prints the filed outflow rate benefit_payments_2e / net_assets_boy as a Schedule H based demand estimate beside the illustrative slider model, with the model named. Until then the match says the line is not yet in the plan record",
+    "3.7 filed outflows (schedule_h.benefit_payments_2e)": "when typed, the liquidity match prints the filed outflow rate benefit_payments_2e / net_assets_boy as a Schedule H line 2e figure beside the filed outflow proxy. Until then the match says the line is not yet in the plan record and the proxy stands in for it",
     "3.7 filed inflows (schedule_h.participant_contributions_2a1b)": "when typed, printed as an inflow rate that offsets outflows at the plan level, never at the position level",
-    "3.5 QDIA (schedule_h.qdia_indicator)": "when typed, the structural reasons name the QDIA and state that a product reaching participants through it sits inside a TDF or managed-account sleeve, not as a standalone DIA"
+    "3.5 QDIA (schedule_h.qdia_indicator)": "when typed, the structural reasons name the QDIA and state that a product reaching participants through it sits inside a TDF or managed-account sleeve, not as a standalone DIA",
+    "3.7 filed outflow proxy (schedule_h.filed_outflow_proxy)": "the base demand of the scenario layer: 10.75% of beginning net assets per year, (tot_expenses - tot_admin_expenses) / net_assets_boy, recomputed and checked by the validator on every run"
   }
 }

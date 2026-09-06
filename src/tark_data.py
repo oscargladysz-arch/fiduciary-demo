@@ -7,7 +7,7 @@ generator) imports from here and ONLY from here — no module re-declares
 cell IDs, statuses, or file paths.
 
 Data contract on disk:
-    data/products/<key>.json           one file per product, all 54 cells present
+    data/products/<key>.json           one file per product, all 55 cells present
     data/evidence/<key>_evidence.csv   same cells, same statuses (citations)
     data/plans/<key>.json              reference plans (real 5500 economics,
                                        anonymized display labels)
@@ -20,6 +20,7 @@ Usage:
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import os
 import re
@@ -100,9 +101,25 @@ NOT_FETCHED_SENTENCE = ("The verbatim text of paragraphs (g) to (l) is not yet i
                         "The Federal Register document is linked above.")
 
 
+# the authority file and its own manifest (the Federal Register document is
+# not an EDGAR filing: no CIK, no accession, so it never enters data/manifest.csv)
+AUTHORITY_FILE = "2550-404a-6_proposed.md"
+AUTHORITY_MANIFEST = "manifest.csv"
+AUTHORITY_MANIFEST_COLUMNS = [
+    "document", "citation", "rin", "section", "paragraphs", "publication_date",
+    "source_url", "html_url", "fetched_at_utc", "source_sha256", "source_local_path",
+    "local_path", "content_sha256", "paragraph_count",
+]
+AUTHORITY_LETTERS = ("g", "h", "i", "j", "k", "l")
+
+
 def parse_authority(text: str) -> dict[str, list[str]]:
-    """{letter: [verbatim paragraphs]} from the markdown src/fetch_authority.py
-    writes: '## (g)' headings followed by '> ' blockquote lines."""
+    """{letter: [verbatim paragraphs]} from the markdown the authority fetcher
+    writes: a '## (g)' heading per letter, then one '> ' line per paragraph
+    with a bare '>' between paragraphs. A paragraph is the line after the
+    two-character prefix, byte for byte. A non-blank line that carries no
+    prefix inside a section continues the previous paragraph (an older file
+    that wrapped a paragraph over several lines still reads whole)."""
     out: dict[str, list[str]] = {}
     letter = None
     for line in text.splitlines():
@@ -111,22 +128,57 @@ def parse_authority(text: str) -> dict[str, list[str]]:
             letter = m.group(1)
             out[letter] = []
             continue
-        if letter and line.startswith("> ") and line[2:].strip():
-            out[letter].append(line[2:].strip())
+        if not letter:
+            continue
+        if line.startswith("> "):
+            if line[2:]:
+                out[letter].append(line[2:])
+        elif line.startswith(">"):
+            continue
+        elif line.strip() and not line.startswith("#") and out[letter]:
+            out[letter][-1] = out[letter][-1] + " " + line.strip()
     return out
+
+
+def authority_manifest_row(path: Path) -> dict | None:
+    """The row of the authority manifest that names this file and whose
+    content hash equals the file's sha256, or None. A file without its
+    hashed row is not in the build."""
+    mpath = path.parent / AUTHORITY_MANIFEST
+    if not mpath.exists():
+        return None
+    with mpath.open(newline="", encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    for r in rows:
+        if Path(r.get("local_path") or "").name == path.name and r.get("content_sha256") == digest:
+            return r
+    return None
 
 
 def authority() -> dict:
     """The verbatim regulatory text when fetched into this build, else the
-    not-fetched state. Never text from memory."""
-    d = DATA / "authority"
-    files = sorted(d.glob("*_proposed.md")) if d.exists() else []
-    if not files:
-        return {"status": "not fetched", "note": NOT_FETCHED_SENTENCE,
-                "file": None, "paragraphs": None}
-    paras = parse_authority(files[0].read_text())
+    not-fetched state. Never text from memory. Fetched means: the file
+    exists, its manifest row carries its content hash, and every paragraph
+    letter (g) to (l) parses with text."""
+    path = DATA / "authority" / AUTHORITY_FILE
+    absent = {"status": "not fetched", "note": NOT_FETCHED_SENTENCE,
+              "file": None, "paragraphs": None, "url": None, "sha256": None, "fetched_at": None}
+    if not path.exists():
+        return absent
+    row = authority_manifest_row(path)
+    if row is None:
+        return absent
+    paras = parse_authority(path.read_text(encoding="utf-8"))
+    if not all(paras.get(x) for x in AUTHORITY_LETTERS):
+        return absent
+    try:
+        rel = str(path.relative_to(BASE))
+    except ValueError:
+        rel = str(path)
     return {"status": "fetched", "note": "verbatim Federal Register text is in this build",
-            "file": str(files[0].relative_to(BASE)), "paragraphs": paras}
+            "file": rel, "paragraphs": paras, "url": row.get("source_url"),
+            "sha256": row.get("content_sha256"), "fetched_at": row.get("fetched_at_utc")}
 
 
 def rule_ref(cid: str, auth: dict | None = None) -> dict:
@@ -149,6 +201,7 @@ CELLS = {
     "1.7": "De-smoothed volatility", "1.8": "Risk-adjusted metrics (PME etc)",
     "1.9": "Stress-window performance", "1.10": "Market price & premium/discount",
     "1.11": "Track record & manager tenure",
+    "1.12": "Peer comparison (paragraphs (g) and (h))",
     "2.1": "Management fee (rate AND base)", "2.2": "Incentive fee terms",
     "2.3": "Total expense ratio & waivers", "2.4": "AFFE",
     "2.5": "Underlying GP economics", "2.6": "Loads & servicing fees",
@@ -515,6 +568,36 @@ def validate_plan(key: str) -> list[str]:
                 errs.append(f"{key}: schedule_h.{fld} is null without a reason")
             if rec.get("value") is not None and not rec.get("source"):
                 errs.append(f"{key}: schedule_h.{fld} has a value without a source")
+        # the filed outflow proxy (R2-P1-10) is the scenario layer's base
+        # demand: its value must be the recomputation from this record's own
+        # financials, its inputs must equal them, and it names its formula,
+        # source and plan year. Null only with a reason (an intake plan that
+        # did not supply the totals).
+        fp = sh.get("filed_outflow_proxy")
+        if not isinstance(fp, dict):
+            errs.append(f"{key}: schedule_h.filed_outflow_proxy missing (the scenario layer's base demand)")
+        elif fp.get("value") is None:
+            if not fp.get("reason"):
+                errs.append(f"{key}: schedule_h.filed_outflow_proxy is null without a reason")
+        else:
+            te, ta, boy = (fin.get("tot_expenses"), fin.get("tot_admin_expenses"),
+                           fin.get("net_assets_boy"))
+            ins = fp.get("inputs") or {}
+            ok = True
+            for nm, val in (("tot_expenses", te), ("tot_admin_expenses", ta), ("net_assets_boy", boy)):
+                if not isinstance(val, (int, float)) or isinstance(val, bool):
+                    errs.append(f"{key}: financials.{nm} missing, the filed outflow proxy needs it")
+                    ok = False
+                elif (ins.get(nm) or {}).get("value") != val:
+                    errs.append(f"{key}: filed_outflow_proxy.inputs.{nm} differs from financials.{nm}")
+            if ok and boy:
+                want = round((te - ta) / boy * 100, 2)
+                if fp.get("value") != want:
+                    errs.append(f"{key}: filed_outflow_proxy.value {fp.get('value')} is not the "
+                                f"recomputed {want}")
+            for req in ("formula", "source", "plan_year"):
+                if not fp.get(req):
+                    errs.append(f"{key}: filed_outflow_proxy.{req} missing")
     return errs
 
 
@@ -612,7 +695,20 @@ FACT_OK_STATUS = ("extracted", "verified", "computed", "fetched",
 FACT_ENUMS = {
     "dealing_cadence": ("daily", "monthly", "quarterly", "exchange"),
     "cap_period": ("month", "quarter", "year"),
+    "repurchase_program_status": ("suspended", "active"),
 }
+# facts whose value is a judgment over the words of a cell rather than a
+# number (R2-P1-12): each carries an evidence_phrase, a verbatim run of the
+# cited cell's words, and the build fails when the phrase is not in the cell.
+# gate_history carries one even when null (the null is itself a reading of
+# the cell: the amounts are not printed). Every top-level boolean is held to
+# the same contract.
+EVIDENCE_FIELDS = ("dealing_cadence", "cap_period", "repurchase_program_status", "gate_history")
+PHRASE_ALWAYS = ("gate_history",)
+
+
+def _norm_words(s) -> str:
+    return re.sub(r"\s+", " ", str(s or "")).strip().lower()
 
 
 def _num_forms(v) -> set[str]:
@@ -643,6 +739,24 @@ def validate_facts() -> list[str]:
                 errs.append(f"facts:{key}:{field}: unknown source_cell '{sc}'")
                 continue
             cell = cells[sc]
+            # evidence phrases: required behind every boolean and every
+            # closed-vocabulary string that is typed, and behind gate_history
+            # whatever its value. Checked whenever present.
+            phrase = f.get("evidence_phrase")
+            pending = str(f.get("status", "")) == "pending"
+            needs_phrase = not pending and (
+                field in PHRASE_ALWAYS
+                or (f.get("value") is not None
+                    and (field in EVIDENCE_FIELDS or isinstance(f.get("value"), bool))))
+            if needs_phrase and not (isinstance(phrase, str) and phrase.strip()):
+                errs.append(f"facts:{key}:{field}: no evidence_phrase (a boolean or a "
+                            f"closed-vocabulary string must quote cell {sc})")
+            elif phrase is not None:
+                if not isinstance(phrase, str) or not phrase.strip():
+                    errs.append(f"facts:{key}:{field}: evidence_phrase must be a non-empty string")
+                elif _norm_words(phrase) not in _norm_words(cell.get("value")):
+                    errs.append(f"facts:{key}:{field}: evidence_phrase {phrase!r} not found "
+                                f"in cell {sc} text")
             if f.get("value") is None:
                 if not f.get("reason"):
                     errs.append(f"facts:{key}:{field}: null without a reason")
@@ -707,6 +821,7 @@ def validate_facts() -> list[str]:
 # printed fiscal-year return list, a disclosed annualized figure (aatr, or
 # aatr_5yr when the disclosure is a five-year figure), or none
 HELD_RETURN_KINDS = ("series", "fy_returns", "aatr", "aatr_5yr", "none")
+DECLARED_BENCHMARK_TYPES = ("declared", "sec_required_comparator")
 REGISTRY_FIELDS = ("cohort", "strategy", "asset_class", "sub_strategy", "wrapper_type",
                    "pricing_class", "nav_cadence", "leverage_regime", "held_returns",
                    "advisers", "adviser_keys", "declared_benchmarks", "source_cells",
@@ -734,7 +849,16 @@ def validate_registry() -> list[str]:
                 errs.append(f"registry {k}: field {f} missing")
             elif d[f] in (None, "", [], {}) and f != "declared_benchmarks":
                 errs.append(f"registry {k}: field {f} empty")
-        if not d.get("declared_benchmarks") and not d.get("declared_none_reason"):
+        # Lane A entries are typed (decision 7.21): "declared" where the filing
+        # names the index as the fund's benchmark, "sec_required_comparator"
+        # where it appears only in a required performance presentation. A
+        # product with no "declared" entry states why in declared_none_reason.
+        decl = d.get("declared_benchmarks") or []
+        for e in decl:
+            if e.get("type") not in DECLARED_BENCHMARK_TYPES:
+                errs.append(f"registry {k}: declared benchmark {e.get('name')!r} has type {e.get('type')!r}, "
+                            f"not one of {DECLARED_BENCHMARK_TYPES}")
+        if not any(e.get("type") == "declared" for e in decl) and not d.get("declared_none_reason"):
             errs.append(f"registry {k}: no declared benchmark and no declared_none_reason")
         if d.get("wrapper_type") not in WRAPPER_LABEL:
             errs.append(f"registry {k}: wrapper_type {d.get('wrapper_type')!r} not in the vocabulary")
