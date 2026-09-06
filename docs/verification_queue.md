@@ -11,14 +11,16 @@ from the statuses (machine-parsed: keep the `- key cell_id —` line format).
 ## Queue (demo-load-bearing first)
 
 ### Tier 1 — numbers spoken aloud in the demo
-Derived from the table at the end of `docs/demo_script.md` (v8). Re-derive
+Derived from the table at the end of `docs/demo_script.md` (v9). Re-derive
 this list whenever the script changes.
 - hl_paf 2.1 — 1.40% on managed assets, leverage-inclusive (the fee-base trap beat, and the first drawer the script opens: accession 0001213900-26-066804)
 - dxyz 2.1 — 2.50% on gross assets incl. borrowings (Fee Matrix)
 - kkr_kpec 6.4 — Schedule K-1 (the recordkeeper beat)
 - cliffwater_cclfx 2.3 — 1.36% expense ratio before waivers, excluding interest expense, 3.31% including interest (Fee Matrix, Screener and Evaluation)
-- cliffwater_cclfx 5.1 — the fund expressly declares no benchmark (drives the Benchmark card)
-- hl_paf 5.1 — S&P 500 and MSCI World stated as comparators (declared benchmarks on the card, both fail the strategy gate)
+- cliffwater_cclfx 5.1 — the fund expressly declares no benchmark, two SEC-required comparators named (drives the Benchmark card)
+- cliffwater_cclfx 1.1 — the daily NAV series the calendar-year peer comparison and the KS-PME read (the 1.0613 and 1.2532 beats)
+- hl_paf 5.1 — S&P 500 and MSCI World stated as SEC-required comparators (on the card, both fail the strategy gate)
+- hl_paf 1.2 — the filed fiscal-year returns behind the reference comparison (the 1.9565 beat)
 - arkvx 5.1 — no prospectus-declared benchmark (the escalation beat)
 - sreit 3.1 — repurchases suspended, 0% cap on aggregate NAV for ordinary requests (the misaligned structural verdict)
 - sreit 3.3 — gating history, requests above the cap (the misaligned structural verdict)

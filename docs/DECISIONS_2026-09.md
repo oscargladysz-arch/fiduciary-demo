@@ -1641,3 +1641,212 @@ sreit, jll_ipt under the tech/media plan, product-independent views once),
   against `site/`, and pushed without force (`94bf391..d74e91c`). The
   runbook recipe stands for a person with force-push rights. Either form
   yields the same tree.
+
+### 7.20 R2-P0 merged, R2-P1 begins
+- Pull request #2 (R2-P0) was merged into `main` as `eb6242d` on
+  2026-09-06 (17:07 UTC). `gh-pages` stays at `d74e91c`, the deployed tree
+  of `0d37757`, which `main` now carries. The working branch
+  `claude/tark-round-2-audit-jl9q4q` is restarted from `main` (the harness
+  keeps the branch name, decision 7.7). R2-P1 lands as its own pull
+  request from that branch and is not deployed before the Tuesday sends,
+  because it changes benchmark numbers the v8 script depends on.
+- The EDGAR HTTP 200 check and the live-URL drawer check remain the
+  person's before Tuesday. Their results go into entry 1 of
+  `docs/DEPLOY_LOG.md` when reported. Nothing in R2-P1 assumes they
+  passed.
+- R2-P1 order of work, from the brief: A (benchmark v3, R2-P1-1 to 9)
+  first because C depends on the new slot structure, B (liquidity,
+  R2-P1-10 to 12) and D (authority and case law sources, R2-P1-14, 16)
+  in parallel on files A does not touch, then C (memo, packet, computed
+  cells, R2-P1-13, 15), then the methodology rewrite (R2-P1-9) last.
+  Network-bound steps (the CDLI and NFI-ODCE fetch, the DOL bulk file,
+  the case-law documents, the Federal Register fetch) get their scripts,
+  schemas and manifest rows built here and are run by a person on a
+  networked machine. Their absence never substitutes a number.
+
+### 7.21 R2-P1-A defaults: how Slot K and Slot G are built
+Decision 7.1 fixes the two slots. These are the defaults under it, each
+reversible by editing the named place.
+
+- Slot K rubric v3, 12 points, threshold 7, one possession criterion.
+  strategy_match 0 to 3 (the matrix, gate below 2). risk_liquidity_match
+  0 to 3 read from the facts layer (dealing cadence, cap period, the caps,
+  gate history, program status) against the candidate's typed liquidity
+  class, never from the cadence of the held return file. provider
+  independence 0 or 2 from the affiliation map, and an affiliated provider
+  is ineligible for Slot K (an index the fund's own adviser publishes is
+  never the fund's meaningful benchmark, it stays scored in the ledger).
+  data_held 0 or 2, the only possession criterion: 2 when the candidate's
+  series is in the record, public or published, 0 when it is cited.
+  pricing_basis_match 0 to 2: 2 when the candidate prices the way the fund
+  does (appraisal NAV for a NAV fund, market for an exchange-traded fund),
+  1 when a market-priced series stands in for an appraisal fund (the case
+  the PME construct exists for), 0 when an appraisal index is offered for a
+  market-priced fund. Ties print "tied on score, ordered by strategy_match,
+  then risk_liquidity_match, then data held, then alphabetical" and the
+  ledger says "tied". The brief names data_quality in that sentence. v3 has
+  no such criterion, so the sentence names the criterion that replaces it.
+  Reverse by: the rubric section of the methodology and the scorer.
+- A cited candidate can be Slot K. It gets no number and the card says the
+  series is not in the record. Every declared or SEC-required comparator
+  with a held series gets its comparison computed and shown, and when Slot
+  K has no number the highest-ranked held public market series is shown as
+  a reference comparison, named as a reference, never as the benchmark.
+- Slot G member returns use one basis per product, the registry's
+  held_returns kind. A daily series gives calendar years from the adjusted
+  close, complete years only (a December observation on both ends). Filed
+  fiscal-year returns whose year ends 12-31 are calendar years (bcred,
+  ocic, kkr_kpec): the audit's own recomputation in item 13 treats them so.
+  Filed years ending in another month stay fiscal years and are never
+  averaged with calendar years. The composite is leave-one-out,
+  equal-weight, only over periods every peer reports, with at least three
+  peers, and the ratio runs over the consecutive common periods the fund
+  also reports. Evergreen private equity (March and December year ends)
+  and the non-traded REIT cohort (two peers) refuse the ratio and show the
+  table. Calendar-quarter alignment waits for quarterly total returns,
+  which no annual-tier member prints. Reverse by: the alignment section of
+  the methodology.
+- One member table per cohort. The cohort artifact's composite and the
+  engine's Slot G read the same period returns (audit item 20), so the
+  Cohorts view and the card cannot show two series for one cohort.
+- Cell 1.12 "Peer comparison (paragraphs (g) and (h))" is added under
+  factor 1 and owned by the computed-cells writer. The record grows from
+  54 to 55 cells per product. Cell 1.8 keeps Slot K.
+- Lane A typing from cell 5.1: "declared" only where the filing names the
+  index as the fund's benchmark (dxyz, stepstone_spm, jll_ipt's NFI-ODCE),
+  "SEC-required comparator" where the index appears in the shareholder
+  report's or 10-K's required performance presentation (hl_paf,
+  amg_pantheon, ares_pmf, cion_ares, pflex, arkvx, ssss, jll_ipt's S&P
+  500, cliffwater_cclfx's two illustrative comparators). Three cited
+  candidates are added so those comparators can be scored: the Morningstar
+  LSTA US Leveraged Loan Index, the Bloomberg US Aggregate and the ICE
+  BofA US High Yield Index.
+- One basis per product: stepstone_spm moves to its filed fiscal-year
+  series (FY2022 to FY2026, Class I) and kkr_kpec to its filed GAAP-NAV
+  calendar-year returns (2024 and 2025, Class I, the 2023 partial period
+  excluded). The transactional-NAV inception-to-date figure stays in cell
+  1.2 as evidence and is no longer an engine input. Both changes go
+  through the corrections log.
+- Escalation text is generated from the strategy's display name and the
+  candidates scored. No fixed sentence.
+- Analysis Lab: the default proxy is Slot K's series when held, else the
+  reference public series. Every held candidate series is a proxy. Slot G
+  is shown in the lab under its own label with its table and ratio.
+
+### 7.22 R2-P1-16: the authority text round-trips, and a file is in the build only with its hash
+The writer collapses whitespace inside each paragraph and emits one
+blockquote line per paragraph, so the parser reads every character (the
+synthetic fixture yields 33 paragraphs and 2,051 of 2,051 characters,
+against the labels only before). Roman sub-paragraphs (i), (v) and (x)
+are told from top-level letters by letter sequence and lookahead. The
+Federal Register document is not an EDGAR pull and gets its own manifest,
+`data/authority/manifest.csv`, with the source hash and the hash of the
+file as written. The authority reader admits the text only when the file,
+its hashed row and all six letters agree, and the invariants gate fails a
+file without its row. The fetch still needs a networked machine (7.8).
+The runbook for the person who runs it is in the fetcher's own header.
+
+### 7.23 R2-P1-14: cell 5.7 comes from saved documents, and the timing sentence goes
+The seeding script with the case-law string literal is deleted. A fetcher
+saves the Supreme Court docket page, the questions-presented document the
+page links and the opinion under review with hashed manifest rows in
+`data/caselaw/manifest.csv`, and its apply step writes the cell from those
+files alone at extracted-unverified, refusing when any file or hash is
+missing and never touching a verified row. No argument sentence is
+written unless the docket page lists an argument entry with its date.
+Until it runs, the one-off strip script removes the unsupported
+argument-term sentence and its quote snippet from the round-1 partial row
+on all sixteen products, logged in the corrections table and allowlisted
+per product and column. No case-law prose remains in source. The docket
+URL and the opinion URL are confirmed by the person who runs the fetch,
+not typed here.
+
+### 7.24 R2-P1-10 and R2-P1-11: the scenario base is the plan's filing, the sliders are the stress, the allocation moves dollars
+- Each plan file types `schedule_h.filed_outflow_proxy`: (total expenses
+  minus administrative expenses) / beginning net assets, with the formula,
+  the three inputs, the plan year and the plan's source block, recomputed
+  by the validator on every run. Consulting 6.50%, manufacturer 11.53%,
+  restaurant 10.75%, tech 11.69%. Line 2e stays null with its reason, and
+  the match says the proxy stands in for it.
+- The scenario verdict's base rung reads the filed rate applied to the
+  position. The stress rung reads the filed rate plus the increment the
+  turnover sliders add under the x2 and x1.5 multiples over their own
+  assumption. The slider assumption is printed beside the filed rate on
+  the view, in the match file, in cells 3.8 and 3.9 and in the memo, never
+  blended. Consequence, repinned: under default sliders every 20%-cap
+  product is conditional-weak under the tech plan (stressed 20.5% vs 20%)
+  and conditional under the other three, where it was conditional-weak
+  under consulting alone (audit item 24). The gate asserts the lowest-filed
+  plan is never the only weak plan unless its own filed rate is in thin
+  headroom.
+- The allocation slider moves the plan's dollar demand at the filed rate
+  against the fund's dollar capacity (binding cap times typed net assets)
+  and the plan's share of it, for the six products whose net assets are
+  typed with a source cell (cion_ares, hl_paf, kkr_kpec, ocic, pflex,
+  stepstone_spm). Elsewhere it is removed and one sentence says why. No
+  slider exists that moves neither the verdict nor a printed number (audit
+  item 23). JS and Python parity covers every recomputed figure in all 64
+  matches.
+- The demo script's liquidity beat is re-derived from the new surface in
+  v9 (filed 11.7% and 6.5%, stressed 20.5% and 19.2%, conditional-weak
+  then conditional). Reverse by: restore the previous paragraph and
+  surface-check lines, which the frontend gate would then fail.
+
+### 7.25 R2-P1-12: gate_history is typed by one rule and every judgment quotes its cell
+- The rule lives in the facts builder's module header: True when a filing
+  states proration or unfilled requests, False when it states every
+  request was filled in full or that no repurchase right exists to gate,
+  null when tendered-versus-accepted amounts are not printed. A run of
+  completed offers or "no event disclosed" does not support False.
+- Applied to all 16: ares_pmf, kkr_kpec and arkvx move False to null
+  (audit item 26), amg_pantheon moves False to null on the same evidence
+  class ("No proration or oversubscription event is disclosed", never a
+  full-fill statement), and bcred moves False to True on its own cell's
+  Q2-2026 sentence ("requests exceeded quarterly limits, accepted
+  pro-rata", the first printed gating). Structural verdicts follow: four to
+  partial, bcred to conditional-weak. These are the rule's outcomes, not
+  regressions, and each is a logged correction.
+- Every gate_history fact, null included, every typed boolean (big4 quotes
+  the auditor's name) and every closed-vocabulary string (dealing_cadence,
+  cap_period, repurchase_program_status) carries an evidence phrase, a
+  verbatim run of the cited cell's words, and the facts validator fails the
+  build when the phrase is not in the cell (case-insensitive,
+  whitespace-normalized). The liquidity gate proves the failure on a
+  corrupted scratch copy.
+
+### 7.26 R2-P1-13 and R2-P1-15: the last unowned computed cells, and no plan in another plan's memo
+- Cells 1.6, 1.7 and 4.8 are written from one new block of the analytics
+  supplement, the series diagnostics (monthly sampling for volatility and
+  the Geltner lag-1 statistics, the full daily series for the drawdown
+  with its peak and trough dates, the printed monthly NAV path for breit).
+  Cells 1.10 and 4.7 are written from the held close series and the
+  supplement's premium blocks. Where a hand-typed figure differs from the
+  recomputation (a drawdown measured on monthly points before, on the
+  daily series now) the correction is logged with that cause. The writer
+  only regenerates rows that were already computed.
+- Cell 3.7 is owned for all sixteen products with one plan-independent
+  sentence: participant liquidity demand is computed per reference plan
+  from the plan's own record and shown for the plan being evaluated. The
+  ten documented n/a rows said the same thing and become computed. The
+  memo's findings table prints, for cells 3.7, 3.8 and 3.9, the sentence
+  built from the memo's own plan (its counts, its filed outflow proxy, its
+  match file), never the record's plan-independent text, so no plan's
+  numbers sit in another plan's document.
+- The memo's provenance paragraph names structured cells only when the
+  product has one. The packet's Exhibit B carries the liquidity section
+  under its own heading. The memo gate reads all 64 memos and all 64
+  packets and fails on another plan's label, participant counts or match
+  file name, and on a status word printed where a headline belongs.
+
+### 7.27 Default: demo script v9 speaks the calendar-aligned peer ratio, labeled
+v9 replaces v8 (7.3). With Slot G calendar-aligned and n printed per period
+(R2-P1-3), the peer ratio is spoken, always as "peer comparison, paragraphs
+(g) and (h), relative wealth ratio", never as a benchmark or a PME. A PME is
+spoken only against a public market series with the Yahoo adjusted close
+caveat. Where the meaningful benchmark is a cited index with no number, the
+spoken PME is the reference comparison and is called that. The liquidity
+beat speaks the filed outflow proxy, the stressed figure and the slider
+assumption as three separate numbers (7.24). Tier 1 of the verification
+queue adds the two return-series cells the spoken figures read (cclfx 1.1,
+hl_paf 1.2). The Authority panel stays closed until the rule text is in the
+build. Reverse by: edit the demo script and re-derive Tier 1.

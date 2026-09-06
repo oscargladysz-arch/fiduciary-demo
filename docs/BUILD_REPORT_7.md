@@ -120,3 +120,84 @@ source documents, the calibration run and the 17th product. Opening the live
 URL is also blocked from here (github.io), so the Tier 1 drawer check was
 run against the local build of the deployed commit and is repeated by the
 frontend gate on every run.
+
+## 7. R2-P1, engine truth: tasks
+
+Started 2026-09-06 after R2-P0 merged into `main` (`eb6242d`) and the live
+site carried the Tuesday cut (decision 7.20). Not deployed: the Tuesday cut
+stays live until the sends, and R2-P1 goes out from a recorded run after
+it. The commit hashes are in section 10.
+
+| task | what changed | decision |
+|---|---|---|
+| R2-P1-1 | The published-index path: `src/fetch_index_series.py` normalizes a downloaded or fetched CDLI or NFI-ODCE headline file into `data/series_quarterly/idx_<id>.csv` (period_end, total_return_pct, one row per calendar quarter) and records URL, fetch date, licence note and source hash in the quarterly manifest. The engine treats the index as held the moment the file exists and compares on identical periods with a relative wealth ratio. The fetch itself needs a networked machine (section 9). | 7.2 |
+| R2-P1-2 | Slot K and Slot G in the engine. Rubric v3 (12 points: strategy match 3 with the gate, risk and liquidity match 3, provider independence 2 with affiliated providers ineligible, data held 2, pricing basis match 2). Ties print "tied on score, ordered by strategy_match, then risk_liquidity_match, then data held, then alphabetical" and the word "outranked" is gone. The naming rule is enforced on the artifact, cells 1.8, 1.12, 5.5 and 5.6, the card, the memos and the Screener headers. New cell 1.12 carries Slot G. | 7.1, 7.21 |
+| R2-P1-3 | Calendar alignment (rule 14). One member table per cohort from one basis per product: calendar years from the daily series (cclfx, pflex, cadux), filed December years (bcred, ocic, kkr_kpec, breit, sreit), March years kept as fiscal years and never averaged with calendar years. Composite only where every peer reports the period, at least three peers, identical dates, n printed. Evergreen private equity and the REIT and venture cohorts refuse the ratio and show the table. | 7.21 |
+| R2-P1-4 | `risk_liquidity_match` reads the facts layer (dealing cadence, cap period, caps, gate history, program status) against the candidate's typed liquidity class. The held return file's cadence moves nothing (property test). | 7.21 |
+| R2-P1-5 | Lane A typed from cell 5.1: "declared" (dxyz, stepstone_spm, jll_ipt's NFI-ODCE) and "SEC-required comparator" (hl_paf, amg_pantheon, ares_pmf, cion_ares, pflex, arkvx, ssss, jll_ipt's S&P 500, cliffwater_cclfx's two illustrative comparators). Three cited candidates added for those comparators. Every Lane A entry with a held series gets its own comparison on the card, in cell 1.8 and in the memo. | 7.21 |
+| R2-P1-6 | One basis per product. stepstone_spm on its filed fiscal-year series (growth 1.9504 FY2022 to FY2026), kkr_kpec on its GAAP-NAV calendar years 2024 and 2025 (a two-year window, labeled low confidence). jll_ipt's NFI-ODCE is Slot K, cited and not held, no number. A property test asserts every comparison of a product names the same fund return source. | 7.21 |
+| R2-P1-7 | Escalation text is generated from the strategy's display name and the candidates scored, with the required next step derived from the menu. | 7.21 |
+| R2-P1-8 | Analysis Lab opens on Slot K's series when held, else on the reference series, and shows Slot G under its own label with the table and the ratio. The card carries two named slot cards, the Lane A strip, the reference block, the tie chip and the ledger. The Cohorts view charts the one member table and says when no composite return is formed. | 7.21 |
+| R2-P1-9 | Methodology rewritten around the two slots with both scoring rules, the alignment rule, the naming rule, the affiliation map and worked examples for cclfx and hl_paf. The expected-outcome table is deleted as a test oracle. The benchmark gate is property tests (one fact moves one criterion, affiliation only from the map, naming, alignment, ties, one basis, the audit's hand recomputations). | 7.21 |
+| R2-P1-10 | The scenario base is the plan's filed outflow proxy (Schedule H totals over beginning net assets, recomputed by the validator), the sliders are the stress around it, both printed and never blended. | 7.24 |
+| R2-P1-11 | The allocation slider moves dollar demand against the fund's dollar capacity for the six products whose net assets are typed, and is removed with one sentence elsewhere. | 7.24 |
+| R2-P1-12 | gate_history typed by one written rule with an evidence phrase per fact, validated against the cell text. ares_pmf, kkr_kpec, arkvx and amg_pantheon move to null, bcred to True on its own Q2-2026 sentence. | 7.25 |
+| R2-P1-13 | Cells 1.6, 1.7, 1.10, 3.7, 4.7 and 4.8 are written by the owned-cells writer from the analytics supplement's new series diagnostics, the held series and the plan records. 3.7 is plan-independent in the record and plan-specific in each memo. | 7.26 |
+| R2-P1-14 | The case-law seeding literal is deleted. A fetcher saves the docket page, the questions presented and the opinion with hashed manifest rows and writes cell 5.7 from them. The unverified argument-term sentence is stripped from all 16 records through the corrections log. | 7.23 |
+| R2-P1-15 | Memo: alignment note and the typed Lane A sentences in the benchmark section, structured boilerplate only above zero, plan-specific 3.7, 3.8 and 3.9 lines from the memo's own plan, the packet's Exhibit B under its heading, no status word as a headline. The memo gate reads all 64 memos and all 64 packets for another plan's label, counts or match file. | 7.26 |
+| R2-P1-16 | The authority fetcher and parser round-trip (one blockquote line per paragraph, roman sub-paragraphs told from letters by sequence), a real-shaped synthetic XML fixture, a hashed manifest for the Federal Register document. The panel and the memo render the verbatim text only once the fetch has run on a networked machine. | 7.22 |
+
+## 8. Reproduction table, audit items 11 to 35
+
+"Before" is the state the audit reproduced. "After" is the state of this
+branch, with the figure read from the artifact, and "gate" names the check
+that fails if the defect returns.
+
+| item | audit finding | before | after | gate |
+|---|---|---|---|---|
+| 11 | Peer-composite comparison labeled KS-PME | 9 cards, 36 memos, cells 1.8 and 5.5, the Screener column | Slot G is a relative wealth ratio everywhere, the artifact carries no PME key on any appraisal-based comparison, the card says "Never a benchmark and never a PME" | `test_benchmark` (naming rule on every committed comparison), `reconcile` (cells, bundle, memos), `test_frontend` |
+| 12 | Factor (k) filled with the (g)/(h) comparison | composite primary for 9 products | Two named slots. Slot K is a public or published index or proxy (BKLN for cclfx at 8 of 12, CDLI for bcred and ocic, the Cambridge PE benchmark for evergreen PE, NFI-ODCE for the REITs). Slot G is the cohort in cell 1.12 and is never a candidate | `test_benchmark` (no peer id on any menu, slot labels), `test_frontend` (both slot cards) |
+| 13 | Composite label-aligned across March, June and December years, 0.9756 published, about 1.03 recomputed | cclfx 0.9756 on fiscal-year labels, 2022 dropped | cclfx on calendar years 2021 to 2025, n=4 in every period: fund growth 1.5567, composite 1.4668, ratio 1.0613. The audit's own subset (the three December-year peers as filed) reproduces at 1.028 inside the gate. Evergreen PE refuses the ratio | `test_benchmark` (hand recomputation 1.5567 and 1.028, alignment properties), `test_cohort` |
+| 14 | Published indices structurally excluded by 4 possession points | CDLI 7 or 5, ODCE and Cambridge 7, composite 10 | Possession is one criterion worth 2. CDLI is Slot K for bcred and ocic at 9 of 12 (cited, no number), NFI-ODCE for breit, sreit and jll_ipt at 9, the Cambridge PE benchmark for evergreen PE at 9. The ledger prints every criterion so a reader sees a candidate lost on data, not fit. The normalizer for the CDLI and ODCE headline series is in the repository | `test_benchmark` (acquiring a series moves data_held alone), methodology section 6 |
+| 15 | Expected-outcome table written first and reproduced by the cascade | `test_benchmark` asserted the methodology table | The table is deleted. The gate is property tests, and the methodology's worked-example figures are read back from the artifacts | `test_benchmark` |
+| 16 | risk_liquidity_match read the held file's cadence | `_held_cadence` | The criterion reads the facts layer and prints the fund's dealing terms in its reason. The held kind moves nothing | `test_benchmark` (property) |
+| 17 | Lane A typing inconsistent, fund-versus-declared PME not computed | cion_ares, amg_pantheon, ares_pmf declared, pflex and arkvx absent | Typed per product from cell 5.1. hl_paf's S&P 500 and MSCI World are SEC-required comparators at 7 of 12 with their own PMEs (1.1603 and 1.2386) on the card and in the memo | `test_benchmark` (typing and comparisons), `validate_data` (type vocabulary) |
+| 18 | Ties logged as rankings ("outranked"), jll_ipt's ODCE described as held | ODCE over Cambridge RE by menu order | Equal-score eligible candidates are logged "tied" with the ordering sentence (pflex: CDLI and BKLN at 8, ordered on risk match). The status string says "cited, not held" for every unheld index. The licensed duplicate (Cambridge RE) is off the menu so no alphabetical tie decides a slot | `test_benchmark` (tie wording, no "outranked", jll_ipt status) |
+| 19 | stepstone_spm mixed the fiscal-year series with a 5-year AATR, kkr_kpec mixed GAAP and transactional NAV | two bases per product | One basis each: stepstone_spm fiscal-year series (PSP reference KS-PME 1.8718 on growth 1.9504), kkr_kpec GAAP-NAV calendar years 2024 and 2025 (PSP reference KS-PME 1.0387, low confidence). Both logged as corrections | `test_benchmark` (one basis per product) |
+| 20 | Two composites for one cohort | cohort artifact and engine differed | One member table (`src/tark_periods.py`) feeds the cohort artifact and Slot G. The Cohorts view charts it | `test_cohort`, `test_benchmark` |
+| 21 | Escalation advice hard-coded | "a venture index" for every strategy | Generated from the strategy and the candidates scored | `test_benchmark` |
+| 22 | Lab default proxy was the strategy ETF, the composite not explorable | 9 of 15 products | The lab opens on Slot K's series or the reference series and shows Slot G under its own label | `test_frontend` (lab default equals the artifact) |
+| 23 | Allocation slider decorative | identical at 1%, 5%, 50% | Moves dollar demand and the plan's share of fund capacity for six products, removed with a sentence elsewhere | `test_liquidity`, `test_frontend` (JS parity) |
+| 24 | Schedule H never read, slider ranking the reverse of the filings | consulting alone conditional-weak | Filed outflow proxy is the base (tech 11.69%, consulting 6.50%, manufacturer 11.53%, restaurant 10.75%). hl_paf: conditional-weak under tech (stressed 20.5% vs 20%), conditional under consulting (19.2%) | `test_liquidity` (lowest-filed plan never the only weak plan) |
+| 25 | Scenario verdict a function of the plan alone | 13 products conditional under three plans | The verdict now moves with the filed rate and the wrapper's cap per product | `test_liquidity` |
+| 26 | gate_history typed False on non-disclosure, validate_facts checked numbers only | ares_pmf, kkr_kpec, arkvx False | One written rule, evidence phrase per fact checked against the cell. Four products to null, bcred to True on its own proration sentence | `validate_data` (phrases), `test_liquidity` |
+| 27 | Latent JS null-cap defect | `cadence * cap_pct` | Fixed in R2-P0-5, parity re-asserted over the filed base and the dollar figures | `test_frontend` |
+| 28 | Constant citation list cited n/a cells | 3.5 and 3.7 in every match | Citations are the non-n/a cells per product (R2-P0-5), and 3.7 is now computed for every product | `test_liquidity` |
+| 29 | Legal conclusion in 12 memos | fixed in R2-P0-9 | unchanged, still gated | `test_memo` |
+| 30 | Cross-plan leaks, 24 unowned computed cells | tech counts in 18 memos of other plans, 3.8 and 3.9 cited one plan's match | 3.7 plan-independent in the record and plan-specific in each memo, 3.8 and 3.9 lines from the memo's own match, the six cell families owned by the writer | `test_memo` (64 memos and 64 packets, no other plan's label, counts or match file), `test_artifacts_fresh` |
+| 31 | Case-law cell sourced to a string literal with an unverified argument-term sentence | seeding script, 16 records | Literal deleted, sentence stripped through the corrections log, fetcher with hashed manifest rows ready for a networked run | `test_ingest` (source-document checks), `test_memo` |
+| 32 | Alignment note missing from the memo | card only | In the memo's benchmark section for Slot G and for any published-index comparison | `reconcile` (alignment note in every memo) |
+| 33 | "Structured" boilerplate in all 64 memos | 15 products with 0 structured cells | The sentence appears only where the product has a structured cell | `test_memo` |
+| 34 | Packet: empty Exhibit B, status word as headline, ODCE "selected" with no comparison, reconcile read 16 memos | as found | Exhibit B carries the section under its heading, the headline column never prints a status word, a selected cited index says "no comparison computed", reconcile reads all 64 memos | `test_memo`, `reconcile` |
+| 35 | Census `listed_other_classes` not share-class aware | as found | Not in R2-P1 (R2-P3 per the audit's plan) | none yet |
+
+## 9. What a networked person runs for R2-P1
+
+Recorded in decisions 7.2, 7.8, 7.22 and 7.23. Each script prints its own
+runbook in its header.
+
+1. `python src/fetch_index_series.py --id cdli --url <sponsor page or file> --license "<terms as read>"`, then the same for `odce`. If the sponsor refuses automated access, download once by hand and add `--from-file <file> --fetched <date>`. Then `python src/produce.py`, the hook, and the corrections log carries every number that moved when the engine treats the index as held.
+2. `export TARK_SEC_CONTACT='Name email'` and `python src/fetch_authority.py`, commit the markdown and its manifest row together, rebuild, and the panel and the memo render paragraphs (g) to (l).
+3. `pip install pypdf`, `python src/fetch_caselaw.py fetch --opinion-url <confirmed URL>`, then `apply` (dry run) and `apply --write`, then the printed corrections and allowlist commands.
+4. `python src/check_edgar_urls.py` before any deploy, as in the deploy log.
+
+## 10. Gates grown in R2-P1
+
+- `test_benchmark`: property tests replace the oracle table (one fact moves one criterion, affiliation only from the map, naming rule on every committed comparison, alignment rule, tie wording, one basis per product, the reference comparison, the published-index path on a synthetic file, the audit's hand recomputations, the methodology's worked examples read back).
+- `reconcile`: Slot K, the reference comparison and Slot G tied across artifact, bundle, cells 1.8 and 1.12, facts and all 64 memos, with the naming rule on every peer sentence.
+- `test_memo`: cross-plan leak gate over 64 memos and 64 packets, own-plan 3.7 line, no status word as a headline, structured sentence only above zero, Exhibit B under its heading.
+- `test_liquidity`: filed outflow proxy recomputed per plan, the lowest-filed plan never the only weak plan, evidence phrases proven on a corrupted scratch copy, JS parity over the filed base and dollar figures.
+- `validate_data`: typed Lane A entries, evidence phrases on booleans and enums, cell 1.12 in every record.
+- `test_frontend`: both slot cards on every product, tie chips, the lab's default equals the artifact, the demo script's 48 surface rows, the spoken peer ratio only as the labeled peer comparison and equal to the artifact.
+- `test_ingest`: the sources gate (authority round trip, case-law fetch on fixtures, the strip on a synthetic sentence).
+- `corrections_log`: watches every owned cell (17), the v3 slots, the reference and declared comparisons, and takes `--only` so each write carries the cause of the task that moved the number.
