@@ -32,8 +32,8 @@ FEE_CELLS = ("2.1", "2.2", "2.3", "2.4", "2.6", "2.7", "6.4")
 
 def _stat_line(comp: dict) -> str:
     """The comparison's statistic named for its comparator (rule 12)."""
-    if comp.get("kind") == "composite":
-        return (f"relative wealth ratio {comp['relative_wealth_ratio']} vs the peer composite, annualized "
+    if comp.get("kind") != "series":
+        return (f"relative wealth ratio {comp['relative_wealth_ratio']}, annualized "
                 f"excess return {comp['excess_return_pct']}%/yr (not a public market equivalent)")
     return f"KS-PME {comp['ks_pme']}, Direct Alpha {comp['direct_alpha_pct']}%/yr"
 
@@ -73,15 +73,27 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
                           f"{(m.get('scenario_verdict') or 'not computable').upper()}.")
     if sel is None:
         doc.add_paragraph("Benchmark: no selection artifact.")
-    elif sel.get("escalation"):
-        doc.add_paragraph("Benchmark: escalated. " + sel["escalation"])
+    elif sel["slot_k"].get("escalation"):
+        doc.add_paragraph("Benchmark: escalated. " + sel["slot_k"]["escalation"])
     else:
-        pr = sel["primary"]
+        pr = sel["slot_k"]["selected"]
         comp = pr.get("comparison") or {}
-        line = f"Benchmark: {pr['candidate']} at {pr['score']}/{pr['max']}"
+        line = f"Meaningful benchmark (paragraph (k)): {pr['candidate']} at {pr['score']}/{pr['max']}"
         if comp:
             line += f", {_stat_line(comp)} over {comp['window']}"
+        else:
+            line += f", no comparison computed ({(pr.get('comparison_note') or 'not computable').rstrip('.')})"
         doc.add_paragraph(line + ".")
+        ref = sel.get("reference_comparison")
+        if ref:
+            doc.add_paragraph(f"Reference comparison, not the meaningful benchmark: {ref['candidate']}, "
+                              f"{_stat_line(ref['comparison'])} over {ref['comparison']['window']}.")
+    g = ((sel or {}).get("slot_g") or {}).get("composite") or {}
+    if g.get("status") == "computed":
+        doc.add_paragraph(f"Peer comparison (paragraphs (g) and (h)): {_stat_line(g)} vs the peer composite "
+                          f"over {g['window']} (n={g['n']}), not a benchmark.")
+    elif g:
+        doc.add_paragraph("Peer comparison (paragraphs (g) and (h)): composite refused, " + g["reason"].rstrip(".") + ".")
     flags = _flags(sel, m, fdoc)
     doc.add_paragraph("Flags raised by the record (each restates a typed value or verdict, with its source):")
     for f in flags or ["none"]:
@@ -95,21 +107,40 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
     if sel is None:
         doc.add_paragraph("No selection artifact for this product.")
     else:
-        doc.add_paragraph(f"{RUBRIC_LABEL[0].upper()}{RUBRIC_LABEL[1:]}, threshold 7 of 12, strategy gate. "
-                          + (f"Max attainable on held data {sel['max_attainable']}/12." if sel.get("max_attainable") is not None
+        sk = sel["slot_k"]
+        doc.add_paragraph(f"{RUBRIC_LABEL[0].upper()}{RUBRIC_LABEL[1:]}, threshold 7 of 12, strategy gate, "
+                          "affiliated providers ineligible. "
+                          + (f"Max attainable by an eligible candidate on held data {sk['max_attainable']}/12."
+                             if sk.get("max_attainable") is not None
                              else "No candidate is eligible on held data."))
         t = doc.add_table(rows=1, cols=4)
         t.style = "Table Grid"
         h = t.rows[0].cells
         h[0].text, h[1].text, h[2].text, h[3].text = "Slot", "Candidate", "Score", "Outcome"
-        for slot in ("primary", "secondary"):
-            s2 = sel.get(slot)
-            if s2:
-                r = t.add_row().cells
-                comp = s2.get("comparison") or {}
-                r[0].text, r[1].text, r[2].text = slot, s2["candidate"], f"{s2['score']}/{s2['max']}"
-                r[3].text = (f"{_stat_line(comp)}, {comp['window']}"
-                             if comp else (s2.get("comparison_note") or sel.get("comparison_note") or "selected"))
+        s2 = sk.get("selected")
+        if s2:
+            r = t.add_row().cells
+            comp = s2.get("comparison") or {}
+            r[0].text, r[1].text, r[2].text = sk["label"], s2["candidate"], f"{s2['score']}/{s2['max']}"
+            r[3].text = (f"{_stat_line(comp)}, {comp['window']}" if comp
+                         else "selected, no comparison computed: " + (s2.get("comparison_note") or "not computable"))
+        ref = sel.get("reference_comparison")
+        if ref:
+            r = t.add_row().cells
+            r[0].text, r[1].text, r[2].text = "reference, not the benchmark", ref["candidate"], f"{ref['score']}/{ref['max']}"
+            r[3].text = f"{_stat_line(ref['comparison'])}, {ref['comparison']['window']}"
+        for d in sel.get("declared") or []:
+            r = t.add_row().cells
+            r[0].text, r[1].text, r[2].text = d["type_label"], d["name"], ""
+            comp = d.get("comparison") or {}
+            r[3].text = d["status"] + (f". {_stat_line(comp)}, {comp['window']}" if comp else "")
+        g = (sel.get("slot_g") or {})
+        if g:
+            r = t.add_row().cells
+            comp = g["composite"]
+            r[0].text, r[1].text, r[2].text = g["label"], comp.get("candidate") or g["cohort_label"], "not scored"
+            r[3].text = (f"{_stat_line(comp)}, {comp['window']} (n={comp['n']})" if comp["status"] == "computed"
+                         else "composite refused: " + comp["reason"])
         for rj in sel.get("rejected", []):
             r = t.add_row().cells
             r[0].text, r[1].text, r[2].text, r[3].text = "rejected", rj["candidate"], f"{rj['score']}/{rj['max']}", rj["rejection"]
@@ -118,7 +149,7 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
 
     # ---- exhibit B: liquidity match for this plan (the memo's section, verbatim)
     doc.add_heading("Exhibit B. Liquidity match for this plan", level=1)
-    _liquidity_section(doc, m, fdoc, plan)
+    _liquidity_section(doc, m, fdoc, plan, heading=False)
 
     # ---- exhibit C: the typed fee row
     doc.add_heading("Exhibit C. Fees and terms, typed layer", level=1)
@@ -132,8 +163,10 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
         c = p["cells"][cid]
         r = t.add_row().cells
         r[0].text = f"{cid} {cell_title(cid)}"
-        r[1].text = typed_headline(cid, fbc.get(cid, {})) or ("n/a" if status_kind(c.get("status", "")) == "n/a"
-                                                               else "no typed fact for this cell")
+        # never a status word where a headline belongs (audit round 2 item 34)
+        r[1].text = typed_headline(cid, fbc.get(cid, {})) or (
+            "not applicable, the record states why" if status_kind(c.get("status", "")) == "n/a"
+            else "no typed fact for this cell")
         r[2].text = str(c.get("status", ""))
     for row in t.rows:
         row.cells[0].width, row.cells[1].width, row.cells[2].width = Inches(2.0), Inches(2.5), Inches(2.0)

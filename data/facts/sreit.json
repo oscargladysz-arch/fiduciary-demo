@@ -62,6 +62,7 @@
       "value": true,
       "source_cell": "3.3",
       "note": "requests exceeded plan limits continuously since October 2022. Caps shrank three times, then the plan closed",
+      "evidence_phrase": "requests have consistently exceeded plan limits",
       "status": "extracted-unverified"
     },
     "tax_form": {
@@ -78,6 +79,7 @@
     "big4": {
       "value": true,
       "source_cell": "4.5",
+      "evidence_phrase": "Deloitte & Touche LLP",
       "status": "extracted-unverified"
     },
     "expense_ratio_pct": {
@@ -111,18 +113,21 @@
       "source_cell": "3.1",
       "since": "April 29, 2026 amendment",
       "note": "April 29, 2026 amendment: 'no repurchase requests will be accepted' except death, qualifying disability and accounts below $5,000",
+      "evidence_phrase": "we suspended our share repurchase program",
       "status": "extracted-unverified"
     },
     "dealing_cadence": {
       "value": "monthly",
       "source_cell": "3.1",
       "note": "cell 3.1: 'Monthly share repurchase plan'. 0% for ordinary requests since the April 29, 2026 amendment ('no repurchase requests will be accepted' except death, qualifying disability and accounts below $5,000). Cap history: 2% per month and 5% per quarter (2017), 0.33% and 1% (May 2024), 0.5% and 1.5% (June 2025)",
+      "evidence_phrase": "Monthly share repurchase plan",
       "status": "extracted-unverified"
     },
     "cap_period": {
       "value": "month",
       "source_cell": "3.1",
       "note": "cell 3.1: 'Monthly share repurchase plan'. 0% for ordinary requests since the April 29, 2026 amendment ('no repurchase requests will be accepted' except death, qualifying disability and accounts below $5,000). Cap history: 2% per month and 5% per quarter (2017), 0.33% and 1% (May 2024), 0.5% and 1.5% (June 2025)",
+      "evidence_phrase": "of NAV per month",
       "status": "extracted-unverified"
     },
     "repurchase_caps": {
@@ -160,7 +165,7 @@
       "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
     },
     "primary_benchmark_id": {
-      "value": "vnq",
+      "value": "odce",
       "source_cell": "5.3",
       "status": "computed"
     },
@@ -173,7 +178,7 @@
       "value": 0.9453,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "KS-PME vs VNQ over 2024-12-31 to 2025-12-31, fund return source: filed fiscal-year returns"
+      "note": "KS-PME vs VNQ over 2024-12-31 to 2025-12-31 (reference comparison, not the meaningful benchmark), fund return source: filed calendar-year returns (December fiscal year)"
     },
     "pme_public_proxy_name": {
       "value": "VNQ",
@@ -184,13 +189,19 @@
       "value": -5.47,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "KS-PME vs VNQ over 2024-12-31 to 2025-12-31, fund return source: filed fiscal-year returns"
+      "note": "KS-PME vs VNQ over 2024-12-31 to 2025-12-31 (reference comparison, not the meaningful benchmark), fund return source: filed calendar-year returns (December fiscal year)"
     },
-    "peer_relative_wealth_ratio": {
+    "slot_k_relative_wealth_ratio": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "no peer composite comparison in either slot for this product"
+      "reason": "the meaningful benchmark is not a held appraisal-based series"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": null,
+      "source_cell": "1.12",
+      "status": "computed",
+      "reason": "peer composite refused: fewer than 3 peers remain after leaving Starwood Real Estate Income Trust, Inc. out (2: Blackstone Real Estate Income Trust Inc, JLL Income Property Trust, Inc.)"
     }
   }
 }

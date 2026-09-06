@@ -160,31 +160,56 @@ else:
 check("facts bundle: every field cites a real cell", all(
     f.get("source_cell") in bundle["products"][k]["cells"]
     for k in PRODUCTS for f in bundle["facts"][k].values()))
-def _slot_of_kind(k, kind):
-    sel = bundle["benchmarks"].get(k) or {}
-    return next((s["comparison"] for s in (sel.get("primary"), sel.get("secondary"))
-                 if s and (s.get("comparison") or {}).get("kind") == kind), None)
-check("facts bundle: pme_public_proxy mirrors the public-proxy slot and peer_relative_wealth_ratio the composite "
-      "slot of the selection artifact (rule 12)", all(
-    bundle["facts"][k]["pme_public_proxy"]["value"] == (_slot_of_kind(k, "series") or {}).get("ks_pme")
+def _slot_k(k):
+    return ((bundle["benchmarks"].get(k) or {}).get("slot_k") or {}).get("selected")
+def _reference(k):
+    return (bundle["benchmarks"].get(k) or {}).get("reference_comparison")
+def _series_comparison(k):
+    """the public market series comparison the facts mirror: Slot K's own
+    when Slot K is a series, else the reference comparison's, else None"""
+    s = _slot_k(k)
+    if s and (s.get("comparison") or {}).get("kind") == "series":
+        return s["comparison"]
+    r = _reference(k)
+    if r and (r.get("comparison") or {}).get("kind") == "series":
+        return r["comparison"]
+    return None
+def _peer_composite(k):
+    return ((bundle["benchmarks"].get(k) or {}).get("slot_g") or {}).get("composite")
+check("facts bundle: pme_public_proxy mirrors Slot K's public series, else the reference comparison (named so in "
+      "the fact note), else null, and peer_relative_wealth_ratio mirrors slot_g.composite when computed, else null "
+      "(rule 12, decision 7.1)", all(
+    bundle["facts"][k]["pme_public_proxy"]["value"] == (_series_comparison(k) or {}).get("ks_pme")
     and bundle["facts"][k]["peer_relative_wealth_ratio"]["value"]
-    == (_slot_of_kind(k, "composite") or {}).get("relative_wealth_ratio")
-    for k in PRODUCTS if bundle["benchmarks"].get(k, {}).get("primary")))
-check("benchmarks bundle: no composite comparison carries a PME key or name", all(
+    == ((_peer_composite(k) or {}).get("relative_wealth_ratio")
+        if (_peer_composite(k) or {}).get("status") == "computed" else None)
+    and (((_slot_k(k) or {}).get("comparison") or {}).get("kind") == "series" or _series_comparison(k) is None
+         or "reference comparison" in bundle["facts"][k]["pme_public_proxy"].get("note", ""))
+    for k in PRODUCTS if bundle["benchmarks"].get(k)))
+check("facts bundle: slot_k_relative_wealth_ratio mirrors Slot K only when it is a held published index, else null", all(
+    (bundle["facts"][k]["slot_k_relative_wealth_ratio"]["value"]
+     == ((_slot_k(k) or {}).get("comparison") or {}).get("relative_wealth_ratio"))
+    if ((_slot_k(k) or {}).get("comparison") or {}).get("kind") == "published_index"
+    else bundle["facts"][k]["slot_k_relative_wealth_ratio"]["value"] is None
+    for k in PRODUCTS if bundle["benchmarks"].get(k)))
+check("benchmarks bundle: no peer composite carries a PME key or name", all(
     "ks_pme" not in comp and "direct_alpha_pct" not in comp and comp["statistic"].startswith("relative wealth ratio")
-    for k in PRODUCTS for comp in [_slot_of_kind(k, "composite")] if comp))
+    for k in PRODUCTS for comp in [_peer_composite(k)] if comp))
 sm = json.loads((SITE / "series.js").read_text().split("\n")[2][len("window.TARK_LAB = "):-1])
-check("lab matrix: every product x proxy pair carries a real v2 score, criteria and eligibility",
+check("lab matrix: every product x proxy pair carries a real v3 score, the five v3 criteria and eligibility",
       all(isinstance(v["score"], int) and set(v["criteria"]) == {"strategy_match", "risk_liquidity_match",
-          "investability", "data_quality", "provider_independence"} and isinstance(v["eligible"], bool)
+          "provider_independence", "data_held", "pricing_basis_match"} and isinstance(v["eligible"], bool)
           and v["reasons"] for prod in sm.values() for v in prod.values())
       and all(set(prod) == set(bundle["proxy_library"]) for prod in sm.values()))
 check("lab matrix: cclfx x BKLN eligible and on the menu, cclfx x SPY not eligible and off the menu",
       sm["cliffwater_cclfx"]["bkln"]["eligible"] and sm["cliffwater_cclfx"]["bkln"]["on_menu"]
       and not sm["cliffwater_cclfx"]["spy"]["eligible"] and not sm["cliffwater_cclfx"]["spy"]["on_menu"])
-check("benchmarks bundle: rubric v2 with a ceiling and a declared-benchmark record on every selection", all(
-    sel.get("rubric_version") == "v2" and "max_attainable" in sel
-    and ("declared_benchmarks" in sel) for sel in bundle["benchmarks"].values()))
+check("benchmarks bundle: rubric v3 on every selection, Slot K with its ceiling, the declared record and Slot G "
+      "present, the v2 keys gone", all(
+    sel.get("rubric_version") == "v3" and "max_attainable" in (sel.get("slot_k") or {})
+    and "declared" in sel and bool(sel.get("slot_g"))
+    and not any(old in sel for old in ("primary", "secondary", "secondary_note", "declared_benchmarks", "escalation"))
+    for sel in bundle["benchmarks"].values()))
 
 with sync_playwright() as pw:
     browser = pw.chromium.launch()
@@ -312,7 +337,7 @@ with sync_playwright() as pw:
              const inputs = [...Object.keys(T.glossary), ...Object.values(T.glossary)];
              for (const p of Object.values(T.products)) {
                inputs.push(p.wrapper);
-               for (const c of Object.values(p.cells)) inputs.push(c.element);
+               for (const s of Object.values(T.cell_labels)) inputs.push(s);
              }
              for (const d of Object.values(T.cell_display))
                for (const x of Object.values(d)) inputs.push(x.headline);
@@ -369,17 +394,25 @@ with sync_playwright() as pw:
     # the public-proxy card keeps KS-PME, each names its fund return source
     # stat labels render uppercase through CSS and inner_text follows, so the
     # label tokens are compared case-folded and the PME names case-sensitively
-    _comp_card = page.locator('[data-stat-kind="composite"]').first
-    _card_html = page.locator('.cardgrid .card', has=_comp_card).first.inner_text()
-    _card_low = _card_html.lower()
-    check("benchmark cclfx: the composite card reads relative wealth ratio, names the filed fiscal-year source "
-          "and the alignment note, and carries no PME name",
-          "relative wealth ratio vs peer composite" in _card_low and "filed fiscal-year returns" in _card_low
-          and "Alignment:" in _card_html and "KS-PME" not in _card_html and "Direct Alpha" not in _card_html
-          and "pme" not in _card_low.replace("public market equivalent", ""))
-    _ser_card = page.locator('.cardgrid .card', has=page.locator('[data-stat-kind="series"]')).first.inner_text()
-    check("benchmark cclfx: the public-proxy card keeps KS-PME and names the Yahoo adjusted close source",
-          "KS-PME" in _ser_card and "yahoo adjusted close" in _ser_card.lower())
+    _g_card = page.locator('[data-slot="g"]').first
+    _g_text = _g_card.inner_text()
+    _g_low = _g_text.lower()
+    _g_src = bundle["benchmarks"]["cliffwater_cclfx"]["slot_g"]["composite"]["fund_return_source"]
+    check("benchmark cclfx: the Slot G card reads relative wealth ratio vs peer composite, names its fund return "
+          "source and the alignment note, says never a benchmark and never a PME, and carries no other PME or "
+          "benchmark name",
+          "relative wealth ratio vs peer composite" in _g_low and _g_src.lower() in _g_low
+          and "Alignment:" in _g_text and "Never a benchmark and never a PME." in _g_text
+          and _g_card.locator('[data-stat-kind="composite"]').count() == 1
+          and "KS-PME" not in _g_text and "Direct Alpha" not in _g_text
+          and "pme" not in _g_low.replace("public market equivalent", "").replace("never a pme", "")
+          and "benchmark" not in _g_low.replace("never a benchmark", ""))
+    _k_card = page.locator('[data-slot="k"]').first
+    _k_text = _k_card.inner_text()
+    check("benchmark cclfx: the Slot K card carries the series statrow, keeps KS-PME, names the Yahoo adjusted "
+          "close source and shows no reference block (Slot K has its own number)",
+          _k_card.locator('[data-stat-kind="series"]').count() == 1 and "KS-PME" in _k_text
+          and "yahoo adjusted close" in _k_text.lower() and _k_card.locator('[data-reference="true"]').count() == 0)
     _scr = view_text("screener")
     check("screener: the PME column is split into KS-PME vs public proxy and peer relative wealth ratio",
           "KS-PME vs public proxy" in _scr and "Peer relative wealth ratio" in _scr)
@@ -406,7 +439,7 @@ with sync_playwright() as pw:
              const T = window.TARK, bad = [];
              const menu = {};
              for (const sel of Object.values(T.benchmarks)) {
-               for (const c of [sel.primary, sel.secondary, ...(sel.rejected || [])].filter(Boolean)) menu[c.id] = c;
+               for (const c of [sel.slot_k && sel.slot_k.selected, sel.reference_comparison, ...(sel.rejected || [])].filter(Boolean)) menu[c.id] = c;
              }
              for (const [k, p] of Object.entries(T.products)) {
                window.tarkSetState({view: 'pme', plan: T.plan_order[0], product: k, proxy: '', win: ''});
@@ -416,8 +449,8 @@ with sync_playwright() as pw:
                  if (empty || !sub.includes(p.fund_name)) bad.push(`pme ${k}: profile exists but lab did not open on it`);
                  const sel = T.benchmarks[k];
                  // the lab opens on its default proxy series; compare with the
-                 // slot (primary or secondary) that carries that series
-                 const slot = sel && [sel.primary, sel.secondary].find((x) => x && x.comparison
+                 // slot (Slot K's selection or the reference comparison) that carries that series
+                 const slot = sel && [sel.slot_k && sel.slot_k.selected, sel.reference_comparison].find((x) => x && x.comparison
                    && x.comparison.kind === 'series' && x.series_id === T.pme_profiles[k].default_proxy);
                  const comp = slot && slot.comparison;
                  if (comp) {
@@ -551,10 +584,11 @@ with sync_playwright() as pw:
     # ---------- 6. interactive recompute sanity ----------
     view_text("pme", product="cliffwater_cclfx")
     ks0 = page.locator("#pme_ks").inner_text()
-    # the lab opens on BKLN (the secondary since rubric v2; the primary is the
-    # peer composite, which the lab cannot swap against)
+    # the lab opens on BKLN: Slot K's own series for cclfx (v3), or the
+    # reference comparison wherever Slot K is a cited index without a number
     cclfx_sel = bundle["benchmarks"]["cliffwater_cclfx"]
-    bkln_slot = next(x for x in (cclfx_sel["primary"], cclfx_sel["secondary"]) if x and x["series_id"] == "bkln")
+    bkln_slot = next(x for x in (cclfx_sel["slot_k"].get("selected"), cclfx_sel.get("reference_comparison"))
+                     if x and x.get("series_id") == "bkln" and (x.get("comparison") or {}).get("kind") == "series")
     check("pme default reproduces committed KS-PME (BKLN slot)",
           abs(float(ks0) - bkln_slot["comparison"]["ks_pme"]) < 1e-4)
     da0 = page.locator("#pme_da").inner_text()
@@ -573,6 +607,9 @@ with sync_playwright() as pw:
 
     view_text("liquidity", product="cliffwater_cclfx")
     d0 = page.locator("#o_reason").inner_text()
+    s0 = page.locator("#o_stressed").inner_text()
+    v0 = page.locator("#o_verdict").inner_text()
+    f0 = page.locator("#o_filed").inner_text()
     page.evaluate("""() => { const s = document.getElementById('s_tail');
         s.value = '45'; s.dispatchEvent(new Event('input')); }""")
     d1 = page.locator("#o_reason").inner_text()
@@ -581,6 +618,50 @@ with sync_playwright() as pw:
           page.locator("#capchart svg rect").count() >= 2)
     check("liquidity stress block present",
           "Stressed demand" in page.locator("#view").inner_text())
+    # R2-P1-10: the turnover slider moves the slider assumption and the
+    # stressed demand, never the filed outflow proxy, and the live verdict
+    # follows the stressed rung
+    check("liquidity: the tail slider moves the stressed demand and leaves the filed outflow proxy where the filing put it",
+          page.locator("#o_stressed").inner_text() != s0 and page.locator("#o_filed").inner_text() == f0
+          and f0.endswith("%"), f"stressed {s0} -> {page.locator('#o_stressed').inner_text()}, filed {f0}")
+    check("liquidity: the capacity chart draws the filed outflow proxy, the slider assumption and the stressed demand",
+          page.locator("#capchart svg rect").count() >= 3
+          and all(x in page.locator("#capchart").inner_text() for x in ("Filed outflow proxy", "Slider assumption", "Stressed demand")))
+    check("liquidity: filed outflow proxy and slider assumption are both printed and labeled on the view",
+          all(x in page.locator("#view").inner_text() for x in ("Filed outflow proxy", "Slider assumption", "not blended")))
+    del v0
+    # R2-P1-11: the allocation slider exists exactly where the fund's dollar
+    # capacity is computable (fund net assets typed), moves the dollar figures
+    # and the plan's share of that capacity, and moves no percent-of-position
+    # figure. Elsewhere one sentence says why it is absent.
+    alloc_bad = []
+    for pr in PRODUCTS:
+        t = view_text("liquidity", plan="plan_tech_media", product=pr)
+        mm = bundle_liq.get(f"plan_tech_media__{pr}")
+        if not mm:
+            continue
+        has = page.locator("#s_alloc").count() == 1
+        want = bool(mm["scenario"]["fund_capacity"]["available"])
+        if has != want:
+            alloc_bad.append(f"{pr}: slider {has} vs fund capacity {want}")
+        if not want and "No allocation slider for this fund" not in t:
+            alloc_bad.append(f"{pr}: no sentence for the missing slider")
+        if want and ("Fund capacity in dollars" not in t or "of that capacity" not in t):
+            alloc_bad.append(f"{pr}: dollar capacity not printed")
+    check("liquidity: the allocation slider exists exactly where the fund's dollar capacity is computable, with the "
+          "dollar figures printed, and one sentence explains its absence elsewhere", not alloc_bad, "; ".join(alloc_bad[:4]))
+    view_text("liquidity", plan="plan_tech_media", product="hl_paf")
+    fund0 = page.locator("#o_fund").inner_text()
+    pct0 = (page.locator("#o_filed").inner_text(), page.locator("#o_slider").inner_text(),
+            page.locator("#o_stressed").inner_text(), page.locator("#o_verdict").inner_text())
+    page.evaluate("""() => { const s = document.getElementById('s_alloc');
+        s.value = '10'; s.dispatchEvent(new Event('input')); }""")
+    fund1 = page.locator("#o_fund").inner_text()
+    pct1 = (page.locator("#o_filed").inner_text(), page.locator("#o_slider").inner_text(),
+            page.locator("#o_stressed").inner_text(), page.locator("#o_verdict").inner_text())
+    check("liquidity hl_paf: moving the allocation slider changes the plan's dollar demand and share of the fund's "
+          "capacity and moves no percent-of-position figure or verdict",
+          fund0 != fund1 and "of that capacity" in fund1 and pct0 == pct1, f"{fund0[:60]} -> {fund1[:60]}")
 
     # ---------- 7. JS<->Python parity: same toy cases as test_analytics ----------
     toys = page.evaluate("""() => {
@@ -632,24 +713,43 @@ with sync_playwright() as pw:
           abs(toys["rec0"] - -0.01) < 1e-12 and abs(toys["recN"] - 0.025) < 1e-12)
 
     # liquidity scenario parity vs every bundled match (default params)
+    # R2-P1-10 and R2-P1-11: every figure the JS recomputes live (the filed
+    # base, the slider assumption, the stress increment and the stressed
+    # demand, in percent and in dollars, the fund's dollar capacity and the
+    # plan's share of it) equals the Python figure in every bundled match
     mism = page.evaluate("""() => {
       const out = [];
+      const near = (a, b, tol) => (a === null || a === undefined)
+        ? (b === null || b === undefined) : (b !== null && b !== undefined && Math.abs(a - b) <= tol);
       for (const [k, m] of Object.entries(window.TARK.liquidity)) {
-        const sc = m.scenario;
+        const sc = m.scenario, ss = m.stressed_scenario, fc = sc.fund_capacity;
         const got = window.TarkLiquidity.computeScenario(
-          m.plan_inputs, m.wrapper_facts, sc);
-        if (Math.abs(got.demand_pct_of_position - sc.demand_pct_of_position) > 0.05 ||
-            Math.abs(got.plan_allocation_usd - sc.plan_allocation_usd) > 1)
-          out.push(k);
+          m.plan_inputs, m.wrapper_facts, sc, ss.multiples);
+        const bad = [];
+        if (!near(got.plan_allocation_usd, sc.plan_allocation_usd, 1)) bad.push("alloc");
+        if (!near(got.filed_outflow_proxy_pct, sc.filed_outflow_proxy_pct, 1e-9)) bad.push("filed");
+        if (!near(got.filed_annual_demand_usd, sc.filed_annual_demand_usd, 1)) bad.push("filed_usd");
+        if (!near(got.slider_assumption_pct, sc.slider_assumption_pct, 0.05)) bad.push("slider");
+        if (!near(got.slider_annual_demand_usd, sc.slider_annual_demand_usd, 1)) bad.push("slider_usd");
+        if (!near(got.stress_increment_pct, ss.stress_increment_pct, 0.05)) bad.push("increment");
+        if (!near(got.stressed_pct, ss.demand_pct_of_position, 0.05)) bad.push("stressed");
+        if (!near(got.stressed_annual_demand_usd, ss.annual_demand_usd, 1)) bad.push("stressed_usd");
+        if (got.annual_wrapper_capacity_pct !== sc.annual_wrapper_capacity_pct) bad.push("capacity");
+        if (got.fund_capacity.available !== fc.available) bad.push("fund_available");
+        if (fc.available && (!near(got.fund_capacity.annual_capacity_usd, fc.annual_capacity_usd, 1)
+            || !near(got.fund_capacity.plan_annual_demand_usd, fc.plan_annual_demand_usd, 1)
+            || !near(got.fund_capacity.plan_share_of_fund_capacity_pct, fc.plan_share_of_fund_capacity_pct, 0.011)))
+          bad.push("fund_dollars");
+        if (bad.length) out.push(`${k}: ${bad.join(",")}`);
       }
       return out;
     }""")
-    check(f"parity: JS scenario matches all {len(bundle_liq)} bundled liquidity scenarios",
-          not mism, "; ".join(mism[:4]))
+    check(f"parity: JS scenario matches all {len(bundle_liq)} bundled liquidity scenarios (filed base, slider assumption, "
+          "stress increment, stressed demand, dollars, fund capacity and share)", not mism, "; ".join(mism[:4]))
     vmism = page.evaluate("""() => {
       const T = window.TARK, L = window.TarkLiquidity, out = [];
       for (const [k, m] of Object.entries(T.liquidity)) {
-        const sc = L.computeScenario(m.plan_inputs, m.wrapper_facts, m.scenario);
+        const sc = L.computeScenario(m.plan_inputs, m.wrapper_facts, m.scenario, m.stressed_scenario.multiples);
         const sp = L.stressedDemandPct(m.plan_inputs, m.scenario, m.stressed_scenario.multiples);
         const v = L.scenarioVerdict(sc, sp, m.wrapper_facts.exchange);
         if (v !== m.scenario_verdict) out.push(`${k}: js ${v} vs ${m.scenario_verdict}`);
@@ -698,22 +798,38 @@ with sync_playwright() as pw:
               for d in bundle["daily_series"].values() if d["price_series"]))
 
     # ---------- 7b. design-pass additions ----------
+    def _committed_reference(k):
+        """the committed artifact, its public-series slot, and whether that
+        slot is the reference comparison (Slot K cited, not held) or Slot K"""
+        art = json.loads((BASE / "data" / "benchmarks" / f"{k}_selection.json").read_text())
+        s = (art.get("slot_k") or {}).get("selected")
+        if s and (s.get("comparison") or {}).get("kind") == "series":
+            return art, s, False
+        return art, art.get("reference_comparison"), True
+    _art, _slot, _is_ref = _committed_reference("kkr_kpec")
     t = view_text("benchmarks", product="kkr_kpec")
-    check("kkr_kpec selection exists with PSP primary",
-          "Listed private equity investable proxy" in t and "0.8964" in t)
+    check("kkr_kpec: Cambridge PE is the cited Slot K, PSP renders as the reference comparison with the committed KS-PME",
+          _is_ref and "Cambridge" in _art["slot_k"]["selected"]["candidate"]
+          and "Listed private equity investable proxy" in t and str(_slot["comparison"]["ks_pme"]) in t
+          and "Reference comparison, not the meaningful benchmark" in t
+          and page.locator('[data-slot="k"] [data-reference="true"] [data-stat-kind="series"]').count() == 1)
+    _art, _slot, _is_ref = _committed_reference("breit")
+    _breit_ks = _slot["comparison"]["ks_pme"]
     t = view_text("benchmarks", product="breit")
-    # 0.9073 -> 0.9064 (P1-1): the window starts 2022-12-31, a Saturday; the
-    # index anchor is now the level on or before that date (2022-12-30),
-    # not the first trading day after it, the same anchor the PME uses
-    check("breit selection exists with VNQ primary",
-          "Listed REIT investable proxy" in t and "0.9064" in t)
+    # the window starts 2022-12-31, a Saturday: the index anchor is the level
+    # on or before that date (2022-12-30), the same anchor the PME uses
+    check("breit: NFI-ODCE is the cited Slot K, VNQ renders as the reference comparison with the committed KS-PME",
+          _is_ref and "ODCE" in _art["slot_k"]["selected"]["candidate"]
+          and "Listed REIT investable proxy" in t and str(_breit_ks) in t
+          and "Reference comparison, not the meaningful benchmark" in t
+          and page.locator('[data-slot="k"] [data-reference="true"] [data-stat-kind="series"]').count() == 1)
     t_s = view_text("benchmarks", product="sreit")
     check("sreit: one-year comparison window labeled low confidence on the card",
           "low confidence" in t_s.lower() and "shorter than 3 years" in t_s)
     t_c = view_text("benchmarks", product="cliffwater_cclfx")
     check("cclfx: no low-confidence label on its windows", "low confidence" not in t_c.lower())
-    check("breit ODCE secondary with honest data caveat",
-          "ODCE" in t)
+    check("breit: the cited Slot K states that no comparison was computed on held data",
+          "ODCE" in t and "No comparison computed on held data" in t)
     t = view_text("desmooth", product="breit")
     check("breit de-smoothing from printed monthly NAV (rho 0.483)",
           "0.483" in t)
@@ -756,6 +872,64 @@ with sync_playwright() as pw:
     t = view_text("benchmarks", product="dxyz")
     check("escalation renders as formal notice",
           page.locator(".notice .notice-head").count() == 1)
+
+    # ---------- v3 surface law over every product's Benchmark Selection
+    slot_bad = []
+    for pr in PRODUCTS:
+        tt = view_text("benchmarks", product=pr)
+        raw = page.evaluate("() => document.getElementById('view').textContent")
+        sel = bundle["benchmarks"][pr]
+        if page.locator('[data-slot="k"]').count() != 1 or page.locator('[data-slot="g"]').count() != 1:
+            slot_bad.append(f"{pr}: slot cards")
+        if "PRIMARY" in tt or "SECONDARY" in tt:
+            slot_bad.append(f"{pr}: rank word on screen")
+        leaked = [k2 for k2 in PRODUCTS if re.search(rf"(?<![A-Za-z0-9_]){re.escape(k2)}(?![A-Za-z0-9_])", raw)]
+        if leaked:
+            slot_bad.append(f"{pr}: bare key {leaked[0]}")
+        tied = [r for r in sel["rejected"] if str(r["rejection"]).startswith("tied")]
+        chips = page.locator("[data-tied-chip]")
+        if chips.count() != len(tied) or any(chips.nth(i).inner_text() != "TIED" for i in range(len(tied))):
+            slot_bad.append(f"{pr}: TIED chip count")
+        if bool(tied) != bool(sel["slot_k"].get("ties")):
+            slot_bad.append(f"{pr}: ledger ties and slot_k.ties disagree")
+        if tied and ("Tied on score with" not in tt or any(r["candidate"] not in tt for r in tied)
+                     or "ordered by strategy_match, then risk_liquidity_match, then data held, then alphabetical" not in tt):
+            slot_bad.append(f"{pr}: tie sentence")
+        picked_k = sel["slot_k"].get("selected") or {}
+        if sel.get("reference_comparison") and not picked_k.get("comparison"):
+            if (page.locator('[data-slot="k"] [data-reference="true"]').count() != 1
+                    or "Reference comparison, not the meaningful benchmark" not in tt
+                    or sel["reference_comparison"]["candidate"] not in tt):
+                slot_bad.append(f"{pr}: reference block")
+        elif page.locator('[data-reference="true"]').count():
+            slot_bad.append(f"{pr}: reference block where Slot K has its own comparison")
+        if picked_k and picked_k["candidate"] not in page.locator('[data-slot="k"]').inner_text():
+            slot_bad.append(f"{pr}: Slot K candidate")
+        if sel["slot_k"].get("escalation") and sel["slot_k"]["escalation"].split(".")[0] not in page.locator('[data-slot="k"]').inner_text():
+            slot_bad.append(f"{pr}: escalation sentence missing from the Slot K card")
+        g = sel["slot_g"]
+        g_text = page.locator('[data-slot="g"]').inner_text()
+        if g["cohort_label"] not in g_text or any(n not in g_text for n in g["member_names"]):
+            slot_bad.append(f"{pr}: Slot G cohort or peer names")
+        if page.locator('[data-slot="g"] [data-peer-table] tbody tr').count() != max(1, len(g["table"])):
+            slot_bad.append(f"{pr}: Slot G table rows")
+        if (g["composite"].get("status") == "computed") != (page.locator('[data-slot="g"] [data-stat-kind="composite"]').count() == 1):
+            slot_bad.append(f"{pr}: Slot G composite block")
+        if g["composite"].get("status") != "computed" and f"Composite refused: {g['composite'].get('reason')}" not in g_text:
+            slot_bad.append(f"{pr}: Slot G refusal reason")
+        if "The declaration itself earns no points." not in tt or "Return basis for every comparison:" not in tt \
+                or sel["basis"]["label"] not in tt:
+            slot_bad.append(f"{pr}: declared strip or basis line")
+        if any(d["name"] not in tt or d["status"] not in tt for d in sel["declared"]):
+            slot_bad.append(f"{pr}: declared entry")
+        if sel.get("declared_none_reason") and f"The fund declares no benchmark ({sel['declared_none_reason']})." not in tt:
+            slot_bad.append(f"{pr}: declared-none reason")
+    check("benchmarks: every product shows one Slot K and one Slot G card, prints no PRIMARY or SECONDARY and no "
+          "bare product key, marks every tied ledger row TIED beside the tie sentence, shows the reference block "
+          "only where Slot K has no number, and prints the declared record and the return basis",
+          not slot_bad and any(str(r["rejection"]).startswith("tied")
+                               for s in bundle["benchmarks"].values() for r in s["rejected"]),
+          "; ".join(slot_bad[:6]))
 
     # ---------- 7c. workbench: screener / compare / lab / palette / URLs ----------
     page.evaluate("""() => window.tarkSetState({view: 'screener', f_tax: 'K-1'})""")
@@ -816,8 +990,14 @@ with sync_playwright() as pw:
           "USER-CONFIGURED" in page.locator("#view").inner_text())
     page.evaluate("""() => window.tarkSetState({proxy: ''})""")
     view_text("pme", product="breit")
-    check("breit lab: annual-tier PME vs VNQ reproduces engine 0.9064",
-          abs(float(page.locator("#pme_ks").inner_text()) - 0.9064) < 1e-4)
+    check("breit lab: annual-tier PME vs VNQ reproduces the committed reference KS-PME",
+          abs(float(page.locator("#pme_ks").inner_text()) - _breit_ks) < 1e-4)
+    check("breit lab: the verdict card names the meaningful benchmark and says the lab opens on the reference",
+          "Engine's meaningful benchmark for this product" in page.locator("#verdictcard").inner_text()
+          and "The lab opens on the reference comparison, not the meaningful benchmark"
+          in page.locator("#verdictcard").inner_text()
+          and page.locator("[data-lab-peer]").count() == 1
+          and "never a proxy" in page.locator("[data-lab-peer]").inner_text())
     check("breit lab: annual granularity honestly labeled",
           "fiscal" in page.locator("#pmenote").inner_text().lower())
     view_text("pme", product="dxyz")
@@ -1250,6 +1430,21 @@ with sync_playwright() as pw:
         cohort: 'evergreen_pe'}); return document.getElementById('view').innerText; }""")
     check("evergreen cohort carries the kkr fallback note",
           "authorized fallback" in t)
+    check("evergreen private equity cohort: no composite return formed, the reason and each period's n on screen",
+          "no composite return formed" in t.lower() and "different year ends" in t
+          and page.locator("[data-no-composite] table tbody tr").count()
+          == len(bundle["cohorts"]["evergreen_pe"]["composite"]["rows"])
+          and page.locator("#compchart").count() == 0)
+    page.evaluate("() => window.tarkSetState({view: 'cohorts', cohort: 'private_credit'})")
+    page.wait_for_selector("#compchart svg", timeout=5000)
+    _pc_rows = bundle["cohorts"]["private_credit"]["composite"]["rows"]
+    _formed = [r for r in _pc_rows if r["composite_return_pct"] is not None]
+    check("private credit cohort: the calendar-year composite chart renders one marker per formed composite "
+          "return and the note says where a composite exists",
+          bool(_formed) and len(_formed) < len(_pc_rows)
+          and page.locator("#compchart svg circle[r='3.4']").count() == len(_formed)
+          and "composite return exists only where every member reports the period"
+          in page.locator("#view").inner_text())
     # R4 phrasing law over the BUNDLE: no ordinal-percentile language for
     # members of n<4 cohorts (evergreen n=5 members may use it)
     import re as _re
@@ -1368,8 +1563,33 @@ with sync_playwright() as pw:
             _miss.append(f"{_view}/{_product}/{_plan}: {_token}")
     check(f"demo script: all {len(_rows)} surface-check texts render on the named view under the named plan",
           len(_rows) >= 20 and not _miss, "; ".join(_miss[:6]))
-    check("demo script: no peer-composite ratio is spoken (decision 7.3)",
-          not re.search(r"\b0\.97\d\d\b|\b1\.06\d\d\b|relative wealth ratio (?:of )?\d", _script.split("## Numbers this script speaks")[0]))
+    # decision 7.27: the peer ratio may be spoken, but only as the labeled
+    # peer comparison, never as a benchmark or a PME, and only the number the
+    # artifact holds. Every ratio-shaped number in the spoken part must sit
+    # in a sentence that names the peer comparison, that sentence must not
+    # call it a benchmark or a PME, and the value must be Slot G's ratio for
+    # cliffwater_cclfx (the one product whose peer ratio the script speaks).
+    _spoken = _script.split("## Numbers this script speaks")[0]
+    _g = (bundle["benchmarks"]["cliffwater_cclfx"].get("slot_g") or {}).get("composite") or {}
+    _ratio_ok = True
+    _why = []
+    for _m in re.finditer(r"relative wealth ratio (?:of )?(\d\.\d{2,4})", _spoken):
+        _sent = _spoken[max(0, _m.start() - 400):_m.end() + 250]
+        _sent = re.split(r"(?<=[.!?])\s+", _sent[:400 + _m.end() - _m.start()])[-1] + re.split(r"(?<=[.!?])\s+", _sent[400 + _m.end() - _m.start():])[0]
+        _low = _sent.lower()
+        if "peer comparison" not in _low and "paragraphs (g) and (h)" not in _low:
+            _ratio_ok, _why = False, _why + ["ratio spoken outside the labeled peer comparison"]
+        if re.search(r"\bpme\b|ks-pme|benchmark", _low.replace("not a benchmark", "").replace("not a pme", "")):
+            _ratio_ok, _why = False, _why + ["ratio sentence names a benchmark or a PME"]
+        if _g.get("status") != "computed" or float(_m.group(1)) != _g.get("relative_wealth_ratio"):
+            _ratio_ok, _why = False, _why + [f"spoken {_m.group(1)} vs artifact {_g.get('relative_wealth_ratio')}"]
+    check("demo script: any peer ratio spoken is labeled as the peer comparison, never a benchmark or a PME, and "
+          "equals Slot G's ratio (decision 7.27)", _ratio_ok, "; ".join(_why[:3]))
+    check("demo script: no v2 composite ratio survives (0.97xx) and every KS-PME spoken carries the Yahoo caveat "
+          "nearby", not re.search(r"\b0\.97\d\d\b", _spoken)
+          and all("yahoo adjusted close" in _spoken[max(0, m.start() - 500):m.end() + 500].lower()
+                  or "filed fiscal-year returns" in _spoken[max(0, m.start() - 500):m.end() + 500].lower()
+                  for m in re.finditer(r"KS-PME \d\.\d{4}", _spoken)))
 
     # ---------- VERIFY 5: mobile (390 px) and print renders of Roster, Evaluation, Benchmarks
     mobile = browser.new_page(viewport={"width": 390, "height": 844})

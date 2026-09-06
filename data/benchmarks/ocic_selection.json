@@ -1,210 +1,298 @@
 {
   "product": "ocic",
   "strategy": "private_credit",
+  "cohort": "private_credit",
   "source_cells": [
     "1.2",
     "5.1"
   ],
-  "rubric_version": "v2",
-  "rubric": "Tark benchmark rubric, 12 points: strategy match 3 (gate below 2), risk/liquidity match 3, investability 2, data quality 2, provider independence 2, threshold 7/12",
-  "max_attainable": 9,
-  "declared_benchmarks": [],
-  "declared_none_reason": "cell 5.1 (partial): no self-declared benchmark index appears in the 10-K or the N-2",
-  "primary": {
-    "candidate": "Peer composite, private credit cohort without Blue Owl Credit Income Corp. (members: Blackstone Private Credit Fund, CION Ares Diversified Credit Fund, Cliffwater Corporate Lending Fund, PIMCO Flexible Credit Income Fund)",
-    "id": "peer_credit",
-    "lane": "C",
-    "score": 9,
-    "max": 12,
-    "criteria": {
-      "strategy_match": 3,
-      "risk_liquidity_match": 2,
-      "investability": 2,
-      "data_quality": 1,
-      "provider_independence": 1
-    },
-    "series_id": "composite:private_credit",
-    "reasons": [
-      "strategy_match 3/3: same asset class and sub-strategy (private credit / direct lending)",
-      "risk_liquidity_match 2/3: NAV-class series, members span more than one leverage regime",
-      "investability 2/2: computable on held data (cohort composite from filings)",
-      "data_quality 1/2: annual composite with 5 overlapping fiscal years",
-      "provider_independence 1/2: constructed by the evaluator from the roster, not a third-party index. A composite the evaluator built from a roster the evaluator chose is not an independent yardstick, so it earns at most 1 of 2"
-    ],
-    "comparison": {
-      "kind": "composite",
-      "statistic": "relative wealth ratio vs peer composite",
-      "comparator_kind": "appraisal-based peer composite constructed by the evaluator, not a market series",
-      "fund_return_source": "filed fiscal-year returns",
-      "not_pme_note": "Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought.",
-      "window": "FY2021 to FY2025",
-      "window_note": "5 overlapping fiscal year(s) of 5 composite years",
-      "fund_window": "FY2021 to FY2025",
-      "window_years": 5.0,
-      "alignment_note": "aligned by fiscal year-end year. Members' fiscal years end in month 03 (cliffwater_cclfx), 06 (pflex), 12 (bcred, cion_ares), the fund's in month 12",
-      "composite_rows": [
-        {
-          "year": "2021",
-          "composite_return_pct": 14.97,
-          "n": 4,
-          "members": [
-            "bcred",
-            "cion_ares",
-            "cliffwater_cclfx",
-            "pflex"
-          ]
-        },
-        {
-          "year": "2022",
-          "composite_return_pct": -3.0,
-          "n": 3,
-          "members": [
-            "bcred",
-            "cion_ares",
-            "pflex"
-          ]
-        },
-        {
-          "year": "2023",
-          "composite_return_pct": 8.95,
-          "n": 4,
-          "members": [
-            "bcred",
-            "cion_ares",
-            "cliffwater_cclfx",
-            "pflex"
-          ]
-        },
-        {
-          "year": "2024",
-          "composite_return_pct": 12.09,
-          "n": 4,
-          "members": [
-            "bcred",
-            "cion_ares",
-            "cliffwater_cclfx",
-            "pflex"
-          ]
-        },
-        {
-          "year": "2025",
-          "composite_return_pct": 10.31,
-          "n": 4,
-          "members": [
-            "bcred",
-            "cion_ares",
-            "cliffwater_cclfx",
-            "pflex"
-          ]
-        }
+  "rubric_version": "v3",
+  "rubric": "Tark benchmark rubric, 12 points: strategy match 3 (gate below 2), risk/liquidity match 3, provider independence 2 (an affiliated provider is ineligible), data held 2, pricing basis match 2, threshold 7/12",
+  "basis": {
+    "kind": "fy_returns",
+    "label": "filed calendar-year returns (December fiscal year)"
+  },
+  "slot_k": {
+    "label": "Meaningful benchmark (paragraph (k))",
+    "selected": {
+      "candidate": "Cliffwater Direct Lending Index (CDLI)",
+      "id": "cdli",
+      "lane": "P",
+      "declared_type": null,
+      "score": 9,
+      "max": 12,
+      "criteria": {
+        "strategy_match": 3,
+        "risk_liquidity_match": 2,
+        "provider_independence": 2,
+        "data_held": 0,
+        "pricing_basis_match": 2
+      },
+      "held": false,
+      "comparator_kind": "appraisal-based published series",
+      "series_id": "cited:cdli",
+      "reasons": [
+        "strategy_match 3/3: same asset class and sub-strategy (private credit / direct lending)",
+        "risk_liquidity_match 2/3: appraisal-based index without a dealing mechanism of its own against a NAV fund (quarterly dealing at NAV under 5% cap per quarter): the pricing process matches, the liquidity terms cannot",
+        "provider_independence 2/2: provider unaffiliated with the fund (Cliffwater): the registry affiliation map ties it to none of the fund's advisers",
+        "data_held 0/2: cited, series not in the record: no comparison can be computed yet",
+        "pricing_basis_match 2/2: both appraisal-based NAV series"
       ],
-      "fund_growth_x": 1.4983,
-      "index_growth_x": 1.5023,
-      "relative_wealth_ratio": 0.9973,
-      "excess_return_pct": -0.05,
-      "fund_ann_pct": 8.42,
-      "index_ann_pct": 8.48,
-      "low_confidence": null
+      "comparison": null,
+      "comparison_note": "cited, series not in the record: no comparison computed"
     },
+    "escalation": null,
+    "max_attainable": 9,
+    "ties": []
+  },
+  "slot_g": {
+    "label": "Peer comparison (paragraphs (g) and (h))",
+    "cohort": "private_credit",
+    "cohort_label": "private credit cohort",
+    "members": [
+      "cliffwater_cclfx",
+      "bcred",
+      "pflex",
+      "cion_ares"
+    ],
+    "member_names": [
+      "Cliffwater Corporate Lending Fund",
+      "Blackstone Private Credit Fund",
+      "PIMCO Flexible Credit Income Fund",
+      "CION Ares Diversified Credit Fund"
+    ],
+    "member_source": {
+      "Cliffwater Corporate Lending Fund": "Yahoo adjusted close, approximates NAV total return",
+      "Blackstone Private Credit Fund": "filed calendar-year returns (December fiscal year)",
+      "PIMCO Flexible Credit Income Fund": "Yahoo adjusted close, approximates NAV total return",
+      "CION Ares Diversified Credit Fund": "Yahoo adjusted close, approximates NAV total return",
+      "Blue Owl Credit Income Corp.": "filed calendar-year returns (December fiscal year)"
+    },
+    "member_period_kind": {
+      "Cliffwater Corporate Lending Fund": "calendar_year",
+      "Blackstone Private Credit Fund": "calendar_year",
+      "PIMCO Flexible Credit Income Fund": "calendar_year",
+      "CION Ares Diversified Credit Fund": "calendar_year",
+      "Blue Owl Credit Income Corp.": "calendar_year"
+    },
+    "table": [
+      {
+        "period": "2018-12-31",
+        "label": "2018",
+        "period_kind": "calendar_year",
+        "n": 2,
+        "returns": {
+          "Cliffwater Corporate Lending Fund": null,
+          "Blackstone Private Credit Fund": null,
+          "PIMCO Flexible Credit Income Fund": 2.86,
+          "CION Ares Diversified Credit Fund": 4.45,
+          "Blue Owl Credit Income Corp.": null
+        }
+      },
+      {
+        "period": "2019-12-31",
+        "label": "2019",
+        "period_kind": "calendar_year",
+        "n": 2,
+        "returns": {
+          "Cliffwater Corporate Lending Fund": null,
+          "Blackstone Private Credit Fund": null,
+          "PIMCO Flexible Credit Income Fund": 10.63,
+          "CION Ares Diversified Credit Fund": 9.5,
+          "Blue Owl Credit Income Corp.": null
+        }
+      },
+      {
+        "period": "2020-12-31",
+        "label": "2020",
+        "period_kind": "calendar_year",
+        "n": 3,
+        "returns": {
+          "Cliffwater Corporate Lending Fund": 5.39,
+          "Blackstone Private Credit Fund": null,
+          "PIMCO Flexible Credit Income Fund": 4.29,
+          "CION Ares Diversified Credit Fund": 2.79,
+          "Blue Owl Credit Income Corp.": null
+        }
+      },
+      {
+        "period": "2021-12-31",
+        "label": "2021",
+        "period_kind": "calendar_year",
+        "n": 5,
+        "returns": {
+          "Cliffwater Corporate Lending Fund": 10.38,
+          "Blackstone Private Credit Fund": 12.6,
+          "PIMCO Flexible Credit Income Fund": 11.29,
+          "CION Ares Diversified Credit Fund": 9.21,
+          "Blue Owl Credit Income Corp.": 4.3
+        }
+      },
+      {
+        "period": "2022-12-31",
+        "label": "2022",
+        "period_kind": "calendar_year",
+        "n": 5,
+        "returns": {
+          "Cliffwater Corporate Lending Fund": 2.05,
+          "Blackstone Private Credit Fund": 3.6,
+          "PIMCO Flexible Credit Income Fund": -15.36,
+          "CION Ares Diversified Credit Fund": -2.85,
+          "Blue Owl Credit Income Corp.": 5.2
+        }
+      },
+      {
+        "period": "2023-12-31",
+        "label": "2023",
+        "period_kind": "calendar_year",
+        "n": 5,
+        "returns": {
+          "Cliffwater Corporate Lending Fund": 12.66,
+          "Blackstone Private Credit Fund": 14.4,
+          "PIMCO Flexible Credit Income Fund": 9.25,
+          "CION Ares Diversified Credit Fund": 12.99,
+          "Blue Owl Credit Income Corp.": 13.5
+        }
+      },
+      {
+        "period": "2024-12-31",
+        "label": "2024",
+        "period_kind": "calendar_year",
+        "n": 5,
+        "returns": {
+          "Cliffwater Corporate Lending Fund": 12.62,
+          "Blackstone Private Credit Fund": 11.0,
+          "PIMCO Flexible Credit Income Fund": 15.27,
+          "CION Ares Diversified Credit Fund": 10.39,
+          "Blue Owl Credit Income Corp.": 11.5
+        }
+      },
+      {
+        "period": "2025-12-31",
+        "label": "2025",
+        "period_kind": "calendar_year",
+        "n": 5,
+        "returns": {
+          "Cliffwater Corporate Lending Fund": 8.92,
+          "Blackstone Private Credit Fund": 8.0,
+          "PIMCO Flexible Credit Income Fund": 12.2,
+          "CION Ares Diversified Credit Fund": 7.69,
+          "Blue Owl Credit Income Corp.": 7.9
+        }
+      }
+    ],
+    "survivorship_note": "The cohort is the roster's 5 surviving, still-filing products. Funds that closed, merged, or stopped filing are not in it, so any composite carries survivorship bias in the fund's favor. Membership rationales and exclusions are in the roster record.",
+    "heterogeneity_note": "Members span 2 wrapper types (interval fund (Rule 23c-3), non-traded BDC) and 2 leverage regimes (1940-Act asset-coverage limits, BDC 150% asset-coverage regime). Fee bases, leverage and exit rights are not like-for-like, so the comparison is a history of similar investments, not a like-for-like index.",
     "composite": {
-      "cohort": "private_credit",
-      "members": [
-        "bcred",
-        "cion_ares",
-        "cliffwater_cclfx",
-        "pflex"
+      "n_peers": 4,
+      "weighting": "equal-weight across peers, only over periods every peer reports",
+      "statistic": "relative wealth ratio vs peer composite",
+      "not_pme_note": "Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought.",
+      "status": "computed",
+      "reason": null,
+      "period_kind": "calendar_year",
+      "window": "2021 to 2025",
+      "periods": [
+        "2021-12-31",
+        "2022-12-31",
+        "2023-12-31",
+        "2024-12-31",
+        "2025-12-31"
       ],
       "rows": [
         {
-          "year": "2021",
-          "composite_return_pct": 14.97,
+          "period": "2021-12-31",
+          "label": "2021",
           "n": 4,
-          "members": [
-            "bcred",
-            "cion_ares",
-            "cliffwater_cclfx",
-            "pflex"
-          ]
+          "composite_return_pct": 10.87,
+          "fund_return_pct": 4.3,
+          "members": {
+            "Cliffwater Corporate Lending Fund": 10.38,
+            "Blackstone Private Credit Fund": 12.6,
+            "PIMCO Flexible Credit Income Fund": 11.29,
+            "CION Ares Diversified Credit Fund": 9.21
+          }
         },
         {
-          "year": "2022",
-          "composite_return_pct": -3.0,
-          "n": 3,
-          "members": [
-            "bcred",
-            "cion_ares",
-            "pflex"
-          ]
+          "period": "2022-12-31",
+          "label": "2022",
+          "n": 4,
+          "composite_return_pct": -3.14,
+          "fund_return_pct": 5.2,
+          "members": {
+            "Cliffwater Corporate Lending Fund": 2.05,
+            "Blackstone Private Credit Fund": 3.6,
+            "PIMCO Flexible Credit Income Fund": -15.36,
+            "CION Ares Diversified Credit Fund": -2.85
+          }
         },
         {
-          "year": "2023",
-          "composite_return_pct": 8.95,
+          "period": "2023-12-31",
+          "label": "2023",
           "n": 4,
-          "members": [
-            "bcred",
-            "cion_ares",
-            "cliffwater_cclfx",
-            "pflex"
-          ]
+          "composite_return_pct": 12.32,
+          "fund_return_pct": 13.5,
+          "members": {
+            "Cliffwater Corporate Lending Fund": 12.66,
+            "Blackstone Private Credit Fund": 14.4,
+            "PIMCO Flexible Credit Income Fund": 9.25,
+            "CION Ares Diversified Credit Fund": 12.99
+          }
         },
         {
-          "year": "2024",
-          "composite_return_pct": 12.09,
+          "period": "2024-12-31",
+          "label": "2024",
           "n": 4,
-          "members": [
-            "bcred",
-            "cion_ares",
-            "cliffwater_cclfx",
-            "pflex"
-          ]
+          "composite_return_pct": 12.32,
+          "fund_return_pct": 11.5,
+          "members": {
+            "Cliffwater Corporate Lending Fund": 12.62,
+            "Blackstone Private Credit Fund": 11.0,
+            "PIMCO Flexible Credit Income Fund": 15.27,
+            "CION Ares Diversified Credit Fund": 10.39
+          }
         },
         {
-          "year": "2025",
-          "composite_return_pct": 10.31,
+          "period": "2025-12-31",
+          "label": "2025",
           "n": 4,
-          "members": [
-            "bcred",
-            "cion_ares",
-            "cliffwater_cclfx",
-            "pflex"
-          ]
+          "composite_return_pct": 9.2,
+          "fund_return_pct": 7.9,
+          "members": {
+            "Cliffwater Corporate Lending Fund": 8.92,
+            "Blackstone Private Credit Fund": 8.0,
+            "PIMCO Flexible Credit Income Fund": 12.2,
+            "CION Ares Diversified Credit Fund": 7.69
+          }
         }
       ],
-      "fye_months": {
-        "bcred": "12",
-        "cion_ares": "12",
-        "cliffwater_cclfx": "03",
-        "pflex": "06"
-      },
-      "weighting": "equal-weight across members reporting that fiscal year, aligned by fiscal year-end year. Stub and partial periods excluded"
+      "window_years": 5,
+      "n": 4,
+      "fund_growth_x": 1.4983,
+      "index_growth_x": 1.4795,
+      "relative_wealth_ratio": 1.0127,
+      "excess_return_pct": 0.25,
+      "fund_ann_pct": 8.42,
+      "index_ann_pct": 8.15,
+      "fund_return_source": "filed calendar-year returns (December fiscal year)",
+      "alignment_note": "5 calendar-year period(s) with identical start and end dates for every member (2020-12-31 to 2025-12-31), n=4 peers in every period. Member return sources: Cliffwater Corporate Lending Fund: Yahoo adjusted close, approximates NAV total return; Blackstone Private Credit Fund: filed calendar-year returns (December fiscal year); PIMCO Flexible Credit Income Fund: Yahoo adjusted close, approximates NAV total return; CION Ares Diversified Credit Fund: Yahoo adjusted close, approximates NAV total return",
+      "low_confidence": null,
+      "candidate": "Peer composite, private credit cohort without Blue Owl Credit Income Corp.",
+      "kind": "composite",
+      "window_note": "5 calendar-year period(s), n=4 peers in every period"
     }
   },
-  "secondary": {
+  "reference_comparison": {
     "candidate": "Senior loan investable proxy (BKLN, for Morningstar LSTA class)",
     "id": "bkln",
-    "lane": "B",
-    "score": 9,
+    "score": 8,
     "max": 12,
-    "criteria": {
-      "strategy_match": 2,
-      "risk_liquidity_match": 1,
-      "investability": 2,
-      "data_quality": 2,
-      "provider_independence": 2
-    },
     "series_id": "bkln",
-    "reasons": [
-      "strategy_match 2/3: the public-market version of the asset class (syndicated loans for direct lending)",
-      "risk_liquidity_match 1/3: daily-liquid market proxy vs a semi-liquid NAV fund, vol and liquidity regimes differ",
-      "investability 2/2: computable on held data (daily series)",
-      "data_quality 2/2: daily series held",
-      "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Morningstar LSTA class): the registry affiliation map ties it to none of the fund's advisers"
-    ],
     "comparison": {
       "kind": "series",
       "statistic": "KS-PME vs public market proxy",
       "comparator_kind": "public market series (exchange-traded proxy, Yahoo adjusted close)",
-      "fund_return_source": "filed fiscal-year returns",
+      "fund_return_source": "filed calendar-year returns (December fiscal year)",
       "window": "2021-01-01 to 2025-12-31",
       "window_note": "",
       "fund_window": "2021-01-01 to 2025-12-31",
@@ -216,33 +304,89 @@
       "fund_ann_pct": 8.43,
       "index_ann_pct": 5.36,
       "low_confidence": null
-    }
+    },
+    "note": "reference comparison on the highest-ranked held public market series: not the meaningful benchmark"
   },
+  "declared": [],
+  "declared_none_reason": "cell 5.1 (partial): no self-declared benchmark index appears in the 10-K or the N-2",
   "rejected": [
     {
-      "candidate": "Cliffwater Direct Lending Index (CDLI)",
-      "id": "cdli",
+      "candidate": "Senior loan investable proxy (BKLN, for Morningstar LSTA class)",
+      "id": "bkln",
       "lane": "B",
-      "score": 7,
+      "declared_type": null,
+      "score": 8,
       "max": 12,
       "criteria": {
-        "strategy_match": 3,
-        "risk_liquidity_match": 2,
-        "investability": 0,
-        "data_quality": 0,
-        "provider_independence": 2
+        "strategy_match": 2,
+        "risk_liquidity_match": 1,
+        "provider_independence": 2,
+        "data_held": 2,
+        "pricing_basis_match": 1
       },
-      "series_id": "cited:cdli",
+      "held": true,
+      "comparator_kind": "public market series",
+      "series_id": "bkln",
       "reasons": [
-        "strategy_match 3/3: same asset class and sub-strategy (private credit / direct lending)",
-        "risk_liquidity_match 2/3: NAV-class series, quarterly observations vs the fund's annual return data and an index, not a fund set, so leverage regime is not comparable",
-        "investability 0/2: index cited, series not held, not computable",
-        "data_quality 0/2: cited, not computed",
-        "provider_independence 2/2: provider unaffiliated with the fund (Cliffwater): the registry affiliation map ties it to none of the fund's advisers"
+        "strategy_match 2/3: the public-market version of the asset class (syndicated loans for direct lending)",
+        "risk_liquidity_match 1/3: daily-liquid market series against a semi-liquid NAV fund (quarterly dealing at NAV under 5% cap per quarter): volatility and liquidity regimes differ, the PME construct exists for exactly this comparison",
+        "provider_independence 2/2: provider unaffiliated with the fund (Invesco / Morningstar LSTA class): the registry affiliation map ties it to none of the fund's advisers",
+        "data_held 2/2: daily public market series held (exchange-traded proxy, Yahoo adjusted close)",
+        "pricing_basis_match 1/2: a market-priced series standing in for an appraisal-based fund: comparable only through a PME, which is window-sensitive on appraisal-lagged NAVs"
       ],
-      "rejection": "outranked: score 7/12 vs primary 9/12 and secondary 9/12 (only two slots). Retained in log as viable alternate"
+      "rejection": "ranked below the selected candidate: 8/12 vs 9/12 for CDLI"
+    },
+    {
+      "candidate": "Credit Suisse Leveraged Loan Index (CSLLI)",
+      "id": "csll",
+      "lane": "P",
+      "declared_type": null,
+      "score": 6,
+      "max": 12,
+      "criteria": {
+        "strategy_match": 2,
+        "risk_liquidity_match": 1,
+        "provider_independence": 2,
+        "data_held": 0,
+        "pricing_basis_match": 1
+      },
+      "held": false,
+      "comparator_kind": "public market series",
+      "series_id": "cited:csll",
+      "reasons": [
+        "strategy_match 2/3: the public-market version of the asset class (leveraged loans for direct lending)",
+        "risk_liquidity_match 1/3: daily-liquid market series against a semi-liquid NAV fund (quarterly dealing at NAV under 5% cap per quarter): volatility and liquidity regimes differ, the PME construct exists for exactly this comparison",
+        "provider_independence 2/2: provider unaffiliated with the fund (Credit Suisse (UBS)): the registry affiliation map ties it to none of the fund's advisers",
+        "data_held 0/2: cited, series not in the record: no comparison can be computed yet",
+        "pricing_basis_match 1/2: a market-priced series standing in for an appraisal-based fund: comparable only through a PME, which is window-sensitive on appraisal-lagged NAVs"
+      ],
+      "rejection": "score 6/12 below the threshold 7/12"
+    },
+    {
+      "candidate": "Morningstar LSTA US Leveraged Loan Index",
+      "id": "lsta",
+      "lane": "P",
+      "declared_type": null,
+      "score": 6,
+      "max": 12,
+      "criteria": {
+        "strategy_match": 2,
+        "risk_liquidity_match": 1,
+        "provider_independence": 2,
+        "data_held": 0,
+        "pricing_basis_match": 1
+      },
+      "held": false,
+      "comparator_kind": "public market series",
+      "series_id": "cited:lsta",
+      "reasons": [
+        "strategy_match 2/3: the public-market version of the asset class (syndicated loans for direct lending)",
+        "risk_liquidity_match 1/3: daily-liquid market series against a semi-liquid NAV fund (quarterly dealing at NAV under 5% cap per quarter): volatility and liquidity regimes differ, the PME construct exists for exactly this comparison",
+        "provider_independence 2/2: provider unaffiliated with the fund (Morningstar / LSTA): the registry affiliation map ties it to none of the fund's advisers",
+        "data_held 0/2: cited, series not in the record: no comparison can be computed yet",
+        "pricing_basis_match 1/2: a market-priced series standing in for an appraisal-based fund: comparable only through a PME, which is window-sensitive on appraisal-lagged NAVs"
+      ],
+      "rejection": "score 6/12 below the threshold 7/12"
     }
-  ],
-  "secondary_note": null,
-  "escalation": null
+  ]
 }

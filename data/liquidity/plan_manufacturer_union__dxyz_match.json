@@ -8,24 +8,45 @@
     "BUT price-vs-NAV decoupling means participants transact at the premium or discount, not at portfolio value. The liquidity is real, the price basis is not (1.10, 4.7)."
   ],
   "scenario_reasons": [
-    "Capacity: daily on-exchange liquidity. Capacity is market depth, not a fund cap."
+    "Capacity: daily on-exchange liquidity. Capacity is market depth, not a fund cap.",
+    "Filed outflow proxy (Schedule H, plan year 2024-01-01 to 2024-12-31): 11.5% of the position per year, the plan's total expenses less administrative expenses over beginning net assets, applied to the position. On an exchange this is a selling rate against market depth, not a claim on a fund cap.",
+    "Slider assumption (illustrative): 7.2% of the position per year, from tail turnover 20%/yr on the 14.9% of accounts that are separated and active turnover 5%/yr on the rest. Shown beside the filed rate, not blended with it, and likewise a selling rate against market depth."
   ],
   "reasons": [
     "Daily exchange liquidity mechanically satisfies daily participant dealing (3.1).",
     "BUT price-vs-NAV decoupling means participants transact at the premium or discount, not at portfolio value. The liquidity is real, the price basis is not (1.10, 4.7).",
-    "Capacity: daily on-exchange liquidity. Capacity is market depth, not a fund cap."
+    "Capacity: daily on-exchange liquidity. Capacity is market depth, not a fund cap.",
+    "Filed outflow proxy (Schedule H, plan year 2024-01-01 to 2024-12-31): 11.5% of the position per year, the plan's total expenses less administrative expenses over beginning net assets, applied to the position. On an exchange this is a selling rate against market depth, not a claim on a fund cap.",
+    "Slider assumption (illustrative): 7.2% of the position per year, from tail turnover 20%/yr on the 14.9% of accounts that are separated and active turnover 5%/yr on the rest. Shown beside the filed rate, not blended with it, and likewise a selling rate against market depth."
   ],
   "missing_facts": [],
-  "layers": "verdict is structural (typed facts, cells 3.1, 3.3, 2.7, plan-independent). scenario_verdict is ILLUSTRATIVE (demand model against the same capacity, per plan).",
+  "layers": "verdict is structural (typed facts, cells 3.1, 3.3, 2.7, plan-independent). scenario_verdict is ILLUSTRATIVE (the plan's filed outflow proxy as the base demand and the sliders as the stress, against the same capacity, per plan).",
+  "filed_outflow": {
+    "label": "filed outflow proxy",
+    "rate_pct": 11.53,
+    "formula": "(total expenses minus total administrative expenses) / net assets at the beginning of the plan year * 100",
+    "inputs": {
+      "tot_expenses": 84229623.0,
+      "tot_admin_expenses": 0.0,
+      "net_assets_boy": 730545316.0
+    },
+    "plan_year": "2024-01-01 to 2024-12-31",
+    "source": "Schedule H totals of the plan's Form 5500 for plan year 2024-01-01 to 2024-12-31, from the plan record",
+    "what": "total expenses less administrative expenses over beginning net assets, an upper bound on benefit payments while Schedule H line 2e is not in the record"
+  },
   "stressed_scenario": {
     "illustrative": true,
-    "assumptions": "tail turnover x2, active turnover x1.5 vs base scenario",
+    "base": "filed outflow proxy",
+    "assumptions": "the filed outflow proxy plus the increment the sliders add under stress (tail turnover x2, active turnover x1.5 over the slider assumption)",
     "multiples": {
       "tail_multiple": 2.0,
       "active_multiple": 1.5
     },
-    "annual_demand_usd": 4886868,
-    "demand_pct_of_position": 12.3,
+    "filed_outflow_proxy_pct": 11.53,
+    "slider_assumption_pct": 7.2,
+    "stress_increment_pct": 5.1,
+    "annual_demand_usd": 6586576,
+    "demand_pct_of_position": 16.6,
     "annual_wrapper_capacity_pct": null,
     "outcome": "daily exchange liquidity, so stress transmits to price, not to a fund gate"
   },
@@ -43,6 +64,9 @@
     "gate_history": false,
     "program_status": null,
     "early_fee": "not typed (2.7)",
+    "net_assets_usd": 438000000,
+    "net_assets_cell": "2.3",
+    "net_assets_approx": true,
     "null_reasons": {
       "repurchase_cap_pct": "on-exchange liquidity with no fund-level cap",
       "repurchase_cap_base": "on-exchange liquidity with no fund-level cap",
@@ -65,15 +89,27 @@
     "tail_annual_turnover_pct": 20.0,
     "active_annual_turnover_pct": 5.0,
     "illustrative": true,
+    "base": "filed outflow proxy",
     "plan_allocation_usd": 39585346,
-    "annual_demand_usd": 2864483,
-    "demand_pct_of_position": 7.2,
-    "annual_wrapper_capacity_pct": null
+    "filed_outflow_proxy_pct": 11.53,
+    "filed_annual_demand_usd": 4564190,
+    "slider_assumption_pct": 7.2,
+    "slider_annual_demand_usd": 2864483,
+    "demand_pct_of_position": 11.53,
+    "annual_demand_usd": 4564190,
+    "annual_wrapper_capacity_pct": null,
+    "fund_capacity": {
+      "available": false,
+      "reason": "an exchange-listed wrapper has no fund-level repurchase capacity to share, exit is at the market price, so the allocation slider is not shown"
+    }
   },
   "plan_inputs": {
     "net_assets": 791706910.0,
     "tail_share_pct": 14.9,
-    "separated_with_balances": 1136.0
+    "tail_share": 0.14908136482939632,
+    "separated_with_balances": 1136.0,
+    "filed_outflow_proxy_pct": 11.53,
+    "plan_year": "2024-01-01 to 2024-12-31"
   },
   "citations": [
     "3.1",

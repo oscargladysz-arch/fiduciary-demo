@@ -7,7 +7,7 @@ Stages, each a function an offline test drives with a mock client:
   1 registry check   data/registry.json must already carry the product (the
                      cohort, strategy and wrapper are judgments a person makes)
   2 scaffold         data/products/<key>.json and the evidence CSV via the
-                     promote helpers (54 cells, census prefills at structured)
+                     promote helpers (55 cells, census prefills at structured)
   3 fetch            src/fetch_edgar.fetch_product (the registry's document
                      sets) unless --skip-fetch
   4 text             every held filing to plain text with page anchors

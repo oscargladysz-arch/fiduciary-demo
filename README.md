@@ -15,7 +15,7 @@ the evidence row). Only a human editing `data/evidence/*.csv` can set
 
 ## Layout
 
-- `data/`: the record. `products/*.json` and `evidence/*.csv` (54 cells per
+- `data/`: the record. `products/*.json` and `evidence/*.csv` (55 cells per
   product, both stores kept equal by the validator), `facts/` (typed
   projections), `plans/` (four anonymized reference plans), `cohorts/`,
   `benchmarks/`, `liquidity/`, `series*/`, `census/` (the T1 universe),

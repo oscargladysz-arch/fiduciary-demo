@@ -54,7 +54,7 @@ ack ids) would leak.
    cache. The series and census chunks lazy-load, so hard-refresh twice
    after a redeploy.
 5. The app opens on the **Screener** with the tech/media plan selected.
-   `docs/demo_script.md` (v8, the advisor workflow) says where to go from
+   `docs/demo_script.md` (v9, the advisor workflow) says where to go from
    there, and its closing table names the record location of every number
    it speaks.
 
@@ -71,11 +71,17 @@ surfaces recompute them from the record. Where each number lives:
   from the record.
 - **Benchmark card figures** (score out of 12, the statistic the card names,
   the effective window, the fund return source): read them from the card.
-  Against a public proxy the statistic is KS-PME and Direct Alpha. Against
-  a peer composite it is a relative wealth ratio and an excess return, never
-  a PME, and the demo does not speak the composite number at all (decision
-  7.3). The reconcile gate ties the same figure across the Screener, the
-  card, cell 1.8 and the memo, so the card is the number.
+  The card carries two named comparisons (decision 7.1). "Meaningful
+  benchmark (paragraph (k))" is the highest-scoring independent index or
+  proxy for the strategy: against a public market series the statistic is
+  KS-PME and Direct Alpha, against a published appraisal-based series it is
+  a relative wealth ratio, and a cited index that is not held shows no
+  number and says so, with a reference comparison on the best held public
+  series named as a reference. "Peer comparison (paragraphs (g) and (h))"
+  is the cohort side by side on identical calendar periods with n per
+  period and a relative wealth ratio, never a benchmark and never a PME.
+  The reconcile gate ties every figure across the Screener, the card, cells
+  1.8 and 1.12 and the memo, so the card is the number.
 - **Liquidity verdicts:** two layers on the Liquidity Match view. The
   structural verdict comes from typed facts and does not move with the plan.
   The scenario verdict is labeled ILLUSTRATIVE and does. Never quote the
@@ -128,9 +134,11 @@ the record. The static site itself writes nothing.
 - Palette command grammar is minimal (views, products, plans, cells,
   compare, density). Matching is substring-based.
 - Saved scenarios are per-browser (no sync, nothing leaves the origin).
-- `hl_paf`, `kkr_kpec` and `breit` PME windows move in fiscal-year steps
-  (annual disclosure is the honest granularity). Only products with a daily
-  NAV series have the smooth monthly slider.
+- Annual-tier products (filed fiscal-year returns) have PME windows that
+  move in fiscal-year steps in the Analysis Lab (annual disclosure is the
+  honest granularity). Only products with a daily NAV series have the
+  smooth monthly slider. The lab opens on the engine's own comparison: the
+  meaningful benchmark's series when it is held, else the reference series.
 - Glossary chips need a hover, or a tap on touch devices.
 - Zero cells are human-verified. The UI says so on every surface that
   counts. That is a feature, not a gap.
@@ -170,9 +178,10 @@ the record. The static site itself writes nothing.
   memos and 64 packets), `test_app` (Streamlit suite), `test_artifacts_fresh`
   (committed artifacts reproduce from a clean producer run), `build_site`
   (anonymization gate), `reconcile` (one number, every surface: facts,
-  headlines, cards, cells 1.8 and 3.9, match files and memo agree on expense
-  ratio, management fee, KS-PME, Direct Alpha and the liquidity verdict,
-  and every EDGAR link in the drawer is the manifest's URL), `test_surfaces`
+  headlines, cards, cells 1.8, 1.12 and 3.9, match files and memo agree on
+  expense ratio, management fee, the meaningful benchmark's KS-PME or ratio,
+  the peer ratio and the liquidity verdict, and every EDGAR link in the
+  drawer is the manifest's URL), `test_surfaces`
   (no developer instruction, file path, script name or internal key on any
   rendered view, in the bundle or in any generated document),
   `test_frontend` (render sweep across every view, product and plan with the
@@ -190,7 +199,7 @@ the record. The static site itself writes nothing.
 
 ## Promotion and ingestion pipeline (census to roster)
 `python src/promote.py <cik> --key <key>`: R1 identity check against live
-EDGAR, 54-cell scaffold, census answers prefilled at status `structured`,
+EDGAR, 55-cell scaffold, census answers prefilled at status `structured`,
 extraction worklist printed. `python src/ingest.py <cik> --key <key>` runs
 promote, fetch and the structured extraction in one pass. Both need network
 and `TARK_SEC_CONTACT`, ingest also needs `ANTHROPIC_API_KEY`. Without

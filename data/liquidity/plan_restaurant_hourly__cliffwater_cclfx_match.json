@@ -9,33 +9,52 @@
   ],
   "scenario_reasons": [
     "Capacity: 5% per quarter on outstanding shares: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed.",
-    "Scenario demand (illustrative): 9.2% of the position per year vs 20% annual wrapper capacity. Adequate headroom at this allocation if offers are not prorated.",
-    "Scenario verdict (ILLUSTRATIVE, this plan): conditional. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
-    "Schedule H benefit-payment lines are not yet in the plan record. Demand uses the illustrative turnover sliders only."
+    "Filed outflow proxy (Schedule H, plan year 2024-05-01 to 2025-04-30): 10.8% of the position per year vs 20% annual wrapper capacity, the plan's total expenses less administrative expenses over beginning net assets, applied to the position. Adequate headroom at the filed rate if offers are not prorated.",
+    "Slider assumption (illustrative): 9.2% of the position per year vs 20% annual wrapper capacity, from tail turnover 20%/yr on the 28.2% of accounts that are separated and active turnover 5%/yr on the rest. Shown beside the filed rate, not blended with it. Within 60% of wrapper capacity at these sliders.",
+    "Scenario verdict (ILLUSTRATIVE, this plan): conditional. Misaligned when the filed outflow proxy exceeds the annual wrapper capacity, conditional-weak when the stressed demand exceeds it, conditional otherwise. It moves with the plan's filing and the sliders. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
+    "Schedule H benefit-payment line 2e is not yet in the plan record. The filed outflow proxy (total expenses less administrative expenses over beginning net assets) stands in for it as the base demand, and the turnover sliders are the stress around it."
   ],
   "reasons": [
     "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity, whereas this wrapper deals quarterly with a 5% cap per quarter on outstanding shares. Direct DIA use requires a bridging structure: CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
     "Facts missing for a structural verdict: gate_history (N-23C3A filings are offer NOTIFICATIONS, not results. Per-offer proration outcomes not yet evidenced). The verdict stays partial until they are typed from the filings.",
     "Capacity: 5% per quarter on outstanding shares: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed.",
-    "Scenario demand (illustrative): 9.2% of the position per year vs 20% annual wrapper capacity. Adequate headroom at this allocation if offers are not prorated.",
-    "Scenario verdict (ILLUSTRATIVE, this plan): conditional. It moves with the sliders and the plan. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
-    "Schedule H benefit-payment lines are not yet in the plan record. Demand uses the illustrative turnover sliders only."
+    "Filed outflow proxy (Schedule H, plan year 2024-05-01 to 2025-04-30): 10.8% of the position per year vs 20% annual wrapper capacity, the plan's total expenses less administrative expenses over beginning net assets, applied to the position. Adequate headroom at the filed rate if offers are not prorated.",
+    "Slider assumption (illustrative): 9.2% of the position per year vs 20% annual wrapper capacity, from tail turnover 20%/yr on the 28.2% of accounts that are separated and active turnover 5%/yr on the rest. Shown beside the filed rate, not blended with it. Within 60% of wrapper capacity at these sliders.",
+    "Scenario verdict (ILLUSTRATIVE, this plan): conditional. Misaligned when the filed outflow proxy exceeds the annual wrapper capacity, conditional-weak when the stressed demand exceeds it, conditional otherwise. It moves with the plan's filing and the sliders. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
+    "Schedule H benefit-payment line 2e is not yet in the plan record. The filed outflow proxy (total expenses less administrative expenses over beginning net assets) stands in for it as the base demand, and the turnover sliders are the stress around it."
   ],
   "missing_facts": [
     "gate_history"
   ],
-  "layers": "verdict is structural (typed facts, cells 3.1, 3.3, 2.7, plan-independent). scenario_verdict is ILLUSTRATIVE (demand model against the same capacity, per plan).",
+  "layers": "verdict is structural (typed facts, cells 3.1, 3.3, 2.7, plan-independent). scenario_verdict is ILLUSTRATIVE (the plan's filed outflow proxy as the base demand and the sliders as the stress, against the same capacity, per plan).",
+  "filed_outflow": {
+    "label": "filed outflow proxy",
+    "rate_pct": 10.75,
+    "formula": "(total expenses minus total administrative expenses) / net assets at the beginning of the plan year * 100",
+    "inputs": {
+      "tot_expenses": 149669956.0,
+      "tot_admin_expenses": 1621511.0,
+      "net_assets_boy": 1376802027.0
+    },
+    "plan_year": "2024-05-01 to 2025-04-30",
+    "source": "Schedule H totals of the plan's Form 5500 for plan year 2024-05-01 to 2025-04-30, from the plan record",
+    "what": "total expenses less administrative expenses over beginning net assets, an upper bound on benefit payments while Schedule H line 2e is not in the record"
+  },
   "stressed_scenario": {
     "illustrative": true,
-    "assumptions": "tail turnover x2, active turnover x1.5 vs base scenario",
+    "base": "filed outflow proxy",
+    "assumptions": "the filed outflow proxy plus the increment the sliders add under stress (tail turnover x2, active turnover x1.5 over the slider assumption)",
     "multiples": {
       "tail_multiple": 2.0,
       "active_multiple": 1.5
     },
-    "annual_demand_usd": 13216612,
-    "demand_pct_of_position": 16.7,
+    "filed_outflow_proxy_pct": 10.75,
+    "slider_assumption_pct": 9.2,
+    "stress_increment_pct": 7.4,
+    "annual_demand_usd": 14417591,
+    "demand_pct_of_position": 18.2,
     "annual_wrapper_capacity_pct": 20.0,
-    "outcome": "within wrapper capacity (16.7% vs 20%) IF offers are not prorated"
+    "outcome": "within wrapper capacity (18.2% vs 20%) IF offers are not prorated"
   },
   "plan_display_label": "US casual-dining restaurant group 401(k) plan (~$1.6B, FL)",
   "plan_direction": "total",
@@ -56,9 +75,13 @@
     "gate_history": null,
     "program_status": null,
     "early_fee": "none at fund level (2.7)",
+    "net_assets_usd": null,
+    "net_assets_cell": "3.4",
+    "net_assets_approx": false,
     "null_reasons": {
       "gate_history": "N-23C3A filings are offer NOTIFICATIONS, not results. Per-offer proration outcomes not yet evidenced",
-      "repurchase_program_status": "no suspension language in 3.1 or 3.3 as of 2026-03-31"
+      "repurchase_program_status": "no suspension language in 3.1 or 3.3 as of 2026-03-31",
+      "net_assets_usd": "net assets ~$31.26B printed, but the carrying cells (1.1/3.6) are partial - verification unlocks this fact"
     },
     "source_cell": "2.7, 3.1, 3.3, 6.1",
     "cells_read": [
@@ -75,15 +98,27 @@
     "tail_annual_turnover_pct": 20.0,
     "active_annual_turnover_pct": 5.0,
     "illustrative": true,
+    "base": "filed outflow proxy",
     "plan_allocation_usd": 79258783,
-    "annual_demand_usd": 7319341,
-    "demand_pct_of_position": 9.2,
-    "annual_wrapper_capacity_pct": 20.0
+    "filed_outflow_proxy_pct": 10.75,
+    "filed_annual_demand_usd": 8520319,
+    "slider_assumption_pct": 9.2,
+    "slider_annual_demand_usd": 7319341,
+    "demand_pct_of_position": 10.75,
+    "annual_demand_usd": 8520319,
+    "annual_wrapper_capacity_pct": 20.0,
+    "fund_capacity": {
+      "available": false,
+      "reason": "the fund's net assets are not typed in the record (net assets ~$31.26B printed, but the carrying cells (1.1/3.6) are partial - verification unlocks this fact), so the plan's dollar demand cannot be set against the fund's dollar capacity and the allocation slider is not shown"
+    }
   },
   "plan_inputs": {
     "net_assets": 1585175658.0,
     "tail_share_pct": 28.2,
-    "separated_with_balances": 12176.0
+    "tail_share": 0.28231584316816993,
+    "separated_with_balances": 12176.0,
+    "filed_outflow_proxy_pct": 10.75,
+    "plan_year": "2024-05-01 to 2025-04-30"
   },
   "citations": [
     "2.7",

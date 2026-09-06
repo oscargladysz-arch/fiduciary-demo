@@ -12,6 +12,30 @@ extracted/verified/computed for non-null values, (b) numeric fields WITHOUT
 the approx flag appear verbatim in the cited cell's text. Engine outputs are
 pulled live from the selection/match artifacts, never retyped.
 
+gate_history rule (R2-P1-12, audit item 26), applied to all 16 products
+--------------------------------------------------------------------------
+gate_history is a judgment over the words of cell 3.3 (cell 3.1 for an
+exchange-listed wrapper, whose 3.3 is n/a). One rule types it:
+
+  True   when a filing states proration or unfilled requests: the issuer's
+         own words that requests exceeded a cap, were accepted pro rata,
+         deferred or rejected, in any period on record.
+  False  when a filing states that every request was filled in full (in
+         words, or as a per-offer table in which every tendered share was
+         repurchased and no proration is recorded), or states that no
+         repurchase right or program exists to gate.
+  null   when the tendered-versus-accepted amounts are not printed. A run of
+         completed offers, however long, and a sentence that no proration
+         event is disclosed, do not establish that every request in those
+         offers was filled, so neither supports False.
+
+Every gate_history fact, null or not, carries an evidence_phrase: a short
+verbatim run of the cited cell's words that validate_facts must find in the
+cell text (case-insensitive, whitespace-normalized). The same contract binds
+every other boolean (big4) and every closed-vocabulary string (dealing_cadence,
+cap_period, repurchase_program_status). A phrase that is not in the cell fails
+the build, so the typed value cannot drift from the evidence it cites.
+
 Run: python src/build_facts.py   -> data/facts/<product>.json
 """
 from __future__ import annotations
@@ -27,8 +51,8 @@ def F(value, cell, **kw):
     return {"value": value, "source_cell": cell, **kw}
 
 
-def null(reason, cell):
-    return {"value": None, "source_cell": cell, "reason": reason}
+def null(reason, cell, **kw):
+    return {"value": None, "source_cell": cell, "reason": reason, **kw}
 
 
 MAPPING = {
@@ -51,7 +75,8 @@ MAPPING = {
         "repurchase_cap_base": F("net_assets", "3.1"),
         "gate_history": null("offer continuity since Q2-2021 evidenced. "
                              "Per-offer proration incidence not printed in "
-                             "on-disk filings", "3.3"),
+                             "on-disk filings", "3.3",
+                             evidence_phrase="NOT PRINTED: shares tendered-but-not-accepted"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("Cohen & Company, Ltd.", "4.5"),
         "big4": F(False, "4.5"),
@@ -74,7 +99,8 @@ MAPPING = {
         "repurchase_cap_base": F("outstanding_shares", "3.1"),
         "gate_history": null("N-23C3A filings are offer NOTIFICATIONS, not "
                              "results. Per-offer proration outcomes not yet "
-                             "evidenced", "3.3"),
+                             "evidenced", "3.3",
+                             evidence_phrase="8 quarterly N-23C3A filings"),
         "tax_form": null("form number not printed in any on-disk filing. RIC "
                          "status implies 1099 but the cell is partial", "6.4"),
         "auditor": F("Cohen & Company, Ltd.", "4.5"),
@@ -105,7 +131,8 @@ MAPPING = {
         "gate_history": F(False, "3.1",
                           note="exchange wrapper has no gating mechanism. The "
                                "'no fund-level repurchase program' finding is "
-                               "itself an absence-inference flagged in the cell"),
+                               "itself an absence-inference flagged in the cell",
+                          evidence_phrase="no fund-level repurchase program"),
         "tax_form": null("form number not printed in any on-disk filing. RIC "
                          "status implies 1099 but the cell is partial", "6.4"),
         "auditor": F("KPMG LLP", "4.5"),
@@ -131,7 +158,12 @@ MAPPING = {
         "repurchase_cadence_per_year": F(4, "3.1"),
         "repurchase_cap_pct": F(5.0, "3.1"),
         "repurchase_cap_base": F("aggregate_nav", "3.1"),
-        "gate_history": F(False, "3.3"),
+        "gate_history": null("shares requested versus repurchased: the 10-K prints "
+                             "repurchases by class and discloses no proration, "
+                             "deferral or unsatisfied-request event for 2024-2025, "
+                             "but the requested amounts are not printed, so a clean "
+                             "False would overclaim (R2-P1-12 rule)", "3.3",
+                             evidence_phrase="requested amounts are NOT printed"),
         "tax_form": F("K-1", "6.4"),
         "auditor": F("Deloitte & Touche LLP", "4.5"),
         "big4": F(True, "4.5"),
@@ -163,7 +195,8 @@ MAPPING = {
         "repurchase_cap_pct": F(2.0, "3.1", note="monthly, with 5% quarterly"),
         "repurchase_cap_base": F("aggregate_nav", "3.1"),
         "gate_history": F(True, "3.3",
-                          note="prorated repurchases 2022-24. FY2025 fulfilled 100%"),
+                          note="prorated repurchases 2022-24. FY2025 fulfilled 100%",
+                          evidence_phrase="periods of prorated fulfillment"),
         "tax_form": null("form number not printed in on-disk 10-K/10-Q. REIT "
                          "status implies 1099-DIV but the cell is partial", "6.4"),
         "auditor": F("Deloitte & Touche LLP", "4.5"),
@@ -196,9 +229,12 @@ MAPPING = {
         "repurchase_cap_pct": F(5.0, "3.1"),
         "repurchase_cap_base": F("nav", "3.1",
                                  note="board-discretionary quarterly tenders"),
-        "gate_history": F(False, "3.3",
-                          note="completed tenders printed every quarter "
-                               "2023-2026H1, all requests satisfied"),
+        "gate_history": F(True, "3.3",
+                          note="Q2-2026 tender: requests exceeded the quarterly "
+                               "limit and were accepted pro rata (10-Q footnote 4), "
+                               "the first printed gating. FY2023 to FY2025 tenders "
+                               "were satisfied in full (R2-P1-12 rule)",
+                          evidence_phrase="requests exceeded quarterly limits, accepted pro-rata"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("Deloitte & Touche LLP", "4.5"),
         "big4": F(True, "4.5"),
@@ -229,7 +265,8 @@ MAPPING = {
         "repurchase_cap_base": F("outstanding_shares", "3.1"),
         "gate_history": F(False, "3.3",
                           note="FY2025 offers undersubscribed (max 4.32% "
-                               "tendered vs 5% cap)"),
+                               "tendered vs 5% cap)",
+                          evidence_phrase="Every tendered share was repurchased"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("PricewaterhouseCoopers LLP", "4.5"),
         "big4": F(True, "4.5"),
@@ -274,7 +311,8 @@ MAPPING = {
                              "BUT tendered-vs-repurchased counts are never "
                              "disclosed - proration cannot be ruled out "
                              "from public filings, so a clean False would "
-                             "overclaim", "3.3"),
+                             "overclaim", "3.3",
+                             evidence_phrase="does not disclose shares TENDERED versus repurchased"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("KPMG LLP", "4.5"),
         "big4": F(True, "4.5"),
@@ -320,7 +358,8 @@ MAPPING = {
         "repurchase_cap_base": F("outstanding_shares", "3.1"),
         "gate_history": F(False, "3.3",
                           note="all four FY2025 offers at 5.00%, "
-                               "undersubscribed (2.09-2.88% repurchased)"),
+                               "undersubscribed (2.09-2.88% repurchased)",
+                          evidence_phrase="ALL UNDERSUBSCRIBED (no proration, no gates)"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("Ernst & Young LLP", "4.5"),
         "big4": F(True, "4.5"),
@@ -357,8 +396,12 @@ MAPPING = {
                                      "board-discretionary (Rule 13e-4 tenders)"),
         "repurchase_cap_base": F("net_assets", "3.1",
                                  note="board-discretionary quarterly tenders"),
-        "gate_history": F(False, "3.3",
-                          note="four offers conducted in each of FY2025/FY2026"),
+        "gate_history": null("tendered-versus-accepted amounts and proration "
+                             "incidence per offer are not printed (final tender "
+                             "amendments not on disk). Four offers in each of "
+                             "FY2025 and FY2026 establish continuity, not full "
+                             "fills (R2-P1-12 rule)", "3.3",
+                             evidence_phrase="NOT PRINTED: tendered-vs-accepted amounts"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("Ernst & Young LLP", "4.5"),
         "big4": F(True, "4.5"),
@@ -383,7 +426,12 @@ MAPPING = {
         "repurchase_cap_pct": F(5.0, "3.3",
                                 note="live offer approx. 5% of outstanding Units"),
         "repurchase_cap_base": F("outstanding_shares", "3.3"),
-        "gate_history": F(False, "3.3"),
+        "gate_history": null("no proration or oversubscription event is disclosed "
+                             "in the on-disk documents, but the tendered-versus-"
+                             "accepted amounts per offer are not printed either. "
+                             "Completed-tender dollars establish continuity, not "
+                             "full fills (R2-P1-12 rule)", "3.3",
+                             evidence_phrase="No proration or oversubscription event is disclosed"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("KPMG LLP", "4.5"),
         "big4": F(True, "4.5"),
@@ -424,7 +472,8 @@ MAPPING = {
         "gate_history": F(True, "3.3",
                           note="requests exceeded plan limits continuously "
                                "since October 2022. Caps shrank three times, "
-                               "then the plan closed"),
+                               "then the plan closed",
+                          evidence_phrase="requests have consistently exceeded plan limits"),
         "tax_form": null("form number not printed in on-disk filings. REIT "
                          "status implies 1099-DIV but the cell is partial",
                          "6.4"),
@@ -460,7 +509,8 @@ MAPPING = {
                                       "quarter-end"),
         "gate_history": F(False, "3.3",
                           note="never deferred nor rejected a request "
-                               "through 2025-12-31, as disclosed"),
+                               "through 2025-12-31, as disclosed",
+                          evidence_phrase="never deferred nor rejected a repurchase request"),
         "tax_form": null("tax-form name not literally printed. REIT status "
                          "and possible return-of-capital character are "
                          "printed (cell 6.4)", "6.4"),
@@ -499,7 +549,8 @@ MAPPING = {
         "repurchase_cap_base": null("on-exchange liquidity with no fund-level cap",
                                     "3.1"),
         "gate_history": F(False, "3.3",
-                          note="no redemption right exists to gate"),
+                          note="no redemption right exists to gate",
+                          evidence_phrase="no investor redemption right to gate"),
         "tax_form": null("form number not printed in on-disk filings. RIC "
                          "status implies 1099 but the cell is partial", "6.4"),
         "auditor": F("CBIZ CPAs P.C.", "4.5"),
@@ -528,8 +579,12 @@ MAPPING = {
                                 note="fundamental 5-25% policy. Every "
                                      "completed offer at 5%"),
         "repurchase_cap_base": F("outstanding_shares", "3.1"),
-        "gate_history": F(False, "3.3",
-                          note="no gating or postponement disclosed"),
+        "gate_history": null("no gating, suspension or postponement is disclosed, "
+                             "but the tendered-versus-accepted amounts are not "
+                             "printed: the Sep-2024 offer was fully utilized at "
+                             "its cap with proration, if any, not stated "
+                             "(R2-P1-12 rule)", "3.3",
+                             evidence_phrase="proration, if any, not stated"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("Ernst & Young LLP", "4.5"),
         "big4": F(True, "4.5"),
@@ -555,7 +610,8 @@ MAPPING = {
         "gate_history": null("per-offer tendered-vs-purchased counts not "
                              "printed in on-disk filings. Sept 2025 offer was "
                              "Board-UPSIZED (demand signal). Proration "
-                             "incidence unevidenced", "3.3"),
+                             "incidence unevidenced", "3.3",
+                             evidence_phrase="are not printed in the N-CSR or the on-disk SC TO-I"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("Ernst & Young LLP", "4.5"),
         "big4": F(True, "4.5"),
@@ -636,7 +692,8 @@ for _key, _m in MAPPING.items():
         _m["repurchase_program_status"] = F(
             "suspended", "3.1", since="April 29, 2026 amendment",
             note="April 29, 2026 amendment: 'no repurchase requests will be accepted' "
-                 "except death, qualifying disability and accounts below $5,000")
+                 "except death, qualifying disability and accounts below $5,000",
+            evidence_phrase="we suspended our share repurchase program")
     elif _m["wrapper_type"]["value"] in ("listed_cef", "listed_bdc"):
         _m["repurchase_program_status"] = null("exchange-listed, no repurchase program", "3.1")
     else:
@@ -704,16 +761,46 @@ DEALING_TERMS = {
     "stepstone_spm": ("quarterly", "quarter", [(5.0, "quarter")],
                       "'Quarterly tender offers: up to 5% of OUTSTANDING SHARES'"),
 }
+# Evidence phrases (R2-P1-12): one verbatim run of cell 3.1's words behind
+# the dealing cadence and one behind the cap period. validate_facts fails
+# when a phrase is not in the cell (case-insensitive, whitespace-normalized).
+DEALING_EVIDENCE = {
+    "hl_paf": ("Quarterly tender offers", "up to 5.00% of net assets"),
+    "cliffwater_cclfx": ("of outstanding shares, quarterly",
+                         "up to five percent (5%) of outstanding shares"),
+    "dxyz": ("daily on-exchange liquidity", None),
+    "kkr_kpec": ("Quarterly share repurchase plan", "per calendar quarter"),
+    "breit": ("2% of aggregate NAV per MONTH", "2% of aggregate NAV per MONTH, 5% per QUARTER"),
+    "bcred": ("quarterly tender offers at Board discretion", "assessed each quarter"),
+    "pflex": ("quarterly repurchase offers", "5% per quarter"),
+    "ocic": ("quarterly issuer tender offers", "per quarter"),
+    "cion_ares": ("quarterly repurchase offers", "the 5% minimum each quarter"),
+    "ares_pmf": ("quarterly repurchase offers", "quarterly repurchase offers of no more than 5%"),
+    "amg_pantheon": ("recommending quarterly offers", "up to 5% per offer"),
+    "sreit": ("Monthly share repurchase plan", "of NAV per month"),
+    "jll_ipt": ("CADENCE: DAILY", "per calendar quarter"),
+    "ssss": ("any trading day", None),
+    "arkvx": ("quarterly Rule 23c-3 repurchase offers", "quarterly Rule 23c-3 repurchase offers"),
+    "stepstone_spm": ("Quarterly tender offers", "up to 5% of OUTSTANDING SHARES"),
+}
 for _key, (_dc, _cp, _caps, _words) in DEALING_TERMS.items():
     _m = MAPPING[_key]
-    _m["dealing_cadence"] = F(_dc, "3.1", note=f"cell 3.1: {_words}")
+    _dc_phrase, _cp_phrase = DEALING_EVIDENCE[_key]
+    _m["dealing_cadence"] = F(_dc, "3.1", note=f"cell 3.1: {_words}", evidence_phrase=_dc_phrase)
     if _caps is None:
         _m["cap_period"] = null(_NO_FUND_CAP, "3.1")
         _m["repurchase_caps"] = null(_NO_FUND_CAP, "3.1")
     else:
-        _m["cap_period"] = F(_cp, "3.1", note=f"cell 3.1: {_words}")
+        _m["cap_period"] = F(_cp, "3.1", note=f"cell 3.1: {_words}", evidence_phrase=_cp_phrase)
         _m["repurchase_caps"] = F([{"pct": p, "period": per} for p, per in _caps],
                                   "3.1", note=f"cell 3.1: {_words}")
+
+# big4 is a boolean read off the auditor's name, so the name printed in cell
+# 4.5 is its evidence phrase (the same contract as gate_history)
+for _key, _m in MAPPING.items():
+    if _m["auditor"]["value"] and "big4" in _m and _m["big4"]["value"] is not None:
+        _m["big4"]["evidence_phrase"] = _m["auditor"]["value"]
+    assert "evidence_phrase" in _m["gate_history"], f"{_key}: gate_history without an evidence phrase"
 
 
 def years_between(d0: str, d1: str) -> float:
@@ -797,58 +884,71 @@ def main() -> None:
                 "reason": "liquidity match not yet run"}
         sel_path = DATA / "benchmarks" / f"{key}_selection.json"
         sel = json.loads(sel_path.read_text()) if sel_path.exists() else None
-        # the statistic is named for its comparator (R2-P0-6, rule 12): a PME
-        # only against a public market series, a relative wealth ratio against
-        # the peer composite, each from whichever slot carries that comparator
+        # the statistic is named for its comparator (rule 12): a PME only
+        # against a public market series, a relative wealth ratio against an
+        # appraisal-based comparator. Slot K feeds the benchmark facts, Slot G
+        # the peer facts (decision 7.1). primary_benchmark_id is the Slot K
+        # selection (the field name predates v3 and is mapped to words by
+        # every surface).
         ENGINE_NULL = ("primary_benchmark_id", "selection_score", "pme_public_proxy",
-                       "pme_public_proxy_name", "direct_alpha_public_proxy", "peer_relative_wealth_ratio")
-        if sel is None:
+                       "pme_public_proxy_name", "direct_alpha_public_proxy", "peer_relative_wealth_ratio",
+                       "slot_k_relative_wealth_ratio")
+        sk = (sel or {}).get("slot_k") or {}
+        if sel is None or "slot_k" not in sel:
             for fld in ENGINE_NULL:
                 facts[fld] = {"value": None, "source_cell": "1.8",
                               "status": "pending",
                               "reason": "engine selection not yet run for this product"}
-        elif sel.get("primary"):
+        else:
             from tark_display import candidate_short
-            slots = [s for s in (sel.get("primary"), sel.get("secondary")) if s]
-            series_slot = next((s for s in slots if (s.get("comparison") or {}).get("kind") == "series"), None)
-            comp_slot = next((s for s in slots if (s.get("comparison") or {}).get("kind") == "composite"), None)
-            facts["primary_benchmark_id"] = F(sel["primary"]["id"], "5.3",
-                                              status="computed")
-            facts["selection_score"] = F(sel["primary"]["score"], "5.3",
-                                         status="computed")
-            # .get throughout: the first facts pass of the producer runs before
-            # the benchmark step and may read an older artifact, which the
-            # facts-engine pass then overwrites
-            if series_slot:
-                c = series_slot["comparison"]
-                name = candidate_short(series_slot["id"])
-                note = (f"KS-PME vs {name} over {c.get('window')}, fund return source: "
+            selected = sk.get("selected")
+            if selected:
+                facts["primary_benchmark_id"] = F(selected["id"], "5.3", status="computed")
+                facts["selection_score"] = F(selected["score"], "5.3", status="computed")
+            else:
+                esc = "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+                facts["primary_benchmark_id"] = {"value": None, "source_cell": "5.3", "status": "computed", "reason": esc}
+                facts["selection_score"] = {"value": None, "source_cell": "5.3", "status": "computed", "reason": esc}
+            # the public-series PME: Slot K's own when Slot K is a public
+            # market series, else the reference comparison, named as such
+            comp_k = (selected or {}).get("comparison") or {}
+            ref = sel.get("reference_comparison")
+            if comp_k.get("kind") == "series":
+                c, name, role = comp_k, candidate_short(selected["id"]), "meaningful benchmark"
+            elif ref:
+                c, name, role = ref["comparison"], candidate_short(ref["id"]), "reference comparison, not the meaningful benchmark"
+            else:
+                c = None
+            if c:
+                note = (f"KS-PME vs {name} over {c.get('window')} ({role}), fund return source: "
                         f"{c.get('fund_return_source', '')}")
                 facts["pme_public_proxy"] = F(c.get("ks_pme"), "1.8", status="computed", note=note)
                 facts["pme_public_proxy_name"] = F(name, "1.8", status="computed")
                 facts["direct_alpha_public_proxy"] = F(c.get("direct_alpha_pct"), "1.8", status="computed", note=note)
             else:
-                why = ((sel["primary"].get("comparison_note") or
-                        "no public market proxy comparison computable on held data"))
+                why = (sk.get("escalation") or (selected or {}).get("comparison_note")
+                       or "no public market series comparison computable on held data")
                 for fld in ("pme_public_proxy", "pme_public_proxy_name", "direct_alpha_public_proxy"):
-                    facts[fld] = {"value": None, "source_cell": "1.8",
-                                  "status": "computed", "reason": why}
-            if comp_slot:
-                c = comp_slot["comparison"]
+                    facts[fld] = {"value": None, "source_cell": "1.8", "status": "computed", "reason": why}
+            if comp_k.get("kind") == "published_index":
+                facts["slot_k_relative_wealth_ratio"] = F(
+                    comp_k.get("relative_wealth_ratio"), "1.8", status="computed",
+                    note=(f"relative wealth ratio vs {candidate_short(selected['id'])} over {comp_k.get('window')}, "
+                          "appraisal-based published series, not a public market equivalent"))
+            else:
+                facts["slot_k_relative_wealth_ratio"] = {
+                    "value": None, "source_cell": "1.8", "status": "computed",
+                    "reason": "the meaningful benchmark is not a held appraisal-based series"}
+            g = ((sel.get("slot_g") or {}).get("composite") or {})
+            if g.get("status") == "computed":
                 facts["peer_relative_wealth_ratio"] = F(
-                    c.get("relative_wealth_ratio"), "1.8", status="computed",
-                    note=(f"relative wealth ratio vs {candidate_short(comp_slot['id'])} over {c.get('window')}, "
-                          "fund return source: filed fiscal-year returns. Not a public market equivalent"))
+                    g.get("relative_wealth_ratio"), "1.12", status="computed",
+                    note=(f"relative wealth ratio vs the peer composite over {g.get('window')} (n={g.get('n')}), "
+                          f"fund return source: {g.get('fund_return_source')}. Not a public market equivalent"))
             else:
                 facts["peer_relative_wealth_ratio"] = {
-                    "value": None, "source_cell": "1.8", "status": "computed",
-                    "reason": "no peer composite comparison in either slot for this product"}
-        else:
-            esc = ("engine escalation: no meaningful benchmark constructible "
-                   "(see the selection artifact)")
-            for fld in ENGINE_NULL:
-                facts[fld] = {"value": None, "source_cell": "1.8",
-                              "status": "computed", "reason": esc}
+                    "value": None, "source_cell": "1.12", "status": "computed",
+                    "reason": "peer composite refused: " + (g.get("reason") or "no cohort")}
         doc = {"product_key": key, "cohort_id": cohort_id, "depth": depth,
                "membership_rationale": rationale,
                "what": "typed projections of evidenced cells, zero new facts. "

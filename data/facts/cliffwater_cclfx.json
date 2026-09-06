@@ -54,6 +54,7 @@
       "value": null,
       "source_cell": "3.3",
       "reason": "N-23C3A filings are offer NOTIFICATIONS, not results. Per-offer proration outcomes not yet evidenced",
+      "evidence_phrase": "8 quarterly N-23C3A filings",
       "status": "fetched-series, extraction pending"
     },
     "tax_form": {
@@ -70,6 +71,7 @@
     "big4": {
       "value": false,
       "source_cell": "4.5",
+      "evidence_phrase": "Cohen & Company, Ltd.",
       "status": "extracted-unverified"
     },
     "expense_ratio_pct": {
@@ -109,12 +111,14 @@
       "value": "quarterly",
       "source_cell": "3.1",
       "note": "cell 3.1: 'up to five percent (5%) of outstanding shares, quarterly'",
+      "evidence_phrase": "of outstanding shares, quarterly",
       "status": "extracted-unverified"
     },
     "cap_period": {
       "value": "quarter",
       "source_cell": "3.1",
       "note": "cell 3.1: 'up to five percent (5%) of outstanding shares, quarterly'",
+      "evidence_phrase": "up to five percent (5%) of outstanding shares",
       "status": "extracted-unverified"
     },
     "repurchase_caps": {
@@ -142,22 +146,22 @@
     },
     "liquidity_verdict_by_plan": {
       "value": {
-        "plan_consulting_alumni": "conditional-weak",
+        "plan_consulting_alumni": "conditional",
         "plan_manufacturer_union": "conditional",
         "plan_restaurant_hourly": "conditional",
-        "plan_tech_media": "conditional"
+        "plan_tech_media": "conditional-weak"
       },
       "source_cell": "3.9",
       "status": "computed",
       "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
     },
     "primary_benchmark_id": {
-      "value": "peer_credit",
+      "value": "bkln",
       "source_cell": "5.3",
       "status": "computed"
     },
     "selection_score": {
-      "value": 9,
+      "value": 8,
       "source_cell": "5.3",
       "status": "computed"
     },
@@ -165,7 +169,7 @@
       "value": 1.2532,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "KS-PME vs BKLN over 2019-06-05 to 2026-07-17, fund return source: Yahoo adjusted close, approximates NAV total return"
+      "note": "KS-PME vs BKLN over 2019-06-05 to 2026-07-17 (meaningful benchmark), fund return source: Yahoo adjusted close, approximates NAV total return"
     },
     "pme_public_proxy_name": {
       "value": "BKLN",
@@ -176,13 +180,19 @@
       "value": 3.22,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "KS-PME vs BKLN over 2019-06-05 to 2026-07-17, fund return source: Yahoo adjusted close, approximates NAV total return"
+      "note": "KS-PME vs BKLN over 2019-06-05 to 2026-07-17 (meaningful benchmark), fund return source: Yahoo adjusted close, approximates NAV total return"
     },
-    "peer_relative_wealth_ratio": {
-      "value": 0.9756,
+    "slot_k_relative_wealth_ratio": {
+      "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "note": "relative wealth ratio vs private credit peer composite over FY2021 to FY2025, fund return source: filed fiscal-year returns. Not a public market equivalent"
+      "reason": "the meaningful benchmark is not a held appraisal-based series"
+    },
+    "peer_relative_wealth_ratio": {
+      "value": 1.0613,
+      "source_cell": "1.12",
+      "status": "computed",
+      "note": "relative wealth ratio vs the peer composite over 2021 to 2025 (n=4), fund return source: Yahoo adjusted close, approximates NAV total return. Not a public market equivalent"
     }
   }
 }

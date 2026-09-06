@@ -190,7 +190,26 @@ const SERIES_VIEWS = new Set(["evaluation", "pme", "dxyz", "desmooth",
                               "liquidity", "cohorts", "search", "packet",
                               "verification", "fees"]);
 window.tarkMergeLazy = function () {
-  window.TARK.series = window.TARK_SERIES;
+  // the chunk ships each series as a first date, day offsets and values:
+  // expand back to [[date, value], ...] once, so every chart and lab reads
+  // the same array the engine read
+  const expand = (s) => {
+    if (Array.isArray(s)) return s;
+    const base = Date.UTC(+s.base.slice(0, 4), +s.base.slice(5, 7) - 1, +s.base.slice(8, 10));
+    return s.d.map((off, i) => [new Date(base + off * 86400000).toISOString().slice(0, 10), s.v[i]]);
+  };
+  const series = {};
+  for (const [k, s] of Object.entries(window.TARK_SERIES || {})) series[k] = expand(s);
+  window.TARK.series = series;
+  // the chunk carries each product's wrapper facts once and the stress
+  // assumption sentence once: give every match its copy back
+  const shared = window.TARK_LIQ_SHARED || { wrapper_facts: {}, stress_assumptions: "" };
+  for (const m of Object.values(window.TARK_LIQ || {})) {
+    if (!m.wrapper_facts) m.wrapper_facts = shared.wrapper_facts[m.product];
+    if (m.stressed_scenario && m.stressed_scenario.assumptions === undefined) {
+      m.stressed_scenario.assumptions = shared.stress_assumptions;
+    }
+  }
   window.TARK.liquidity = window.TARK_LIQ;
   window.TARK.swap_matrix = window.TARK_LAB;   // lab verdict matrix
   const ev = window.TARK_EVIDENCE || {};

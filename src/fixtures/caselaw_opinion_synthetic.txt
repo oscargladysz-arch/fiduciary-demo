@@ -1,0 +1,18 @@
+SYNTHETIC TEST FIXTURE. This is NOT a court opinion. The case number,
+the court and the text below were invented for src/test_sources.py so that
+the fetcher's identity check (the lower-court case number the docket page
+states must appear in the opinion text) can run offline.
+
+SYNTHETIC COURT OF APPEALS FOR THE ZEROTH CIRCUIT
+
+No. 00-00000
+
+Synthetic Petitioner, et al., Plaintiffs-Appellants,
+v.
+Synthetic Respondent Committee, et al., Defendants-Appellees.
+
+OPINION (fixture)
+
+This fixture opinion holds nothing. It exists so that a test can save a
+document, hash it and record the hash in a manifest row without any real
+court document being present in the repository.

@@ -92,7 +92,7 @@ check("runbook carries no record coverage percentages",
 # audit, the decisions log and the build reports record the deletion itself
 LIVING = ["README.md", "docs/INVESTOR_DEMO.md", "docs/demo_script.md",
           "docs/verification_queue.md"]
-for name in ("hook_snapshot.txt", "README_SPIKE.md"):
+for name in ("hook_snapshot.txt", "README_SPIKE.md", "src/seed_case_law_cell.py"):
     check(f"{name} is gone", not (BASE / name).exists())
     refs = [d for d in LIVING if name in (BASE / d).read_text()]
     check(f"no operational document references {name}", not refs, ", ".join(refs))

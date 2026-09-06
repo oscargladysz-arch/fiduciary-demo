@@ -10,10 +10,11 @@ import json
 import sys
 from pathlib import Path
 
-from tark_liquidity import (REQUIRED, SCHEDULE_H_ABSENT, VERDICTS, binding_cap,
-                            capacity_from_facts, run_match, scenario_verdict,
-                            schedule_h_lines, structural_verdict, wrapper_facts)
-from tark_data import DATA, load_product, load_products, plan_keys, status_kind
+from tark_liquidity import (FILED_LABEL, REQUIRED, SCHEDULE_H_ABSENT, THIN_HEADROOM_SHARE, VERDICTS,
+                            binding_cap, capacity_from_facts, load_facts, run_match, scenario_verdict,
+                            schedule_h_lines, slider_demand_pct, stress_increment_pct,
+                            stressed_demand_pct, structural_verdict, wrapper_facts)
+from tark_data import DATA, _norm_words, load_plan, load_product, load_products, plan_keys, status_kind
 
 FAILS: list[str] = []
 
@@ -43,12 +44,20 @@ check("a null required fact yields partial and names it",
 check("suspension takes precedence over a null fact",
       structural_verdict({**base, "program_status": "suspended", "gate_history": None})[0] == "misaligned")
 
-# ---- scenario ladder
-check("scenario: base demand above capacity is misaligned", scenario_verdict(25.0, 30.0, 20.0, False) == "misaligned")
+# ---- scenario ladder (R2-P1-10: the base rung reads the filed outflow
+# proxy, the stress rung reads the filed proxy plus the sliders' increment)
+check("scenario: filed demand above capacity is misaligned", scenario_verdict(25.0, 30.0, 20.0, False) == "misaligned")
 check("scenario: stressed demand above capacity is conditional-weak", scenario_verdict(10.0, 25.0, 20.0, False) == "conditional-weak")
 check("scenario: within capacity under stress is conditional", scenario_verdict(5.0, 9.0, 20.0, False) == "conditional")
 check("scenario: exchange-listed is aligned-mechanical", scenario_verdict(50.0, 90.0, None, True) == "aligned-mechanical")
 check("scenario: capacity not computable yields no scenario verdict", scenario_verdict(5.0, 9.0, None, False) is None)
+check("scenario: a filed rate above capacity is misaligned however low the sliders sit",
+      scenario_verdict(25.0, 25.5, 20.0, False) == "misaligned")
+check("scenario: no filed rate yields no scenario verdict", scenario_verdict(None, None, 20.0, False) is None)
+check("stress arithmetic: filed 6.5, tail share 0.5, sliders 20/5 at x2/x1.5 gives 6.5 + (0.5 * 20 + 0.5 * 2.5) = 17.75",
+      abs(stress_increment_pct(0.5, 20.0, 5.0) - 11.25) < 1e-9
+      and abs(stressed_demand_pct(6.5, 0.5, 20.0, 5.0) - 17.75) < 1e-9
+      and abs(slider_demand_pct(0.5, 20.0, 5.0) - 12.5) < 1e-9)
 
 # ---- the record: every product under every plan
 matches = {(pk, k): run_match(k, pk) for pk in PLANS for k in PRODUCTS}
@@ -97,9 +106,14 @@ check("schedule H present: QDIA named in the structural reasons",
 absent_lines, _ = schedule_h_lines({"financials": {"net_assets_boy": 1.0}, "schedule_h": {
     "benefit_payments_2e": {"value": None, "reason": "not typed in the test"}}})
 # R2-P0-5: the absent sentence is fixed wording (no environment excuse, no
-# file name), so the plan file's reason is no longer echoed into the match
-check("schedule H absent: the match says the lines are not yet in the plan record and uses the sliders only",
-      any(x == SCHEDULE_H_ABSENT and "sliders only" in x for x in absent_lines)
+# file name), so the plan file's reason is no longer echoed into the match.
+# R2-P1-10: it names the filed outflow proxy as what stands in for line 2e
+# and the sliders as the stress, never as the base
+check("schedule H absent: the match says line 2e is not yet in the plan record, names the filed outflow proxy as "
+      "what stands in for it and the sliders as the stress",
+      any(x == SCHEDULE_H_ABSENT and "line 2e is not yet in the plan record" in x
+          and "filed outflow proxy" in x and "stands in for it" in x and "sliders are the stress" in x
+          for x in absent_lines)
       and "not typed in the test" not in " ".join(absent_lines))
 check("today's four plans carry Schedule H as null-with-reason and every non-exchange match says so",
       all(any(r == SCHEDULE_H_ABSENT for r in m["scenario_reasons"])
@@ -157,6 +171,13 @@ check("breit: the structural gap sentence prints both caps in words, no per-year
       and not any("x/year" in r for r in br["reasons"]))
 check("breit under plan_consulting_alumni: 13.7% demand against 20% capacity is THIN HEADROOM",
       any("THIN HEADROOM" in r for r in br["scenario_reasons"]))
+check("breit under plan_consulting_alumni: the THIN HEADROOM sentence belongs to the 13.7% slider assumption, "
+      "and the 6.5% filed outflow proxy line says adequate headroom at the filed rate",
+      any(r.startswith("Slider assumption (illustrative): 13.7% of the position per year vs 20% annual wrapper capacity")
+          and "THIN HEADROOM: the slider assumption" in r for r in br["scenario_reasons"])
+      and any(r.startswith("Filed outflow proxy (Schedule H, plan year 2024-01-01 to 2024-12-31): 6.5% of the position "
+                           "per year vs 20% annual wrapper capacity")
+              and "Adequate headroom at the filed rate" in r for r in br["scenario_reasons"]))
 check("breit: the caps label names both caps and the binding annual figure",
       br["wrapper_facts"]["caps_label"] == "2% per month and 5% per quarter, binding 20% per year")
 check("every match carries the display labels for the site and the memo",
@@ -205,6 +226,195 @@ check("wrapper facts cite cells and carry a reason for every null",
               if wrapper_facts(k)[{"repurchase_cadence_per_year": "cadence_per_year",
                                    "repurchase_cap_pct": "cap_pct", "gate_history": "gate_history"}[n]] is None)
           for k in PRODUCTS))
+
+# ---- R2-P1-10: the base demand is the plan's filed outflow proxy, the sliders are the stress
+plans_doc = {pk: load_plan(pk) for pk in PLANS}
+proxy = {pk: (plans_doc[pk].get("schedule_h") or {}).get("filed_outflow_proxy") or {} for pk in PLANS}
+check("every plan file types a filed outflow proxy with its formula, its three inputs, its plan year and its source",
+      all(isinstance(proxy[pk].get("value"), (int, float)) and proxy[pk].get("formula") and proxy[pk].get("source")
+          and proxy[pk].get("plan_year")
+          and set(proxy[pk].get("inputs") or {}) == {"tot_expenses", "tot_admin_expenses", "net_assets_boy"}
+          for pk in PLANS))
+check("the filed outflow proxy is (total expenses - administrative expenses) / beginning net assets * 100, recomputed here",
+      all(proxy[pk].get("value") == round((plans_doc[pk]["financials"]["tot_expenses"]
+                                           - plans_doc[pk]["financials"]["tot_admin_expenses"])
+                                          / plans_doc[pk]["financials"]["net_assets_boy"] * 100, 2)
+          and all((proxy[pk]["inputs"][n] or {}).get("value") == plans_doc[pk]["financials"][n]
+                  for n in ("tot_expenses", "tot_admin_expenses", "net_assets_boy"))
+          for pk in PLANS))
+check("the four filed rates in the match files equal the plan files' proxy values, in every match and in every block",
+      all(m["scenario"]["filed_outflow_proxy_pct"] == proxy[pk]["value"]
+          and m["plan_inputs"]["filed_outflow_proxy_pct"] == proxy[pk]["value"]
+          and m["filed_outflow"]["rate_pct"] == proxy[pk]["value"]
+          and m["stressed_scenario"]["filed_outflow_proxy_pct"] == proxy[pk]["value"]
+          for (pk, k), m in matches.items()))
+check("the four plans' filed rates are distinct, so the ranking they give the scenario layer is theirs, not the sliders'",
+      len({proxy[pk]["value"] for pk in PLANS}) == len(PLANS))
+check("the base demand of every match is the filed outflow proxy applied to the position, in percent and in dollars",
+      all(m["scenario"]["base"] == FILED_LABEL
+          and m["scenario"]["demand_pct_of_position"] == m["scenario"]["filed_outflow_proxy_pct"]
+          and abs(m["scenario"]["filed_annual_demand_usd"]
+                  - m["scenario"]["plan_allocation_usd"] * m["scenario"]["filed_outflow_proxy_pct"] / 100) <= 1
+          and m["scenario"]["annual_demand_usd"] == m["scenario"]["filed_annual_demand_usd"]
+          for m in matches.values()))
+check("the slider assumption is tail turnover on the separated share of accounts and active turnover on the rest",
+      all(abs(m["scenario"]["slider_assumption_pct"]
+              - slider_demand_pct(m["plan_inputs"]["tail_share_pct"] / 100, m["scenario"]["tail_annual_turnover_pct"],
+                                  m["scenario"]["active_annual_turnover_pct"])) < 0.06
+          for m in matches.values()))
+check("the stressed demand is the filed outflow proxy plus the sliders' stress increment, never the slider model alone",
+      all(m["stressed_scenario"]["base"] == FILED_LABEL
+          and abs(m["stressed_scenario"]["demand_pct_of_position"]
+                  - (m["scenario"]["filed_outflow_proxy_pct"] + m["stressed_scenario"]["stress_increment_pct"])) < 0.11
+          and abs(m["stressed_scenario"]["stress_increment_pct"]
+                  - stress_increment_pct(m["plan_inputs"]["tail_share_pct"] / 100, m["scenario"]["tail_annual_turnover_pct"],
+                                         m["scenario"]["active_annual_turnover_pct"], m["stressed_scenario"]["multiples"])) < 0.06
+          for m in matches.values()))
+check("every match's scenario verdict is the ladder on the filed rate and the stressed demand it carries",
+      all(m["scenario_verdict"] == scenario_verdict(m["scenario"]["filed_outflow_proxy_pct"],
+                                                    m["scenario"]["filed_outflow_proxy_pct"]
+                                                    + m["stressed_scenario"]["stress_increment_pct"]
+                                                    if m["stressed_scenario"]["stress_increment_pct"] is not None else None,
+                                                    m["scenario"]["annual_wrapper_capacity_pct"], m["wrapper_facts"]["exchange"])
+          for m in matches.values()))
+# the brief's test: the plan whose filing shows the lowest outflow rate is
+# never the only plan flagged conditional-weak for a product, unless its own
+# filed rate is already in thin headroom against that wrapper (the filed
+# rates then say so). Under the slider-only model the lowest-filed plan was
+# the only weak one for 13 products (audit item 24).
+lowest = min(PLANS, key=lambda pk: proxy[pk]["value"])
+offenders = []
+for k in PRODUCTS:
+    weak = [pk for pk in PLANS if matches[(pk, k)]["scenario_verdict"] == "conditional-weak"]
+    cap = matches[(lowest, k)]["scenario"]["annual_wrapper_capacity_pct"]
+    if weak == [lowest] and not (cap and proxy[lowest]["value"] > THIN_HEADROOM_SHARE * cap):
+        offenders.append(k)
+check(f"the plan with the lowest filed outflow rate ({lowest}) is not the only plan flagged conditional-weak for any "
+      "product unless its filed rate says so", not offenders, ", ".join(offenders))
+check("the scenario verdict still differs between plans for at least one product, now on the filings",
+      any(len({matches[(pk, k)]["scenario_verdict"] for pk in PLANS}) > 1 for k in PRODUCTS))
+_hl_c = matches[("plan_consulting_alumni", "hl_paf")]
+_hl_c45 = run_match("hl_paf", "plan_consulting_alumni", {"tail_annual_turnover_pct": 45.0})
+check("the turnover sliders move the stressed demand and can move the verdict (hl_paf under the consulting plan: "
+      "tail turnover 45 pushes the stressed demand past 20% and the verdict to conditional-weak)",
+      _hl_c["scenario_verdict"] == "conditional" and _hl_c45["scenario_verdict"] == "conditional-weak"
+      and _hl_c45["stressed_scenario"]["demand_pct_of_position"] > 20
+      and _hl_c45["scenario"]["filed_outflow_proxy_pct"] == _hl_c["scenario"]["filed_outflow_proxy_pct"])
+check("every non-exchange match prints the filed outflow proxy and the slider assumption as separate labeled lines "
+      "carrying their own numbers, the slider line saying it is not blended with the filed rate",
+      all(any(r.startswith("Filed outflow proxy (Schedule H, plan year ")
+              and f"{m['scenario']['filed_outflow_proxy_pct']:.1f}% of the position per year" in r
+              for r in m["scenario_reasons"])
+          and any(r.startswith("Slider assumption (illustrative): ")
+                  and f"{m['scenario']['slider_assumption_pct']:.1f}% of the position per year" in r
+                  and "not blended with it" in r for r in m["scenario_reasons"])
+          for m in matches.values() if not m["wrapper_facts"]["exchange"]))
+check("the verdict sentence names both rungs and the number each reads",
+      all(any(r.startswith("Scenario verdict (ILLUSTRATIVE, this plan): ") and "filed outflow proxy exceeds" in r
+              and "stressed demand exceeds" in r and "Proration assumption" in r for r in m["scenario_reasons"])
+          for m in matches.values() if not m["wrapper_facts"]["exchange"]))
+check("the stressed outcome prints the stressed figure it compares, never the slider figure",
+      all(f"{m['stressed_scenario']['demand_pct_of_position']:.1f}%" in m["stressed_scenario"]["outcome"]
+          for m in matches.values()
+          if not m["wrapper_facts"]["exchange"] and m["scenario"]["annual_wrapper_capacity_pct"] is not None))
+check("no reason string calls the slider figure the scenario demand or the base",
+      not any("Scenario demand (illustrative)" in r or "sliders only" in r for m in matches.values() for r in m["reasons"]))
+check("exchange-listed matches print both rates as selling rates against market depth, not against a fund cap",
+      all(any(r.startswith("Filed outflow proxy") and "market depth" in r for r in m["scenario_reasons"])
+          and any(r.startswith("Slider assumption") and "market depth" in r for r in m["scenario_reasons"])
+          for m in matches.values() if m["wrapper_facts"]["exchange"]))
+
+# ---- R2-P1-11: the allocation moves dollars against the fund's own dollar capacity, or is removed
+na_typed = {k: load_facts(k)["net_assets_usd"].get("value") is not None for k in PRODUCTS}
+check("the fund's dollar capacity is computed exactly where the fund's net assets are typed, the wrapper is not "
+      "exchange-listed and its annual cap is computable and above 0",
+      all(m["scenario"]["fund_capacity"]["available"]
+          == (na_typed[k] and not m["wrapper_facts"]["exchange"]
+              and (m["scenario"]["annual_wrapper_capacity_pct"] or 0) > 0)
+          for (pk, k), m in matches.items()))
+_with = sorted(k for k in PRODUCTS if matches[("plan_tech_media", k)]["scenario"]["fund_capacity"]["available"])
+check("today six products carry the allocation slider (fund net assets typed with a source cell)",
+      _with == ["cion_ares", "hl_paf", "kkr_kpec", "ocic", "pflex", "stepstone_spm"], ", ".join(_with))
+check("where available: fund capacity = binding annual cap * fund net assets, plan demand = allocation share * plan net "
+      "assets * filed rate, share = demand / capacity, and the net assets cell is cited",
+      all(abs(fc["annual_capacity_usd"] - m["scenario"]["annual_wrapper_capacity_pct"] / 100 * fc["fund_net_assets_usd"]) <= 1
+          and abs(fc["plan_annual_demand_usd"] - m["plan_inputs"]["net_assets"] * m["scenario"]["allocation_pct_of_plan"] / 100
+                  * m["scenario"]["filed_outflow_proxy_pct"] / 100) <= 1
+          and abs(fc["plan_share_of_fund_capacity_pct"] - fc["plan_annual_demand_usd"] / fc["annual_capacity_usd"] * 100) < 0.011
+          and fc["net_assets_cell"] in m["citations"]
+          and any(r.startswith("Fund capacity in dollars: ") and f"{fc['plan_share_of_fund_capacity_pct']:.2f}% of that capacity" in r
+                  and "shared by every holder" in r for r in m["scenario_reasons"])
+          for m in matches.values() for fc in [m["scenario"]["fund_capacity"]] if fc["available"]))
+_hl_t = matches[("plan_tech_media", "hl_paf")]
+_hl_t10 = run_match("hl_paf", "plan_tech_media", {"allocation_pct_of_plan": 10.0})
+check("hl_paf: doubling the allocation doubles the plan's dollar demand and its share of the fund's capacity, and moves "
+      "no percent-of-position figure and no verdict",
+      abs(_hl_t10["scenario"]["fund_capacity"]["plan_share_of_fund_capacity_pct"]
+          - 2 * _hl_t["scenario"]["fund_capacity"]["plan_share_of_fund_capacity_pct"]) < 0.02
+      and _hl_t10["scenario"]["fund_capacity"]["plan_annual_demand_usd"] > 1.99 * _hl_t["scenario"]["fund_capacity"]["plan_annual_demand_usd"]
+      and (_hl_t10["scenario"]["filed_outflow_proxy_pct"], _hl_t10["scenario"]["slider_assumption_pct"],
+           _hl_t10["stressed_scenario"]["demand_pct_of_position"], _hl_t10["scenario_verdict"])
+      == (_hl_t["scenario"]["filed_outflow_proxy_pct"], _hl_t["scenario"]["slider_assumption_pct"],
+          _hl_t["stressed_scenario"]["demand_pct_of_position"], _hl_t["scenario_verdict"]))
+check("where the fund's dollar capacity is not computable, the match carries one reason sentence that names the "
+      "missing allocation slider, prints no dollar share and no dollar line",
+      all((fc["reason"] and "allocation slider is not shown" in fc["reason"]
+           and not any(r.startswith("Fund capacity in dollars") for r in m["scenario_reasons"])
+           and "plan_share_of_fund_capacity_pct" not in fc)
+          for m in matches.values() for fc in [m["scenario"]["fund_capacity"]] if not fc["available"]))
+check("the reason for a missing slider names the cause (net assets not typed, exchange-listed, or a 0% or unknown cap)",
+      all(("net assets are not typed" in fc["reason"] or "exchange-listed" in fc["reason"]
+           or "0% while repurchases are suspended" in fc["reason"] or "not computable (3.1)" in fc["reason"])
+          for m in matches.values() for fc in [m["scenario"]["fund_capacity"]] if not fc["available"]))
+
+# ---- R2-P1-12: gate_history is typed by one rule and every judgment quotes its cell
+GATE_BY_RULE = {"bcred": True, "breit": True, "sreit": True,
+                "pflex": False, "jll_ipt": False, "cion_ares": False, "ssss": False, "dxyz": False,
+                "hl_paf": None, "cliffwater_cclfx": None, "ocic": None, "stepstone_spm": None,
+                "ares_pmf": None, "kkr_kpec": None, "arkvx": None, "amg_pantheon": None}
+check("gate_history by the rule: True where a filing states proration, False where it states full fills or no right "
+      "to gate, null where tendered-versus-accepted amounts are not printed (all 16)",
+      all(load_facts(k)["gate_history"]["value"] is GATE_BY_RULE[k] for k in PRODUCTS))
+check("every gate_history fact carries an evidence phrase found verbatim in its cited cell (case-insensitive, "
+      "whitespace-normalized), null facts included",
+      all(_norm_words(load_facts(k)["gate_history"].get("evidence_phrase"))
+          and _norm_words(load_facts(k)["gate_history"]["evidence_phrase"])
+          in _norm_words(load_product(k)["cells"][load_facts(k)["gate_history"]["source_cell"]].get("value"))
+          for k in PRODUCTS))
+check("every typed dealing cadence, cap period, program status and big4 flag carries an evidence phrase found in its cell",
+      all(_norm_words(f.get("evidence_phrase"))
+          and _norm_words(f["evidence_phrase"]) in _norm_words(load_product(k)["cells"][f["source_cell"]].get("value"))
+          for k in PRODUCTS for n, f in load_facts(k).items()
+          if n in ("dealing_cadence", "cap_period", "repurchase_program_status", "big4") and f.get("value") is not None))
+check("a null gate_history yields the partial structural verdict, and bcred's printed Q2-2026 proration yields conditional-weak",
+      all(matches[("plan_tech_media", k)]["verdict"] == "partial" for k in ("ares_pmf", "kkr_kpec", "arkvx", "amg_pantheon")
+          if matches[("plan_tech_media", k)]["wrapper_facts"]["program_status"] != "suspended")
+      and matches[("plan_tech_media", "bcred")]["verdict"] == "conditional-weak")
+# the validator refuses a phrase that is not in the cell: a scratch copy of the
+# record with one phrase corrupted must fail validate_facts on that fact
+import os  # noqa: E402
+import shutil  # noqa: E402
+import subprocess  # noqa: E402
+import tempfile  # noqa: E402
+_tmp = Path(tempfile.mkdtemp(prefix="tark_phrase_"))
+for _sub in ("products", "facts", "plans"):
+    shutil.copytree(DATA / _sub, _tmp / _sub)
+for _f in DATA.glob("*.json"):
+    shutil.copy(_f, _tmp / _f.name)
+for _f in DATA.glob("*.csv"):
+    shutil.copy(_f, _tmp / _f.name)
+_fp = _tmp / "facts" / "breit.json"
+_doc = json.loads(_fp.read_text())
+_doc["facts"]["gate_history"]["evidence_phrase"] = "words the cell does not contain"
+_fp.write_text(json.dumps(_doc))
+_r = subprocess.run([sys.executable, "-c",
+                     "from tark_data import validate_facts; import json; print(json.dumps(validate_facts()))"],
+                    env={**os.environ, "TARK_DATA_DIR": str(_tmp)}, capture_output=True, text=True,
+                    cwd=str(Path(__file__).resolve().parent))
+_errs = json.loads(_r.stdout.strip().splitlines()[-1]) if _r.returncode == 0 and _r.stdout.strip() else [f"validator crashed: {_r.stderr[-300:]}"]
+check("validate_facts fails when an evidence phrase is absent from the cell (breit gate_history corrupted in a scratch copy)",
+      any("breit:gate_history" in e and "evidence_phrase" in e for e in _errs), "; ".join(_errs[:3]))
+shutil.rmtree(_tmp, ignore_errors=True)
 
 print(f"\n{len(FAILS)} failure(s)." if FAILS else "\nAll liquidity tests pass.")
 sys.exit(1 if FAILS else 0)

@@ -86,7 +86,7 @@ def scaffold(form: dict) -> dict:
     if not re.fullmatch(r"plan_[a-z0-9_]{2,40}", key):
         refuse(f"plan_key {key!r} must match plan_[a-z0-9_]")
     fin = {k: float(form[k]) for k in ("net_assets_eoy",) }
-    for k in ("net_assets_boy", "tot_admin_expenses"):
+    for k in ("net_assets_boy", "tot_admin_expenses", "tot_expenses"):
         if form.get(k) not in (None, ""):
             fin[k] = float(form[k])
     part = {k: float(form[k]) for k in ("with_account_balances", "active_eoy", "separated_deferred_vested")}
@@ -102,16 +102,44 @@ def scaffold(form: dict) -> dict:
         return {"value": v, "source": str(form.get(field + "_source") or source)}
 
     ref = load_plan("plan_tech_media")
+    plan_year = str(form.get("plan_year") or "")
+    source = {"publisher": str(form.get("publisher") or "advisor intake (Form 5500 and Schedule H of the plan)"),
+              "pulled": str(form.get("pulled") or ""),
+              "note": "entered through src/plan_intake.py, figures as the advisor supplied them"}
+    # the filed outflow proxy (R2-P1-10) is the scenario layer's base demand:
+    # computed here only from the three totals the advisor supplied, else
+    # null with the reason, never a default
+    totals = ("tot_expenses", "tot_admin_expenses", "net_assets_boy")
+    if all(k in fin for k in totals) and fin["net_assets_boy"]:
+        proxy = {
+            "value": round((fin["tot_expenses"] - fin["tot_admin_expenses"]) / fin["net_assets_boy"] * 100, 2),
+            "unit": "percent of beginning-of-year net assets, per plan year",
+            "formula": "(total expenses minus total administrative expenses) / net assets at the "
+                       "beginning of the plan year * 100",
+            "inputs": {"tot_expenses": {"value": fin["tot_expenses"], "meaning": "total expenses, Schedule H"},
+                       "tot_admin_expenses": {"value": fin["tot_admin_expenses"],
+                                              "meaning": "total administrative expenses, Schedule H"},
+                       "net_assets_boy": {"value": fin["net_assets_boy"],
+                                          "meaning": "net assets at the beginning of the plan year, Schedule H"}},
+            "plan_year": plan_year,
+            "source": dict(source),
+            "what": "a proxy for the plan's filed outflow rate while Schedule H line 2e is not in the record, "
+                    "total expenses less administrative expenses over beginning net assets",
+        }
+    else:
+        proxy = {"value": None,
+                 "reason": "not computable at intake: total expenses, total administrative expenses and "
+                           "beginning net assets are all needed, fill them from Schedule H",
+                 "formula": "(total expenses minus total administrative expenses) / net assets at the "
+                            "beginning of the plan year * 100"}
     return {
         "plan_key": key,
         "display_label": label,
         "anonymization_label": label,
         "archetype": str(form.get("archetype") or ""),
         "anonymization_rule": ANON_RULE,
-        "plan_year": str(form.get("plan_year") or ""),
-        "source": {"publisher": str(form.get("publisher") or "advisor intake (Form 5500 and Schedule H of the plan)"),
-                   "pulled": str(form.get("pulled") or ""),
-                   "note": "entered through src/plan_intake.py, figures as the advisor supplied them"},
+        "plan_year": plan_year,
+        "source": source,
         "plan_characteristics": {"pension_benefit_codes": codes,
                                  "codes_decoded": str(form.get("codes_decoded") or codes),
                                  "note": str(form.get("characteristics_note") or "")},
@@ -121,6 +149,7 @@ def scaffold(form: dict) -> dict:
             "benefit_payments_2e": sh("benefit_payments_2e", "Schedule H line 2e (benefit payments and payments to provide benefits)"),
             "participant_contributions_2a1b": sh("participant_contributions_2a1b", "Schedule H line 2a(1)(B) (participant contributions)"),
             "qdia_indicator": sh("qdia_indicator", "plan document or 404a-5 participant fee disclosure"),
+            "filed_outflow_proxy": proxy,
         },
         "derived": derive(fin, part),
         "dictionary_cells": ref.get("dictionary_cells", {}),

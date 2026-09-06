@@ -1,8 +1,8 @@
 {
   "what": "offline accession resolution over every evidence row that names a filing",
-  "references": 729,
+  "references": 727,
   "counts": {
-    "exact": 692,
+    "exact": 690,
     "form_only": 28,
     "set": 5,
     "range": 2,

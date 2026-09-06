@@ -6,7 +6,7 @@ Reconcile gate: one number, every surface
 For every product, the figures a committee reads must agree wherever they
 appear: the typed facts (screener and compare read them), the cell headline
 the Evaluation and Fee views print, the benchmark selection artifact and
-the card that renders it, the engine-owned cells 1.8 and 3.9, the
+the card that renders it, the engine-owned cells 1.8, 1.12 and 3.9, the
 liquidity match files, and the memo for the reference plan. Checked:
 expense ratio, management fee rate and base, KS-PME and Direct Alpha of the
 primary comparison, and the structural liquidity verdict. Reads the record,
@@ -87,23 +87,34 @@ def main() -> int:
                 bad["mgmt"].append(f"{k}: {cid} headline {disp!r} vs facts {mf} on {mb} or memo")
         # ---- every computed comparison, named for its comparator (rule 12):
         # KS-PME and Direct Alpha against a public market series, a relative
-        # wealth ratio against the peer composite. Artifact, bundle card, cell
-        # 1.8, the typed facts and every memo must agree, and no composite
-        # sentence may carry a PME name.
+        # wealth ratio against an appraisal-based comparator. Slot K, the
+        # reference comparison and Slot G must agree across the artifact, the
+        # bundle card, cells 1.8 and 1.12, the typed facts and every memo, and
+        # no sentence about Slot G may carry a PME name (decision 7.1).
         sel = json.loads((DATA / "benchmarks" / f"{k}_selection.json").read_text())
         bsel = B["benchmarks"].get(k) or {}
         c18 = prods[k]["cells"]["1.8"]["value"]
+        c112 = prods[k]["cells"]["1.12"]["value"]
         c55 = prods[k]["cells"]["5.5"]["value"]
         c56 = prods[k]["cells"]["5.6"]["value"]
-        for slot in ("primary", "secondary"):
-            s = sel.get(slot) or {}
+        sk = sel["slot_k"]
+        slots = []
+        if sk.get("selected"):
+            slots.append(("slot_k", sk["selected"], (bsel.get("slot_k") or {}).get("selected") or {}))
+        if sel.get("reference_comparison"):
+            slots.append(("reference", sel["reference_comparison"], bsel.get("reference_comparison") or {}))
+        pme_fact = (fx.get("pme_public_proxy") or {}).get("value")
+        pme_expected = None
+        for slot, s, bs in slots:
             comp = s.get("comparison") or {}
             if not comp:
                 continue
-            bcomp = ((bsel.get(slot) or {}).get("comparison") or {})
+            bcomp = bs.get("comparison") or {}
             cand = re.escape(s["candidate"])
             if comp["kind"] == "series":
                 ks, da = comp["ks_pme"], comp["direct_alpha_pct"]
+                if pme_expected is None:
+                    pme_expected = ks
                 if not (bcomp.get("ks_pme") == ks and bcomp.get("direct_alpha_pct") == da
                         and bcomp.get("statistic", "").startswith("KS-PME")):
                     bad["pme"].append(f"{k} {slot}: bundle card {bcomp.get('ks_pme')} vs artifact {ks}")
@@ -116,30 +127,60 @@ def main() -> int:
                 if comp["fund_return_source"].lower() not in c18.lower() \
                         or not all(comp["fund_return_source"].lower() in mt for mt in memos.values()):
                     bad["pme"].append(f"{k} {slot}: fund return source not named in cell 1.8 or a memo")
-                if (fx.get("pme_public_proxy") or {}).get("value") != ks and slot == "primary":
-                    bad["pme"].append(f"{k}: facts pme_public_proxy {(fx.get('pme_public_proxy') or {}).get('value')} vs artifact {ks}")
+                if slot == "reference":
+                    if "reference comparison" not in c18.lower() or "not the meaningful benchmark" not in c18.lower():
+                        bad["pme"].append(f"{k}: cell 1.8 does not name the reference comparison as such")
+                    if not all("not the meaningful benchmark" in mt for mt in memos.values()):
+                        bad["pme"].append(f"{k}: a memo does not name the reference comparison as such")
             else:
-                r = comp["relative_wealth_ratio"]
-                if not (bcomp.get("relative_wealth_ratio") == r and "ks_pme" not in bcomp
+                rr = comp["relative_wealth_ratio"]
+                if not (bcomp.get("relative_wealth_ratio") == rr and "ks_pme" not in bcomp
                         and bcomp.get("statistic", "").startswith("relative wealth ratio")):
-                    bad["pme"].append(f"{k} {slot}: bundle card composite {bcomp.get('relative_wealth_ratio')} vs artifact {r}")
+                    bad["pme"].append(f"{k} {slot}: bundle card ratio {bcomp.get('relative_wealth_ratio')} vs artifact {rr}")
                 m = re.search(cand + r": relative wealth ratio ([0-9.]+)", c18)
-                if not (m and float(m.group(1)) == r):
-                    bad["pme"].append(f"{k} {slot}: cell 1.8 lacks relative wealth ratio {r}")
-                if not all(f"relative wealth ratio {r}" in mt and comp["alignment_note"].lower()[:60] in mt
-                           for mt in memos.values()):
-                    bad["pme"].append(f"{k} {slot}: a memo lacks relative wealth ratio {r} or the alignment note")
-                if (fx.get("peer_relative_wealth_ratio") or {}).get("value") != r:
-                    bad["pme"].append(f"{k}: facts peer_relative_wealth_ratio vs artifact {r}")
-                # the naming rule: no sentence about the composite carries a PME name
-                for cid, text in (("1.8", c18), ("5.5", c55), ("5.6", c56)):
-                    for sent in re.split(r"(?<=[.!?])\s+", text):
-                        if s["candidate"] in sent and re.search(r"KS-PME|Direct Alpha|\bPME\b", sent):
-                            bad["pme"].append(f"{k} cell {cid}: a composite sentence carries a PME name")
-                for pl, mt in memos.items():
-                    if re.search(r"ks-pme [0-9.]+ ?(?:vs|against)? ?(?:the )?peer", mt) or \
-                            re.search(r"peer composite[^.]{0,80}ks-pme", mt):
-                        bad["pme"].append(f"{k} {pl}: memo names a PME against the peer composite")
+                if not (m and float(m.group(1)) == rr):
+                    bad["pme"].append(f"{k} {slot}: cell 1.8 lacks relative wealth ratio {rr}")
+                if (fx.get("slot_k_relative_wealth_ratio") or {}).get("value") != rr:
+                    bad["pme"].append(f"{k}: facts slot_k_relative_wealth_ratio vs artifact {rr}")
+        if pme_fact != pme_expected:
+            bad["pme"].append(f"{k}: facts pme_public_proxy {pme_fact} vs artifact {pme_expected}")
+        # ---- Slot G: the peer comparison, never a PME, agrees everywhere
+        g = ((sel.get("slot_g") or {}).get("composite") or {})
+        bg = (((bsel.get("slot_g") or {}).get("composite")) or {})
+        peer_fact = (fx.get("peer_relative_wealth_ratio") or {}).get("value")
+        if g.get("status") == "computed":
+            rr = g["relative_wealth_ratio"]
+            if not (bg.get("relative_wealth_ratio") == rr and "ks_pme" not in bg
+                    and bg.get("statistic", "").startswith("relative wealth ratio")):
+                bad["pme"].append(f"{k} slot_g: bundle {bg.get('relative_wealth_ratio')} vs artifact {rr}")
+            if f"relative wealth ratio {rr}" not in c112 or g["alignment_note"][:60] not in c112:
+                bad["pme"].append(f"{k}: cell 1.12 lacks relative wealth ratio {rr} or the alignment note")
+            if not all(f"relative wealth ratio {rr}" in mt and g["alignment_note"].lower()[:60] in mt
+                       for mt in memos.values()):
+                bad["pme"].append(f"{k} slot_g: a memo lacks relative wealth ratio {rr} or the alignment note")
+            if peer_fact != rr:
+                bad["pme"].append(f"{k}: facts peer_relative_wealth_ratio {peer_fact} vs artifact {rr}")
+        else:
+            if peer_fact is not None:
+                bad["pme"].append(f"{k}: facts peer_relative_wealth_ratio {peer_fact} but the composite is refused")
+            if g and ("REFUSED" not in c112 or g["reason"][:40] not in c112):
+                bad["pme"].append(f"{k}: cell 1.12 does not carry the refusal reason")
+            if g and not all("composite refused" in mt for mt in memos.values()):
+                bad["pme"].append(f"{k}: a memo lacks the peer composite refusal")
+        # the naming rule (rule 12): no sentence about the peer composite or a
+        # published appraisal index carries a PME name, in any cell or memo
+        peer_words = ("peer composite", "peer comparison", "paragraphs (g) and (h)")
+        for cid, text in (("1.8", c18), ("1.12", c112), ("5.5", c55), ("5.6", c56)):
+            for sent in re.split(r"(?<=[.!?])\s+", text):
+                low = sent.lower()
+                if any(w in low for w in peer_words) and re.search(r"KS-PME|Direct Alpha|\bPME\b", sent) \
+                        and "never a pme" not in low and "not a public market equivalent" not in low \
+                        and "never a public market equivalent" not in low:
+                    bad["pme"].append(f"{k} cell {cid}: a peer-comparison sentence carries a PME name")
+        for pl, mt in memos.items():
+            if re.search(r"ks-pme [0-9.]+ ?(?:vs|against)? ?(?:the )?peer", mt) or \
+                    re.search(r"peer composite[^.]{0,80}ks-pme", mt):
+                bad["pme"].append(f"{k} {pl}: memo names a PME against the peer composite")
         # ---- structural liquidity verdict: facts, bundle, cell 3.9, four match files, memo
         sv = (fx.get("liquidity_structural_verdict") or {}).get("value")
         if sv:
@@ -179,9 +220,10 @@ def main() -> int:
           "; ".join(bad["expense"][:4]))
     check("management fee rate and base agree across facts, bundle, cell 2.1 headline and memo, all 16",
           not bad["mgmt"], "; ".join(bad["mgmt"][:4]))
-    check("every comparison is named for its comparator (KS-PME vs a public proxy, relative wealth ratio vs the "
-          "peer composite) and agrees across artifact, bundle card, cell 1.8, facts and all memos, with the "
-          "fund return source named", not bad["pme"], "; ".join(bad["pme"][:4]))
+    check("every comparison is named for its comparator (KS-PME vs a public proxy, relative wealth ratio vs an "
+          "appraisal-based comparator) and Slot K, the reference comparison and Slot G agree across artifact, "
+          "bundle card, cells 1.8 and 1.12, facts and all memos, with the fund return source named",
+          not bad["pme"], "; ".join(bad["pme"][:6]))
     check(f"structural liquidity verdict agrees across facts, bundle, cell 3.9 headline, four match files and "
           f"all {n_memos} memos", not bad["verdict"], "; ".join(bad["verdict"][:4]))
     check("ILLUSTRATIVE scenario verdict agrees per plan across facts, match file, bundle, cell 3.9 text and "

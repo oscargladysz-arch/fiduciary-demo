@@ -349,17 +349,6 @@
         "reason": "no date written, the only N-CSR filing held for this product"
       }
     ],
-    "3.7": [
-      {
-        "text": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
-        "form": "N-CSR",
-        "match": "exact",
-        "filing_date": "2025-09-05",
-        "accession": "0001193125-25-196888",
-        "url": "https://www.sec.gov/Archives/edgar/data/1688554/000119312525196888/d96151dncsr.htm",
-        "local_path": "data/raw/pflex/N-CSR_2025-09-05_d96151dncsr.htm"
-      }
-    ],
     "4.1": [
       {
         "text": "N-CSR FY2025 (filed 2025-09-05), CIK 1688554",
@@ -612,7 +601,7 @@
     ]
   },
   "counts": {
-    "exact": 40,
+    "exact": 39,
     "form_only": 4,
     "range": 1,
     "set": 1

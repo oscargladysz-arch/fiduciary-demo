@@ -19,7 +19,6 @@ Run:  python src/tark_cohort.py   -> data/cohorts/<id>.json
 """
 from __future__ import annotations
 
-import csv
 import json
 from statistics import median
 
@@ -151,47 +150,51 @@ def caveat_block(cohort_id: str) -> list[str]:
     return out
 
 
-def _annual_returns(key: str) -> dict[str, float]:
-    """{year: decimal return} from data/series_annual/<key>.csv."""
-    p = DATA / "series_annual" / f"{key}.csv"
-    if not p.exists():
-        return {}
-    out = {}
-    with open(p, newline="") as fh:
-        for r in csv.DictReader(fh):
-            if r.get("total_return_pct"):
-                out[r["fy_end"][:4]] = float(r["total_return_pct"]) / 100
-    return out
-
-
 def composite(cohort_id: str) -> dict:
-    """Equal-weight annual composite — or an explicit refusal where members'
-    pricing bases are heterogeneous (averaging premiums against appraisals
-    would fabricate a series)."""
-    wts = COHORTS[cohort_id]["wrapper_types"]
+    """The cohort's one member table (tark_periods): every period any member
+    reports with each member's return and n, and an equal-weight composite
+    return only where every member reports the period on the same basis.
+    Refused entirely where members' pricing bases are heterogeneous or where
+    members report on different year ends (rule 14). The engine's Slot G
+    reads the same member table, leave-one-out."""
+    from tark_periods import period_table
+    members = cohort_members(cohort_id)
     values, _ = member_values(cohort_id, "pricing_class")
-    bases = set(values.values())
-    if len(bases) > 1:
+    if len(set(values.values())) > 1:
         return {"refused": True,
                 "reason": "members' pricing bases are heterogeneous (market "
                           "price vs NAV). An equal-weight composite would "
                           "average premium/discount dynamics against "
-                          "appraisal NAVs, so it is refused, not fudged"}
-    members = cohort_members(cohort_id)
-    per = {k: _annual_returns(k) for k in members}
-    years = sorted({y for m in per.values() for y in m})
+                          "appraisal NAVs, so it is refused, not fudged",
+                "rows": [], "member_source": {}}
+    tbl = period_table(members)
+    per = tbl["per_member"]
+    kinds = {m: per[m]["period_kind"] for m in members}
+    months = {m: per[m]["fy_end_month"] for m in members}
     rows = []
-    for y in years:
-        have = {k: per[k][y] for k in members if y in per[k]}
-        if len(have) >= 2:
-            rows.append({"year": y,
-                         "composite_return_pct": round(
-                             sum(have.values()) / len(have) * 100, 2),
-                         "n": len(have), "members": sorted(have)})
-    return {"refused": False, "granularity": "annual (fiscal years as filed, with "
-            "year-end months that differ across members and are disclosed per row)",
-            "weighting": "equal-weight across members reporting that year",
-            "rows": rows}
+    for r in tbl["rows"]:
+        have = [m for m in members if r["returns"][m] is not None]
+        full = len(have) == len(members)
+        rows.append({"period": r["period"], "label": r["label"], "period_kind": r["period_kind"],
+                     "n": r["n"], "members": sorted(have), "returns": r["returns"],
+                     "composite_return_pct": (round(sum(r["returns"][m] for m in have) / len(have), 2)
+                                              if full and r["period_kind"] != "mixed" else None)})
+    aligned = (len(set(kinds.values())) == 1 and "none" not in kinds.values()
+               and len(set(months.values())) == 1)
+    out = {"refused": False, "rows": rows,
+           "member_source": {m: per[m]["source"] for m in members},
+           "member_period_kind": kinds,
+           "granularity": ("calendar years, identical start and end dates for every member"
+                           if aligned and kinds[members[0]] == "calendar_year" else
+                           "fiscal years to the same month for every member"
+                           if aligned else "mixed year ends: no common period, composite returns not formed"),
+           "weighting": "equal-weight, only over periods every member reports on the same basis"}
+    if not aligned:
+        out["composite_refused_reason"] = (
+            "members report on different year ends (" + ", ".join(
+                f"{m}: {'calendar years' if kinds[m] == 'calendar_year' else 'fiscal years to month ' + str(months[m]) if kinds[m] == 'fiscal_year' else 'no period returns'}"
+                for m in members) + "), so no equal-weight composite return is formed. The table shows each member's own periods with n")
+    return out
 
 
 def build_cohorts() -> None:

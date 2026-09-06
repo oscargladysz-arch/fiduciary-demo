@@ -468,17 +468,6 @@
         "reason": "no date written, the only 486BPOS filing held for this product"
       }
     ],
-    "3.7": [
-      {
-        "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27), CIK 1905088",
-        "form": "486BPOS",
-        "match": "exact",
-        "filing_date": "2025-10-27",
-        "accession": "0001213900-25-102648",
-        "url": "https://www.sec.gov/Archives/edgar/data/1905088/000121390025102648/ea0260971-01_486bpos.htm",
-        "local_path": "data/raw/arkvx/486BPOS_2025-10-27_ea0260971-01_486bpos.htm"
-      }
-    ],
     "4.1": [
       {
         "text": "486BPOS prospectus dated 2025-10-28 (filed 2025-10-27",
@@ -716,7 +705,7 @@
     ]
   },
   "counts": {
-    "exact": 46,
+    "exact": 45,
     "set": 1,
     "form_only": 9,
     "range": 1

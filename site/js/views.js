@@ -167,7 +167,7 @@ window.addEventListener("click", (e) => {
   if (b) {
     const { key, cid } = b.dataset;
     const cell = T.products[key].cells[cid];
-    openCite(cell, `${cid} · ${cell.element} (${T.products[key].fund_name})`);
+    openCite(cell, `${cid} · ${T.cell_labels[cid]} (${T.products[key].fund_name})`);
   }
 });
 
@@ -390,7 +390,7 @@ export function viewEvaluation(root, state) {
         const advisorBlock = T.advisor_cells.includes(cid) ? advisorCell(key, cid, state.plan) : "";
         return `<div class="cellrow">
           <div class="head"><span class="cid num">${cid}</span>
-            <span class="el">${gloss(cell.element)}</span>
+            <span class="el">${gloss(T.cell_labels[cid])}</span>
             ${ref.advisor_completed ? `<span class="chip plain" data-advisor-completed>advisor-completed, paragraph ${esc(ref.para)}</span>` : ""}
             ${chip(cell.status || "pending")} ${citeBtn(key, cid)}
             <button class="pinbtn" data-pin-cell data-key="${key}" data-cid="${cid}"
@@ -480,10 +480,103 @@ function wireAdvisorForms(root, key, plan) {
 }
 
 /* ========================================================== BENCHMARKS */
+/* Architecture v3 (decision 7.1): two named comparisons, each named for the
+ * rule paragraph it answers. The statistic is named for its comparator: a
+ * KS-PME only against a public market series, a relative wealth ratio
+ * against an appraisal-based comparator (a published index or the peer
+ * composite). Product keys, candidate ids and lane letters never print. */
+const firstClause = (s) => String(s || "source not named").split(",")[0];
+const numOr = (v) => v == null ? "n/a" : esc(String(v));
+const pctYr = (v) => v == null ? "n/a" : `${esc(String(v))}%<small>/yr</small>`;
+const windowTag = (c) => `<span class="num">(${esc(c.window || "window not stated")}${c.window_note ? `, ${esc(c.window_note)}` : ""})</span>`;
+const lowChip = (c) => c.low_confidence ? ` <span class="chip illustrative">${esc(c.low_confidence)}</span>` : "";
+const nameList = (names) => {
+  const s = (names || []).map(esc).join(", ") || "none on record";
+  return s.endsWith(".") ? s : `${s}.`;
+};
+const slotBadge = (label) => `<div class="cap" style="letter-spacing:.14em;font-weight:600;color:var(--plum-700)">${esc(label)}</div>`;
+
+/* a public market series comparison: KS-PME, Direct Alpha, both legs
+ * annualized, the illustrative monthly schedule where the fund series is daily */
+function seriesStatBlock(comp) {
+  return `<div class="statrow" data-stat-kind="series">
+      ${stat("KS-PME", numOr(comp.ks_pme))}
+      ${stat("Direct Alpha", pctYr(comp.direct_alpha_pct))}
+      ${stat(`Fund, ${firstClause(comp.fund_return_source)}`, pctYr(comp.fund_ann_pct))}
+      ${stat("Public proxy", pctYr(comp.index_ann_pct))}
+      ${comp.ks_pme_monthly_schedule != null
+        ? stat("KS-PME, monthly schedule", `${numOr(comp.ks_pme_monthly_schedule)} <span class="chip illustrative">ILLUSTRATIVE</span>`)
+        : ""}
+    </div>
+    <div class="cap">Two-point comparison: one contribution at the window start, one
+      valuation at the end. ${gloss("Direct Alpha")} is the annualized form of the same
+      two flows.${comp.ks_pme_monthly_schedule != null
+        ? ` The monthly-schedule figure is ${esc(comp.schedule_note || "")}` : ""}
+      Fund return source: ${esc(comp.fund_return_source || "not named")}.
+      ${gloss("KS-PME")} and ${gloss("Direct Alpha")} on
+      appraisal-lagged NAVs are window-sensitive, disclosed, and explorable:
+      <a href="#" data-goto="pme">move the window yourself →</a>
+      ${windowTag(comp)}${lowChip(comp)}</div>`;
+}
+
+/* a held appraisal-based published index: a relative wealth ratio, never a PME */
+function publishedStatBlock(comp) {
+  return `<div class="statrow" data-stat-kind="published">
+      ${stat("Relative wealth ratio vs published index", numOr(comp.relative_wealth_ratio))}
+      ${stat("Excess return", pctYr(comp.excess_return_pct))}
+      ${stat(`Fund, ${firstClause(comp.fund_return_source)}`, pctYr(comp.fund_ann_pct))}
+      ${stat("Published index", pctYr(comp.index_ann_pct))}
+    </div>
+    <div class="cap">${comp.not_pme_note ? `${esc(comp.not_pme_note)} ` : ""}The ${gloss("relative wealth ratio")}
+      is the fund's growth divided by the index's over identical periods, on two-point flows.
+      Fund return source: ${esc(comp.fund_return_source || "not named")}.
+      ${comp.alignment_note ? `<span data-alignment-note>Alignment: ${esc(comp.alignment_note)}.</span> ` : ""}
+      ${windowTag(comp)}${lowChip(comp)}</div>`;
+}
+
+/* Slot G, the peer comparison: the composite ratio or its refusal, the
+ * side-by-side table with n per period, then the two record notes. Shared
+ * by the Benchmark Selection card and the Analysis Lab's reading card. */
+export function peerComparisonBody(g) {
+  const comp = g.composite || {};
+  const peers = g.member_names || [];
+  const table = g.table || [];
+  // the bundle ships the column names once and each row's values in that
+  // order (the record keeps the keyed form, both are read here)
+  const cols = g.columns || (table.length ? Object.keys(table[0].returns || {}) : []);
+  const valueOf = (r, n) => r.values ? r.values[cols.indexOf(n)] : (r.returns || {})[n];
+  const fundCol = cols.find((n) => !peers.includes(n));
+  const order = [...(fundCol ? [fundCol] : []), ...peers];
+  const pct = (v) => v == null ? "n/a" : `${esc(String(v))}%`;
+  const computed = comp.status === "computed";
+  return `${computed ? `<div class="statrow" data-stat-kind="composite">
+      ${stat("Relative wealth ratio vs peer composite", numOr(comp.relative_wealth_ratio))}
+      ${stat("Excess return vs peer composite", pctYr(comp.excess_return_pct))}
+      ${stat(`Fund, ${firstClause(comp.fund_return_source)}`, pctYr(comp.fund_ann_pct))}
+      ${stat("Peer composite", pctYr(comp.index_ann_pct))}
+    </div>
+    <div class="cap">${comp.not_pme_note ? `${esc(comp.not_pme_note)} ` : ""}Never a benchmark and never a PME.
+      The ${gloss("relative wealth ratio")} is the fund's growth divided by the composite's over
+      the same periods, on two-point flows. Fund return source: ${esc(comp.fund_return_source || "not named")}.
+      <span class="num">(${esc(comp.window || "window not stated")}, n=${numOr(comp.n)}${comp.window_note ? `, ${esc(comp.window_note)}` : ""})</span>${lowChip(comp)}
+      <span data-alignment-note>Alignment: ${esc(comp.alignment_note || "not recorded")}.</span></div>`
+    : `<div class="cap" data-composite-refused>Composite refused: ${esc(comp.reason || "no reason recorded")}.</div>`}
+    <div class="tablewrap" style="margin-top:8px"><table class="grid" data-peer-table>
+      <thead><tr><th>Period</th><th>n</th>${order.map((n) => `<th>${esc(n)}</th>`).join("")}</tr></thead>
+      <tbody>${table.length ? table.map((r) => `<tr><td>${esc(r.label || r.period || "period not labeled")}</td>
+          <td class="num">${numOr(r.n)}</td>
+          ${order.map((n) => `<td class="num">${pct(valueOf(r, n))}</td>`).join("")}</tr>`).join("")
+        : `<tr><td colspan="${order.length + 2}" class="cap">No period on record.</td></tr>`}</tbody>
+    </table></div>
+    ${g.survivorship_note ? `<div class="cap" style="margin-top:6px">${esc(g.survivorship_note)}</div>` : ""}
+    ${g.heterogeneity_note ? `<div class="cap">${esc(g.heterogeneity_note)}</div>` : ""}`;
+}
+
 export function viewBenchmarks(root, state, setState) {
   const key = state.product;
   const p = T.products[key];
   const sel = T.benchmarks[key];
+  const SLOT = T.slot_labels || {};
   if (!sel) {
     root.innerHTML = `<div class="viewhead"><h1>Benchmark Selection</h1>
       <div class="sub">${esc(p.fund_name)}</div></div>
@@ -491,90 +584,128 @@ export function viewBenchmarks(root, state, setState) {
       No engine profile exists for this product yet.</div>`;
     return;
   }
-  const slotCard = (slot, badge) => {
-    const s = sel[slot];
-    if (!s) return "";
-    const comp = s.comparison;
-    return `<div class="card">
-      <div class="cap" style="letter-spacing:.14em;font-weight:600;color:var(--plum-700)">${badge}</div>
-      <h3>${esc(s.candidate)}</h3>
-      <div class="num" style="font-size:15px;margin-top:2px">${s.score}/${s.max}</div>
-      <div class="scorebar"><div class="fill" style="width:${s.score / s.max * 100}%"></div></div>
-      ${comp && comp.kind === "composite" ? `<div class="statrow" data-stat-kind="composite">
-        ${stat("Relative wealth ratio vs peer composite", comp.relative_wealth_ratio)}
-        ${stat("Excess return vs peer composite", `${comp.excess_return_pct}%<small>/yr</small>`)}
-        ${stat("Fund, filed fiscal-year returns", `${comp.fund_ann_pct}%<small>/yr</small>`)}
-        ${stat("Peer composite", `${comp.index_ann_pct}%<small>/yr</small>`)}
-      </div>
-      <div class="cap">${esc(comp.not_pme_note)} The ${gloss("relative wealth ratio")} is the fund's
-        growth divided by the composite's over the same fiscal years, on two-point flows (one
-        contribution at the window start, one valuation at the end). Fund return source:
-        ${esc(comp.fund_return_source)}.
-        <span class="num">(${esc(comp.window)}${comp.window_note ? `, ${esc(comp.window_note)}` : ""})</span>
-        ${comp.low_confidence ? ` <span class="chip illustrative">${esc(comp.low_confidence)}</span>` : ""}
-        <span data-alignment-note>Alignment: ${esc(comp.alignment_note)}.</span></div>`
-      : comp ? `<div class="statrow" data-stat-kind="series">
-        ${stat("KS-PME", comp.ks_pme)}
-        ${stat("Direct Alpha", `${comp.direct_alpha_pct}%<small>/yr</small>`)}
-        ${stat(`Fund, ${(comp.fund_return_source || "source not named").split(",")[0]}`, `${comp.fund_ann_pct}%<small>/yr</small>`)}
-        ${stat("Public proxy", `${comp.index_ann_pct}%<small>/yr</small>`)}
-        ${comp.ks_pme_monthly_schedule != null
-          ? stat("KS-PME, monthly schedule", `${comp.ks_pme_monthly_schedule} <span class="chip illustrative">ILLUSTRATIVE</span>`)
-          : ""}
-      </div>
-      <div class="cap">Two-point comparison: one contribution at the window start, one
-        valuation at the end. ${gloss("Direct Alpha")} is the annualized form of the same
-        two flows.${comp.ks_pme_monthly_schedule != null
-          ? ` The monthly-schedule figure is ${esc(comp.schedule_note)}` : ""}
-        Fund return source: ${esc(comp.fund_return_source)}.
-        ${gloss("KS-PME")} and ${gloss("Direct Alpha")} on
-        appraisal-lagged NAVs are window-sensitive, disclosed, and explorable:
-        <a href="#" data-goto="pme">move the window yourself →</a>
-        <span class="num">(${esc(comp.window)}${comp.window_note ? `, ${esc(comp.window_note)}` : ""})</span>
-        ${comp.low_confidence ? ` <span class="chip illustrative">${esc(comp.low_confidence)}</span>` : ""}</div>`
-      : s.comparison_note ? `<div class="cap">Comparison not computable on held data: ${esc(s.comparison_note)}.${
-          s.comparison_note.includes("proxy series")
-            ? " A proxy series covering the fund's window would make it computable."
-            : " The candidate is scored on its own descriptors. A comparison needs a fund return series the filings do not print."}</div>` : ""}
+  const sk = sel.slot_k || {};
+  const picked = sk.selected || null;
+  const ref = sel.reference_comparison || null;
+  const kind = (picked && picked.comparison && picked.comparison.kind) || null;
+  const rejected = sel.rejected || [];
+  // a candidate id never prints: the ledger's own name for it, else the short name
+  const nameOf = (id) => {
+    const hit = rejected.find((r) => r.id === id);
+    return hit ? hit.candidate : (T.candidate_short[id] || "another candidate");
+  };
+
+  // the highest-ranked held public market series, shown only when Slot K
+  // has no number of its own, and named for what it is
+  const refBlock = ref ? `<div data-reference="true" style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)">
+      <div class="cap" style="font-weight:600;color:var(--plum-800)">Reference comparison, not the meaningful benchmark</div>
+      <div style="margin:4px 0 2px"><b>${esc(ref.candidate)}</b> <span class="num">${numOr(ref.score)}/${numOr(ref.max)}</span></div>
+      ${ref.comparison && ref.comparison.kind === "series" ? seriesStatBlock(ref.comparison)
+        : `<div class="cap">No comparison computed on held data.</div>`}
+      <div class="cap">${esc(ref.note || "reference comparison on the highest-ranked held public market series")}.</div>
+    </div>` : "";
+
+  const slotKCard = () => {
+    const label = sk.label || SLOT.slot_k || "Meaningful benchmark";
+    if (!picked) {
+      const escal = sk.escalation || "No candidate selected and no escalation recorded";
+      const head = escal.split(".")[0];
+      const rest = escal.split(".").slice(1).join(".").trim();
+      return `<div class="card" data-slot="k">${slotBadge(label)}
+        <h3 style="color:var(--alarm)">${esc(head)}.</h3>
+        ${rest ? `<div class="cap">${esc(rest)}</div>` : ""}
+        ${refBlock}</div>`;
+    }
+    const comp = picked.comparison || null;
+    const body = kind === "series" ? seriesStatBlock(comp)
+      : kind === "published_index" ? publishedStatBlock(comp)
+      : `<div class="cap">No comparison computed on held data: ${esc(picked.comparison_note
+          || "the candidate is cited and its series is not in the record")}.</div>${refBlock}`;
+    const ties = (sk.ties || []).length
+      ? `<div class="cap" data-ties style="margin-top:8px">Tied on score with
+          ${sk.ties.map((id) => `<b>${esc(nameOf(id))}</b>`).join(", ")}: ordered by strategy_match,
+          then risk_liquidity_match, then data held, then alphabetical.</div>` : "";
+    return `<div class="card" data-slot="k">${slotBadge(label)}
+      <h3>${esc(picked.candidate)}</h3>
+      <div class="num" style="font-size:15px;margin-top:2px">${numOr(picked.score)}/${numOr(picked.max)}</div>
+      <div class="scorebar"><div class="fill" style="width:${(picked.score / (picked.max || 1)) * 100}%"></div></div>
+      ${body}${ties}
       <details style="margin-top:10px"><summary class="cap" style="cursor:pointer">Scoring rationale</summary>
         <ul style="margin:8px 0 0 18px; font-size:12.5px">
-          ${s.reasons.map((r) => `<li>${esc(r)}</li>`).join("")}</ul></details>
+          ${(picked.reasons || []).map((r) => `<li>${esc(r)}</li>`).join("")}</ul></details>
     </div>`;
   };
 
-  const rejRows = sel.rejected.map((r, i) => `<tr>
+  const slotGCard = () => {
+    const g = sel.slot_g || null;
+    const label = (g && g.label) || SLOT.slot_g || "Peer comparison";
+    if (!g) {
+      return `<div class="card" data-slot="g">${slotBadge(label)}
+        <div class="cap">No peer comparison on record for this product.</div></div>`;
+    }
+    return `<div class="card" data-slot="g">${slotBadge(label)}
+      <h3>${esc(g.cohort_label || "peer cohort")}</h3>
+      <div class="cap" style="margin:2px 0 6px">Peers: ${nameList(g.member_names)}</div>
+      ${peerComparisonBody(g)}
+    </div>`;
+  };
+
+  // the declared record (cell 5.1): every entry with its status, the
+  // comparison where one was computed, and the reason when the fund
+  // declares no benchmark of its own. The declaration earns no points.
+  const declared = sel.declared || [];
+  // the reason is recorded whenever the fund declares no benchmark of its
+  // own, SEC-required comparators listed or not: it prints whenever present
+  const declaredNone = !!sel.declared_none_reason;
+  const cap1 = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+  const declLines = declared.map((d) => {
+    const c = d.comparison;
+    const cmp = c && c.kind === "series"
+      ? ` Fund vs ${esc(d.name || "the declared index")}: KS-PME ${numOr(c.ks_pme)}, Direct Alpha ${
+          c.direct_alpha_pct == null ? "n/a" : `${esc(String(c.direct_alpha_pct))}%/yr`} over ${
+          esc(c.window || "window not stated")} (${esc(c.fund_return_source || "source not named")}).`
+      : "";
+    return `<b>${esc(cap1(d.type_label || "declared"))}</b>: ${esc(d.name || "unnamed")}, ${esc(d.status || "status not recorded")}.${cmp}`;
+  });
+  const declStrip = `<div class="cap" style="margin:6px 0 4px" data-declared>${
+      declaredNone ? `The fund declares no benchmark (${esc(sel.declared_none_reason)}). `
+        : !declLines.length ? "The fund declares no benchmark (no reason recorded). " : ""}${
+      declLines.length ? `${declLines.join(" ")} ` : ""}The declaration itself earns no points.</div>
+    <div class="cap" style="margin:0 0 10px" data-basis>Return basis for every comparison: ${esc((sel.basis || {}).label || "not stated")}.</div>`;
+
+  const rejRows = rejected.map((r, i) => {
+    const tied = String(r.rejection || "").startsWith("tied");
+    return `<tr${tied ? ' data-tied-row="true"' : ""}>
       <td class="entryno">${String(i + 1).padStart(2, "0")}</td>
-      <td>${esc(r.candidate)}</td><td>${esc(T.lane_labels[r.lane] || r.lane)}</td>
-      <td class="num">${r.score}/${r.max}</td>
-      <td>${esc(r.rejection)}
-        <div class="cap" style="margin-top:5px">${r.reasons.map(esc).join(" · ")}</div>
-      </td></tr>`).join("");
+      <td>${esc(r.candidate)}</td><td>${esc(T.lane_labels[r.lane] || "lane not labeled")}</td>
+      <td class="num">${numOr(r.score)}/${numOr(r.max)}</td>
+      <td>${tied ? '<span class="chip plain" data-tied-chip>TIED</span> ' : ""}${esc(r.rejection || "no reason logged")}
+        <div class="cap" style="margin-top:5px">${(r.reasons || []).map(esc).join(" · ")}</div>
+      </td></tr>`;
+  }).join("");
 
   root.innerHTML = `
     <div class="viewhead"><h1>Benchmark Selection</h1>
-      <div class="sub">${esc(p.fund_name)} · ${esc(T.strategy_labels[sel.strategy] || sel.strategy)} · three lanes
-        (fund-declared, third-party, peer composite), ${esc(T.rubric_label)} (strategy gate below 2),
+      <div class="sub">${esc(p.fund_name)} · ${esc(T.strategy_labels[sel.strategy] || "strategy not labeled")} · two comparisons,
+        each named for the paragraph it answers (${gloss("meaningful benchmark")}, ${gloss("peer comparison")}).
+        ${esc(T.rubric_label)}, strategy gate below 2, affiliated providers ineligible,
         threshold ${T.min_primary_score}/12,
-        max attainable on held data ${sel.max_attainable == null ? "none eligible" : `${sel.max_attainable}/12`},
+        max attainable by an eligible candidate ${sk.max_attainable == null ? "none eligible" : `${sk.max_attainable}/12`},
         and every rejection on the record.</div></div>
-    <div class="cap" style="margin:6px 0 10px">${sel.declared_benchmarks && sel.declared_benchmarks.length
-      ? `Fund declares (cell 5.1): ${sel.declared_benchmarks.map((d) => `<b>${esc(d.name)}</b>, ${esc(d.status)}`).join(" · ")}.
-         The declaration itself earns no points.`
-      : `Fund declares no benchmark (${esc(sel.declared_none_reason || "cell 5.1")}), so the engine constructs one.`}</div>
-    ${sel.escalation ? `<div class="notice">
+    ${declStrip}
+    ${sk.escalation ? `<div class="notice">
         <div class="notice-head">Formal escalation: no benchmark assigned</div>
-        <div class="notice-body"><b>${esc(sel.escalation.split(".")[0])}.</b>
-          ${esc(sel.escalation.split(".").slice(1).join(".").trim())}
+        <div class="notice-body"><b>${esc(sk.escalation.split(".")[0])}.</b>
+          ${esc(sk.escalation.split(".").slice(1).join(".").trim())}
           ${key === "dxyz" ? `<div style="margin-top:10px">
             <a class="btn" href="#" data-goto="dxyz">See the premium decomposition →</a></div>` : ""}
         </div></div>` : ""}
-    <div class="cardgrid g2">${slotCard("primary", "PRIMARY")}${slotCard("secondary", "SECONDARY")}${sel.primary && !sel.secondary
-      ? `<div class="card"><div class="cap" style="letter-spacing:.14em;font-weight:600;color:var(--plum-700)">SECONDARY</div>
-         <p class="cap">${esc(sel.secondary_note || "no eligible secondary")}.</p></div>` : ""}</div>
+    <div class="cardgrid g2">${slotKCard()}${slotGCard()}</div>
     <h2 style="margin:22px 0 6px">Rejection ledger</h2>
     <div class="cap" style="margin-bottom:8px">Every candidate not selected, with
       its true reason and full rubric rationale: the other half of a defensible
-      record.</div>
+      record. A row marked TIED shares the selected candidate's score and lost
+      the tie-break, it was not ranked below it.</div>
     <div class="tablewrap"><table class="grid ledger" id="rejtable">
       <thead><tr><th>#</th><th class="sortable" data-col="1">Candidate</th>
         <th class="sortable" data-col="2">Lane</th>
@@ -631,6 +762,9 @@ export function viewPme(root, state, setState) {
   const proxyId = T.proxy_library[state.proxy] ? state.proxy : prof.default_proxy;
   const verdict = T.swap_matrix[key][proxyId];
 
+  // the peer comparison rides with the profile, the selection artifact
+  // carries the same record if the profile copy is ever dropped for size
+  const labG = prof.slot_g || (T.benchmarks[key] || {}).slot_g || null;
   const isAnnual = prof.granularity === "annual";
   const hasFy = !!prof.fy_returns;
   const fundDaily = prof.fund_series ? T.series[prof.fund_series] : null;
@@ -675,6 +809,14 @@ export function viewPme(root, state, setState) {
         <div id="verdictbody"></div>
       </div>
     </div>
+    ${labG ? `<div class="card" data-lab-peer style="margin-top:14px">
+        ${slotBadge(labG.label || (T.slot_labels || {}).slot_g || "Peer comparison")}
+        <h3>${esc(labG.cohort_label || "peer cohort")}</h3>
+        <div class="cap" style="margin:2px 0 6px">Explorable here for reading only: the peer comparison
+          is never a proxy the lab can swap in, never a benchmark and never a PME.
+          Peers: ${nameList(labG.member_names)}</div>
+        ${peerComparisonBody(labG)}
+      </div>` : ""}
     <h2 style="margin:18px 0 6px">Analysis tables <span class="cap">(vs selected proxy, Python-first math, parity-tested)</span></h2>
     <div class="cardgrid g2" id="tables"></div>`;
 
@@ -685,8 +827,11 @@ export function viewPme(root, state, setState) {
 
   // --- engine verdict panel (always beside the user's choice) ---
   const sel = T.benchmarks[key];
+  const skSel = (sel && sel.slot_k && sel.slot_k.selected) || null;
+  const skRef = (sel && sel.reference_comparison) || null;
+  const skHas = !!(skSel && skSel.comparison);
   const vb = root.querySelector("#verdictbody");
-  // every pair is scored by the real rubric v2 scorer at build time: the
+  // every pair is scored by the real rubric v3 scorer at build time: the
   // panel grades the user's choice and says whether it sits on the menu
   vb.innerHTML = `
       <div class="num" style="font-size:22px;font-weight:600;color:var(--plum-900)">
@@ -699,9 +844,11 @@ export function viewPme(root, state, setState) {
           : "This proxy is not on the engine's menu for this product. It is scored on its descriptors alone."}</div>
       <ul style="margin:10px 0 0 18px;font-size:12px">
         ${verdict.reasons.map((r) => `<li>${esc(r)}</li>`).join("")}</ul>
-      <div class="cap" style="margin-top:10px">${sel && sel.primary
-        ? `Engine's actual selection for this product: <b>${esc(sel.primary.candidate)}</b>
-           (${sel.primary.score}/12). Rejection ledger: <a href="#" data-goto-bench>view →</a>`
+      <div class="cap" style="margin-top:10px">${skSel
+        ? `Engine's meaningful benchmark for this product: <b>${esc(skSel.candidate)}</b>
+           (${numOr(skSel.score)}/${numOr(skSel.max)}).${!skHas && skRef
+             ? " The lab opens on the reference comparison, not the meaningful benchmark." : ""}
+           Rejection ledger: <a href="#" data-goto-bench>view →</a>`
         : `Engine outcome for this product: FORMAL ESCALATION, no benchmark assigned.
            <a href="#" data-goto-bench>see the notice →</a>`}</div>`;
   root.querySelectorAll("[data-goto-bench]").forEach((a) => a.addEventListener("click",
@@ -934,13 +1081,24 @@ export function viewLiquidity(root, state) {
   const sc = m.scenario;
   const profile = m.wrapper_facts;
   const stress = m.stressed_scenario;
+  // the filed outflow proxy rides plan_inputs (the plan record's figure)
+  const fo = (m.plan_inputs.filed_outflow_proxy_pct === null || m.plan_inputs.filed_outflow_proxy_pct === undefined)
+    ? null : { rate_pct: m.plan_inputs.filed_outflow_proxy_pct, plan_year: m.plan_inputs.plan_year };
+  const fc0 = sc.fund_capacity || { available: false };
+  // the allocation slider exists only where it moves a dollar figure against
+  // the fund's own dollar capacity (fund net assets typed, cap computable)
+  const hasAlloc = !!fc0.available;
+  const pct1 = (v) => (v === null || v === undefined) ? "not computable" : v.toFixed(1) + "%";
+  const filedHead = fo
+    ? `, filed outflow proxy ${fo.rate_pct.toFixed(1)}% of beginning net assets per year (Schedule H, plan year ${esc(fo.plan_year)})`
+    : ", no filed outflow proxy in the plan record";
 
   root.innerHTML = `
     <div class="viewhead"><h1>Liquidity Match</h1>
       <div class="sub">${esc(p.fund_name)} × ${esc(m.plan_display_label)}. Tail
         ${m.plan_inputs.tail_share_pct}% of accounts
         (${Math.round(m.plan_inputs.separated_with_balances).toLocaleString()}
-        separated), plan direction: ${esc(m.plan_direction)}.</div></div>
+        separated), plan direction: ${esc(m.plan_direction)}${filedHead}.</div></div>
     <div class="banner ${bannerCls}"><h3>Structural verdict: ${esc(m.verdict.toUpperCase())}</h3>
       <div class="cap">From typed facts only (cells 3.1, 3.3, 2.7). The same under every plan.</div></div>
     <ul style="margin:0 0 10px 18px; font-size:13.5px" id="reasons">
@@ -948,19 +1106,23 @@ export function viewLiquidity(root, state) {
     <div class="banner ${cls(m.scenario_verdict)}" id="scenario_banner">
       <h3>Scenario verdict: <span id="o_verdict">${esc((m.scenario_verdict || "not computable").toUpperCase())}</span>
         <span class="chip illustrative">ILLUSTRATIVE</span></h3>
-      <div class="cap">The demand model against the typed capacity, for this plan and these
-        sliders. It moves when either moves. Proration assumption: an oversubscribed offer is
-        filled pro rata and the unfilled remainder waits for the next window.</div></div>
+      <div class="cap">The plan's filed outflow proxy against the typed capacity is the base, the
+        sliders are the stress around it. Misaligned when the filed rate exceeds the annual
+        capacity, conditional-weak when the stressed demand exceeds it, conditional otherwise.
+        It moves with the plan's filing and the sliders. Proration assumption: an oversubscribed
+        offer is filled pro rata and the unfilled remainder waits for the next window.</div></div>
     <ul style="margin:0 0 16px 18px; font-size:13.5px" id="screasons">
       ${m.scenario_reasons.map((r) => `<li style="margin-bottom:6px">${esc(r)}</li>`).join("")}</ul>
     <div class="cardgrid g2">
       <div class="card">
         <h3>Capacity vs demand <span class="chip illustrative">ILLUSTRATIVE</span></h3>
         <div class="cap">Wrapper capacity is a filed fact (cells ${esc(String(profile.source_cell))}).
-          The demand model is an adjustable scenario, never presented as fact.</div>
-        <div class="sliderrow"><label>Plan allocation to product</label>
+          The filed outflow proxy is the plan's own Schedule H figure applied to the position.
+          The sliders are an adjustable stress, never presented as fact.</div>
+        ${hasAlloc ? `<div class="sliderrow"><label>Plan allocation to product</label>
           <input type="range" id="s_alloc" min="1" max="10" step="0.5"
-            value="${sc.allocation_pct_of_plan}"><span class="out" id="o_alloc"></span></div>
+            value="${sc.allocation_pct_of_plan}"><span class="out" id="o_alloc"></span></div>`
+    : `<div class="cap" id="noalloc">No allocation slider for this fund: ${esc(fc0.reason || "the fund's dollar capacity is not computable")}.</div>`}
         <div class="sliderrow"><label>Tail annual turnover</label>
           <input type="range" id="s_tail" min="5" max="50" step="1"
             value="${sc.tail_annual_turnover_pct}"><span class="out" id="o_tail"></span></div>
@@ -969,6 +1131,7 @@ export function viewLiquidity(root, state) {
             value="${sc.active_annual_turnover_pct}"><span class="out" id="o_act"></span></div>
         <div id="capchart" style="margin-top:8px"></div>
         <div class="cap" id="o_reason" style="margin-top:6px"></div>
+        <div class="cap" id="o_fund" style="margin-top:6px"></div>
       </div>
       <div class="card"><h3>Wrapper facts</h3>
         <table class="grid" style="border:0;margin-top:8px">
@@ -982,17 +1145,31 @@ export function viewLiquidity(root, state) {
           <tr><td>Program status</td><td>${profile.program_status ? esc(profile.program_status) + " (3.1)"
             : esc(profile.null_reasons.repurchase_program_status || "not typed")}</td></tr>
           <tr><td>Early repurchase</td><td>${esc(profile.early_fee)}</td></tr>
+          <tr><td>Fund net assets</td><td class="num">${profile.net_assets_usd == null
+            ? `not typed: ${esc(profile.null_reasons.net_assets_usd || "no reason recorded")}`
+            : (profile.net_assets_approx ? "approx. " : "") + money(profile.net_assets_usd) + ` (${esc(String(profile.net_assets_cell))})`}</td></tr>
           ${m.missing_facts.length ? `<tr><td>Missing for a verdict</td><td>${m.missing_facts.map(esc).join(", ")}</td></tr>` : ""}
         </table>
         <h3 style="margin-top:14px">Stress test <span class="chip illustrative">ILLUSTRATIVE</span></h3>
         <div class="cap">${esc(stress.assumptions)}</div>
         <div class="statrow" style="margin:8px 0">
-          ${stat("Stressed demand", `<span class="num">${stress.demand_pct_of_position}%</span><small>/yr of position</small>`)}
+          ${stat("Filed outflow proxy", `<span class="num" id="o_filed">${pct1(sc.filed_outflow_proxy_pct)}</span><small>/yr of position</small>`)}
+          ${stat("Slider assumption", `<span class="num" id="o_slider">${pct1(sc.slider_assumption_pct)}</span><small>/yr of position</small>`)}
+          ${stat("Stressed demand", `<span class="num" id="o_stressed">${pct1(stress.demand_pct_of_position)}</span><small>/yr of position</small>`)}
         </div>
-        <div class="cap"><b>${esc(stress.outcome)}</b></div>
+        <div class="cap" id="o_outcome"><b>${esc(stress.outcome)}</b></div>
         <div class="cap" style="margin-top:8px">Citations: ${m.citations.map(esc).join(" · ")}</div>
       </div>
     </div>`;
+
+  const els = { alloc: root.querySelector("#s_alloc"), tail: root.querySelector("#s_tail"),
+    act: root.querySelector("#s_act") };
+  const curParams = () => ({
+    allocation_pct_of_plan: els.alloc ? +els.alloc.value : sc.allocation_pct_of_plan,
+    tail_annual_turnover_pct: +els.tail.value,
+    active_annual_turnover_pct: +els.act.value,
+  });
+  const live = (prm) => computeScenario(m.plan_inputs, profile, prm, stress.multiples);
 
   // ---- named scenarios (localStorage only; nothing leaves the browser) ----
   const SCN_KEY = "tark_scenarios";
@@ -1004,16 +1181,12 @@ export function viewLiquidity(root, state) {
   function renderScenarios() {
     const scns = loadScn();
     const names = Object.keys(scns).slice(0, 12);
-    const cur = {
-      allocation_pct_of_plan: +root.querySelector("#s_alloc").value,
-      tail_annual_turnover_pct: +root.querySelector("#s_tail").value,
-      active_annual_turnover_pct: +root.querySelector("#s_act").value,
-    };
+    const cur = curParams();
     scnPanel.innerHTML = `<h3>Saved scenarios
         <span class="chip illustrative">ILLUSTRATIVE</span></h3>
       <div class="cap">Named parameter sets live in YOUR browser (localStorage).
         Compare up to three against the current sliders, per the selected
-        plan × product.</div>
+        plan × product. The filed outflow proxy is the plan's, the same in every column.</div>
       <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
         <input id="scnname" placeholder="scenario name" maxlength="24"
           style="border:1px solid var(--line);border-radius:3px;padding:5px 9px;font:500 12px var(--text)">
@@ -1047,69 +1220,92 @@ export function viewLiquidity(root, state) {
     const out = scnPanel.querySelector("#scncompare");
     if (!chosen.length) { out.innerHTML = `<p class="cap">Select saved scenarios to compare (alt-click removes).</p>`; return; }
     const cols = [["current sliders", cur], ...chosen.map((n) => [n, scns[n]])];
+    const outs = cols.map(([, prm]) => live({ ...prm,
+      allocation_pct_of_plan: hasAlloc ? prm.allocation_pct_of_plan : sc.allocation_pct_of_plan }));
+    const paramRows = [...(hasAlloc ? [["Allocation %", "allocation_pct_of_plan"]] : []),
+      ["Tail turnover %", "tail_annual_turnover_pct"], ["Active turnover %", "active_annual_turnover_pct"]];
     out.innerHTML = `<div class="tablewrap"><table class="grid"><thead><tr>
       <th>Parameter</th>${cols.map(([n]) => `<th>${esc(n)}</th>`).join("")}</tr></thead><tbody>
-      ${[["Allocation %", "allocation_pct_of_plan"], ["Tail turnover %", "tail_annual_turnover_pct"],
-         ["Active turnover %", "active_annual_turnover_pct"]].map(([lbl, f]) =>
+      ${paramRows.map(([lbl, f]) =>
         `<tr><td>${lbl}</td>${cols.map(([, prm]) => `<td class="num">${prm[f]}</td>`).join("")}</tr>`).join("")}
-      <tr><td style="font-weight:600">Demand %/yr of position</td>
-        ${cols.map(([, prm]) => {
-          const o = computeScenario(m.plan_inputs, profile, prm);
-          return `<td class="num" style="font-weight:600">${o.demand_pct_of_position.toFixed(1)}%
-            ${o.thin_headroom ? '<span class="chip trap">thin</span>' : ""}</td>`;
-        }).join("")}</tr>
-      <tr><td>Annual demand</td>
-        ${cols.map(([, prm]) => `<td class="num">${money(computeScenario(m.plan_inputs, profile, prm).annual_demand_usd)}</td>`).join("")}</tr>
+      <tr><td>Filed outflow proxy %/yr of position (the plan's, not a slider)</td>
+        ${outs.map((o) => `<td class="num">${pct1(o.filed_outflow_proxy_pct)}</td>`).join("")}</tr>
+      <tr><td style="font-weight:600">Slider assumption %/yr of position</td>
+        ${outs.map((o) => `<td class="num" style="font-weight:600">${o.slider_assumption_pct.toFixed(1)}%
+            ${o.thin_headroom_slider ? '<span class="chip trap">thin</span>' : ""}</td>`).join("")}</tr>
+      <tr><td style="font-weight:600">Stressed demand %/yr of position</td>
+        ${outs.map((o) => `<td class="num" style="font-weight:600">${pct1(o.stressed_pct)}</td>`).join("")}</tr>
+      ${hasAlloc ? `<tr><td>Plan share of the fund's annual dollar capacity</td>
+        ${outs.map((o) => `<td class="num">${o.fund_capacity.available ? o.fund_capacity.plan_share_of_fund_capacity_pct.toFixed(2) + "%" : "not computable"}</td>`).join("")}</tr>` : ""}
     </tbody></table></div>
     <div class="cap" style="margin-top:4px">All columns ILLUSTRATIVE: parameter
       choices, not facts. Wrapper capacity ${profile.exchange ? "is market depth (listed)" :
       (profile.annual_capacity_pct == null ? "not computable" : profile.annual_capacity_pct.toFixed(0) + "%/yr (filed, binding cap)")}.</div>`;
   }
 
-  const els = ["alloc", "tail", "act"].map((s) => root.querySelector("#s_" + s));
+  function outcomeText(out) {
+    const cap = out.annual_wrapper_capacity_pct;
+    if (profile.exchange || cap === null || out.stressed_pct === null) return stress.outcome;
+    const s = out._stressed_exact;
+    if (s > cap) {
+      return `EXCEEDS annual wrapper capacity (${s.toFixed(1)}% vs ${cap.toFixed(0)}%). ` +
+        "Unmet demand rolls into later windows (gating-equivalent outcome)";
+    }
+    return `within wrapper capacity (${s.toFixed(1)}% vs ${cap.toFixed(0)}%) IF offers are not prorated` +
+      (profile.gate_history ? ", but this issuer HAS prorated under stress (3.3)" : "");
+  }
+
   function update() {
-    const params = {
-      allocation_pct_of_plan: +els[0].value,
-      tail_annual_turnover_pct: +els[1].value,
-      active_annual_turnover_pct: +els[2].value,
-    };
-    root.querySelector("#o_alloc").textContent = params.allocation_pct_of_plan.toFixed(1) + "%";
+    const params = curParams();
+    if (els.alloc) root.querySelector("#o_alloc").textContent = params.allocation_pct_of_plan.toFixed(1) + "%";
     root.querySelector("#o_tail").textContent = params.tail_annual_turnover_pct.toFixed(0) + "%";
     root.querySelector("#o_act").textContent = params.active_annual_turnover_pct.toFixed(1) + "%";
-    const out = computeScenario(m.plan_inputs, profile, params);
-    const liveVerdict = scenarioVerdict(out,
-      stressedDemandPct(m.plan_inputs, params, stress.multiples), profile.exchange);
+    const out = live(params);
+    const liveVerdict = scenarioVerdict(out, out._stressed_exact, profile.exchange);
     const ov = root.querySelector("#o_verdict");
     if (ov) {
       ov.textContent = (liveVerdict || "not computable").toUpperCase();
       root.querySelector("#scenario_banner").className = `banner ${cls(liveVerdict)}`;
     }
-    const stressOut = computeScenario(m.plan_inputs, profile, {
-      ...params,
-      tail_annual_turnover_pct: params.tail_annual_turnover_pct * 2,
-      active_annual_turnover_pct: params.active_annual_turnover_pct * 1.5,
-    });
     const cap = out.annual_wrapper_capacity_pct;
     barChart(root.querySelector("#capchart"), {
       items: [
         { label: "Wrapper capacity (filed)", value: cap,
           color: "#593380", note: "daily (exchange-listed)" },
-        { label: "Scenario demand (illustrative)",
-          value: out.demand_pct_of_position, color: "#92600d" },
+        { label: "Filed outflow proxy (Schedule H)",
+          value: out.filed_outflow_proxy_pct, color: "#1f5f8b", note: "not in the plan record" },
+        { label: "Slider assumption (illustrative)",
+          value: out.slider_assumption_pct, color: "#92600d" },
         { label: "Stressed demand (illustrative)",
-          value: stressOut.demand_pct_of_position, color: "#9d2f26" },
+          value: out.stressed_pct, color: "#9d2f26", note: "not computable" },
       ],
       format: (v) => v.toFixed(0) + "%",
-      max: Math.max(cap || 0, stressOut.demand_pct_of_position) * 1.15 || 30,
+      max: Math.max(cap || 0, out.stressed_pct || 0, out.slider_assumption_pct || 0) * 1.15 || 30,
     });
-    const r = scenarioReason(out);
+    root.querySelector("#o_filed").textContent = pct1(out.filed_outflow_proxy_pct);
+    root.querySelector("#o_slider").textContent = pct1(out.slider_assumption_pct);
+    root.querySelector("#o_stressed").textContent = pct1(out.stressed_pct);
+    root.querySelector("#o_outcome").innerHTML = `<b>${esc(outcomeText(out))}</b>`;
+    const dollars = [
+      out.filed_annual_demand_usd === null ? null : `filed outflow proxy ${money(out.filed_annual_demand_usd)}/yr`,
+      `slider assumption ${money(out.slider_annual_demand_usd)}/yr`,
+      out.stressed_annual_demand_usd === null ? null : `stressed ${money(out.stressed_annual_demand_usd)}/yr`,
+    ].filter(Boolean).join(", ");
     root.querySelector("#o_reason").innerHTML =
-      `<span class="num">${money(out.plan_allocation_usd)}</span> position ·
-       <span class="num">${money(out.annual_demand_usd)}</span>/yr demand. ` +
-      esc(r ? r : "Exchange-listed: capacity is market depth, not a fund cap.") +
+      `<span class="num">${money(out.plan_allocation_usd)}</span> position · ${dollars}. ` +
+      esc(profile.exchange ? "Exchange-listed: capacity is market depth, not a fund cap." : scenarioReason(out)) +
       ` <b>[ILLUSTRATIVE]</b>`;
+    const fc = out.fund_capacity;
+    root.querySelector("#o_fund").innerHTML = !fc.available ? "" :
+      `Fund capacity in dollars: <span class="num">${money(fc.annual_capacity_usd)}</span> per year
+       (${cap.toFixed(0)}% of ${profile.net_assets_approx ? "approx. " : ""}${money(profile.net_assets_usd)}
+       net assets, cell ${esc(String(profile.net_assets_cell))}). At a ${params.allocation_pct_of_plan.toFixed(1)}%
+       allocation the plan's demand at the filed rate is <span class="num">${money(fc.plan_annual_demand_usd)}</span>
+       per year, <span class="num">${fc.plan_share_of_fund_capacity_pct.toFixed(2)}%</span> of that capacity,
+       a claim shared with every other holder. The allocation moves these dollar figures and this share,
+       never the percent-of-position ladder.`;
   }
-  els.forEach((e) => e.addEventListener("input", () => { update(); renderScenarios(); }));
+  Object.values(els).filter(Boolean).forEach((e) => e.addEventListener("input", () => { update(); renderScenarios(); }));
   update();
   renderScenarios();
 }

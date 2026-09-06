@@ -19,7 +19,8 @@ import csv
 import json
 from pathlib import Path
 
-from tark_analytics import max_drawdown
+from tark_analytics import (ann_vol, desmooth_geltner, lag1_autocorr, max_drawdown,
+                            month_end_points, period_returns)
 from tark_data import (DATA, load_product, load_series, product_keys,
                        record_as_of)
 
@@ -132,6 +133,53 @@ def stress_windows() -> dict:
     return out
 
 
+def series_diagnostics() -> dict:
+    """Per product with a held daily series: the volatility, smoothing and
+    drawdown figures the owned cells 1.6, 1.7 and 4.8 restate (R2-P1-13).
+    Monthly sampling (last observation of each month) for volatility and the
+    Geltner lag-1 diagnostics, the full daily series for the drawdown with
+    its peak and trough dates. Market-priced products (dxyz, ssss) are
+    measured on the close, labeled as a market price, and carry the daily
+    volatility beside the monthly figure."""
+    out = {}
+    from tark_benchmark import REGISTRY
+    for key, reg in REGISTRY.items():
+        held = reg["held_returns"]
+        if held.get("kind") != "series":
+            continue
+        market = reg["pricing_class"] == "MARKET"
+        ticker = held["series"]
+        s = load_series(ticker, "close" if market else "adj_close")
+        vals = [v for _, v in s]
+        me = month_end_points(s)
+        rets = period_returns([v for _, v in me])
+        rho = lag1_autocorr(rets)
+        ds, _ = desmooth_geltner(rets, rho)
+        peak_i = pi = ti = 0
+        pk, worst = vals[0], 0.0
+        for i, v in enumerate(vals):
+            if v > pk:
+                pk, peak_i = v, i
+            dd = v / pk - 1
+            if dd < worst:
+                worst, pi, ti = dd, peak_i, i
+        out[key] = {
+            "ticker": ticker.upper(),
+            "basis": ("Yahoo daily close, a market price that includes premium and discount dynamics"
+                      if market else "Yahoo adjusted close, approximates NAV total return with distributions reinvested"),
+            "window": f"{s[0][0]} to {s[-1][0]}",
+            "monthly_obs": len(rets),
+            "ann_vol_observed_pct": round(ann_vol(rets, 12) * 100, 2),
+            "ann_vol_daily_pct": round(ann_vol(period_returns(vals), 252) * 100, 1),
+            "lag1_autocorr_rho": round(rho, 3),
+            "ann_vol_desmoothed_pct": round(ann_vol(ds, 12) * 100, 2),
+            "max_drawdown_pct": round(worst * 100, 2),
+            "drawdown_peak": s[pi][0], "drawdown_trough": s[ti][0],
+            "series": f"data/series/{ticker}.csv",
+        }
+    return out
+
+
 def breit_monthly_diagnostics() -> dict | None:
     """Smoothing/vol diagnostics from BREIT's PRINTED monthly NAV path
     (Class I, 10-K Item 5 table). NAV path only - distributions excluded -
@@ -203,6 +251,7 @@ def main() -> None:
         "fee_percentile": fee_percentile(),
         "stress_windows": stress_windows(),
         "breit_monthly_diagnostics": breit_monthly_diagnostics(),
+        "series_diagnostics": series_diagnostics(),
     }
     OUT.write_text(json.dumps(doc, indent=2))
     print(f"wrote {OUT}")

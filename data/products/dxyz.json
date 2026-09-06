@@ -57,12 +57,12 @@
     },
     "1.6": {
       "element": "Volatility & max drawdown",
-      "value": "Ann vol 162.6% (daily); max drawdown -90.3% (peak $99.79 on 2024-04-08 to trough $9.63 on 2024-08-07).",
+      "value": "Computed from the held daily series DXYZ (Yahoo daily close, a market price that includes premium and discount dynamics), 2024-03-26 to 2026-07-17: annualized volatility 204.62% on 28 monthly returns and 162.6% on daily returns, max drawdown -90.35% on the daily series (peak 2024-04-08 to trough 2024-08-07). A market-price series: the drawdown and the volatility include premium and discount swings and are not a measure of the portfolio.",
       "status": "computed",
-      "source": "data/analytics/metrics.json",
-      "section": "dxyz block",
+      "source": "analytics supplement artifact (series diagnostics)",
+      "section": "series diagnostics for this product",
       "quote": "",
-      "extracted_by": "Claude (M2/M3 pipeline)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "1.7": {
@@ -77,10 +77,10 @@
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": "No KS-PME or Direct Alpha computable: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from available data. Required next: public NAV series (quarterly filings) plus a premium/NAV decomposition before any comparator is defensible. The escalation is documented in the selection artifact.",
+      "value": "No KS-PME or Direct Alpha computable for the meaningful-benchmark slot: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE for this pre-IPO and venture fund: its price is premium-driven and decoupled from NAV, so every candidate benchmarks the premium, not the portfolio. Required next: a NAV series from the filings and a premium to NAV decomposition before any comparator is defensible. Declared benchmark NASDAQ Composite Index (cell 5.1): cited, not held, scored 5/12, fund price decoupled from NAV. No comparison: cited, series not in the record: no comparison computed. Return basis for every comparison: Yahoo adjusted close, approximates NAV total return (DXYZ). The peer comparison (paragraphs (g) and (h)) is cell 1.12, never a PME. Window-sensitive: every figure on appraisal-lagged NAVs moves with the window (methodology section 3).",
       "status": "computed",
       "source": "benchmark selection artifact (Destiny Tech100 Inc)",
-      "section": "escalation",
+      "section": "meaningful benchmark, reference and declared comparisons",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
@@ -97,12 +97,12 @@
     },
     "1.10": {
       "element": "Market price & premium/discount",
-      "value": "Full trading-life price series on disk (579 sessions since 2024-03-26 listing): first $9.00, peak $99.79, last $25.97, cumulative +188.6%. Premium/NAV decomposition pending NAV series - the engine escalation.",
+      "value": "Full trading-life price series on record (579 sessions, 2024-03-26 to 2026-07-17, DXYZ daily close): first $9.00, peak $99.79 on 2024-04-08, last $25.97, cumulative +188.6%. Premium or discount to the latest filed NAV ($24.56): +5.7% at the 2026-07-17 close. premium computed vs the most recent FILED quarterly NAV (the live NAV is unobservable between filings). Filed range from the fund's own prospectus table. A market price benchmarks the premium, not the portfolio (cells 4.7 and 5.6).",
       "status": "computed",
-      "source": "data/series/dxyz.csv + data/analytics/metrics.json",
-      "section": "dxyz block",
+      "source": "held daily series and analytics supplement artifact (premium block)",
+      "section": "price history and premium to NAV",
       "quote": "",
-      "extracted_by": "Claude (M2/M3 pipeline)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "1.11": {
@@ -113,6 +113,16 @@
       "section": "424B5 'Management - Portfolio Managers' and 'Our Adviser'; N-CSR 'Directors and Officers' + Note 1 Organization + Performance and Graphical Illustrations",
       "quote": "The Investment Committee is currently comprised of Sohail Prasad. ... The Adviser has no operating history as a registered investment adviser.",
       "extracted_by": "Claude Code (2026-08-09)",
+      "verified_by": ""
+    },
+    "1.12": {
+      "element": "Peer comparison (paragraphs (g) and (h))",
+      "value": "Peer comparison (paragraphs (g) and (h)): pre-IPO and venture cohort, peers Neostellar Capital Corp., ARK Venture Fund, fund return basis Yahoo adjusted close, approximates NAV total return (DXYZ). Composite REFUSED: fewer than 3 peers remain after leaving Destiny Tech100 Inc out (2: Neostellar Capital Corp., ARK Venture Fund). Side by side, every period any member reports, columns in this order: Neostellar Capital Corp., ARK Venture Fund, Destiny Tech100 Inc. n = members reporting. 2017 (n=1): 8.35% / n/a / n/a | 2018 (n=1): -4.22% / n/a / n/a | 2019 (n=1): 31.56% / n/a / n/a | 2020 (n=1): 116.63% / n/a / n/a | 2021 (n=1): 72.61% / n/a / n/a | 2022 (n=1): -70.31% / n/a / n/a | 2023 (n=2): 3.68% / 61.25% / n/a | 2024 (n=2): 49.24% / 6.69% / n/a | 2025 (n=3): 69.91% / 55.68% / -47.96%. The cohort is the roster's 3 surviving, still-filing products. Funds that closed, merged, or stopped filing are not in it, so any composite carries survivorship bias in the fund's favor. Membership rationales and exclusions are in the roster record. Members span 3 wrapper types (interval fund (Rule 23c-3), listed BDC, listed closed-end fund) and 2 leverage regimes (1940-Act asset-coverage limits, BDC 150% asset-coverage regime). Fee bases, leverage and exit rights are not like-for-like, so the comparison is a history of similar investments, not a like-for-like index.",
+      "status": "computed",
+      "source": "benchmark selection artifact (Destiny Tech100 Inc)",
+      "section": "peer comparison: member table, composite or refusal, survivorship, heterogeneity",
+      "quote": "",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "2.1": {
@@ -252,12 +262,12 @@
     },
     "3.7": {
       "element": "Plan participant liquidity demand",
-      "value": "Plan-side demand profile (Form 5500 PY2024): 1,847 separated-with-balances = 36.1% of 5,120 accounts - the near-term liquidity tail; 3,281 active; zero retirees in pay status; 404(c) fully participant-directed.",
+      "value": "Plan participant liquidity demand is computed per reference plan from the plan's own Form 5500 record (participants with account balances, separated participants with balances as the near-term liquidity tail, active participants, retirees in pay status, and the filed outflow proxy from Schedule H totals), for each of the 4 reference plans. The figures appear in the decision memo and the Liquidity view for the plan being evaluated. This product record holds no plan's counts, so a memo for one plan never carries another plan's numbers.",
       "status": "computed",
-      "source": "data/plans/plan_tech_media.json",
-      "section": "participants",
+      "source": "plan records on file (Form 5500), read per plan by the liquidity match",
+      "section": "participant counts and filed outflow proxy, per plan",
       "quote": "",
-      "extracted_by": "Claude (M6 pipeline)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "3.8": {
@@ -272,7 +282,7 @@
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Structural liquidity verdict ALIGNED-MECHANICAL (typed facts, cells 3.1, 3.3, 2.7, plan-independent). Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): aligned-mechanical, US industrial manufacturer 401(k) plan (~$0.8B, OH): aligned-mechanical, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): aligned-mechanical, US media/technology company 401(k) plan (~$570M, New York): aligned-mechanical. Daily exchange liquidity mechanically satisfies daily participant dealing (3.1). BUT price-vs-NAV decoupling means participants transact at the premium or discount, not at portfolio value. The liquidity is real, the price basis is not (1.10, 4.7). Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts and on the Liquidity view.",
+      "value": "Structural liquidity verdict ALIGNED-MECHANICAL (typed facts, cells 3.1, 3.3, 2.7, plan-independent). Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): aligned-mechanical, US industrial manufacturer 401(k) plan (~$0.8B, OH): aligned-mechanical, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): aligned-mechanical, US media/technology company 401(k) plan (~$570M, New York): aligned-mechanical. Base demand is each plan's filed outflow proxy (Schedule H), the sliders set the stress. Daily exchange liquidity mechanically satisfies daily participant dealing (3.1). BUT price-vs-NAV decoupling means participants transact at the premium or discount, not at portfolio value. The liquidity is real, the price basis is not (1.10, 4.7). Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts and on the Liquidity view.",
       "status": "computed",
       "source": "liquidity match artifacts (Destiny Tech100 Inc, four reference plans)",
       "section": "verdict, scenario verdict, missing facts and structural reasons across the four plan match files",
@@ -342,12 +352,12 @@
     },
     "4.7": {
       "element": "Premium/discount check",
-      "value": "Premium vs latest FILED quarterly NAV ($24.56 at None): 5.7% at the 2026-07-17 close ($25.97). Filed premium range since listing: -3.1% to 1837.6% (fund's own prospectus table). Live NAV unobservable between filings.",
+      "value": "Premium vs the latest FILED quarterly NAV ($24.56): +5.7% at the 2026-07-17 close ($25.97). Filed premium range since listing: -3.1% to 1837.6%. Premium computed vs the most recent FILED quarterly NAV (the live NAV is unobservable between filings). Filed range from the fund's own prospectus table.",
       "status": "computed",
-      "source": "data/analytics/supplement.json (dxyz_premium)",
-      "section": "dxyz_premium",
+      "source": "analytics supplement artifact (premium block)",
+      "section": "premium and discount to NAV",
       "quote": "",
-      "extracted_by": "Claude Code (2026-08-09)",
+      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "4.8": {
@@ -387,10 +397,10 @@
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": "Benchmark candidates evaluated by the engine (Tark benchmark rubric, 12 points, threshold 7 of 12, strategy gate below 2 of 3 ineligible). ESCALATED: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from available data. Required next: public NAV series (quarterly filings) plus a premium/NAV decomposition before any comparator is defensible. REJECTED S&P 500 investable proxy (SPY) 7/12 (third-party index or investable proxy): fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio. REJECTED Listed private equity investable proxy (PSP) 7/12 (third-party index or investable proxy): fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio. REJECTED Peer composite, pre-IPO and venture cohort without Destiny Tech100 Inc (members: ARK Venture Fund, Neostellar Capital Corp.) 3/12 (peer composite constructed by the evaluator): fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio. REJECTED NASDAQ Composite Index 3/12 (fund-declared benchmark): fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio. Fund-declared (cell 5.1): NASDAQ Composite Index (cited, not held, scored 3/12, fails the strategy gate (strategy_match 1/3)).",
+      "value": "Candidates evaluated for the meaningful-benchmark slot, paragraph (k) (Tark benchmark rubric, 12 points, threshold 7 of 12, strategy gate below 2 of 3 ineligible, an index published by the fund's own adviser ineligible). ESCALATED: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE for this pre-IPO and venture fund: its price is premium-driven and decoupled from NAV, so every candidate benchmarks the premium, not the portfolio. Required next: a NAV series from the filings and a premium to NAV decomposition before any comparator is defensible. REJECTED Listed private equity investable proxy (PSP) 7/12 (exchange-traded strategy proxy): fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio. REJECTED S&P 500 investable proxy (SPY) 7/12 (exchange-traded strategy proxy): fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio. REJECTED NASDAQ Composite Index 5/12 (fund-declared benchmark or SEC-required comparator): fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio. Declared benchmark NASDAQ Composite Index (cell 5.1): cited, not held, scored 5/12, fund price decoupled from NAV. No comparison: cited, series not in the record: no comparison computed. The peer cohort is not a candidate here: it is the paragraph (g) and (h) comparison in cell 1.12.",
       "status": "computed",
       "source": "benchmark selection artifact (Destiny Tech100 Inc)",
-      "section": "primary, secondary, rejected and declared benchmarks",
+      "section": "selected, tied, rejected and declared candidates",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
@@ -407,31 +417,31 @@
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
-      "value": "No PME inputs constructible: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from available data. Required next: public NAV series (quarterly filings) plus a premium/NAV decomposition before any comparator is defensible.",
+      "value": "No public market series comparison is computable on held data, so no PME inputs exist for this product: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE for this pre-IPO and venture fund: its price is premium-driven and decoupled from NAV, so every candidate benchmarks the premium, not the portfolio. Required next: a NAV series from the filings and a premium to NAV decomposition before any comparator is defensible. Peer comparison inputs: composite refused (fewer than 3 peers remain after leaving Destiny Tech100 Inc out (2: Neostellar Capital Corp., ARK Venture Fund)), see cell 1.12.",
       "status": "computed",
       "source": "benchmark selection artifact (Destiny Tech100 Inc)",
-      "section": "escalation",
+      "section": "meaningful benchmark, reference and peer comparison inputs",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
-      "value": "Benchmark suitability (Tark benchmark rubric, 12 points). ESCALATED: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from available data. Required next: public NAV series (quarterly filings) plus a premium/NAV decomposition before any comparator is defensible. No candidate is eligible, so no maximum is attainable on held data. Fund-declared benchmark(s) (cell 5.1): NASDAQ Composite Index: cited, not held, scored 3/12, fails the strategy gate (strategy_match 1/3). Rejected: 4 candidates, each with its reason in the ledger. The scoring rules are in the benchmark methodology document.",
+      "value": "Benchmark suitability (Tark benchmark rubric, 12 points). ESCALATED: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE for this pre-IPO and venture fund: its price is premium-driven and decoupled from NAV, so every candidate benchmarks the premium, not the portfolio. Required next: a NAV series from the filings and a premium to NAV decomposition before any comparator is defensible. No candidate is eligible, so no maximum is attainable on held data. Declared benchmark NASDAQ Composite Index (cell 5.1): cited, not held, scored 5/12, fund price decoupled from NAV. No comparison: cited, series not in the record: no comparison computed. Peer comparison (cell 1.12): composite refused, fewer than 3 peers remain after leaving Destiny Tech100 Inc out (2: Neostellar Capital Corp., ARK Venture Fund). Not selected: 3 candidates, each with its reason in the ledger. The scoring rules are in the benchmark methodology document.",
       "status": "computed",
       "source": "benchmark selection artifact (Destiny Tech100 Inc)",
-      "section": "primary, secondary, escalation, maximum attainable, declared benchmarks, rejected",
+      "section": "meaningful benchmark, reference, maximum attainable, declared benchmarks, peer comparison",
       "quote": "",
       "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.7": {
       "element": "Case-law tracker",
-      "value": "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498 (U.S.). Certiorari granted 2026-01-16 per the Supreme Court docket listing. Question presented, per the docket as relayed in search-result snippets: whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary breached the duty of prudence requires alleging a meaningful benchmark. The Ninth Circuit had required plaintiffs to identify a comparable alternative giving a sound basis for comparison, a meaningful benchmark. Argument is listed for the October 2026 term and had not been held as of 2026-09-04. No holding exists yet, and this cell draws no consequence for the evaluation. Status partial: assembled from the docket listing and search snippets, not from the source documents, which this build could not fetch.",
+      "value": "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498 (U.S.). Certiorari granted 2026-01-16 per the Supreme Court docket listing. Question presented, per the docket as relayed in search-result snippets: whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary breached the duty of prudence requires alleging a meaningful benchmark. The Ninth Circuit had required plaintiffs to identify a comparable alternative giving a sound basis for comparison, a meaningful benchmark. No holding exists yet, and this cell draws no consequence for the evaluation. Status partial: assembled from the docket listing and search snippets, not from the source documents, which this build could not fetch.",
       "status": "partial - search snippets and docket listing only, source documents not fetched in this build",
       "source": "Supreme Court docket 25-498, https://www.supremecourt.gov/docket/docketfiles/html/public/25-498.html (grant date). SCOTUSblog case page, https://www.scotusblog.com/cases/anderson-v-intel-corp-investment-policy-comm/ and CRS Legal Sidebar LSB11396, https://www.congress.gov/crs-product/LSB11396 (question presented, argument term). Accessed 2026-09-04 through web-search snippets only.",
       "section": "docket listing and search-result snippets (question presented, argument scheduling)",
-      "quote": "search snippet, not the source document: \"whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary failed to use the requisite 'care, skill, prudence, or diligence' under the circumstances and thus breached ERISA's duty of prudence when investing plan assets requires alleging a 'meaningful benchmark'\" and \"The case is scheduled for argument before the Supreme Court of the United States during the court's October 2026-2027 term.\"",
+      "quote": "search snippet, not the source document: \"whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary failed to use the requisite 'care, skill, prudence, or diligence' under the circumstances and thus breached ERISA's duty of prudence when investing plan assets requires alleging a 'meaningful benchmark'\"",
       "extracted_by": "Claude Code (WebSearch snippet, 2026-09-04)",
       "verified_by": ""
     },

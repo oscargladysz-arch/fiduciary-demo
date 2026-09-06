@@ -365,5 +365,91 @@
     "inputs": [
       "data/series_monthly/breit_nav.csv"
     ]
+  },
+  "series_diagnostics": {
+    "cliffwater_cclfx": {
+      "ticker": "CCLFX",
+      "basis": "Yahoo adjusted close, approximates NAV total return with distributions reinvested",
+      "window": "2019-06-05 to 2026-07-17",
+      "monthly_obs": 85,
+      "ann_vol_observed_pct": 2.07,
+      "ann_vol_daily_pct": 2.0,
+      "lag1_autocorr_rho": 0.139,
+      "ann_vol_desmoothed_pct": 2.39,
+      "max_drawdown_pct": -3.91,
+      "drawdown_peak": "2020-02-14",
+      "drawdown_trough": "2020-03-25",
+      "series": "data/series/cclfx.csv"
+    },
+    "pflex": {
+      "ticker": "PFLEX",
+      "basis": "Yahoo adjusted close, approximates NAV total return with distributions reinvested",
+      "window": "2017-02-23 to 2026-08-13",
+      "monthly_obs": 114,
+      "ann_vol_observed_pct": 8.62,
+      "ann_vol_daily_pct": 5.8,
+      "lag1_autocorr_rho": 0.124,
+      "ann_vol_desmoothed_pct": 9.81,
+      "max_drawdown_pct": -24.6,
+      "drawdown_peak": "2020-02-21",
+      "drawdown_trough": "2020-03-23",
+      "series": "data/series/pflex.csv"
+    },
+    "cion_ares": {
+      "ticker": "CADUX",
+      "basis": "Yahoo adjusted close, approximates NAV total return with distributions reinvested",
+      "window": "2017-07-11 to 2026-08-24",
+      "monthly_obs": 109,
+      "ann_vol_observed_pct": 6.07,
+      "ann_vol_daily_pct": 3.7,
+      "lag1_autocorr_rho": 0.075,
+      "ann_vol_desmoothed_pct": 6.57,
+      "max_drawdown_pct": -18.59,
+      "drawdown_peak": "2020-02-20",
+      "drawdown_trough": "2020-03-25",
+      "series": "data/series/cadux.csv"
+    },
+    "dxyz": {
+      "ticker": "DXYZ",
+      "basis": "Yahoo daily close, a market price that includes premium and discount dynamics",
+      "window": "2024-03-26 to 2026-07-17",
+      "monthly_obs": 28,
+      "ann_vol_observed_pct": 204.62,
+      "ann_vol_daily_pct": 162.6,
+      "lag1_autocorr_rho": 0.094,
+      "ann_vol_desmoothed_pct": 227.26,
+      "max_drawdown_pct": -90.35,
+      "drawdown_peak": "2024-04-08",
+      "drawdown_trough": "2024-08-07",
+      "series": "data/series/dxyz.csv"
+    },
+    "ssss": {
+      "ticker": "NSLR",
+      "basis": "Yahoo daily close, a market price that includes premium and discount dynamics",
+      "window": "2016-08-15 to 2026-08-14",
+      "monthly_obs": 120,
+      "ann_vol_observed_pct": 47.5,
+      "ann_vol_daily_pct": 47.6,
+      "lag1_autocorr_rho": 0.049,
+      "ann_vol_desmoothed_pct": 50.1,
+      "max_drawdown_pct": -81.97,
+      "drawdown_peak": "2021-08-16",
+      "drawdown_trough": "2023-03-17",
+      "series": "data/series/nslr.csv"
+    },
+    "arkvx": {
+      "ticker": "ARKVX",
+      "basis": "Yahoo adjusted close, approximates NAV total return with distributions reinvested",
+      "window": "2022-08-31 to 2026-08-13",
+      "monthly_obs": 48,
+      "ann_vol_observed_pct": 24.45,
+      "ann_vol_daily_pct": 18.4,
+      "lag1_autocorr_rho": -0.026,
+      "ann_vol_desmoothed_pct": 23.99,
+      "max_drawdown_pct": -19.1,
+      "drawdown_peak": "2023-07-31",
+      "drawdown_trough": "2023-10-30",
+      "series": "data/series/arkvx.csv"
+    }
   }
 }

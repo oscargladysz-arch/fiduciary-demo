@@ -103,7 +103,9 @@
   },
   "composite": {
     "refused": true,
-    "reason": "members' pricing bases are heterogeneous (market price vs NAV). An equal-weight composite would average premium/discount dynamics against appraisal NAVs, so it is refused, not fudged"
+    "reason": "members' pricing bases are heterogeneous (market price vs NAV). An equal-weight composite would average premium/discount dynamics against appraisal NAVs, so it is refused, not fudged",
+    "rows": [],
+    "member_source": {}
   },
   "caveats": [
     "PRICING-BASIS MIX: some members transact at NAV, others at exchange market price. Return comparisons mix appraisal dynamics with premium/discount dynamics, so composites across this line are refused, not averaged. [typed per product: arkvx: NAV, dxyz: MARKET, ssss: MARKET]",

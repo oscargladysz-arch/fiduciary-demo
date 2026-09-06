@@ -1,4 +1,4 @@
-# Tark Demo Script v8, 7 minutes (the advisor workflow)
+# Tark Demo Script v9, 7 minutes (the advisor workflow)
 
 Setup: reset per `docs/INVESTOR_DEMO.md`. The app lands on the **Screener**
 with the tech/media plan selected in the header. Fallback:
@@ -10,21 +10,27 @@ record location of each one. Read a number off the screen before saying it.
 If the screen disagrees with this script, the screen is right and the script
 is stale. Coverage counts are read from the Coverage view, never recited.
 
-What changed from v7 (decision 7.3 in `docs/DECISIONS_2026-09.md`): this
-version speaks no peer-composite number. A PME is spoken only against a
-public market series and only with its data-source caveat. The Authority
-panel is not opened, because the verbatim rule text is not in this build.
-The Cliffwater expense figure is named by its basis. The closing table is
-re-derived and Tier 1 of `docs/verification_queue.md` is re-derived from it.
+What changed from v8 (decisions 7.1, 7.21, 7.24 and 7.27 in
+`docs/DECISIONS_2026-09.md`): the benchmark card carries two named
+comparisons, "Meaningful benchmark (paragraph (k))" and "Peer comparison
+(paragraphs (g) and (h))". The peer ratio is now calendar-aligned with n per
+period, so v9 speaks it, always with its label and never as a benchmark or a
+PME. A PME is spoken only against a public market series and only with its
+data-source caveat. Where the meaningful benchmark is a published index the
+record does not hold, the card says so and the spoken PME is the reference
+comparison, named as such. The liquidity beat starts from the plan's filed
+outflow proxy. The Authority panel is not opened, because the verbatim rule
+text is not in this build. The closing table is re-derived and Tier 1 of
+`docs/verification_queue.md` is re-derived from it.
 
 **0:00, Screener (landing).** "Sixteen products, one plan in the header,
 every row a cell from the record or a fact recomputed from it. This is what a
 3(21) advisor sees on day one: the candidates, the plan, and the six factors
 of the proposed safe harbor, 91 FR 16088, before anyone has formed an
 opinion. Two performance columns, not one: KS-PME against a public proxy
-where a public series exists, and the peer relative wealth ratio where the
-comparator is a peer composite. They sort separately because they are
-different statistics."
+where a public series exists, and the peer relative wealth ratio from cell
+1.12. They sort separately because they are different statistics, and the
+second one is never a benchmark."
 
 **0:40, Six-Factor Evaluation, Hamilton Lane Private Assets Fund (hl_paf).**
 "Six factors, paragraphs (g) to (l) of proposed 29 CFR 2550.404a-6, and
@@ -51,25 +57,31 @@ an expense ratio exists in the record."
 
 **2:30, Benchmark Selection, cliffwater_cclfx.** "Cell 5.1: the fund
 expressly declares no benchmark, and the card says so instead of hiding a
-placeholder. The Tark benchmark rubric, twelve points, five criteria, every
-point traced to a typed descriptor. Primary: the leave-one-out private-credit
-peer composite, 9 of 12, four members named on the card. Its statistic is a
-relative wealth ratio, not a PME, because a peer composite is appraisal-based
-and cannot be bought, and the card says so. I am not reading that ratio
-aloud today: the alignment note on the card says the members are aligned by
-fiscal-year label, and the calendar-aligned recomputation is the next
-engineering step. Secondary: BKLN, the senior loan proxy, 9 of 12, KS-PME
-1.2532 over 2019-06-05 to 2026-07-17, computed on Yahoo adjusted close,
-which approximates NAV total return, and the card names that source beside
-the fund return. The ledger: CDLI at 5 of 12, below the threshold of 7, with
-the reason per criterion printed, including that the index is published by
-the fund's own adviser, which is a fact from the affiliation map and not a
-string match." Switch to hl_paf. "Here the fund states the S&P 500 and MSCI
-World as comparators. Both are on the card as declared benchmarks, both
-scored 8 of 12, both fail the strategy gate at strategy match 1 of 3. A
-declaration earns no points by itself." Switch to arkvx. "And when nothing
-passes the gate the engine escalates: no meaningful benchmark constructible,
-with the required next step printed. It does not pick the least bad ETF."
+placeholder. Two comparisons, each named for the paragraph it answers.
+Meaningful benchmark, paragraph (k): BKLN, the senior loan proxy, 8 of 12 on
+the Tark benchmark rubric, twelve points, five criteria, every point traced
+to a typed descriptor. KS-PME 1.2532 over 2019-06-05 to 2026-07-17, computed
+on Yahoo adjusted close, which approximates NAV total return, and the card
+names that source beside the fund return. The ledger: CDLI, the
+strategy-exact index, scores 7 of 12 and is ineligible, because it is
+published by the fund's own adviser, a fact from the affiliation map and not
+a string match. Peer comparison, paragraphs (g) and (h): the four other
+private credit products on identical calendar years, 2021 to 2025, n equals
+four in every period, relative wealth ratio 1.0613. That is a history of
+similar investments, not a benchmark and not a PME, and the card says so
+twice." Switch to hl_paf. "Here the meaningful benchmark is the Cambridge
+Associates private equity benchmark, 9 of 12, cited and not held, so the
+card shows no number for it and says why. The reference comparison, named as
+a reference and not the benchmark, is PSP, the listed private equity proxy,
+KS-PME 1.9565 on filed fiscal-year returns. The fund's own S&P 500 and MSCI
+World are SEC-required comparators, 7 of 12 each, they fail the strategy
+gate at 1 of 3, and each still gets its own comparison on the card. A
+comparator earns no points for being named in a filing. The peer comparison
+here is refused: the four peers report on March and December year ends, so
+the card shows the side-by-side table and no ratio." Switch to arkvx. "And
+when nothing passes the gate the engine escalates: no meaningful benchmark
+constructible, with every candidate scored and the required next step
+printed. It does not pick the least bad ETF."
 
 **3:45, Liquidity Match, sreit then hl_paf.** "Two layers, never blurred.
 The structural verdict reads typed facts only and does not move with the
@@ -78,12 +90,18 @@ amendment, 0% cap on aggregate NAV for ordinary requests, gating history
 yes. Structural verdict: misaligned, plan-independent. No plan input can
 talk it back." Switch to hl_paf, then switch the header plan from the
 tech/media plan to the consulting-alumni plan. "The scenario layer is labeled
-ILLUSTRATIVE and it moves with the plan: conditional under the tech plan,
-conditional-weak under the consulting plan, because the modeled demand rises
-from 10.4% to 13.7% of the position per year against the same 20% annual
-capacity, quarterly offers at 5% of net assets. The structural layer stays
-partial, because the record has not established this fund's gating history,
-and the card names the missing fact instead of guessing."
+ILLUSTRATIVE and it starts from the plan's own filing: the filed outflow
+proxy from Schedule H, total expenses less administrative expenses over
+beginning net assets, applied to the position. The tech plan filed 11.7% of
+the position per year, the consulting plan 6.5%, both against the same 20%
+annual capacity, quarterly offers at 5% of net assets. The sliders are the
+stress around that base, so the verdict is conditional-weak under the tech
+plan, where the stressed demand of 20.5% crosses the cap, and conditional
+under the consulting plan, where it stays at 19.2%. The slider assumption,
+10.4% and 13.7%, is printed beside the filed rate and never blended with it.
+The structural layer stays partial, because the record has not established
+this fund's gating history, and the card names the missing fact instead of
+guessing."
 
 **4:45, Advisor inputs.** Back on the Evaluation view, scroll to the
 complexity factor. "Cells 6.6 and 6.8 belong to paragraph (l): operational
@@ -124,8 +142,8 @@ confused. That is the product."
 
 Tier 1 of `docs/verification_queue.md` is derived from the cell rows of this
 table. The artifact rows are recomputed by the producer chain and tied across
-surfaces by the reconcile gate. The peer-composite ratio is deliberately
-absent from the spoken column.
+surfaces by the reconcile gate. The peer ratio is spoken with its label
+(cell 1.12), never as a benchmark.
 
 | spoken | surface | record location |
 |---|---|---|
@@ -135,14 +153,16 @@ absent from the spoken column.
 | Schedule K-1 | Fee Matrix | kkr_kpec cell 6.4 |
 | 1.36% expense ratio before waivers, excluding interest expense, 3.31% including interest | Fee Matrix, Screener, Evaluation | cliffwater_cclfx cell 2.3 (typed fact expense_ratio_pct with its basis) |
 | the fund expressly declares no benchmark | Benchmark Selection | cliffwater_cclfx cell 5.1 |
-| peer composite primary, 9 of 12, relative wealth ratio (the ratio itself is not spoken) | Benchmark Selection, cell 5.3 | `data/benchmarks/cliffwater_cclfx_selection.json`, primary |
-| BKLN 9 of 12, KS-PME 1.2532, 2019-06-05 to 2026-07-17, Yahoo adjusted close | Benchmark Selection, Screener, cell 1.8, memo | same artifact, secondary |
-| CDLI 5 of 12, rejected, affiliated with the fund's adviser | Benchmark Selection ledger | same artifact, rejected list, and the affiliation map in `data/registry.json` |
-| S&P 500 and MSCI World stated, 8 of 12 each, strategy match 1 of 3 | Benchmark Selection | hl_paf cell 5.1 and `data/benchmarks/hl_paf_selection.json` |
+| meaningful benchmark BKLN 8 of 12, KS-PME 1.2532, 2019-06-05 to 2026-07-17, Yahoo adjusted close | Benchmark Selection, Screener, cell 1.8, memo | `data/benchmarks/cliffwater_cclfx_selection.json`, slot_k |
+| CDLI 7 of 12, ineligible, affiliated with the fund's adviser | Benchmark Selection ledger | same artifact, rejected list, and the affiliation map in `data/registry.json` |
+| peer comparison 2021 to 2025, n=4, relative wealth ratio 1.0613, not a benchmark, not a PME | Benchmark Selection, cell 1.12, memo | same artifact, slot_g |
+| Cambridge PE benchmark 9 of 12, cited, not held, no number | Benchmark Selection | hl_paf cell 5.3 and `data/benchmarks/hl_paf_selection.json`, slot_k |
+| reference comparison PSP, KS-PME 1.9565, filed fiscal-year returns | Benchmark Selection, cell 1.8, memo | same artifact, reference_comparison |
+| S&P 500 and MSCI World SEC-required comparators, 7 of 12 each, strategy match 1 of 3 | Benchmark Selection | hl_paf cell 5.1 and the same artifact, declared |
 | no meaningful benchmark constructible | Benchmark Selection | arkvx cell 5.1 and `data/benchmarks/arkvx_selection.json` |
 | repurchases suspended since the April 29, 2026 amendment, 0% cap on aggregate NAV, gating yes, structural verdict misaligned | Liquidity Match | sreit cells 3.1 and 3.3, `data/liquidity/<plan>__sreit_match.json` |
 | quarterly offers, 5% per quarter on net assets, 20% per year | Liquidity Match | hl_paf cell 3.1, `data/liquidity/<plan>__hl_paf_match.json` |
-| 10.4% then 13.7% of the position per year, conditional then conditional-weak (ILLUSTRATIVE) | Liquidity Match | hl_paf match files for plan_tech_media and plan_consulting_alumni |
+| filed outflow proxy 11.7% then 6.5% of the position per year, stressed 20.5% then 19.2%, conditional-weak then conditional (ILLUSTRATIVE), slider assumption 10.4% and 13.7% beside it | Liquidity Match | hl_paf match files for plan_tech_media and plan_consulting_alumni, and the two plan files' filed outflow blocks |
 | 3,599 wrappers, as of 2026-08-25 | Universe, The Funnel | `data/census/census.json` (validator-enforced T1) |
 | 241 / 516 / 378 / 1,072 by class, 72,502 dark | The Funnel | `data/census/census.json`, `data/census/universe.json` (validator-enforced T1) |
 | 0 verified | Verification, Coverage, memo provenance | live count over `data/evidence/*.csv` |
@@ -155,7 +175,7 @@ screen. The drawer rows name the cell in the plan column. A "-" product means
 the view does not depend on the product.
 
 - screener | - | plan_tech_media | KS-PME vs public proxy
-- screener | - | plan_tech_media | Peer relative wealth ratio
+- screener | - | plan_tech_media | Peer relative wealth ratio (cell 1.12)
 - evaluation | hl_paf | plan_tech_media | 1.40% on managed assets
 - drawer | hl_paf | 2.1 | 0001213900-26-066804
 - drawer | hl_paf | 2.1 | extracted · unverified
@@ -164,23 +184,36 @@ the view does not depend on the product.
 - fees | - | plan_tech_media | 1.36%
 - evaluation | cliffwater_cclfx | plan_tech_media | 1.36% expense ratio, before waivers, excluding interest expense
 - benchmarks | cliffwater_cclfx | plan_tech_media | expressly declares no
-- benchmarks | cliffwater_cclfx | plan_tech_media | 9/12
-- benchmarks | cliffwater_cclfx | plan_tech_media | Relative wealth ratio vs peer composite
-- benchmarks | cliffwater_cclfx | plan_tech_media | Not a public market equivalent
+- benchmarks | cliffwater_cclfx | plan_tech_media | Meaningful benchmark (paragraph (k))
+- benchmarks | cliffwater_cclfx | plan_tech_media | 8/12
 - benchmarks | cliffwater_cclfx | plan_tech_media | 1.2532
 - benchmarks | cliffwater_cclfx | plan_tech_media | 2019-06-05 to 2026-07-17
 - benchmarks | cliffwater_cclfx | plan_tech_media | Yahoo adjusted close
-- benchmarks | cliffwater_cclfx | plan_tech_media | 5/12
-- benchmarks | cliffwater_cclfx | plan_tech_media | affiliation map
-- benchmarks | hl_paf | plan_tech_media | 8/12
+- benchmarks | cliffwater_cclfx | plan_tech_media | 7/12
+- benchmarks | cliffwater_cclfx | plan_tech_media | affiliated provider
+- benchmarks | cliffwater_cclfx | plan_tech_media | Peer comparison (paragraphs (g) and (h))
+- benchmarks | cliffwater_cclfx | plan_tech_media | Relative wealth ratio vs peer composite
+- benchmarks | cliffwater_cclfx | plan_tech_media | 1.0613
+- benchmarks | cliffwater_cclfx | plan_tech_media | 2021 to 2025
+- benchmarks | cliffwater_cclfx | plan_tech_media | Never a benchmark and never a PME
+- benchmarks | hl_paf | plan_tech_media | 9/12
+- benchmarks | hl_paf | plan_tech_media | not in the record
+- benchmarks | hl_paf | plan_tech_media | Reference comparison, not the meaningful benchmark
+- benchmarks | hl_paf | plan_tech_media | 1.9565
+- benchmarks | hl_paf | plan_tech_media | SEC-required comparator
+- benchmarks | hl_paf | plan_tech_media | Composite refused
 - benchmarks | arkvx | plan_tech_media | NO MEANINGFUL BENCHMARK CONSTRUCTIBLE
 - liquidity | sreit | plan_tech_media | suspended since the April 29, 2026 amendment
 - liquidity | sreit | plan_tech_media | misaligned
 - liquidity | hl_paf | plan_tech_media | 5% per quarter, 20% per year
+- liquidity | hl_paf | plan_tech_media | 11.7% of the position per year vs 20% annual wrapper capacity
 - liquidity | hl_paf | plan_tech_media | 10.4% of the position per year vs 20% annual wrapper capacity
-- liquidity | hl_paf | plan_tech_media | conditional
+- liquidity | hl_paf | plan_tech_media | 20.5% vs 20%
+- liquidity | hl_paf | plan_tech_media | Scenario verdict: CONDITIONAL-WEAK
+- liquidity | hl_paf | plan_consulting_alumni | 6.5% of the position per year vs 20% annual wrapper capacity
 - liquidity | hl_paf | plan_consulting_alumni | 13.7% of the position per year vs 20% annual wrapper capacity
-- liquidity | hl_paf | plan_consulting_alumni | conditional-weak
+- liquidity | hl_paf | plan_consulting_alumni | 19.2% vs 20%
+- liquidity | hl_paf | plan_consulting_alumni | Scenario verdict: CONDITIONAL ILLUSTRATIVE
 - verification | - | plan_tech_media | spoken aloud
 - census | - | plan_tech_media | 3,599
 - funnel | - | plan_tech_media | 241

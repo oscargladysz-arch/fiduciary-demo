@@ -124,67 +124,243 @@
   },
   "composite": {
     "refused": false,
-    "granularity": "annual (fiscal years as filed, with year-end months that differ across members and are disclosed per row)",
-    "weighting": "equal-weight across members reporting that year",
     "rows": [
       {
-        "year": "2022",
-        "composite_return_pct": 22.85,
+        "period": "2017-03-31",
+        "label": "FY2017 (year to 2017-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 1,
+        "members": [
+          "amg_pantheon"
+        ],
+        "returns": {
+          "hl_paf": null,
+          "stepstone_spm": null,
+          "kkr_kpec": null,
+          "ares_pmf": null,
+          "amg_pantheon": 14.27
+        },
+        "composite_return_pct": null
+      },
+      {
+        "period": "2018-03-31",
+        "label": "FY2018 (year to 2018-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 1,
+        "members": [
+          "amg_pantheon"
+        ],
+        "returns": {
+          "hl_paf": null,
+          "stepstone_spm": null,
+          "kkr_kpec": null,
+          "ares_pmf": null,
+          "amg_pantheon": 14.26
+        },
+        "composite_return_pct": null
+      },
+      {
+        "period": "2019-03-31",
+        "label": "FY2019 (year to 2019-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 1,
+        "members": [
+          "amg_pantheon"
+        ],
+        "returns": {
+          "hl_paf": null,
+          "stepstone_spm": null,
+          "kkr_kpec": null,
+          "ares_pmf": null,
+          "amg_pantheon": 10.11
+        },
+        "composite_return_pct": null
+      },
+      {
+        "period": "2020-03-31",
+        "label": "FY2020 (year to 2020-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 1,
+        "members": [
+          "amg_pantheon"
+        ],
+        "returns": {
+          "hl_paf": null,
+          "stepstone_spm": null,
+          "kkr_kpec": null,
+          "ares_pmf": null,
+          "amg_pantheon": 4.15
+        },
+        "composite_return_pct": null
+      },
+      {
+        "period": "2021-03-31",
+        "label": "FY2021 (year to 2021-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 1,
+        "members": [
+          "amg_pantheon"
+        ],
+        "returns": {
+          "hl_paf": null,
+          "stepstone_spm": null,
+          "kkr_kpec": null,
+          "ares_pmf": null,
+          "amg_pantheon": 35.72
+        },
+        "composite_return_pct": null
+      },
+      {
+        "period": "2022-03-31",
+        "label": "FY2022 (year to 2022-03-31)",
+        "period_kind": "fiscal_year",
         "n": 3,
         "members": [
           "amg_pantheon",
           "hl_paf",
           "stepstone_spm"
-        ]
+        ],
+        "returns": {
+          "hl_paf": 20.77,
+          "stepstone_spm": 29.43,
+          "kkr_kpec": null,
+          "ares_pmf": null,
+          "amg_pantheon": 18.36
+        },
+        "composite_return_pct": null
       },
       {
-        "year": "2023",
-        "composite_return_pct": 8.34,
-        "n": 5,
-        "members": [
-          "amg_pantheon",
-          "ares_pmf",
-          "hl_paf",
-          "kkr_kpec",
-          "stepstone_spm"
-        ]
-      },
-      {
-        "year": "2024",
-        "composite_return_pct": 13.49,
-        "n": 5,
-        "members": [
-          "amg_pantheon",
-          "ares_pmf",
-          "hl_paf",
-          "kkr_kpec",
-          "stepstone_spm"
-        ]
-      },
-      {
-        "year": "2025",
-        "composite_return_pct": 13.9,
-        "n": 5,
-        "members": [
-          "amg_pantheon",
-          "ares_pmf",
-          "hl_paf",
-          "kkr_kpec",
-          "stepstone_spm"
-        ]
-      },
-      {
-        "year": "2026",
-        "composite_return_pct": 10.94,
+        "period": "2023-03-31",
+        "label": "FY2023 (year to 2023-03-31)",
+        "period_kind": "fiscal_year",
         "n": 4,
         "members": [
           "amg_pantheon",
           "ares_pmf",
           "hl_paf",
           "stepstone_spm"
-        ]
+        ],
+        "returns": {
+          "hl_paf": 16.1,
+          "stepstone_spm": 8.23,
+          "kkr_kpec": null,
+          "ares_pmf": 9.27,
+          "amg_pantheon": 6.45
+        },
+        "composite_return_pct": null
+      },
+      {
+        "period": "2024-03-31",
+        "label": "FY2024 (year to 2024-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 4,
+        "members": [
+          "amg_pantheon",
+          "ares_pmf",
+          "hl_paf",
+          "stepstone_spm"
+        ],
+        "returns": {
+          "hl_paf": 12.68,
+          "stepstone_spm": 13.79,
+          "kkr_kpec": null,
+          "ares_pmf": 17.1,
+          "amg_pantheon": 12.08
+        },
+        "composite_return_pct": null
+      },
+      {
+        "period": "2024-12-31",
+        "label": "2024",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "members": [
+          "kkr_kpec"
+        ],
+        "returns": {
+          "hl_paf": null,
+          "stepstone_spm": null,
+          "kkr_kpec": 11.82,
+          "ares_pmf": null,
+          "amg_pantheon": null
+        },
+        "composite_return_pct": null
+      },
+      {
+        "period": "2025-03-31",
+        "label": "FY2025 (year to 2025-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 4,
+        "members": [
+          "amg_pantheon",
+          "ares_pmf",
+          "hl_paf",
+          "stepstone_spm"
+        ],
+        "returns": {
+          "hl_paf": 12.59,
+          "stepstone_spm": 10.76,
+          "kkr_kpec": null,
+          "ares_pmf": 19.95,
+          "amg_pantheon": 10.07
+        },
+        "composite_return_pct": null
+      },
+      {
+        "period": "2025-12-31",
+        "label": "2025",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "members": [
+          "kkr_kpec"
+        ],
+        "returns": {
+          "hl_paf": null,
+          "stepstone_spm": null,
+          "kkr_kpec": 16.14,
+          "ares_pmf": null,
+          "amg_pantheon": null
+        },
+        "composite_return_pct": null
+      },
+      {
+        "period": "2026-03-31",
+        "label": "FY2026 (year to 2026-03-31)",
+        "period_kind": "fiscal_year",
+        "n": 4,
+        "members": [
+          "amg_pantheon",
+          "ares_pmf",
+          "hl_paf",
+          "stepstone_spm"
+        ],
+        "returns": {
+          "hl_paf": 14.6,
+          "stepstone_spm": 10.47,
+          "kkr_kpec": null,
+          "ares_pmf": 9.58,
+          "amg_pantheon": 9.1
+        },
+        "composite_return_pct": null
       }
-    ]
+    ],
+    "member_source": {
+      "hl_paf": "filed fiscal-year returns",
+      "stepstone_spm": "filed fiscal-year returns",
+      "kkr_kpec": "filed calendar-year returns (December fiscal year)",
+      "ares_pmf": "filed fiscal-year returns",
+      "amg_pantheon": "filed fiscal-year returns"
+    },
+    "member_period_kind": {
+      "hl_paf": "fiscal_year",
+      "stepstone_spm": "fiscal_year",
+      "kkr_kpec": "calendar_year",
+      "ares_pmf": "fiscal_year",
+      "amg_pantheon": "fiscal_year"
+    },
+    "granularity": "mixed year ends: no common period, composite returns not formed",
+    "weighting": "equal-weight, only over periods every member reports on the same basis",
+    "composite_refused_reason": "members report on different year ends (hl_paf: fiscal years to month 03, stepstone_spm: fiscal years to month 03, kkr_kpec: calendar years, ares_pmf: fiscal years to month 03, amg_pantheon: fiscal years to month 03), so no equal-weight composite return is formed. The table shows each member's own periods with n"
   },
   "caveats": [
     "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds. Fee bases and return volatility are not like-for-like. [typed per product: amg_pantheon: 1940-Act asset-coverage limits, ares_pmf: 1940-Act asset-coverage limits, hl_paf: 1940-Act asset-coverage limits, kkr_kpec: no 1940-Act leverage limits (34-Act conglomerate), stepstone_spm: 1940-Act asset-coverage limits]",

@@ -45,11 +45,15 @@ check("app.py uses coverage_summary and has no local coverage formula",
       "coverage_summary(" in ap and "def coverage_pct" not in ap)
 tot = coverage_totals()["counts"]
 # P1-23 moved 16 cells 5.6 from n/a to computed and 16 cells 5.7 from n/a to
-# partial (32 fewer n/a). The pin is a snapshot of the record, not a target.
-check("record totals per kind (recomputed): extracted 406, n/a 205, computed 161, "
+# partial (32 fewer n/a). R2-P1-A added cell 1.12 (the peer comparison) to
+# all 16 products as a computed cell owned by the writer: 161 to 177.
+# R2-P1-13 owns cell 3.7 for all 16: its ten documented n/a rows (plan-side,
+# per plan) became the writer's computed sentence: 177 to 187, n/a 205 to
+# 195. The pin is a snapshot of the record, not a target.
+check("record totals per kind (recomputed): extracted 406, n/a 195, computed 187, "
       "partial 75, fetched 16, structured 1, verified 0, pending 0",
       (tot["extracted"], tot["na"], tot["computed"], tot["partial"], tot["fetched"],
-       tot["structured"], tot["verified"], tot["pending"]) == (406, 205, 161, 75, 16, 1, 0, 0),
+       tot["structured"], tot["verified"], tot["pending"]) == (406, 195, 187, 75, 16, 1, 0, 0),
       str(tot))
 c = coverage_summary("cion_ares")
 check("cion_ares: structured counts as resolved (structured 1, pending 0)",
@@ -165,8 +169,10 @@ for _k, _p in _lp().items():
     _sp = BASE / "data" / "benchmarks" / f"{_k}_selection.json"
     if _sk(_c18["status"]) == "computed" and _sp.exists():
         _sel = _json.loads(_sp.read_text())
-        _comp = ((_sel.get("primary") or {}).get("comparison") or {})
-        if _comp.get("kind") == "composite":
+        # Slot K's own statistic, else the reference comparison's (decision 7.21)
+        _comp = (((_sel.get("slot_k") or {}).get("selected") or {}).get("comparison")
+                 or (_sel.get("reference_comparison") or {}).get("comparison") or {})
+        if _comp.get("kind") == "published_index":
             _m = _re.search(r"relative wealth ratio ([0-9.]+)", _c18["value"])
             _want = _comp["relative_wealth_ratio"]
         else:
@@ -174,21 +180,45 @@ for _k, _p in _lp().items():
             _want = _comp.get("ks_pme")
         if _comp and (not _m or float(_m.group(1)) != _want):
             _bad18.append(f"{_k}: cell {_m.group(1) if _m else None} vs artifact {_want}")
+        _g = ((_sel.get("slot_g") or {}).get("composite") or {})
+        _c112 = _p["cells"]["1.12"]["value"]
+        if _g.get("status") == "computed" and f"relative wealth ratio {_g['relative_wealth_ratio']}" not in _c112:
+            _bad18.append(f"{_k}: cell 1.12 lacks the peer ratio {_g['relative_wealth_ratio']}")
+        if _g.get("status") == "refused" and "REFUSED" not in _c112:
+            _bad18.append(f"{_k}: cell 1.12 does not state the refusal")
     _fx = _json.loads((BASE / "data" / "facts" / f"{_k}.json").read_text())["facts"]
     _sv = (_fx.get("liquidity_structural_verdict") or {}).get("value")
     if _sv and not _p["cells"]["3.9"]["value"].startswith(f"Structural liquidity verdict {_sv.upper()}"):
         _bad39.append(_k)
-check("cell 1.8 states the selection artifact's primary statistic (KS-PME for a public proxy, relative wealth "
-      "ratio for the peer composite) for every product with one", not _bad18,
+check("cell 1.8 states the meaningful benchmark's statistic (or the reference comparison's) and cell 1.12 the "
+      "peer ratio or its refusal, for every product with one", not _bad18,
       "; ".join(_bad18[:4]))
 check("cell 3.9 opens with the typed structural verdict for every product", not _bad39, "; ".join(_bad39))
 
-# the authority parser reads what fetch_authority.py writes, letter by letter
-from tark_data import parse_authority as _pa, rule_ref as _rr, authority as _auth  # noqa: E402
-_sample = "# head\n\n## (g)\n\n> first para.\n>\n> second para.\n\n## (h)\n\n> third.\n"
-check("parse_authority: paragraphs keyed by letter, blockquote lines only",
-      _pa(_sample) == {"g": ["first para.", "second para."], "h": ["third."]})
+# the authority parser reads what fetch_authority.py writes, letter by letter,
+# byte for byte: the synthetic fixture (33 paragraphs, nested roman items)
+# goes through the writer into a scratch directory and back
+import tempfile as _tempfile  # noqa: E402
+import fetch_authority as _fa  # noqa: E402
+from tark_data import (AUTHORITY_FILE as _AF, parse_authority as _pa,  # noqa: E402
+                       rule_ref as _rr, authority as _auth)
+_fx = (BASE / "src" / "fixtures" / "authority_fr_synthetic.xml").read_bytes()
+_paras = _fa.select(_fa.section_paragraphs(_fx), _fa.PARAS)
+_tmp = Path(_tempfile.mkdtemp(prefix="tark_auth_inv_"))
+_meta = {"citation": _fa.CITATION, "publication_date": "2026-03-31", "regulation_id_numbers": [_fa.RIN],
+         "docket_ids": ["EBSA-2026-0166"], "full_text_xml_url": "file://fixture", "html_url": ""}
+_path, _row = _fa.write(_tmp, _tmp / "raw", _meta, _fx, _paras, "2026-09-06T00:00:00+00:00")
+check("parse_authority: the writer's file parses back to every paragraph of every letter byte for byte "
+      "(fixture: 33 paragraphs, nested (i) items inside (g), (h) and (j))",
+      _pa(_path.read_text(encoding="utf-8")) == _paras and sum(len(v) for v in _paras.values()) == 33
+      and _paras["h"][3].startswith("(i) ") and _paras["i"][0].startswith("(i) Fixture heading (i)"))
+import shutil as _shutil  # noqa: E402
+_shutil.rmtree(_tmp, ignore_errors=True)
 _a = _auth()
+_afile = DATA / "authority" / _AF
+check("authority: a file in data/authority is in the build only with its hashed manifest row "
+      "(a half-fetched state fails here)", not _afile.exists() or _a["status"] == "fetched",
+      "file present, manifest row missing or its content hash differs")
 check("rule_ref: paragraph letter follows the factor and the basis names the verbatim state",
       _rr("3.4", _a)["para"] == "(i)" and _rr("6.6", _a)["advisor_completed"]
       and not _rr("6.5", _a)["advisor_completed"]
