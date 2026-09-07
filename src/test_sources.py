@@ -117,8 +117,9 @@ def run(check) -> None:
         noout = subprocess.run([sys.executable, str(BASE / "src" / "fetch_authority.py"),
                                 "--xml", str(FIXTURES / "authority_fr_synthetic.xml")],
                                capture_output=True, text=True)
+        _rec = DATA / "authority" / "2550-404a-6_proposed.md"
         check("authority: --xml without --out is refused, a fixture run never writes into the record",
-              noout.returncode != 0 and not (DATA / "authority").exists())
+              noout.returncode != 0 and (not _rec.exists() or "synthetic" not in _rec.read_text().lower()))
     legacy = "# head\n\n## (g)\n\n> (g) first para,\nwrapped on a second line.\n>\n> (1) second.\n\n## (h)\n\n> (h) third.\n"
     check("authority: an older file with a wrapped paragraph still reads whole",
           parse_authority(legacy) == {"g": ["(g) first para, wrapped on a second line.", "(1) second."],

@@ -279,16 +279,26 @@ def cmd_check(a) -> int:
     return 0
 
 
-def cmd_allow(a) -> int:
-    text = REPORT.read_text()
+def add_allow_row(product: str, cell: str, column: str, reason: str, report: Path | None = None) -> bool:
+    """One row in the report's evidence allowlist block. A row is keyed by
+    product, cell, column and reason, so a second reason for the same
+    column is a second row. Returns False when the row is already there."""
+    path = report or REPORT
+    text = path.read_text()
     i, j = _block(text, ALLOW_BEGIN, ALLOW_END)
-    row = f"| {a.product} | {a.cell} | {a.column} | {a.reason} | {record_as_of()} |"
-    if row.split("|")[1:4] in [r.split("|")[1:4] for r in text[i:j].splitlines()]:
-        print("already allowlisted")
-        return 0
+    row = f"| {product} | {cell} | {column} | {reason} | {record_as_of()} |"
+    if row.split("|")[1:5] in [r.split("|")[1:5] for r in text[i:j].splitlines()]:
+        return False
     body = text[i:j].rstrip("\n")
-    REPORT.write_text(text[:i] + body + "\n" + row + "\n" + text[j:])
-    print("allowlisted", a.product, a.cell, a.column)
+    path.write_text(text[:i] + body + "\n" + row + "\n" + text[j:])
+    return True
+
+
+def cmd_allow(a) -> int:
+    if add_allow_row(a.product, a.cell, a.column, a.reason):
+        print("allowlisted", a.product, a.cell, a.column)
+    else:
+        print("already allowlisted")
     return 0
 
 

@@ -65,3 +65,60 @@ Pre-deploy steps, in order:
 - Not in this deploy, by decision: the verbatim rule text (7.3), the
   CDLI and NFI-ODCE headline series (7.2, R2-P1), Schedule H lines, the
   calibration run and the 17th product (7.8).
+
+## Entry 2, 2026-09-07, R2-P1 and R2-P2-1 to R2-P2-3
+
+- Source commit: the code tree of `95f2e28` on
+  `claude/tark-round-2-audit-jl9q4q` (R2-P1 merged from pull request 3,
+  then R2-P1-16, R2-P2-1, R2-P2-2, R2-P2-3, the merge of `main` and the
+  skill move). The commit that adds this entry differs from that tree by
+  this file, the build report and the decisions file only, as entry 1 did.
+- Machine: the remote build container (Linux, Python 3.11, Playwright
+  1.56.0, Chromium build 1194). It does not reach sec.gov, github.io or
+  federalregister.gov.
+- Hook run that authorized the deploy: `sh hooks/pre-commit` on the tree of
+  `95f2e28`, started 2026-09-07 07:01:45 UTC, finished 07:05:07 UTC, exit
+  0, 1,048 `[PASS]` lines, wall time 202 s. Gates in order, each green:
+  validate_data, validate_census, test_evidence_immutable, corrections_log
+  check, test_invariants, test_copy, test_docs, test_analytics,
+  test_cohort, test_benchmark, test_liquidity, test_ingest (with
+  test_sources), test_memo, test_app, test_artifacts_fresh, build_site,
+  reconcile, test_surfaces, test_frontend.
+- Build outputs from that run: `site/data.js` 1,192,453 bytes,
+  `site/series.js` 1,118,892 bytes, `site/census.data.js` 303,145 bytes,
+  64 memos and 64 packets under `site/memos/`. The anonymization gate in
+  the build passed (13 sponsor tokens screened).
+- Deploy: the built `site/` of that run copied over the existing `gh-pages`
+  history (every prior file removed first, `.nojekyll` kept), committed as
+  `839940f` and pushed to `origin/gh-pages` (`d74e91c..839940f`).
+  A recursive diff between `site/` and the deployed tree shows no
+  difference apart from `.nojekyll`. Appended to history, no force-push, as
+  in entry 1.
+- Tier 1 drawer check: green in the authorizing run ("Tier 1 manual check,
+  automated: drawer document, quote and accession equal the CSV for all 12
+  cells"). The live URL was not opened from this container (github.io is
+  blocked), so the same check on the live page is Oscar's, on his machine.
+- EDGAR HTTP 200 check: DONE by Oscar on his machine on 2026-09-07 before
+  this deploy, `python src/check_edgar_urls.py` on the tree of `95f2e28`:
+  "15 citation rows, 9 distinct EDGAR URLs (Tier 1 of
+  docs/verification_queue.md)", every one of the 9 URLs answered 200,
+  exit 0. The nine: the two Hamilton Lane N-CSR and SC TO-I documents,
+  the Cliffwater N-CSR, the Destiny Tech100 N-CSR, the KKR 10-K, the ARK
+  Venture N-CSR, and the Starwood REIT 10-K, 10-Q and 424B3, each by its
+  accession as the check printed them.
+- Demo script surface check: green in the same run ("all 48 surface-check
+  texts render on the named view under the named plan", the spoken peer
+  ratio only as the labeled peer comparison, no v2 composite ratio).
+- What this deploy puts live for the first time: benchmark architecture
+  v3 (the meaningful benchmark and the peer comparison as two named
+  cards, typed declared benchmarks, calendar-aligned composites, the
+  reference comparison, generated escalation), the liquidity view on the
+  filed outflow proxy, cell 1.12 on every product, the verbatim text of
+  paragraphs (g) to (l) in the Authority panel and the memo appendix, the
+  forms that hand the person a file, and the Verification view whose
+  signature requests the gate now admits.
+- Not in this deploy: any human-verified cell (the count is 0 until Oscar
+  signs the Tier 1 rows, which goes out as entry 3), the CDLI and NFI-ODCE
+  headline series, the case-law source documents, the calibration run and
+  the 17th product.
+- Rollback: `d74e91c` (entry 1) stays in the `gh-pages` history.

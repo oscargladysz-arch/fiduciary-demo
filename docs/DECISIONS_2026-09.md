@@ -1850,3 +1850,119 @@ assumption as three separate numbers (7.24). Tier 1 of the verification
 queue adds the two return-series cells the spoken figures read (cclfx 1.1,
 hl_paf 1.2). The Authority panel stays closed until the rule text is in the
 build. Reverse by: edit the demo script and re-derive Tier 1.
+
+### 7.28 R2-P1 merged, not deployed, two calls open
+Pull request 3 merged into `main` as `3ac2e9c` on 2026-09-06 (eight
+task-tagged commits, `e80250f` to `ef64112`). The working branch is
+restarted from that merge. The live site is still the Tuesday cut
+(`d74e91c`, deploy entry 1), so the surfaces this branch describes are not
+what a visitor sees until a recorded run deploys them. Two calls are
+Oscar's: whether Tuesday runs on the live cut with the v8 script (in the
+history at `0d37757`) or on a deploy of R2-P1 with v9 after the EDGAR check
+passes on a networked machine, and when the three networked fetches
+(published index series, authority text, case-law documents) run. Until
+they run, nothing describes them as done, and the cards for CDLI, NFI-ODCE
+and the Cambridge benchmark say the series is not in the record.
+
+### 7.29 R2-P1-16 closed: the authority text is fetched, quoted, and never paraphrased
+Oscar ran the authority fetcher on his own machine on 2026-09-07 at 06:19
+UTC. The record now holds `data/authority/2550-404a-6_proposed.md` (70
+paragraphs: (g) 7, (h) 16, (i) 15, (j) 13, (k) 10, (l) 9) and its manifest
+row, content hash `aef7a94680824e5574780e1f614702189d9dafcf1fde58558ff3ac782d3dcd5a`,
+source XML hash `01331810d9c219d3…` from the Federal Register full-text
+document 2026-06178. The file is committed byte for byte as fetched. Its
+header line reads "docket ." because the API metadata carried no docket id
+on that run. The header is not rendered anywhere and the fetcher now prints
+"docket not stated in the API metadata" in that case, so the next fetch
+does not repeat the blemish. The record's file is not rewritten by hand.
+
+Rendering: the Authority panel quotes the first paragraph under each letter
+(the rule text) in view, with the remaining paragraphs (the Department's
+examples and definitions) folded under a count, every word the Federal
+Register's. The paragraphs ride the lazy chunk and are merged into the rule
+object on load, so the first-paint bundle carries the status, the hash and
+the note only and stays under its pin. Opening the panel loads the chunk
+once and re-renders the panel in place. Every memo quotes the six rule
+paragraphs in its regulatory basis and the full text in its last appendix,
+with the fetch date and the hash. A frontend check compares each rendered
+lead paragraph to the fetched record byte for byte and counts the folds
+against the record. The demo script is v10: the 0:40 beat opens the panel
+and reads the first sentence of paragraph (k) off the screen.
+
+Not changed: no cell value, no published number, no status. The
+corrections table has no row for this task because nothing it watches
+moved. The basis sentence under every factor now ends "verbatim text in
+this build", which is the sentence the code always printed for this state.
+
+### 7.30 R2-P2-1: the verification gate admits a human signature, and the tool earns it
+Decision 7.4 lands. `test_invariants` no longer pins verified at 0. It
+accepts a verified row only in the form `verify_cell.py` writes: status
+"verified - <signer>, <date>", verified_by "<signer>, <date>", a signer the
+word-bounded person filter accepts, the product JSON and the evidence CSV
+agreeing, and two rows in the evidence allowlist with the reason "verified
+by <signer> on <date>, quote found in <document>", which only that tool
+writes. A verified_by on a row that is not verified fails. The totals pin
+holds extracted plus verified at 406, so a signature moves one row and the
+sum stays. This grows the gate: it checked one number, it now checks the
+signature's form, its author, its agreement across files and its marker.
+
+The tool earns the status before it writes it. The recorded quote must be
+found in the cited filing: the manifest row for the evidence row's
+accession read from its local file (the citations file's rows when the
+accession says "multiple"), or `--fetch` from the manifest URL with
+`TARK_SEC_CONTACT` set, or `--document` pointing at the copy the person
+checked. Matching normalizes whitespace and typographic quotes and nothing
+else, and a quote with an ellipsis is matched fragment by fragment in
+order. No document on the machine, no signature. This answers audit item
+38 as written: the script no longer signs a quote it has not seen in the
+document. The signer filter is word-bounded, so "Talbot" and "Cabot" are
+people and "Claude Code" or "the bot" are not.
+
+Not done here: the ingest still leaves the accession and local_file
+columns empty on the rows it writes (audit item 41), so a row it produced
+resolves no document and the person passes `--document` or `--fetch`.
+The ten Tier 1 signatures are Oscar's to make, on his machine, with the
+filings fetched there. Nothing in this task signs a cell.
+
+### 7.31 R2-P2-2: every form hands the person a file
+The advisor statement, the plan intake and the signature request are
+offered as a named download (a browser blob whose bytes are the text on
+screen) with a copy button, and the offer disappears when the form is
+refused. The site still writes nothing. File names: the advisor patch
+under the plan and product it belongs to, the intake under a slug of the
+anonymized label, the request under the product and cell. Audit item 36
+(the "# save as" comment line that made the file invalid JSON) was already
+gone in R2-P0. The intake's sponsor hint no longer refuses the words
+"company" and "co", which a plan description uses ("consulting company",
+a Colorado plan), and the reference sponsors' own tokens are screened by
+`tark_anon`, the list the build already refuses to emit, so a label that
+would fail the bundle screen fails at intake. Audit item 39. The service's
+authentication and job model (audit item 40) stay with decision 7.6.
+
+### 7.32 R2-P2-3: a row the ingest writes names its filing
+The ingest wrote every evidence row with an empty local_file and an empty
+accession (audit item 41, first clause), so the verification tool could
+not find the filing for a row the ingest produced and a person had to pass
+the file by hand. The ingest now writes both from what it already knew:
+the held filing's path under the record and the accession parsed from the
+document label it wrote into the source column. The scratch run checks all
+three located cells carry them, the verification dry run resolves the
+filing from the ledger alone, and a row with both columns blanked is still
+refused without a document. The rest of item 41 (chunking, token
+accounting, exhibits, PDF and iXBRL handling, the dry run's copy) waits
+for the networked run and is not described as done.
+
+### 7.33 Deploy 2 goes out before the signatures, not after
+Decision 7.28 left open whether R2-P1 deploys before Tuesday. Oscar ran
+the EDGAR check on 2026-09-07 (9 distinct Tier 1 URLs, every one 200), the
+last condition rule 15 sets, so R2-P1 and R2-P2-1 to R2-P2-3 deploy now as
+entry 2 of the deploy log, from the recorded hook run on the tree of
+`95f2e28`, rather than waiting for the Tier 1 signatures. Reason: the
+signatures are Oscar's own work over the next hours and may stall on a
+quote the filing does not carry, and the site is more honest with the v3
+benchmark cards, the verbatim rule text and the fetched authority live
+than with the Tuesday cut. The signatures go out as entry 3 from their own
+recorded run when they land. The Tuesday cut `d74e91c` stays in the
+`gh-pages` history as the rollback. The live check of the Tier 1 drawers
+on the deployed page is Oscar's, on his machine, since the container does
+not reach the live URL.

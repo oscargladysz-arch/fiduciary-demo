@@ -1335,6 +1335,23 @@ with sync_playwright() as pw:
           and intake_doc.get("pension_benefit_codes") == "2E2G2J2K"
           and intake_doc.get("derived_preview", {}).get("avg_balance_per_account") == 80000
           and "identity_private" not in intake_doc)
+    # R2-P2-2: the file is offered as a named download whose bytes are the
+    # text on screen, with a copy button, and the site still writes nothing
+    _dl = pf.locator("a[data-download]")
+    _blob_text = page.evaluate("async (u) => (await fetch(u)).text()", _dl.get_attribute("href"))
+    check("plan intake: the intake file downloads under a plan_intake name with the same bytes as the text shown",
+          _dl.get_attribute("download") == "plan_intake_us_regional_hospital_403_b_plan_400m_oh.json"
+          and _dl.get_attribute("href").startswith("blob:") and _blob_text == pf.locator("[data-plan-patch]").inner_text()
+          and pf.locator("[data-copy]").count() == 1)
+    pf.locator('[data-f="display_label"]').fill("US consulting company 401(k) plan (~$50M, CO)")
+    pf.locator("[data-plan-make]").click()
+    check("plan intake: a description with the words company and CO is accepted (audit item 39)",
+          not pf.locator("[data-plan-patch]").is_hidden()
+          and json.loads(pf.locator("[data-plan-patch]").inner_text()).get("display_label", "").endswith("CO)"))
+    pf.locator('[data-f="display_label"]').fill("")
+    pf.locator("[data-plan-make]").click()
+    check("plan intake: a refused form hides the previous file and its download",
+          pf.locator("[data-plan-patch]").is_hidden() and pf.locator("[data-file-actions]").is_hidden())
 
     # ---------- P2-7: verification view, quote beside value, command from signer and date
     view_text("verification")
@@ -1354,6 +1371,10 @@ with sync_playwright() as pw:
     vf.locator('[data-f="date"]').fill("2026-09-04")
     vf.locator("[data-verify-make]").click()
     _req = json.loads(vf.locator("[data-verify-cmd]").inner_text())
+    check("verification: the signature request is offered as a named file download with a copy button",
+          vf.locator("a[data-download]").get_attribute("download") == f"verify_{order[0].replace(':', '_')}.json"
+          and vf.locator("a[data-download]").get_attribute("href").startswith("blob:")
+          and vf.locator("[data-copy]").count() == 1)
     check("verification: the signature request names the product, cell, signer and date, no command line, "
           "nothing is written by the site",
           _req.get("signature_request") == "verify"
@@ -1376,10 +1397,32 @@ with sync_playwright() as pw:
           and (bundle["rule"]["authority"]["status"] == "fetched" or "not yet in this build" in auth_t))
     check("authority panel: scope sentence (selection, not monitoring) and advisor-completed cells",
           "Monitoring is not documented here" in auth_t and "6.6 and 6.8" in auth_t)
+    # once the text is fetched, the panel quotes the rule paragraph under
+    # every letter byte for byte from the hashed record, the lead in view
+    # and the Department's examples folded, and the first-paint bundle
+    # carries none of it (the paragraphs ride the lazy chunk)
+    from tark_data import authority as _authority
+    _auth = _authority()
+    if _auth["status"] == "fetched":
+        page.wait_for_selector("[data-authority-lead='(k)']", timeout=15000)
+        auth_t = page.locator("details.authority").inner_text()
+        _leads = {c: page.locator(f"[data-authority-lead='({c})']").inner_text() for c in "ghijkl"}
+        check("authority panel: every lead paragraph (g) to (l) is the fetched record's text verbatim",
+              all(_leads[c] == _auth["paragraphs"][c][0] for c in "ghijkl"))
+        _folded = page.locator("details.authority details.authmore").count()
+        check("authority panel: the examples under each letter are folded, none dropped",
+              _folded == sum(1 for c in "ghijkl" if len(_auth["paragraphs"][c]) > 1)
+              and all(f"{len(_auth['paragraphs'][c]) - 1} further paragraph" in auth_t.lower()
+                      or len(_auth["paragraphs"][c]) < 2
+                      for c in "ghijkl")
+              and "paragraphs" not in bundle["rule"]["authority"])
+    else:
+        check("authority panel: nothing quoted when the text is not fetched",
+              page.locator("[data-authority-lead]").count() == 0)
     ev_t = view_text("evaluation", product="hl_paf")
-    check("evaluation: every factor shows its rule paragraph and basis",
+    check("evaluation: every factor shows its rule paragraph and the build's basis sentence",
           all(f"rule paragraph ({c})" in ev_t for c in "ghijkl")
-          and ev_t.count("Basis: factor order per the 2026-09-03 audit") == 6)
+          and ev_t.count(f"Basis: {bundle['rule']['mapping_basis']}") == 6)
     # ---------- P2-6: advisor-stated cells, form emits a patch, nothing is faked
     n_forms = page.locator("[data-advisor-form]").count()
     n_stated = page.locator("[data-advisor-stated]").count()
@@ -1409,6 +1452,10 @@ with sync_playwright() as pw:
               and patch.get("cells", {}).get(cid, {}).get("signer") == "A. Person, committee chair"
               and patch["cells"][cid]["status"].startswith("advisor-stated - A. Person")
               and "not evidence" in patch.get("not_evidence", ""))
+        check("advisor form: the statement is offered as a named file download with a copy button",
+              form.locator("a[data-download]").get_attribute("download") == "advisor_plan_tech_media__hl_paf.json"
+              and form.locator("a[data-download]").get_attribute("href").startswith("blob:")
+              and form.locator("[data-copy]").count() == 1)
     check("evaluation: cells 6.6 and 6.8 carry the advisor-completed chip, no other cell does",
           page.locator("[data-advisor-completed]").count() == 2
           and all("paragraph (l)" in page.locator("[data-advisor-completed]").nth(i).inner_text()

@@ -158,6 +158,10 @@ check("verbatim quote: 2.1 written as extracted-unverified with the page in the 
 check("quote across a table row (cells joined by spaces) still verifies: 2.4 extracted-unverified",
       prod["cells"]["2.4"]["status"] == "extracted-unverified")
 check("page anchor: 2.7 located on page 2", "page 2" in prod["cells"]["2.7"]["source"])
+_ev = {r["cell_id"]: r for r in load_evidence(KEY)}
+check("ledger: every row the ingest wrote from a held filing carries the filing's record path and accession (audit item 41)",
+      all(_ev[c]["local_file"] == f"data/raw/{KEY}/486BPOS_2026-05-01_synthetic.htm"
+          and _ev[c]["accession"] == "0009999999-26-000001" for c in ("2.1", "2.4", "2.7")))
 check("the lie: 3.1 downgraded to partial with the reason, value kept for a human",
       prod["cells"]["3.1"]["status"].startswith("partial - quote not located verbatim")
       and "25%" in prod["cells"]["3.1"]["value"] and by["3.1"].reason)
@@ -273,15 +277,83 @@ check("verify: a signer naming a model, script or agent is refused",
 check("verify: a partial cell cannot be verified", refused(KEY, "3.1", "A. Person, chair", "2026-09-04"))
 check("verify: a pending cell cannot be verified", refused(KEY, "1.1", "A. Person, chair", "2026-09-04"))
 check("verify: a structured cell cannot be verified", refused(KEY, "4.5", "A. Person, chair", "2026-09-04"))
-row = verify_cell.apply(KEY, "2.1", "A. Person, committee chair", "2026-09-04", dry_run=True)
+SYN_DOC = str(raw_dir / "486BPOS_2026-05-01_synthetic.htm")
+row = verify_cell.apply(KEY, "2.1", "A. Person, committee chair", "2026-09-04", dry_run=True, document=SYN_DOC)
 after = (DATA / "products" / f"{KEY}.json").read_text()
 check("verify: the dry run shows the signed row and writes nothing",
       row["status"] == "verified - A. Person, committee chair, 2026-09-04"
       and row["verified_by"] == "A. Person, committee chair, 2026-09-04"
       and row["value"] == prod["cells"]["2.1"]["value"] and row["quote"] == prod["cells"]["2.1"]["quote"]
       and before == after and load_product(KEY)["cells"]["2.1"]["status"] == "extracted-unverified")
-check("verify: no verified row exists in the scratch record after the tests",
+check("verify: no verified row exists in the scratch record after the dry runs",
       all(not str(c["status"]).startswith("verified") for c in load_product(KEY)["cells"].values()))
+
+# ---------------- verify_cell (R2-P2-1): the quote against the document, the marker, the gate
+from verify_cell import cited_documents, quote_in_text, verified_row_problems  # noqa: E402
+import corrections_log  # noqa: E402
+check("verify: the signer filter is word-bounded, Talbot and Cabot are people, a bot or a model is not",
+      not verify_cell.NOT_A_PERSON.search("R. Talbot, trustee") and not verify_cell.NOT_A_PERSON.search("J. Cabot, CIO")
+      and bool(verify_cell.NOT_A_PERSON.search("Claude Code")) and bool(verify_cell.NOT_A_PERSON.search("the bot")))
+_txt = "the fund pays a management fee at an annual rate of 1.25% of the fund's average daily managed assets"
+check("verify: an ellipsis quote is matched fragment by fragment, in order, never out of order",
+      quote_in_text("management fee at an annual rate ... Managed Assets", _txt)[0]
+      and not quote_in_text("Managed Assets ... management fee at an annual rate", _txt)[0]
+      and quote_in_text("1.25% of the Fund\u2019s average", _txt)[0])
+check("verify: the ledger's local file resolves the document, so the dry run needs no --document",
+      [d["path"] for d in cited_documents(KEY, "2.1")] == [f"data/raw/{KEY}/486BPOS_2026-05-01_synthetic.htm"]
+      and verify_cell.apply(KEY, "2.1", "A. Person, chair", "2026-09-04", dry_run=True)["status"].startswith("verified"))
+_rows0 = load_evidence(KEY)
+for _r in _rows0:
+    if _r["cell_id"] == "2.1":
+        _r["local_file"], _r["accession"] = "", ""
+with open(DATA / "evidence" / f"{KEY}_evidence.csv", "w", newline="") as fh:
+    _w = csv.DictWriter(fh, fieldnames=EVIDENCE_COLUMNS)
+    _w.writeheader()
+    _w.writerows(_rows0)
+check("verify: a row that cites no document the record resolves is refused without --document or --fetch",
+      cited_documents(KEY, "2.1") == [] and refused(KEY, "2.1", "A. Person, chair", "2026-09-04"))
+(SCRATCH / "no_quote.htm").write_text("<html><body><p>A filing that never states the fee.</p></body></html>")
+check("verify: a document that does not contain the quote refuses the signature",
+      refused(KEY, "2.1", "A. Person, chair", "2026-09-04", document=str(SCRATCH / "no_quote.htm")))
+check("verify: a document path that does not exist refuses the signature",
+      refused(KEY, "2.1", "A. Person, chair", "2026-09-04", document=str(SCRATCH / "missing.htm")))
+scratch_report = SCRATCH / "crosscheck_report.md"
+shutil.copy(BASE / "docs" / "crosscheck_report.md", scratch_report)
+real_report_before = (BASE / "docs" / "crosscheck_report.md").read_bytes()
+signed = verify_cell.apply(KEY, "2.1", "R. Talbot, trustee", "2026-09-05", dry_run=False, document=SYN_DOC, report=scratch_report)
+ev21 = next(r for r in load_evidence(KEY) if r["cell_id"] == "2.1")
+allow_scratch = corrections_log.allow_rows(scratch_report.read_text())
+marker_rows = [a for a in allow_scratch if a["product"] == KEY and a["cell"] == "2.1"
+               and a["reason"].startswith("verified by R. Talbot, trustee on 2026-09-05")]
+check("verify: a real signature writes the JSON and the CSV together and two allowlist rows with the marker reason",
+      load_product(KEY)["cells"]["2.1"]["status"] == "verified - R. Talbot, trustee, 2026-09-05"
+      and ev21["status"] == signed["status"] and ev21["verified_by"] == "R. Talbot, trustee, 2026-09-05"
+      and sorted(a["column"] for a in marker_rows) == ["status", "verified_by"]
+      and "quote found in" in marker_rows[0]["reason"])
+check("verify: the repository's own report is untouched by the scratch signature",
+      (BASE / "docs" / "crosscheck_report.md").read_bytes() == real_report_before)
+check("verify: the gate accepts the signed scratch row",
+      verified_row_problems([KEY], allow=allow_scratch) == [])
+check("verify: the gate refuses the same row without the allowlist marker",
+      any("allowlist" in p for p in verified_row_problems([KEY], allow=[])))
+_p = load_product(KEY)
+_p["cells"]["2.4"]["verified_by"] = "someone, 2026-09-05"
+(DATA / "products" / f"{KEY}.json").write_text(json.dumps(_p, indent=1))
+_rows = load_evidence(KEY)
+for _r in _rows:
+    if _r["cell_id"] == "2.4":
+        _r["verified_by"] = "someone, 2026-09-05"
+    if _r["cell_id"] == "2.7":
+        _r["status"], _r["verified_by"] = "verified - ingest.py run, 2026-09-05", "ingest.py run, 2026-09-05"
+with open(DATA / "evidence" / f"{KEY}_evidence.csv", "w", newline="") as fh:
+    _w = csv.DictWriter(fh, fieldnames=EVIDENCE_COLUMNS)
+    _w.writeheader()
+    _w.writerows(_rows)
+_probs = verified_row_problems([KEY], allow=allow_scratch)
+check("verify: the gate refuses a signature without a verified status, a script signer, and a CSV the JSON does not carry",
+      any("not verified" in p and "2.4" in p for p in _probs)
+      and any("not a person" in p and "2.7" in p for p in _probs)
+      and any("disagree" in p and "2.7" in p for p in _probs))
 
 # ---------------- plan intake (P2-8): anonymized label required, derived recomputed
 import plan_intake  # noqa: E402
@@ -300,6 +372,15 @@ def intake_refused(form):
         return True
 check("intake: a label that looks like a sponsor is refused",
       intake_refused({**FORM, "display_label": "Acme Widgets Inc. 401(k)", "anonymization_label": "Acme Widgets Inc. 401(k)"}))
+from tark_anon import forbidden_tokens  # noqa: E402
+check("intake: a label naming a reference sponsor's token is refused, without the token being printed",
+      intake_refused({**FORM, "display_label": f"plan of {forbidden_tokens()[0]} employees",
+                      "anonymization_label": f"plan of {forbidden_tokens()[0]} employees"}))
+_co = plan_intake.intake({**FORM, "display_label": "US consulting company 401(k) plan (~$50M, CO)",
+                          "anonymization_label": "US consulting company 401(k) plan (~$50M, CO)"})
+check("intake: a description with the words company and CO is a description, not a sponsor, and is accepted",
+      _co.exists() and json.loads(_co.read_text())["display_label"].endswith("CO)"))
+_co.unlink()
 check("intake: an EIN in the label is refused",
       intake_refused({**FORM, "display_label": "plan 12-3456789", "anonymization_label": "plan 12-3456789"}))
 check("intake: without the anonymization confirmation it is refused",

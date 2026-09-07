@@ -25,9 +25,14 @@ import re
 import sys
 from pathlib import Path
 
+from tark_anon import leaks
 from tark_data import DATA, load_plan, validate_plan
 
-SPONSOR_HINT = re.compile(r"\b(inc|llc|l\.l\.c|corp|corporation|ltd|limited|company|co|lp|l\.p|plc|group holdings)\b\.?"
+# a corporate suffix or an EIN. "company" and "co" are not here: a plan
+# description says "consulting company" and a Colorado plan says "CO". The
+# reference sponsors' own tokens are screened by tark_anon, the same list
+# the build refuses to emit (audit item 39).
+SPONSOR_HINT = re.compile(r"\b(inc|llc|l\.l\.c|corp|corporation|ltd|limited|lp|l\.p|plc|holdings)\b\.?"
                           r"|\b\d{2}-\d{7}\b", re.I)
 ANON_RULE = ("Sponsor name never appears on demo surfaces. The plan entered the record through "
              "src/plan_intake.py under an anonymized label and no identity block is stored.")
@@ -70,6 +75,9 @@ def scaffold(form: dict) -> dict:
     if SPONSOR_HINT.search(label):
         refuse(f"display_label {label!r} looks like a sponsor name or an EIN, describe the plan instead "
                "(industry, size, state)")
+    if leaks(label):
+        refuse("display_label carries a token from a reference plan's sponsor identity, the build would "
+               "refuse to publish it, describe the plan instead (industry, size, state)")
     for f in NUMERIC:
         v = form.get(f)
         if f in ("net_assets_boy", "tot_admin_expenses", "retired_receiving") and v in (None, ""):

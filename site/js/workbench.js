@@ -3,7 +3,7 @@
  * source_cell provenance and honest nulls. URL state is keys/IDs only —
  * free text (search queries) never enters the hash. */
 
-import { esc, chip, statusKind, money, stat, citeBtn, gloss , fmtIncentive, fmtEarly } from "./views.js";
+import { esc, chip, statusKind, money, stat, citeBtn, gloss , fmtIncentive, fmtEarly, offerFile, hideFile } from "./views.js";
 
 const T = window.TARK;
 const PRODUCTS = Object.keys(T.products);
@@ -449,15 +449,14 @@ export function viewVerification(root, state, setState) {
       const date = form.querySelector('[data-f="date"]').value.trim();
       const msg = form.querySelector("[data-verify-msg]");
       const out = form.querySelector("[data-verify-cmd]");
-      if (!hasQuote) { msg.textContent = "no verbatim quote on record, nothing to verify against"; out.hidden = true; return; }
+      if (!hasQuote) { msg.textContent = "no verbatim quote on record, nothing to verify against"; hideFile(form, out); return; }
       if (!signer || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
         msg.textContent = "signer and an ISO date are both required, nothing was produced";
-        out.hidden = true;
+        hideFile(form, out);
         return;
       }
-      out.textContent = JSON.stringify({ signature_request: "verify", product, cell: cid, signer, date,
-        note: "Tark's verification step checks the quote against the filing before it writes verified" }, null, 2);
-      out.hidden = false;
+      offerFile(form, out, `verify_${product}_${cid}.json`, JSON.stringify({ signature_request: "verify", product, cell: cid, signer, date,
+        note: "Tark's verification step checks the quote against the filing before it writes verified" }, null, 2));
       msg.textContent = "signature request ready. Send it to Tark as yourself, the site writes nothing";
     });
   });

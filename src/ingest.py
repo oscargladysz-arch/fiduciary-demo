@@ -39,6 +39,7 @@ from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 
+from resolve_citations import references
 from tark_data import (CELLS, DATA, EVIDENCE_COLUMNS, load_evidence, load_product,
                        status_kind, validate_product)
 
@@ -263,6 +264,17 @@ class Outcome:
     status: str                      # extracted-unverified | partial - ... | pending extraction
     record: dict | None              # the cell record to write, None when the cell is left alone
     reason: str = ""
+    local_file: str = ""             # the cited filing's path under the record, when the filing was held
+    accession: str = ""              # its accession number, from the document label
+
+
+def _record_relative(path: str) -> str:
+    """A held filing's path as the evidence ledger writes it: under the
+    record ('data/raw/...'), never a machine path."""
+    try:
+        return str(Path(path).resolve().relative_to(DATA.parent.resolve()))
+    except ValueError:
+        return path
 
 
 def verify(cid: str, ex: CellExtraction, docs: list[FilingText], model: str, today: str) -> Outcome:
@@ -288,7 +300,14 @@ def verify(cid: str, ex: CellExtraction, docs: list[FilingText], model: str, tod
     record = {"element": CELLS[cid], "value": ex.value.strip(), "status": status,
               "source": src + (f", {section}" if section else ""), "section": section,
               "quote": (ex.quote or "").strip(), "extracted_by": extracted_by, "verified_by": ""}
-    return Outcome(cid, status, record, "" if located else why)
+    # the ledger columns the verification tool resolves the document by
+    # (audit item 41): the held filing's path and its accession, from the
+    # label the ingest itself wrote, so a person signing the row later
+    # finds the filing without retyping anything
+    refs = references(doc.label) if doc else []
+    acc = refs[0]["accessions"][0] if refs and refs[0].get("accessions") else ""
+    return Outcome(cid, status, record, "" if located else why,
+                   local_file=_record_relative(doc.path) if doc else "", accession=acc)
 
 
 # --------------------------------------------------------------------- write
@@ -308,7 +327,8 @@ def write_cells(key: str, outcomes: list[Outcome], today: str) -> list[str]:
             if r["cell_id"] == o.cid:
                 r.update({"element": o.record["element"], "value": o.record["value"],
                           "source_doc": o.record["source"], "source_section": o.record["section"],
-                          "quote": o.record["quote"], "local_file": "", "date_pulled": today,
+                          "quote": o.record["quote"], "local_file": o.local_file, "accession": o.accession,
+                          "date_pulled": today,
                           "extracted_by": o.record["extracted_by"], "verified_by": "",
                           "status": o.record["status"]})
         written.append(o.cid)

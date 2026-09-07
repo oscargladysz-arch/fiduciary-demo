@@ -323,6 +323,7 @@ def _scope_section(doc: Document) -> None:
            "Federal Register citation and RIN, not paraphrased."))
 
 
+
 def _case_law_section(doc: Document, product: dict) -> None:
     doc.add_heading("Case law", level=1)
     c = product["cells"]["5.7"]
@@ -661,10 +662,21 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
     for para in RULE_PARAS:
         doc.add_paragraph(para)
     doc.add_paragraph("Factor mapping basis: " + rule_ref("1.1", auth)["basis"] + ". "
-                      + ("The verbatim paragraphs are quoted in the appendix." if auth["status"] == "fetched"
-                         else auth["note"])
+                      + ("The rule paragraph under each letter follows verbatim and the full text of "
+                         "paragraphs (g) to (l), examples included, is the appendix at the end of this memo."
+                         if auth["status"] == "fetched" else auth["note"])
                       + " Cells " + " and ".join(ADVISOR_COMPLETED)
                       + " are advisor-completed under paragraph (l).")
+    if auth["status"] == "fetched":
+        # the first paragraph under each letter is the rule text itself, the
+        # rest are the Department's examples: quote the rule text here
+        for letter in "ghijkl":
+            paras = (auth.get("paragraphs") or {}).get(letter) or []
+            if paras:
+                doc.add_paragraph(paras[0], style="Intense Quote")
+        doc.add_paragraph(f"Source: Federal Register document {RULE['fr_document']}, fetched "
+                          f"{auth.get('fetched_at', 'on the date in the authority manifest')}, "
+                          f"content hash {auth.get('sha256', '')[:16]}. Nothing in the quoted text is Tark's.")
 
     facts_path = DATA / "facts" / f"{key}.json"
     fdoc = json.loads(facts_path.read_text()) if facts_path.exists() else {}
@@ -740,7 +752,10 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
 
     if auth["status"] == "fetched":
         doc.add_heading("Appendix: verbatim regulatory text", level=1)
-        doc.add_paragraph(auth["note"] + ". Every paragraph below is the Federal Register text unchanged.")
+        doc.add_paragraph(auth["note"] + f". Federal Register document {RULE['fr_document']}, fetched "
+                          f"{auth.get('fetched_at', 'on the date in the authority manifest')}, content hash "
+                          f"{auth.get('sha256', '')}. Runs of whitespace inside a paragraph are collapsed to "
+                          "one space. Every paragraph below is the Federal Register text unchanged.")
         for letter, paras in auth["paragraphs"].items():
             doc.add_heading(f"Paragraph ({letter})", level=2)
             for t in paras:

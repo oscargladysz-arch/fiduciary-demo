@@ -9,8 +9,9 @@ branch, decision 7.7), one task-tagged commit per task, nothing squashed,
 recorded below. R2-P1, R2-P2 and R2-P3 are appended as they land.
 
 The non-negotiables held throughout and the gates assert them: no cell was
-set to `verified` (the count is 0 and the gate still pins it until R2-P2-1
-rewrites it for a human signature), no number, quote, document name,
+set to `verified` (the count is 0. Since R2-P2-1 the gate no longer pins
+it: it accepts a verified row only as a human signature written by the
+verification tool after the quote was found in the filing), no number, quote, document name,
 accession or date was invented (every accession now comes from
 `data/manifest.csv` and nowhere else), tier language is never blurred, the
 four reference plans stay anonymized, gates only grew, every changed
@@ -110,6 +111,16 @@ check is not done: the container does not reach sec.gov, and a person runs
 `python src/check_edgar_urls.py` on a networked machine before Tuesday. The
 live URL was not opened from the container (github.io is blocked).
 
+Entry 2 of `docs/DEPLOY_LOG.md`, 2026-09-07. Source tree `95f2e28` (R2-P1
+merged, R2-P1-16, R2-P2-1 to R2-P2-3), hook run 07:01:45 to 07:05:07 UTC
+(19 gates, exit 0, 1,048 PASS lines, 202 s), deployed as `gh-pages` commit
+`839940f` (`d74e91c..839940f`, 136 files changed), the deployed tree
+identical to `site/` apart from `.nojekyll`. The EDGAR HTTP 200 check was
+run by Oscar on his machine before the deploy: 9 distinct Tier 1 URLs, every
+one 200, exit 0. The Tier 1 drawer check passed in the authorizing run for
+all 12 cells. Rollback is `d74e91c`. No human-verified cell is in this
+deploy, the Tier 1 signatures go out as entry 3.
+
 ## 6. What could not be done from this container
 
 Recorded in decision 7.8 and repeated here so nobody describes them as done:
@@ -145,7 +156,7 @@ it. The commit hashes are in section 11.
 | R2-P1-13 | Cells 1.6, 1.7, 1.10, 3.7, 4.7 and 4.8 are written by the owned-cells writer from the analytics supplement's new series diagnostics, the held series and the plan records. 3.7 is plan-independent in the record and plan-specific in each memo. | 7.26 |
 | R2-P1-14 | The case-law seeding literal is deleted. A fetcher saves the docket page, the questions presented and the opinion with hashed manifest rows and writes cell 5.7 from them. The unverified argument-term sentence is stripped from all 16 records through the corrections log. | 7.23 |
 | R2-P1-15 | Memo: alignment note and the typed Lane A sentences in the benchmark section, structured boilerplate only above zero, plan-specific 3.7, 3.8 and 3.9 lines from the memo's own plan, the packet's Exhibit B under its heading, no status word as a headline. The memo gate reads all 64 memos and all 64 packets for another plan's label, counts or match file. | 7.26 |
-| R2-P1-16 | The authority fetcher and parser round-trip (one blockquote line per paragraph, roman sub-paragraphs told from letters by sequence), a real-shaped synthetic XML fixture, a hashed manifest for the Federal Register document. The panel and the memo render the verbatim text only once the fetch has run on a networked machine. | 7.22 |
+| R2-P1-16 | The authority fetcher and parser round-trip (one blockquote line per paragraph, roman sub-paragraphs told from letters by sequence), a real-shaped synthetic XML fixture, a hashed manifest for the Federal Register document. The panel and the memo render the verbatim text only once the fetch has run on a networked machine. Ran on 2026-09-07 on Oscar's machine (70 paragraphs, content hash aef7a946 and the rest in the manifest row): the panel quotes the rule paragraph under each letter with the examples folded, the memo quotes the rule paragraphs in its regulatory basis and the full text in its last appendix, and the paragraphs ride the lazy chunk so the first-paint bundle stays under its pin. | 7.22, 7.29 |
 
 ## 8. Reproduction table, audit items 11 to 35
 
@@ -187,7 +198,7 @@ Recorded in decisions 7.2, 7.8, 7.22 and 7.23. Each script prints its own
 runbook in its header.
 
 1. `python src/fetch_index_series.py --id cdli --url <sponsor page or file> --license "<terms as read>"`, then the same for `odce`. If the sponsor refuses automated access, download once by hand and add `--from-file <file> --fetched <date>`. Then `python src/produce.py`, the hook, and the corrections log carries every number that moved when the engine treats the index as held.
-2. `export TARK_SEC_CONTACT='Name email'` and `python src/fetch_authority.py`, commit the markdown and its manifest row together, rebuild, and the panel and the memo render paragraphs (g) to (l).
+2. `export TARK_SEC_CONTACT='Name email'` and `python src/fetch_authority.py`, commit the markdown and its manifest row together, rebuild, and the panel and the memo render paragraphs (g) to (l). Done 2026-09-07 (decision 7.29).
 3. `pip install pypdf`, `python src/fetch_caselaw.py fetch --opinion-url <confirmed URL>`, then `apply` (dry run) and `apply --write`, then the printed corrections and allowlist commands.
 4. `python src/check_edgar_urls.py` before any deploy, as in the deploy log.
 
@@ -218,3 +229,19 @@ task the message says so.
 | `e6a2816` | R2-P1-13, R2-P1-15 |
 | `99d77d1` | R2-P1-14, R2-P1-16 |
 | `12c4fd2` | R2-P1 close: decisions, demo script v9, queue, runbook, this report, corrections table |
+| `be0aa29` | R2-P1-16 close: the authority text fetched on 2026-09-07, rendered, demo script v10 (decision 7.29) |
+
+## 12. R2-P2, an advisor can act: tasks
+
+| task | what landed | decision |
+|---|---|---|
+| R2-P2-1 | The verification gate admits a human signature: `test_invariants` accepts a verified row only in the form `verify_cell.py` writes (signer, ISO date, product JSON and CSV agreeing, the tool's two allowlist rows as the marker), pins extracted plus verified at 406 instead of verified at 0. `verify_cell.py` finds the recorded quote in the cited filing before it writes (manifest local file, `--fetch`, or `--document`), fragment by fragment across an ellipsis, and refuses without a document. The signer filter is word-bounded, so Talbot and Cabot are people. Audit items 37 and 38. | 7.4, 7.30 |
+| R2-P2-2 | The advisor, plan-intake and verification forms offer their file as a named download (a browser blob with the bytes shown on screen) and a copy button, hidden again when the form is refused. The intake's sponsor hint no longer refuses "company" or "CO" and the reference sponsors' tokens are screened by the same list the build refuses to emit. Audit items 36 and 39. | 7.31 |
+| R2-P2-3 | The ingest writes the held filing's record path and accession on every row it produces, so the verification tool resolves the document from the ledger alone. Audit item 41, first clause. The rest of item 41 waits for the networked run. | 7.32 |
+
+## 13. Gates grown in R2-P2
+
+- `test_invariants`: the verified pin becomes the signature contract (form, person, agreement, marker), the totals pin holds the sum.
+- `test_ingest`: the word-bounded signer filter, in-order fragment matching, refusal without a document, refusal on a document without the quote, a real signature on the scratch record writing both files and the marker rows into a scratch report while the repository's report is untouched, the gate accepting that row and refusing a forged verified_by, a script signer and a JSON that disagrees with the CSV. Intake: a reference sponsor's token refused without printing it, "company" and "CO" accepted.
+- `test_frontend`: each form's download name, blob bytes equal to the text shown, copy button, the file hidden on refusal, the "company, CO" label accepted.
+- `test_ingest`: the ledger columns on every row the canned run wrote, the verification dry run resolving the filing from the ledger, refusal once the columns are blank.
