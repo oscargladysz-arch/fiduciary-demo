@@ -1335,6 +1335,23 @@ with sync_playwright() as pw:
           and intake_doc.get("pension_benefit_codes") == "2E2G2J2K"
           and intake_doc.get("derived_preview", {}).get("avg_balance_per_account") == 80000
           and "identity_private" not in intake_doc)
+    # R2-P2-2: the file is offered as a named download whose bytes are the
+    # text on screen, with a copy button, and the site still writes nothing
+    _dl = pf.locator("a[data-download]")
+    _blob_text = page.evaluate("async (u) => (await fetch(u)).text()", _dl.get_attribute("href"))
+    check("plan intake: the intake file downloads under a plan_intake name with the same bytes as the text shown",
+          _dl.get_attribute("download") == "plan_intake_us_regional_hospital_403_b_plan_400m_oh.json"
+          and _dl.get_attribute("href").startswith("blob:") and _blob_text == pf.locator("[data-plan-patch]").inner_text()
+          and pf.locator("[data-copy]").count() == 1)
+    pf.locator('[data-f="display_label"]').fill("US consulting company 401(k) plan (~$50M, CO)")
+    pf.locator("[data-plan-make]").click()
+    check("plan intake: a description with the words company and CO is accepted (audit item 39)",
+          not pf.locator("[data-plan-patch]").is_hidden()
+          and json.loads(pf.locator("[data-plan-patch]").inner_text()).get("display_label", "").endswith("CO)"))
+    pf.locator('[data-f="display_label"]').fill("")
+    pf.locator("[data-plan-make]").click()
+    check("plan intake: a refused form hides the previous file and its download",
+          pf.locator("[data-plan-patch]").is_hidden() and pf.locator("[data-file-actions]").is_hidden())
 
     # ---------- P2-7: verification view, quote beside value, command from signer and date
     view_text("verification")
@@ -1354,6 +1371,10 @@ with sync_playwright() as pw:
     vf.locator('[data-f="date"]').fill("2026-09-04")
     vf.locator("[data-verify-make]").click()
     _req = json.loads(vf.locator("[data-verify-cmd]").inner_text())
+    check("verification: the signature request is offered as a named file download with a copy button",
+          vf.locator("a[data-download]").get_attribute("download") == f"verify_{order[0].replace(':', '_')}.json"
+          and vf.locator("a[data-download]").get_attribute("href").startswith("blob:")
+          and vf.locator("[data-copy]").count() == 1)
     check("verification: the signature request names the product, cell, signer and date, no command line, "
           "nothing is written by the site",
           _req.get("signature_request") == "verify"
@@ -1431,6 +1452,10 @@ with sync_playwright() as pw:
               and patch.get("cells", {}).get(cid, {}).get("signer") == "A. Person, committee chair"
               and patch["cells"][cid]["status"].startswith("advisor-stated - A. Person")
               and "not evidence" in patch.get("not_evidence", ""))
+        check("advisor form: the statement is offered as a named file download with a copy button",
+              form.locator("a[data-download]").get_attribute("download") == "advisor_plan_tech_media__hl_paf.json"
+              and form.locator("a[data-download]").get_attribute("href").startswith("blob:")
+              and form.locator("[data-copy]").count() == 1)
     check("evaluation: cells 6.6 and 6.8 carry the advisor-completed chip, no other cell does",
           page.locator("[data-advisor-completed]").count() == 2
           and all("paragraph (l)" in page.locator("[data-advisor-completed]").nth(i).inner_text()

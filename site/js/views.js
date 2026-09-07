@@ -285,7 +285,37 @@ export function viewPlans(root, state, setState) {
 
 /* plan intake form (P2-8): emits the intake file for src/plan_intake.py. The
  * sponsor hint mirrors the CLI's, the CLI is the one that validates and writes. */
-const SPONSOR_HINT = /\b(inc|llc|l\.l\.c|corp|corporation|ltd|limited|company|co|lp|l\.p|plc|group holdings)\b\.?|\b\d{2}-\d{7}\b/i;
+const SPONSOR_HINT = /\b(inc|llc|l\.l\.c|corp|corporation|ltd|limited|lp|l\.p|plc|holdings)\b\.?|\b\d{2}-\d{7}\b/i;
+
+/* a form's output as a file: shown, offered as a named download and a copy
+ * button. The site still writes nothing, the person sends the file. */
+export function offerFile(form, pre, filename, text) {
+  pre.textContent = text;
+  pre.hidden = false;
+  let bar = form.querySelector("[data-file-actions]");
+  if (!bar) {
+    bar = document.createElement("div");
+    bar.className = "fileactions";
+    bar.setAttribute("data-file-actions", "");
+    pre.insertAdjacentElement("beforebegin", bar);
+  }
+  const old = bar.querySelector("a[data-download]");
+  if (old && old.href.startsWith("blob:")) URL.revokeObjectURL(old.href);
+  const url = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+  bar.hidden = false;
+  bar.innerHTML = `<a class="btn ghost" data-download href="${url}" download="${esc(filename)}">download ${esc(filename)}</a>
+    <button class="btn ghost" type="button" data-copy>copy</button> <span class="cap" data-copy-msg></span>`;
+  bar.querySelector("[data-copy]").addEventListener("click", async () => {
+    const m = bar.querySelector("[data-copy-msg]");
+    try { await navigator.clipboard.writeText(text); m.textContent = "copied"; }
+    catch (e) { m.textContent = "clipboard unavailable here, select the text below"; }
+  });
+}
+export function hideFile(form, pre) {
+  pre.hidden = true;
+  const bar = form.querySelector("[data-file-actions]");
+  if (bar) bar.hidden = true;
+}
 function wirePlanForm(root) {
   const form = root.querySelector("[data-plan-form]");
   if (!form) return;
@@ -300,7 +330,7 @@ function wirePlanForm(root) {
     for (const f of ["net_assets_eoy", "net_assets_boy", "tot_admin_expenses", "with_account_balances",
                      "active_eoy", "separated_deferred_vested", "retired_receiving",
                      "benefit_payments_2e", "participant_contributions_2a1b"]) doc[f] = num(f);
-    const fail = (t) => { msg.textContent = t; out.hidden = true; };
+    const fail = (t) => { msg.textContent = t; hideFile(form, out); };
     if (!label) return fail("an anonymized label is required, nothing was produced");
     if (SPONSOR_HINT.test(label)) return fail("the label looks like a sponsor name or an EIN, describe the plan instead");
     if (!get("anonymization_label").checked) return fail("confirm that the label names no sponsor, nothing was produced");
@@ -310,8 +340,8 @@ function wirePlanForm(root) {
     doc.anonymization_label = label;
     doc.derived_preview = { avg_balance_per_account: Math.round(doc.net_assets_eoy / doc.with_account_balances),
       liquidity_tail_pct: Math.round(doc.separated_deferred_vested / doc.with_account_balances * 1000) / 10 };
-    out.textContent = JSON.stringify(doc, null, 2);
-    out.hidden = false;
+    const slug = label.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 40) || "intake";
+    offerFile(form, out, `plan_intake_${slug}.json`, JSON.stringify(doc, null, 2));
     msg.textContent = "intake file ready. Send this file to Tark to record the plan. Tark recomputes the derived figures and validates before anything enters the record";
   });
 }
@@ -465,15 +495,14 @@ function wireAdvisorForms(root, key, plan) {
       const out = form.querySelector("[data-advisor-patch]");
       if (!value || !signer || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
         msg.textContent = "value, signer and an ISO date are all required, nothing was produced";
-        out.hidden = true;
+        hideFile(form, out);
         return;
       }
       const existing = T.advisor[`${plan}__${key}`] || { plan, product: key, cells: {} };
       const doc = { ...existing, plan, product: key, not_evidence: T.advisor_not_evidence,
         cells: { ...existing.cells, [cid]: { value, signer, date,
           status: `advisor-stated - ${signer}, ${date}` } } };
-      out.textContent = JSON.stringify(doc, null, 2);
-      out.hidden = false;
+      offerFile(form, out, `advisor_${plan}__${key}.json`, JSON.stringify(doc, null, 2));
       msg.textContent = "statement file ready. Send this file to Tark to record it (the site itself writes nothing)";
     });
   });
