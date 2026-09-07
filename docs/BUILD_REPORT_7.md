@@ -227,9 +227,11 @@ task the message says so.
 |---|---|---|
 | R2-P2-1 | The verification gate admits a human signature: `test_invariants` accepts a verified row only in the form `verify_cell.py` writes (signer, ISO date, product JSON and CSV agreeing, the tool's two allowlist rows as the marker), pins extracted plus verified at 406 instead of verified at 0. `verify_cell.py` finds the recorded quote in the cited filing before it writes (manifest local file, `--fetch`, or `--document`), fragment by fragment across an ellipsis, and refuses without a document. The signer filter is word-bounded, so Talbot and Cabot are people. Audit items 37 and 38. | 7.4, 7.30 |
 | R2-P2-2 | The advisor, plan-intake and verification forms offer their file as a named download (a browser blob with the bytes shown on screen) and a copy button, hidden again when the form is refused. The intake's sponsor hint no longer refuses "company" or "CO" and the reference sponsors' tokens are screened by the same list the build refuses to emit. Audit items 36 and 39. | 7.31 |
+| R2-P2-3 | The ingest writes the held filing's record path and accession on every row it produces, so the verification tool resolves the document from the ledger alone. Audit item 41, first clause. The rest of item 41 waits for the networked run. | 7.32 |
 
 ## 13. Gates grown in R2-P2
 
 - `test_invariants`: the verified pin becomes the signature contract (form, person, agreement, marker), the totals pin holds the sum.
 - `test_ingest`: the word-bounded signer filter, in-order fragment matching, refusal without a document, refusal on a document without the quote, a real signature on the scratch record writing both files and the marker rows into a scratch report while the repository's report is untouched, the gate accepting that row and refusing a forged verified_by, a script signer and a JSON that disagrees with the CSV. Intake: a reference sponsor's token refused without printing it, "company" and "CO" accepted.
 - `test_frontend`: each form's download name, blob bytes equal to the text shown, copy button, the file hidden on refusal, the "company, CO" label accepted.
+- `test_ingest`: the ledger columns on every row the canned run wrote, the verification dry run resolving the filing from the ledger, refusal once the columns are blank.

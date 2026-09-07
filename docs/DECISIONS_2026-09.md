@@ -1938,3 +1938,16 @@ a Colorado plan), and the reference sponsors' own tokens are screened by
 `tark_anon`, the list the build already refuses to emit, so a label that
 would fail the bundle screen fails at intake. Audit item 39. The service's
 authentication and job model (audit item 40) stay with decision 7.6.
+
+### 7.32 R2-P2-3: a row the ingest writes names its filing
+The ingest wrote every evidence row with an empty local_file and an empty
+accession (audit item 41, first clause), so the verification tool could
+not find the filing for a row the ingest produced and a person had to pass
+the file by hand. The ingest now writes both from what it already knew:
+the held filing's path under the record and the accession parsed from the
+document label it wrote into the source column. The scratch run checks all
+three located cells carry them, the verification dry run resolves the
+filing from the ledger alone, and a row with both columns blanked is still
+refused without a document. The rest of item 41 (chunking, token
+accounting, exhibits, PDF and iXBRL handling, the dry run's copy) waits
+for the networked run and is not described as done.

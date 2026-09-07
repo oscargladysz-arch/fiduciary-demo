@@ -158,6 +158,10 @@ check("verbatim quote: 2.1 written as extracted-unverified with the page in the 
 check("quote across a table row (cells joined by spaces) still verifies: 2.4 extracted-unverified",
       prod["cells"]["2.4"]["status"] == "extracted-unverified")
 check("page anchor: 2.7 located on page 2", "page 2" in prod["cells"]["2.7"]["source"])
+_ev = {r["cell_id"]: r for r in load_evidence(KEY)}
+check("ledger: every row the ingest wrote from a held filing carries the filing's record path and accession (audit item 41)",
+      all(_ev[c]["local_file"] == f"data/raw/{KEY}/486BPOS_2026-05-01_synthetic.htm"
+          and _ev[c]["accession"] == "0009999999-26-000001" for c in ("2.1", "2.4", "2.7")))
 check("the lie: 3.1 downgraded to partial with the reason, value kept for a human",
       prod["cells"]["3.1"]["status"].startswith("partial - quote not located verbatim")
       and "25%" in prod["cells"]["3.1"]["value"] and by["3.1"].reason)
@@ -295,7 +299,18 @@ check("verify: an ellipsis quote is matched fragment by fragment, in order, neve
       quote_in_text("management fee at an annual rate ... Managed Assets", _txt)[0]
       and not quote_in_text("Managed Assets ... management fee at an annual rate", _txt)[0]
       and quote_in_text("1.25% of the Fund\u2019s average", _txt)[0])
-check("verify: the scratch row cites no document the record resolves, so without one the signature is refused",
+check("verify: the ledger's local file resolves the document, so the dry run needs no --document",
+      [d["path"] for d in cited_documents(KEY, "2.1")] == [f"data/raw/{KEY}/486BPOS_2026-05-01_synthetic.htm"]
+      and verify_cell.apply(KEY, "2.1", "A. Person, chair", "2026-09-04", dry_run=True)["status"].startswith("verified"))
+_rows0 = load_evidence(KEY)
+for _r in _rows0:
+    if _r["cell_id"] == "2.1":
+        _r["local_file"], _r["accession"] = "", ""
+with open(DATA / "evidence" / f"{KEY}_evidence.csv", "w", newline="") as fh:
+    _w = csv.DictWriter(fh, fieldnames=EVIDENCE_COLUMNS)
+    _w.writeheader()
+    _w.writerows(_rows0)
+check("verify: a row that cites no document the record resolves is refused without --document or --fetch",
       cited_documents(KEY, "2.1") == [] and refused(KEY, "2.1", "A. Person, chair", "2026-09-04"))
 (SCRATCH / "no_quote.htm").write_text("<html><body><p>A filing that never states the fee.</p></body></html>")
 check("verify: a document that does not contain the quote refuses the signature",
