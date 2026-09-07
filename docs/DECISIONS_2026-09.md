@@ -1951,3 +1951,18 @@ filing from the ledger alone, and a row with both columns blanked is still
 refused without a document. The rest of item 41 (chunking, token
 accounting, exhibits, PDF and iXBRL handling, the dry run's copy) waits
 for the networked run and is not described as done.
+
+### 7.33 Deploy 2 goes out before the signatures, not after
+Decision 7.28 left open whether R2-P1 deploys before Tuesday. Oscar ran
+the EDGAR check on 2026-09-07 (9 distinct Tier 1 URLs, every one 200), the
+last condition rule 15 sets, so R2-P1 and R2-P2-1 to R2-P2-3 deploy now as
+entry 2 of the deploy log, from the recorded hook run on the tree of
+`95f2e28`, rather than waiting for the Tier 1 signatures. Reason: the
+signatures are Oscar's own work over the next hours and may stall on a
+quote the filing does not carry, and the site is more honest with the v3
+benchmark cards, the verbatim rule text and the fetched authority live
+than with the Tuesday cut. The signatures go out as entry 3 from their own
+recorded run when they land. The Tuesday cut `d74e91c` stays in the
+`gh-pages` history as the rollback. The live check of the Tier 1 drawers
+on the deployed page is Oscar's, on his machine, since the container does
+not reach the live URL.

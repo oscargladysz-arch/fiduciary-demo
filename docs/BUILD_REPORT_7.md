@@ -111,6 +111,16 @@ check is not done: the container does not reach sec.gov, and a person runs
 `python src/check_edgar_urls.py` on a networked machine before Tuesday. The
 live URL was not opened from the container (github.io is blocked).
 
+Entry 2 of `docs/DEPLOY_LOG.md`, 2026-09-07. Source tree `95f2e28` (R2-P1
+merged, R2-P1-16, R2-P2-1 to R2-P2-3), hook run 07:01:45 to 07:05:07 UTC
+(19 gates, exit 0, 1,048 PASS lines, 202 s), deployed as `gh-pages` commit
+`839940f` (`d74e91c..839940f`, 136 files changed), the deployed tree
+identical to `site/` apart from `.nojekyll`. The EDGAR HTTP 200 check was
+run by Oscar on his machine before the deploy: 9 distinct Tier 1 URLs, every
+one 200, exit 0. The Tier 1 drawer check passed in the authorizing run for
+all 12 cells. Rollback is `d74e91c`. No human-verified cell is in this
+deploy, the Tier 1 signatures go out as entry 3.
+
 ## 6. What could not be done from this container
 
 Recorded in decision 7.8 and repeated here so nobody describes them as done:
