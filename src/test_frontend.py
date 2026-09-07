@@ -1376,10 +1376,32 @@ with sync_playwright() as pw:
           and (bundle["rule"]["authority"]["status"] == "fetched" or "not yet in this build" in auth_t))
     check("authority panel: scope sentence (selection, not monitoring) and advisor-completed cells",
           "Monitoring is not documented here" in auth_t and "6.6 and 6.8" in auth_t)
+    # once the text is fetched, the panel quotes the rule paragraph under
+    # every letter byte for byte from the hashed record, the lead in view
+    # and the Department's examples folded, and the first-paint bundle
+    # carries none of it (the paragraphs ride the lazy chunk)
+    from tark_data import authority as _authority
+    _auth = _authority()
+    if _auth["status"] == "fetched":
+        page.wait_for_selector("[data-authority-lead='(k)']", timeout=15000)
+        auth_t = page.locator("details.authority").inner_text()
+        _leads = {c: page.locator(f"[data-authority-lead='({c})']").inner_text() for c in "ghijkl"}
+        check("authority panel: every lead paragraph (g) to (l) is the fetched record's text verbatim",
+              all(_leads[c] == _auth["paragraphs"][c][0] for c in "ghijkl"))
+        _folded = page.locator("details.authority details.authmore").count()
+        check("authority panel: the examples under each letter are folded, none dropped",
+              _folded == sum(1 for c in "ghijkl" if len(_auth["paragraphs"][c]) > 1)
+              and all(f"{len(_auth['paragraphs'][c]) - 1} further paragraph" in auth_t.lower()
+                      or len(_auth["paragraphs"][c]) < 2
+                      for c in "ghijkl")
+              and "paragraphs" not in bundle["rule"]["authority"])
+    else:
+        check("authority panel: nothing quoted when the text is not fetched",
+              page.locator("[data-authority-lead]").count() == 0)
     ev_t = view_text("evaluation", product="hl_paf")
-    check("evaluation: every factor shows its rule paragraph and basis",
+    check("evaluation: every factor shows its rule paragraph and the build's basis sentence",
           all(f"rule paragraph ({c})" in ev_t for c in "ghijkl")
-          and ev_t.count("Basis: factor order per the 2026-09-03 audit") == 6)
+          and ev_t.count(f"Basis: {bundle['rule']['mapping_basis']}") == 6)
     # ---------- P2-6: advisor-stated cells, form emits a patch, nothing is faked
     n_forms = page.locator("[data-advisor-form]").count()
     n_stated = page.locator("[data-advisor-stated]").count()

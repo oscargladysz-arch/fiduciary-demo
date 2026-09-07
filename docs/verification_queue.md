@@ -11,7 +11,7 @@ from the statuses (machine-parsed: keep the `- key cell_id —` line format).
 ## Queue (demo-load-bearing first)
 
 ### Tier 1 — numbers spoken aloud in the demo
-Derived from the table at the end of `docs/demo_script.md` (v9). Re-derive
+Derived from the table at the end of `docs/demo_script.md` (v10). Re-derive
 this list whenever the script changes.
 - hl_paf 2.1 — 1.40% on managed assets, leverage-inclusive (the fee-base trap beat, and the first drawer the script opens: accession 0001213900-26-066804)
 - dxyz 2.1 — 2.50% on gross assets incl. borrowings (Fee Matrix)

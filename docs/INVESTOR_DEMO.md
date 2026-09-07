@@ -54,7 +54,7 @@ ack ids) would leak.
    cache. The series and census chunks lazy-load, so hard-refresh twice
    after a redeploy.
 5. The app opens on the **Screener** with the tech/media plan selected.
-   `docs/demo_script.md` (v9, the advisor workflow) says where to go from
+   `docs/demo_script.md` (v10, the advisor workflow) says where to go from
    there, and its closing table names the record location of every number
    it speaks.
 
@@ -142,11 +142,12 @@ the record. The static site itself writes nothing.
 - Glossary chips need a hover, or a tap on touch devices.
 - Zero cells are human-verified. The UI says so on every surface that
   counts. That is a feature, not a gap.
-- The verbatim rule text is fetched by `python src/fetch_authority.py` on a
-  machine that reaches the Federal Register API. Until that has run, the
-  Authority panel and the memos say the text is not yet in the build and
-  cite the paragraph numbers only, and the demo script does not open the
-  panel (decision 7.3).
+- The verbatim rule text was fetched by `python src/fetch_authority.py` on
+  2026-09-07 from the Federal Register API (decisions 7.3 and 7.29). The
+  Authority panel quotes paragraphs (g) to (l) from the hashed file in the
+  record, the rule paragraph in view and the examples folded, and every
+  memo quotes the rule paragraphs in its regulatory basis and the full text
+  in its last appendix. The demo script opens the panel once, at 0:40.
 - Cell 5.7 (case law) is `partial` on all 16 products: docket listing and
   search snippets, not the source documents. The memo labels it so.
 - The ingestion pipeline is tested offline with a mock client. Its

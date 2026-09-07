@@ -139,9 +139,18 @@ function authorityPanel() {
   const factors = Object.entries(T.factors).map(([n, label]) => {
     const letter = T.rule_refs[`${n}.1`].para;
     const paras = a.paragraphs && a.paragraphs[letter.replace(/[()]/g, "")];
+    // the first paragraph under a letter is the rule text, the rest are the
+    // Department's examples and definitions: the rule text is always in
+    // view, the rest one click away, every word the Federal Register's
     const body = paras
-      ? paras.map((t) => `<blockquote class="verbatim">${esc(t)}</blockquote>`).join("")
-      : `<div class="cap">paragraph ${esc(letter)}: ${esc(a.note)}</div>`;
+      ? `<blockquote class="verbatim" data-authority-lead="${esc(letter)}">${esc(paras[0])}</blockquote>`
+        + (paras.length > 1
+          ? `<details class="authmore"><summary>${paras.length - 1} further paragraph${paras.length > 2 ? "s" : ""} under ${esc(letter)}, verbatim</summary>`
+            + paras.slice(1).map((t) => `<blockquote class="verbatim">${esc(t)}</blockquote>`).join("") + `</details>`
+          : "")
+      : a.status === "fetched"
+        ? `<div class="cap" data-authority-pending>paragraph ${esc(letter)}: loading the verbatim text.</div>`
+        : `<div class="cap">paragraph ${esc(letter)}: ${esc(a.note)}</div>`;
     return `<div class="authfactor"><b>${n} · ${esc(label)}</b> <span class="cap">paragraph ${esc(letter)}</span>${body}</div>`;
   }).join("");
   return `<div class="authbody">
@@ -171,6 +180,15 @@ function buildTopbar() {
     <button class="copylink" id="palettebtn"><kbd>⌘K</kbd> palette</button>
     <span class="spacer"></span>
     <details class="authority"><summary>Authority</summary>${authorityPanel()}</details>`;
+  const auth = bar.querySelector("details.authority");
+  auth.addEventListener("toggle", () => {
+    if (!auth.open || !T.rule.authority || T.rule.authority.status !== "fetched") return;
+    if (T.rule.authority.paragraphs) return;
+    loadSeriesChunk(() => {
+      const d = document.querySelector("details.authority");
+      if (d) { d.innerHTML = `<summary>Authority</summary>${authorityPanel()}`; d.open = true; }
+    });
+  });
   bar.querySelector("#planpick").addEventListener("change",
     (e) => setState({ plan: e.target.value }));
   bar.querySelector("#prodpick").addEventListener("change",
@@ -212,24 +230,38 @@ window.tarkMergeLazy = function () {
   }
   window.TARK.liquidity = window.TARK_LIQ;
   window.TARK.swap_matrix = window.TARK_LAB;   // lab verdict matrix
+  // the verbatim rule paragraphs, keyed by letter, when the text is in the build
+  if (window.TARK.rule && window.TARK.rule.authority) {
+    window.TARK.rule.authority.paragraphs = window.TARK_AUTHORITY || null;
+  }
   const ev = window.TARK_EVIDENCE || {};
   for (const k of Object.keys(ev)) {
     for (const cid of Object.keys(ev[k])) Object.assign(window.TARK.products[k].cells[cid], ev[k][cid]);
   }
 };
 let seriesLoading = false;
+const seriesWaiters = [];
+/* one script element for the chunk however many callers ask: the series
+ * views and the Authority panel both wait on the same load */
+function loadSeriesChunk(then) {
+  if (window.TARK.series) { then(); return; }
+  seriesWaiters.push(then);
+  if (seriesLoading) return;
+  seriesLoading = true;
+  const s = document.createElement("script");
+  s.src = "series.js";
+  s.onload = () => {
+    window.tarkMergeLazy();
+    while (seriesWaiters.length) seriesWaiters.shift()();
+  };
+  document.head.append(s);
+}
 function ensureSeries() {
   const root = document.getElementById("view");
   root.innerHTML = `<div class="nochart"><div class="k">Loading series</div>
     Loading the price/NAV series chunk, split from the core bundle so the
     screener and comparison views paint instantly.</div>`;
-  if (!seriesLoading) {
-    seriesLoading = true;
-    const s = document.createElement("script");
-    s.src = "series.js";
-    s.onload = () => { window.tarkMergeLazy(); render(); };
-    document.head.append(s);
-  }
+  loadSeriesChunk(render);
 }
 
 /* the census chunk (T1 universe, ~1.3k entities) is lazy-loaded the same

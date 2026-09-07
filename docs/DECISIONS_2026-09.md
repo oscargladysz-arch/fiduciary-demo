@@ -1863,3 +1863,33 @@ passes on a networked machine, and when the three networked fetches
 (published index series, authority text, case-law documents) run. Until
 they run, nothing describes them as done, and the cards for CDLI, NFI-ODCE
 and the Cambridge benchmark say the series is not in the record.
+
+### 7.29 R2-P1-16 closed: the authority text is fetched, quoted, and never paraphrased
+Oscar ran the authority fetcher on his own machine on 2026-09-07 at 06:19
+UTC. The record now holds `data/authority/2550-404a-6_proposed.md` (70
+paragraphs: (g) 7, (h) 16, (i) 15, (j) 13, (k) 10, (l) 9) and its manifest
+row, content hash `aef7a94680824e5574780e1f614702189d9dafcf1fde58558ff3ac782d3dcd5a`,
+source XML hash `01331810d9c219d3…` from the Federal Register full-text
+document 2026-06178. The file is committed byte for byte as fetched. Its
+header line reads "docket ." because the API metadata carried no docket id
+on that run. The header is not rendered anywhere and the fetcher now prints
+"docket not stated in the API metadata" in that case, so the next fetch
+does not repeat the blemish. The record's file is not rewritten by hand.
+
+Rendering: the Authority panel quotes the first paragraph under each letter
+(the rule text) in view, with the remaining paragraphs (the Department's
+examples and definitions) folded under a count, every word the Federal
+Register's. The paragraphs ride the lazy chunk and are merged into the rule
+object on load, so the first-paint bundle carries the status, the hash and
+the note only and stays under its pin. Opening the panel loads the chunk
+once and re-renders the panel in place. Every memo quotes the six rule
+paragraphs in its regulatory basis and the full text in its last appendix,
+with the fetch date and the hash. A frontend check compares each rendered
+lead paragraph to the fetched record byte for byte and counts the folds
+against the record. The demo script is v10: the 0:40 beat opens the panel
+and reads the first sentence of paragraph (k) off the screen.
+
+Not changed: no cell value, no published number, no status. The
+corrections table has no row for this task because nothing it watches
+moved. The basis sentence under every factor now ends "verbatim text in
+this build", which is the sentence the code always printed for this state.

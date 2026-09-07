@@ -668,7 +668,10 @@ def main() -> None:
         "advisor_not_evidence": ADVISOR_NOT_EVIDENCE,
         # an evaluation service, when one is connected at build time (P2-5)
         "service_url": (os.environ.get("TARK_SERVICE_URL") or "").rstrip("/") or None,
-        "rule": {**RULE, "authority": authority(),
+        # the verbatim paragraphs (about 60 KB) ride the lazy chunk as
+        # TARK_AUTHORITY and are merged back on load, so the first-paint
+        # bundle carries the status, the hash and the note only
+        "rule": {**RULE, "authority": {k: v for k, v in authority().items() if k != "paragraphs"},
                  "mapping_basis": rule_ref("1.1", authority())["basis"]},
         "rule_refs": {cid: {k: v for k, v in rule_ref(cid, authority()).items() if k != "basis"}
                       for cid in CELLS},
@@ -787,7 +790,9 @@ def main() -> None:
         + "window.TARK_EVIDENCE = " + evidence_payload + ";\n"
         # last, so the gates that read the chunk lines by position keep theirs
         + "window.TARK_LIQ_SHARED = "
-        + json.dumps(liquidity_shared, separators=(",", ":")) + ";\n")
+        + json.dumps(liquidity_shared, separators=(",", ":")) + ";\n"
+        + "window.TARK_AUTHORITY = "
+        + json.dumps(authority().get("paragraphs") or {}, separators=(",", ":")) + ";\n")
     (SITE / "census.data.js").write_text("window.TARK_CENSUS = "
                                          + census_payload + ";\n")
 

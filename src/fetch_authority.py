@@ -161,7 +161,8 @@ def render(meta: dict, source_sha: str, fetched_at: str, paras: dict[str, list[s
              "",
              f"Source: Federal Register document {DOC}, {meta['citation']}, published "
              f"{meta['publication_date']}, RIN {', '.join(meta.get('regulation_id_numbers') or [])}, "
-             f"docket {', '.join(meta.get('docket_ids') or [])}.",
+             + (f"docket {', '.join(meta['docket_ids'])}." if meta.get("docket_ids")
+                else "docket not stated in the API metadata."),
              f"Fetched {fetched_at} from {meta['full_text_xml_url']} "
              f"(sha256 of the XML as served {source_sha}). HTML: {meta.get('html_url')}.",
              "",

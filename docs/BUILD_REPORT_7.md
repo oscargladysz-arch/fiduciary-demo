@@ -145,7 +145,7 @@ it. The commit hashes are in section 11.
 | R2-P1-13 | Cells 1.6, 1.7, 1.10, 3.7, 4.7 and 4.8 are written by the owned-cells writer from the analytics supplement's new series diagnostics, the held series and the plan records. 3.7 is plan-independent in the record and plan-specific in each memo. | 7.26 |
 | R2-P1-14 | The case-law seeding literal is deleted. A fetcher saves the docket page, the questions presented and the opinion with hashed manifest rows and writes cell 5.7 from them. The unverified argument-term sentence is stripped from all 16 records through the corrections log. | 7.23 |
 | R2-P1-15 | Memo: alignment note and the typed Lane A sentences in the benchmark section, structured boilerplate only above zero, plan-specific 3.7, 3.8 and 3.9 lines from the memo's own plan, the packet's Exhibit B under its heading, no status word as a headline. The memo gate reads all 64 memos and all 64 packets for another plan's label, counts or match file. | 7.26 |
-| R2-P1-16 | The authority fetcher and parser round-trip (one blockquote line per paragraph, roman sub-paragraphs told from letters by sequence), a real-shaped synthetic XML fixture, a hashed manifest for the Federal Register document. The panel and the memo render the verbatim text only once the fetch has run on a networked machine. | 7.22 |
+| R2-P1-16 | The authority fetcher and parser round-trip (one blockquote line per paragraph, roman sub-paragraphs told from letters by sequence), a real-shaped synthetic XML fixture, a hashed manifest for the Federal Register document. The panel and the memo render the verbatim text only once the fetch has run on a networked machine. Ran on 2026-09-07 on Oscar's machine (70 paragraphs, content hash aef7a946 and the rest in the manifest row): the panel quotes the rule paragraph under each letter with the examples folded, the memo quotes the rule paragraphs in its regulatory basis and the full text in its last appendix, and the paragraphs ride the lazy chunk so the first-paint bundle stays under its pin. | 7.22, 7.29 |
 
 ## 8. Reproduction table, audit items 11 to 35
 
@@ -187,7 +187,7 @@ Recorded in decisions 7.2, 7.8, 7.22 and 7.23. Each script prints its own
 runbook in its header.
 
 1. `python src/fetch_index_series.py --id cdli --url <sponsor page or file> --license "<terms as read>"`, then the same for `odce`. If the sponsor refuses automated access, download once by hand and add `--from-file <file> --fetched <date>`. Then `python src/produce.py`, the hook, and the corrections log carries every number that moved when the engine treats the index as held.
-2. `export TARK_SEC_CONTACT='Name email'` and `python src/fetch_authority.py`, commit the markdown and its manifest row together, rebuild, and the panel and the memo render paragraphs (g) to (l).
+2. `export TARK_SEC_CONTACT='Name email'` and `python src/fetch_authority.py`, commit the markdown and its manifest row together, rebuild, and the panel and the memo render paragraphs (g) to (l). Done 2026-09-07 (decision 7.29).
 3. `pip install pypdf`, `python src/fetch_caselaw.py fetch --opinion-url <confirmed URL>`, then `apply` (dry run) and `apply --write`, then the printed corrections and allowlist commands.
 4. `python src/check_edgar_urls.py` before any deploy, as in the deploy log.
 

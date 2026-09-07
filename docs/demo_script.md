@@ -1,4 +1,4 @@
-# Tark Demo Script v9, 7 minutes (the advisor workflow)
+# Tark Demo Script v10, 7 minutes (the advisor workflow)
 
 Setup: reset per `docs/INVESTOR_DEMO.md`. The app lands on the **Screener**
 with the tech/media plan selected in the header. Fallback:
@@ -10,8 +10,11 @@ record location of each one. Read a number off the screen before saying it.
 If the screen disagrees with this script, the screen is right and the script
 is stale. Coverage counts are read from the Coverage view, never recited.
 
-What changed from v8 (decisions 7.1, 7.21, 7.24 and 7.27 in
-`docs/DECISIONS_2026-09.md`): the benchmark card carries two named
+What changed from v9 (decision 7.29): the verbatim text of paragraphs (g)
+to (l) is in the build, fetched from the Federal Register on 2026-09-07, so
+the 0:40 beat opens the Authority panel and reads the first words of
+paragraph (k) off the screen. What changed from v8 (decisions 7.1, 7.21,
+7.24 and 7.27 in `docs/DECISIONS_2026-09.md`): the benchmark card carries two named
 comparisons, "Meaningful benchmark (paragraph (k))" and "Peer comparison
 (paragraphs (g) and (h))". The peer ratio is now calendar-aligned with n per
 period, so v9 speaks it, always with its label and never as a benchmark or a
@@ -19,8 +22,8 @@ PME. A PME is spoken only against a public market series and only with its
 data-source caveat. Where the meaningful benchmark is a published index the
 record does not hold, the card says so and the spoken PME is the reference
 comparison, named as such. The liquidity beat starts from the plan's filed
-outflow proxy. The Authority panel is not opened, because the verbatim rule
-text is not in this build. The closing table is re-derived and Tier 1 of
+outflow proxy. The Authority panel is opened once, at 0:40, and the speaker
+reads the rule text there, never from memory. The closing table is re-derived and Tier 1 of
 `docs/verification_queue.md` is re-derived from it.
 
 **0:00, Screener (landing).** "Sixteen products, one plan in the header,
@@ -35,9 +38,12 @@ second one is never a benchmark."
 **0:40, Six-Factor Evaluation, Hamilton Lane Private Assets Fund (hl_paf).**
 "Six factors, paragraphs (g) to (l) of proposed 29 CFR 2550.404a-6, and
 every cell is chipped with its paragraph. The Authority panel links the
-Federal Register document and the docket, and it says that the verbatim text
-of the paragraphs is not yet in this build. We do not paraphrase the rule, so
-today we leave the panel closed." Scroll to the fees factor. "Cell 2.1
+Federal Register document and the docket, and it quotes the paragraphs
+verbatim from the fetched text, the rule paragraph in view and the
+Department's examples one click away." Open the panel and read the first
+sentence under paragraph (k) off the screen, then close it. "We do not
+paraphrase the rule. What you just heard is the Federal Register's text,
+hashed in the record." Scroll to the fees factor. "Cell 2.1
 headline: 1.40% on managed assets, leverage-inclusive. That is the fee-base
 trap, and the headline is the typed fact, not a regex over the prose." Click
 the cell. "The drawer: document, section, verbatim quote, the accession from
@@ -113,8 +119,9 @@ evidence."
 
 **5:20, Packet.** "Download the decision memo and the committee packet for
 the plan in the header. The file name carries the plan. Sections: the
-regulatory basis with the paragraph numbers and the plain statement that the
-verbatim text is not yet in this build, six-factor findings as complete
+regulatory basis with the paragraph numbers and the rule paragraph under
+each letter quoted verbatim, with the full text as the last appendix,
+six-factor findings as complete
 sentences with the typed facts, benchmark selection with the ledger and the
 alignment note, liquidity match with the structural verdict and the
 ILLUSTRATIVE scenario, a recommendation section that lists the flags and
