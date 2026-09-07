@@ -2,9 +2,13 @@
 
 The evidence CSVs (`data/evidence/*.csv`) are the verification interface: check
 the row against the cited document, then sign it through `src/verify_cell.py`
-with your name and the date (the Verification view makes the exact command
-beside each row). That script is the only path that writes `verified`, and it
-writes both the CSV and the product JSON. Nothing else may do this.
+with your name and the date (the Verification view makes the signature request
+file beside each row, downloadable). That script is the only path that writes
+`verified`, and it writes both the CSV and the product JSON. Before it writes
+it finds the recorded quote in the cited filing on your machine (the manifest's
+local file, `--fetch` from the SEC with `TARK_SEC_CONTACT` set, or `--document`
+pointing at your copy) and refuses otherwise. Nothing else may do this, and the
+gates accept a verified row only in the form that script writes.
 The site's Verification view renders this queue with live progress computed
 from the statuses (machine-parsed: keep the `- key cell_id —` line format).
 

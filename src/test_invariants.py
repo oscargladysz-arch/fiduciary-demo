@@ -24,17 +24,20 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         FAILS.append(name)
 
 
-# 1. verified is human-only: this remediation never sets it
-verified_rows = 0
-signed = 0
-for key in product_keys():
-    for r in load_evidence(key):
-        if r["status"].startswith("verified"):
-            verified_rows += 1
-        if r["verified_by"].strip():
-            signed += 1
-check("no cell is verified and no verified_by is signed in this pull request",
-      verified_rows == 0 and signed == 0, f"verified={verified_rows} signed={signed}")
+# 1. verified is human-only (decision 7.4, R2-P2-1). The pin at zero is
+# replaced by the contract the verification tool writes: a verified row
+# carries 'verified - <signer>, <date>', verified_by '<signer>, <date>', a
+# signer that is a person, the product JSON agreeing with the CSV, and the
+# tool's two allowlist rows (the marker that a person ran it after the
+# quote was found in the cited document). A signed verified_by on a row
+# that is not verified fails too. The count is free to grow, the sum of
+# extracted and verified is what the totals pin below holds.
+from verify_cell import verified_row_problems  # noqa: E402
+_problems = verified_row_problems()
+verified_rows = sum(1 for key in product_keys() for r in load_evidence(key)
+                    if r["status"].startswith("verified"))
+check(f"every verified row is a human signature written by the verification tool ({verified_rows} verified)",
+      _problems == [], " | ".join(_problems[:5]))
 
 # 2. one coverage formula: build_site and app.py call tark_data.coverage_summary
 bs = (BASE / "src" / "build_site.py").read_text()
@@ -50,10 +53,12 @@ tot = coverage_totals()["counts"]
 # R2-P1-13 owns cell 3.7 for all 16: its ten documented n/a rows (plan-side,
 # per plan) became the writer's computed sentence: 177 to 187, n/a 205 to
 # 195. The pin is a snapshot of the record, not a target.
-check("record totals per kind (recomputed): extracted 406, n/a 195, computed 187, "
-      "partial 75, fetched 16, structured 1, verified 0, pending 0",
-      (tot["extracted"], tot["na"], tot["computed"], tot["partial"], tot["fetched"],
-       tot["structured"], tot["verified"], tot["pending"]) == (406, 195, 187, 75, 16, 1, 0, 0),
+# a human signature moves one row from extracted to verified (decision
+# 7.4), so the two are pinned as a sum
+check("record totals per kind (recomputed): extracted plus verified 406, n/a 195, computed 187, "
+      "partial 75, fetched 16, structured 1, pending 0",
+      (tot["extracted"] + tot["verified"], tot["na"], tot["computed"], tot["partial"], tot["fetched"],
+       tot["structured"], tot["pending"]) == (406, 195, 187, 75, 16, 1, 0),
       str(tot))
 c = coverage_summary("cion_ares")
 check("cion_ares: structured counts as resolved (structured 1, pending 0)",

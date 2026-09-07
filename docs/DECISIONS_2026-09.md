@@ -1893,3 +1893,48 @@ Not changed: no cell value, no published number, no status. The
 corrections table has no row for this task because nothing it watches
 moved. The basis sentence under every factor now ends "verbatim text in
 this build", which is the sentence the code always printed for this state.
+
+### 7.30 R2-P2-1: the verification gate admits a human signature, and the tool earns it
+Decision 7.4 lands. `test_invariants` no longer pins verified at 0. It
+accepts a verified row only in the form `verify_cell.py` writes: status
+"verified - <signer>, <date>", verified_by "<signer>, <date>", a signer the
+word-bounded person filter accepts, the product JSON and the evidence CSV
+agreeing, and two rows in the evidence allowlist with the reason "verified
+by <signer> on <date>, quote found in <document>", which only that tool
+writes. A verified_by on a row that is not verified fails. The totals pin
+holds extracted plus verified at 406, so a signature moves one row and the
+sum stays. This grows the gate: it checked one number, it now checks the
+signature's form, its author, its agreement across files and its marker.
+
+The tool earns the status before it writes it. The recorded quote must be
+found in the cited filing: the manifest row for the evidence row's
+accession read from its local file (the citations file's rows when the
+accession says "multiple"), or `--fetch` from the manifest URL with
+`TARK_SEC_CONTACT` set, or `--document` pointing at the copy the person
+checked. Matching normalizes whitespace and typographic quotes and nothing
+else, and a quote with an ellipsis is matched fragment by fragment in
+order. No document on the machine, no signature. This answers audit item
+38 as written: the script no longer signs a quote it has not seen in the
+document. The signer filter is word-bounded, so "Talbot" and "Cabot" are
+people and "Claude Code" or "the bot" are not.
+
+Not done here: the ingest still leaves the accession and local_file
+columns empty on the rows it writes (audit item 41), so a row it produced
+resolves no document and the person passes `--document` or `--fetch`.
+The ten Tier 1 signatures are Oscar's to make, on his machine, with the
+filings fetched there. Nothing in this task signs a cell.
+
+### 7.31 R2-P2-2: every form hands the person a file
+The advisor statement, the plan intake and the signature request are
+offered as a named download (a browser blob whose bytes are the text on
+screen) with a copy button, and the offer disappears when the form is
+refused. The site still writes nothing. File names: the advisor patch
+under the plan and product it belongs to, the intake under a slug of the
+anonymized label, the request under the product and cell. Audit item 36
+(the "# save as" comment line that made the file invalid JSON) was already
+gone in R2-P0. The intake's sponsor hint no longer refuses the words
+"company" and "co", which a plan description uses ("consulting company",
+a Colorado plan), and the reference sponsors' own tokens are screened by
+`tark_anon`, the list the build already refuses to emit, so a label that
+would fail the bundle screen fails at intake. Audit item 39. The service's
+authentication and job model (audit item 40) stay with decision 7.6.
