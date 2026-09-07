@@ -3,7 +3,7 @@
  * source_cell provenance and honest nulls. URL state is keys/IDs only —
  * free text (search queries) never enters the hash. */
 
-import { esc, chip, statusKind, money, stat, citeBtn, gloss , fmtIncentive, fmtEarly } from "./views.js";
+import { esc, chip, statusKind, money, stat, citeBtn, gloss , fmtIncentive, fmtEarly, offerFile, hideFile } from "./views.js";
 
 const T = window.TARK;
 const PRODUCTS = Object.keys(T.products);
@@ -74,7 +74,7 @@ const COLS = [
       (v) => v.toFixed(4))],
   ["alpha", "Direct Alpha vs public proxy", (k) => factCell(k, fact(k, "direct_alpha_public_proxy"),
       (v) => v.toFixed(2) + "%/yr")],
-  ["peer", "Peer relative wealth ratio", (k) => factCell(k, fact(k, "peer_relative_wealth_ratio"),
+  ["peer", "Peer relative wealth ratio (cell 1.12)", (k) => factCell(k, fact(k, "peer_relative_wealth_ratio"),
       (v) => v.toFixed(4))],
   ["score", "Engine score", (k) => factCell(k, fact(k, "selection_score"),
       (v) => v + "/12")],
@@ -233,11 +233,11 @@ const CMP_ROWS = [
   ["Tax form", "tax_form", (v) => v, (v) => v === "K-1"],
   ["Auditor", "auditor", (v) => v, null],
   ["Big-4", "big4", (v) => v ? "yes" : "no", null],
-  ["Primary benchmark", "primary_benchmark_id", (v) => T.candidate_short[v] || v, null],
+  ["Meaningful benchmark (paragraph (k))", "primary_benchmark_id", (v) => T.candidate_short[v] || "candidate without a short name", null],
   ["Engine score", "selection_score", (v) => v + "/12", null],
   ["KS-PME vs public proxy", "pme_public_proxy", (v) => v.toFixed(4), (v) => v < 1],
   ["Direct Alpha vs public proxy", "direct_alpha_public_proxy", (v) => v.toFixed(2) + "%/yr", (v) => v < 0],
-  ["Peer relative wealth ratio", "peer_relative_wealth_ratio", (v) => v.toFixed(4), (v) => v < 1],
+  ["Peer relative wealth ratio (cell 1.12)", "peer_relative_wealth_ratio", (v) => v.toFixed(4), (v) => v < 1],
   ["Track record", "track_record_years", (v) => v + " yrs", null],
   ["Net assets", "net_assets_usd", (v) => money(v), null],
 ];
@@ -415,7 +415,7 @@ export function viewVerification(root, state, setState) {
             <td>${esc(shortName(it.product))}
               ${it.tier === 1 ? `<span class="chip plain" data-tier1-badge>${esc(q.tiers["1"] || "Tier 1")}</span>` : ""}</td>
             <td class="num">${esc(it.cell)}</td>
-            <td>${esc(cell.element)}</td>
+            <td>${esc(T.cell_labels[it.cell])}</td>
             <td>${chip(cell.status)}</td>
             <td>${citeBtn(it.product, it.cell)}
               <a href="#" data-goto-cell="${it.product}">open →</a></td></tr>
@@ -449,15 +449,14 @@ export function viewVerification(root, state, setState) {
       const date = form.querySelector('[data-f="date"]').value.trim();
       const msg = form.querySelector("[data-verify-msg]");
       const out = form.querySelector("[data-verify-cmd]");
-      if (!hasQuote) { msg.textContent = "no verbatim quote on record, nothing to verify against"; out.hidden = true; return; }
+      if (!hasQuote) { msg.textContent = "no verbatim quote on record, nothing to verify against"; hideFile(form, out); return; }
       if (!signer || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
         msg.textContent = "signer and an ISO date are both required, nothing was produced";
-        out.hidden = true;
+        hideFile(form, out);
         return;
       }
-      out.textContent = JSON.stringify({ signature_request: "verify", product, cell: cid, signer, date,
-        note: "Tark's verification step checks the quote against the filing before it writes verified" }, null, 2);
-      out.hidden = false;
+      offerFile(form, out, `verify_${product}_${cid}.json`, JSON.stringify({ signature_request: "verify", product, cell: cid, signer, date,
+        note: "Tark's verification step checks the quote against the filing before it writes verified" }, null, 2));
       msg.textContent = "signature request ready. Send it to Tark as yourself, the site writes nothing";
     });
   });
@@ -484,7 +483,7 @@ export function viewSearch(root, state, setState) {
     const hits = [];
     for (const k of PRODUCTS) {
       for (const [cid, cell] of Object.entries(T.products[k].cells)) {
-        const hay = `${cell.value || ""} ${cell.quote || ""} ${cell.element}`.toLowerCase();
+        const hay = `${cell.value || ""} ${cell.quote || ""} ${T.cell_labels[cid]}`.toLowerCase();
         const at = hay.indexOf(q);
         if (at >= 0) {
           hits.push({ k, cid, cell,
@@ -497,7 +496,7 @@ export function viewSearch(root, state, setState) {
       <tr><th>Product</th><th>Cell</th><th>Element</th><th>Match</th><th>Status</th><th></th></tr></thead>
       <tbody>${hits.map((h) => `<tr>
         <td>${esc(shortName(h.k))}</td><td class="num">${h.cid}</td>
-        <td>${esc(h.cell.element)}</td>
+        <td>${esc(T.cell_labels[h.cid])}</td>
         <td class="cap">…${esc(h.ctx)}…</td>
         <td>${chip(h.cell.status)}</td>
         <td>${citeBtn(h.k, h.cid)}</td></tr>`).join("")}</tbody></table></div>
@@ -733,7 +732,7 @@ export function viewCohorts(root, state, setState) {
     ["tax_form", "Tax form"], ["big4", "Big-4 audit"],
     ["track_record_years", "Track record (yrs)"],
     ["pme_public_proxy", "KS-PME vs public proxy"],
-    ["peer_relative_wealth_ratio", "Peer relative wealth ratio"],
+    ["peer_relative_wealth_ratio", "Peer relative wealth ratio (cell 1.12)"],
   ];
   const cell = (k, field) => {
     const f = fact(k, field);
@@ -767,7 +766,18 @@ export function viewCohorts(root, state, setState) {
       <div class="rminmax"><span>${st.min}</span><span>${st.max}</span></div></div>`;
   };
 
-  const comp = C.composite;
+  // composite rows (v3): one per period with n, a composite_return_pct only
+  // where every member reports the period on the same basis
+  const comp = C.composite || { refused: true, reason: "no composite on record" };
+  const compRows = comp.rows || [];
+  const charted = compRows.filter((r) => r.composite_return_pct != null);
+  const noneFormed = !comp.refused && !charted.length;
+  const nOr = (v) => v == null ? "n/a" : esc(String(v));
+  // the cohort artifact names members by product key inside its prose
+  // (composite_refused_reason): keys never print, the fund's name does
+  const wordsForKeys = (s) => Object.keys(T.products).sort((a, b) => b.length - a.length)
+    .reduce((acc, k) => acc.replace(new RegExp(`(?<![A-Za-z0-9_])${k}(?![A-Za-z0-9_])`, "g"),
+      T.products[k].fund_name.split(" (")[0]), String(s || ""));
   const exclusions = T.roster_decisions_md.split("## Considered and excluded")[1]?.split("##")[0] || "";
 
   root.innerHTML = `
@@ -794,10 +804,18 @@ export function viewCohorts(root, state, setState) {
       rangeBar(f, (FIELD_ROWS.find(([id]) => id === f) || [f, f])[1])).join("")}</div>
     <h2 style="margin:18px 0 6px">Composite</h2>
     ${comp.refused ? `<div class="nochart"><div class="k">Composite refused</div>
-        ${esc(comp.reason)}</div>`
+        ${esc(wordsForKeys(comp.reason || "no reason recorded"))}</div>`
+      : noneFormed ? `<div class="nochart" data-no-composite><div class="k">No composite return formed</div>
+        ${esc(wordsForKeys(comp.composite_refused_reason || "no period is reported by every member on the same basis"))}.
+        <div class="tablewrap" style="margin-top:8px"><table class="grid" style="max-width:460px">
+          <thead><tr><th>Period</th><th>n</th></tr></thead>
+          <tbody>${compRows.map((r) => `<tr><td>${esc(r.label || r.period || "period not labeled")}</td>
+            <td class="num">${nOr(r.n)}</td></tr>`).join("")}</tbody>
+        </table></div></div>`
       : `<div class="chartbox"><div id="compchart"></div>
-         <div class="chartnote">${esc(comp.granularity)} · ${esc(comp.weighting)}.
-           Per-row membership is shown in the tooltip. Rows require ≥2 reporting members.</div></div>`}
+         <div class="chartnote">${esc(comp.granularity || "granularity not stated")} · ${esc(comp.weighting || "weighting not stated")}.
+           n per period is shown in the tooltip. A composite return exists only where every
+           member reports the period (${charted.length} of ${compRows.length} periods on record).</div></div>`}
     <h2 style="margin:18px 0 6px">Membership rationales</h2>
     ${members.map((k) => `<div class="cellrow"><div class="head">
         <span class="el">${esc(T.products[k].fund_name)}</span>
@@ -810,14 +828,41 @@ export function viewCohorts(root, state, setState) {
 
   root.querySelectorAll("[data-cohort]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault(); setState({ view: "cohorts", cohort: a.dataset.cohort }); }));
-  if (!comp.refused && comp.rows.length) {
+  if (!comp.refused && charted.length) {
     import("./charts.js").then(({ lineChart }) => {
       const box = root.querySelector("#compchart");
       if (!box) return;
       lineChart(box, {
-        series: [{ points: comp.rows.map((r) => [`${r.year}-12-31`, r.composite_return_pct]),
+        series: [{ points: charted.map((r) => [r.period, r.composite_return_pct]),
           label: `equal-weight composite (${C.label})`, color: "#593380", width: 2, markers: true }],
         height: 220, includeZero: true, yFormat: (v) => v.toFixed(0) + "%",
+      });
+      // n per period rides on the markers: a native title on each one, and
+      // the shared tooltip gets the nearest period's n appended
+      const svg = box.querySelector("svg");
+      if (!svg) return;
+      const marks = [...svg.querySelectorAll('circle[r="3.4"]')];
+      marks.forEach((c, i) => {
+        const r = charted[i];
+        if (!r) return;
+        const t = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        t.textContent = `${r.label || r.period}: n=${r.n}, composite ${r.composite_return_pct}%`;
+        c.append(t);
+      });
+      const W = (svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width) || 920;
+      svg.addEventListener("mousemove", (ev) => {
+        const tt = document.querySelector(".charttip");
+        if (!tt || tt.style.display === "none" || !marks.length) return;
+        const rect = svg.getBoundingClientRect();
+        const mx = (ev.clientX - rect.left) / rect.width * W;
+        let best = -1; let bd = Infinity;
+        marks.forEach((c, i) => {
+          const d = Math.abs(+c.getAttribute("cx") - mx);
+          if (d < bd) { bd = d; best = i; }
+        });
+        if (best >= 0 && bd < 60 && !tt.textContent.includes("n=")) {
+          tt.textContent += `  ·  n=${charted[best].n}`;
+        }
       });
     });
   }

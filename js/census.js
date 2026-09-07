@@ -261,7 +261,7 @@ function renderEntity(root, e, state, setState) {
         : `
           <p class="cap">Everything above is T1 (structured filing data). A
           promotion step verifies identity against EDGAR (R1),
-          fetches the fund's filings, scaffolds the 54-cell six-factor record,
+          fetches the fund's filings, scaffolds the 55-cell six-factor record,
           prefills what the census already answers (marked
           <span class="chip structured">structured filing data (T1)</span>),
           and emits the extraction worklist for the rest. Nothing here is
