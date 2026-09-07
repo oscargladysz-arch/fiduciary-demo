@@ -650,9 +650,16 @@ def main() -> None:
                     edgar.extend({"form": ref.get("form", ""), "filing_date": f["filing_date"],
                                   "accession": f["accession"], "url": f["url"]} for f in ref["filings"])
             cell["edgar"] = edgar
-    products = {k: {**p, "cells": {cid: {f: (display_path_free(c.get(f, "")) if f == "value" else c.get(f, ""))
-                                         for f in FIRST_PAINT_FIELDS}
-                                   for cid, c in p["cells"].items()}}
+    # R3-P0-2: the citation button must render on a fresh load of the
+    # Screener and Compare, before the lazy chunk carries the drawer detail,
+    # so the first paint names which cells have a source (ids only, one
+    # short string per product, to stay under the bundle's size pin)
+    cited_cells = {k: ",".join(cid for cid, c in p["cells"].items() if c.get("source"))
+                   for k, p in products.items()}
+    products = {k: {**p, "cited": cited_cells[k],
+                    "cells": {cid: {f: (display_path_free(c.get(f, "")) if f == "value" else c.get(f, ""))
+                                    for f in FIRST_PAINT_FIELDS}
+                              for cid, c in p["cells"].items()}}
                 for k, p in products.items()}
     _reg = json.loads((DATA / "registry.json").read_text())["products"]
     descriptors = {k: {a: _reg[k].get(a) for a in ("wrapper_type", "pricing_class",

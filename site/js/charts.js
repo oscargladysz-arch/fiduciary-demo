@@ -249,8 +249,10 @@ export function donut(container, cfg) {
   const r = size / 2 - 12;
   const cx = size / 2; const cy = size / 2;
   const total = cfg.segments.reduce((a, s) => a + s.value, 0) || 1;
-  const svg = el("svg", { viewBox: `0 0 ${size} ${size}`,
-    style: `max-width:${size}px` });
+  // R3-P0-2: an SVG with a viewBox and no width or height renders at
+  // 0 by 0 inside a flex row, so the ring carries its intended size
+  const svg = el("svg", { viewBox: `0 0 ${size} ${size}`, width: size,
+    height: size, "data-donut": "", style: `max-width:${size}px` });
   let a0 = -Math.PI / 2;
   for (const s of cfg.segments) {
     const frac = s.value / total;

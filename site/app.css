@@ -527,6 +527,9 @@ body[data-density="compact"] h1 { font-size: 20px; }
   .sliderrow { grid-template-columns: 1fr; gap: var(--s1); }
   .rollup { grid-template-columns: repeat(3, 1fr); }
   .cardgrid.g2 { grid-template-columns: 1fr; }
+  /* R3-P0-2: the roster ring now has its 64 px width, so the wrapper chip
+     beside it wraps instead of running past the card on a phone */
+  #rostercards .chip.wrapper { white-space: normal; }
 }
 
 /* ------------------------------------------------------- cohort ranges */
