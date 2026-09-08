@@ -28,9 +28,12 @@ the evidence row). Only a human editing `data/evidence/*.csv` can set
 - `src/`: producers (`produce.py` runs them in a fixed order), the engines
   (`tark_analytics.py`, `tark_benchmark.py`, `tark_liquidity.py`,
   `tark_cohort.py`, `tark_memo.py`), the ingestion of a new fund from its CIK
-  (`ingest.py`, structured extraction with a verbatim-quote contract, offline
-  gate `test_ingest.py`, calibration against an evaluated product with
-  `calibrate_ingest.py`), human verification of one cell (`verify_cell.py`,
+  (`ingest.py`, structured extraction with a verbatim-quote contract, a
+  cost estimate before the first call and a budget stop, a write after
+  every cell, `run_product` as the library entry, the offline gate
+  `test_ingest.py` against the mock client in `mock_model.py`, calibration
+  against an evaluated product with `calibrate_ingest.py`), human
+  verification of one cell (`verify_cell.py`,
   signer and date required, the only path that writes verified), plan intake
   under an anonymized label (`plan_intake.py`), the site build
   (`build_site.py`), the one-endpoint

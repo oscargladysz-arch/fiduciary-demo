@@ -1,0 +1,23 @@
+{
+ "what": "Canned answers for the ingest gate's mock model (decision 8.17). $DOC is replaced by the synthetic filing's label. 3.1 is a deliberate lie (a figure the filing does not contain) and 6.4 cites a document that is not on record. Every figure is synthetic.",
+ "default_usage": {"input_tokens": 60, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 900, "output_tokens": 80},
+ "cells": {
+  "2.1": {"found": true,
+          "value": "Management fee 1.25% per year on average daily Managed Assets (a leverage-inclusive base).",
+          "quote": "management fee at an annual rate of 1.25% of the Fund's average daily Managed Assets",
+          "source_doc": "$DOC", "section": "Management fee", "not_found_reason": "",
+          "usage": {"input_tokens": 60, "cache_creation_input_tokens": 900, "cache_read_input_tokens": 0, "output_tokens": 95}},
+  "2.4": {"found": true, "value": "AFFE line present at 0.42%.",
+          "quote": "Acquired Fund Fees and Expenses 0.42%", "source_doc": "$DOC",
+          "section": "fee table", "not_found_reason": ""},
+  "2.7": {"found": true, "value": "No early repurchase fee.",
+          "quote": "The Fund does not charge an early repurchase fee.", "source_doc": "$DOC",
+          "section": "Repurchases", "not_found_reason": ""},
+  "3.1": {"found": true, "value": "Quarterly repurchase offers for 25% of outstanding Shares.",
+          "quote": "quarterly repurchase offers for 25% of its outstanding Shares",
+          "source_doc": "$DOC", "section": "Repurchases", "not_found_reason": ""},
+  "6.4": {"found": true, "value": "Form 1099-DIV, RIC status.",
+          "quote": "Shareholders receive Form 1099-DIV. The Fund has elected to be treated as a RIC.",
+          "source_doc": "a document that is not on record", "section": "Taxes", "not_found_reason": ""}
+ }
+}

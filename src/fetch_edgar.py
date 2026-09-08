@@ -14,6 +14,13 @@ Design rules:
 - Script fetches and organizes; humans read and extract (see docs/extraction_worksheet.md).
 - SEC fair-access: identified User-Agent, <=4 requests/sec, retry-once on throttle.
 - Idempotent: existing files are skipped, manifest rows are deduped.
+- Every path under the data root (TARK_DATA_DIR): a run against a copy of
+  the record never writes the repository. fetch_product(key) returns the
+  product's manifest rows for the caller (the ingest, the worker).
+- Exhibits: a registry entry may name `exhibits: {form: [patterns]}`. For
+  such a form the filing index is read and every matching document is saved
+  beside the primary document, with its own manifest row on the same
+  accession (so the document label names the document, see ingest.doc_label).
 
 Registry verified against live EDGAR on 2026-07-09. Notes:
 - "HLPIF" (from earlier project docs) maps to NO registered entity; the
@@ -28,6 +35,7 @@ Registry verified against live EDGAR on 2026-07-09. Notes:
 
 import argparse
 import csv
+import fnmatch
 import json
 import sys
 import time
@@ -36,36 +44,46 @@ from pathlib import Path
 
 import requests
 
-from tark_data import sec_user_agent  # noqa: E402  (contact from TARK_SEC_CONTACT)
+from tark_data import DATA, sec_user_agent  # noqa: E402  (contact from TARK_SEC_CONTACT)
 
 
 def headers() -> dict:
     return {"User-Agent": sec_user_agent(), "Accept-Encoding": "gzip, deflate"}
-REPO_ROOT = Path(__file__).resolve().parents[1]
-RAW_DIR = REPO_ROOT / "data" / "raw"
-MANIFEST = REPO_ROOT / "data" / "manifest.csv"
+
+
+RAW_DIR = DATA / "raw"
+MANIFEST = DATA / "manifest.csv"
 MANIFEST_COLS = [
     "product", "fund_name", "cik", "doc_set", "form", "filing_date",
     "accession", "primary_document", "url", "local_path", "pulled_at_utc",
 ]
 SLEEP = 0.3  # seconds between requests (SEC allows 10/sec; we stay well under)
 
-# identity from data/products, document sets from the one registry: every
-# product in the record is fetchable, none is hand-listed here
+
+# identity from data/products, document sets and exhibits from the one
+# registry: every product in the record is fetchable, none is hand-listed
+# here. Read on demand, so a product promoted after import is visible.
 def _products_from_record() -> dict:
-    import json as _json
-    from pathlib import Path as _Path
-    base = _Path(__file__).resolve().parents[1] / "data"
-    reg = _json.loads((base / "registry.json").read_text())["products"]
+    reg = json.loads((DATA / "registry.json").read_text())["products"]
     out = {}
     for key, r in reg.items():
-        prod = _json.loads((base / "products" / f"{key}.json").read_text())
+        pp = DATA / "products" / f"{key}.json"
+        if not pp.exists():
+            continue
+        prod = json.loads(pp.read_text())
         out[key] = {"name": prod["fund_name"], "cik": prod["cik"], "wrapper": prod.get("wrapper", ""),
-                    "doc_sets": r["filings"]}
+                    "doc_sets": r["filings"], "exhibits": r.get("exhibits") or {}}
     return out
 
 
-PRODUCTS = _products_from_record()
+def products() -> dict:
+    return _products_from_record()
+
+
+def __getattr__(name):
+    if name == "PRODUCTS":
+        return _products_from_record()
+    raise AttributeError(name)
 
 
 def polite_get(url, as_json=False):
@@ -121,12 +139,15 @@ def filings_for_form(subs, form, count):
     return out
 
 
+def filing_url(cik, accession, doc):
+    return f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{accession.replace('-', '')}/{doc}"
+
+
 def download_filing(cik, filing, dest_dir):
-    acc_nodash = filing["accession"].replace("-", "")
     doc = filing["primary_document"]
     if not doc:
         return None, None
-    url = f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{acc_nodash}/{doc}"
+    url = filing_url(cik, filing["accession"], doc)
     safe_name = f"{filing['form'].replace('/', '-')}_{filing['filing_date']}_{Path(doc).name}"
     local = dest_dir / safe_name
     if local.exists() and local.stat().st_size > 0:
@@ -134,6 +155,28 @@ def download_filing(cik, filing, dest_dir):
     data = polite_get(url)
     local.write_bytes(data)
     return url, local
+
+
+def filing_index(cik, accession) -> list[str]:
+    """The document names in a filing's folder, from the EDGAR directory index."""
+    idx = polite_get(filing_url(cik, accession, "index.json"), as_json=True)
+    items = (idx.get("directory") or {}).get("item") or []
+    return [it.get("name", "") for it in items if it.get("name")]
+
+
+def exhibit_documents(cik, filing, patterns) -> list[str]:
+    """The exhibit documents a filing carries that match the registry's
+    patterns (case-insensitive globs), the primary document excluded."""
+    names = filing_index(cik, filing["accession"])
+    out = []
+    for n in names:
+        if n == filing["primary_document"] or n.lower().endswith((".xml", ".xsd", ".json", ".txt.gz")):
+            continue
+        if n.lower() == "index.json" or n.lower().endswith("-index.htm"):
+            continue
+        if any(fnmatch.fnmatch(n.lower(), p.lower()) for p in patterns):
+            out.append(n)
+    return out
 
 
 def read_manifest():
@@ -151,8 +194,17 @@ def write_manifest(rows):
         w.writerows(rows)
 
 
-def fetch_product(key):
-    p = PRODUCTS[key]
+def _row(key, p, doc_set, filing, url, local, pulled_at):
+    return {"product": key, "fund_name": p["name"], "cik": p["cik"], "doc_set": doc_set,
+            "form": filing["form"], "filing_date": filing["filing_date"], "accession": filing["accession"],
+            "primary_document": filing["primary_document"], "url": url,
+            "local_path": str(local.relative_to(DATA.parent)), "pulled_at_utc": pulled_at}
+
+
+def fetch_product(key) -> list[dict]:
+    """Fetch the registry's document sets for one product into data/raw/<key>
+    and record every pull in the manifest. Returns the product's manifest rows."""
+    p = products()[key]
     dest = RAW_DIR / key
     dest.mkdir(parents=True, exist_ok=True)
     print(f"\n== {key}: {p['name']} (CIK {p['cik']}, {p['wrapper']}) ==")
@@ -160,6 +212,12 @@ def fetch_product(key):
     manifest = read_manifest()
     seen = {(r["accession"], r["primary_document"]) for r in manifest}
     pulled_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+    def record(doc_set, filing, url, local):
+        key_pair = (filing["accession"], filing["primary_document"])
+        if key_pair not in seen:
+            manifest.append(_row(key, p, doc_set, filing, url, local, pulled_at))
+            seen.add(key_pair)
 
     for doc_set, forms in p["doc_sets"].items():
         for form, filing in latest_filing_per_form(subs, forms).items():
@@ -169,41 +227,29 @@ def fetch_product(key):
                 continue
             size_kb = local.stat().st_size // 1024
             print(f"  [ok]   {doc_set:<16} {form:<8} {filing['filing_date']}  ->  {local.name} ({size_kb} KB)")
-            key_pair = (filing["accession"], filing["primary_document"])
-            if key_pair not in seen:
-                manifest.append({
-                    "product": key,
-                    "fund_name": p["name"],
-                    "cik": p["cik"],
-                    "doc_set": doc_set,
-                    "form": form,
-                    "filing_date": filing["filing_date"],
-                    "accession": filing["accession"],
-                    "primary_document": filing["primary_document"],
-                    "url": url,
-                    "local_path": str(local.relative_to(REPO_ROOT)),
-                    "pulled_at_utc": pulled_at,
-                })
-                seen.add(key_pair)
+            record(doc_set, filing, url, local)
+            if p["exhibits"].get(form) and not any(
+                    r["accession"] == filing["accession"] and r["primary_document"] != filing["primary_document"]
+                    for r in manifest):
+                # the filing index is read once per accession: a rerun with the
+                # exhibits already in the manifest makes no request
+                for name in exhibit_documents(p["cik"], filing, p["exhibits"][form]):
+                    ex = {**filing, "primary_document": name}
+                    url2, local2 = download_filing(p["cik"], ex, dest)
+                    print(f"  [ok]   {doc_set:<16} {form:<8} {filing['filing_date']}  ->  {local2.name} "
+                          f"(exhibit, {local2.stat().st_size // 1024} KB)")
+                    record(doc_set, ex, url2, local2)
     for set_name, spec in p.get("history_sets", {}).items():
         for filing in filings_for_form(subs, spec["form"], spec["count"]):
             url, local = download_filing(p["cik"], filing, dest)
             if url is None:
                 continue
             print(f"  [ok]   {set_name:<16} {filing['form']:<8} {filing['filing_date']}  ->  {local.name} ({local.stat().st_size // 1024} KB)")
-            key_pair = (filing["accession"], filing["primary_document"])
-            if key_pair not in seen:
-                manifest.append({
-                    "product": key, "fund_name": p["name"], "cik": p["cik"],
-                    "doc_set": set_name, "form": filing["form"],
-                    "filing_date": filing["filing_date"], "accession": filing["accession"],
-                    "primary_document": filing["primary_document"], "url": url,
-                    "local_path": str(local.relative_to(REPO_ROOT)), "pulled_at_utc": pulled_at,
-                })
-                seen.add(key_pair)
+            record(set_name, filing, url, local)
 
     write_manifest(manifest)
-    print(f"  manifest: {MANIFEST.relative_to(REPO_ROOT)} ({len(manifest)} rows)")
+    print(f"  manifest: {MANIFEST.relative_to(DATA.parent)} ({len(manifest)} rows)")
+    return [r for r in manifest if r["product"] == key]
 
 
 def main():
@@ -211,10 +257,11 @@ def main():
     ap.add_argument("products", nargs="*", help="product keys to fetch")
     ap.add_argument("--list", action="store_true", help="show the registry and exit")
     args = ap.parse_args()
+    reg = products()
 
     if args.list or not args.products:
         print("Verified product registry (2026-07-09):")
-        for k, v in PRODUCTS.items():
+        for k, v in reg.items():
             print(f"  {k:<15} {v['name']}  [CIK {v['cik']}]  {v['wrapper']}")
         print("\nExcluded: bxpe (Reg D private placement, no public prospectus),")
         print("          capital_group_kkr (registrant unresolved - slot OPEN),")
@@ -224,7 +271,7 @@ def main():
         return
 
     for key in args.products:
-        if key not in PRODUCTS:
+        if key not in reg:
             sys.exit(f"unknown product '{key}' - run with --list to see the registry")
         fetch_product(key)
 

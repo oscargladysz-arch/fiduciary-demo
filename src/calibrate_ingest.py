@@ -108,12 +108,9 @@ def calibrate(client, key: str, model: str, only: set[str] | None = None,
         w = csv.DictWriter(fh, fieldnames=EVIDENCE_COLUMNS)
         w.writeheader()
         w.writerows(rows)
-    held = ingest.held_filings(key)
-    docs = []
-    for r in held:
-        p = tark_data.DATA.parent / r["local_path"]
-        if p.exists():
-            docs.append(ingest.filing_text(p, ingest.doc_label(r)))
+    docs, skipped = ingest.documents_for(key)
+    for s in skipped:
+        print(f"  [skipped] {s['document']}: {s['reason']}")
     if not docs:
         raise SystemExit(f"no filing text on disk for {key} (data/raw/{key}/ is empty here)")
     outcomes = ingest.run_extraction(client, key, docs, set(targets), model, today)
@@ -121,8 +118,11 @@ def calibrate(client, key: str, model: str, only: set[str] | None = None,
     for o in outcomes:
         if o.cid in targets:
             result[o.cid] = compare(committed[o.cid], o.record, o.status, o.reason)
+            result[o.cid]["usd"] = round(o.usd, 6)
+            result[o.cid]["tokens"] = o.tokens
     report = {"product": key, "model": model, "documents": [d.label for d in docs],
-              "targets": targets, "summary": summarize(result), "cells": result}
+              "targets": targets, "summary": summarize(result), "cells": result,
+              "cost": outcomes.cost.as_dict(), "estimate": outcomes.estimate, "stopped": outcomes.stopped}
     return report
 
 
@@ -143,6 +143,9 @@ def main() -> int:
     print(f"{a.key}: {s['cells']} cells, located {s['located']} ({s['located_share']}), same document "
           f"{s['same_document_share']}, mean figure recall {s['mean_figure_recall']}, partial {s['partial']}, "
           f"pending {s['pending']} -> {path}")
+    c = report["cost"]
+    print(f"cost: {c['calls']} calls, ${c['usd']:.2f} (an estimate at the configured price list), "
+          f"{c['input_tokens']:,} in / {c['cache_read_input_tokens']:,} cache read / {c['output_tokens']:,} out")
     return 0
 
 

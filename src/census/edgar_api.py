@@ -14,12 +14,15 @@ import urllib.request
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parents[2]
-RAW = BASE / "data" / "census" / "raw"
-RAW.mkdir(parents=True, exist_ok=True)
 
 import sys as _sys  # noqa: E402
 _sys.path.insert(0, str(BASE / "src"))
-from tark_data import sec_user_agent  # noqa: E402  (contact from TARK_SEC_CONTACT)
+from tark_data import DATA, sec_user_agent  # noqa: E402  (contact from TARK_SEC_CONTACT)
+
+# the cache lives under the data root, so a run against a copy of the record
+# (TARK_DATA_DIR) never writes into the repository's census cache
+RAW = DATA / "census" / "raw"
+RAW.mkdir(parents=True, exist_ok=True)
 
 
 def ua() -> dict:

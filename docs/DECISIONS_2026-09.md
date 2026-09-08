@@ -2456,3 +2456,79 @@ packet sample exists under `docs/reference/committee_packet_sample/`, so
   amended accordingly.
 Reverse by: `src/tark_memo.py` section order, `punctuate` in
 `src/tark_display.py`.
+
+### 8.34 R3-P3-3: the ingest hardened for an unattended run, tested against a mock (default, reversible)
+The worker of R3-P4 runs the ingest with nobody watching, so every way it
+could fail silently or expensively is closed, and every check runs against
+the mock client in `src/mock_model.py` (8.17: no test calls the real API).
+- Accounting: every response's token usage is read and summed, and priced
+  at a configured list in USD per million tokens. The list is
+  configuration, not a measurement: every dollar figure the ingest prints,
+  reports or stops on is an estimate at that list. The default table names
+  the extraction model (8.20) at input 5.00, output 25.00, cache write 6.25,
+  cache read 0.50. That table is my reading of the published price list and
+  is not verified from this container. The laptop session confirms it
+  against the published prices before the proof run and overrides it with
+  `TARK_PRICES_JSON` where it differs. A model without an entry is refused
+  before any call.
+- The estimate before the first call: the client counts the prefix
+  (`count_tokens`) when it can, a character rule otherwise, the method
+  named in the report. Whole corpus: one cache write and cache reads.
+  Pages per cell: every call pays its own prefix. An output allowance of
+  800 tokens per call is reserved. The estimate plus what earlier runs
+  spent (`spent_before_usd`, the worker passes its ledger's total) over
+  the budget refuses the run before any call.
+- The budget: `TARK_BUDGET_USD` defaults to 50 (8.13) and is raised only by
+  Oscar in the environment. The running cost at or over the budget stops
+  the run cleanly: the remaining cells stay pending with the reason, the
+  report says budget, the exit code is 2. The wall-time budget
+  (`TARK_TIME_BUDGET_S`, none by default) stops the same way and says time.
+  A cell in flight finishes.
+- Retrieval: the filings ride whole as one cached prefix when they fit the
+  context cap (`TARK_INGEST_CONTEXT_TOKENS`, 150,000). Otherwise each cell
+  receives the pages ranked by its preferred document sets and its
+  retrieval terms (the third element of the contract), neighbours kept,
+  with the true page anchors, and the report records the pages sent. The
+  verify step scans the whole document either way.
+- Errors: a request-too-large or a structured-output validation error is
+  retried once at half the context with the preferred document sets. Any
+  other error is recorded on the cell (`extraction error: <class>: <text>`)
+  and the loop goes on. Only an interrupt escapes.
+- Writes: the product JSON, the ledger and the report are written after
+  every cell, to a sibling file then renamed, so a kill loses one cell at
+  most and never a half-written file.
+- Text: inline XBRL headers and hidden blocks, and anything styled
+  display:none, never reach the extraction text. PDF exhibits read through
+  `pdftotext` (CI installs `poppler-utils`, this container has none, so the
+  binary path prints a named skip here and the splitter is tested on a
+  fixture). A document this machine cannot read is skipped with the reason
+  in the report, never read as bytes.
+- Exhibits: a registry entry may name `exhibits: {form: [patterns]}`. The
+  fetcher reads that filing's index once and saves the matching documents
+  beside the primary document, one manifest row each on the same
+  accession, and the document label names the document.
+- The ledger's accession and record path come from the manifest row the
+  document was built from, not from a parse of the label.
+- Paths: `promote.py`, `fetch_edgar.py` and the census cache bind under the
+  data root (`TARK_DATA_DIR`), so a dry run (`--dry-run DIR`, a copy of the
+  record with this product's raw filings and this CIK's cached submissions
+  under `DIR/data`) reaches extraction and never writes the repository.
+- The entry point: `src.ingest.run_product(cik, workdir, on_progress,
+  model_client, ...)` returns a `RunResult` (outcomes, cost, estimate,
+  stop, report path, validation errors, documents read and skipped, cells
+  written, ok). `workdir` holds `data/`, and `TARK_DATA_DIR` must point at
+  it before the first import (every module binds its data root at import,
+  the call refuses otherwise). Progress events: run_start with the
+  estimate, cell_start and cell_done per contract cell, run_end with the
+  cost. A callback that raises is recorded, never fatal. `src/__init__.py`
+  makes `from src.ingest import run_product` work from the repository
+  root. `promote.scaffold` is the library form of promote.
+- `data/ingest/` is gitignored: a report carries wall time and cost, which
+  are not reproducible, and the freshness gate does not cover it. The cost
+  per cell that 8.20 asks for goes into the build report from the proof
+  run's report, by hand, with the price list it was computed at.
+Not done here, by 8.4: no networked run. The fetcher's exhibit path and the
+dry run ran against a faked network in the gate only. The calibration
+(R3-P3-4) and the proof run (R3-P4-8) are the laptop session's.
+Reverse by: `PRICES_USD_PER_MTOK`, `DEFAULT_BUDGET_USD`,
+`DEFAULT_CONTEXT_TOKENS` and `OUTPUT_TOKENS_PER_CALL` in `src/ingest.py`.
