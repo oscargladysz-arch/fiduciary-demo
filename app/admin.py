@@ -6,7 +6,8 @@ the policies would refuse a user.
     python -m app.admin workspace "<name>"                 create a workspace
     python -m app.admin invite <email> <workspace>         invite through Supabase Auth and record the membership
     python -m app.admin set-registry <product_id> <entry.json>   a person's registry judgment for a product's jobs
-    python -m app.admin requeue <job_id>                   a failed or stuck job back to queued
+    python -m app.admin requeue <job_id> [--running]       a failed job back to queued (a running one only with the flag)
+    python -m app.admin delete-workspace <workspace>       remove a workspace: its storage prefix, then every row (cascade)
     python -m app.admin jobs [<workspace>]                 list jobs with state, runner and cost
     python -m app.admin budget                             the spend total against TARK_BUDGET_USD
 
@@ -72,12 +73,27 @@ def set_registry(sb: Supabase, product_id: str, entry: dict) -> dict:
     return rows[0]
 
 
-def requeue(sb: Supabase, job_id: str) -> dict:
-    rows = sb.update("jobs", {"id": job_id, "state": "in.(failed,running)"},
+def delete_workspace(sb: Supabase, workspace: str) -> dict:
+    """Data removal on request (ASVS 8.3.2): every object under the
+    workspace prefix, then the workspace row, which cascades through every
+    tenant table. Members lose the membership with the cascade, the auth
+    user stays (Supabase Auth is the identity provider)."""
+    ws = workspace_id(sb, workspace)
+    objects = [o["name"] for o in sb.list_objects("workspace", f"{ws}/") if o.get("name")]
+    removed = 0
+    for i in range(0, len(objects), 100):
+        removed += len(sb.delete_objects("workspace", objects[i:i + 100]))
+    rows = sb.delete("workspaces", {"id": ws})
+    return {"workspace_id": ws, "objects_removed": removed, "rows_removed": len(rows)}
+
+
+def requeue(sb: Supabase, job_id: str, include_running: bool = False) -> dict:
+    states = "in.(failed,running)" if include_running else "failed"
+    rows = sb.update("jobs", {"id": job_id, "state": states},
                      {"state": "queued", "runner": "", "progress_step": "queued", "progress_detail": "requeued by the admin",
                       "failure_reason": "", "claimed_at": None, "started_at": None, "finished_at": None})
     if not rows:
-        raise SystemExit("no failed or running job with that id")
+        raise SystemExit("no failed job with that id (a running job needs --running, after a look at its updated_at)")
     return rows[0]
 
 
@@ -101,6 +117,9 @@ def main(argv: list[str] | None = None, sb: Supabase | None = None) -> int:
     p.add_argument("entry_json")
     p = sub.add_parser("requeue")
     p.add_argument("job_id")
+    p.add_argument("--running", action="store_true")
+    p = sub.add_parser("delete-workspace")
+    p.add_argument("workspace")
     p = sub.add_parser("jobs")
     p.add_argument("workspace", nargs="?", default="")
     sub.add_parser("budget")
@@ -114,7 +133,9 @@ def main(argv: list[str] | None = None, sb: Supabase | None = None) -> int:
         elif a.cmd == "set-registry":
             print(json.dumps({"product_id": set_registry(sb, a.product_id, json.loads(Path(a.entry_json).read_text()))["id"]}))
         elif a.cmd == "requeue":
-            print(json.dumps({k: requeue(sb, a.job_id)[k] for k in ("id", "state")}))
+            print(json.dumps({k: requeue(sb, a.job_id, a.running)[k] for k in ("id", "state")}))
+        elif a.cmd == "delete-workspace":
+            print(json.dumps(delete_workspace(sb, a.workspace)))
         elif a.cmd == "jobs":
             filters = {"workspace_id": workspace_id(sb, a.workspace)} if a.workspace else None
             for j in sb.select("jobs", filters=filters, order="created_at.desc", limit=50):

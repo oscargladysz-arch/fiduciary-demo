@@ -37,10 +37,13 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
+ISSUER = "https://project.supabase.test/auth/v1"
+
+
 def make_token(secret: str, user_id: str, email: str = "", ttl_s: int = 3600, alg: str = "HS256", key=None,
-               kid: str | None = None) -> str:
+               kid: str | None = None, issuer: str = ISSUER) -> str:
     payload = {"sub": user_id, "email": email, "role": "authenticated", "aud": "authenticated",
-               "exp": int(time.time()) + ttl_s, "iat": int(time.time())}
+               "exp": int(time.time()) + ttl_s, "iat": int(time.time()), "iss": issuer}
     headers = {"kid": kid} if kid else None
     return jwt.encode(payload, key if key is not None else secret, algorithm=alg, headers=headers)
 
@@ -186,15 +189,29 @@ class FakeSupabase:
                 if who == "user":
                     ws = row.get("workspace_id")
                     if table == "audit_log":
-                        if row.get("user_id") != uid or (ws is not None and ws not in self.memberships(uid)):
+                        if (row.get("user_id") != uid or (ws is not None and ws not in self.memberships(uid))
+                                or row.get("event") not in ("login", "plan_created", "product_created", "job_created", "download")):
                             return self._json(401, {"message": "new row violates row-level security policy"})
                     elif ws not in self.memberships(uid):
                         return self._json(401, {"message": "new row violates row-level security policy"})
-                    if table == "jobs" and (row.get("state") != "queued" or row.get("runner") or row.get("cost_usd")):
+                    if table == "jobs" and (row.get("state") != "queued" or row.get("runner") or row.get("cost_usd")
+                                            or row.get("attempts") or row.get("progress_detail") or row.get("claimed_at")):
                         return self._json(401, {"message": "new row violates row-level security policy"})
+                if table == "jobs":
+                    # the composite keys of 001 and the exists clauses of 002: the
+                    # product and the plan must belong to the job's workspace
+                    prod = next((r for r in self.tables["products"] if r["id"] == row.get("product_id")), None)
+                    pln = next((r for r in self.tables["plans"] if r["id"] == row.get("plan_id")), None)
+                    if prod is None or pln is None or prod["workspace_id"] != row.get("workspace_id") or pln["workspace_id"] != row.get("workspace_id"):
+                        code = 401 if who == "user" else 409
+                        return self._json(code, {"message": "new row violates row-level security policy" if who == "user"
+                                                 else "insert or update on table jobs violates foreign key constraint jobs_product_id_workspace_id_fkey"})
                 if table == "jobs" and any(r["product_id"] == row["product_id"] and r["plan_id"] == row["plan_id"]
                                            and r["state"] in ("queued", "running") for r in self.tables["jobs"]):
                     return self._json(409, {"message": "duplicate key value violates unique constraint jobs_one_active_per_pair"})
+                if table == "products" and any(r["workspace_id"] == row.get("workspace_id") and r["cik"] == row.get("cik")
+                                               for r in self.tables["products"]):
+                    return self._json(409, {"message": "duplicate key value violates unique constraint products_workspace_id_cik_key"})
                 if table == "documents" and any(r["storage_path"] == row["storage_path"] for r in self.tables["documents"]):
                     return self._json(409, {"message": "duplicate key value violates unique constraint documents_storage_path_key"})
                 if table in ("audit_log", "spend"):
@@ -208,6 +225,16 @@ class FakeSupabase:
                 self.tables[table].append(row)
                 out.append(row)
             return self._json(201, out)
+        if request.method == "DELETE":
+            if who != "service":
+                return self._json(401, {"message": "permission denied for table " + table})
+            gone = [r for r in self.tables[table] if self._match(r, filters)]
+            self.tables[table] = [r for r in self.tables[table] if r not in gone]
+            if table == "workspaces":
+                for ws_ in gone:
+                    for t in TENANT_TABLES + ("workspace_members",):
+                        self.tables[t] = [r for r in self.tables[t] if r.get("workspace_id") != ws_["id"]]
+            return self._json(200, gone)
         if request.method == "PATCH":
             if who != "service":
                 return self._json(401, {"message": "permission denied for table " + table})
@@ -224,13 +251,13 @@ class FakeSupabase:
         return self._json(405, {"message": "method not allowed"})
 
     def _storage(self, request: httpx.Request, rest: str, who: str, uid: str | None) -> httpx.Response:
-        m = re.match(r"object/(sign|list)/([^/]+)(?:/(.*))?$", rest) or re.match(r"object/([^/]+)/(.*)$", rest)
+        m = re.match(r"object/(sign|list)/([^/]+)(?:/(.*))?$", rest) or re.match(r"object/([^/]+)(?:/(.*))?$", rest)
         if not m:
             return self._json(404, {"message": "no such storage route"})
         if m.re.pattern.startswith("object/(sign|list)"):
             action, bucket, path = m.group(1), m.group(2), m.group(3) or ""
         else:
-            action, bucket, path = "object", m.group(1), m.group(2)
+            action, bucket, path = "object", m.group(1), m.group(2) or ""
         key = f"{bucket}/{path}"
 
         def allowed(p: str) -> bool:

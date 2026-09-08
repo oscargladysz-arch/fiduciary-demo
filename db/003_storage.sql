@@ -3,9 +3,12 @@
 -- downloads. Only the service role (the worker, the backup) writes objects.
 -- Re-runnable.
 
-insert into storage.buckets (id, name, public, file_size_limit)
-values ('workspace', 'workspace', false, 52428800)
-on conflict (id) do update set public = false, file_size_limit = 52428800;
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('workspace', 'workspace', false, 52428800,
+        array['application/json', 'text/csv', 'text/plain', 'text/markdown', 'application/pdf', 'application/gzip',
+              'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+on conflict (id) do update set public = false, file_size_limit = 52428800,
+  allowed_mime_types = excluded.allowed_mime_types;
 
 -- a member reads under their workspace prefix. No insert, update or delete
 -- policy for authenticated: uploads are the worker's, with the service role.

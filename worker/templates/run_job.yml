@@ -18,10 +18,15 @@ on:
 concurrency:
   group: job-${{ github.event.client_payload.job_id || inputs.job_id }}
   cancel-in-progress: false
+permissions:
+  contents: read                # the job token can write nothing in this repository
 jobs:
   run:
     runs-on: ubuntu-latest
     timeout-minutes: 100          # the wall-time budget plus the fetch, the producers and the upload
+    env:
+      JOB_ID: ${{ github.event.client_payload.job_id || inputs.job_id }}
+      PIPELINE_COMMIT: ${{ github.event.client_payload.pipeline_commit || inputs.pipeline_commit }}
     steps:
       - name: check out the public pipeline at the pinned commit
         uses: actions/checkout@v4
@@ -29,6 +34,12 @@ jobs:
           repository: OWNER/fiduciary-demo
           ref: ${{ github.event.client_payload.pipeline_commit || inputs.pipeline_commit }}
           path: pipeline
+          fetch-depth: 0
+      - name: the commit must be on the public main branch, never a fork or a stray branch
+        working-directory: pipeline
+        run: |
+          git fetch --quiet origin main
+          git merge-base --is-ancestor HEAD origin/main
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -51,4 +62,4 @@ jobs:
           TARK_INGEST_MODEL: ${{ vars.TARK_INGEST_MODEL || 'claude-opus-5' }}
           TARK_PRICES_JSON: ${{ vars.TARK_PRICES_JSON }}
           TARK_RUNNER: actions
-        run: python -m worker.run_job "${{ github.event.client_payload.job_id || inputs.job_id }}" --runner actions
+        run: python -m worker.run_job "$JOB_ID" --runner actions

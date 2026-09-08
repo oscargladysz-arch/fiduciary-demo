@@ -26,7 +26,8 @@ create table if not exists public.plans (
   workspace_id uuid not null references public.workspaces(id) on delete cascade,
   intake       jsonb not null,
   source_note  text not null default '',
-  created_at   timestamptz not null default now()
+  created_at   timestamptz not null default now(),
+  unique (id, workspace_id)        -- the target of the jobs composite key (ASVS 4.1.2)
 );
 create index if not exists plans_workspace_idx on public.plans (workspace_id);
 
@@ -39,7 +40,8 @@ create table if not exists public.products (
   product_key  text not null check (product_key ~ '^[a-z0-9_]{2,32}$'),
   registry_entry jsonb,            -- a person's registry judgment for the job (the admin CLI sets it), else the worker's default
   created_at   timestamptz not null default now(),
-  unique (workspace_id, cik)
+  unique (workspace_id, cik),
+  unique (id, workspace_id)        -- the target of the jobs composite key (ASVS 4.1.2)
 );
 create index if not exists products_workspace_idx on public.products (workspace_id);
 
@@ -63,9 +65,31 @@ create table if not exists public.jobs (
   failure_reason   text not null default '',
   tokens_in        bigint not null default 0,
   tokens_out       bigint not null default 0,
-  cost_usd         numeric(12, 6) not null default 0
+  cost_usd         numeric(12, 6) not null default 0,
+  -- the product and the plan must belong to the job's own workspace, whatever
+  -- the caller writes (ASVS 4.1.2): a composite key the policy cannot lose
+  foreign key (product_id, workspace_id) references public.products (id, workspace_id) on delete cascade,
+  foreign key (plan_id, workspace_id) references public.plans (id, workspace_id) on delete cascade
 );
 create index if not exists jobs_workspace_idx on public.jobs (workspace_id, created_at desc);
+-- the same composite keys on a project created from an earlier version of this file
+do $$
+begin
+  if not exists (select 1 from pg_constraint where conname = 'products_id_workspace_id_key') then
+    alter table public.products add constraint products_id_workspace_id_key unique (id, workspace_id);
+  end if;
+  if not exists (select 1 from pg_constraint where conname = 'plans_id_workspace_id_key') then
+    alter table public.plans add constraint plans_id_workspace_id_key unique (id, workspace_id);
+  end if;
+  if not exists (select 1 from pg_constraint where conname = 'jobs_product_id_workspace_id_fkey') then
+    alter table public.jobs add constraint jobs_product_id_workspace_id_fkey
+      foreign key (product_id, workspace_id) references public.products (id, workspace_id) on delete cascade;
+  end if;
+  if not exists (select 1 from pg_constraint where conname = 'jobs_plan_id_workspace_id_fkey') then
+    alter table public.jobs add constraint jobs_plan_id_workspace_id_fkey
+      foreign key (plan_id, workspace_id) references public.plans (id, workspace_id) on delete cascade;
+  end if;
+end $$;
 -- one job per product and plan pair at a time (R3-P4-4)
 create unique index if not exists jobs_one_active_per_pair
   on public.jobs (product_id, plan_id) where state in ('queued', 'running');
@@ -133,9 +157,11 @@ language sql stable security definer set search_path = public as $$
     where m.workspace_id = ws and m.user_id = auth.uid()
   );
 $$;
-revoke all on function public.is_member(uuid) from public;
+-- Supabase grants execute on every new function to anon and authenticated by
+-- default, and a revoke from public alone leaves those grants (ASVS 4.1.3)
+revoke all on function public.is_member(uuid) from public, anon;
 grant execute on function public.is_member(uuid) to authenticated, service_role;
-revoke all on function public.spend_total() from public;
+revoke all on function public.spend_total() from public, anon, authenticated;
 grant execute on function public.spend_total() to service_role;
 
 -- the keep-alive's one trivial query a day (R3-P4-7)

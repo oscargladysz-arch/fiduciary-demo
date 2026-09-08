@@ -164,6 +164,20 @@ row3 = sb.select("jobs", filters={"id": job3["id"]})[0]
 check("refusal: a pipeline refusal marks the job failed with the pipeline's own sentence, no record, no census promotion",
       res4.claimed and res4.state == "failed" and row3["state"] == "failed" and row3["failure_reason"]
       and "census" in row3["failure_reason"] and sb.select("records", filters={"job_id": job3["id"]}) == [], row3["failure_reason"])
+# a job that names another workspace's plan (seeded past the policies, the way a leaked id would)
+ws_b = fake.seed_workspace("Workspace B")
+plan_b = sb.insert("plans", {"workspace_id": ws_b, "intake": {**plan_obj, "plan_key": "ws_plan_b"}, "source_note": ""})
+job4 = {"id": str(uuid.uuid4()), "workspace_id": ws, "product_id": product["id"], "plan_id": plan_b["id"], "state": "queued",
+        "progress_step": "queued", "progress_detail": "", "runner": "", "pipeline_commit": "", "attempts": 0, "claimed_at": None,
+        "started_at": None, "finished_at": None, "failure_reason": "", "tokens_in": 0, "tokens_out": 0, "cost_usd": 0,
+        "created_at": "2026-09-08T00:00:00+00:00", "updated_at": "2026-09-08T00:00:00+00:00"}
+fake.tables["jobs"].append(job4)
+res5 = run_job(job4["id"], "mock", runner="laptop", sb=sb, pipeline_dir=BASE, budget_usd=50.0, log=logs.append)
+check("isolation: a job whose plan belongs to another workspace fails before anything runs, with the reason, and no record",
+      res5.claimed and res5.state == "failed" and "outside its workspace" in res5.reason
+      and sb.select("records", filters={"job_id": job4["id"]}) == [] and not any("preparing" in ln and job4["id"][:8] in ln for ln in logs[-3:]))
+check("isolation: a job id that is not a uuid is refused before any query",
+      (lambda r: not r.claimed and "job id" in r.reason)(run_job("../etc/passwd", "mock", sb=sb, pipeline_dir=BASE, log=logs.append)))
 check("copy: every failure reason is a sentence with no semicolon or em dash",
       all(";" not in r["failure_reason"] and "—" not in r["failure_reason"] for r in fake.tables["jobs"]))
 

@@ -21,6 +21,7 @@ from pathlib import Path
 
 import httpx
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, Response
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import BaseModel, Field
@@ -43,7 +44,10 @@ SECURITY_HEADERS = {
     "Referrer-Policy": "no-referrer",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=()",
     "Cache-Control": "no-store",
+    "Content-Disposition": "attachment; filename=api.json",  # copy-exempt: a header value, a JSON answer is never rendered as a page
 }
+MAX_BODY_BYTES = 262_144        # an intake is a few kilobytes, nothing here needs more
+UUID_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
 
 
 def now_iso() -> str:
@@ -55,20 +59,20 @@ def refuse(status: int, sentence: str) -> HTTPException:
 
 
 class PlanIn(BaseModel):
-    workspace_id: str
+    workspace_id: str = Field(pattern=UUID_PATTERN)
     intake: dict = Field(default_factory=dict)     # the intake form fields of src/plan_intake.py
-    source_note: str = ""
+    source_note: str = Field(default="", max_length=2000)
 
 
 class ProductIn(BaseModel):
-    workspace_id: str
-    cik: str = ""
-    census_id: str = ""
+    workspace_id: str = Field(pattern=UUID_PATTERN)
+    cik: str = Field(default="", max_length=12)
+    census_id: str = Field(default="", max_length=12)
 
 
 class JobIn(BaseModel):
-    product_id: str
-    plan_id: str
+    product_id: str = Field(pattern=UUID_PATTERN)
+    plan_id: str = Field(pattern=UUID_PATTERN)
 
 
 # the intake form's field names as words, so a refusal reads as a sentence
@@ -163,6 +167,10 @@ def create_app(settings: Settings | None = None, *, verifier: Verifier | None = 
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next):
+        length = request.headers.get("content-length")
+        if length and length.isdigit() and int(length) > MAX_BODY_BYTES:
+            return JSONResponse({"detail": "the request body is larger than anything this workspace accepts"},
+                                status_code=413, headers=SECURITY_HEADERS)
         try:
             response = await call_next(request)
         except Exception as e:  # noqa: BLE001  (never a stack trace to a client, never a secret in the log)
@@ -173,6 +181,12 @@ def create_app(settings: Settings | None = None, *, verifier: Verifier | None = 
             response.headers[k] = v
         return response
 
+    @app.exception_handler(RequestValidationError)
+    async def body_error(request: Request, e: RequestValidationError):
+        log(f"{request.method} {request.url.path} malformed body")
+        return JSONResponse({"detail": "the request is missing a field or carries a value of the wrong shape"},
+                            status_code=422, headers=SECURITY_HEADERS)
+
     @app.exception_handler(SupabaseError)
     async def supabase_error(request: Request, e: SupabaseError):
         log(f"{request.method} {request.url.path} supabase {e.status}")
@@ -180,8 +194,10 @@ def create_app(settings: Settings | None = None, *, verifier: Verifier | None = 
             return JSONResponse({"detail": "the workspace refused the request, sign in to a workspace you belong to"},
                                 status_code=403, headers=SECURITY_HEADERS)
         if e.status == 409:
-            return JSONResponse({"detail": "a job for this product and plan is already queued or running"},
-                                status_code=409, headers=SECURITY_HEADERS)
+            sentence = ("a job for this product and plan is already queued or running" if "jobs_one_active" in e.message
+                        else "that fund is already in this workspace" if "products" in e.message
+                        else "the workspace already holds that row")
+            return JSONResponse({"detail": sentence}, status_code=409, headers=SECURITY_HEADERS)
         return JSONResponse({"detail": "the workspace could not complete the request, try again in a moment"},
                             status_code=502, headers=SECURITY_HEADERS)
 
@@ -259,7 +275,7 @@ def create_app(settings: Settings | None = None, *, verifier: Verifier | None = 
     @app.post("/api/products", status_code=201)
     def create_product(body: ProductIn, c: Claims = Depends(claims)):
         cik = (body.cik or body.census_id or "").strip().lstrip("0") or ""
-        if not cik.isdigit():
+        if not re.fullmatch(r"[0-9]{1,10}", cik):
             raise refuse(422, "a fund is submitted by its CIK, the number the SEC assigns to the registrant")
         ent = ref.census_entity(cik)
         if ent is None:

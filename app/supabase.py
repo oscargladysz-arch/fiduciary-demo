@@ -77,6 +77,14 @@ class Supabase:
                           headers={"Prefer": "return=representation"})
         return r.json()
 
+    def delete(self, table: str, filters: dict) -> list[dict]:
+        """Rows deleted. Refuses an empty filter: never a whole table."""
+        if not filters:
+            raise ValueError("delete needs a filter")
+        r = self._request("DELETE", f"/rest/v1/{table}", params=_filters(filters),
+                          headers={"Prefer": "return=representation"})
+        return r.json()
+
     def rpc(self, fn: str, args: dict | None = None) -> Any:
         return self._request("POST", f"/rest/v1/rpc/{fn}", json_body=args or {}).json()
 

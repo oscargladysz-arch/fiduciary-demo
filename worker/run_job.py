@@ -25,8 +25,8 @@ from __future__ import annotations
 
 import argparse
 import json
-import mimetypes
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -47,6 +47,11 @@ from app.supabase import Supabase, SupabaseError  # noqa: E402
 
 BUCKET = "workspace"
 DEFAULT_BUDGET_USD = 50.0
+UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+KEY_RE = re.compile(r"^[a-z0-9_]{2,32}$")
+CONTENT_TYPES = {".json": "application/json", ".csv": "text/csv", ".txt": "text/plain", ".md": "text/markdown",
+                 ".pdf": "application/pdf", ".gz": "application/gzip",
+                 ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"}
 STEP_ORDER = ("queued", "preparing the record", "fetching filings", "extracting cells", "computing benchmark and liquidity",
               "writing documents", "writing views", "uploading", "done", "failed")
 
@@ -98,6 +103,10 @@ def run_job(job_id: str, model_client=None, *, runner: str = "actions", sb: Supa
     def say(line: str) -> None:
         log(redact(f"[job {job_id[:8]}] {line}"))
 
+    if not UUID_RE.match(str(job_id)):
+        res.reason = "the job id is not one the runner accepts"
+        say(res.reason)
+        return res
     rows = sb.select("jobs", filters={"id": job_id})
     if not rows:
         res.reason = "no job with that id"
@@ -143,6 +152,11 @@ def run_job(job_id: str, model_client=None, *, runner: str = "actions", sb: Supa
         plan = sb.select("plans", filters={"id": job["plan_id"]})[0]
     except (IndexError, SupabaseError):
         return fail("the job's product or plan is no longer in the workspace")
+    if product.get("workspace_id") != ws or plan.get("workspace_id") != ws:
+        return fail("the job names a product or a plan outside its workspace, nothing was run")
+    plan_obj = plan.get("intake") or {}
+    if not KEY_RE.match(str(plan_obj.get("plan_key", ""))) or not KEY_RE.match(str(product.get("product_key", ""))):
+        return fail("the plan key or the product key is not one the runner accepts")
     spent = float(sb.rpc("spend_total") or 0.0)
     if spent >= budget:
         return fail(f"the model budget is spent: ${spent:.2f} of ${budget:.2f} across every run so far, raising it is Oscar's action in the environment")
@@ -155,12 +169,12 @@ def run_job(job_id: str, model_client=None, *, runner: str = "actions", sb: Supa
         data = wd / "data"
         if not data.exists():
             dry_run_copy(pipeline / "data", data, product["product_key"], product["cik"])
-        plan_obj = plan["intake"]
         (data / "plans").mkdir(exist_ok=True)
         (data / "plans" / f"{plan_obj['plan_key']}.json").write_text(json.dumps(plan_obj, indent=2, ensure_ascii=False) + "\n")
         if product.get("registry_entry"):
             (wd / "registry_entry.json").write_text(json.dumps(product["registry_entry"], indent=1))
-        env = {k: v for k, v in os.environ.items() if k not in ("SUPABASE_SERVICE_KEY", "SUPABASE_URL", "TARK_DISPATCH_TOKEN")}
+        env = {k: v for k, v in os.environ.items()
+               if k not in ("SUPABASE_SERVICE_KEY", "SUPABASE_URL", "TARK_DISPATCH_TOKEN", "DATABASE_URL", "SUPABASE_JWT_SECRET")}
         env.update({"TARK_DATA_DIR": str(data), "TARK_AS_OF": date.today().isoformat(), "PYTHONPATH": str(pipeline),
                     "TARK_BUDGET_USD": str(budget)})
         cmd = [python, "-m", "worker.pipeline", "--workdir", str(wd), "--cik", product["cik"], "--key", product["product_key"],
@@ -172,7 +186,11 @@ def run_job(job_id: str, model_client=None, *, runner: str = "actions", sb: Supa
             cmd += ["--time-budget-s", str(time_budget_s)]
         say(f"pipeline at {pipeline} ({'mocked model' if mock else 'real model'}), budget ${budget:.2f}, ${spent:.2f} spent before")
         t0 = time.monotonic()
-        proc = subprocess.Popen(cmd, cwd=str(pipeline), env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        # stderr goes to a file so a chatty child never blocks on a full pipe
+        # while the parent reads stdout
+        err_path = wd / "child.stderr"
+        err_fh = open(err_path, "w")
+        proc = subprocess.Popen(cmd, cwd=str(pipeline), env=env, stdout=subprocess.PIPE, stderr=err_fh, text=True)
         cost, last_error, done_ev = {}, "", None
         assert proc.stdout is not None
         for line in proc.stdout:
@@ -205,7 +223,8 @@ def run_job(job_id: str, model_client=None, *, runner: str = "actions", sb: Supa
                 last_error = "the job ran past the wall-time budget and was stopped"
                 break
         proc.wait()
-        stderr_tail = (proc.stderr.read() if proc.stderr else "")[-2000:]
+        err_fh.close()
+        stderr_tail = err_path.read_text(errors="replace")[-2000:] if err_path.exists() else ""
         if proc.returncode != 0 or done_ev is None:
             reason = last_error or f"the pipeline exited with code {proc.returncode}"
             if stderr_tail:
@@ -218,9 +237,14 @@ def run_job(job_id: str, model_client=None, *, runner: str = "actions", sb: Supa
         prefix = f"{ws}/{job_id}"
         uploaded = []
         for f in manifest["files"]:
-            p = out / f["path"]
-            ctype = mimetypes.guess_type(p.name)[0] or "application/octet-stream"
-            sb.upload(BUCKET, f"{prefix}/{f['path']}", p.read_bytes(), content_type=ctype)
+            rel = str(f["path"])
+            if rel.startswith("/") or ".." in rel.split("/"):
+                return fail("the pipeline manifest names a path outside the job's output, nothing was uploaded")
+            p = out / rel
+            ctype = CONTENT_TYPES.get(p.suffix.lower())
+            if ctype is None:
+                return fail(f"the pipeline wrote a file type the store does not accept ({p.suffix or 'no suffix'}), nothing was uploaded")
+            sb.upload(BUCKET, f"{prefix}/{rel}", p.read_bytes(), content_type=ctype)
             uploaded.append(f)
         sb.upload(BUCKET, f"{prefix}/manifest.json", (out / "manifest.json").read_bytes(), content_type="application/json")
         rec = sb.insert("records", {"workspace_id": ws, "product_id": product["id"], "plan_id": plan["id"], "job_id": job_id,

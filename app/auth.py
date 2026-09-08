@@ -18,6 +18,7 @@ import httpx
 import jwt
 
 ASYMMETRIC = ("ES256", "RS256", "ES384", "RS384", "EdDSA")
+REQUIRED = {"require": ["exp", "sub", "iss", "aud"]}   # a token without an expiry or a subject is refused
 
 
 class AuthError(Exception):
@@ -39,15 +40,27 @@ class Claims:
 
 class Verifier:
     def __init__(self, supabase_url: str, jwt_secret: str = "", transport: httpx.BaseTransport | None = None,
-                 jwks_ttl_s: int = 600):
+                 jwks_ttl_s: int = 600, refresh_window_s: int = 30):
         self.url = supabase_url.rstrip("/")
         self.secret = jwt_secret
         self.transport = transport
         self.ttl = jwks_ttl_s
+        self.refresh_window = refresh_window_s
         self._keys: dict[str, jwt.PyJWK] = {}
         self._fetched = 0.0
+        self._forced = 0.0
+
+    @property
+    def issuer(self) -> str:
+        return f"{self.url}/auth/v1"
 
     def _jwks(self, force: bool = False) -> dict[str, jwt.PyJWK]:
+        if force:
+            # an unknown kid forces one refetch per window, so a flood of bad
+            # tokens cannot turn into a flood of key-set requests
+            if time.time() - self._forced < self.refresh_window:
+                return self._keys
+            self._forced = time.time()
         if force or not self._keys or time.time() - self._fetched > self.ttl:
             with httpx.Client(base_url=self.url, transport=self.transport, timeout=10.0) as c:
                 r = c.get("/auth/v1/.well-known/jwks.json")
@@ -72,11 +85,13 @@ class Verifier:
                     keys = self._jwks(force=True)
                 if kid not in keys:
                     raise AuthError("the token's signing key is not one the project publishes")
-                payload = jwt.decode(token, keys[kid].key, algorithms=[alg], audience="authenticated")
+                payload = jwt.decode(token, keys[kid].key, algorithms=[alg], audience="authenticated",
+                                     issuer=self.issuer, options=REQUIRED)
             elif alg == "HS256":
                 if not self.secret:
                     raise AuthError("the project signs with a secret this API was not given")
-                payload = jwt.decode(token, self.secret, algorithms=["HS256"], audience="authenticated")
+                payload = jwt.decode(token, self.secret, algorithms=["HS256"], audience="authenticated",
+                                     issuer=self.issuer, options=REQUIRED)
             else:
                 raise AuthError("the token's algorithm is not one Supabase issues")
         except jwt.ExpiredSignatureError:

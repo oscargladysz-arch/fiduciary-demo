@@ -8,13 +8,17 @@ on:
     - cron: "*/10 * * * *"
     - cron: "17 6 * * *"
   workflow_dispatch:
+permissions:
+  contents: read
 jobs:
   ping:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      TARK_API_URL: ${{ vars.TARK_API_URL }}
     steps:
       - name: wake the API
-        run: curl -sS --fail --max-time 60 "${{ vars.TARK_API_URL }}/api/health"
+        run: curl -sS --fail --max-time 60 "$TARK_API_URL/api/health"
       - name: one query a day so the database project does not pause
         if: github.event.schedule == '17 6 * * *' || github.event_name == 'workflow_dispatch'
-        run: curl -sS --fail --max-time 60 "${{ vars.TARK_API_URL }}/api/health?db_check=1" | grep -q '"database": *"ok"'
+        run: curl -sS --fail --max-time 60 "$TARK_API_URL/api/health?db_check=1" | grep -q '"database": *"ok"'

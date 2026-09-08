@@ -37,7 +37,9 @@ from app.auth import AuthError, Verifier  # noqa: E402
 from app.main import Reference, SECURITY_HEADERS, VIEWS, create_app  # noqa: E402
 from app.settings import Settings, redact  # noqa: E402
 from app.supabase import Supabase, SupabaseError  # noqa: E402
-from app.testing import FakeSupabase, make_token  # noqa: E402
+from app.admin import delete_workspace, requeue  # noqa: E402
+from app.settings import load_settings  # noqa: E402
+from app.testing import ISSUER, FakeSupabase, make_token  # noqa: E402
 from tark_display import prose_hits  # noqa: E402
 
 FAILS = []
@@ -79,6 +81,14 @@ def hdr(tok: str) -> dict:
     return {"Authorization": f"Bearer {tok}"}
 
 
+def _raises(fn) -> bool:
+    try:
+        fn()
+        return False
+    except SystemExit:
+        return True
+
+
 # ---------------- health and headers
 r = tc.get("/api/health")
 check("health: answers without a token, names the pipeline commit and no secret",
@@ -103,7 +113,9 @@ protected = [("GET", "/api/me"), ("GET", "/api/plans"), ("POST", "/api/plans"), 
              ("GET", "/api/reference/index.json"), ("GET", "/api/reference/hl_paf/record.json")]
 bad_tokens = {"missing": None, "malformed": "not.a.jwt.at.all", "expired": make_token(SECRET, alice, ttl_s=-10),
               "wrong secret": make_token("another-secret-" + uuid.uuid4().hex, alice),
-              "wrong audience": jwt.encode({"sub": alice, "aud": "anon", "exp": int(time.time()) + 60}, SECRET, algorithm="HS256")}
+              "wrong audience": jwt.encode({"sub": alice, "aud": "anon", "exp": int(time.time()) + 60, "iss": ISSUER}, SECRET, algorithm="HS256"),
+              "wrong issuer": make_token(SECRET, alice, issuer="https://another-project.supabase.test/auth/v1"),
+              "no expiry": jwt.encode({"sub": alice, "aud": "authenticated", "iss": ISSUER}, SECRET, algorithm="HS256")}
 _bad = []
 for method, path in protected:
     for kind, tok in bad_tokens.items():
@@ -111,7 +123,7 @@ for method, path in protected:
         rr = tc.request(method, path, headers=h, json={} if method == "POST" else None)
         if rr.status_code != 401 or "detail" not in rr.json():
             _bad.append(f"{method} {path} {kind}: {rr.status_code}")
-check("tokens: every protected route answers 401 with a sentence to a missing, malformed, expired, foreign or misaudienced token",
+check("tokens: every protected route answers 401 with a sentence to a missing, malformed, expired, foreign, misaudienced, misissued or unexpiring token",
       not _bad, "; ".join(_bad[:3]))  # copy-exempt: a joiner in a console detail
 check("tokens: an expired token is named as expired, never echoed",
       "expired" in tc.get("/api/me", headers=hdr(bad_tokens["expired"])).json()["detail"]
@@ -135,6 +147,14 @@ try:
 except AuthError as e:
     rotated = "signing key" in str(e) and fake.requests.count(("GET", "/auth/v1/.well-known/jwks.json")) >= 2
 check("jwks: an unknown kid refetches the key set once and is refused when still unknown", rotated)
+_n_before = fake.requests.count(("GET", "/auth/v1/.well-known/jwks.json"))
+for _k in ("key-3", "key-4", "key-5"):
+    try:
+        ver.verify(make_token("", alice, alg="ES256", key=priv2, kid=_k))
+    except AuthError:
+        pass
+check("jwks: a run of unknown kids inside the refresh window fetches the key set no more than once",
+      fake.requests.count(("GET", "/auth/v1/.well-known/jwks.json")) - _n_before <= 1)
 try:
     Verifier("https://project.supabase.test", "", transport=fake.transport).verify(tok_a)
     hs_without = False
@@ -148,6 +168,13 @@ check("me: the user's workspaces only, human verification pending, a login audit
       r.status_code == 200 and [w["id"] for w in r.json()["workspaces"]] == [ws_a]
       and r.json()["human_verification"] == "pending"
       and any(a["event"] == "login" and a["user_id"] == alice and a["workspace_id"] == ws_a for a in fake.tables["audit_log"]))
+
+check("headers: every JSON answer is marked as an attachment, so no browser renders it as a page",
+      r.headers.get("content-disposition", "").startswith("attachment"))
+check("settings: a Supabase URL or an app origin that is not https is refused at load",
+      (lambda: (_raises(lambda: load_settings({"SUPABASE_URL": "http://x", "SUPABASE_ANON_KEY": "k"}))
+                and _raises(lambda: load_settings({"SUPABASE_URL": "https://x", "SUPABASE_ANON_KEY": "k", "TARK_APP_ORIGIN": "http://y"}))
+                and load_settings({"SUPABASE_URL": "https://x", "SUPABASE_ANON_KEY": "k", "TARK_SIGNED_URL_SECONDS": "99999"}).signed_url_seconds == 3600))())
 
 # ---------------- plans through the intake validator
 INTAKE = {"display_label": "US regional clinic 403(b) plan (~$400M, OH)",
@@ -170,6 +197,11 @@ check("plans: a label that looks like a sponsor name is refused with the intake'
 r = tc.post("/api/plans", headers=hdr(tok_a), json={"workspace_id": ws_b, "intake": INTAKE})
 check("plans: a member of A cannot write a plan into B, the policy refuses and the API says so in one sentence",
       r.status_code == 403 and r.json()["detail"].endswith("you belong to"), r.text[:200])
+r = tc.post("/api/plans", headers=hdr(tok_a), json={"workspace_id": "not-a-uuid", "intake": INTAKE})
+r_big = tc.post("/api/plans", headers={**hdr(tok_a), "Content-Length": "300001"}, content=b"{}")
+check("bodies: a malformed body is refused in one sentence and a body over the cap is refused before it is read",
+      r.status_code == 422 and r.json()["detail"].startswith("the request is missing") and r_big.status_code == 413
+      and "larger" in r_big.json()["detail"], f"{r.status_code} {r_big.status_code}")
 check("plans: listing under A's token shows A's plan and none of B's",
       [p["id"] for p in tc.get("/api/plans", headers=hdr(tok_a)).json()["plans"]] == [plan_a["id"]]
       and tc.get("/api/plans", headers=hdr(tok_b)).json()["plans"] == [])
@@ -187,6 +219,9 @@ check("products: a reference product is refused by its key and pointed at the re
       r.status_code == 409 and "cliffwater_cclfx" in r.json()["detail"])
 r = tc.post("/api/products", headers=hdr(tok_a), json={"workspace_id": ws_a, "cik": "x"})
 check("products: a non-numeric submission is refused in one sentence", r.status_code == 422 and "CIK" in r.json()["detail"])
+r = tc.post("/api/products", headers=hdr(tok_a), json={"workspace_id": ws_a, "cik": "0001467631"})
+check("products: the same fund twice in one workspace is refused with its own sentence, not the job sentence",
+      r.status_code == 409 and "already in this workspace" in r.json()["detail"], r.text[:200])
 
 # ---------------- jobs: one per pair, dispatched, foreign rows invisible
 r = tc.post("/api/jobs", headers=hdr(tok_a), json={"product_id": prod_a["id"], "plan_id": plan_a["id"]})
@@ -209,6 +244,29 @@ check("jobs: A reads the job, B receives not found for the same id, nobody sees 
       and tc.get("/api/jobs", headers=hdr(tok_b)).json()["jobs"] == [])
 check("jobs: a malformed id is not found, never an error",
       tc.get("/api/jobs/not-an-id", headers=hdr(tok_a)).status_code == 404)
+# the direct PostgREST path, the one the policies alone must hold (ASVS 4.1.2)
+_plan_b = fake.tables["plans"].append({"id": str(uuid.uuid4()), "workspace_id": ws_b, "intake": {"plan_key": "ws_b"}, "source_note": "",
+                                       "created_at": "2026-09-08T00:00:00+00:00"}) or fake.tables["plans"][-1]
+_as_a = Supabase("https://project.supabase.test", fake.anon_key, token=tok_a, transport=fake.transport)
+try:
+    _as_a.insert("jobs", {"workspace_id": ws_a, "product_id": prod_a["id"], "plan_id": _plan_b["id"], "state": "queued",
+                          "progress_step": "queued"})
+    _direct = False
+except SupabaseError as e:
+    _direct = e.status == 401
+try:
+    _as_a.insert("jobs", {"workspace_id": ws_a, "product_id": prod_a["id"], "plan_id": plan_a["id"], "state": "queued",
+                          "progress_step": "queued", "attempts": 3})
+    _pinned = False
+except SupabaseError as e:
+    _pinned = e.status == 401
+try:
+    _as_a.insert("audit_log", {"workspace_id": ws_a, "user_id": alice, "event": "job_done", "detail": {}})
+    _forged = False
+except SupabaseError as e:
+    _forged = e.status == 401
+check("policies: through the database directly, a member cannot queue a job on another workspace's plan, cannot set the worker's columns, "
+      "and cannot write a worker event into the audit trail", _direct and _pinned and _forged)
 
 # dispatch failure leaves the job queued with a plain note
 def github_down(request: httpx.Request) -> httpx.Response:
@@ -253,6 +311,22 @@ check("documents: a signed URL with the expiry and the filename, audited as a do
 r = tc.get(f"/api/documents/{doc['id']}?redirect=1", headers=hdr(tok_a), follow_redirects=False)
 check("documents: the redirect form sends the browser to the signed URL", r.status_code == 302 and "fake-signature" in r.headers["location"])
 check("documents: B cannot sign A's document", tc.get(f"/api/documents/{doc['id']}", headers=hdr(tok_b)).status_code == 404)
+# the admin's removal path and the requeue guard (ASVS 8.3.2, the review's observation on requeue)
+_admin = Supabase("https://project.supabase.test", fake.service_key, transport=fake.transport)
+_job_running = {**job_a, "id": str(uuid.uuid4()), "state": "running", "plan_id": plan_a["id"], "product_id": prod_a["id"]}
+fake.tables["jobs"].append(_job_running)
+_req_failed = _raises(lambda: requeue(_admin, _job_running["id"]))
+_req_ok = requeue(_admin, _job_running["id"], include_running=True)["state"] == "queued"
+_ws_c = fake.seed_workspace("Workspace C", bob)
+fake.objects[f"workspace/{_ws_c}/x/views/record.json"] = b"{}"
+fake.tables["plans"].append({"id": str(uuid.uuid4()), "workspace_id": _ws_c, "intake": {}, "source_note": "", "created_at": "2026-09-08T00:00:00+00:00"})
+_res = delete_workspace(_admin, "Workspace C")
+check("admin: a running job is requeued only with the flag, and delete-workspace removes the storage prefix and every row of the workspace and nothing else",
+      _req_failed and _req_ok and _res["objects_removed"] == 1 and _res["rows_removed"] == 1
+      and not any(k.startswith(f"workspace/{_ws_c}/") for k in fake.objects)
+      and not any(p["workspace_id"] == _ws_c for p in fake.tables["plans"])
+      and any(p["workspace_id"] == ws_a for p in fake.tables["plans"])
+      and f"workspace/{prefix}/views/record.json" in fake.objects, str(_res))
 
 # ---------------- references, read-only, the public record
 r = tc.get("/api/reference/index.json", headers=hdr(tok_a))

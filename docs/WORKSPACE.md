@@ -71,8 +71,8 @@ reads nothing (no grant to the anon role).
 1. New web service from the public repository, branch `main`, runtime
    Python 3.11, free instance. Build command
    `pip install -r requirements.txt`, start command
-   `uvicorn app.main:app --host 0.0.0.0 --port $PORT`, health check path
-   `/api/health`.
+   `uvicorn app.main:app --host 0.0.0.0 --port $PORT --no-server-header`,
+   health check path `/api/health`.
 2. Environment: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_JWT_SECRET`
    (legacy projects only), `TARK_APP_ORIGIN` (the static app's origin,
    exactly one), `TARK_DISPATCH_REPO` (`<owner>/tark-workspace`),
@@ -105,6 +105,12 @@ python -m app.admin invite partner@example.com "Partner name, plan sponsor type"
 Supabase Auth sends the invite. The partner sets a password on the app's
 login route. The membership row is written by the CLI and the invite is in
 `audit_log`. One user per workspace this round (R3-P4-0).
+
+Removal is by request to the admin: `python -m app.admin delete-workspace
+"<name>"` removes every object under the workspace's storage prefix and
+then the workspace row, which cascades through every table. The auth user
+stays in Supabase Auth and is deleted there by hand. The app's notice says
+so in one sentence.
 
 ## 7. Run a job, read its log, and what to do when it fails
 
@@ -149,7 +155,8 @@ first. Then:
 
 `python -m app.admin jobs` lists the last 50 jobs with state, runner and
 cost. A job that is `running` with no live workflow (a runner died) is
-requeued the same way.
+requeued with `--running`, after a look at its `updated_at` and the
+Actions list, so two runners never write under one prefix.
 
 ## 8. Tenancy tests and the security review (laptop session)
 
@@ -174,7 +181,11 @@ policies, the auth module and the storage rules is
 key so the Supabase project does not pause for inactivity.
 `backup.yml` runs `python -m worker.backup` nightly: `pg_dump` of the
 public schema and data plus a listing of the bucket, under
-`backups/<date>/` in the bucket, pruned after 30 days.
+`backups/<date>/` in the bucket, pruned after 30 days. Once the proof run
+passes, pin the variable `TARK_PIPELINE_REF` in the private repository to
+that commit, so the nightly job runs code that CI has run. The bucket's
+size cap (50 MB per object) applies to the dump too: when the database
+outgrows it, give the backups their own bucket.
 
 Restore test (once before October 23, on a local Postgres, never the
 project):
