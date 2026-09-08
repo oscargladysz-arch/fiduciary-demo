@@ -185,6 +185,15 @@ preview-subpath check.
 
 ## 6. Checkpoint record
 
-Pending. Oscar's approval, the accent and the display face chosen, the
-preview URL and the screenshots reviewed are recorded here and as decision
-8.21 when given.
+Approved by Oscar on 2026-09-08, as built, and recorded as decision 8.21.
+- Accent: the re-tuned plum. The ink-blue alternative was not taken.
+- Display face: Fraunces for the wordmark and the landing H1, Inter
+  everywhere else. The Inter-only proposal was not taken.
+- Focus ring: the blue, kept distinct from the accent.
+- Reviewed on: the eight images in `docs/screenshots/design_checkpoint/`,
+  both themes at 1440 and 390 px, each width also with the focus ring on.
+  The preview at `previews/5/#/design` was gone by then, because a preview
+  folder is removed when its pull request closes.
+Every property an image cannot show is asserted by the web gate on every
+route, which is where it belongs. A later change to a token is a commit
+against decision 8.21.

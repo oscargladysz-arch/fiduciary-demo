@@ -28,7 +28,7 @@ auth code was written, no service was created and no money was spent.
 |---|---|---|---|
 | Nothing deploys before the last send (1:02pm Eastern Sep 8) | Sep 8 | Nothing deployed from this session. Entry 3 is Oscar's hand deploy after the last send, from pull request 4's recorded green run. | Oscar |
 | The Tuesday patch prepared (R3-P0-2) | Sep 7 night | 2026-09-08, `949ef7d`, pull request 4, CI green | cloud |
-| Design checkpoint on a preview build (R3-P1-5, -6) | Sep 16 | 2026-09-08, `d053954`, pull request 5, preview at `previews/5/#/design`, both themes, 1440 and 390 px. Approval (8.21) pending, Oscar's action. | cloud, Oscar |
+| Design checkpoint on a preview build (R3-P1-5, -6) | Sep 16 | 2026-09-08, `d053954`, pull request 5, preview at `previews/5/#/design`, both themes, 1440 and 390 px. Approved by Oscar on 2026-09-08 as built, recorded as decision 8.21 (amended after this report was written). | cloud, Oscar |
 | CI green on main with previews per pull request (R3-P0-3) | Sep 18 | 2026-09-08, `c3dedfb` and `3f4886b`, green on every push since, 16 runs, previews for pull requests 5, 6 and 7. Green on `main` waits for the first merge. | cloud |
 | Ingest hardened with mocked-model tests (R3-P3-3) | Sep 18 | 2026-09-08, `2cb593e`, pull request 7, the ingest gate at 143 checks, CI green | cloud |
 | R3-P2 complete | Sep 25 | 2026-09-08, `f2925c0`, `13b9b94`, `a484b77`, `b6027f8`, pull request 6, CI green, preview `previews/6/` | cloud |
@@ -520,7 +520,7 @@ is a rehearsal against a fake Supabase, not the workspace.
 | Number | Phase | Head | State |
 |---|---|---|---|
 | 4 | R3-P0-2, the Tuesday patch | `949ef7d` | open, Oscar merges and deploys it after the last send |
-| 5 | R3-P1-5 and R3-P1-6, the design system and the checkpoint | `d053954` | open, waiting on Oscar's approval (8.21) |
+| 5 | R3-P1-5 and R3-P1-6, the design system and the checkpoint | `d053954` | merged. Approved by Oscar on 2026-09-08, decision 8.21 (amended after this report was written) |
 | 6 | R3-P2, the record and the documents | `b6027f8` | open |
 | 7 | R3-P3-3, the ingest hardened | `2cb593e` | open |
 | 8 | R3-P4, the workspace, network-free | `b77f0f9` | open |

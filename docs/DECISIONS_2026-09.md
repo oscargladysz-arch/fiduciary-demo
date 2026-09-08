@@ -1976,9 +1976,9 @@ session (R3-P0-2, R3-P0-3, R3-P1, R3-P2 and the network-free code of
 R3-P4) and the laptop session (R3-P3 and the account-bound parts of
 R3-P4). Entries 8.1 to 8.17 were decided by Oscar on 2026-09-07 and are
 not defaults. Entries 8.18 to 8.20 are defaults, reversible by Oscar.
-Entry 8.21 is reserved for Oscar's approval of the design system at the
-checkpoint and 8.22 for the reconciliation with the committee packet
-sample. Judgment calls taken by the engineer are appended from 8.23 on,
+Entry 8.21 carries Oscar's approval of the design system at the checkpoint
+(given 2026-09-08) and 8.22 is reserved for the reconciliation with the
+committee packet sample. Judgment calls taken by the engineer are appended from 8.23 on,
 each marked "default, reversible".
 
 ### 8.1 Frontend rebuild (decided by Oscar on 2026-09-07)
@@ -2088,9 +2088,34 @@ The one `src/ingest.py` uses today, made a config value, with the proof
 run's cost per cell reported so Oscar can choose a cheaper model for
 partner funds.
 
-### 8.21 Design checkpoint approval (reserved for Oscar)
-Pending. Written when Oscar approves the design system on the preview
-build at the checkpoint, with the pull request comment it points to.
+### 8.21 Design checkpoint approval (approved by Oscar on 2026-09-08)
+Approved as built. The two proposals left open in 8.27 are settled by the
+approval of what was shown, so the alternatives are not taken:
+- Accent: the re-tuned plum stays (`#593380` for text, `#8961b6` for
+  non-text, light theme). The ink-blue alternative is not taken.
+- Type: proposal A stays. Fraunces is kept for the wordmark and the
+  landing H1, Inter everywhere else. The Inter-only proposal B is not
+  taken.
+- The focus ring stays a blue, distinct from the accent, so it is visible
+  on plum buttons.
+The rest of 8.27 stands as written: the token file is the only place a
+color, size, space, radius, shadow or duration literal may appear, the
+seven status pairs and the four verdict pairs keep their tested contrast,
+the six-step type scale keeps its 12 px floor, and the dark theme keeps a
+full second token set.
+What Oscar saw: the eight images in `docs/screenshots/design_checkpoint/`,
+both themes at 1440 and 390 px, each width also captured with the keyboard
+focus ring on. He did not click through a live preview, because merging
+pull request 5 deleted `previews/5/` (a preview folder is removed when its
+pull request closes, decision 8.26). The behavior an image cannot show
+(focus order, the navigation sheet, the palette, the theme toggle, reduced
+motion) is asserted by the web gate on every route rather than by the
+checkpoint, which is the arrangement of 8.27 and does not change here.
+What this unblocks: every R3-P1 view, and nothing else. The design system
+is fixed for the rebuild, so a later change to a token is a commit against
+this entry, not a silent edit.
+Reverse by: saying which of the two settled choices to flip. Each is one
+token change and a gate run.
 
 ### 8.22 Reconciliation with the committee packet sample (reserved)
 Pending. Written in R3-P2-13 when `docs/reference/committee_packet_sample/`
