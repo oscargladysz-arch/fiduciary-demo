@@ -1,5 +1,5 @@
 {
-  "what": "Comparability caveats by wrapper-type pair, assembled into each cohort's caveat block. Maintained as data (R3): the engine composes prose from these entries, it does not invent them. pricing_class (NAV|MARKET) governs the pricing caveat and composite refusal, pricing_basis text feeds captions. The engine compares typed per-product values from data/registry.json when every member has one, and these wrapper attributes otherwise.",
+  "what": "Comparability caveats by wrapper-type pair, assembled into each cohort's caveat block. Maintained as data: the cohort record composes prose from these entries, it does not invent them. The pricing class (NAV or MARKET) governs the pricing caveat and the composite refusal, the pricing basis text feeds captions. The cohort record compares per-product values from the registry when every member has one, and these wrapper attributes otherwise.",
   "wrapper_attributes": {
     "interval_23c3": {
       "liquidity_law": "Rule 23c-3 OBLIGATION (board cannot skip a window)",

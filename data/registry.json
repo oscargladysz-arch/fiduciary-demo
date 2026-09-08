@@ -556,7 +556,7 @@
       },
       "as_of": "2026-03-31",
       "depth": "cohort",
-      "membership_rationale": "Secondaries-led evergreen PE tender-offer fund - wrapper and strategy twin of hl_paf/stepstone_spm.",
+      "membership_rationale": "Secondaries-led evergreen PE tender-offer fund - wrapper and strategy twin of Hamilton Lane Private Assets Fund and StepStone Private Markets.",
       "filings": {
         "prospectus": [
           "486BPOS",
@@ -634,7 +634,7 @@
       },
       "as_of": "2026-03-31",
       "depth": "cohort",
-      "membership_rationale": "Evergreen PE (Pantheon) tender-offer LLC - wrapper and strategy twin of hl_paf/stepstone_spm.",
+      "membership_rationale": "Evergreen PE (Pantheon) tender-offer LLC - wrapper and strategy twin of Hamilton Lane Private Assets Fund and StepStone Private Markets.",
       "filings": {
         "prospectus": [
           "N-2",
@@ -1026,6 +1026,11 @@
           "name": "S&P 500",
           "candidate": "spy",
           "type": "sec_required_comparator"
+        },
+        {
+          "name": "Nasdaq Stock Index",
+          "candidate": "nasdaq_comp",
+          "type": "sec_required_comparator"
         }
       ],
       "source_cells": [
@@ -1147,7 +1152,7 @@
         "ares_pmf",
         "amg_pantheon"
       ],
-      "fallback_note": "kkr_kpec joins under the authorized fallback: its structural twins are Reg D vehicles with no public filings (data/roster_decisions.md - 'The kkr_kpec ruling'). Cross-wrapper caveats apply."
+      "fallback_note": "kkr_kpec joins under the authorized fallback: its structural twins are Reg D vehicles with no public filings (the roster decisions record, 'The kkr_kpec ruling'). Cross-wrapper caveats apply."
     },
     "nontraded_reit": {
       "label": "Non-traded NAV REITs",

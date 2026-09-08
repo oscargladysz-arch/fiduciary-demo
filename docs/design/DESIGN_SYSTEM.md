@@ -143,11 +143,23 @@ ARIA behavior, by component:
 - Every internal identifier reaches the DOM through the copy layer
   (`web/src/copy/copy.ts`): registry keys, cohort keys, strategy and lane
   keys, rubric criteria, enum values, statuses, verdicts, wrapper classes,
-  job states and census field names. The allowlist gate fails any
-  snake_case token, path, bare registry key, ticket reference, or the words
-  engine, artifact, typed fact, the writer, owned, slider (outside its
-  label) and build in reader prose, unless inside a code-styled provenance
-  field (`.provenance`).
+  job states and census field names. The allowlist gate
+  (`src/test_surfaces.py`, rules in `tark_display.PROSE_RULES`) fails any
+  snake_case token, repository path or file name, ticket reference, the
+  words engine, artifact, typed, the writer, the build, this build and the
+  site, and slider outside the name of the figure it sets ("slider
+  assumption") and the control's own label ("allocation slider"), in reader
+  prose: every bundle string a view prints, every rendered view and every
+  document paragraph. A field set in code style for provenance is exempt
+  from these rules and never from the forbidden-string list: in the bundle
+  the evidence ledger's source and verbatim quote and the closed-vocabulary
+  fact values the views map to words, on a page an element with the
+  `provenance` or `cmd` class, a `pre` or `code` element and a slider
+  control's own row, in a document the "Source as written" and "Accession
+  and EDGAR URL" columns. "Owned" is not in the list: its only uses are
+  English ("wholly owned"). Internal keys inside the record's own cell text
+  (a product key, a field name, a dataset column) reach every surface and
+  document through `tark_display.display_copy`, which prints their words.
 - "Verified" and "human-verified" appear only beside the count of signed
   cells. A pending state says "pending".
 

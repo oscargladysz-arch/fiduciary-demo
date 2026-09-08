@@ -179,7 +179,7 @@ def render_benchmark():
     sel = json.loads(sel_path.read_text())
     st.caption(f"Strategy: {sel['strategy']} · engine inputs from cells "
                f"{', '.join(sel['source_cells'])} · {sel.get('rubric', 'rubric not recorded')}"
-               + (f" · max attainable on held data {sel['max_attainable']}/12"
+               + (f" · max attainable on held data {sel['max_attainable']} of {sel.get('threshold', {}).get('max', 10)}"
                   if sel.get("max_attainable") is not None else ""))
 
     sk = sel["slot_k"]
@@ -230,12 +230,12 @@ def render_benchmark():
          for r in sel["rejected"]],
         width="stretch", hide_index=True)
 
-    memo = ROOT / "site" / "memos" / f"{plan_key}__{product_key}_decision_memo.docx"
+    memo = ROOT / "site" / "memos" / f"{plan_key}__{product_key}_selection_record.docx"
     if memo.exists():
-        st.download_button("Download decision memo (.docx)", memo.read_bytes(),
+        st.download_button("Download the Investment Selection Record (.docx)", memo.read_bytes(),
                            file_name=memo.name, key="memo_dl")
     else:
-        st.caption("The decision memo for this plan and product has not been built yet.")
+        st.caption("The Investment Selection Record for this plan and product has not been built yet.")
 
 
 def render_liquidity():

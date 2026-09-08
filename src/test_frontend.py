@@ -196,17 +196,18 @@ check("benchmarks bundle: no peer composite carries a PME key or name", all(
     "ks_pme" not in comp and "direct_alpha_pct" not in comp and comp["statistic"].startswith("relative wealth ratio")
     for k in PRODUCTS for comp in [_peer_composite(k)] if comp))
 sm = json.loads((SITE / "series.js").read_text().split("\n")[2][len("window.TARK_LAB = "):-1])
-check("lab matrix: every product x proxy pair carries a real v3 score, the five v3 criteria and eligibility",
+check("lab matrix: every product x proxy pair carries a real v3.1 score, the four v3.1 criteria and eligibility",
       all(isinstance(v["score"], int) and set(v["criteria"]) == {"strategy_match", "risk_liquidity_match",
-          "provider_independence", "data_held", "pricing_basis_match"} and isinstance(v["eligible"], bool)
+          "provider_independence", "data_held"} and isinstance(v["eligible"], bool)
           and v["reasons"] for prod in sm.values() for v in prod.values())
       and all(set(prod) == set(bundle["proxy_library"]) for prod in sm.values()))
 check("lab matrix: cclfx x BKLN eligible and on the menu, cclfx x SPY not eligible and off the menu",
       sm["cliffwater_cclfx"]["bkln"]["eligible"] and sm["cliffwater_cclfx"]["bkln"]["on_menu"]
       and not sm["cliffwater_cclfx"]["spy"]["eligible"] and not sm["cliffwater_cclfx"]["spy"]["on_menu"])
-check("benchmarks bundle: rubric v3 on every selection, Slot K with its ceiling, the declared record and Slot G "
-      "present, the v2 keys gone", all(
-    sel.get("rubric_version") == "v3" and "max_attainable" in (sel.get("slot_k") or {})
+check("benchmarks bundle: rubric v3.1 on every selection, Slot K with its ceiling, the declared record, Slot G and "
+      "the selection lock present, the v2 keys and the lock's input list gone", all(
+    sel.get("rubric_version") == "v3.1" and "max_attainable" in (sel.get("slot_k") or {})
+    and len(sel.get("record_hash", "")) == 64 and sel.get("recorded_at") and "inputs" not in sel
     and "declared" in sel and bool(sel.get("slot_g"))
     and not any(old in sel for old in ("primary", "secondary", "secondary_note", "declared_benchmarks", "escalation"))
     for sel in bundle["benchmarks"].values()))
@@ -414,8 +415,11 @@ with sync_playwright() as pw:
           _k_card.locator('[data-stat-kind="series"]').count() == 1 and "KS-PME" in _k_text
           and "yahoo adjusted close" in _k_text.lower() and _k_card.locator('[data-reference="true"]').count() == 0)
     _scr = view_text("screener")
-    check("screener: the PME column is split into KS-PME vs public proxy and peer relative wealth ratio",
-          "KS-PME vs public proxy" in _scr and "Peer relative wealth ratio" in _scr)
+    check("screener: the PME column is split into KS-PME vs reference proxy and peer relative wealth ratio, and the "
+          "by-descriptor sentence prints for every product whose Slot K has no number (decision 8.5)",
+          "KS-PME vs reference proxy" in _scr and "Peer relative wealth ratio" in _scr
+          and page.locator("#view [data-by-descriptor]").count()
+          == sum(1 for k in PRODUCTS if (bundle["facts"][k].get("slot_k_by_descriptor") or {}).get("value") is True))
     tl = t.lower()   # stat labels render uppercase (CSS), inner_text follows
     check("benchmark cclfx: monthly-schedule row labeled ILLUSTRATIVE, two-point stated primary",
           "monthly schedule" in tl and "illustrative" in tl and "two-point figure is primary" in tl
@@ -537,13 +541,51 @@ with sync_playwright() as pw:
     # CCLFX has ever prorated (cell 3.3 holds N-23C3A notifications, not
     # results), so gate_history is null and the structural verdict says so
     check("liquidity cclfx: PARTIAL structural verdict, the missing fact named",
-          "STRUCTURAL VERDICT: PARTIAL" in t.upper() and "Facts missing" in t and "gate_history" in t)
+          "STRUCTURAL VERDICT: PARTIAL" in t.upper() and "Facts missing" in t and "gating history" in t)
     check("liquidity cclfx: structural gap named", "STRUCTURAL GAP" in t)
     check("liquidity cclfx: scenario verdict banner labeled ILLUSTRATIVE",
           "SCENARIO VERDICT" in t.upper() and "ILLUSTRATIVE" in t)
     t = view_text("liquidity", product="sreit")
     check("liquidity sreit: MISALIGNED on the suspended program, capacity 0%",
           "MISALIGNED" in t and "suspended" in t and "0%" in t and "far inside" not in t)
+    check("liquidity sreit: the fund's net assets are typed from cell 3.4 and printed as approximate",
+          "approx. $8.3B (3.4)" in t)
+    # R3-P2-7 (b): the program status precedes the cadence on every surface
+    t = view_text("screener")
+    check("screener: sreit's dealing column reads suspended, not monthly",
+          "suspended" in page.locator('tr[data-key="sreit"]').first.inner_text()
+          and "monthly" not in page.locator('tr[data-key="sreit"]').first.inner_text())
+    t = view_text("evaluation", product="sreit")
+    check("evaluation sreit: the cell 3.1 headline reads suspended before any cadence word",
+          "repurchases suspended since the April 29, 2026 amendment" in t)
+    # R3-P2-11: cell 3.7 shows the selected plan's own demand sentence
+    t_tech = view_text("evaluation", plan="plan_tech_media", product="hl_paf")
+    s_tech = page.locator('[data-plan-cell="3.7"]').inner_text()
+    t_cons = view_text("evaluation", plan="plan_consulting_alumni", product="hl_paf")
+    s_cons = page.locator('[data-plan-cell="3.7"]').inner_text()
+    check("evaluation: cell 3.7 leads with the selected plan's own demand sentence and it changes with the plan",
+          s_tech == bundle["plans"]["plan_tech_media"]["demand_sentence"]
+          and s_cons == bundle["plans"]["plan_consulting_alumni"]["demand_sentence"] and s_tech != s_cons
+          and s_tech in t_tech and s_tech not in t_cons)
+    # R3-P2-8: the rollup tiles count on the record's one arithmetic
+    t = view_text("evaluation", product="sreit")
+    roll = bundle["factor_rollups"]["sreit"]
+    check("evaluation: the factor rollups count evidenced as T1 plus T2 plus T3, name the soft cells, and sum to the "
+          "coverage headline's resolved count",
+          sum(r["evidenced"] + r["computed"] for r in roll.values()) == bundle["evidence_counts"]["sreit"]["resolved"]
+          and sum(r["soft"] for r in roll.values()) == bundle["evidence_counts"]["sreit"]["soft"]
+          and any(f"{r['soft']} partial" in t for r in roll.values() if r["soft"]))
+    check("coverage: resolved is structured plus extracted plus verified plus computed for every product, and the "
+          "headline prints the four counts side by side with the signed count last",
+          all(c["resolved"] == c["structured"] + c["extracted"] + c["verified"] + c["computed"]
+              and c["headline"].endswith(f"{c['verified']} verified by a person")
+              and f"{c['evidenced']} evidenced, {c['computed']} computed, {c['soft']} partial, {c['na']} n/a" in c["headline"]
+              for c in bundle["evidence_counts"].values()))
+    # R3-P2-17d: the filed since-inception return beside the series figure
+    t = view_text("benchmarks", product="cliffwater_cclfx")
+    check("cclfx card: the reconciliation names the filed 9.34% since inception and the series' 7.89%/yr with why they differ",
+          page.locator("[data-reconciliation]").count() == 1 and "9.34%" in t and "7.89%/yr" in t
+          and "differ by end date" in t and bundle["reconciliation"]["cliffwater_cclfx"] in t)
     t = view_text("liquidity", product="breit")
     check("liquidity breit: CONDITIONAL-WEAK on gating precedent",
           "CONDITIONAL-WEAK" in t and "prorated" in t)
@@ -651,12 +693,12 @@ with sync_playwright() as pw:
     check("liquidity: the allocation slider exists exactly where the fund's dollar capacity is computable, with the "
           "dollar figures printed, and one sentence explains its absence elsewhere", not alloc_bad, "; ".join(alloc_bad[:4]))
     view_text("liquidity", plan="plan_tech_media", product="hl_paf")
-    fund0 = page.locator("#o_fund").inner_text()
+    fund0 = page.locator('[data-bullet="fund"]').inner_text()
     pct0 = (page.locator("#o_filed").inner_text(), page.locator("#o_slider").inner_text(),
             page.locator("#o_stressed").inner_text(), page.locator("#o_verdict").inner_text())
     page.evaluate("""() => { const s = document.getElementById('s_alloc');
         s.value = '10'; s.dispatchEvent(new Event('input')); }""")
-    fund1 = page.locator("#o_fund").inner_text()
+    fund1 = page.locator('[data-bullet="fund"]').inner_text()
     pct1 = (page.locator("#o_filed").inner_text(), page.locator("#o_slider").inner_text(),
             page.locator("#o_stressed").inner_text(), page.locator("#o_verdict").inner_text())
     check("liquidity hl_paf: moving the allocation slider changes the plan's dollar demand and share of the fund's "
@@ -758,6 +800,40 @@ with sync_playwright() as pw:
     }""")
     check(f"parity: JS scenario verdict matches all {len(bundle_liq)} bundled matches",
           not vmism, "; ".join(vmism[:4]))
+    # R3-P1-10 and R3-P2-7: at the default sliders the bullets the view
+    # rebuilds live and the drivers line are the record's own sentences,
+    # word for word, for every bundled match
+    smism = page.evaluate("""() => {
+      const T = window.TARK, L = window.TarkLiquidity, out = [];
+      for (const [k, m] of Object.entries(T.liquidity)) {
+        const sc = L.computeScenario(m.plan_inputs, m.wrapper_facts, m.scenario, m.stressed_scenario.multiples);
+        const v = L.scenarioVerdict(sc, sc._stressed_exact, m.wrapper_facts.exchange);
+        const d = L.scenarioDrivers(sc, sc._stressed_exact, m.wrapper_facts, v);
+        if (d.sentence !== m.scenario.drivers.sentence || d.rung !== m.scenario.drivers.rung) out.push(`${k}: drivers`);
+        const bullets = L.scenarioBullets(m, sc, m.scenario, m.wrapper_facts, v).map((b) => b.text);
+        if (JSON.stringify(bullets) !== JSON.stringify(m.scenario_reasons)) {
+          const i = bullets.findIndex((b, j) => b !== m.scenario_reasons[j]);
+          out.push(`${k}: bullet ${i}: ${String(bullets[i]).slice(0, 80)} | ${String(m.scenario_reasons[i]).slice(0, 80)}`);
+        }
+      }
+      return out;
+    }""")
+    check(f"parity: at the default sliders the live bullets and the drivers line equal the record's sentences for all "
+          f"{len(bundle_liq)} matches, word for word", not smism, "; ".join(smism[:3]))
+    view_text("liquidity", plan="plan_consulting_alumni", product="hl_paf")
+    drv0 = page.locator("[data-drivers]").inner_text()
+    verdict_bullet0 = page.locator('[data-bullet="verdict"]').inner_text()
+    page.evaluate("""() => { const s = document.getElementById('s_tail');
+        s.value = '45'; s.dispatchEvent(new Event('input')); }""")
+    drv1 = page.locator("[data-drivers]").inner_text()
+    verdict_bullet1 = page.locator('[data-bullet="verdict"]').inner_text()
+    check("liquidity: the drivers line and the verdict bullet move with the sliders from the one live state (hl_paf under "
+          "the consulting plan: no rung at the defaults, the stress rung at tail turnover 45)",
+          "No rung fired" in drv0 and "Stress rung" in drv1 and "No rung fired" in verdict_bullet0
+          and "Stress rung" in verdict_bullet1 and "conditional-weak" in verdict_bullet1
+          and page.locator("#o_verdict").inner_text() == "CONDITIONAL-WEAK", f"{drv0[:60]} -> {drv1[:60]}")
+    check("liquidity: the program status row prints the typed status and the date it was read at",
+          "active as of 2026-03-31 (3.1)" in page.locator("#view").inner_text())
     check("scenario verdict varies with the plan for at least one product (bundled)",
           any(bundle_liq[f"plan_tech_media__{pr}"]["scenario_verdict"]
               != bundle_liq[f"plan_consulting_alumni__{pr}"]["scenario_verdict"] for pr in PRODUCTS))
@@ -828,8 +904,8 @@ with sync_playwright() as pw:
           "low confidence" in t_s.lower() and "shorter than 3 years" in t_s)
     t_c = view_text("benchmarks", product="cliffwater_cclfx")
     check("cclfx: no low-confidence label on its windows", "low confidence" not in t_c.lower())
-    check("breit: the cited Slot K states that no comparison was computed on held data",
-          "ODCE" in t and "No comparison computed on held data" in t)
+    check("breit: the cited Slot K holds the slot by descriptor and prints the decided sentence (decision 8.5)",
+          "ODCE" in t and bundle["by_descriptor_sentence"] in t and "No comparison computed on held data" not in t)
     t = view_text("desmooth", product="breit")
     check("breit de-smoothing from printed monthly NAV (rho 0.483)",
           "0.483" in t)
@@ -886,15 +962,25 @@ with sync_playwright() as pw:
         leaked = [k2 for k2 in PRODUCTS if re.search(rf"(?<![A-Za-z0-9_]){re.escape(k2)}(?![A-Za-z0-9_])", raw)]
         if leaked:
             slot_bad.append(f"{pr}: bare key {leaked[0]}")
-        tied = [r for r in sel["rejected"] if str(r["rejection"]).startswith("tied")]
+        tied = [r for r in sel["rejected"] if r.get("tied") is True]
         chips = page.locator("[data-tied-chip]")
         if chips.count() != len(tied) or any(chips.nth(i).inner_text() != "TIED" for i in range(len(tied))):
             slot_bad.append(f"{pr}: TIED chip count")
         if bool(tied) != bool(sel["slot_k"].get("ties")):
             slot_bad.append(f"{pr}: ledger ties and slot_k.ties disagree")
-        if tied and ("Tied on score with" not in tt or any(r["candidate"] not in tt for r in tied)
-                     or "ordered by strategy_match, then risk_liquidity_match, then data held, then alphabetical" not in tt):
+        if tied and (bundle["tie_sentence"] not in tt or any(r["candidate"] not in tt for r in tied)):
             slot_bad.append(f"{pr}: tie sentence")
+        if picked_k_pre := (sel["slot_k"].get("selected") or {}):
+            if picked_k_pre.get("by_descriptor") and (page.locator('[data-slot="k"] [data-by-descriptor]').count() != 1
+                                                       or bundle["by_descriptor_sentence"] not in tt):
+                slot_bad.append(f"{pr}: by-descriptor sentence")
+            if not picked_k_pre.get("by_descriptor") and page.locator('[data-slot="k"] [data-by-descriptor]').count():
+                slot_bad.append(f"{pr}: by-descriptor sentence where Slot K has a number")
+        if sel.get("record_hash") and (page.locator('[data-slot="k"] [data-lock]').count() != 1
+                                       or sel["record_hash"][:8] not in tt or "Selection recorded" not in tt):
+            slot_bad.append(f"{pr}: selection lock line")
+        if "/10" in tt or "/12" in tt:
+            slot_bad.append(f"{pr}: a slash score survives")
         picked_k = sel["slot_k"].get("selected") or {}
         if sel.get("reference_comparison") and not picked_k.get("comparison"):
             if (page.locator('[data-slot="k"] [data-reference="true"]').count() != 1
@@ -927,7 +1013,7 @@ with sync_playwright() as pw:
     check("benchmarks: every product shows one Slot K and one Slot G card, prints no PRIMARY or SECONDARY and no "
           "bare product key, marks every tied ledger row TIED beside the tie sentence, shows the reference block "
           "only where Slot K has no number, and prints the declared record and the return basis",
-          not slot_bad and any(str(r["rejection"]).startswith("tied")
+          not slot_bad and any(r.get("tied") is True
                                for s in bundle["benchmarks"].values() for r in s["rejected"]),
           "; ".join(slot_bad[:6]))
 
@@ -971,7 +1057,7 @@ with sync_playwright() as pw:
               f"&proxy=spy", wait_until="networkidle")
     vtext = page.locator("#verdictcard").inner_text()
     check("URL round-trip: lab proxy restored; off-menu proxy graded by the real scorer",
-          "not on the engine's menu" in vtext and "Not eligible" in vtext
+          "not on the record's candidate menu" in vtext and "Not eligible" in vtext
           and "strategy gate" in vtext)
     # sponsor sweep over generated URLs
     url_now = page.evaluate("() => location.href").lower()
@@ -993,7 +1079,7 @@ with sync_playwright() as pw:
     check("breit lab: annual-tier PME vs VNQ reproduces the committed reference KS-PME",
           abs(float(page.locator("#pme_ks").inner_text()) - _breit_ks) < 1e-4)
     check("breit lab: the verdict card names the meaningful benchmark and says the lab opens on the reference",
-          "Engine's meaningful benchmark for this product" in page.locator("#verdictcard").inner_text()
+          "The record's meaningful benchmark for this product" in page.locator("#verdictcard").inner_text()
           and "The lab opens on the reference comparison, not the meaningful benchmark"
           in page.locator("#verdictcard").inner_text()
           and page.locator("[data-lab-peer]").count() == 1
@@ -1267,33 +1353,33 @@ with sync_playwright() as pw:
     for k in bundle["memos"]:
         try:
             with urllib.request.urlopen(
-                    f"http://127.0.0.1:{PORT}/memos/{k}_decision_memo.docx") as resp:
+                    f"http://127.0.0.1:{PORT}/memos/{k}_selection_record.docx") as resp:
                 if resp.status != 200 or int(resp.headers["Content-Length"]) < 5000:
                     memo_bad.append(k)
         except Exception:  # noqa: BLE001
             memo_bad.append(k)
-    check("all decision memos served", not memo_bad, "; ".join(memo_bad))
-    packet_bad = []
-    for k in bundle["packets"]:
+    check("all Investment Selection Records served", not memo_bad, "; ".join(memo_bad))
+    att_ok = False
+    if bundle.get("attachment"):
         try:
-            with urllib.request.urlopen(f"http://127.0.0.1:{PORT}/memos/{k}_committee_packet.docx") as resp:
-                if resp.status != 200 or int(resp.headers["Content-Length"]) < 5000:
-                    packet_bad.append(k)
+            with urllib.request.urlopen(f"http://127.0.0.1:{PORT}/memos/{bundle['attachment']}") as resp:
+                att_ok = resp.status == 200 and int(resp.headers["Content-Length"]) > 5000
         except Exception:  # noqa: BLE001
-            packet_bad.append(k)
-    check("all committee packets served, one per plan x product",
-          not packet_bad and len(bundle["packets"]) == len(bundle["plan_order"]) * len(bundle["products"]))
+            att_ok = False
+    check("the attachment (verbatim rule text) is one file served beside the records, named by its content hash",
+          bundle.get("attachment") and bundle["attachment"].startswith("attachment_a_rule_text_") and att_ok)
     view_text("packet", product="cliffwater_cclfx", plan="plan_consulting_alumni")
-    check("packet view: the committee packet link follows the selected plan",
-          page.locator("#packetlink").get_attribute("href")
-          == "memos/plan_consulting_alumni__cliffwater_cclfx_committee_packet.docx")
+    check("packet view: the record link follows the selected plan and the attachment link is beside it",
+          page.locator("#recordlink").get_attribute("href")
+          == "memos/plan_consulting_alumni__cliffwater_cclfx_selection_record.docx"
+          and page.locator("#attachmentlink").get_attribute("href") == f"memos/{bundle['attachment']}")
     printed = page.evaluate("""() => new Promise((res) => {
         window.print = () => res(document.body.className);
         document.querySelector('[data-print-pins]').click();
       })""")
     check("packet view: printing covers the pinned exhibits only (print class on during the dialog, off after)",
           "print-pins" in printed and "print-pins" not in page.evaluate("() => document.body.className"))
-    check("one memo per plan x product in the bundle",
+    check("one record per plan x product in the bundle",
           len(bundle["memos"]) == len(bundle["plan_order"]) * len(bundle["products"])
           and all(f"{pl}__{pk}" in bundle["memos"]
                   for pl in bundle["plan_order"] for pk in bundle["products"]))
@@ -1301,9 +1387,9 @@ with sync_playwright() as pw:
     href_tech = page.locator("#memolink").get_attribute("href")
     view_text("benchmarks", product="cliffwater_cclfx", plan="plan_consulting_alumni")
     href_cons = page.locator("#memolink").get_attribute("href")
-    check("benchmark memo link follows the selected plan",
-          href_tech == "memos/plan_tech_media__cliffwater_cclfx_decision_memo.docx"
-          and href_cons == "memos/plan_consulting_alumni__cliffwater_cclfx_decision_memo.docx",
+    check("benchmark record link follows the selected plan",
+          href_tech == "memos/plan_tech_media__cliffwater_cclfx_selection_record.docx"
+          and href_cons == "memos/plan_consulting_alumni__cliffwater_cclfx_selection_record.docx",
           f"{href_tech} / {href_cons}")
 
     # ---------- P2-8: plan intake form emits the intake file, refuses a sponsor-like label
@@ -1394,7 +1480,7 @@ with sync_playwright() as pw:
           and bundle["rule"]["docket"] in auth_t)
     check("authority panel: verbatim status is the build's, never text from memory",
           page.locator("#auth_status").inner_text() == bundle["rule"]["authority"]["status"]
-          and (bundle["rule"]["authority"]["status"] == "fetched" or "not yet in this build" in auth_t))
+          and (bundle["rule"]["authority"]["status"] == "fetched" or "not yet in the record" in auth_t))
     check("authority panel: scope sentence (selection, not monitoring) and advisor-completed cells",
           "Monitoring is not documented here" in auth_t and "6.6 and 6.8" in auth_t)
     # once the text is fetched, the panel quotes the rule paragraph under
@@ -1477,11 +1563,14 @@ with sync_playwright() as pw:
         cohort: 'evergreen_pe'}); return document.getElementById('view').innerText; }""")
     check("evergreen cohort carries the kkr fallback note",
           "authorized fallback" in t)
-    check("evergreen private equity cohort: no composite return formed, the reason and each period's n on screen",
-          "no composite return formed" in t.lower() and "different year ends" in t
-          and page.locator("[data-no-composite] table tbody tr").count()
-          == len(bundle["cohorts"]["evergreen_pe"]["composite"]["rows"])
-          and page.locator("#compchart").count() == 0)
+    _evc = bundle["cohorts"]["evergreen_pe"]["composite"]
+    check("evergreen private equity cohort (R3-P2-5): the composite is formed over the four March-year-end members, "
+          "the December member is excluded by name with its reason on screen, and no product key prints",
+          page.locator("#compchart svg").count() == 1 and page.locator("[data-composite-note]").count() == 1
+          and "KKR Private Equity Conglomerate LLC" in t and "calendar years" in t
+          and _evc.get("composite_members") and len(_evc["composite_members"]) == 4
+          and [e["member"] for e in _evc["excluded_members"]] == ["KKR Private Equity Conglomerate LLC"]
+          and "kkr_kpec" not in t)
     page.evaluate("() => window.tarkSetState({view: 'cohorts', cohort: 'private_credit'})")
     page.wait_for_selector("#compchart svg", timeout=5000)
     _pc_rows = bundle["cohorts"]["private_credit"]["composite"]["rows"]

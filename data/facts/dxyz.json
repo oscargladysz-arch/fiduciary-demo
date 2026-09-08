@@ -3,7 +3,7 @@
   "cohort_id": "venture",
   "depth": "full",
   "membership_rationale": "Listed CEF holding pre-IPO tech, the premium-pricing fail case. The cohort exists to show premium vs NAV pricing as a PATTERN.",
-  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
+  "what": "facts read from evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -106,6 +106,12 @@
       "source_cell": "2.4",
       "status": "extracted-unverified"
     },
+    "filed_since_inception_return_pct": {
+      "value": null,
+      "source_cell": "1.2",
+      "reason": "since-inception annualized return not read from cell 1.2 in this round",
+      "status": "extracted-unverified"
+    },
     "repurchase_program_status": {
       "value": null,
       "source_cell": "3.1",
@@ -141,7 +147,7 @@
       "value": "aligned-mechanical",
       "source_cell": "3.9",
       "status": "computed",
-      "note": "from typed facts only (cells 3.1, 3.3, 2.7), plan-independent"
+      "note": "from the dealing terms on record only (cells 3.1, 3.3, 2.7), plan-independent"
     },
     "liquidity_verdict_by_plan": {
       "value": {
@@ -152,19 +158,25 @@
       },
       "source_cell": "3.9",
       "status": "computed",
-      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
+      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default turnover assumptions against the recorded capacity)"
     },
     "primary_benchmark_id": {
       "value": null,
       "source_cell": "5.3",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+      "reason": "escalation: no meaningful benchmark constructible (see the selection record)"
     },
     "selection_score": {
       "value": null,
       "source_cell": "5.3",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+      "reason": "escalation: no meaningful benchmark constructible (see the selection record)"
+    },
+    "slot_k_by_descriptor": {
+      "value": null,
+      "source_cell": "5.3",
+      "status": "computed",
+      "reason": "escalation: no meaningful benchmark constructible (see the selection record)"
     },
     "pme_public_proxy": {
       "value": null,

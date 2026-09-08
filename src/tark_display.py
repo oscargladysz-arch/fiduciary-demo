@@ -10,6 +10,7 @@ so the site and the memo can never disagree on a headline.
 from __future__ import annotations
 
 import re
+from decimal import ROUND_HALF_UP, Decimal
 
 from tark_data import NOT_FETCHED_SENTENCE, status_kind  # noqa: F401 (re-exported)
 
@@ -44,7 +45,7 @@ def fmt_incentive(v: dict | None) -> str:
         parts.append(_pct(v["rate_pct"]))
     if v.get("hurdle_pct") is not None:
         parts.append(f"{_pct(v['hurdle_pct'])} hurdle")
-    return " / ".join(parts) if parts else "present, rate not typed (see 2.2)"
+    return " / ".join(parts) if parts else "present, rate not on record (see 2.2)"
 
 
 def fmt_early(v: dict | None) -> str:
@@ -53,16 +54,53 @@ def fmt_early(v: dict | None) -> str:
     if not v.get("present"):
         return "none"
     rate = _pct(v["rate_pct"]) if v.get("rate_pct") is not None else \
-        "fee present, rate not typed (see 2.7)"
+        "fee present, rate not on record (see 2.7)"
     return f"{rate} {v['window']}" if v.get("window") else rate
+
+
+def _fixed1(v: float) -> str:
+    """One decimal, an exact binary tie rounded up, the rule the site's
+    JavaScript toFixed applies, so the memo and the site print one figure."""
+    return str(Decimal(v).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
 
 
 def _money(x) -> str:
     if x >= 1e9:
-        return f"${x / 1e9:.1f}B"
+        return f"${_fixed1(x / 1e9)}B"
     if x >= 1e6:
-        return f"${x / 1e6:.1f}M"
+        return f"${_fixed1(x / 1e6)}M"
     return f"${round(x):,}"
+
+
+def plan_demand_sentence(plan: dict) -> str | None:
+    """Cell 3.7 for one plan (R3-P2-11): the plan's own participant counts
+    and filed outflow proxy, from its record. One builder for the memo and
+    the site, so the two never drift. None when the plan carries no counts."""
+    part = plan.get("participants") or {}
+    wab = part.get("with_account_balances")
+    if not wab:
+        return None
+    sep = part.get("separated_deferred_vested") or 0
+    act = part.get("active_eoy") or 0
+    ret = part.get("retired_receiving") or 0
+    fo = ((plan.get("schedule_h") or {}).get("filed_outflow_proxy") or {})
+    tail = f"{sep:,.0f} separated participants with balances = {sep / wab * 100:.1f}% of {wab:,.0f} accounts"
+    return (f"Plan-side demand profile for this plan (Form 5500, plan year {plan.get('plan_year', 'on file')}): "
+            f"{tail} (the near-term liquidity tail), {act:,.0f} active, {ret:,.0f} retirees in pay status"
+            + (f", filed outflow proxy {fo['value']:g}% of beginning net assets (Schedule H totals)."
+               if fo.get("value") is not None else "."))
+
+
+def reconciliation_sentence(filed_pct: float, note: str, comp: dict) -> str:
+    """The filed since-inception return beside the held series' annualized
+    return, with why the two differ (R3-P2-17d). Neither is restated and
+    the comparison uses the series. One builder for the cells, the memo
+    and the site."""
+    return (f"Reconciliation: the filed since-inception annualized return is {filed_pct:g}% "
+            f"({note}, cell 1.2) and the held series annualizes to {comp['fund_ann_pct']}%/yr over "
+            f"{comp['window']}. The two differ by end date, by the adjusted-close reinvestment "
+            "convention against the fund's own total-return calculation, and by share class. "
+            "Neither is restated and the comparison uses the series.")
 
 
 def facts_by_cell(facts: dict) -> dict[str, dict]:
@@ -81,7 +119,7 @@ def typed_headline(cid: str, fx: dict) -> str | None:
         return None
     g = lambda f: fx.get(f, {}).get("value")  # noqa: E731
     if cid == "2.1" and g("mgmt_fee_pct") is not None:
-        base = BASE_LABEL.get(g("mgmt_fee_base"), g("mgmt_fee_base") or "a base not typed")
+        base = BASE_LABEL.get(g("mgmt_fee_base"), g("mgmt_fee_base") or "a base not on record")
         return f"{g('mgmt_fee_pct'):.2f}% on {base}"
     if cid == "2.2" and "incentive_fee" in fx:
         return "incentive fee: " + fmt_incentive(g("incentive_fee"))
@@ -91,17 +129,25 @@ def typed_headline(cid: str, fx: dict) -> str | None:
         basis = (fx.get("expense_ratio_pct", {}).get("basis") or "").strip()
         if not basis:
             note = (fx.get("expense_ratio_pct", {}).get("note") or "").split(". ")[0].split(", ")[0].strip()
-            basis = note[:80] if note else "basis not typed"
+            basis = note[:80] if note else "basis not on record"
         return f"{g('expense_ratio_pct'):.2f}% expense ratio, {basis}"
     if cid == "2.4" and "affe" in fx:
         v = g("affe")
         if not v.get("present"):
             return "no AFFE line"
         return f"AFFE {v['rate_pct']:.2f}%" if v.get("rate_pct") is not None \
-            else "AFFE line present, rate not typed"
+            else "AFFE line present, rate not on record"
     if cid == "2.7" and "early_repurchase" in fx:
         return "early repurchase fee: " + fmt_early(g("early_repurchase"))
     if cid == "3.1":
+        # the program status precedes the cadence (R3-P2-7): a suspended
+        # plan's cadence is not a dealing term a holder can use
+        if g("repurchase_program_status") == "suspended":
+            since = fx["repurchase_program_status"].get("since")
+            dc = g("dealing_cadence")
+            return ("repurchases suspended" + (f" since the {since}" if since else "")
+                    + (f", the {dc} plan is closed to ordinary requests" if dc in ("daily", "monthly", "quarterly")
+                       else ", the plan is closed to ordinary requests"))
         # dealing cadence and cap period are two facts (R2-P0-5): jll_ipt deals
         # daily under a quarterly cap, breit has a monthly and a quarterly cap
         parts = []
@@ -154,8 +200,10 @@ def typed_headline(cid: str, fx: dict) -> str | None:
         return ", ".join(parts)
     if cid == "5.3" and g("primary_benchmark_id"):
         sc = g("selection_score")
+        by_desc = g("slot_k_by_descriptor") is True
         return (f"{candidate_short(g('primary_benchmark_id'))} selected"
-                + (f", {sc}/12" if sc is not None else ""))
+                + (" by descriptor" if by_desc else "")
+                + (f", {x_of_n(sc, RUBRIC_MAX)}" if sc is not None else ""))
     if cid == "3.9" and g("liquidity_structural_verdict"):
         # the headline is the structural layer only (typed facts, plan-
         # independent). The per-plan scenario verdicts are ILLUSTRATIVE and
@@ -221,7 +269,7 @@ def cell_display(cell: dict, cid: str = "", fx: dict | None = None) -> dict:
     boundary when long). No figure is ever extracted from prose by regex:
     that produced headlines that read the opposite of the finding."""
     st = str(cell.get("status", "pending"))
-    val = display_path_free(cell.get("value") or "")
+    val = display_copy(cell.get("value") or "")
     kind = status_kind(st)
     if kind == "n/a":
         reason = st.split(":", 1)[1].strip() if ":" in st else st[6:].strip(" -")
@@ -299,12 +347,12 @@ CANDIDATE_SHORT = {
 }
 SLOT_LABELS = {"slot_k": "Meaningful benchmark (paragraph (k))",
                "slot_g": "Peer comparison (paragraphs (g) and (h))"}
-RUBRIC_LABEL = "Tark benchmark rubric, 12 points"
-COMPUTED_WRITER_LABEL = "Tark computed-cells writer"
+from tark_benchmark_common import RUBRIC_LABEL, RUBRIC_MAX, x_of_n  # noqa: E402,F401
+COMPUTED_WRITER_LABEL = "Tark computed cells"
 SCHEDULE_H_ABSENT_SENTENCE = ("Schedule H benefit-payment line 2e is not yet in the plan record. "
                               "The filed outflow proxy (total expenses less administrative "
                               "expenses over beginning net assets) stands in for it as the base "
-                              "demand, and the turnover sliders are the stress around it.")
+                              "demand, and the turnover assumptions are the stress around it.")
 
 
 def strategy_label(key: str) -> str:
@@ -354,15 +402,135 @@ SURFACE_FORBIDDEN = [
 ]
 
 
+# The allowlist gate's second family (R3-P2-12, design system section 6).
+# Reader prose, meaning every bundle string a view prints, every rendered
+# view and every document paragraph, may not carry an internal token: a
+# snake_case key, a repository path or file name, a ticket reference, a
+# developer word, or "slider" outside the name of the figure the control
+# sets ("slider assumption") and the control's own label ("allocation
+# slider"). A field set in code style for provenance (a cited file name, an
+# accession column, a form's JSON) is exempt from this family and never from
+# SURFACE_FORBIDDEN. URLs are stripped before the rules run. Each entry is
+# (name, case-insensitive regular expression). Grow it, never prune it.
+PROSE_RULES = [
+    ("snake_case token", r"(?<![A-Za-z0-9_/.\-])[a-z][a-z0-9]*_[a-z0-9_]+(?![A-Za-z0-9_])"),
+    ("repository path or file name",
+     r"(?<![\w/])(?:data|docs|src|site|web)/[A-Za-z0-9_./\-]+"
+     r"|(?<![\w/.\-])[A-Za-z0-9_\-]{2,}\.(?:py|json|csv|md|js|htm|html|txt)\b"),
+    ("ticket reference", r"\bR[0-9]-P[0-9]-[0-9]+\b|\bR[0-9]-P[0-9]\b|\bP[0-9]-[0-9]+\b"),
+    ("developer word", r"\b(?:engine|artifacts?|typed|the writer|the build|this build|the site)\b"),
+    ("slider outside its label", r"(?<!allocation )\bsliders?\b(?! assumption\b)"),
+]
+PROSE_URL = re.compile(r"https?://\S+")
+
+
+def prose_hits(text: str) -> list[tuple[str, str]]:
+    """(rule name, matched text) for every PROSE_RULES hit in one string."""
+    t = PROSE_URL.sub(" ", text or "")
+    out = []
+    for name, rx in _PROSE_COMPILED:
+        for m in rx.finditer(t):
+            out.append((name, m.group(0)))
+    return out
+
+
+_PROSE_COMPILED = [(n, re.compile(p, re.IGNORECASE)) for n, p in PROSE_RULES]
+
+# Internal keys that reach reader prose from inside the record (a product
+# key in a cell's own text, a fact field name, a wrapper or base enum, a
+# series column) render as their words on every surface and in every
+# document (R3-P2-12). A verbatim quote is never rewritten.
+FACT_LABEL = {
+    "gate_history": "gating history",
+    "repurchase_cadence_per_year": "dealing cadence",
+    "repurchase_cap_pct": "repurchase cap",
+    "repurchase_program_status": "program status",
+    "repurchase_caps": "repurchase caps",
+    "net_assets_usd": "net assets",
+    "adj_close": "adjusted close",
+    "index_proxy": "public market proxy",
+    "series_manifest": "the series manifest",
+    # the N-CEN structured dataset's own field names, cited in cells 4.5 and 4.6
+    "PUB_ACCOUNTANT_NAME": "the accountant-name field",
+    "IS_ACCT_OPINION_QUALIFIED": "the opinion-qualified flag",
+    "IS_NAV_ERROR_CORRECTED": "the NAV-error-corrected flag",
+}
+
+
+def fact_label(field: str) -> str:
+    return FACT_LABEL.get(field, field.replace("_", " "))
+
+
+_KEY_LABELS: list[tuple[re.Pattern, str]] | None = None
+
+
+def _key_labels() -> list[tuple[re.Pattern, str]]:
+    global _KEY_LABELS
+    if _KEY_LABELS is None:
+        from tark_data import load_products
+        pairs: list[tuple[str, str]] = []
+        for key, p in load_products().items():
+            pairs.append((key, p["fund_name"].split(" (")[0]))
+        pairs += [(k, v) for k, v in WRAPPER_LABEL.items()]
+        pairs += [(k, v) for k, v in BASE_LABEL.items() if "_" in k]
+        pairs += list(FACT_LABEL.items())
+        # longest key first so a key that contains another is replaced whole
+        pairs.sort(key=lambda kv: -len(kv[0]))
+        _KEY_LABELS = [(re.compile(r"(?<![A-Za-z0-9_])" + re.escape(k) + r"(?![A-Za-z0-9_])"), v)
+                       for k, v in pairs if "_" in k]
+    return _KEY_LABELS
+
+
+_EM_DASH = re.compile(r"\s*\u2014\s*")
+_SEMICOLON = re.compile(r";\s*")
+_DOUBLE_PERIOD = re.compile(r"(?<!\.)\.\.(?!\.)")
+_SPACED_HYPHEN = re.compile(r"(?<=[A-Za-z)\.%']) - (?=[A-Za-z(\'])")
+_PERIODS = re.compile(r"\bperiod\(s\)")
+
+
+def punctuate(text: str) -> str:
+    """The copy rule on punctuation (R3-P2-17): no em dash and no semicolon
+    in reader prose (each becomes a comma), no double period, no spaced
+    hyphen between words (a comma), and "periods" for "period(s)". URLs are
+    left alone. Applied to record text on every surface and in every
+    document, never to a verbatim quote."""
+    parts = re.split(r"(https?://\S+)", text)
+    for i in range(0, len(parts), 2):
+        t = parts[i]
+        t = _EM_DASH.sub(", ", t)
+        t = _SEMICOLON.sub(", ", t)
+        t = _DOUBLE_PERIOD.sub(".", t)
+        t = _SPACED_HYPHEN.sub(", ", t)
+        t = _PERIODS.sub("periods", t)
+        parts[i] = t
+    return "".join(parts)
+
+
+def display_copy(text) -> str:
+    """Reader copy of a record string: repository paths become their labels,
+    internal keys become their words and the punctuation rule applies. A URL
+    inside the string is left exactly as written. Used for cell values,
+    sources and sections, never for a verbatim quote."""
+    if not isinstance(text, str):
+        return text
+    parts = re.split(r"(https?://\S+)", text)
+    for i in range(0, len(parts), 2):
+        out = display_path_free(parts[i])
+        for rx, label in _key_labels():
+            out = rx.sub(label, out)
+        parts[i] = punctuate(out)
+    return "".join(parts)
+
+
 # Repository paths inside cell text stay in the record (the validator checks
 # that every cited path exists) and render as reader labels on every surface
 # and in every document (R2-P0-3). Order matters: specific before generic.
 _PATH_LABELS = [
-    (re.compile(r"data/analytics/supplement\.json(?:\s*\(stress_windows\.[a-z_]+\))?"), "the analytics supplement artifact (stress windows)"),
-    (re.compile(r"data/analytics/metrics\.json"), "the analytics metrics artifact"),
-    (re.compile(r"data/cohorts/([a-z_]+)\.json"), lambda m: f"the cohort artifact ({cohort_label(m.group(1))})"),
-    (re.compile(r"data/liquidity/[A-Za-z0-9_.\-]*"), "the liquidity match artifacts"),
-    (re.compile(r"data/benchmarks/[A-Za-z0-9_.\-]*"), "the benchmark selection artifact"),
+    (re.compile(r"data/analytics/supplement\.json(?:\s*\(stress_windows\.[a-z_]+\))?"), "the analytics supplement (stress windows)"),
+    (re.compile(r"data/analytics/metrics\.json"), "the analytics metrics"),
+    (re.compile(r"data/cohorts/([a-z_]+)\.json"), lambda m: f"the cohort record ({cohort_label(m.group(1))})"),
+    (re.compile(r"data/liquidity/[A-Za-z0-9_.\-]*"), "the liquidity match records"),
+    (re.compile(r"data/benchmarks/[A-Za-z0-9_.\-]*"), "the benchmark selection record"),
     (re.compile(r"data/manifest\.csv"), "the filing manifest"),
     # no plan label here: cell 3.7 still cites one plan's record in every
     # product (audit item 30, owned per plan in R2-P1-13), and naming it would
@@ -377,7 +545,7 @@ _PATH_LABELS = [
     (re.compile(r"data/series_quarterly/manifest\.json"), "the quarterly NAV series manifest"),
     (re.compile(r"data/series_quarterly(?:/[A-Za-z0-9_.\-]*)?"), "the quarterly NAV series on record"),
     (re.compile(r"data/citations/[A-Za-z0-9_.\-]*"), "the citations record"),
-    (re.compile(r"data/facts(?:/[A-Za-z0-9_.\-]*)?"), "the typed facts"),
+    (re.compile(r"data/facts(?:/[A-Za-z0-9_.\-]*)?"), "the facts on record"),
     (re.compile(r"data/roster_decisions\.md"), "the roster decisions record"),
     (re.compile(r"data/evidence(?:/[A-Za-z0-9_.\-*]*)?"), "the evidence ledger"),
     (re.compile(r"data/[A-Za-z0-9_./\-]*"), "the record"),

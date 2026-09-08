@@ -128,7 +128,7 @@ check("evergreen_pe: leverage-regime caveat stays (kkr_kpec has no 1940-Act limi
       any("LEVERAGE-REGIME" in c for c in _ev))
 _vals, _basis = tc.member_values("evergreen_pe", "pricing_class")
 check("member_values reads typed per-product values for a real cohort",
-      _basis == "typed per product" and set(_vals.values()) == {"NAV"})
+      _basis == "per product from the record" and set(_vals.values()) == {"NAV"})
 _vals, _basis = tc.member_values("_toymix", "pricing_class")
 check("member_values falls back to wrapper attributes for members outside the registry",
       _basis == "by wrapper type" and set(_vals.values()) == {"NAV", "MARKET"})

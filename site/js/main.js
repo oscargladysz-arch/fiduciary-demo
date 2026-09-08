@@ -173,7 +173,7 @@ function authorityPanel() {
     <div class="cap">Federal Register document <a href="${esc(r.fr_url)}" target="_blank" rel="noopener" id="fr_link">${esc(r.fr_document)}</a>
       · docket <a href="${esc(r.docket_url)}" target="_blank" rel="noopener">${esc(r.docket)}</a>
       · verbatim text: <span id="auth_status">${esc(a.status)}</span></div>
-    <div class="cap">Scope of this build: the selection of a designated investment alternative, documented per product and per plan. Monitoring is not documented here. Cells 6.6 and 6.8 are advisor-completed under paragraph (l).</div>
+    <div class="cap">Scope of this record: the selection of a designated investment alternative, documented per product and per plan. Monitoring is not documented here. Cells 6.6 and 6.8 are advisor-completed under paragraph (l).</div>
     ${factors}
     <div class="cap">Factor mapping basis: ${esc(r.mapping_basis)}.</div>
   </div>`;

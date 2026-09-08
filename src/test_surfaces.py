@@ -36,8 +36,9 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from tark_anon import docx_text  # noqa: E402
-from tark_display import SURFACE_FORBIDDEN  # noqa: E402
+from tark_anon import docx_texts  # noqa: E402
+from tark_data import FACT_ENUMS  # noqa: E402
+from tark_display import PROSE_RULES, SURFACE_FORBIDDEN, prose_hits  # noqa: E402
 
 BASE = Path(__file__).resolve().parents[1]
 SITE = BASE / "site"
@@ -66,7 +67,23 @@ IDENTIFIER_KEYS = {
     "proxy", "service_url", "ref", "status", "kind", "type", "declared_type", "published_id",
     "period", "periods", "period_kind", "member_period_kind", "ties", "cohort_label_id",
     "cls_codes",   # the census wire format's code-to-class table, decoded by the view
+    # file stems the JS builds hrefs from, a series column and role the JS
+    # maps to labels, the census row field names it decodes, the fact keys a
+    # match lists (its labels ride beside them), the roster decisions
+    # markdown the Cohorts view renders through its key-to-words map
+    "memos", "attachment", "files", "column", "role", "row_fields", "missing_facts", "cells_read",
+    "roster_decisions_md",
+    # cohort member lists and statistic field names, the caveat matrix's
+    # attribute keys, a cited local file, the plan order, the census entity rows
+    "composite_members", "excluded_members", "field", "attrs", "local_file", "plan_order", "entities",
 }
+# a fact whose value is a closed vocabulary (the JS maps it to words): the
+# value under these fields is a key, not prose
+ENUM_VALUE_FIELDS = set(FACT_ENUMS) | {"wrapper_type", "mgmt_fee_base", "repurchase_cap_base", "tax_form",
+                                       "pricing_class", "leverage_regime", "nav_cadence"}
+# the rule names the second family must keep (grow, never prune)
+REQUIRED_RULES = ("snake_case token", "repository path or file name", "ticket reference", "developer word",
+                  "slider outside its label")
 
 # views whose content does not depend on the selected product: rendered once
 PRODUCT_INDEPENDENT = {"census", "funnel", "screener", "search", "plans", "roster",
@@ -95,12 +112,19 @@ def excerpt(text: str, start: int, end: int) -> str:
     return re.sub(r"\s+", " ", text[lo:hi]).strip()
 
 
-def scan(text: str, family: str, location: str) -> None:
-    if not text or not ANY.search(text):
+def scan(text: str, family: str, location: str, prose: bool = True) -> None:
+    """The forbidden-string list always, the prose rules (R3-P2-12) on
+    reader prose. A code-styled provenance field passes prose=False."""
+    if not text:
         return
-    for src, rx in PATTERNS:
-        for m in rx.finditer(text):
-            HITS[family].append((src, location, excerpt(text, m.start(), m.end())))
+    if ANY.search(text):
+        for src, rx in PATTERNS:
+            for m in rx.finditer(text):
+                HITS[family].append((src, location, excerpt(text, m.start(), m.end())))
+    if prose:
+        for rule, hit in prose_hits(text):
+            i = text.find(hit)
+            HITS[family].append((f"prose: {rule}", location, excerpt(text, i, i + len(hit))))
 
 
 # ------------------------------------------------------------ precondition
@@ -124,6 +148,14 @@ def check_required_tokens() -> None:
     check(f"forbidden list: SURFACE_FORBIDDEN still covers every required token "
           f"({len(SURFACE_FORBIDDEN)} patterns, {len(REQUIRED_TOKENS)} tokens)",
           bool(SURFACE_FORBIDDEN) and not missing, "uncovered: " + ", ".join(missing))
+    names = [n for n, _ in PROSE_RULES]
+    check(f"allowlist rules: the prose family keeps its {len(REQUIRED_RULES)} named rules ({len(PROSE_RULES)} rules)",
+          all(r in names for r in REQUIRED_RULES), "missing: " + ", ".join(r for r in REQUIRED_RULES if r not in names))
+    check("allowlist rules: the family fires on a key, a path, a ticket, a developer word and a bare slider, and not "
+          "on the figure's own label or a URL",
+          {r for r, _ in prose_hits("gate_history data/facts/x.json R2-P1-12 the engine sliders")}
+          == set(REQUIRED_RULES)
+          and not prose_hits("Slider assumption 10.4%, the allocation slider, https://www.sec.gov/Archives/edgar/data/1/x.htm"))
 
 
 # ------------------------------------------------------------ 1. the bundle
@@ -143,20 +175,24 @@ def bundle_objects() -> dict[str, object]:
     return objs
 
 
-def walk_strings(node, key: str, path: str, count: list[int]) -> None:
+def walk_strings(node, key: str, path: str, count: list[int], parent: str = "") -> None:
     """Scan every string leaf except those under an identifier key. Dict keys
-    themselves are never scanned, they are code, not copy."""
+    themselves are never scanned, they are code, not copy. The value of a
+    closed-vocabulary fact is a key the JS maps to words: the forbidden list
+    runs over it, the prose rules do not."""
     if key in IDENTIFIER_KEYS:
         return
     if isinstance(node, dict):
         for k, v in node.items():
-            walk_strings(v, k, f"{path}.{k}", count)
+            walk_strings(v, k, f"{path}.{k}", count, key)
     elif isinstance(node, list):
         for i, v in enumerate(node):
-            walk_strings(v, key, f"{path}[{i}]", count)
+            walk_strings(v, key, f"{path}[{i}]", count, parent)
     elif isinstance(node, str):
         count[0] += 1
-        scan(node, "bundle", path)
+        # the evidence ledger's source column and verbatim quote are provenance
+        provenance = path.startswith("TARK_EVIDENCE") and key in ("source", "quote")
+        scan(node, "bundle", path, prose=not (provenance or (key == "value" and parent in ENUM_VALUE_FIELDS)))
 
 
 def scan_bundle() -> tuple[dict, int]:
@@ -172,36 +208,59 @@ class SurfaceText(HTMLParser):
     """Every text node outside script and style plus the attribute values a
     reader meets on hover or in a form (title, placeholder, aria-label,
     data-def). Hidden elements count: a developer string must not hide in a
-    tooltip, a closed details block or a hidden pre."""
+    tooltip, a closed details block or a hidden pre. Text inside a
+    code-styled element (pre, code, a command or provenance block, a slider
+    control's own row) is collected apart: the forbidden list runs over it,
+    the prose rules do not (R3-P2-12)."""
     SKIP = {"script", "style"}
     ATTRS = {"title", "placeholder", "aria-label", "data-def"}
+    CODE_TAGS = {"pre", "code"}
+    CODE_CLASSES = ("cmd", "provenance", "sliderrow")
+    VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param",
+            "source", "track", "wbr"}
 
     def __init__(self) -> None:
         super().__init__()
         self.parts: list[str] = []
+        self.code_parts: list[str] = []
         self._skip = 0
+        self._stack: list[bool] = []   # one entry per open element: is it code-styled
+
+    def _in_code(self) -> bool:
+        return any(self._stack)
 
     def handle_starttag(self, tag, attrs):
         if tag in self.SKIP:
             self._skip += 1
+        cls = next((v or "" for k, v in attrs if k == "class"), "")
+        code = tag in self.CODE_TAGS or any(c in cls.split() for c in self.CODE_CLASSES)
+        if tag not in self.VOID:
+            self._stack.append(code)
         for k, v in attrs:
             if k in self.ATTRS and v:
-                self.parts.append(v)
+                (self.code_parts if (code or self._in_code()) else self.parts).append(v)
 
     def handle_endtag(self, tag):
         if tag in self.SKIP and self._skip:
             self._skip -= 1
+        if tag not in self.VOID and self._stack:
+            self._stack.pop()
 
     def handle_data(self, data):
         if not self._skip and data.strip():
-            self.parts.append(data)
+            (self.code_parts if self._in_code() else self.parts).append(data)
 
 
 def surface_text(html: str) -> str:
+    return surface_texts(html)[0]
+
+
+def surface_texts(html: str) -> tuple[str, str]:
+    """(reader prose, code-styled text) of one rendered page."""
     p = SurfaceText()
     p.feed(html)
     p.close()
-    return "\n".join(p.parts)
+    return "\n".join(p.parts), "\n".join(p.code_parts)
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -256,7 +315,9 @@ def scan_views(bundle: dict) -> tuple[int, list[str]]:
 
         def scan_page(view: str, product: str, plan: str) -> None:
             rendered[0] += 1
-            scan(surface_text(page.content()), "views", f"view {view} product {product} plan {plan}")
+            prose, code = surface_texts(page.content())
+            scan(prose, "views", f"view {view} product {product} plan {plan}")
+            scan(code, "views", f"view {view} product {product} plan {plan} (code-styled)", prose=False)
 
         # the Authority panel lives in the top bar of every page: open it once
         # and scan (its text is in the DOM either way, open makes the intent plain)
@@ -342,7 +403,9 @@ def scan_views(bundle: dict) -> tuple[int, list[str]]:
 def scan_documents() -> int:
     docs = sorted((SITE / "memos").glob("*.docx"))
     for p in docs:
-        scan(docx_text(p), "documents", f"docx {p.name}")
+        prose, provenance = docx_texts(p)
+        scan(prose, "documents", f"docx {p.name}")
+        scan(provenance, "documents", f"docx {p.name} (provenance columns)", prose=False)
     return len(docs)
 
 
@@ -377,8 +440,8 @@ def main() -> int:
     ensure_built()
 
     bundle, n_strings = scan_bundle()
-    check(f"bundle: no developer string, file path, script name or internal key in {n_strings} string values",
-          not HITS["bundle"], f"{len(HITS['bundle'])} hits")
+    check(f"bundle: no developer string, file path, script name, internal key, ticket, developer word or bare "
+          f"slider in {n_strings} string values", not HITS["bundle"], f"{len(HITS['bundle'])} hits")
 
     n_states, errors = scan_views(bundle)
     check(f"views: none in {n_states} rendered states, no page error",

@@ -44,25 +44,25 @@ METHOD_NOTES = [
     "forms filter, year-split 2001-present, checkpointed",
     "REIT candidates via browse-edgar company search SIC=6798 + "
     "type=10-K",
-    "listing oracle: SEC company_tickers.json",
+    "listing oracle: the SEC company tickers file",
     "precedence on overlapping signals: BDC, then interval fund (Rule 23c-3), "
     "then tender-offer CEF, then non-traded REIT, then listed CEF, then other "
     "unlisted CEF",
     "'listed' means a real exchange listing confirmed in SEC "
     "submissions. An OTC quotation alone does not count (non-traded "
     "vehicles can carry OTC tickers)",
-    "unlisted_cef_other: N-2-family registrants that are neither "
+    "other unlisted CEF: N-2-family registrants that are neither "
     "exchange-listed nor show tender/interval filing behavior - the "
     "wrapper is real but its liquidity mechanism (if any) is not "
     "detectable from filing behavior",
     "EFTS coverage is 2001+. Funds whose only relevant filings "
     "predate 2001 are not seen",
     "listing is tri-state (True, False, null with a reason) and "
-    "share-class aware: listed_common is the exchange status taken for "
-    "the common shares, listed_other_classes is null because the census "
-    "does not enumerate share classes. An interval_23c3 record that is "
+    "share-class aware: the common-share listing is the exchange status taken for "
+    "the common shares, the other-class listing is null because the census "
+    "does not enumerate share classes. An interval fund (Rule 23c-3) record that is "
     "exchange-listed and whose last N-23C3A is more than 24 months before "
-    "the census as-of is reclassified to listed_cef by the N-23C3A "
+    "the census as-of is reclassified to listed CEF by the N-23C3A "
     "recency rule (a committed census step, reversible on a fresh "
     "N-23C3A). One that still files N-23C3A keeps its class with listing "
     "null: offline, the census cannot tell which share class is listed",

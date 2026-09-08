@@ -11,7 +11,7 @@ import { annVol, beta, calendarYearReturns, desmoothGeltner, directAlpha,
          lag1Autocorr, levelOn, monthlyScheduleFlows,
          monthEndPoints, periodReturns, rollingReturns,
          rollingVol } from "./analytics.js";
-import { computeScenario, scenarioReason, scenarioVerdict, stressedDemandPct } from "./liquidity.js";
+import { computeScenario, scenarioBullets, scenarioDrivers, scenarioVerdict, stressedDemandPct } from "./liquidity.js";
 import { lineChart, barChart, donut } from "./charts.js";
 
 const T = window.TARK;
@@ -130,12 +130,12 @@ export function fmtIncentive(v) {
   const parts = [];
   if (v.rate_pct != null) parts.push(`${v.rate_pct}%`);
   if (v.hurdle_pct != null) parts.push(`${v.hurdle_pct}% hurdle`);
-  return parts.length ? parts.join(" / ") : "present, rate not typed (see 2.2)";
+  return parts.length ? parts.join(" / ") : "present, rate not on record (see 2.2)";
 }
 export function fmtEarly(v) {
   if (!v) return "";
   if (!v.present) return "none";
-  const rate = v.rate_pct != null ? `${v.rate_pct}%` : "fee present, rate not typed (see 2.7)";
+  const rate = v.rate_pct != null ? `${v.rate_pct}%` : "fee present, rate not on record (see 2.7)";
   return v.window ? `${rate} ${v.window}` : rate;
 }
 
@@ -268,7 +268,7 @@ export function viewPlans(root, state, setState) {
         plan-independent.</div></div>
     <div class="cardgrid g2">${cards}</div>
     <details class="planform" data-plan-form>
-      <summary class="cap">Add your plan (anonymized label required, the site writes nothing)</summary>
+      <summary class="cap">Add your plan (anonymized label required, this page writes nothing)</summary>
       <p class="cap">The intake stores no sponsor identity. Describe the plan (industry, size,
         state) and confirm the label names no sponsor. Derived figures are recomputed from
         the primitives by Tark's intake step, never taken from this form.</p>
@@ -317,7 +317,7 @@ export function offerFile(form, pre, filename, text) {
   if (old && old.href.startsWith("blob:")) URL.revokeObjectURL(old.href);
   const url = URL.createObjectURL(new Blob([text], { type: "application/json" }));
   bar.hidden = false;
-  bar.innerHTML = `<a class="btn ghost" data-download href="${url}" download="${esc(filename)}">download ${esc(filename)}</a>
+  bar.innerHTML = `<a class="btn ghost" data-download href="${url}" download="${esc(filename)}">download <code>${esc(filename)}</code></a>
     <button class="btn ghost" type="button" data-copy>copy</button> <span class="cap" data-copy-msg></span>`;
   bar.querySelector("[data-copy]").addEventListener("click", async () => {
     const m = bar.querySelector("[data-copy-msg]");
@@ -386,7 +386,7 @@ export function viewRoster(root, state, setState) {
       <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap">
         <button class="btn ghost" data-goto="evaluation" data-key="${k}">Six-factor record</button>
         <button class="btn ghost" data-goto="benchmarks" data-key="${k}">Benchmark</button>
-        ${T.memos.includes(`${state.plan}__${k}`) ? `<a class="btn ghost" href="memos/${state.plan}__${k}_decision_memo.docx" download>Memo ↓</a>` : ""}
+        ${T.memos.includes(`${state.plan}__${k}`) ? `<a class="btn ghost" href="memos/${state.plan}__${k}_selection_record.docx" download>Record ↓</a>` : ""}
       </div>`;
     card.querySelector("[data-ring]").append(kindDonut(c, 64));
     grid.append(card);
@@ -407,7 +407,7 @@ export function viewEvaluation(root, state) {
     return `<a href="#f${n}" data-anchor="f${n}">
       <div class="fnum">${r.evidenced + r.computed}<span style="font-size:11px;color:var(--ink-3)">/${r.total - r.na}</span></div>
       <div class="fname">${n} · ${esc(label)}</div>
-      <div class="fmeta">${r.evidenced} evidenced · ${r.computed} computed${r.na ? ` · ${r.na} n/a` : ""}</div>
+      <div class="fmeta">${r.evidenced} evidenced · ${r.computed} computed${r.soft ? ` · ${r.soft} partial` : ""}${r.na ? ` · ${r.na} n/a` : ""}</div>
     </a>`;
   }).join("");
 
@@ -423,9 +423,16 @@ export function viewEvaluation(root, state) {
           body = `<div class="muted">not applicable / not public-sourceable:
             ${esc(disp.plain)}</div>`;
         } else if (!cell.value) {
-          body = `<div class="muted">pending: pointer in data/evidence/${esc(key)}_evidence.csv</div>`;
+          body = `<div class="muted">pending: see the evidence ledger for this cell</div>`;
         } else {
-          body = `<div class="headline">${gloss(disp.headline)}</div>
+          // cell 3.7 is a property of the plan: the selected plan's own
+          // sentence leads, the product record's cell follows (R3-P2-11)
+          const planSentence = cid === "3.7" ? (T.plans[state.plan] || {}).demand_sentence : null;
+          const planBlock = planSentence
+            ? `<div class="headline" data-plan-cell="3.7">${esc(planSentence)}</div>
+               <div class="cap">Computed for ${esc(T.plans[state.plan].display_label)} from its own Form 5500
+               record, this plan. The product record's cell follows.</div>` : "";
+          body = `${planBlock}<div class="headline">${gloss(disp.headline)}</div>
             <div class="plain">${esc(disp.plain)}</div>
             <details class="src"><summary>Full text & provenance</summary>
               <div class="fulltext">${esc(cell.value)}</div></details>`;
@@ -517,7 +524,7 @@ function wireAdvisorForms(root, key, plan) {
         cells: { ...existing.cells, [cid]: { value, signer, date,
           status: `advisor-stated - ${signer}, ${date}` } } };
       offerFile(form, out, `advisor_${plan}__${key}.json`, JSON.stringify(doc, null, 2));
-      msg.textContent = "statement file ready. Send this file to Tark to record it (the site itself writes nothing)";
+      msg.textContent = "statement file ready. Send this file to Tark to record it (this page itself writes nothing)";
     });
   });
 }
@@ -623,8 +630,8 @@ export function viewBenchmarks(root, state, setState) {
   if (!sel) {
     root.innerHTML = `<div class="viewhead"><h1>Benchmark Selection</h1>
       <div class="sub">${esc(p.fund_name)}</div></div>
-      <div class="nochart"><div class="k">No selection artifact</div>
-      No engine profile exists for this product yet.</div>`;
+      <div class="nochart"><div class="k">No selection record</div>
+      No selection has been run for this product yet.</div>`;
     return;
   }
   const sk = sel.slot_k || {};
@@ -642,7 +649,7 @@ export function viewBenchmarks(root, state, setState) {
   // has no number of its own, and named for what it is
   const refBlock = ref ? `<div data-reference="true" style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)">
       <div class="cap" style="font-weight:600;color:var(--plum-800)">Reference comparison, not the meaningful benchmark</div>
-      <div style="margin:4px 0 2px"><b>${esc(ref.candidate)}</b> <span class="num">${numOr(ref.score)}/${numOr(ref.max)}</span></div>
+      <div style="margin:4px 0 2px"><b>${esc(ref.candidate)}</b> <span class="num">${numOr(ref.score)} of ${numOr(ref.max)}</span></div>
       ${ref.comparison && ref.comparison.kind === "series" ? seriesStatBlock(ref.comparison)
         : `<div class="cap">No comparison computed on held data.</div>`}
       <div class="cap">${esc(ref.note || "reference comparison on the highest-ranked held public market series")}.</div>
@@ -654,25 +661,37 @@ export function viewBenchmarks(root, state, setState) {
       const escal = sk.escalation || "No candidate selected and no escalation recorded";
       const head = escal.split(".")[0];
       const rest = escal.split(".").slice(1).join(".").trim();
+      const lockE = sel.record_hash
+        ? `<div class="cap" data-lock style="margin-top:8px">Selection recorded ${esc(String(sel.recorded_at || "").slice(0, 10))},
+            record <span class="num">${esc(String(sel.record_hash).slice(0, 8))}</span></div>` : "";
       return `<div class="card" data-slot="k">${slotBadge(label)}
         <h3 style="color:var(--alarm)">${esc(head)}.</h3>
         ${rest ? `<div class="cap">${esc(rest)}</div>` : ""}
-        ${refBlock}</div>`;
+        ${refBlock}${lockE}</div>`;
     }
     const comp = picked.comparison || null;
+    // decision 8.5: a cited index with no held series holds the slot and
+    // prints one sentence until its series is held
     const body = kind === "series" ? seriesStatBlock(comp)
       : kind === "published_index" ? publishedStatBlock(comp)
-      : `<div class="cap">No comparison computed on held data: ${esc(picked.comparison_note
+      : picked.by_descriptor
+        ? `<div class="cap" data-by-descriptor>${esc(T.by_descriptor_sentence)}</div>${refBlock}`
+        : `<div class="cap">No comparison computed on held data: ${esc(picked.comparison_note
           || "the candidate is cited and its series is not in the record")}.</div>${refBlock}`;
     const ties = (sk.ties || []).length
-      ? `<div class="cap" data-ties style="margin-top:8px">Tied on score with
-          ${sk.ties.map((id) => `<b>${esc(nameOf(id))}</b>`).join(", ")}: ordered by strategy_match,
-          then risk_liquidity_match, then data held, then alphabetical.</div>` : "";
+      ? `<div class="cap" data-ties style="margin-top:8px">${esc(T.tie_sentence)} Tied with
+          ${sk.ties.map((id) => `<b>${esc(nameOf(id))}</b>`).join(", ")}.</div>` : "";
+    // the selection lock line (R3-P2-19)
+    const lock = sel.record_hash
+      ? `<div class="cap" data-lock style="margin-top:8px">Selection recorded ${esc(String(sel.recorded_at || "").slice(0, 10))},
+          record <span class="num">${esc(String(sel.record_hash).slice(0, 8))}</span></div>` : "";
+    const recon = T.reconciliation[key]
+      ? `<div class="cap" data-reconciliation style="margin-top:8px">${esc(T.reconciliation[key])}</div>` : "";
     return `<div class="card" data-slot="k">${slotBadge(label)}
       <h3>${esc(picked.candidate)}</h3>
-      <div class="num" style="font-size:15px;margin-top:2px">${numOr(picked.score)}/${numOr(picked.max)}</div>
+      <div class="num" style="font-size:15px;margin-top:2px">${numOr(picked.score)} of ${numOr(picked.max)}</div>
       <div class="scorebar"><div class="fill" style="width:${(picked.score / (picked.max || 1)) * 100}%"></div></div>
-      ${body}${ties}
+      ${body}${recon}${ties}${lock}
       <details style="margin-top:10px"><summary class="cap" style="cursor:pointer">Scoring rationale</summary>
         <ul style="margin:8px 0 0 18px; font-size:12.5px">
           ${(picked.reasons || []).map((r) => `<li>${esc(r)}</li>`).join("")}</ul></details>
@@ -717,11 +736,11 @@ export function viewBenchmarks(root, state, setState) {
     <div class="cap" style="margin:0 0 10px" data-basis>Return basis for every comparison: ${esc((sel.basis || {}).label || "not stated")}.</div>`;
 
   const rejRows = rejected.map((r, i) => {
-    const tied = String(r.rejection || "").startsWith("tied");
+    const tied = r.tied === true;
     return `<tr${tied ? ' data-tied-row="true"' : ""}>
       <td class="entryno">${String(i + 1).padStart(2, "0")}</td>
       <td>${esc(r.candidate)}</td><td>${esc(T.lane_labels[r.lane] || "lane not labeled")}</td>
-      <td class="num">${numOr(r.score)}/${numOr(r.max)}</td>
+      <td class="num">${numOr(r.score)} of ${numOr(r.max)}</td>
       <td>${tied ? '<span class="chip plain" data-tied-chip>TIED</span> ' : ""}${esc(r.rejection || "no reason logged")}
         <div class="cap" style="margin-top:5px">${(r.reasons || []).map(esc).join(" · ")}</div>
       </td></tr>`;
@@ -731,9 +750,9 @@ export function viewBenchmarks(root, state, setState) {
     <div class="viewhead"><h1>Benchmark Selection</h1>
       <div class="sub">${esc(p.fund_name)} · ${esc(T.strategy_labels[sel.strategy] || "strategy not labeled")} · two comparisons,
         each named for the paragraph it answers (${gloss("meaningful benchmark")}, ${gloss("peer comparison")}).
-        ${esc(T.rubric_label)}, strategy gate below 2, affiliated providers ineligible,
-        threshold ${T.min_primary_score}/12,
-        max attainable by an eligible candidate ${sk.max_attainable == null ? "none eligible" : `${sk.max_attainable}/12`},
+        ${esc(T.rubric_label)}, strategy gate below ${T.strategy_gate_min} of 3, affiliated providers ineligible,
+        threshold ${T.min_primary_score} of ${T.rubric_max},
+        max attainable by an eligible candidate ${sk.max_attainable == null ? "none eligible" : `${sk.max_attainable} of ${T.rubric_max}`},
         and every rejection on the record.</div></div>
     ${declStrip}
     ${sk.escalation ? `<div class="notice">
@@ -755,7 +774,7 @@ export function viewBenchmarks(root, state, setState) {
         <th class="sortable" data-col="3">Score</th><th>Reason as logged</th></tr></thead>
       <tbody>${rejRows}</tbody></table></div>
     ${T.memos.includes(`${state.plan}__${key}`) ? `<div style="margin-top:16px">
-      <a class="btn" id="memolink" href="memos/${state.plan}__${key}_decision_memo.docx" download>Download decision memo (.docx) for ${esc(T.plans[state.plan].display_label)}</a></div>` : ""}`;
+      <a class="btn" id="memolink" href="memos/${state.plan}__${key}_selection_record.docx" download>Download the Investment Selection Record (.docx) for ${esc(T.plans[state.plan].display_label)}</a></div>` : ""}`;
 
   root.querySelectorAll("[data-goto]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault(); setState({ view: a.dataset.goto }); }));
@@ -815,12 +834,12 @@ export function viewPme(root, state, setState) {
   root.innerHTML = `
     <div class="viewhead"><h1>Analysis Lab: benchmark swap</h1>
       <div class="sub">${esc(p.fund_name)}: recompute PME / Direct Alpha against ANY
-        proxy and window, and the engine grades your choice beside the result.
+        proxy and window, and the record's rubric grades your choice beside the result.
         Customization plus judgment, never instead of it.</div></div>
     ${prof.price_series_warning ? `<div class="banner red"><b>Price-series warning:</b>
       ${esc(prof.price_series_warning)}.</div>` : ""}
     <div class="banner amber"><span class="chip illustrative">USER-CONFIGURED ANALYSIS</span>
-      Results below reflect YOUR proxy/window choice, not the engine's selection.
+      Results below reflect YOUR proxy/window choice, not the record's selection.
       Appraisal-lagged NAVs are window-sensitive. The standing methodology
       disclosure applies to every recomputation on this screen.</div>
     <div class="cardgrid g2">
@@ -848,7 +867,7 @@ export function viewPme(root, state, setState) {
         <div class="chartnote" id="pmenote"></div>
       </div>
       <div class="card" id="verdictcard">
-        <h3>The engine's judgment of your choice</h3>
+        <h3>The rubric's judgment of your choice</h3>
         <div id="verdictbody"></div>
       </div>
     </div>
@@ -883,16 +902,16 @@ export function viewPme(root, state, setState) {
       <div class="banner${verdict.eligible ? "" : " amber"}" style="margin:8px 0 0">
         <b>${verdict.eligible ? "Eligible" : "Not eligible"}.</b> ${esc(verdict.verdict)}.
         ${verdict.on_menu
-          ? "This proxy is on the engine's menu for this product."
-          : "This proxy is not on the engine's menu for this product. It is scored on its descriptors alone."}</div>
+          ? "This proxy is on the record's candidate menu for this product."
+          : "This proxy is not on the record's candidate menu for this product. It is scored on its descriptors alone."}</div>
       <ul style="margin:10px 0 0 18px;font-size:12px">
         ${verdict.reasons.map((r) => `<li>${esc(r)}</li>`).join("")}</ul>
       <div class="cap" style="margin-top:10px">${skSel
-        ? `Engine's meaningful benchmark for this product: <b>${esc(skSel.candidate)}</b>
+        ? `The record's meaningful benchmark for this product: <b>${esc(skSel.candidate)}</b>
            (${numOr(skSel.score)}/${numOr(skSel.max)}).${!skHas && skRef
              ? " The lab opens on the reference comparison, not the meaningful benchmark." : ""}
            Rejection ledger: <a href="#" data-goto-bench>view →</a>`
-        : `Engine outcome for this product: FORMAL ESCALATION, no benchmark assigned.
+        : `The record's outcome for this product: FORMAL ESCALATION, no benchmark assigned.
            <a href="#" data-goto-bench>see the notice →</a>`}</div>`;
   root.querySelectorAll("[data-goto-bench]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault(); setState({ view: "benchmarks" }); }));
@@ -1013,7 +1032,7 @@ export function viewPme(root, state, setState) {
       (hasFy ? "Fund line compounds disclosed fiscal-year returns (fiscal-step windows: annual is the honest granularity). "
         : isAnnual ? "Single disclosed ITD figure: window fixed to the disclosure period. "
         : "Fund growth daily-anchored. Lines month-end sampled for drawing. ")
-      + "Same code path as the engine (parity-tested).";
+      + "Same arithmetic as the record (parity-tested).";
     renderTables();
   }
 
@@ -1143,25 +1162,25 @@ export function viewLiquidity(root, state) {
         (${Math.round(m.plan_inputs.separated_with_balances).toLocaleString()}
         separated), plan direction: ${esc(m.plan_direction)}${filedHead}.</div></div>
     <div class="banner ${bannerCls}"><h3>Structural verdict: ${esc(m.verdict.toUpperCase())}</h3>
-      <div class="cap">From typed facts only (cells 3.1, 3.3, 2.7). The same under every plan.</div></div>
+      <div class="cap">From the dealing terms on record only (cells 3.1, 3.3, 2.7). The same under every plan.</div></div>
     <ul style="margin:0 0 10px 18px; font-size:13.5px" id="reasons">
       ${m.structural_reasons.map((r) => `<li style="margin-bottom:6px">${esc(r)}</li>`).join("")}</ul>
     <div class="banner ${cls(m.scenario_verdict)}" id="scenario_banner">
       <h3>Scenario verdict: <span id="o_verdict">${esc((m.scenario_verdict || "not computable").toUpperCase())}</span>
         <span class="chip illustrative">ILLUSTRATIVE</span></h3>
-      <div class="cap">The plan's filed outflow proxy against the typed capacity is the base, the
-        sliders are the stress around it. Misaligned when the filed rate exceeds the annual
+      <div class="cap">The plan's filed outflow proxy against the recorded capacity is the base, the
+        turnover assumptions are the stress around it. Misaligned when the filed rate exceeds the annual
         capacity, conditional-weak when the stressed demand exceeds it, conditional otherwise.
-        It moves with the plan's filing and the sliders. Proration assumption: an oversubscribed
-        offer is filled pro rata and the unfilled remainder waits for the next window.</div></div>
-    <ul style="margin:0 0 16px 18px; font-size:13.5px" id="screasons">
-      ${m.scenario_reasons.map((r) => `<li style="margin-bottom:6px">${esc(r)}</li>`).join("")}</ul>
+        It moves with the plan's filing and the turnover assumptions. Proration assumption: an oversubscribed
+        offer is filled pro rata and the unfilled remainder waits for the next window.</div>
+      <div class="cap" data-drivers style="margin-top:6px">${esc(sc.drivers.sentence)}</div></div>
+    <ul style="margin:0 0 16px 18px; font-size:13.5px" id="screasons"></ul>
     <div class="cardgrid g2">
       <div class="card">
         <h3>Capacity vs demand <span class="chip illustrative">ILLUSTRATIVE</span></h3>
         <div class="cap">Wrapper capacity is a filed fact (cells ${esc(String(profile.source_cell))}).
           The filed outflow proxy is the plan's own Schedule H figure applied to the position.
-          The sliders are an adjustable stress, never presented as fact.</div>
+          The turnover assumptions are an adjustable stress, never presented as fact.</div>
         ${hasAlloc ? `<div class="sliderrow"><label>Plan allocation to product</label>
           <input type="range" id="s_alloc" min="1" max="10" step="0.5"
             value="${sc.allocation_pct_of_plan}"><span class="out" id="o_alloc"></span></div>`
@@ -1174,24 +1193,24 @@ export function viewLiquidity(root, state) {
             value="${sc.active_annual_turnover_pct}"><span class="out" id="o_act"></span></div>
         <div id="capchart" style="margin-top:8px"></div>
         <div class="cap" id="o_reason" style="margin-top:6px"></div>
-        <div class="cap" id="o_fund" style="margin-top:6px"></div>
       </div>
       <div class="card"><h3>Wrapper facts</h3>
         <table class="grid" style="border:0;margin-top:8px">
           <tr><td>Kind</td><td class="num">${gloss(T.wrapper_labels[profile.kind] || profile.kind)}</td></tr>
-          <tr><td>Dealing terms</td><td>${esc(profile.dealing_label || "not typed (3.1)")}</td></tr>
-          <tr><td>Repurchase caps</td><td>${esc(profile.caps_label || "not typed (3.1)")}</td></tr>
+          <tr><td>Dealing terms</td><td>${esc(profile.dealing_label || "not on record (3.1)")}</td></tr>
+          <tr><td>Repurchase caps</td><td>${esc(profile.caps_label || "not on record (3.1)")}</td></tr>
           <tr><td>Annual capacity</td><td class="num">${profile.annual_capacity_pct == null ? "not computable" : profile.annual_capacity_pct + "% of the position per year (binding cap)"}</td></tr>
           <tr><td>Exchange-listed</td><td class="num">${profile.exchange ? "yes" : "no"}</td></tr>
           <tr><td>Gating history</td><td class="num">${profile.gate_history === true ? "YES (3.3)"
-            : profile.gate_history === false ? "none identified (3.3)" : `not typed: ${esc(profile.null_reasons.gate_history || "no reason recorded")}`}</td></tr>
-          <tr><td>Program status</td><td>${profile.program_status ? esc(profile.program_status) + " (3.1)"
-            : esc(profile.null_reasons.repurchase_program_status || "not typed")}</td></tr>
+            : profile.gate_history === false ? "none identified (3.3)" : `not on record: ${esc(profile.null_reasons.gate_history || "no reason recorded")}`}</td></tr>
+          <tr><td>Program status</td><td>${profile.program_status ? esc(profile.program_status)
+            + (profile.program_status_as_of ? ` as of ${esc(profile.program_status_as_of)}` : "") + " (3.1)"
+            : esc(profile.null_reasons.repurchase_program_status || "not on record")}</td></tr>
           <tr><td>Early repurchase</td><td>${esc(profile.early_fee)}</td></tr>
           <tr><td>Fund net assets</td><td class="num">${profile.net_assets_usd == null
-            ? `not typed: ${esc(profile.null_reasons.net_assets_usd || "no reason recorded")}`
+            ? `not on record: ${esc(profile.null_reasons.net_assets_usd || "no reason recorded")}`
             : (profile.net_assets_approx ? "approx. " : "") + money(profile.net_assets_usd) + ` (${esc(String(profile.net_assets_cell))})`}</td></tr>
-          ${m.missing_facts.length ? `<tr><td>Missing for a verdict</td><td>${m.missing_facts.map(esc).join(", ")}</td></tr>` : ""}
+          ${m.missing_facts.length ? `<tr><td>Missing for a verdict</td><td>${m.missing_facts_labels.map(esc).join(", ")}</td></tr>` : ""}
         </table>
         <h3 style="margin-top:14px">Stress test <span class="chip illustrative">ILLUSTRATIVE</span></h3>
         <div class="cap">${esc(stress.assumptions)}</div>
@@ -1228,12 +1247,12 @@ export function viewLiquidity(root, state) {
     scnPanel.innerHTML = `<h3>Saved scenarios
         <span class="chip illustrative">ILLUSTRATIVE</span></h3>
       <div class="cap">Named parameter sets live in YOUR browser (localStorage).
-        Compare up to three against the current sliders, per the selected
+        Compare up to three against the current settings, per the selected
         plan × product. The filed outflow proxy is the plan's, the same in every column.</div>
       <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
         <input id="scnname" placeholder="scenario name" maxlength="24"
           style="border:1px solid var(--line);border-radius:3px;padding:5px 9px;font:500 12px var(--text)">
-        <button class="copylink" id="scnsave">save current sliders</button>
+        <button class="copylink" id="scnsave">save current settings</button>
         ${names.map((n) => `<label class="comparepick" style="margin:0">
           <span class="${(window._scnSel || []).includes(n) ? "on" : ""}"
             style="border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer"
@@ -1262,7 +1281,7 @@ export function viewLiquidity(root, state) {
     const chosen = (window._scnSel || []).filter((n) => scns[n]).slice(0, 3);
     const out = scnPanel.querySelector("#scncompare");
     if (!chosen.length) { out.innerHTML = `<p class="cap">Select saved scenarios to compare (alt-click removes).</p>`; return; }
-    const cols = [["current sliders", cur], ...chosen.map((n) => [n, scns[n]])];
+    const cols = [["current settings", cur], ...chosen.map((n) => [n, scns[n]])];
     const outs = cols.map(([, prm]) => live({ ...prm,
       allocation_pct_of_plan: hasAlloc ? prm.allocation_pct_of_plan : sc.allocation_pct_of_plan }));
     const paramRows = [...(hasAlloc ? [["Allocation %", "allocation_pct_of_plan"]] : []),
@@ -1271,7 +1290,7 @@ export function viewLiquidity(root, state) {
       <th>Parameter</th>${cols.map(([n]) => `<th>${esc(n)}</th>`).join("")}</tr></thead><tbody>
       ${paramRows.map(([lbl, f]) =>
         `<tr><td>${lbl}</td>${cols.map(([, prm]) => `<td class="num">${prm[f]}</td>`).join("")}</tr>`).join("")}
-      <tr><td>Filed outflow proxy %/yr of position (the plan's, not a slider)</td>
+      <tr><td>Filed outflow proxy %/yr of position (the plan's, not a setting)</td>
         ${outs.map((o) => `<td class="num">${pct1(o.filed_outflow_proxy_pct)}</td>`).join("")}</tr>
       <tr><td style="font-weight:600">Slider assumption %/yr of position</td>
         ${outs.map((o) => `<td class="num" style="font-weight:600">${o.slider_assumption_pct.toFixed(1)}%
@@ -1310,6 +1329,12 @@ export function viewLiquidity(root, state) {
       ov.textContent = (liveVerdict || "not computable").toUpperCase();
       root.querySelector("#scenario_banner").className = `banner ${cls(liveVerdict)}`;
     }
+    // the bullets and the drivers line come from the same live state as
+    // the stress block (R3-P1-10, R3-P2-7): one figure, stated once
+    root.querySelector("[data-drivers]").textContent =
+      scenarioDrivers(out, out._stressed_exact, profile, liveVerdict).sentence;
+    root.querySelector("#screasons").innerHTML = scenarioBullets(m, out, params, profile, liveVerdict)
+      .map((b) => `<li style="margin-bottom:6px" data-bullet="${b.kind}">${esc(b.text)}</li>`).join("");
     const cap = out.annual_wrapper_capacity_pct;
     barChart(root.querySelector("#capchart"), {
       items: [
@@ -1336,17 +1361,8 @@ export function viewLiquidity(root, state) {
     ].filter(Boolean).join(", ");
     root.querySelector("#o_reason").innerHTML =
       `<span class="num">${money(out.plan_allocation_usd)}</span> position · ${dollars}. ` +
-      esc(profile.exchange ? "Exchange-listed: capacity is market depth, not a fund cap." : scenarioReason(out)) +
-      ` <b>[ILLUSTRATIVE]</b>`;
-    const fc = out.fund_capacity;
-    root.querySelector("#o_fund").innerHTML = !fc.available ? "" :
-      `Fund capacity in dollars: <span class="num">${money(fc.annual_capacity_usd)}</span> per year
-       (${cap.toFixed(0)}% of ${profile.net_assets_approx ? "approx. " : ""}${money(profile.net_assets_usd)}
-       net assets, cell ${esc(String(profile.net_assets_cell))}). At a ${params.allocation_pct_of_plan.toFixed(1)}%
-       allocation the plan's demand at the filed rate is <span class="num">${money(fc.plan_annual_demand_usd)}</span>
-       per year, <span class="num">${fc.plan_share_of_fund_capacity_pct.toFixed(2)}%</span> of that capacity,
-       a claim shared with every other holder. The allocation moves these dollar figures and this share,
-       never the percent-of-position ladder.`;
+      (profile.exchange ? "Exchange-listed: capacity is market depth, not a fund cap. " : "") +
+      `<b>[ILLUSTRATIVE]</b>`;
   }
   Object.values(els).filter(Boolean).forEach((e) => e.addEventListener("input", () => { update(); renderScenarios(); }));
   update();
@@ -1380,7 +1396,7 @@ export function viewFees(root) {
       const pct = val(k, "mgmt_fee_pct"), base = val(k, "mgmt_fee_base");
       if (pct === null) return { text: kind, badge: "" };
       const badge = base ? `<span class="chip ${TRAP_BASES.has(base) ? "trap" : "okbase"}">base: ${esc(BASES[base] || base)}</span>` : "";
-      return { text: `${pct.toFixed(2)}% on ${BASES[base] || base || "a base not typed"}`, badge };
+      return { text: `${pct.toFixed(2)}% on ${BASES[base] || base || "a base not on record"}`, badge };
     }
     if (cid === "2.2") { const v = val(k, "incentive_fee"); return { text: v === null ? kind : fmtIncentive(v), badge: "" }; }
     if (cid === "2.3") { const v = val(k, "expense_ratio_pct"); return { text: v === null ? kind : (T.cell_display[k]["2.3"]?.typed ? T.cell_display[k]["2.3"].headline : `${v.toFixed(2)}% expense ratio`), badge: "" }; }
@@ -1388,7 +1404,7 @@ export function viewFees(root) {
       const v = val(k, "affe");
       if (v === null) return { text: kind, badge: "" };
       if (!v.present) return { text: "none", badge: "" };
-      return { text: v.rate_pct != null ? `AFFE ${v.rate_pct.toFixed(2)}%` : "AFFE line present, rate not typed", badge: "" };
+      return { text: v.rate_pct != null ? `AFFE ${v.rate_pct.toFixed(2)}%` : "AFFE line present, rate not on record", badge: "" };
     }
     if (cid === "2.7") { const v = val(k, "early_repurchase"); return { text: v === null ? kind : fmtEarly(v), badge: "" }; }
     if (cid === "6.4") {
@@ -1423,7 +1439,7 @@ export function viewFees(root) {
     return { product: k, label: T.products[k].fund_name.split(" (")[0],
       value: f && f.value !== null ? f.value : null,
       color: f && f.value !== null ? "#593380" : "#837b8e",
-      note: f && f.value !== null ? "" : `no comparable expense ratio line: ${f?.reason || "not typed"}` };
+      note: f && f.value !== null ? "" : `no comparable expense ratio line: ${f?.reason || "not on record"}` };
   });
   const missing = items.filter((i) => i.value === null).map((i) => i.label);
 
@@ -1431,9 +1447,9 @@ export function viewFees(root) {
     <div class="viewhead"><h1>Fee Matrix</h1>
       <div class="sub">The headline rate is never the story. The BASE is.</div></div>
     <div class="chartbox" style="margin-bottom:14px">
-      <h3 style="margin-bottom:4px">Net expense ratio, typed from cell 2.3, where one exists</h3>
+      <h3 style="margin-bottom:4px">Net expense ratio, read from cell 2.3, where one exists</h3>
       <div id="feechart"></div>
-      <div class="chartnote">Each bar is the typed fact facts.expense_ratio_pct
+      <div class="chartnote">Each bar is the expense ratio on record from cell 2.3
         (bases differ by wrapper and are quoted in the fact's note, click source
         on row 2.3). No comparable line for ${missing.length ? esc(missing.join(", ")) : "none"}:
         their burden is fee plus performance participation (2.1/2.2), flagged in
@@ -1442,8 +1458,8 @@ export function viewFees(root) {
       <thead><tr><th style="min-width:120px">Cell</th>
         ${keys.map((k) => `<th style="min-width:210px">${esc(T.products[k].fund_name)}</th>`).join("")}
       </tr></thead><tbody>${body}</tbody></table></div>
-    <p class="cap" style="margin-top:10px">Headline chips are the typed facts
-      layer (data/facts, each field cites its cell). An absence reads "none".
+    <p class="cap" style="margin-top:10px">Headline chips are the facts on record
+      (each cites its cell). An absence reads "none".
       Click source for document, section and verbatim quote.</p>`;
 
   const box = root.querySelector("#feechart");
@@ -1474,9 +1490,9 @@ function nslrPanel(root) {
       <div class="chartnote">DXYZ trades at a PREMIUM to NAV, NSLR at a
         persistent DISCOUNT. Two listed venture vehicles, two opposite gaps,
         one conclusion: the market price is not the portfolio. This is why the
-        engine escalates BOTH rather than benchmarking either price
+        record escalates BOTH rather than benchmarking either price
         (the analytics supplement's premium decomposition and both selection
-        artifacts).</div></div>`;
+        records).</div></div>`;
   lineChart(box.querySelector("#nslrchart"), {
     series: [
       { points: px, label: "NSLR market price (daily close)", color: "#593380", width: 1.3 },
@@ -1504,7 +1520,7 @@ export function viewDxyz(root) {
   root.innerHTML = `
     <div class="viewhead"><h1>DXYZ: Price vs NAV</h1>
       <div class="sub">The market price is a premium series, not a portfolio
-        series, which is WHY the engine refused a benchmark.</div></div>
+        series, which is WHY the selection refused a benchmark.</div></div>
     <div class="statrow">
       ${stat("Peak close", "$" + peak.toFixed(2), peakDate)}
       ${stat("Drawdown from peak", dd.toFixed(1) + "%", "computed from price series")}
@@ -1562,7 +1578,7 @@ export function viewDesmooth(root, state) {
                basis: `monthly returns from ${d.label}`,
                price: d.price_series,
                committed: m
-                 ? `pipeline: rho ${m.lag1_autocorr_rho}, observed ${m.ann_vol_observed_pct}% → de-smoothed ${m.ann_vol_desmoothed_pct}% (the analytics metrics artifact)`
+                 ? `pipeline: rho ${m.lag1_autocorr_rho}, observed ${m.ann_vol_observed_pct}% → de-smoothed ${m.ann_vol_desmoothed_pct}% (the analytics metrics)`
                  : "no committed pipeline diagnostic for this series yet (live recompute only)" };
     };
   }
@@ -1574,7 +1590,7 @@ export function viewDesmooth(root, state) {
                dates: pts.map(([d]) => d),
                basis: "monthly NAV path as PRINTED in the 10-K (distributions excluded, appraisal-process diagnostic)",
                price: false,
-               committed: `pipeline: rho ${bd.lag1_autocorr_rho}, observed ${bd.nav_path_ann_vol_pct}% → de-smoothed ${bd.desmoothed_ann_vol_pct}% (the analytics supplement artifact)` };
+               committed: `pipeline: rho ${bd.lag1_autocorr_rho}, observed ${bd.nav_path_ann_vol_pct}% → de-smoothed ${bd.desmoothed_ann_vol_pct}% (the analytics supplement)` };
     };
   }
   const UNAVAILABLE_REASON = (k) =>
@@ -1638,7 +1654,7 @@ export function viewDesmooth(root, state) {
         never mark: stale-pricing bias, gating, or premium collapse.</div>
     </div>
     <div class="chartbox"><div id="dschart"></div>
-      <div class="chartnote">${esc(data.basis)}. r*_t = (r_t − ρ·r_{t−1}) / (1 − ρ),
+      <div class="chartnote">${esc(data.basis)}. <code>r*_t = (r_t − ρ·r_{t−1}) / (1 − ρ)</code>,
         recomputed live with the parity-tested port. Committed record:
         ${esc(data.committed)}.</div></div>
     <h2 style="margin:18px 0 4px">Where this diagnostic cannot run</h2>
@@ -1686,7 +1702,7 @@ export function viewCoverage(root) {
           re-check is a machine re-check, not human verification.</div></div>
       <div class="card"><h3 class="num" style="font-size:28px;color:var(--plum-700)">${tax.counts.verified}</h3>
         <div class="cap">cells human-verified so far (T3). The verification
-          interface is data/evidence/*.csv, and nothing is marked verified until
+          interface is the evidence ledger, and nothing is marked verified until
           a human signs the row. Honesty is load-bearing.</div></div>
     </div>
     <div class="cardgrid g3" id="prodrings"></div>

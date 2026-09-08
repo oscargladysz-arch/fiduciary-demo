@@ -28,34 +28,35 @@ are printed as ties. docs/benchmark_methodology.md is the specification.
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 from pathlib import Path
 
 from tark_analytics import (_level_on, cumulative_growth, direct_alpha,
                             effective_window, ks_pme, monthly_schedule_flows,
                             year_frac)
-from tark_benchmark_common import LOW_CONFIDENCE_YEARS, low_confidence  # noqa: F401 (re-exported)
+from tark_benchmark_common import (BY_DESCRIPTOR_SENTENCE, CRITERIA, CRITERION_LABEL, CRITERION_MAX,  # noqa: F401
+                                   LOW_CONFIDENCE_YEARS, MIN_PRIMARY_FRACTION, MIN_PRIMARY_SCORE, RUBRIC_MAX,
+                                   RUBRIC_VERSION, STRATEGY_GATE_MIN, TIE_SENTENCE, canonical_json, low_confidence,
+                                   record_hash, sha256_file, x_of_n)
 from tark_data import DATA, load_products, load_series
 from tark_display import (RUBRIC_LABEL, asset_label, candidate_short, cohort_label,
                           strategy_label, sub_label)
 from tark_periods import (aligned_composite, calendar_years_from_series,
                           member_period_returns)
 
-MIN_PRIMARY_SCORE = 7
-RUBRIC_MAX = 12
-RUBRIC_VERSION = "v3"
 SLOT_K_LABEL = "Meaningful benchmark (paragraph (k))"
 SLOT_G_LABEL = "Peer comparison (paragraphs (g) and (h))"
-CRITERIA = ("strategy_match", "risk_liquidity_match", "provider_independence",
-            "data_held", "pricing_basis_match")
-RUBRIC_CAPTION = (f"{RUBRIC_LABEL}: strategy match 3 (gate below 2), risk/liquidity match 3, "
-                  "provider independence 2 (an affiliated provider is ineligible), data held 2, "
-                  f"pricing basis match 2, threshold {MIN_PRIMARY_SCORE}/{RUBRIC_MAX}")
-TIE_SENTENCE = ("tied on score, ordered by strategy_match, then risk_liquidity_match, "
-                "then data held, then alphabetical")
+# rubric v3.1 (R3-P2-1, R3-P2-2): four criteria, the threshold and the gate
+# as fractions of their maxima, printed as "x of N" on every surface
+RUBRIC_CAPTION = (f"{RUBRIC_LABEL}: strategy match 3 (gate below {STRATEGY_GATE_MIN}), risk and liquidity "
+                  "match 3, provider independence 2 (an affiliated provider is ineligible), data held 2, "
+                  f"threshold {x_of_n(MIN_PRIMARY_SCORE, RUBRIC_MAX)}")
 NOT_PME_NOTE = ("Not a public market equivalent: the comparator is appraisal-based and cannot "
                 "be bought, so the statistic is a relative wealth ratio.")
 YAHOO_SOURCE = "Yahoo adjusted close, approximates NAV total return"
+# the same series for an exchange-traded fund is a market price, not NAV (R3-P2-4)
+MARKET_SOURCE = "Yahoo adjusted close, a market price with distributions reinvested, not NAV"
 # fund short names for anything a surface prints (never a product key)
 FUND_SHORT = {k: p["fund_name"].split(" (")[0] for k, p in load_products().items()}
 
@@ -114,7 +115,8 @@ def basis_of(key: str) -> dict:
     """The one return basis the product uses in every slot (R2-P1-6)."""
     prof = ALL_PRODUCTS[key]
     if prof["held_kind"] == "series":
-        return {"kind": "series", "label": f"{YAHOO_SOURCE} ({prof['series'].upper()})"}
+        src = MARKET_SOURCE if prof.get("pricing_class") == "MARKET" else YAHOO_SOURCE
+        return {"kind": "series", "label": f"{src} ({prof['series'].upper()})"}
     if prof["held_kind"] == "fy_returns":
         per = member_period_returns(key, REGISTRY)
         return {"kind": "fy_returns", "label": per["source"] or "filed fiscal-year returns"}
@@ -308,44 +310,61 @@ def fund_liquidity_terms(prof: dict) -> str:
     """The fund's dealing terms as the facts layer types them (cells 3.1 and
     3.3), printed inside the risk criterion's reason."""
     dc = prof.get("dealing_cadence")
+    if prof.get("repurchase_program_status") == "suspended":
+        return "repurchases suspended (ordinary requests not accepted, capacity 0%)"
     if dc == "exchange":
         base = "exchange-traded, continuous dealing at the market price"
     else:
         caps = prof.get("repurchase_caps") or []
         cap_txt = (" under " + " and ".join(f"{c['pct']:g}% cap per {c['period']}" for c in caps)
-                   if caps else " with no cap typed")
+                   if caps else " with no cap on record")
         base = f"{dc or 'periodic'} dealing at NAV{cap_txt}"
-    if prof.get("repurchase_program_status") == "suspended":
-        base += ", repurchases suspended"
-    elif prof.get("gate_history") is True:
+    if prof.get("gate_history") is True:
         base += ", requests prorated in the filings on record"
     return base
 
 
 def risk_liquidity_match(prof: dict, cand: dict) -> tuple[int, str]:
-    """0 to 3 from the fund's typed dealing terms against the candidate's
-    typed liquidity class (R2-P1-4). Never reads the held return file."""
+    """0 to 3 from the fund's typed dealing terms (cells 3.1 and 3.3: dealing
+    cadence, caps, gating history, program status) against the candidate's
+    typed liquidity class (R3-P2-1). Never reads the held return file. Every
+    input that fires is named in the reason, and a perturbation of any of
+    them moves the score for at least one candidate class:
+      3  an appraisal-based index against a NAV fund whose filings disclose
+         no proration and no suspension, or a daily market series against
+         an exchange-traded fund whose price tracks NAV
+      2  an appraisal-based index against a NAV fund that has prorated
+         requests or suspended repurchases (the index has no such gate)
+      1  a daily market series against a semi-liquid NAV fund
+      0  the fund's price is decoupled from NAV, or an appraisal index for a
+         market-priced fund"""
     terms = fund_liquidity_terms(prof)
     if prof.get("price_nav_decoupled"):
         return 0, ("fund price is premium-driven and decoupled from NAV, no candidate matches that "
                    f"risk process (fund terms: {terms})")
     lc = cand.get("liquidity_class")
+    exchange = prof.get("dealing_cadence") == "exchange" or prof["pricing_class"] == "MARKET"
     if lc == "daily_market":
-        if prof["pricing_class"] == "MARKET":
-            return 2, f"daily market series for an exchange-traded fund ({terms})"
+        if exchange:
+            return 3, f"daily market series for an exchange-traded fund whose price tracks NAV ({terms})"
         return 1, (f"daily-liquid market series against a semi-liquid NAV fund ({terms}): volatility "
                    "and liquidity regimes differ, the PME construct exists for exactly this comparison")
-    if prof["pricing_class"] == "MARKET":
+    if exchange:
         return 0, f"appraisal-based index for a market-priced fund ({terms}): no like-for-like process"
-    if lc == "appraisal_fund_index":
-        regime = cand.get("constituent_leverage_regime")
-        if regime and regime == prof["leverage_regime"]:
-            return 3, (f"appraisal-based index of periodically dealt funds in the fund's own leverage "
-                       f"regime ({terms})")
-        return 2, (f"appraisal-based index of periodically dealt funds ({terms}). The constituents' "
-                   "leverage regime is not typed in the record, so the full match is not claimed")
-    return 2, (f"appraisal-based index without a dealing mechanism of its own against a NAV fund "
-               f"({terms}): the pricing process matches, the liquidity terms cannot")
+    suspended = prof.get("repurchase_program_status") == "suspended"
+    gated = prof.get("gate_history") is True
+    what = ("appraisal-based index of periodically dealt funds" if lc == "appraisal_fund_index"
+            else "appraisal-based index without a dealing mechanism of its own")
+    if suspended:
+        return 2, (f"{what} against a NAV fund whose repurchases are suspended ({terms}): the index "
+                   "carries no such closure, so the liquidity process is one step apart")
+    if gated:
+        return 2, (f"{what} against a NAV fund that has prorated requests ({terms}): the index carries "
+                   "no gate, so the liquidity process is one step apart")
+    gate_note = ("no proration and no suspension disclosed in the filings on record"
+                 if prof.get("gate_history") is None else "every request filled in full per the filings")
+    return 3, (f"{what} against a periodically dealt NAV fund with {gate_note} ({terms}): the pricing "
+               "process and the liquidity process both match")
 
 
 def provider_independence(prof: dict, cand: dict) -> tuple[int, str]:
@@ -375,19 +394,6 @@ def data_held(cand: dict) -> tuple[int, str]:
     return 0, "cited, series not in the record: no comparison can be computed yet"
 
 
-def pricing_basis_match(prof: dict, cand: dict) -> tuple[int, str]:
-    """2 when the candidate prices the way the fund does, 1 when a market
-    series stands in for an appraisal fund, 0 when an appraisal index is
-    offered for a market-priced fund."""
-    if cand["pricing_class"] == prof["pricing_class"]:
-        return 2, ("both appraisal-based NAV series" if prof["pricing_class"] == "NAV"
-                   else "both market-priced series")
-    if prof["pricing_class"] == "NAV":
-        return 1, ("a market-priced series standing in for an appraisal-based fund: comparable only "
-                   "through a PME, which is window-sensitive on appraisal-lagged NAVs")
-    return 0, "an appraisal-based index for a market-priced fund: no like-for-like statistic"
-
-
 def score_candidate(prof: dict, cand: dict) -> dict:
     """Score one candidate for one product from typed descriptors. Every
     criterion returns its points and the reason that fired."""
@@ -396,25 +402,31 @@ def score_candidate(prof: dict, cand: dict) -> dict:
     r_match, r_why = risk_liquidity_match(prof, cand)
     ind, p_why = provider_independence(prof, cand)
     dh, d_why = data_held(cand)
-    pb, b_why = pricing_basis_match(prof, cand)
-    reasons = [f"strategy_match {s_match}/3: {s_why}",
-               f"risk_liquidity_match {r_match}/3: {r_why}",
-               f"provider_independence {ind}/2: {p_why}",
-               f"data_held {dh}/2: {d_why}",
-               f"pricing_basis_match {pb}/2: {b_why}"]
-    total = s_match + r_match + ind + dh + pb
+    crit = {"strategy_match": s_match, "risk_liquidity_match": r_match,
+            "provider_independence": ind, "data_held": dh}
+    whys = {"strategy_match": s_why, "risk_liquidity_match": r_why,
+            "provider_independence": p_why, "data_held": d_why}
+    # reasons print the criterion's display name, never its key (rule 11)
+    reasons = [f"{CRITERION_LABEL[c]} {x_of_n(crit[c], CRITERION_MAX[c])}: {whys[c]}" for c in CRITERIA]
+    total = sum(crit.values())
     return {"candidate": cand["name"], "id": cand["id"], "lane": cand["lane"],
             "declared_type": cand.get("declared_type"),
             "score": total, "max": RUBRIC_MAX,
-            "criteria": {"strategy_match": s_match, "risk_liquidity_match": r_match,
-                         "provider_independence": ind, "data_held": dh,
-                         "pricing_basis_match": pb},
+            "criteria": crit,
             "held": bool(cand.get("held")),
             "comparator_kind": ("public market series" if cand["pricing_class"] == "MARKET"
                                 else "appraisal-based published series"),
             "series_id": cand.get("series") or (cand.get("published_id") if cand.get("data") == "published"
                                                  else f"cited:{cand['id']}"),
             "reasons": reasons}
+
+
+def eligible(s: dict, decoupled: bool) -> bool:
+    """The one eligibility rule for Slot K: not price-decoupled, past the
+    strategy gate, an unaffiliated provider, at or above the threshold."""
+    c = s["criteria"]
+    return (not decoupled and c["strategy_match"] >= STRATEGY_GATE_MIN
+            and c["provider_independence"] == 2 and s["score"] >= MIN_PRIMARY_SCORE)
 
 
 # ------------------------------------------------------------ comparison
@@ -434,7 +446,7 @@ def fiscal_year_bounds(fy_window, n: int) -> list[tuple[str, str]]:
 
 def _fund_source(profile: dict) -> str:
     if profile.get("series"):
-        return YAHOO_SOURCE
+        return MARKET_SOURCE if profile.get("pricing_class") == "MARKET" else YAHOO_SOURCE
     if profile.get("fy_returns"):
         per = member_period_returns(profile["key"], REGISTRY) if profile.get("key") in REGISTRY else {}
         return per.get("source") or "filed fiscal-year returns"
@@ -676,25 +688,37 @@ def escalation_text(profile: dict, scored: list[dict], decoupled: bool) -> str:
                 "not the portfolio. Required next: a NAV series from the filings and a premium to "
                 "NAV decomposition before any comparator is defensible.")
     parts = []
+    gate_fails = threshold_fails = affiliated = 0
     for s in scored:
         c = s["criteria"]
-        if c["strategy_match"] < 2:
-            why = f"fails the strategy gate ({c['strategy_match']}/3)"
+        if c["strategy_match"] < STRATEGY_GATE_MIN:
+            why = f"fails the strategy gate (strategy match {x_of_n(c['strategy_match'], 3)})"
+            gate_fails += 1
         elif c["provider_independence"] == 0:
             why = "affiliated provider"
+            affiliated += 1
         elif s["score"] < MIN_PRIMARY_SCORE:
             why = "below the threshold"
+            threshold_fails += 1
         else:
             why = "eligible"
-        parts.append(f"{candidate_short(s['id'])} {s['score']}/{RUBRIC_MAX} ({why})")
+        parts.append(f"{candidate_short(s['id'])} {x_of_n(s['score'], RUBRIC_MAX)} ({why})")
     exact = [s for s in scored if s["criteria"]["strategy_match"] == 3]
     if exact:
         need = ("a held series for " + " or ".join(candidate_short(s["id"]) for s in exact)
                 + ", the strategy-exact candidates already on the menu")
     else:
         need = f"a published {strat} strategy index with a series the record can hold"
-    return (f"NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this {strat} fund: "
-            f"no candidate passes the strategy gate at or above {MIN_PRIMARY_SCORE}/{RUBRIC_MAX}. "
+    clauses = []
+    if gate_fails:
+        clauses.append(f"fails the strategy gate (strategy match below {x_of_n(STRATEGY_GATE_MIN, 3)})")
+    if threshold_fails:
+        clauses.append(f"scores below the threshold ({x_of_n(MIN_PRIMARY_SCORE, RUBRIC_MAX)})")
+    if affiliated:
+        clauses.append("is published by an affiliated provider")
+    why_all = (" or ".join(clauses) if clauses else "is ineligible")
+    return (f"NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this {strat} fund. "
+            f"Every candidate either {why_all}. "
             "Scored: " + ", ".join(parts) + f". Required next: {need}.")
 
 
@@ -750,12 +774,7 @@ def run_selection(product_key: str) -> dict:
     by_id = {c["id"]: c for c in menu}
     scored = sorted((score_candidate(profile, c) for c in menu), key=_sort_key)
     decoupled = bool(profile.get("price_nav_decoupled"))
-
-    def eligible(s: dict) -> bool:
-        c = s["criteria"]
-        return (not decoupled and c["strategy_match"] >= 2 and c["provider_independence"] == 2
-                and s["score"] >= MIN_PRIMARY_SCORE)
-    elig = [s for s in scored if eligible(s)]
+    elig = [s for s in scored if eligible(s, decoupled)]
     selected = elig[0] if elig else None
 
     rejected = []
@@ -763,23 +782,27 @@ def run_selection(product_key: str) -> dict:
         if s is selected:
             continue
         c = s["criteria"]
+        tied = False
         if decoupled:
             why = ("fund price is premium/discount-driven and decoupled from NAV. "
                    "Benchmarking the price benchmarks the premium, not the portfolio")
-        elif c["strategy_match"] < 2:
-            why = (f"rejected: strategy gate (score {s['score']}/{s['max']} but "
-                   f"strategy_match {c['strategy_match']}/3)")
+        elif c["strategy_match"] < STRATEGY_GATE_MIN:
+            why = (f"rejected: strategy gate (score {x_of_n(s['score'], s['max'])} but "
+                   f"strategy match {x_of_n(c['strategy_match'], 3)})")
         elif c["provider_independence"] == 0:
-            why = (f"rejected: affiliated provider (score {s['score']}/{s['max']}), an index published "
+            why = (f"rejected: affiliated provider (score {x_of_n(s['score'], s['max'])}), an index published "
                    "by the fund's own adviser is ineligible for the meaningful-benchmark slot")
         elif s["score"] < MIN_PRIMARY_SCORE:
-            why = f"score {s['score']}/{s['max']} below the threshold {MIN_PRIMARY_SCORE}/{s['max']}"
+            why = (f"score {x_of_n(s['score'], s['max'])} below the threshold "
+                   f"{x_of_n(MIN_PRIMARY_SCORE, s['max'])}")
         elif selected and s["score"] == selected["score"]:
-            why = f"tied: {TIE_SENTENCE} (score {s['score']}/{s['max']}, selected {candidate_short(selected['id'])})"
+            tied = True
+            why = (f"{TIE_SENTENCE} Score {x_of_n(s['score'], s['max'])}, "
+                   f"{candidate_short(selected['id'])} selected.")
         else:
-            why = (f"ranked below the selected candidate: {s['score']}/{s['max']} vs "
-                   f"{selected['score']}/{selected['max']} for {candidate_short(selected['id'])}")
-        rejected.append({**s, "rejection": why})
+            why = (f"ranked below the selected candidate: {x_of_n(s['score'], s['max'])} vs "
+                   f"{x_of_n(selected['score'], selected['max'])} for {candidate_short(selected['id'])}")
+        rejected.append({**s, "rejection": why, "tied": tied})
 
     # ---- Slot K
     slot_k = {"label": SLOT_K_LABEL, "selected": None, "escalation": None,
@@ -787,28 +810,39 @@ def run_selection(product_key: str) -> dict:
               "ties": [s["id"] for s in elig[1:] if selected and s["score"] == selected["score"]]}
     if selected:
         cand = by_id[selected["id"]]
-        comp, note = _comparison_for(profile, cand)
-        slot_k["selected"] = {**selected, "comparison": comp, "comparison_note": note}
+        if cand.get("held"):
+            comp, note = _comparison_for(profile, cand)
+            by_descriptor = False
+        else:
+            # decision 8.5: a cited index with no held series holds the slot
+            # and every surface prints one sentence until its series is held
+            comp, note, by_descriptor = None, BY_DESCRIPTOR_SENTENCE, True
+        slot_k["selected"] = {**selected, "comparison": comp, "comparison_note": note,
+                              "by_descriptor": by_descriptor}
     else:
         slot_k["escalation"] = escalation_text(profile, scored, decoupled)
 
     # ---- reference comparison on the highest-ranked held public market
     # series when Slot K carries no number (decision 7.21): named as a
-    # reference, never as the benchmark
+    # reference, never as the benchmark. The loop continues past a candidate
+    # whose comparison is not computable (R3-P2-6) and records why.
     reference = None
+    reference_skipped: list[dict] = []
     if not (selected and slot_k["selected"]["comparison"]) and not decoupled:
         for s in scored:
             c = s["criteria"]
             cand = by_id[s["id"]]
-            if (s["held"] and cand["pricing_class"] == "MARKET" and c["strategy_match"] >= 2
+            if (s["held"] and cand["pricing_class"] == "MARKET" and c["strategy_match"] >= STRATEGY_GATE_MIN
                     and c["provider_independence"] == 2):
                 comp, note = _comparison_for(profile, cand)
                 if comp:
                     reference = {"candidate": s["candidate"], "id": s["id"], "score": s["score"],
-                                 "max": s["max"], "series_id": s["series_id"], "comparison": comp,
+                                 "max": s["max"], "series_id": s["series_id"], "lane": s["lane"],
+                                 "held": True, "comparison": comp,
                                  "note": ("reference comparison on the highest-ranked held public "
                                           "market series: not the meaningful benchmark")}
-                break
+                    break
+                reference_skipped.append({"id": s["id"], "candidate": s["candidate"], "note": note})
 
     # ---- Lane A record: every declared or SEC-required comparator, typed,
     # with its own comparison whenever its series is held (R2-P1-5)
@@ -821,37 +855,129 @@ def run_selection(product_key: str) -> dict:
         if s is None:
             status = "not scored"
         elif selected and s is selected:
-            status = f"{'held' if held else 'cited, not held'}, scored {s['score']}/{RUBRIC_MAX}, selected for Slot K"
+            status = f"{'held' if held else 'cited, not held'}, scored {x_of_n(s['score'], RUBRIC_MAX)}, selected for Slot K"
         elif decoupled:
-            status = f"{'held' if held else 'cited, not held'}, scored {s['score']}/{RUBRIC_MAX}, fund price decoupled from NAV"
-        elif s["criteria"]["strategy_match"] < 2:
-            status = (f"{'held' if held else 'cited, not held'}, scored {s['score']}/{RUBRIC_MAX}, "
-                      f"fails the strategy gate (strategy_match {s['criteria']['strategy_match']}/3)")
+            status = f"{'held' if held else 'cited, not held'}, scored {x_of_n(s['score'], RUBRIC_MAX)}, fund price decoupled from NAV"
+        elif s["criteria"]["strategy_match"] < STRATEGY_GATE_MIN:
+            status = (f"{'held' if held else 'cited, not held'}, scored {x_of_n(s['score'], RUBRIC_MAX)}, "
+                      f"fails the strategy gate (strategy match {x_of_n(s['criteria']['strategy_match'], 3)})")
         elif s["score"] < MIN_PRIMARY_SCORE:
-            status = f"{'held' if held else 'cited, not held'}, scored {s['score']}/{RUBRIC_MAX}, below the threshold"
+            status = f"{'held' if held else 'cited, not held'}, scored {x_of_n(s['score'], RUBRIC_MAX)}, below the threshold"
         elif selected and s["score"] == selected["score"]:
-            status = f"{'held' if held else 'cited, not held'}, scored {s['score']}/{RUBRIC_MAX}, tied"
+            status = f"{'held' if held else 'cited, not held'}, scored {x_of_n(s['score'], RUBRIC_MAX)}, tied"
         else:
-            status = f"{'held' if held else 'cited, not held'}, scored {s['score']}/{RUBRIC_MAX}, ranked below the selection"
-        comp, note = (_comparison_for(profile, cand) if cand else (None, "not scored"))
+            status = f"{'held' if held else 'cited, not held'}, scored {x_of_n(s['score'], RUBRIC_MAX)}, ranked below the selection"
+        if cand is None:
+            comp, note = None, "not scored"
+        elif decoupled:
+            # R3-P2-4: no PME on a price series decoupled from NAV, it would
+            # benchmark the premium, not the portfolio (cells 1.10 and 4.7)
+            comp, note = None, ("fund price is premium-driven and decoupled from NAV: no comparison on a "
+                                "market-price series, it would benchmark the premium, not the portfolio")
+        else:
+            comp, note = _comparison_for(profile, cand)
         declared_out.append({"name": d["name"], "candidate_id": d["candidate"], "cell": "5.1",
                              "type": d["type"], "type_label": DECLARED_TYPE_LABEL[d["type"]],
                              "held": held, "status": status,
                              "comparison": comp, "comparison_note": note})
     has_declared = any(d["type"] == "declared" for d in declared_out)
 
-    return {
+    doc = {
         "product": product_key,
         "strategy": profile["strategy"],
         "cohort": profile.get("cohort"),
         "source_cells": profile["source_cells"],
         "rubric_version": RUBRIC_VERSION,
         "rubric": RUBRIC_CAPTION,
+        "threshold": {"min_score": MIN_PRIMARY_SCORE, "max": RUBRIC_MAX, "fraction": MIN_PRIMARY_FRACTION,
+                      "strategy_gate_min": STRATEGY_GATE_MIN, "strategy_gate_max": CRITERION_MAX["strategy_match"]},
         "basis": basis_of(product_key),
         "slot_k": slot_k,
         "slot_g": slot_g(product_key),
         "reference_comparison": reference,
+        "reference_skipped": reference_skipped,
         "declared": declared_out,
         "declared_none_reason": profile.get("declared_none_reason") if not has_declared else None,
         "rejected": rejected,
+        # the selection lock (R3-P2-19): when, under which rubric, from which
+        # inputs, and a hash over the whole record
+        "recorded_at": recorded_at(),
+        "inputs": selection_inputs(product_key, [by_id[s["id"]] for s in scored]),
     }
+    doc["record_hash"] = record_hash(doc)
+    return doc
+
+
+# ---------------------------------------------------------- the lock
+def recorded_at() -> str:
+    """The record's as-of instant, midnight UTC of the as-of date. Artifacts
+    never carry a wall clock (they must reproduce byte for byte in the
+    freshness gate), so a re-record on a later day bumps data/as_of.json."""
+    from tark_data import record_as_of
+    return f"{record_as_of()}T00:00:00Z"
+
+
+# the typed facts the rubric reads for the risk criterion (R3-P2-1)
+RISK_FACT_FIELDS = ("dealing_cadence", "cap_period", "repurchase_caps", "gate_history",
+                    "repurchase_program_status")
+# the cells those facts and the strategy descriptors come from
+LOCK_CELLS = ("3.1", "3.3", "5.1")
+
+
+def _rel(p: Path) -> str:
+    try:
+        return str(p.relative_to(DATA.parent))
+    except ValueError:
+        return str(p)
+
+
+def selection_inputs(key: str, cands: list[dict]) -> dict:
+    """Every input the selection was computed from, each with a hash the
+    lock gate recomputes: the filings by accession (the record holds no
+    filing bytes, so the accession is the lock), the series files by
+    content hash, the descriptors by a hash of the exact values read."""
+    from tark_data import load_evidence
+    prof = ALL_PRODUCTS[key]
+    cells = sorted(set(prof["source_cells"]) | set(LOCK_CELLS))
+    manifest = {}
+    with open(DATA / "manifest.csv", newline="") as fh:
+        for r in csv.DictReader(fh):
+            if r["product"] == key:
+                manifest[r["accession"]] = {"form": r["form"], "filing_date": r["filing_date"]}
+    accessions = []
+    seen = set()
+    for r in load_evidence(key):
+        acc = (r.get("accession") or "").strip()
+        if r["cell_id"] not in cells or not acc or acc.startswith("multiple") or acc in seen:
+            continue
+        seen.add(acc)
+        m = manifest.get(acc, {})
+        accessions.append({"accession": acc, "cell": r["cell_id"], "form": m.get("form", ""),
+                           "filing_date": m.get("filing_date", "")})
+    series = []
+    paths = []
+    if prof.get("series"):
+        paths.append(DATA / "series" / f"{prof['series']}.csv")
+    if prof.get("held_kind") == "fy_returns":
+        paths.append(DATA / "series_annual" / f"{key}.csv")
+    for c in cands:
+        if c.get("series"):
+            paths.append(DATA / "series" / f"{c['series']}.csv")
+        pp = published_series_path(c)
+        if pp:
+            paths.append(pp)
+    for p in sorted({p for p in paths if p.exists()}, key=str):
+        series.append({"path": _rel(p), "sha256": sha256_file(p)})
+    reg = REGISTRY[key]
+    facts_read = {f: prof.get(f) for f in RISK_FACT_FIELDS}
+    descriptors = {
+        "registry": {"path": "data/registry.json", "product": key,
+                     "sha256": hashlib.sha256(canonical_json(reg).encode("utf-8")).hexdigest()},
+        "facts": {"path": f"data/facts/{key}.json", "fields": list(RISK_FACT_FIELDS),
+                  "sha256": hashlib.sha256(canonical_json(facts_read).encode("utf-8")).hexdigest()},
+        "candidates": {"count": len(cands),
+                       "sha256": hashlib.sha256(canonical_json(sorted(cands, key=lambda c: c["id"])).encode("utf-8")).hexdigest()},
+    }
+    return {"cells": cells, "accessions": accessions, "series": series, "descriptors": descriptors,
+            "note": ("filings are locked by accession, the record holds no filing bytes. Series and "
+                     "descriptors are locked by content hash. The record hash covers this whole document.")}

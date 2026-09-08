@@ -30,8 +30,10 @@ from pathlib import Path
 
 from tark_data import (CELLS, DATA, EVIDENCE_COLUMNS, load_evidence,
                        load_product, product_keys, record_as_of, status_kind)
+from tark_benchmark_common import (BY_DESCRIPTOR_SENTENCE, MIN_PRIMARY_SCORE, RUBRIC_MAX,
+                                   STRATEGY_GATE_MIN, TIE_SENTENCE, x_of_n)
 from tark_display import (COMPUTED_WRITER_LABEL, RUBRIC_LABEL, WRAPPER_LABEL, cohort_label,
-                          lane_label)
+                          fact_label, lane_label, reconciliation_sentence)
 
 
 def _fund_short(key: str) -> str:
@@ -89,7 +91,7 @@ def cell_5_4(key: str) -> dict | None:
     note = analyst_note(key, "5.4")
     if note:
         text += f" Analyst note: {note}"
-    return {"value": text, "source": f"cohort artifact ({cohort_label(cid)})",
+    return {"value": text, "source": f"the cohort record ({cohort_label(cid)})",
             "section": "members, composite and caveats", "quote": ""}
 
 
@@ -111,12 +113,12 @@ def cell_2_9(key: str) -> dict | None:
         pl = tark_cohort.percentile_of(key, cid, field, facts_by_key)
         parts.append(f"{label}: {pl['phrase'] if pl else 'fact unavailable for this member'}")
     text = (f"Cohort placement ({cohort_label(cid)}): " + " | ".join(parts)
-            + ". Statistics and per-member values are in the cohort artifact, membership "
-              "rationales in the typed facts.")
+            + ". Statistics and per-member values are in the cohort record, membership "
+              "rationales in the facts on record.")
     note = analyst_note(key, "2.9")
     if note:
         text += f" Analyst note: {note}"
-    return {"value": text, "source": f"cohort artifact ({cohort_label(cid)})",
+    return {"value": text, "source": f"the cohort record ({cohort_label(cid)})",
             "section": "statistics (mid-rank percentile phrasing)",
             "quote": ""}
 
@@ -180,6 +182,18 @@ def _ratio_sentence(label: str, cand: str, c: dict) -> str:
             f"source: {c['fund_return_source']}. {c['not_pme_note']} Alignment: {c['alignment_note'].rstrip('.')}.")
 
 
+def _reconciliation(key: str, c: dict) -> str | None:
+    """The filed since-inception return beside the series figure, when the
+    fact is typed and the comparison is a series comparison (R3-P2-17d)."""
+    fp = DATA / "facts" / f"{key}.json"
+    if not fp.exists() or c.get("kind") != "series":
+        return None
+    f = (json.loads(fp.read_text()).get("facts") or {}).get("filed_since_inception_return_pct") or {}
+    if f.get("value") is None:
+        return None
+    return reconciliation_sentence(f["value"], f.get("note", ""), c)
+
+
 def cell_1_8(key: str) -> dict | None:
     """Risk-adjusted metrics: Slot K's comparison named for its comparator,
     the reference comparison when Slot K has no number, and every Lane A
@@ -187,7 +201,7 @@ def cell_1_8(key: str) -> dict | None:
     sel = _selection(key)
     if not sel:
         return None
-    src = f"benchmark selection artifact ({_fund_short(key)})"
+    src = f"the benchmark selection record ({_fund_short(key)})"
     sk = sel["slot_k"]
     parts: list[str] = []
     lows: list[str] = []
@@ -200,10 +214,14 @@ def cell_1_8(key: str) -> dict | None:
         c = s.get("comparison")
         if c and c["kind"] == "series":
             parts.append(_series_sentence(f"{sk['label']},", s["candidate"], c))
+            if _reconciliation(key, c):
+                parts.append(_reconciliation(key, c))
         elif c:
             parts.append(_ratio_sentence(f"{sk['label']},", s["candidate"], c))
+        elif s.get("by_descriptor"):
+            parts.append(f"{sk['label']}, {s['candidate']} scored {x_of_n(s['score'], s['max'])}. {BY_DESCRIPTOR_SENTENCE}")
         else:
-            parts.append(f"{sk['label']}, {s['candidate']} scored {s['score']}/{s['max']}: no comparison computed "
+            parts.append(f"{sk['label']}, {s['candidate']} scored {x_of_n(s['score'], s['max'])}: no comparison computed "
                          f"({(s.get('comparison_note') or 'not computable on held data').rstrip('.')}).")
         if c and c.get("low_confidence"):
             lows.append(c["low_confidence"])
@@ -246,7 +264,7 @@ def cell_1_12(key: str) -> dict | None:
         return None
     g = sel["slot_g"]
     comp = g["composite"]
-    src = f"benchmark selection artifact ({_fund_short(key)})"
+    src = f"the benchmark selection record ({_fund_short(key)})"
     parts = [f"{g['label']}: {g['cohort_label']}, peers {', '.join(g['member_names'])}, fund return basis "
              f"{sel['basis']['label'].rstrip('.')}."]
     if comp["status"] == "computed":
@@ -283,20 +301,21 @@ def cell_5_3(key: str) -> dict | None:
     sel = _selection(key)
     if not sel:
         return None
-    src = f"benchmark selection artifact ({_fund_short(key)})"
+    src = f"the benchmark selection record ({_fund_short(key)})"
     sk = sel["slot_k"]
     parts = [f"Candidates evaluated for the meaningful-benchmark slot, paragraph (k) ({RUBRIC_LABEL}, "
-             "threshold 7 of 12, strategy gate below 2 of 3 ineligible, an index published by the fund's "
-             "own adviser ineligible)."]
+             f"threshold {x_of_n(MIN_PRIMARY_SCORE, RUBRIC_MAX)}, strategy gate below {x_of_n(STRATEGY_GATE_MIN, 3)} "
+             "ineligible, an index published by the fund's own adviser ineligible)."]
     if sk.get("escalation"):
         parts.append("ESCALATED: " + sk["escalation"].rstrip(".") + ".")
     else:
         s = sk["selected"]
-        parts.append(f"SELECTED {s['candidate']} {s['score']}/{s['max']} ({lane_label(s['lane'])}"
-                     + (", series held" if s.get("held") else ", cited, series not in the record") + ").")
+        parts.append(f"SELECTED {s['candidate']} {x_of_n(s['score'], s['max'])} ({lane_label(s['lane'])}"
+                     + (", series held" if s.get("held") else ", cited, series not in the record") + ")."
+                     + (f" {BY_DESCRIPTOR_SENTENCE}" if s.get("by_descriptor") else ""))
     for r in sel.get("rejected", []):
-        tag = "TIED" if r["rejection"].startswith("tied") else "REJECTED"
-        parts.append(f"{tag} {r['candidate']} {r['score']}/{r['max']} ({lane_label(r['lane'])}): "
+        tag = "TIED" if r.get("tied") else "REJECTED"
+        parts.append(f"{tag} {r['candidate']} {x_of_n(r['score'], r['max'])} ({lane_label(r['lane'])}): "
                      + r["rejection"].rstrip(".") + ".")
     parts.extend(_lane_a_sentences(sel))
     parts.append("The peer cohort is not a candidate here: it is the paragraph (g) and (h) comparison in cell 1.12.")
@@ -310,7 +329,7 @@ def cell_5_5(key: str) -> dict | None:
     sel = _selection(key)
     if not sel:
         return None
-    src = f"benchmark selection artifact ({_fund_short(key)})"
+    src = f"the benchmark selection record ({_fund_short(key)})"
     sk = sel["slot_k"]
     parts = []
     series = None
@@ -329,6 +348,8 @@ def cell_5_5(key: str) -> dict | None:
         parts.append(f"KS-PME {c['ks_pme']} = fund growth / proxy growth. Direct Alpha "
                      f"{_signed(c['direct_alpha_pct'])}%/yr is the annualized form of the same two flows "
                      f"(fund {c['fund_ann_pct']}%/yr vs proxy {c['index_ann_pct']}%/yr).")
+        if lab == "meaningful benchmark" and _reconciliation(key, c):
+            parts.append(_reconciliation(key, c))
         if c.get("ks_pme_monthly_schedule") is not None:
             parts.append(f"ILLUSTRATIVE monthly-schedule KS-PME {c['ks_pme_monthly_schedule']} "
                          f"({c['schedule_contributions']} equal contributions at the window start and each "
@@ -344,6 +365,8 @@ def cell_5_5(key: str) -> dict | None:
                          f"{c['relative_wealth_ratio']} = fund growth {c['fund_growth_x']}x / index growth "
                          f"{c['index_growth_x']}x over {c['window']}, fund return source: {c['fund_return_source']}. "
                          f"{c['not_pme_note']}")
+        elif not c and s.get("by_descriptor"):
+            parts.append(f"Meaningful benchmark {s['candidate']}: no inputs. {BY_DESCRIPTOR_SENTENCE}")
         elif not c:
             parts.append(f"Meaningful benchmark {s['candidate']}: no inputs, "
                          f"{(s.get('comparison_note') or 'not computable').rstrip('.')}.")
@@ -374,7 +397,7 @@ def cell_5_6(key: str) -> dict | None:
         return None
     sk = sel["slot_k"]
     ma = sk.get("max_attainable")
-    ma_txt = (f"Max attainable by an eligible candidate on held data {ma}/12." if ma is not None
+    ma_txt = (f"Max attainable by an eligible candidate on held data {x_of_n(ma, RUBRIC_MAX)}." if ma is not None
               else "No candidate is eligible, so no maximum is attainable on held data.")
     parts = [f"Benchmark suitability ({RUBRIC_LABEL})."]
     if sk.get("escalation"):
@@ -382,21 +405,22 @@ def cell_5_6(key: str) -> dict | None:
     else:
         s = sk["selected"]
         comp = s.get("comparison") or {}
-        line = f"{sk['label']}: {s['candidate']} ({lane_label(s['lane'])}) scored {s['score']}/{s['max']}"
+        line = f"{sk['label']}: {s['candidate']} ({lane_label(s['lane'])}) scored {x_of_n(s['score'], s['max'])}"
         if comp and comp["kind"] == "series":
             line += (f" with a {comp['statistic']} over {comp['window']}: "
                      f"KS-PME {comp['ks_pme']}, Direct Alpha {comp['direct_alpha_pct']}%/yr")
         elif comp:
             line += (f" with a {comp['statistic']} over {comp['window']}: relative wealth ratio "
                      f"{comp['relative_wealth_ratio']}, annualized excess return {comp['excess_return_pct']}%/yr")
+        elif s.get("by_descriptor"):
+            line += f". {BY_DESCRIPTOR_SENTENCE.rstrip('.')}"
         else:
             line += f", no comparison computed ({(s.get('comparison_note') or 'not computable on held data').rstrip('.')})"
         if comp and comp.get("low_confidence"):
             line += f" ({comp['low_confidence']})"
         parts.append(line + ".")
         if sk.get("ties"):
-            parts.append("Tied on score: " + ", ".join(_cand_name(sel, i) for i in sk["ties"])
-                         + ", ordered by strategy_match, then risk_liquidity_match, then data held, then alphabetical.")
+            parts.append(f"{TIE_SENTENCE} Tied with: " + ", ".join(_cand_name(sel, i) for i in sk["ties"]) + ".")
     ref = sel.get("reference_comparison")
     if ref:
         c = ref["comparison"]
@@ -412,11 +436,14 @@ def cell_5_6(key: str) -> dict | None:
         parts.append("Peer comparison (cell 1.12): composite refused, " + g["reason"].rstrip(".") + ".")
     parts.append(f"Not selected: {len(sel.get('rejected', []))} candidates, each with its reason in "
                  "the ledger. The scoring rules are in the benchmark methodology document.")
+    if sel.get("record_hash"):
+        parts.append(f"Selection recorded {sel['recorded_at'][:10]}, record {sel['record_hash'][:8]} "
+                     f"(rubric {sel.get('rubric_version')}, full hash in the selection record).")
     text = " ".join(parts)
     note = analyst_note(key, "5.6")
     if note:
         text += f" Analyst note: {note}"
-    return {"value": text, "source": f"benchmark selection artifact ({_fund_short(key)})",
+    return {"value": text, "source": f"the benchmark selection record ({_fund_short(key)})",
             "section": "meaningful benchmark, reference, maximum attainable, declared benchmarks, peer comparison",
             "quote": ""}
 
@@ -455,7 +482,7 @@ def cell_1_6(key: str) -> dict | None:
                    if market else
                    "An appraisal-based NAV series: the volatility understates the risk of the holdings, see the "
                    "de-smoothed figure in cell 1.7."))
-        return {"value": text, "source": "analytics supplement artifact (series diagnostics)",
+        return {"value": text, "source": "the analytics supplement (series diagnostics)",
                 "section": "series diagnostics for this product", "quote": ""}
     b = _breit_diag(key)
     if b:
@@ -463,7 +490,7 @@ def cell_1_6(key: str) -> dict | None:
                 f"n={b['monthly_obs']} monthly returns): annualized NAV-path volatility {_pct(b['nav_path_ann_vol_pct'])}, "
                 f"NAV-path max drawdown {_pct(b['nav_path_max_drawdown_pct'])}. {b['basis'][0].upper()}{b['basis'][1:]}. "
                 f"{b['drawdown_note'][0].upper()}{b['drawdown_note'][1:]}.")
-        return {"value": text, "source": "analytics supplement artifact (monthly NAV diagnostics)",
+        return {"value": text, "source": "the analytics supplement (monthly NAV diagnostics)",
                 "section": "monthly NAV diagnostics for this product", "quote": ""}
     return None
 
@@ -481,7 +508,7 @@ def cell_1_7(key: str) -> dict | None:
                 f"monthly returns of the held daily series {d['ticker']}, {d['basis']}). Reading: {read}"
                 + (", the de-smoothed figure is the better estimate of the holdings' volatility" if rho >= 0.05 else "")
                 + ". The method and its limits are in the methodology's window-sensitivity section.")
-        return {"value": text, "source": "analytics supplement artifact (series diagnostics)",
+        return {"value": text, "source": "the analytics supplement (series diagnostics)",
                 "section": "series diagnostics for this product", "quote": ""}
     b = _breit_diag(key)
     if b:
@@ -490,7 +517,7 @@ def cell_1_7(key: str) -> dict | None:
                 f"n={b['monthly_obs']}, printed monthly NAV path {b['window']}). The appraisal process compresses "
                 f"reported volatility by about {b['desmoothed_ann_vol_pct'] / b['nav_path_ann_vol_pct']:.1f}x. "
                 f"{b['basis'][0].upper()}{b['basis'][1:]}.")
-        return {"value": text, "source": "analytics supplement artifact (monthly NAV diagnostics)",
+        return {"value": text, "source": "the analytics supplement (monthly NAV diagnostics)",
                 "section": "monthly NAV diagnostics for this product", "quote": ""}
     return None
 
@@ -526,7 +553,7 @@ def cell_4_8(key: str) -> dict | None:
                 "marks.")
     text = head + (" Other measured NAV series in the record, same statistic: " + ", ".join(others) + "."
                    if others else "")
-    return {"value": text, "source": "analytics supplement artifact (series diagnostics)",
+    return {"value": text, "source": "the analytics supplement (series diagnostics)",
             "section": "lag-1 autocorrelation across the measured series", "quote": ""}
 
 
@@ -552,7 +579,7 @@ def cell_1_10(key: str) -> dict | None:
             text += (f" Premium or discount to the latest filed NAV (${nav:.2f}): {pv:+g}% at the {prem['last_close_date']} "
                      f"close. {prem.get('note', '').rstrip('.')}.")
     text += " A market price benchmarks the premium, not the portfolio (cells 4.7 and 5.6)."
-    return {"value": text, "source": "held daily series and analytics supplement artifact (premium block)",
+    return {"value": text, "source": "the held daily series and the analytics supplement (premium block)",
             "section": "price history and premium to NAV", "quote": ""}
 
 
@@ -574,7 +601,7 @@ def cell_4_7(key: str) -> dict | None:
                 f"{prem['latest_nav_date']}). Across the {len(qs)} printed quarters the price stood between "
                 f"{min(qs):g}% and {max(qs):g}% of NAV, at a discount in {sum(1 for q in qs if q < 0)} of them. "
                 f"{prem['note'][0].upper()}{prem['note'][1:].rstrip('.')}.")
-    return {"value": text, "source": "analytics supplement artifact (premium block)",
+    return {"value": text, "source": "the analytics supplement (premium block)",
             "section": "premium and discount to NAV", "quote": ""}
 
 
@@ -604,7 +631,7 @@ def cell_1_9(key: str) -> dict | None:
     sw = (json.loads(sp.read_text()).get("stress_windows") or {}).get(key)
     if not sw:
         return None
-    src = "analytics supplement artifact (stress windows)"
+    src = "the analytics supplement (stress windows)"
     if "cy2022_rate_shock" in sw or "covid_feb_apr_2020" in sw:
         parts = ["Computed stress-window performance from the held daily series "
                  "(adjusted close, distributions reinvested)."]
@@ -636,7 +663,7 @@ def cell_3_8(key: str) -> dict | None:
     ms = _matches(key)
     if not ms:
         return None
-    src = f"liquidity match artifacts ({_fund_short(key)}, four reference plans)"
+    src = f"the liquidity match records ({_fund_short(key)}, four reference plans)"
     section = "stressed scenario and scenario across the four plan match files"
     first = ms[0][2]
     if first["wrapper_facts"].get("exchange"):
@@ -648,7 +675,7 @@ def cell_3_8(key: str) -> dict | None:
     parts = [f"ILLUSTRATIVE redemption stress test (computed for all four reference plans): "
              f"base demand is each plan's filed outflow proxy (Schedule H, total expenses less "
              f"administrative expenses over beginning net assets), stressed demand is "
-             f"{ss['assumptions']}, default sliders allocation {sc['allocation_pct_of_plan']:g}% of plan, "
+             f"{ss['assumptions']}, default turnover assumptions allocation {sc['allocation_pct_of_plan']:g}% of plan, "
              f"tail turnover {sc['tail_annual_turnover_pct']:g}%/yr, active turnover "
              f"{sc['active_annual_turnover_pct']:g}%/yr."]
     for _, label, m in ms:
@@ -673,17 +700,17 @@ def cell_3_9(key: str) -> dict | None:
     if not ms:
         return None
     first = ms[0][2]
-    src = f"liquidity match artifacts ({_fund_short(key)}, four reference plans)"
+    src = f"the liquidity match records ({_fund_short(key)}, four reference plans)"
     verdict = first["verdict"].upper()
     missing = first.get("missing_facts") or []
-    head = (f"Structural liquidity verdict {verdict} (typed facts, cells 3.1, 3.3, 2.7, plan-independent"
-            + (", facts missing: " + ", ".join(missing) if missing else "") + ").")
+    head = (f"Structural liquidity verdict {verdict} (dealing terms on record, cells 3.1, 3.3, 2.7, plan-independent"
+            + (", facts missing: " + ", ".join(fact_label(n) for n in missing) if missing else "") + ").")
     per_plan = ", ".join(f"{label}: {(m.get('scenario_verdict') or 'not computable')}" for _, label, m in ms)
-    parts = [head, f"Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: {per_plan}. "
-                   "Base demand is each plan's filed outflow proxy (Schedule H), the sliders set the stress."]
+    parts = [head, f"Scenario verdicts (ILLUSTRATIVE, default turnover assumptions) by reference plan: {per_plan}. "
+                   "Base demand is each plan's filed outflow proxy (Schedule H), the turnover assumptions set the stress."]
     for r in first.get("structural_reasons") or []:
         parts.append(r.rstrip(".") + ".")
-    parts.append("Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts "
+    parts.append("Per-plan reasons, capacity and stressed outcomes are in the liquidity match records "
                  "and on the Liquidity view.")
     return {"value": " ".join(parts), "source": src,
             "section": "verdict, scenario verdict, missing facts and structural reasons across the four plan match files",
@@ -724,7 +751,7 @@ def write_cell(key: str, cid: str, new: dict, as_of: str,
     kind = status_kind(str(cell.get("status", "pending")))
     if kind not in WRITABLE_KINDS:
         raise SystemExit(f"refusing to overwrite {key} {cid}: status kind "
-                         f"'{kind}' is evidence, not an engine output")
+                         f"'{kind}' is evidence, not a computed output")
     record = {
         "element": CELLS[cid],
         "value": new["value"],

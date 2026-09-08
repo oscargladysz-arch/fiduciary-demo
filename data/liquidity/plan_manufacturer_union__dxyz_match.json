@@ -20,7 +20,8 @@
     "Slider assumption (illustrative): 7.2% of the position per year, from tail turnover 20%/yr on the 14.9% of accounts that are separated and active turnover 5%/yr on the rest. Shown beside the filed rate, not blended with it, and likewise a selling rate against market depth."
   ],
   "missing_facts": [],
-  "layers": "verdict is structural (typed facts, cells 3.1, 3.3, 2.7, plan-independent). scenario_verdict is ILLUSTRATIVE (the plan's filed outflow proxy as the base demand and the sliders as the stress, against the same capacity, per plan).",
+  "missing_facts_labels": [],
+  "layers": "The structural verdict reads the dealing terms on record (cells 3.1, 3.3, 2.7, plan-independent). The scenario verdict is ILLUSTRATIVE (the plan's filed outflow proxy as the base demand and the turnover assumptions as the stress, against the same capacity, per plan).",
   "filed_outflow": {
     "label": "filed outflow proxy",
     "rate_pct": 11.53,
@@ -37,7 +38,7 @@
   "stressed_scenario": {
     "illustrative": true,
     "base": "filed outflow proxy",
-    "assumptions": "the filed outflow proxy plus the increment the sliders add under stress (tail turnover x2, active turnover x1.5 over the slider assumption)",
+    "assumptions": "the filed outflow proxy plus the increment the stress multiples add under stress (tail turnover x2, active turnover x1.5 over the slider assumption)",
     "multiples": {
       "tail_multiple": 2.0,
       "active_multiple": 1.5
@@ -59,11 +60,11 @@
     "cap_pct": null,
     "cap_period": null,
     "caps": null,
-    "cap_base": "not typed",
+    "cap_base": "not on record",
     "exchange": true,
     "gate_history": false,
     "program_status": null,
-    "early_fee": "not typed (2.7)",
+    "early_fee": "not on record (2.7)",
     "net_assets_usd": 438000000,
     "net_assets_cell": "2.3",
     "net_assets_approx": true,
@@ -80,9 +81,23 @@
       "2.7",
       "3.1"
     ],
+    "program_status_as_of": null,
     "annual_capacity_pct": null,
     "dealing_label": "daily on-exchange dealing, no fund-level cap (3.1)",
-    "caps_label": "no fund-level cap, capacity is market depth"
+    "caps_label": "no fund-level cap, capacity is market depth",
+    "scenario_inputs": {
+      "binding_cap": null,
+      "cap_base": "not on record",
+      "dealing_cadence": "exchange",
+      "cadence_per_year": 252,
+      "program_status": null,
+      "program_status_as_of": null,
+      "gate_history": false,
+      "source_cells": [
+        "3.1",
+        "3.3"
+      ]
+    }
   },
   "scenario": {
     "allocation_pct_of_plan": 5.0,
@@ -101,7 +116,30 @@
     "fund_capacity": {
       "available": false,
       "reason": "an exchange-listed wrapper has no fund-level repurchase capacity to share, exit is at the market price, so the allocation slider is not shown"
-    }
+    },
+    "drivers": {
+      "rung": "exchange",
+      "compared": {
+        "filed_pct": 11.53,
+        "stressed_pct": 16.638923884514433,
+        "capacity_pct": null
+      },
+      "binding_cap": null,
+      "cap_base": "not on record",
+      "dealing_cadence": "exchange",
+      "cadence_per_year": 252,
+      "program_status": null,
+      "program_status_as_of": null,
+      "gate_history": false,
+      "source_cells": [
+        "3.1",
+        "3.3"
+      ],
+      "window": null,
+      "sentence": "No rung: the wrapper is exchange-listed, so both rates are selling rates against market depth and no fund cap applies (3.1)."
+    },
+    "capacity_note": "daily on-exchange liquidity. Capacity is market depth, not a fund cap",
+    "schedule_h_lines": []
   },
   "plan_inputs": {
     "net_assets": 791706910.0,
@@ -114,6 +152,6 @@
   "citations": [
     "3.1",
     "3.7",
-    "plan: plan_manufacturer_union.json (Form 5500, plan year 2024-01-01 to 2024-12-31)"
+    "the plan record on file (Form 5500, plan year 2024-01-01 to 2024-12-31)"
   ]
 }

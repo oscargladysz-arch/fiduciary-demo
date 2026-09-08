@@ -10,10 +10,12 @@ import json
 import sys
 from pathlib import Path
 
-from tark_liquidity import (FILED_LABEL, REQUIRED, SCHEDULE_H_ABSENT, THIN_HEADROOM_SHARE, VERDICTS,
-                            binding_cap, capacity_from_facts, load_facts, run_match, scenario_verdict,
-                            schedule_h_lines, slider_demand_pct, stress_increment_pct,
-                            stressed_demand_pct, structural_verdict, wrapper_facts)
+import tark_liquidity
+from tark_liquidity import (FILED_LABEL, PERIODS_PER_YEAR, PRORATION, REQUIRED, RUNG_OF, SCHEDULE_H_ABSENT,
+                            THIN_HEADROOM_SHARE, VERDICTS, binding_cap, capacity_from_facts, drivers_sentence,
+                            load_facts, run_match, scenario_drivers, scenario_verdict, schedule_h_lines,
+                            slider_demand_pct, stress_increment_pct, stressed_demand_pct, structural_verdict,
+                            wrapper_facts)
 from tark_data import DATA, _norm_words, load_plan, load_product, load_products, plan_keys, status_kind
 
 FAILS: list[str] = []
@@ -110,9 +112,9 @@ absent_lines, _ = schedule_h_lines({"financials": {"net_assets_boy": 1.0}, "sche
 # R2-P1-10: it names the filed outflow proxy as what stands in for line 2e
 # and the sliders as the stress, never as the base
 check("schedule H absent: the match says line 2e is not yet in the plan record, names the filed outflow proxy as "
-      "what stands in for it and the sliders as the stress",
+      "what stands in for it and the turnover assumptions as the stress",
       any(x == SCHEDULE_H_ABSENT and "line 2e is not yet in the plan record" in x
-          and "filed outflow proxy" in x and "stands in for it" in x and "sliders are the stress" in x
+          and "filed outflow proxy" in x and "stands in for it" in x and "assumptions are the stress" in x
           for x in absent_lines)
       and "not typed in the test" not in " ".join(absent_lines))
 check("today's four plans carry Schedule H as null-with-reason and every non-exchange match says so",
@@ -198,7 +200,7 @@ for (pk, k), m in matches.items():
 check("no match cites cell 3.9 or a cell whose status is n/a for that product", not bad_cites,
       "; ".join(sorted(set(bad_cites))[:6]))
 check("every match cites cell 3.1 and the plan, and 2.7 wherever the product's 2.7 is not n/a",
-      all("3.1" in m["citations"] and any(c.startswith("plan: ") for c in m["citations"])
+      all("3.1" in m["citations"] and any(c.startswith("the plan record on file (Form 5500") for c in m["citations"])
           and (("2.7" in m["citations"])
                == (status_kind(str(load_product(k)["cells"]["2.7"].get("status", ""))) != "n/a"))
           for (pk, k), m in matches.items()))
@@ -309,10 +311,93 @@ check("every non-exchange match prints the filed outflow proxy and the slider as
                   and f"{m['scenario']['slider_assumption_pct']:.1f}% of the position per year" in r
                   and "not blended with it" in r for r in m["scenario_reasons"])
           for m in matches.values() if not m["wrapper_facts"]["exchange"]))
-check("the verdict sentence names both rungs and the number each reads",
-      all(any(r.startswith("Scenario verdict (ILLUSTRATIVE, this plan): ") and "filed outflow proxy exceeds" in r
-              and "stressed demand exceeds" in r and "Proration assumption" in r for r in m["scenario_reasons"])
+# ---- R3-P2-7: the scenario verdict names the rung that fired and the product facts it read
+def _verdict_line(m):
+    return next(r for r in m["scenario_reasons"] if r.startswith("Scenario verdict (ILLUSTRATIVE, this plan): "))
+check("the verdict sentence names the fired rung, the filed and stressed figures, the capacity and the proration assumption",
+      all(f": {m['scenario_verdict']}. " in _verdict_line(m)
+          and m["scenario"]["drivers"]["sentence"] in _verdict_line(m) and PRORATION in _verdict_line(m)
+          and f"{m['scenario']['filed_outflow_proxy_pct']:.1f}%" in _verdict_line(m)
+          and (m["scenario_verdict"] == "misaligned"
+               or f"{m['stressed_scenario']['demand_pct_of_position']:.1f}%" in _verdict_line(m))
+          and f"{m['scenario']['annual_wrapper_capacity_pct']:.0f}%" in _verdict_line(m)
           for m in matches.values() if not m["wrapper_facts"]["exchange"]))
+check("every match's drivers record names the rung of its verdict, the binding cap, the cadence, the program status "
+      "and the gating history from the typed inputs, and the sentence is the record's own",
+      all(d["rung"] == RUNG_OF[m["scenario_verdict"]]
+          and d["binding_cap"] == binding_cap(m["wrapper_facts"]["caps"])[1]
+          and d["dealing_cadence"] == m["wrapper_facts"]["dealing_cadence"]
+          and d["program_status"] == m["wrapper_facts"]["program_status"]
+          and d["gate_history"] == m["wrapper_facts"]["gate_history"]
+          and d["sentence"] == drivers_sentence(d)
+          and d["compared"]["capacity_pct"] == m["scenario"]["annual_wrapper_capacity_pct"]
+          for m in matches.values() for d in [m["scenario"]["drivers"]]))
+check("the per-window figures restate the annual test over the binding cap's own window and never change the rung",
+      all(abs(w["stressed_per_window_pct"] * w["windows_per_year"] - d["compared"]["stressed_pct"]) < 1e-9
+          and w["windows_per_year"] == PERIODS_PER_YEAR[w["period"]] and w["cap_per_window_pct"] == d["binding_cap"]["pct"]
+          and ((w["stressed_per_window_pct"] > w["cap_per_window_pct"]) == (d["compared"]["stressed_pct"] > d["compared"]["capacity_pct"]))
+          for m in matches.values() for d in [m["scenario"]["drivers"]] for w in [d["window"]] if w))
+check("no per-window figure is printed against a 0% cap, an uncomputable capacity or an exchange",
+      all(m["scenario"]["drivers"]["window"] is None for m in matches.values()
+          if not m["scenario"]["annual_wrapper_capacity_pct"]))
+check("the drivers sentence prints every fact it read with its cell: the rung word, the cap, the cadence noun, the "
+      "program status with its as-of date, the gating history (hl_paf under the tech plan)",
+      all(x in matches[("plan_tech_media", "hl_paf")]["scenario"]["drivers"]["sentence"]
+          for x in ("Stress rung", "binding cap 5% per quarter on net assets (3.1)", "quarterly offers (3.1)",
+                    "program active as of 2026-03-31 (3.1)", "gating history not on record (3.3)", "Per quarter: filed 2.9% and stressed 5.1%")))
+check("sreit's sentence names the base rung, the suspension and the proration precedent, and prints no window against the 0% cap",
+      "Base rung" in matches[("plan_tech_media", "sreit")]["scenario"]["drivers"]["sentence"]
+      and "repurchases suspended (3.1)" in matches[("plan_tech_media", "sreit")]["scenario"]["drivers"]["sentence"]
+      and "prorated under stress before (3.3)" in matches[("plan_tech_media", "sreit")]["scenario"]["drivers"]["sentence"]
+      and "Per month" not in matches[("plan_tech_media", "sreit")]["scenario"]["drivers"]["sentence"])
+check("an exchange-listed match records the exchange rung and no capacity",
+      all(m["scenario"]["drivers"]["rung"] == "exchange" and m["scenario"]["drivers"]["window"] is None
+          for m in matches.values() if m["wrapper_facts"]["exchange"]))
+# the property: the product's own cap moves its verdict and nothing else's.
+# hl_paf under the tech plan sits on the stress rung at 5% per quarter; at 10%
+# per quarter the same plan demand fits and the rung is none, while every
+# other product's match is byte for byte what the record holds
+_real_load = tark_liquidity.load_facts
+def _wider_cap(key):
+    fx = json.loads(json.dumps(_real_load(key)))
+    if key == "hl_paf":
+        fx["repurchase_caps"]["value"] = [{"pct": 10.0, "period": "quarter"}]
+        fx["repurchase_cap_pct"]["value"] = 10.0
+    return fx
+tark_liquidity.load_facts = _wider_cap
+try:
+    _hl_wide = run_match("hl_paf", "plan_tech_media")
+    _others_wide = {k: run_match(k, "plan_tech_media") for k in PRODUCTS if k != "hl_paf"}
+finally:
+    tark_liquidity.load_facts = _real_load
+check("perturbing one product's cap moves only that product's verdict: hl_paf at 10% per quarter drops from the stress rung "
+      "to none under the tech plan (capacity 40%), the drivers say so, and the other 15 matches are unchanged",
+      matches[("plan_tech_media", "hl_paf")]["scenario_verdict"] == "conditional-weak"
+      and _hl_wide["scenario_verdict"] == "conditional" and _hl_wide["scenario"]["annual_wrapper_capacity_pct"] == 40.0
+      and _hl_wide["scenario"]["drivers"]["rung"] == "none"
+      and "binding cap 10% per quarter" in _hl_wide["scenario"]["drivers"]["sentence"]
+      and all(_others_wide[k] == matches[("plan_tech_media", k)] for k in _others_wide))
+check("the same perturbation leaves the plan-side figures where the filing put them (filed and stressed demand unchanged)",
+      _hl_wide["scenario"]["filed_outflow_proxy_pct"] == matches[("plan_tech_media", "hl_paf")]["scenario"]["filed_outflow_proxy_pct"]
+      and _hl_wide["stressed_scenario"]["demand_pct_of_position"] == matches[("plan_tech_media", "hl_paf")]["stressed_scenario"]["demand_pct_of_position"])
+# the program status is typed for every product that has a program (R3-P2-7)
+check("repurchase program status is typed for every non-exchange product ('active' or 'suspended') with the date it was "
+      "read at, and null with the reason only for the two exchange-listed wrappers",
+      all((load_facts(k)["repurchase_program_status"]["value"] in ("active", "suspended")
+           and load_facts(k)["repurchase_program_status"].get("as_of"))
+          if not matches[("plan_tech_media", k)]["wrapper_facts"]["exchange"]
+          else (load_facts(k)["repurchase_program_status"]["value"] is None
+                and "exchange-listed" in load_facts(k)["repurchase_program_status"]["reason"])
+          for k in PRODUCTS))
+check("every match's scenario inputs carry the program status and its as-of date the facts carry",
+      all(m["wrapper_facts"]["scenario_inputs"]["program_status"] == load_facts(m["product"])["repurchase_program_status"]["value"]
+          and m["wrapper_facts"]["scenario_inputs"]["program_status_as_of"] == load_facts(m["product"])["repurchase_program_status"].get("as_of")
+          for m in matches.values()))
+check("the two slider-independent pieces of the bullets ride the scenario typed: the capacity note and the Schedule H lines",
+      all(f"Capacity: {m['scenario']['capacity_note']}." == m["scenario_reasons"][0]
+          and (m["scenario"]["schedule_h_lines"] == [] if m["wrapper_facts"]["exchange"]
+               else m["scenario_reasons"][-len(m["scenario"]["schedule_h_lines"]):] == m["scenario"]["schedule_h_lines"])
+          for m in matches.values()))
 check("the stressed outcome prints the stressed figure it compares, never the slider figure",
       all(f"{m['stressed_scenario']['demand_pct_of_position']:.1f}%" in m["stressed_scenario"]["outcome"]
           for m in matches.values()
@@ -362,8 +447,8 @@ check("where the fund's dollar capacity is not computable, the match carries one
            and not any(r.startswith("Fund capacity in dollars") for r in m["scenario_reasons"])
            and "plan_share_of_fund_capacity_pct" not in fc)
           for m in matches.values() for fc in [m["scenario"]["fund_capacity"]] if not fc["available"]))
-check("the reason for a missing slider names the cause (net assets not typed, exchange-listed, or a 0% or unknown cap)",
-      all(("net assets are not typed" in fc["reason"] or "exchange-listed" in fc["reason"]
+check("the reason for a missing slider names the cause (net assets not on record, exchange-listed, or a 0% or unknown cap)",
+      all(("net assets are not on record" in fc["reason"] or "exchange-listed" in fc["reason"]
            or "0% while repurchases are suspended" in fc["reason"] or "not computable (3.1)" in fc["reason"])
           for m in matches.values() for fc in [m["scenario"]["fund_capacity"]] if not fc["available"]))
 

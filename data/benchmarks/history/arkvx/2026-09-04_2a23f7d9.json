@@ -1,0 +1,366 @@
+{
+  "product": "arkvx",
+  "strategy": "preipo_venture",
+  "cohort": "venture",
+  "source_cells": [
+    "1.2",
+    "5.1"
+  ],
+  "rubric_version": "v3.1",
+  "rubric": "Tark benchmark rubric, 10 points: strategy match 3 (gate below 2), risk and liquidity match 3, provider independence 2 (an affiliated provider is ineligible), data held 2, threshold 6 of 10",
+  "threshold": {
+    "min_score": 6,
+    "max": 10,
+    "fraction": 0.6,
+    "strategy_gate_min": 2,
+    "strategy_gate_max": 3
+  },
+  "basis": {
+    "kind": "series",
+    "label": "Yahoo adjusted close, approximates NAV total return (ARKVX)"
+  },
+  "slot_k": {
+    "label": "Meaningful benchmark (paragraph (k))",
+    "selected": null,
+    "escalation": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this pre-IPO and venture fund. Every candidate either fails the strategy gate (strategy match below 2 of 3). Scored: PSP 6 of 10 (fails the strategy gate (strategy match 1 of 3)), URTH 6 of 10 (fails the strategy gate (strategy match 1 of 3)), SPY 6 of 10 (fails the strategy gate (strategy match 1 of 3)). Required next: a published pre-IPO and venture strategy index with a series the record can hold.",
+    "max_attainable": null,
+    "ties": []
+  },
+  "slot_g": {
+    "label": "Peer comparison (paragraphs (g) and (h))",
+    "cohort": "venture",
+    "cohort_label": "pre-IPO and venture cohort",
+    "members": [
+      "dxyz",
+      "ssss"
+    ],
+    "member_names": [
+      "Destiny Tech100 Inc",
+      "Neostellar Capital Corp."
+    ],
+    "member_source": {
+      "Destiny Tech100 Inc": "Yahoo adjusted close, a market price with distributions reinvested, not NAV",
+      "Neostellar Capital Corp.": "Yahoo adjusted close, a market price with distributions reinvested, not NAV",
+      "ARK Venture Fund": "Yahoo adjusted close, approximates NAV total return"
+    },
+    "member_period_kind": {
+      "Destiny Tech100 Inc": "calendar_year",
+      "Neostellar Capital Corp.": "calendar_year",
+      "ARK Venture Fund": "calendar_year"
+    },
+    "table": [
+      {
+        "period": "2017-12-31",
+        "label": "2017",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "Neostellar Capital Corp.": 8.35,
+          "ARK Venture Fund": null
+        }
+      },
+      {
+        "period": "2018-12-31",
+        "label": "2018",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "Neostellar Capital Corp.": -4.22,
+          "ARK Venture Fund": null
+        }
+      },
+      {
+        "period": "2019-12-31",
+        "label": "2019",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "Neostellar Capital Corp.": 31.56,
+          "ARK Venture Fund": null
+        }
+      },
+      {
+        "period": "2020-12-31",
+        "label": "2020",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "Neostellar Capital Corp.": 116.63,
+          "ARK Venture Fund": null
+        }
+      },
+      {
+        "period": "2021-12-31",
+        "label": "2021",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "Neostellar Capital Corp.": 72.61,
+          "ARK Venture Fund": null
+        }
+      },
+      {
+        "period": "2022-12-31",
+        "label": "2022",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "Neostellar Capital Corp.": -70.31,
+          "ARK Venture Fund": null
+        }
+      },
+      {
+        "period": "2023-12-31",
+        "label": "2023",
+        "period_kind": "calendar_year",
+        "n": 2,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "Neostellar Capital Corp.": 3.68,
+          "ARK Venture Fund": 61.25
+        }
+      },
+      {
+        "period": "2024-12-31",
+        "label": "2024",
+        "period_kind": "calendar_year",
+        "n": 2,
+        "returns": {
+          "Destiny Tech100 Inc": null,
+          "Neostellar Capital Corp.": 49.24,
+          "ARK Venture Fund": 6.69
+        }
+      },
+      {
+        "period": "2025-12-31",
+        "label": "2025",
+        "period_kind": "calendar_year",
+        "n": 3,
+        "returns": {
+          "Destiny Tech100 Inc": -47.96,
+          "Neostellar Capital Corp.": 69.91,
+          "ARK Venture Fund": 55.68
+        }
+      }
+    ],
+    "survivorship_note": "The cohort is the roster's 3 surviving, still-filing products. Funds that closed, merged, or stopped filing are not in it, so any composite carries survivorship bias in the fund's favor. Membership rationales and exclusions are in the roster record.",
+    "heterogeneity_note": "Members span 3 wrapper types (interval fund (Rule 23c-3), listed BDC, listed closed-end fund) and 2 leverage regimes (1940-Act asset-coverage limits, BDC 150% asset-coverage regime). Fee bases, leverage and exit rights are not like-for-like, so the comparison is a history of similar investments, not a like-for-like index.",
+    "composite": {
+      "n_peers": 2,
+      "weighting": "equal-weight across peers, only over periods every peer reports",
+      "statistic": "relative wealth ratio vs peer composite",
+      "not_pme_note": "Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought.",
+      "status": "refused",
+      "reason": "fewer than 3 peers remain after leaving ARK Venture Fund out (2: Destiny Tech100 Inc, Neostellar Capital Corp.)",
+      "candidate": "Peer composite, pre-IPO and venture cohort without ARK Venture Fund",
+      "kind": "composite"
+    }
+  },
+  "reference_comparison": null,
+  "reference_skipped": [],
+  "declared": [
+    {
+      "name": "S&P 500 Index",
+      "candidate_id": "spy",
+      "cell": "5.1",
+      "type": "sec_required_comparator",
+      "type_label": "SEC-required comparator",
+      "held": true,
+      "status": "held, scored 6 of 10, fails the strategy gate (strategy match 1 of 3)",
+      "comparison": {
+        "kind": "series",
+        "statistic": "KS-PME vs public market proxy",
+        "comparator_kind": "public market series (exchange-traded proxy, Yahoo adjusted close)",
+        "fund_return_source": "Yahoo adjusted close, approximates NAV total return",
+        "window": "2022-08-31 to 2026-07-17",
+        "window_note": "clipped: proxy series ends 2026-07-17",
+        "fund_window": "2022-08-31 to 2026-08-13",
+        "window_years": 3.88,
+        "fund_growth_x": 2.7755,
+        "index_growth_x": 1.9842,
+        "ks_pme": 1.3988,
+        "direct_alpha_pct": 9.04,
+        "fund_ann_pct": 30.12,
+        "index_ann_pct": 19.33,
+        "low_confidence": null,
+        "ks_pme_monthly_schedule": 1.3812,
+        "schedule_contributions": 47,
+        "schedule_note": "ILLUSTRATIVE: 47 equal contributions, at the window start and each month-end inside it, valued at the window end. The two-point figure is primary."
+      },
+      "comparison_note": null
+    },
+    {
+      "name": "MSCI World (Net) Index",
+      "candidate_id": "urth",
+      "cell": "5.1",
+      "type": "sec_required_comparator",
+      "type_label": "SEC-required comparator",
+      "held": true,
+      "status": "held, scored 6 of 10, fails the strategy gate (strategy match 1 of 3)",
+      "comparison": {
+        "kind": "series",
+        "statistic": "KS-PME vs public market proxy",
+        "comparator_kind": "public market series (exchange-traded proxy, Yahoo adjusted close)",
+        "fund_return_source": "Yahoo adjusted close, approximates NAV total return",
+        "window": "2022-08-31 to 2026-07-17",
+        "window_note": "clipped: proxy series ends 2026-07-17",
+        "fund_window": "2022-08-31 to 2026-08-13",
+        "window_years": 3.88,
+        "fund_growth_x": 2.7755,
+        "index_growth_x": 1.9489,
+        "ks_pme": 1.4242,
+        "direct_alpha_pct": 9.55,
+        "fund_ann_pct": 30.12,
+        "index_ann_pct": 18.78,
+        "low_confidence": null,
+        "ks_pme_monthly_schedule": 1.3985,
+        "schedule_contributions": 47,
+        "schedule_note": "ILLUSTRATIVE: 47 equal contributions, at the window start and each month-end inside it, valued at the window end. The two-point figure is primary."
+      },
+      "comparison_note": null
+    }
+  ],
+  "declared_none_reason": "cell 5.1: no prospectus-declared benchmark (zero occurrences of 'benchmark' in the 486BPOS)",
+  "rejected": [
+    {
+      "candidate": "Listed private equity investable proxy (PSP)",
+      "id": "psp_v",
+      "lane": "B",
+      "declared_type": null,
+      "score": 6,
+      "max": 10,
+      "criteria": {
+        "strategy_match": 1,
+        "risk_liquidity_match": 1,
+        "provider_independence": 2,
+        "data_held": 2
+      },
+      "held": true,
+      "comparator_kind": "public market series",
+      "series_id": "psp",
+      "reasons": [
+        "Strategy match 1 of 3: adjacent asset class sharing the dominant risk (listed private equity for venture and growth in an interval fund)",
+        "Risk and liquidity match 1 of 3: daily-liquid market series against a semi-liquid NAV fund (quarterly dealing at NAV under 5% cap per quarter): volatility and liquidity regimes differ, the PME construct exists for exactly this comparison",
+        "Provider independence 2 of 2: provider unaffiliated with the fund (Invesco / Red Rocks): the registry affiliation map ties it to none of the fund's advisers",
+        "Data held 2 of 2: daily public market series held (exchange-traded proxy, Yahoo adjusted close)"
+      ],
+      "rejection": "rejected: strategy gate (score 6 of 10 but strategy match 1 of 3)",
+      "tied": false
+    },
+    {
+      "candidate": "MSCI World investable proxy (URTH)",
+      "id": "urth",
+      "lane": "A",
+      "declared_type": "sec_required_comparator",
+      "score": 6,
+      "max": 10,
+      "criteria": {
+        "strategy_match": 1,
+        "risk_liquidity_match": 1,
+        "provider_independence": 2,
+        "data_held": 2
+      },
+      "held": true,
+      "comparator_kind": "public market series",
+      "series_id": "urth",
+      "reasons": [
+        "Strategy match 1 of 3: adjacent asset class sharing the dominant risk (global equity for venture and growth in an interval fund)",
+        "Risk and liquidity match 1 of 3: daily-liquid market series against a semi-liquid NAV fund (quarterly dealing at NAV under 5% cap per quarter): volatility and liquidity regimes differ, the PME construct exists for exactly this comparison",
+        "Provider independence 2 of 2: provider unaffiliated with the fund (iShares / MSCI): the registry affiliation map ties it to none of the fund's advisers",
+        "Data held 2 of 2: daily public market series held (exchange-traded proxy, Yahoo adjusted close)"
+      ],
+      "rejection": "rejected: strategy gate (score 6 of 10 but strategy match 1 of 3)",
+      "tied": false
+    },
+    {
+      "candidate": "S&P 500 investable proxy (SPY)",
+      "id": "spy",
+      "lane": "A",
+      "declared_type": "sec_required_comparator",
+      "score": 6,
+      "max": 10,
+      "criteria": {
+        "strategy_match": 1,
+        "risk_liquidity_match": 1,
+        "provider_independence": 2,
+        "data_held": 2
+      },
+      "held": true,
+      "comparator_kind": "public market series",
+      "series_id": "spy",
+      "reasons": [
+        "Strategy match 1 of 3: adjacent asset class sharing the dominant risk (US large cap for venture and growth in an interval fund)",
+        "Risk and liquidity match 1 of 3: daily-liquid market series against a semi-liquid NAV fund (quarterly dealing at NAV under 5% cap per quarter): volatility and liquidity regimes differ, the PME construct exists for exactly this comparison",
+        "Provider independence 2 of 2: provider unaffiliated with the fund (SPDR / S&P DJI): the registry affiliation map ties it to none of the fund's advisers",
+        "Data held 2 of 2: daily public market series held (exchange-traded proxy, Yahoo adjusted close)"
+      ],
+      "rejection": "rejected: strategy gate (score 6 of 10 but strategy match 1 of 3)",
+      "tied": false
+    }
+  ],
+  "recorded_at": "2026-09-04T00:00:00Z",
+  "inputs": {
+    "cells": [
+      "1.2",
+      "3.1",
+      "3.3",
+      "5.1"
+    ],
+    "accessions": [
+      {
+        "accession": "0001213900-25-097285",
+        "cell": "1.2",
+        "form": "N-CSR",
+        "filing_date": "2025-10-08"
+      }
+    ],
+    "series": [
+      {
+        "path": "data/series/arkvx.csv",
+        "sha256": "2a9ed1e2c04535f32d232a07fab7c81a07462b7f8c6fef4227760508f2f1e436"
+      },
+      {
+        "path": "data/series/psp.csv",
+        "sha256": "cfad2a3cc875ebf6a29403861dd1b3b7eaa539afe86de9a8bce7d3b49846e78d"
+      },
+      {
+        "path": "data/series/spy.csv",
+        "sha256": "c3dcaf06943095125e171a3fc3c12160bfa1cf32f6253ed3be528eddb2069656"
+      },
+      {
+        "path": "data/series/urth.csv",
+        "sha256": "8da4b2c3924ae5434f29f13bb4c2c86e2ea9436d2b80ff55ae3e89458d446a03"
+      }
+    ],
+    "descriptors": {
+      "registry": {
+        "path": "data/registry.json",
+        "product": "arkvx",
+        "sha256": "41e3d22d2bfe14350a40989c94bdc529d9d1ee7b89f8045505eed5a26bb3aac5"
+      },
+      "facts": {
+        "path": "data/facts/arkvx.json",
+        "fields": [
+          "dealing_cadence",
+          "cap_period",
+          "repurchase_caps",
+          "gate_history",
+          "repurchase_program_status"
+        ],
+        "sha256": "31228986a22bb5fd16351bff8cf8c0b167494f23531c6698aa5561e18cb21107"
+      },
+      "candidates": {
+        "count": 3,
+        "sha256": "e87a1e0d0ce969cb9a221341ce983578e946efc6eaf762836d1af3bab0b617ce"
+      }
+    },
+    "note": "filings are locked by accession, the record holds no filing bytes. Series and descriptors are locked by content hash. The record hash covers this whole document."
+  },
+  "record_hash": "2a23f7d9a3de2079a73772c43d4a22ab5963f54a3736bc44215fa401f2c4a7f0"
+}

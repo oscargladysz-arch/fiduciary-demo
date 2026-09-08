@@ -22,10 +22,12 @@ from datetime import date
 from pathlib import Path
 
 from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
+from tark_benchmark_common import (BY_DESCRIPTOR_SENTENCE as _BY_DESCRIPTOR_SENTENCE, RUBRIC_MAX as _RUBRIC_MAX,
+                                   STRATEGY_GATE_MIN as _STRATEGY_GATE_MIN, TIE_SENTENCE as _TIE_SENTENCE)
 from tark_display import (SLOT_LABELS, BASE_LABEL, CANDIDATE_SHORT, LANE_LABEL, RUBRIC_LABEL, STRATEGY_LABEL,
-                          WRAPPER_LABEL, cell_display, display_path_free, facts_by_cell)
-from tark_memo import write_all
-from tark_packet import write_all_packets
+                          WRAPPER_LABEL, cell_display, display_path_free, facts_by_cell,
+                          display_copy, plan_demand_sentence, reconciliation_sentence)
+from tark_memo import attachment_path, write_all
 from tark_data import (ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_CELLS, BASE, DATA, CELLS, FACTORS,
                        RULE, advisor_entries, authority,
                        coverage_summary, rule_ref,
@@ -119,7 +121,7 @@ def crosscheck_summary() -> dict:
                      f"({ints['products']} products, {kv['date']}), "
                      f"{ints['confirmed']} confirmed, {ints['corrected']} corrected. "
                      f"Human verification: {verified}."),
-            "source": "docs/crosscheck_report.md"}
+            "source": "the crosscheck report"}
 
 
 
@@ -178,7 +180,7 @@ STRATEGY_DEFAULT_PROXY = {
     "pe_conglomerate": "psp", "nontraded_reit": "vnq", "preipo_venture": "psp",
 }
 PRICE_SERIES_WARNING = ("MARKET-PRICE series. Any PME here benchmarks the premium, "
-                        "not the portfolio. The engine formally escalated instead "
+                        "not the portfolio. The selection formally escalated instead "
                         "of selecting (5.6)")
 
 
@@ -280,8 +282,8 @@ def swap_matrix() -> dict:
     would be eligible (passes the strategy gate and the threshold) and
     whether it sits on the engine's menu for the product, so the lab grades
     any choice instead of declaring some choices ungradeable."""
-    from tark_benchmark import (CANDIDATES, MIN_PRIMARY_SCORE, PRODUCT_PROFILES,
-                                menu_for, score_candidate)
+    from tark_benchmark import (CANDIDATES, MIN_PRIMARY_SCORE, PRODUCT_PROFILES, STRATEGY_GATE_MIN,
+                                eligible as _eligible, menu_for, score_candidate, x_of_n)
     out: dict = {}
     for key, prof in PRODUCT_PROFILES.items():
         if prof.get("held_kind") == "none":
@@ -296,21 +298,22 @@ def swap_matrix() -> dict:
             s = score_candidate(prof, cand)
             sm = s["criteria"]["strategy_match"]
             decoupled = bool(prof.get("price_nav_decoupled"))
-            gate = sm >= 2
+            gate = sm >= STRATEGY_GATE_MIN
             independent = s["criteria"]["provider_independence"] == 2
-            eligible = gate and independent and s["score"] >= MIN_PRIMARY_SCORE and not decoupled
+            # one eligibility rule, the engine's own (R3-P2-2)
+            eligible = _eligible(s, decoupled)
             if decoupled:
                 verdict = ("not eligible: the fund's price is decoupled from its NAV, so no "
                            "proxy benchmarks the portfolio")
             elif not gate:
-                verdict = f"not eligible: fails the strategy gate (strategy_match {sm}/3)"
+                verdict = f"not eligible: fails the strategy gate (strategy match {x_of_n(sm, 3)})"
             elif not independent:
                 verdict = "not eligible: the provider is affiliated with the fund's adviser"
             elif s["score"] < MIN_PRIMARY_SCORE:
-                verdict = (f"not eligible: {s['score']}/{s['max']} is below the "
-                           f"{MIN_PRIMARY_SCORE}/{s['max']} threshold")
+                verdict = (f"not eligible: {x_of_n(s['score'], s['max'])} is below the "
+                           f"{x_of_n(MIN_PRIMARY_SCORE, s['max'])} threshold")
             else:
-                verdict = (f"eligible under the {RUBRIC_LABEL}: {s['score']}/{s['max']} passes the "
+                verdict = (f"eligible under the {RUBRIC_LABEL}: {x_of_n(s['score'], s['max'])} passes the "
                            "strategy gate and the threshold")
             by_series[proxy] = {"score": s["score"], "max": s["max"],
                                 "criteria": s["criteria"], "reasons": s["reasons"],
@@ -363,7 +366,7 @@ def parse_verification_queue() -> dict:
                          ("extracted", "verified"))
                   for k in product_keys()}
     return {"queue": queue, "tiers": tiers, "verified": verified,
-            "verifiable": verifiable, "source": "docs/verification_queue.md"}
+            "verifiable": verifiable, "source": "the verification queue"}
 
 
 def census_chunk() -> str:
@@ -521,6 +524,9 @@ def main() -> None:
         # identity never ships, and the internal anonymization rule string is
         # not a surface sentence (R2-P0-3)
         pub = {kk: vv for kk, vv in p.items() if kk not in ("identity_private", "anonymization_rule")}
+        # cell 3.7 for this plan, one sentence shared with the memo (R3-P2-11)
+        pub["demand_sentence"] = plan_demand_sentence(p)
+        pub.pop("dictionary_cells", None)   # a maintainer's index of the file, read by no view
         plans_pub[k] = pub
 
     benchmarks = {}
@@ -547,6 +553,11 @@ def main() -> None:
         # the rubric caption ships once (rubric_caption) and the per-criterion
         # integers are printed through the reasons, which every card carries
         sel.pop("rubric", None)
+        # the lock's input list names series files: it stays in the record,
+        # the card prints the recorded date and the record hash (R3-P2-19)
+        sel.pop("inputs", None)
+        sel.pop("threshold", None)
+        sel.pop("reference_skipped", None)
         for x in [sel["slot_k"].get("selected")] + sel.get("rejected", []):
             if x:
                 x.pop("criteria", None)
@@ -583,6 +594,10 @@ def main() -> None:
     facts = {}
     for f in sorted((DATA / "facts").glob("*.json")):
         facts[f.stem] = json.loads(f.read_text())["facts"]
+        # the evidence phrase is the gate's input, not a view's: it stays in
+        # the record and off the first paint
+        for fact in facts[f.stem].values():
+            fact.pop("evidence_phrase", None)
     display = {}
     for k, p in products.items():
         fbc = facts_by_cell(facts.get(k, {}))
@@ -595,11 +610,13 @@ def main() -> None:
             cells = [c for cid, c in p["cells"].items()
                      if cid.split(".")[0] == n]
             kinds = [status_kind(str(c.get("status", "pending"))) for c in cells]
+            # the factor's counts on the record's one arithmetic (R3-P2-8):
+            # evidenced is T1 plus T2 plus T3, soft is partial plus fetched
             by[n] = {"label": label, "total": len(cells),
-                     "evidenced": sum(kind in ("extracted", "verified",
-                                               "partial", "fetched")
+                     "evidenced": sum(kind in ("structured", "extracted", "verified")
                                       for kind in kinds),
                      "computed": kinds.count("computed"),
+                     "soft": sum(kind in ("partial", "fetched") for kind in kinds),
                      "na": kinds.count("n/a")}
         rollups[k] = by
 
@@ -628,7 +645,7 @@ def main() -> None:
     FIRST_PAINT_FIELDS = ("value", "status", "verified_by")
     DETAIL_FIELDS = ("source", "section", "quote", "extracted_by")
     # repository paths inside the record render as reader labels (R2-P0-3)
-    evidence_detail = {k: {cid: {f: display_path_free(c.get(f, "")) for f in DETAIL_FIELDS}
+    evidence_detail = {k: {cid: {f: (display_copy(c.get(f, "")) if f == "section" else display_path_free(c.get(f, ""))) for f in DETAIL_FIELDS}
                            for cid, c in p["cells"].items()}
                        for k, p in products.items()}
     # the accession column and the resolved EDGAR filings per cell (P2-10)
@@ -656,18 +673,31 @@ def main() -> None:
     # short string per product, to stay under the bundle's size pin)
     cited_cells = {k: ",".join(cid for cid, c in p["cells"].items() if c.get("source"))
                    for k, p in products.items()}
+    # the verifier rides the first paint only when a person has signed the
+    # row (an empty string on 880 cells is 14 KB of nothing)
     products = {k: {**p, "cited": cited_cells[k],
-                    "cells": {cid: {f: (display_path_free(c.get(f, "")) if f == "value" else c.get(f, ""))
-                                    for f in FIRST_PAINT_FIELDS}
+                    "cells": {cid: {f: (display_copy(c.get(f, "")) if f == "value" else c.get(f, ""))
+                                    for f in FIRST_PAINT_FIELDS
+                                    if not (f == "verified_by" and not c.get(f))}
                               for cid, c in p["cells"].items()}}
                 for k, p in products.items()}
     _reg = json.loads((DATA / "registry.json").read_text())["products"]
     descriptors = {k: {a: _reg[k].get(a) for a in ("wrapper_type", "pricing_class",
                                                     "nav_cadence", "leverage_regime")}
                    for k in products}
+    # the filed since-inception return beside the series figure, one sentence
+    # per product where the fact is typed and the selected slot is a series
+    # comparison (R3-P2-17d), the same sentence cells 1.8 and 5.5 carry
+    reconciliation = {}
+    for k, sel in benchmarks.items():
+        f = (facts.get(k) or {}).get("filed_since_inception_return_pct") or {}
+        comp = ((sel.get("slot_k") or {}).get("selected") or {}).get("comparison") or {}
+        if f.get("value") is not None and comp.get("kind") == "series":
+            reconciliation[k] = reconciliation_sentence(f["value"], f.get("note", ""), comp)
     bundle = {
         "generated": date.today().isoformat(),
         "facts": facts,
+        "reconciliation": reconciliation,
         # the rule record once, the mapping basis once, per cell only what differs
         # advisor-stated inputs per plan and product (P2-6), inputs not evidence
         "advisor": advisor_entries(),
@@ -712,6 +742,10 @@ def main() -> None:
                                              if k != "plan_tech_media"],
         "benchmarks": benchmarks,
         "min_primary_score": MIN_PRIMARY_SCORE,
+        "rubric_max": _RUBRIC_MAX,
+        "strategy_gate_min": _STRATEGY_GATE_MIN,
+        "tie_sentence": _TIE_SENTENCE,
+        "by_descriptor_sentence": _BY_DESCRIPTOR_SENTENCE,
         # per-plan liquidity match artifacts ride the lazy series chunk —
         # only the Liquidity view reads them; merged by ensureSeries()
         "liquidity": None,
@@ -751,11 +785,12 @@ def main() -> None:
     # the memos are generated by the build, never copied from a stale folder
     memo_dir = SITE / "memos"
     memo_paths = write_all(memo_dir)
-    bundle["memos"] = sorted(m.stem.replace("_decision_memo", "") for m in memo_paths)
-    # committee packets (P2-9), one per plan and product, same folder, same screen
-    packet_paths = write_all_packets(memo_dir)
-    bundle["packets"] = sorted(m.stem.replace("_committee_packet", "") for m in packet_paths)
-    memo_paths = memo_paths + packet_paths
+    bundle["memos"] = sorted(m.stem.replace("_selection_record", "") for m in memo_paths)
+    # Attachment A, the verbatim rule text, one file cited by its content hash
+    att = attachment_path(memo_dir)
+    bundle["attachment"] = att.name if att else None
+    if att:
+        memo_paths = memo_paths + [att]
 
     series_payload = json.dumps({k: compact_series(v) for k, v in {
         "dxyz_daily": [[d, round(v, 4)] for d, v in load_series("dxyz", "close")],
@@ -804,8 +839,8 @@ def main() -> None:
                                          + census_payload + ";\n")
 
     print(f"site/data.js written ({len(payload):,} bytes), census chunk "
-          f"{len(census_payload):,} bytes, {len(bundle['memos'])} memos and "
-          f"{len(bundle['packets'])} packets generated, sponsor tokens screened: {len(sponsor_names)}")
+          f"{len(census_payload):,} bytes, {len(bundle['memos'])} selection records and "
+          f"{1 if bundle['attachment'] else 0} attachment generated, sponsor tokens screened: {len(sponsor_names)}")
 
 
 if __name__ == "__main__":

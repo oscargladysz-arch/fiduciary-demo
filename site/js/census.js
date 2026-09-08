@@ -64,7 +64,7 @@ function pf(f, fmt = (v) => esc(String(v))) {
   if (!f || f.value === null || f.value === undefined) {
     return `<span class="why" title="${esc(f?.reason || "not in structured sources")}">—</span>`;
   }
-  return `<span class="cellval" title="source: ${esc(f.source)} · ref: ${esc(f.ref)} · as of ${esc(f.as_of)}">${fmt(f.value)}</span>`;
+  return `<span class="cellval provenance" title="source: ${esc(f.source)} · ref: ${esc(f.ref)} · as of ${esc(f.as_of)}">${fmt(f.value)}</span>`;
 }
 
 function tenderRecent(e, months) {
@@ -213,7 +213,7 @@ export function viewCensus(root, state, setState) {
 function provRow(label, f, fmt) {
   if (!f) return "";
   return `<tr><td class="k">${esc(label)}</td><td>${pf(f, fmt)}</td>
-    <td class="cap">${esc(f.source || "")} · ${esc(f.ref || "")} · ${esc(f.as_of || "")}</td></tr>`;
+    <td class="cap provenance">${esc(f.source || "")} · ${esc(f.ref || "")} · ${esc(f.as_of || "")}</td></tr>`;
 }
 
 export function viewCensusEntity(root, state, setState) {
@@ -273,7 +273,7 @@ function renderEntity(root, e, state, setState) {
           ${serviceUrl
             ? `<button class="primary" data-evaluate>Evaluate this fund</button>
                <span class="cap">posts to ${esc(serviceUrl)}/evaluate and shows its answer as returned</span>`
-            : `<span class="cap">No evaluation service is connected to this build, so the
+            : `<span class="cap">No evaluation service is connected to this record, so the
                button is not shown. Send the request to Tark.</span>`}
           <div data-evalresult></div>`}
       </div>
@@ -310,7 +310,7 @@ function renderEntity(root, e, state, setState) {
     <h2>Filing activity <span class="cap">(recent EDGAR stream, by form)</span></h2>
     <div class="filestrip">${Object.entries(e.fs.value).map(([f, n]) =>
       `<span class="chip plain">${esc(f)} × ${n}</span>`).join(" ")}
-      <span class="cap" title="source: ${esc(e.fs.source)} · ${esc(e.fs.ref)}">· source: submissions JSON, as of ${esc(e.fs.as_of)}</span></div>` : ""}
+      <span class="cap provenance" title="source: ${esc(e.fs.source)} · ${esc(e.fs.ref)}">· source: submissions JSON, as of ${esc(e.fs.as_of)}</span></div>` : ""}
     ${(e.hint || []).length ? `
     <p class="cap"><span class="chip hint">hint</span> Name suggests:
       ${e.hint.map(esc).join(", ")}. Derived from the NAME ONLY, never a

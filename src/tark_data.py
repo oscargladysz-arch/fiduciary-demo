@@ -97,7 +97,7 @@ MAPPING_BASIS = ("factor order per the 2026-09-03 audit's check of 91 FR 16088, 
                  "paragraphs (g) to (l) of proposed 29 CFR 2550.404a-6")
 # the one sentence every surface prints while the verbatim text is absent
 # (R2-P0-3): no instruction, no script name, no environment excuse
-NOT_FETCHED_SENTENCE = ("The verbatim text of paragraphs (g) to (l) is not yet in this build. "
+NOT_FETCHED_SENTENCE = ("The verbatim text of paragraphs (g) to (l) is not yet in the record. "
                         "The Federal Register document is linked above.")
 
 
@@ -176,7 +176,7 @@ def authority() -> dict:
         rel = str(path.relative_to(BASE))
     except ValueError:
         rel = str(path)
-    return {"status": "fetched", "note": "verbatim Federal Register text is in this build",
+    return {"status": "fetched", "note": "verbatim Federal Register text is in the record",
             "file": rel, "paragraphs": paras, "url": row.get("source_url"),
             "sha256": row.get("content_sha256"), "fetched_at": row.get("fetched_at_utc")}
 
@@ -188,8 +188,8 @@ def rule_ref(cid: str, auth: dict | None = None) -> dict:
     letter = FACTOR_PARAS[cid.split(".")[0]]
     verbatim = auth["status"] == "fetched"
     return {"para": f"({letter})",
-            "basis": MAPPING_BASIS + (", verbatim text in this build" if verbatim
-                                      else ", verbatim text not in this build"),
+            "basis": MAPPING_BASIS + (", verbatim text in the record" if verbatim
+                                      else ", verbatim text not in the record"),
             "verbatim": verbatim,
             "advisor_completed": cid in ADVISOR_COMPLETED}
 
@@ -652,13 +652,20 @@ def coverage_summary(key: str) -> dict:
         c[kind if kind in c else "pending"] += 1
     total = sum(c.values())
     resolvable = total - c["na"]
-    resolved = resolvable - c["pending"]
+    # resolved is T1 plus T2 plus T3 plus computed (R3-P2-8): a partial or a
+    # fetched cell is soft and stays in the denominator unresolved
+    evidenced = c["structured"] + c["extracted"] + c["verified"]
+    soft = c["partial"] + c["fetched"]
+    resolved = evidenced + c["computed"]
     c.update({
         "total": total, "resolvable": resolvable, "resolved": resolved,
+        "evidenced": evidenced, "soft": soft,
         "resolved_pct": round(resolved / resolvable * 100) if resolvable else 0,
-        "headline": (f"{resolved} of {resolvable} resolvable, {c['verified']} verified, "
-                     f"{c['na']} n/a by wrapper"
-                     + (f", {c['pending']} pending" if c["pending"] else "")),
+        # the four counts side by side, then the signed count and any pending
+        "headline": (f"{resolved} of {resolvable} resolved: {evidenced} evidenced, "
+                     f"{c['computed']} computed, {soft} partial, {c['na']} n/a"
+                     + (f", {c['pending']} pending" if c["pending"] else "")
+                     + f", {c['verified']} verified by a person"),
     })
     return c
 
@@ -674,7 +681,7 @@ def coverage_totals() -> dict:
     total = sum(tot.values())
     na = tot["na"]
     resolvable = total - na
-    resolved = resolvable - tot["pending"]
+    resolved = tot["structured"] + tot["extracted"] + tot["verified"] + tot["computed"]
     line = (f"{resolved} of {resolvable} resolvable cells resolved · "
             f"{tot['structured']} structured (T1) · {tot['extracted']} "
             f"extracted-unverified (T2) · {tot['verified']} verified (T3) · "
@@ -744,9 +751,12 @@ def validate_facts() -> list[str]:
             # whatever its value. Checked whenever present.
             phrase = f.get("evidence_phrase")
             pending = str(f.get("status", "")) == "pending"
+            # an engine-owned computed field (status computed) is not typed
+            # from a cell and carries no phrase
+            computed = str(f.get("status", "")) == "computed"
             needs_phrase = not pending and (
                 field in PHRASE_ALWAYS
-                or (f.get("value") is not None
+                or (f.get("value") is not None and not computed
                     and (field in EVIDENCE_FIELDS or isinstance(f.get("value"), bool))))
             if needs_phrase and not (isinstance(phrase, str) and phrase.strip()):
                 errs.append(f"facts:{key}:{field}: no evidence_phrase (a boolean or a "
@@ -895,8 +905,9 @@ LAPTOP_RE = re.compile(r"/private/tmp/|/Users/|/tmp/claude")
 
 def validate_accessions() -> list[str]:
     """The accession column of every evidence row: empty, one accession the
-    manifest holds for that product (or one written in the citation itself),
-    or a pointer to the citations file for a set. No laptop path anywhere."""
+    manifest holds for that product, or a pointer to the citations file for
+    a set (R3-P2-9: an accession written only in the citation is refused).
+    No laptop path anywhere."""
     errs: list[str] = []
     by_prod: dict[str, set[str]] = {}
     for r in load_manifest():
@@ -907,9 +918,8 @@ def validate_accessions() -> list[str]:
             if acc and not acc.startswith("multiple ("):
                 if not ACCESSION_RE.fullmatch(acc):
                     errs.append(f"{key}:{r['cell_id']}: accession {acc!r} is not an accession number")
-                elif acc not in by_prod.get(key, set()) and acc not in (r.get("source_doc") or ""):
-                    errs.append(f"{key}:{r['cell_id']}: accession {acc} is neither a manifest row for this "
-                                "product nor written in its citation")
+                elif acc not in by_prod.get(key, set()):
+                    errs.append(f"{key}:{r['cell_id']}: accession {acc} is not a manifest row for this product")
             for col in EVIDENCE_COLUMNS:
                 if LAPTOP_RE.search(r.get(col) or ""):
                     errs.append(f"{key}:{r['cell_id']}: {col} carries a laptop path")

@@ -49,14 +49,30 @@ def leaks(text: str) -> list[str]:
 
 def docx_text(path: Path | str) -> str:
     """Plain text of a .docx: paragraphs plus every table cell."""
+    prose, provenance = docx_texts(path)
+    return prose + ("\n" + provenance if provenance else "")
+
+
+# a table column whose header is one of these holds provenance set in code
+# style (a cited file name, an accession, a URL): the allowlist gate's prose
+# rules do not run over it, the forbidden-string list always does (R3-P2-12)
+PROVENANCE_HEADERS = ("Source as written", "Accession and EDGAR URL")
+
+
+def docx_texts(path: Path | str) -> tuple[str, str]:
+    """(reader prose, provenance) of a .docx: paragraphs and every table
+    cell, with the cells under a provenance header set apart."""
     from docx import Document
     d = Document(str(path))
-    parts = [p.text for p in d.paragraphs]
+    prose = [p.text for p in d.paragraphs]
+    prov: list[str] = []
     for t in d.tables:
-        for row in t.rows:
-            for c in row.cells:
-                parts.append(c.text)
-    return "\n".join(parts)
+        header = [c.text.strip() for c in t.rows[0].cells] if t.rows else []
+        prov_cols = {i for i, h in enumerate(header) if h in PROVENANCE_HEADERS}
+        for r, row in enumerate(t.rows):
+            for i, c in enumerate(row.cells):
+                (prov if (r > 0 and i in prov_cols) else prose).append(c.text)
+    return "\n".join(prose), "\n".join(prov)
 
 
 if __name__ == "__main__":

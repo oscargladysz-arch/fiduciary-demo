@@ -20,12 +20,12 @@
     "ares_pmf": {
       "wrapper_type": "tender_offer",
       "depth": "cohort",
-      "membership_rationale": "Secondaries-led evergreen PE tender-offer fund - wrapper and strategy twin of hl_paf/stepstone_spm."
+      "membership_rationale": "Secondaries-led evergreen PE tender-offer fund - wrapper and strategy twin of Hamilton Lane Private Assets Fund and StepStone Private Markets."
     },
     "amg_pantheon": {
       "wrapper_type": "tender_offer",
       "depth": "cohort",
-      "membership_rationale": "Evergreen PE (Pantheon) tender-offer LLC - wrapper and strategy twin of hl_paf/stepstone_spm."
+      "membership_rationale": "Evergreen PE (Pantheon) tender-offer LLC - wrapper and strategy twin of Hamilton Lane Private Assets Fund and StepStone Private Markets."
     }
   },
   "n": 5,
@@ -117,8 +117,8 @@
         "kkr_kpec": 9500000000
       },
       "missing": {
-        "ares_pmf": "aggregate net assets not yet carried into a typed cell. Verification-queue item",
-        "amg_pantheon": "aggregate net assets not yet carried into a typed cell. Verification-queue item"
+        "ares_pmf": "aggregate net assets not yet carried into a fact on record. Verification-queue item",
+        "amg_pantheon": "aggregate net assets not yet carried into a fact on record. Verification-queue item"
       }
     }
   },
@@ -247,7 +247,7 @@
           "ares_pmf": 9.27,
           "amg_pantheon": 6.45
         },
-        "composite_return_pct": null
+        "composite_return_pct": 10.01
       },
       {
         "period": "2024-03-31",
@@ -267,7 +267,7 @@
           "ares_pmf": 17.1,
           "amg_pantheon": 12.08
         },
-        "composite_return_pct": null
+        "composite_return_pct": 13.91
       },
       {
         "period": "2024-12-31",
@@ -304,7 +304,7 @@
           "ares_pmf": 19.95,
           "amg_pantheon": 10.07
         },
-        "composite_return_pct": null
+        "composite_return_pct": 13.34
       },
       {
         "period": "2025-12-31",
@@ -341,7 +341,7 @@
           "ares_pmf": 9.58,
           "amg_pantheon": 9.1
         },
-        "composite_return_pct": null
+        "composite_return_pct": 10.94
       }
     ],
     "member_source": {
@@ -358,14 +358,26 @@
       "ares_pmf": "fiscal_year",
       "amg_pantheon": "fiscal_year"
     },
-    "granularity": "mixed year ends: no common period, composite returns not formed",
-    "weighting": "equal-weight, only over periods every member reports on the same basis",
-    "composite_refused_reason": "members report on different year ends (hl_paf: fiscal years to month 03, stepstone_spm: fiscal years to month 03, kkr_kpec: calendar years, ares_pmf: fiscal years to month 03, amg_pantheon: fiscal years to month 03), so no equal-weight composite return is formed. The table shows each member's own periods with n"
+    "composite_members": [
+      "hl_paf",
+      "stepstone_spm",
+      "ares_pmf",
+      "amg_pantheon"
+    ],
+    "excluded_members": [
+      {
+        "member": "KKR Private Equity Conglomerate LLC",
+        "reason": "KKR Private Equity Conglomerate LLC reports calendar years, the composite members report fiscal years to month 03"
+      }
+    ],
+    "granularity": "fiscal years to month 03 for the 4 composite members, 1 excluded by name",
+    "weighting": "equal-weight, only over periods every composite member reports on the same basis",
+    "composite_note": "composite over Hamilton Lane Private Assets Fund, StepStone Private Markets, Ares Private Markets Fund, AMG Pantheon Fund, LLC only. KKR Private Equity Conglomerate LLC reports calendar years, the composite members report fiscal years to month 03"
   },
   "caveats": [
-    "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds. Fee bases and return volatility are not like-for-like. [typed per product: amg_pantheon: 1940-Act asset-coverage limits, ares_pmf: 1940-Act asset-coverage limits, hl_paf: 1940-Act asset-coverage limits, kkr_kpec: no 1940-Act leverage limits (34-Act conglomerate), stepstone_spm: 1940-Act asset-coverage limits]",
-    "LIQUIDITY-LAW MIX: Rule 23c-3 obligations, discretionary tenders, and repurchase plans give different worst-case exit rights. Cadence numbers alone overstate comparability. [by wrapper type: amg_pantheon: board-DISCRETIONARY tender offers (nothing compels the next one), ares_pmf: board-DISCRETIONARY tender offers (nothing compels the next one), hl_paf: board-DISCRETIONARY tender offers (nothing compels the next one), kkr_kpec: board-discretionary share repurchases, stepstone_spm: board-DISCRETIONARY tender offers (nothing compels the next one)]",
-    "kkr_kpec joins under the authorized fallback: its structural twins are Reg D vehicles with no public filings (data/roster_decisions.md - 'The kkr_kpec ruling'). Cross-wrapper caveats apply."
+    "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds. Fee bases and return volatility are not like-for-like. [per product from the record: AMG Pantheon Fund, LLC: 1940-Act asset-coverage limits, Ares Private Markets Fund: 1940-Act asset-coverage limits, Hamilton Lane Private Assets Fund: 1940-Act asset-coverage limits, KKR Private Equity Conglomerate LLC: no 1940-Act leverage limits (34-Act conglomerate), StepStone Private Markets: 1940-Act asset-coverage limits]",
+    "LIQUIDITY-LAW MIX: Rule 23c-3 obligations, discretionary tenders, and repurchase plans give different worst-case exit rights. Cadence numbers alone overstate comparability. [by wrapper type: AMG Pantheon Fund, LLC: board-DISCRETIONARY tender offers (nothing compels the next one), Ares Private Markets Fund: board-DISCRETIONARY tender offers (nothing compels the next one), Hamilton Lane Private Assets Fund: board-DISCRETIONARY tender offers (nothing compels the next one), KKR Private Equity Conglomerate LLC: board-discretionary share repurchases, StepStone Private Markets: board-DISCRETIONARY tender offers (nothing compels the next one)]",
+    "KKR Private Equity Conglomerate LLC joins under the authorized fallback: its structural twins are Reg D vehicles with no public filings (the roster decisions record, 'The KKR Private Equity Conglomerate LLC ruling'). Cross-wrapper caveats apply."
   ],
-  "exclusion_log": "data/roster_decisions.md"
+  "exclusion_log": "the roster decisions record"
 }

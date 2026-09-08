@@ -2107,7 +2107,9 @@ that name. Oscar can rename or re-point the pull requests. Same situation
 and same resolution as decision 7.7.
 
 ### 8.24 Environment facts that constrain the cloud session (2026-09-07)
-Linux container, Python 3.11.15, Node 22.22.2, LibreOffice present,
+Linux container, Python 3.11.15, Node 22.22.2, LibreOffice core present
+without Writer (`soffice --convert-to` answers "source file could not be
+loaded", CI installs `libreoffice-writer`, amended 2026-09-08 under 8.33),
 `pdftotext` absent (poppler library present, the binary is not), Playwright
 pinned to 1.56.0 to match the shipped Chromium build 1194 (the `pip`
 resolver installs 1.62.0 by default, which does not launch that build).
@@ -2189,3 +2191,268 @@ runbook and the deploy log.
 - The route list the gate walks grows with each rebuilt view. Today it is
   `design` alone. R3-P1 exits when it is every route.
 Reverse by: the checkpoint. Oscar's choices land as 8.21.
+
+### 8.28 R3-P2-1 to R3-P2-6, R3-P2-19: rubric v3.1 and the selection lock (default, reversible)
+- The risk criterion reads the typed dealing terms and moves on them: an
+  appraisal index against a NAV fund scores 3 when the filings disclose no
+  proration and no suspension, 2 when they disclose either, a daily proxy
+  scores 1 against a NAV fund and 3 against an exchange-traded fund whose
+  price tracks NAV, 0 stays for a decoupled price. A null gating history is
+  read as "no proration or suspension disclosed in the filings on record"
+  and the reason says exactly that, never "never gated". The constituent
+  leverage regime branch is gone: no candidate typed it and it made 3
+  unreachable.
+- Pricing basis match is dropped, not redefined. It was the same two
+  inputs as the risk criterion. The maximum becomes 10 and the threshold a
+  fraction, six tenths, 6 of 10 (the nearest tenth at or above the old 7
+  of 12). The gate stays strategy match 2 of 3. Every surface prints "x of
+  N" through one helper. Slot K identity is unchanged for all 16 products
+  under the new rubric (checked before committing), five products now tie
+  their cited index with the held ETF (pflex, cion_ares, bcred, breit,
+  sreit) and the ties resolve on the risk criterion or the strategy match,
+  as the tie sentence says.
+- Reasons print the criterion's display name ("Strategy match 3 of 3"),
+  never its key. The tie is a typed flag plus one sentence. The escalation
+  names the gate and the threshold as two clauses. The reference loop
+  continues past a held proxy whose comparison is not computable and
+  records the skip (jll_ipt's VNQ is the live case).
+- A cited Slot K is `by_descriptor: true` and every surface prints the
+  decided sentence (8.5) verbatim, never through a period-stripping
+  wrapper. The Lane A note for a non-selected cited index keeps its own
+  wording so cell 1.8 does not print the Slot K sentence for it.
+- dxyz and ssss: the basis and every fund return source read "a market
+  price with distributions reinvested, not NAV". No comparison is computed
+  on a decoupled price series for any Lane A entry. ssss's second
+  SEC-required comparator (the Nasdaq index, cell 5.1) is typed.
+- The lock: `recorded_at` is the record's as-of instant (midnight UTC of
+  `data/as_of.json`), never a wall clock, because the freshness gate
+  requires a producer run to reproduce the artifact byte for byte and a
+  hash over a wall clock would never reproduce. A new recording on a later
+  day bumps the as-of date. `inputs` lock the filings by accession (the
+  record holds no filing bytes), the series files by content hash and the
+  descriptors by a hash of the exact values read. History files are named
+  `<date>_<hash8>.json` so two recordings on one date cannot collide. The
+  lock checks live in the benchmark gate (the hook has 20 gates, none is
+  added for this). The investor sentence about a lock is true from the
+  commit that carries this decision.
+Reverse by: the rubric section of the methodology and the constants in
+`src/tark_benchmark_common.py`.
+
+### 8.29 R3-P2-7: the scenario ladder keeps three rungs, the record types what fired, and the program status is typed from the filings' own words (default, reversible)
+
+Decided by the cloud session on 2026-09-08 as a default. The round-2 ladder
+(misaligned when the filed outflow proxy exceeds the annual wrapper
+capacity, conditional-weak when the stressed demand exceeds it, conditional
+otherwise) read one product input, the scalar capacity, so the thirteen
+products with identical typed terms (5% per quarter, quarterly offers, no
+suspension) shared one verdict under any plan and the card could not say
+which product fact had fired.
+
+- The verdict vocabulary does not grow. Three rungs, the exchange case and
+  "not computable" stay the closed set the Screener filter, the colours, the
+  memo and the reconcile gate read. A product-specific verdict on identical
+  typed terms would be a verdict on nothing.
+- What changes is the record: `scenario.drivers` types the rung that fired,
+  the three figures compared, the cap that binds with its base, the dealing
+  cadence, the program status with the date it was read at, the gating
+  history and the same test per dealing window (filed and stressed demand
+  per quarter or month against the cap for that window). The per-window
+  figures restate the annual test, since the binding annual figure is the
+  smallest cap times its windows per year, so they explain the rung and
+  never change it, and the gate proves that. One sentence prints them in
+  the verdict bullet, on the card under the banner and in the memo.
+  `wrapper_facts.scenario_inputs` carries the plan-independent half once
+  per product.
+- The property the gate holds: perturbing one product's cap moves that
+  product's verdict and no other match (hl_paf at 10% per quarter drops from
+  the stress rung to none under the tech plan, the fifteen other matches are
+  byte for byte the record's).
+- `repurchase_program_status` is typed for every product that has a
+  program: "active" from a verbatim run of cell 3.1's words that show
+  offers being made or requests being taken (a live tender, a stated
+  cadence in operation), with the record's as-of date and no suspension
+  language in 3.1 or 3.3, "suspended" with the amendment it dates from, and
+  null with the reason only for the two exchange-listed wrappers. A product
+  missing from the table fails the build, so nothing is active by default.
+  This reverses the round-2 null-by-default (7.x: "never active") because a
+  null that a reader had to interpret as "probably open" was a judgment the
+  record was not making. The status is a lock input, so the thirteen record
+  hashes moved with it (cell 5.6, corrections rows under R3-P2-7).
+- The program status precedes the cadence on every surface: sreit reads
+  "repurchases suspended since the April 29, 2026 amendment" in its cell 3.1
+  headline, the Screener and Compare dealing columns, the liquidity view and
+  the memo, never "monthly".
+- The liquidity view rebuilds every scenario bullet and the drivers line
+  from the one live state the stress block reads (R3-P1-10): at the default
+  sliders the bullets equal the record's sentences word for word, and the
+  gate compares all 64. The slider-independent pieces (the capacity note,
+  the Schedule H lines) ride the match typed. The duplicate dollar block
+  under the chart is gone, the page states each figure once.
+Reverse by: `RUNG_OF` and `scenario_drivers` in `src/tark_liquidity.py`,
+`PROGRAM_STATUS` in `src/build_facts.py`.
+
+### 8.30 R3-P2-8 and R3-P2-17a: resolved is T1 plus T2 plus T3 plus computed, and the memo counts the same set (default, reversible)
+
+Decided by the cloud session on 2026-09-08 as a default. "685 of 685
+resolvable cells resolved" counted 75 partial and 16 fetched cells as
+resolved, and the memo's provenance paragraph counted a different set one
+paragraph below the headline.
+
+- `resolved` = structured + extracted + verified + computed. Partial and
+  fetched are `soft` and stay in the denominator unresolved. The record
+  reads 594 of 685.
+- The headline prints the four counts side by side, then the signed count:
+  "35 of 42 resolved: 24 evidenced, 11 computed, 7 partial, 13 n/a, 0
+  verified by a person". "Evidenced" is T1 plus T2 plus T3. The factor
+  rollups on the Evaluation view count the same way and name the soft
+  cells.
+- The memo's provenance paragraph counts source, section, quote and
+  extractor over the resolved set and says how many cells are partial or
+  fetched and not counted, so the two paragraphs agree by construction (the
+  writer asserts it).
+Reverse by: `coverage_summary` in `src/tark_data.py`.
+
+### 8.31 R3-P2-9, R3-P2-10, R3-P2-11, R3-P2-17b to d: four small rules (default, reversible)
+
+Decided by the cloud session on 2026-09-08 as defaults.
+
+- R3-P2-9: an accession in an evidence row must be a manifest row for that
+  product. The "written in its citation" escape is gone from the validator
+  (no row used it, decision 7.10 already said manifest only).
+- R3-P2-10: an intake plan's provenance reads "plan intake, <date>, figures
+  as the advisor supplied them" and `pulled` is the form's date, else the
+  day of the intake (an intake is an action on a day, not a build output, so
+  the wall clock is the fact). No path, no script name. The gate builds an
+  intake plan's shipped object, its liquidity match, its memo and its packet
+  in scratch and scans all four with the surfaces rules, with and without
+  the Schedule H totals.
+- R3-P2-11: cell 3.7 on the Evaluation view leads with the selected plan's
+  own demand sentence, built once in `tark_display.plan_demand_sentence` and
+  shared with the memo, shipped per plan in the first paint. The product
+  record's cell keeps holding no plan's counts.
+- R3-P2-17b: a committee cell the record marks n/a for the product is
+  listed as "not applicable: <reason>" in the recommendation, never as
+  "open". "Stated" still wins.
+- R3-P2-17c: sreit's net assets are typed approx from cell 3.4 (NAV $8.25B
+  at December 31, 2025, before the 2026 repurchases in 3.3). The capacity
+  stays 0% while the program is suspended, so the dollar capacity stays not
+  computable, and the reason now says why rather than "not typed".
+- R3-P2-17d: the filed since-inception return is a typed fact
+  (`filed_since_inception_return_pct`, 9.34% for cclfx from cell 1.2, null
+  with the reason for the other fifteen in this round) and one reconciliation
+  sentence, built once, prints in cells 1.8 and 5.5, on the card and in the
+  memo: the two figures, the window each covers, and the three reasons they
+  differ (end date, reinvestment convention, share class). Neither is
+  restated and the comparison uses the series.
+
+### 8.32 R3-P2-12: the allowlist gate over the bundle, the views and the documents (default, reversible)
+
+Decided by the cloud session on 2026-09-08 as a default. The round-2 gate
+scanned three surfaces for a fixed list of forbidden strings. Rule 11 of
+the round-3 brief names a family, not a list: no snake_case token, path,
+bare registry key, ticket reference, or the words engine, artifact, typed,
+writer, slider, the site and build in reader prose, unless through the copy
+layer.
+
+- The family is five rules in `tark_display.PROSE_RULES`, shared by the
+  gate and the writers, case-insensitive, run after URLs are stripped: a
+  snake_case token, a repository path or a file name with a code extension,
+  a ticket reference, a developer word (engine, artifact, typed, the writer,
+  the build, this build, the site) and slider outside "slider assumption"
+  (the figure the control sets) and "allocation slider" (the control's own
+  label). "Typed" is a whole word: the record's figures are "on record" or
+  "read from" a cell, never typed. The forbidden-string list stays as it was
+  and the gate refuses to prune either.
+- What counts as reader prose: every bundle string a view prints, every
+  rendered view and every document paragraph. What is exempt, and only from
+  the family: the evidence ledger's source column and verbatim quote (a
+  quote is never rewritten), the closed-vocabulary fact values the views
+  map to words (wrapper, base, cadence, period, program status, tax form,
+  pricing class), the wire keys the views decode (file stems, series
+  columns and roles, census row fields and entity rows, cohort member lists
+  and statistic field names, the plan order, a cited local file), on a page
+  an element with the `provenance` or `cmd` class, a `pre` or `code`
+  element and a slider control's own row, and in a document the "Source as
+  written" and "Accession and EDGAR URL" columns. The report names the rule
+  and the location of every hit.
+- The copy layer: `display_copy` prints repository paths and internal keys
+  as their words (a product key as the fund's name, a field name as its
+  label, a wrapper or base enum as its label, a dataset column as its
+  meaning) on every surface and in every document. The record keeps its
+  keys. The writers' own prose was rewritten at the source: "artifact" is
+  "record", "typed facts" is "the dealing terms on record" or "the facts on
+  record", "the sliders" is "the turnover assumptions", "the engine" is "the
+  selection" or "the rubric", "this build" is "this record", "the site" is
+  the view's name.
+- Thirty cells of the record carried the extractor's own developer words
+  ("which this build could not fetch", "XBRL context-ID artifacts", "the
+  engine must construct", local text file names, "annual_series payload").
+  Each was reworded with no figure or finding changed, under an evidence
+  allowlist row per protected row and a corrections row per owned cell. The
+  N-CEN dataset's field names cited in cells 4.5 and 4.6 stay in the record
+  and print as their meaning ("the opinion-qualified flag").
+- The plan record's maintainer index (`dictionary_cells`) no longer ships.
+  The census method notes, the caveat matrix note, the DXYZ quarterly NAV
+  note, two cohort rationales and the fallback note in the registry, the
+  four plans' Schedule H reasons and the verification queue's tier
+  headings were reworded at their source.
+Reverse by: `PROSE_RULES` and `display_copy` in `src/tark_display.py`, the
+exemptions in `src/test_surfaces.py`.
+
+### 8.33 R3-P2-13 to R3-P2-17: the Investment Selection Record (default, reversible)
+
+Decided by the cloud session on 2026-09-08 as a default, under 8.6 (one
+record with attachments replaces the memo and packet pair). No committee
+packet sample exists under `docs/reference/committee_packet_sample/`, so
+8.22 stays reserved and the order below is the brief's default.
+
+- One document per plan and product,
+  `<plan>__<product>_selection_record.docx`, written by `src/tark_memo.py`
+  (the module keeps its name and its older entry points so the gates, the
+  app and reconcile keep importing it). `tark_packet.py` is gone.
+- Page one is the decision summary: both liquidity verdicts, the
+  meaningful benchmark with its statistic, the reference comparison, the
+  peer ratio, the coverage headline with the signed count, the adviser
+  inputs count, the flags, the sentence that the record does not decide
+  with the committee cells and their state, then the committee action and
+  signature table (select, decline, defer, the adopting fiduciary, the
+  adviser, the committee secretary). A signature adopts the record as
+  read, it does not verify a cell.
+- Then a contents field, the regulatory basis (the rule quoted verbatim
+  under each letter, the attachment cited by its full content hash), the
+  six-factor findings (one sentence per factor generated from the facts on
+  record with a cell behind every clause, then the facts on record, the
+  first sentence of every evidenced cell, the not-applicable cells), the
+  fees and terms on record, the benchmark selection (the ledger of every
+  candidate with its lane, score and outcome, the rubric's criteria and the
+  three metrics defined once, the selected slot, the reference, the
+  declared comparators, the peer comparison with its table, the rejection
+  log, the lock line), the product-to-plan liquidity match, the peer cohort
+  placement, the adviser inputs, scope and case law, provenance grouped by
+  filing (one row per filing with the cells that cite it, then the cells
+  whose reference does not resolve, then the plan record), and the
+  attachments list.
+- Attachment A is the verbatim text of paragraphs (g) to (l), one file
+  shared by every record, `attachment_a_rule_text_<hash12>.docx`, nothing
+  in it through the copy layer, screened by the same forbidden list and
+  sponsor screen as the records.
+- Layout: letter page, one-inch margins, every table on a fixed grid whose
+  columns sum to the text width with the header row repeated and no row
+  split across pages, headings kept with the next paragraph, a running
+  header, a footer with the page count, the as-of date and the DRAFT mark,
+  core properties from the record's as-of date (never the wall clock, so
+  the bytes reproduce), a contents field Word refreshes on open.
+- Copy: every string the writer emits goes through `display_copy`, which
+  now also applies the punctuation rule (an em dash or a semicolon becomes
+  a comma, a double period one period, a spaced hyphen between words a
+  comma, "period(s)" "periods"), on the site and in the documents alike.
+  The quoted rule paragraphs and the attachment are verbatim and exempt.
+  The gates compare their expectations through the same function.
+- The record gate (`test_memo`, R3-P2-18) reads the document XML for the
+  layout and exports through LibreOffice Writer where it is installed. In
+  this environment only `libreoffice-core` is present (Writer is not:
+  "source file could not be loaded"), so the export prints a named skip
+  here and runs in CI, which installs `libreoffice-writer`. 8.24 is
+  amended accordingly.
+Reverse by: `src/tark_memo.py` section order, `punctuate` in
+`src/tark_display.py`.

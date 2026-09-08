@@ -3,7 +3,7 @@
   "cohort_id": "venture",
   "depth": "cohort",
   "membership_rationale": "Interval fund holding venture/growth, the NAV-priced contrast to the two market-priced members. Pricing-basis mix is the cohort's disclosed core caveat (composite refused).",
-  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
+  "what": "facts read from evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -57,7 +57,7 @@
     "gate_history": {
       "value": null,
       "source_cell": "3.3",
-      "reason": "no gating, suspension or postponement is disclosed, but the tendered-versus-accepted amounts are not printed: the Sep-2024 offer was fully utilized at its cap with proration, if any, not stated (R2-P1-12 rule)",
+      "reason": "no gating, suspension or postponement is disclosed, but the tendered-versus-accepted amounts are not printed: the Sep-2024 offer was fully utilized at its cap with proration, if any, not stated (the completed-tender rule)",
       "evidence_phrase": "proration, if any, not stated",
       "status": "extracted-unverified"
     },
@@ -87,7 +87,7 @@
     "net_assets_usd": {
       "value": null,
       "source_cell": "3.6",
-      "reason": "aggregate net assets not yet carried into a typed cell. Verification-queue item",
+      "reason": "aggregate net assets not yet carried into a fact on record. Verification-queue item",
       "status": "extracted-unverified"
     },
     "inception": {
@@ -104,10 +104,18 @@
       "source_cell": "2.4",
       "status": "extracted-unverified"
     },
-    "repurchase_program_status": {
+    "filed_since_inception_return_pct": {
       "value": null,
+      "source_cell": "1.2",
+      "reason": "since-inception annualized return not read from cell 1.2 in this round",
+      "status": "extracted-unverified"
+    },
+    "repurchase_program_status": {
+      "value": "active",
       "source_cell": "3.1",
-      "reason": "no suspension language in 3.1 or 3.3 as of 2025-07-31",
+      "as_of": "2025-07-31",
+      "evidence_phrase": "every actual offer to date has been, the 5% minimum",
+      "note": "offers being made per cell 3.1, no suspension language in 3.1 or 3.3 as of 2025-07-31",
       "status": "extracted-unverified"
     },
     "dealing_cadence": {
@@ -145,7 +153,7 @@
       "value": "partial",
       "source_cell": "3.9",
       "status": "computed",
-      "note": "from typed facts only (cells 3.1, 3.3, 2.7), plan-independent"
+      "note": "from the dealing terms on record only (cells 3.1, 3.3, 2.7), plan-independent"
     },
     "liquidity_verdict_by_plan": {
       "value": {
@@ -156,37 +164,43 @@
       },
       "source_cell": "3.9",
       "status": "computed",
-      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
+      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default turnover assumptions against the recorded capacity)"
     },
     "primary_benchmark_id": {
       "value": null,
       "source_cell": "5.3",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+      "reason": "escalation: no meaningful benchmark constructible (see the selection record)"
     },
     "selection_score": {
       "value": null,
       "source_cell": "5.3",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+      "reason": "escalation: no meaningful benchmark constructible (see the selection record)"
+    },
+    "slot_k_by_descriptor": {
+      "value": null,
+      "source_cell": "5.3",
+      "status": "computed",
+      "reason": "escalation: no meaningful benchmark constructible (see the selection record)"
     },
     "pme_public_proxy": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this pre-IPO and venture fund: no candidate passes the strategy gate at or above 7/12. Scored: PSP 7/12 (fails the strategy gate (1/3)), URTH 7/12 (fails the strategy gate (1/3)), SPY 7/12 (fails the strategy gate (1/3)). Required next: a published pre-IPO and venture strategy index with a series the record can hold."
+      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this pre-IPO and venture fund. Every candidate either fails the strategy gate (strategy match below 2 of 3). Scored: PSP 6 of 10 (fails the strategy gate (strategy match 1 of 3)), URTH 6 of 10 (fails the strategy gate (strategy match 1 of 3)), SPY 6 of 10 (fails the strategy gate (strategy match 1 of 3)). Required next: a published pre-IPO and venture strategy index with a series the record can hold."
     },
     "pme_public_proxy_name": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this pre-IPO and venture fund: no candidate passes the strategy gate at or above 7/12. Scored: PSP 7/12 (fails the strategy gate (1/3)), URTH 7/12 (fails the strategy gate (1/3)), SPY 7/12 (fails the strategy gate (1/3)). Required next: a published pre-IPO and venture strategy index with a series the record can hold."
+      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this pre-IPO and venture fund. Every candidate either fails the strategy gate (strategy match below 2 of 3). Scored: PSP 6 of 10 (fails the strategy gate (strategy match 1 of 3)), URTH 6 of 10 (fails the strategy gate (strategy match 1 of 3)), SPY 6 of 10 (fails the strategy gate (strategy match 1 of 3)). Required next: a published pre-IPO and venture strategy index with a series the record can hold."
     },
     "direct_alpha_public_proxy": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this pre-IPO and venture fund: no candidate passes the strategy gate at or above 7/12. Scored: PSP 7/12 (fails the strategy gate (1/3)), URTH 7/12 (fails the strategy gate (1/3)), SPY 7/12 (fails the strategy gate (1/3)). Required next: a published pre-IPO and venture strategy index with a series the record can hold."
+      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this pre-IPO and venture fund. Every candidate either fails the strategy gate (strategy match below 2 of 3). Scored: PSP 6 of 10 (fails the strategy gate (strategy match 1 of 3)), URTH 6 of 10 (fails the strategy gate (strategy match 1 of 3)), SPY 6 of 10 (fails the strategy gate (strategy match 1 of 3)). Required next: a published pre-IPO and venture strategy index with a series the record can hold."
     },
     "slot_k_relative_wealth_ratio": {
       "value": null,

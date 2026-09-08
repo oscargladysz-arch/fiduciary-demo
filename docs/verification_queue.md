@@ -30,7 +30,7 @@ this list whenever the script changes.
 - sreit 3.3 — gating history, requests above the cap (the misaligned structural verdict)
 - hl_paf 3.1 — quarterly offers, 5% cap per quarter on net assets (the 20% annual capacity in the scenario beat)
 
-### Tier 2 — screener-facing facts (typed layer inputs)
+### Tier 2 — screener-facing facts (inputs to the facts on record)
 - hl_paf 2.2 — incentive fee CURRENT terms (10.00% over Loss Recovery Account, approved 2025-03-14; 2021 12.5% terms superseded — corrected by facts-layer verification)
 - hl_paf 2.3 — expense ratios
 - hl_paf 2.7 — 2% early repurchase fee inside one year
@@ -49,7 +49,7 @@ this list whenever the script changes.
 - hl_paf 3.4 — net assets $5,785,749,989
 - stepstone_spm 3.6 — net assets $5,828.9M
 
-### Tier 3 — partial cells whose resolution unlocks typed facts
+### Tier 3 — partial cells whose resolution unlocks facts on record
 - cliffwater_cclfx 2.2 — confirm no incentive fee in prospectus (unlocks fact)
 - stepstone_spm 2.2 — confirm no fund-level incentive fee (unlocks fact)
 - stepstone_spm 2.7 — confirm no early repurchase fee (unlocks fact)

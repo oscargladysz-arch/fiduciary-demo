@@ -162,7 +162,7 @@ MAPPING = {
                              "repurchases by class and discloses no proration, "
                              "deferral or unsatisfied-request event for 2024-2025, "
                              "but the requested amounts are not printed, so a clean "
-                             "False would overclaim (R2-P1-12 rule)", "3.3",
+                             "False would overclaim (the completed-tender rule)", "3.3",
                              evidence_phrase="requested amounts are NOT printed"),
         "tax_form": F("K-1", "6.4"),
         "auditor": F("Deloitte & Touche LLP", "4.5"),
@@ -204,7 +204,7 @@ MAPPING = {
         "expense_ratio_pct": null("no TER line item exists for this '34-Act "
                                   "wrapper. Components in 2.1/2.2/2.6", "2.9"),
         "net_assets_usd": null("aggregate NAV printed in the MD&A NAV-by-class "
-                               "table but not yet carried into a typed cell. "
+                               "table but not yet carried into a fact on record. "
                                "Verification-queue item", "1.1"),
         "inception": null("explicit Class I inception date not printed in "
                           "on-disk filings. ITD basis year (2017 REIT "
@@ -233,7 +233,7 @@ MAPPING = {
                           note="Q2-2026 tender: requests exceeded the quarterly "
                                "limit and were accepted pro rata (10-Q footnote 4), "
                                "the first printed gating. FY2023 to FY2025 tenders "
-                               "were satisfied in full (R2-P1-12 rule)",
+                               "were satisfied in full (the completed-tender rule)",
                           evidence_phrase="requests exceeded quarterly limits, accepted pro-rata"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("Deloitte & Touche LLP", "4.5"),
@@ -243,7 +243,7 @@ MAPPING = {
                                     "cost of BDC leverage - not like-for-like "
                                     "with unlevered '40-Act ratios"),
         "net_assets_usd": null("aggregate net assets not yet carried into a "
-                               "typed cell. Verification-queue item", "3.6"),
+                               "fact on record. Verification-queue item", "3.6"),
         "inception": F("2021-01-07", "1.11", note="escrow break / operations start"),
     },
     "pflex": {
@@ -400,7 +400,7 @@ MAPPING = {
                              "incidence per offer are not printed (final tender "
                              "amendments not on disk). Four offers in each of "
                              "FY2025 and FY2026 establish continuity, not full "
-                             "fills (R2-P1-12 rule)", "3.3",
+                             "fills (the completed-tender rule)", "3.3",
                              evidence_phrase="NOT PRINTED: tendered-vs-accepted amounts"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("Ernst & Young LLP", "4.5"),
@@ -410,7 +410,7 @@ MAPPING = {
                                     "0.03% waiver). Includes 1.60% incentive-"
                                     "fee drag. AFFE excluded"),
         "net_assets_usd": null("aggregate net assets not yet carried into a "
-                               "typed cell. Verification-queue item", "3.6"),
+                               "fact on record. Verification-queue item", "3.6"),
         "inception": F("2022-04-01", "1.11", note="commenced operations"),
     },
     "amg_pantheon": {
@@ -430,7 +430,7 @@ MAPPING = {
                              "in the on-disk documents, but the tendered-versus-"
                              "accepted amounts per offer are not printed either. "
                              "Completed-tender dollars establish continuity, not "
-                             "full fills (R2-P1-12 rule)", "3.3",
+                             "full fills (the completed-tender rule)", "3.3",
                              evidence_phrase="No proration or oversubscription event is disclosed"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("KPMG LLP", "4.5"),
@@ -440,7 +440,7 @@ MAPPING = {
                                     "Expenses. Classes range 2.38-3.38% "
                                     "(differ only by distribution/servicing)"),
         "net_assets_usd": null("aggregate net assets not yet carried into a "
-                               "typed cell. Verification-queue item", "3.6"),
+                               "fact on record. Verification-queue item", "3.6"),
         "inception": F("2014-09-30", "1.11",
                        note="Fund inception (Class 4) - the roster's longest "
                             "'40-Act evergreen-PE record"),
@@ -481,8 +481,10 @@ MAPPING = {
         "big4": F(True, "4.5"),
         "expense_ratio_pct": null("no TER line exists for this '34-Act "
                                   "wrapper. Components in 2.1/2.2/2.6", "2.3"),
-        "net_assets_usd": null("aggregate NAV not yet carried into a typed "
-                               "cell. Verification-queue item", "1.1"),
+        "net_assets_usd": F(8250000000, "3.4", approx=True,
+                            note="NAV $8.25B at December 31, 2025 as printed in the liquidity "
+                                 "discussion of cell 3.4 (10-K FY2025), before the 2026 "
+                                 "repurchases recorded in cell 3.3"),
         "inception": F("2017-12-27", "1.11", note="IPO commencement"),
     },
     "jll_ipt": {
@@ -518,8 +520,8 @@ MAPPING = {
         "big4": F(True, "4.5"),
         "expense_ratio_pct": null("no TER line exists for this '34-Act "
                                   "wrapper. Components in 2.1/2.2/2.6", "2.3"),
-        "net_assets_usd": null("aggregate NAV not yet carried into a typed "
-                               "cell. Verification-queue item", "3.6"),
+        "net_assets_usd": null("aggregate NAV not yet carried into a fact on "
+                               "record. Verification-queue item", "3.6"),
         "inception": F("2012-10-01", "1.11",
                        note="continuous public offering commencement (REIT-"
                             "taxed since 2004 as a private predecessor)"),
@@ -562,7 +564,7 @@ MAPPING = {
                                     "fee regime changed 2026-07-15, so forward "
                                     "ratios will differ (see 2.1/2.2)"),
         "net_assets_usd": null("aggregate net assets not yet carried into a "
-                               "typed cell. Verification-queue item", "3.6"),
+                               "fact on record. Verification-queue item", "3.6"),
         "inception": F("2011-01-06", "1.11",
                        note="the roster's longest listed record (~15 years)"),
     },
@@ -583,7 +585,7 @@ MAPPING = {
                              "but the tendered-versus-accepted amounts are not "
                              "printed: the Sep-2024 offer was fully utilized at "
                              "its cap with proration, if any, not stated "
-                             "(R2-P1-12 rule)", "3.3",
+                             "(the completed-tender rule)", "3.3",
                              evidence_phrase="proration, if any, not stated"),
         "tax_form": F("1099", "6.4"),
         "auditor": F("Ernst & Young LLP", "4.5"),
@@ -592,7 +594,7 @@ MAPPING = {
                                note="FY2025 net of waivers (gross 4.39%), "
                                     "single class"),
         "net_assets_usd": null("aggregate net assets not yet carried into a "
-                               "typed cell. Verification-queue item", "3.6"),
+                               "fact on record. Verification-queue item", "3.6"),
         "inception": F("2022-09-01", "1.11", note="commencement of operations"),
     },
     "stepstone_spm": {
@@ -684,21 +686,65 @@ for _k, _b in EXPENSE_BASIS.items():
     assert MAPPING[_k]["expense_ratio_pct"]["value"] is not None, _k
     MAPPING[_k]["expense_ratio_pct"]["basis"] = _b
 
-# repurchase_program_status (P1-17): "suspended" only where cell 3.1 or 3.3
-# carries suspension language. Everything else is null with the reason, so
-# nothing is ever "active" by default.
+# filed since-inception annualized return (R3-P2-17d): typed only where cell
+# 1.2 prints one and the number was read here, so the reconciliation against
+# the held series prints a cited figure beside the series figure. Null with
+# the reason elsewhere in this round.
+FILED_SI_RETURN = {
+    "cliffwater_cclfx": (9.34, "average annual total return since inception on 6/5/2019 "
+                               "to 3/31/2026 as printed in the N-CSR"),
+}
 for _key, _m in MAPPING.items():
-    if _key == "sreit":
+    if _key in FILED_SI_RETURN:
+        _v, _n = FILED_SI_RETURN[_key]
+        _m["filed_since_inception_return_pct"] = F(_v, "1.2", note=_n)
+    else:
+        _m["filed_since_inception_return_pct"] = null(
+            "since-inception annualized return not read from cell 1.2 in this round", "1.2")
+
+# repurchase_program_status (P1-17, retyped R3-P2-7): one row per product, and
+# a product missing from the table fails the build, so nothing is "active" by
+# default. "active" is typed only from a verbatim run of cell 3.1's words that
+# show offers being made or requests being taken at the record's as-of date,
+# with no suspension language in 3.1 or 3.3. "suspended" carries the
+# amendment it dates from. An exchange-listed wrapper has no repurchase
+# program and stays null with that reason. Row: (status, the words of cell
+# 3.1 behind it, or the null reason).
+PROGRAM_STATUS = {
+    "hl_paf": ("active", "Most recent: up to 5.00% of net assets"),
+    "cliffwater_cclfx": ("active", "Rule 23c-3 periodic repurchase offer: up to five percent "
+                                   "(5%) of outstanding shares, quarterly"),
+    "kkr_kpec": ("active", "Quarterly share repurchase plan: limited to 5.0% of aggregate NAV"),
+    "breit": ("active", "Repurchase caps: 2% of aggregate NAV per MONTH, 5% per QUARTER"),
+    "bcred": ("active", "Current SC TO-I (2026-08-04): up to 90,421,330 shares"),
+    "pflex": ("active", "currently expects 5% per quarter"),
+    "ocic": ("active", "quarterly issuer tender offers at the current net offering price per class"),
+    "cion_ares": ("active", "Quarterly repurchases occur in March, June, September and December"),
+    "ares_pmf": ("active", "Live offer (SC TO-I filed 2026-06-01)"),
+    "amg_pantheon": ("active", "the live Aug-2026 offer is sized at approx. 5% of Units outstanding"),
+    "jll_ipt": ("active", "stockholders may request repurchase of all or part of their shares any day"),
+    "arkvx": ("active", "every actual offer to date has been, the 5% minimum"),
+    "stepstone_spm": ("active", "Quarterly tender offers: up to 5% of OUTSTANDING SHARES"),
+    "sreit": ("suspended", "we suspended our share repurchase program"),
+    "dxyz": (None, "exchange-listed, no repurchase program"),
+    "ssss": (None, "exchange-listed, no repurchase program"),
+}
+assert set(PROGRAM_STATUS) == set(MAPPING), sorted(set(PROGRAM_STATUS) ^ set(MAPPING))
+for _key, (_status, _words) in PROGRAM_STATUS.items():
+    _m = MAPPING[_key]
+    if _status is None:
+        _m["repurchase_program_status"] = null(_words, "3.1")
+    elif _status == "suspended":
         _m["repurchase_program_status"] = F(
-            "suspended", "3.1", since="April 29, 2026 amendment",
+            "suspended", "3.1", since="April 29, 2026 amendment", as_of=AS_OF[_key],
             note="April 29, 2026 amendment: 'no repurchase requests will be accepted' "
                  "except death, qualifying disability and accounts below $5,000",
-            evidence_phrase="we suspended our share repurchase program")
-    elif _m["wrapper_type"]["value"] in ("listed_cef", "listed_bdc"):
-        _m["repurchase_program_status"] = null("exchange-listed, no repurchase program", "3.1")
+            evidence_phrase=_words)
     else:
-        _m["repurchase_program_status"] = null(
-            f"no suspension language in 3.1 or 3.3 as of {AS_OF[_key]}", "3.1")
+        _m["repurchase_program_status"] = F(
+            "active", "3.1", as_of=AS_OF[_key], evidence_phrase=_words,
+            note=f"offers being made per cell 3.1, no suspension language in 3.1 or 3.3 "
+                 f"as of {AS_OF[_key]}")
 
 # Dealing cadence and repurchase caps (R2-P0-5), typed from cell 3.1's own
 # words. The dealing cadence is how often a holder can deal (daily, monthly,
@@ -824,12 +870,12 @@ def main() -> None:
             facts = {field: {"value": None, "source_cell": "6.1",
                              "status": "pending",
                              "reason": "cohort-tier extraction in progress "
-                                       "(see data/roster_decisions.md)"}
+                                       "(see the roster decisions record)"}
                      for field in FIELD_ORDER}
             facts["track_record_years"] = dict(facts["inception"])
             doc = {"product_key": key, "cohort_id": cohort_id, "depth": depth,
                    "membership_rationale": rationale,
-                   "what": "typed projections of evidenced cells - scaffold "
+                   "what": "facts read from evidenced cells - scaffold "
                            "pending cohort-tier extraction",
                    "generated_by": "src/build_facts.py",
                    "facts": facts}
@@ -869,12 +915,12 @@ def main() -> None:
             assert len(structural) == 1, f"{key}: structural verdict differs across plans"
             facts["liquidity_structural_verdict"] = {
                 "value": structural.pop(), "source_cell": "3.9", "status": "computed",
-                "note": "from typed facts only (cells 3.1, 3.3, 2.7), plan-independent"}
+                "note": "from the dealing terms on record only (cells 3.1, 3.3, 2.7), plan-independent"}
             facts["liquidity_verdict_by_plan"] = {
                 "value": {pk: m.get("scenario_verdict") for pk, m in matches.items()},
                 "source_cell": "3.9", "status": "computed",
                 "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the "
-                        "default sliders against the typed capacity)"}
+                        "default turnover assumptions against the recorded capacity)"}
         else:
             facts["liquidity_structural_verdict"] = {
                 "value": None, "source_cell": "3.9", "status": "pending",
@@ -892,23 +938,28 @@ def main() -> None:
         # every surface).
         ENGINE_NULL = ("primary_benchmark_id", "selection_score", "pme_public_proxy",
                        "pme_public_proxy_name", "direct_alpha_public_proxy", "peer_relative_wealth_ratio",
-                       "slot_k_relative_wealth_ratio")
+                       "slot_k_relative_wealth_ratio", "slot_k_by_descriptor")
         sk = (sel or {}).get("slot_k") or {}
         if sel is None or "slot_k" not in sel:
             for fld in ENGINE_NULL:
                 facts[fld] = {"value": None, "source_cell": "1.8",
                               "status": "pending",
-                              "reason": "engine selection not yet run for this product"}
+                              "reason": "selection not yet run for this product"}
         else:
             from tark_display import candidate_short
             selected = sk.get("selected")
             if selected:
                 facts["primary_benchmark_id"] = F(selected["id"], "5.3", status="computed")
                 facts["selection_score"] = F(selected["score"], "5.3", status="computed")
+                facts["slot_k_by_descriptor"] = F(bool(selected.get("by_descriptor")), "5.3", status="computed",
+                                                  note=("the meaningful benchmark is a cited index whose series is "
+                                                        "not held (decision 8.5)" if selected.get("by_descriptor")
+                                                        else "the meaningful benchmark carries its own comparison"))
             else:
-                esc = "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+                esc = "escalation: no meaningful benchmark constructible (see the selection record)"
                 facts["primary_benchmark_id"] = {"value": None, "source_cell": "5.3", "status": "computed", "reason": esc}
                 facts["selection_score"] = {"value": None, "source_cell": "5.3", "status": "computed", "reason": esc}
+                facts["slot_k_by_descriptor"] = {"value": None, "source_cell": "5.3", "status": "computed", "reason": esc}
             # the public-series PME: Slot K's own when Slot K is a public
             # market series, else the reference comparison, named as such
             comp_k = (selected or {}).get("comparison") or {}
@@ -951,7 +1002,7 @@ def main() -> None:
                     "reason": "peer composite refused: " + (g.get("reason") or "no cohort")}
         doc = {"product_key": key, "cohort_id": cohort_id, "depth": depth,
                "membership_rationale": rationale,
-               "what": "typed projections of evidenced cells, zero new facts. "
+               "what": "facts read from evidenced cells, zero new facts. "
                        "Every field carries its source_cell and mirrors its status",
                "generated_by": "src/build_facts.py (hand-mapping machine-checked "
                                "by validate_data.py)",

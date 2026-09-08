@@ -1,0 +1,260 @@
+{
+  "product": "jll_ipt",
+  "strategy": "nontraded_reit",
+  "cohort": "nontraded_reit",
+  "source_cells": [
+    "1.2",
+    "5.1"
+  ],
+  "rubric_version": "v3.1",
+  "rubric": "Tark benchmark rubric, 10 points: strategy match 3 (gate below 2), risk and liquidity match 3, provider independence 2 (an affiliated provider is ineligible), data held 2, threshold 6 of 10",
+  "threshold": {
+    "min_score": 6,
+    "max": 10,
+    "fraction": 0.6,
+    "strategy_gate_min": 2,
+    "strategy_gate_max": 3
+  },
+  "basis": {
+    "kind": "none",
+    "label": "no computable return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
+  },
+  "slot_k": {
+    "label": "Meaningful benchmark (paragraph (k))",
+    "selected": {
+      "candidate": "NCREIF Fund Index - ODCE (private core RE)",
+      "id": "odce",
+      "lane": "A",
+      "declared_type": "declared",
+      "score": 8,
+      "max": 10,
+      "criteria": {
+        "strategy_match": 3,
+        "risk_liquidity_match": 3,
+        "provider_independence": 2,
+        "data_held": 0
+      },
+      "held": false,
+      "comparator_kind": "appraisal-based published series",
+      "series_id": "cited:odce",
+      "reasons": [
+        "Strategy match 3 of 3: a private-market index of real estate for a core non-traded real estate fund",
+        "Risk and liquidity match 3 of 3: appraisal-based index of periodically dealt funds against a periodically dealt NAV fund with every request filled in full per the filings (daily dealing at NAV under 5% cap per quarter): the pricing process and the liquidity process both match",
+        "Provider independence 2 of 2: provider unaffiliated with the fund (NCREIF): the registry affiliation map ties it to none of the fund's advisers",
+        "Data held 0 of 2: cited, series not in the record: no comparison can be computed yet"
+      ],
+      "comparison": null,
+      "comparison_note": "Meaningful benchmark by descriptor. No comparison until its series is held.",
+      "by_descriptor": true
+    },
+    "escalation": null,
+    "max_attainable": 8,
+    "ties": []
+  },
+  "slot_g": {
+    "label": "Peer comparison (paragraphs (g) and (h))",
+    "cohort": "nontraded_reit",
+    "cohort_label": "non-traded real estate cohort",
+    "members": [
+      "breit",
+      "sreit"
+    ],
+    "member_names": [
+      "Blackstone Real Estate Income Trust Inc",
+      "Starwood Real Estate Income Trust, Inc."
+    ],
+    "member_source": {
+      "Blackstone Real Estate Income Trust Inc": "filed calendar-year returns (December fiscal year)",
+      "Starwood Real Estate Income Trust, Inc.": "filed calendar-year returns (December fiscal year)",
+      "JLL Income Property Trust, Inc.": null
+    },
+    "member_period_kind": {
+      "Blackstone Real Estate Income Trust Inc": "calendar_year",
+      "Starwood Real Estate Income Trust, Inc.": "calendar_year",
+      "JLL Income Property Trust, Inc.": "none"
+    },
+    "table": [
+      {
+        "period": "2023-12-31",
+        "label": "2023",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Blackstone Real Estate Income Trust Inc": -0.5,
+          "Starwood Real Estate Income Trust, Inc.": null,
+          "JLL Income Property Trust, Inc.": null
+        }
+      },
+      {
+        "period": "2024-12-31",
+        "label": "2024",
+        "period_kind": "calendar_year",
+        "n": 1,
+        "returns": {
+          "Blackstone Real Estate Income Trust Inc": 2.0,
+          "Starwood Real Estate Income Trust, Inc.": null,
+          "JLL Income Property Trust, Inc.": null
+        }
+      },
+      {
+        "period": "2025-12-31",
+        "label": "2025",
+        "period_kind": "calendar_year",
+        "n": 2,
+        "returns": {
+          "Blackstone Real Estate Income Trust Inc": 8.1,
+          "Starwood Real Estate Income Trust, Inc.": -2.4,
+          "JLL Income Property Trust, Inc.": null
+        }
+      }
+    ],
+    "survivorship_note": "The cohort is the roster's 3 surviving, still-filing products. Funds that closed, merged, or stopped filing are not in it, so any composite carries survivorship bias in the fund's favor. Membership rationales and exclusions are in the roster record.",
+    "heterogeneity_note": "Members span one wrapper type (non-traded REIT) and one leverage regime (charter-level borrowing limits, no 1940-Act coverage test). Fee bases, leverage and exit rights are not like-for-like, so the comparison is a history of similar investments, not a like-for-like index.",
+    "composite": {
+      "n_peers": 2,
+      "weighting": "equal-weight across peers, only over periods every peer reports",
+      "statistic": "relative wealth ratio vs peer composite",
+      "not_pme_note": "Not a public market equivalent: the peer composite is appraisal-based, constructed by the evaluator and cannot be bought.",
+      "status": "refused",
+      "reason": "fewer than 3 peers remain after leaving JLL Income Property Trust, Inc. out (2: Blackstone Real Estate Income Trust Inc, Starwood Real Estate Income Trust, Inc.)",
+      "candidate": "Peer composite, non-traded real estate cohort without JLL Income Property Trust, Inc.",
+      "kind": "composite"
+    }
+  },
+  "reference_comparison": null,
+  "reference_skipped": [
+    {
+      "id": "vnq",
+      "candidate": "Listed REIT investable proxy (VNQ)",
+      "note": "no computable fund return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
+    }
+  ],
+  "declared": [
+    {
+      "name": "NFI-ODCE",
+      "candidate_id": "odce",
+      "cell": "5.1",
+      "type": "declared",
+      "type_label": "declared benchmark",
+      "held": false,
+      "status": "cited, not held, scored 8 of 10, selected for Slot K",
+      "comparison": null,
+      "comparison_note": "no computable fund return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
+    },
+    {
+      "name": "S&P 500",
+      "candidate_id": "spy",
+      "cell": "5.1",
+      "type": "sec_required_comparator",
+      "type_label": "SEC-required comparator",
+      "held": true,
+      "status": "held, scored 5 of 10, fails the strategy gate (strategy match 0 of 3)",
+      "comparison": null,
+      "comparison_note": "no computable fund return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
+    }
+  ],
+  "declared_none_reason": null,
+  "rejected": [
+    {
+      "candidate": "Listed REIT investable proxy (VNQ)",
+      "id": "vnq",
+      "lane": "B",
+      "declared_type": null,
+      "score": 7,
+      "max": 10,
+      "criteria": {
+        "strategy_match": 2,
+        "risk_liquidity_match": 1,
+        "provider_independence": 2,
+        "data_held": 2
+      },
+      "held": true,
+      "comparator_kind": "public market series",
+      "series_id": "vnq",
+      "reasons": [
+        "Strategy match 2 of 3: the public-market version of the asset class (listed REITs for core non-traded real estate)",
+        "Risk and liquidity match 1 of 3: daily-liquid market series against a semi-liquid NAV fund (daily dealing at NAV under 5% cap per quarter): volatility and liquidity regimes differ, the PME construct exists for exactly this comparison",
+        "Provider independence 2 of 2: provider unaffiliated with the fund (Vanguard / MSCI US REIT): the registry affiliation map ties it to none of the fund's advisers",
+        "Data held 2 of 2: daily public market series held (exchange-traded proxy, Yahoo adjusted close)"
+      ],
+      "rejection": "ranked below the selected candidate: 7 of 10 vs 8 of 10 for NFI-ODCE",
+      "tied": false
+    },
+    {
+      "candidate": "S&P 500 investable proxy (SPY)",
+      "id": "spy",
+      "lane": "A",
+      "declared_type": "sec_required_comparator",
+      "score": 5,
+      "max": 10,
+      "criteria": {
+        "strategy_match": 0,
+        "risk_liquidity_match": 1,
+        "provider_independence": 2,
+        "data_held": 2
+      },
+      "held": true,
+      "comparator_kind": "public market series",
+      "series_id": "spy",
+      "reasons": [
+        "Strategy match 0 of 3: unrelated asset class (public equity for real estate)",
+        "Risk and liquidity match 1 of 3: daily-liquid market series against a semi-liquid NAV fund (daily dealing at NAV under 5% cap per quarter): volatility and liquidity regimes differ, the PME construct exists for exactly this comparison",
+        "Provider independence 2 of 2: provider unaffiliated with the fund (SPDR / S&P DJI): the registry affiliation map ties it to none of the fund's advisers",
+        "Data held 2 of 2: daily public market series held (exchange-traded proxy, Yahoo adjusted close)"
+      ],
+      "rejection": "rejected: strategy gate (score 5 of 10 but strategy match 0 of 3)",
+      "tied": false
+    }
+  ],
+  "recorded_at": "2026-09-04T00:00:00Z",
+  "inputs": {
+    "cells": [
+      "1.2",
+      "3.1",
+      "3.3",
+      "5.1"
+    ],
+    "accessions": [
+      {
+        "accession": "0001314152-26-000030",
+        "cell": "5.1",
+        "form": "10-K",
+        "filing_date": "2026-03-26"
+      }
+    ],
+    "series": [
+      {
+        "path": "data/series/spy.csv",
+        "sha256": "c3dcaf06943095125e171a3fc3c12160bfa1cf32f6253ed3be528eddb2069656"
+      },
+      {
+        "path": "data/series/vnq.csv",
+        "sha256": "dbd55d6c96626ce8a448fc8fc350af6bf15de475f0259a206053732be8ce5b1e"
+      }
+    ],
+    "descriptors": {
+      "registry": {
+        "path": "data/registry.json",
+        "product": "jll_ipt",
+        "sha256": "a0cfb6534b3aafc88d35ec2896f1c6a2e663ab855cd3f0d4c1ff11bc20bc14b9"
+      },
+      "facts": {
+        "path": "data/facts/jll_ipt.json",
+        "fields": [
+          "dealing_cadence",
+          "cap_period",
+          "repurchase_caps",
+          "gate_history",
+          "repurchase_program_status"
+        ],
+        "sha256": "f28b69a73e75ab5eafdf03d89ccf8cda120affbd797f4b6e8a4f2ecc35b19c24"
+      },
+      "candidates": {
+        "count": 3,
+        "sha256": "1bcab1aed043714ef9dae50e385104293c332c7e50ae688c87a6df59acb48c59"
+      }
+    },
+    "note": "filings are locked by accession, the record holds no filing bytes. Series and descriptors are locked by content hash. The record hash covers this whole document."
+  },
+  "record_hash": "a9c6e1ed21dbd135badc83dae4bf398010253b87393dc16d29aa83a461acc358"
+}

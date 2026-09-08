@@ -3,7 +3,7 @@
   "cohort_id": "nontraded_reit",
   "depth": "cohort",
   "membership_rationale": "Non-traded monthly-NAV REIT - breit's closest structural twin (class structure, repurchase plan, 2022-24 stress history).",
-  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
+  "what": "facts read from evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -89,9 +89,10 @@
       "status": "n/a - not publicly available: no TER disclosure exists for a '34-Act non-traded REIT - zero hits for 'expense ratio' in the stripped FY2025 10-K and Q2-2026 10-Q; fee-burden components evidenced in 2.1/2.2/2.6/2.7"
     },
     "net_assets_usd": {
-      "value": null,
-      "source_cell": "1.1",
-      "reason": "aggregate NAV not yet carried into a typed cell. Verification-queue item",
+      "value": 8250000000,
+      "source_cell": "3.4",
+      "approx": true,
+      "note": "NAV $8.25B at December 31, 2025 as printed in the liquidity discussion of cell 3.4 (10-K FY2025), before the 2026 repurchases recorded in cell 3.3",
       "status": "extracted-unverified"
     },
     "inception": {
@@ -108,10 +109,17 @@
       "note": "10-K REIT, no 1940-Act fee table, so no AFFE line exists",
       "status": "extracted-unverified"
     },
+    "filed_since_inception_return_pct": {
+      "value": null,
+      "source_cell": "1.2",
+      "reason": "since-inception annualized return not read from cell 1.2 in this round",
+      "status": "extracted-unverified"
+    },
     "repurchase_program_status": {
       "value": "suspended",
       "source_cell": "3.1",
       "since": "April 29, 2026 amendment",
+      "as_of": "2025-12-31",
       "note": "April 29, 2026 amendment: 'no repurchase requests will be accepted' except death, qualifying disability and accounts below $5,000",
       "evidence_phrase": "we suspended our share repurchase program",
       "status": "extracted-unverified"
@@ -151,7 +159,7 @@
       "value": "misaligned",
       "source_cell": "3.9",
       "status": "computed",
-      "note": "from typed facts only (cells 3.1, 3.3, 2.7), plan-independent"
+      "note": "from the dealing terms on record only (cells 3.1, 3.3, 2.7), plan-independent"
     },
     "liquidity_verdict_by_plan": {
       "value": {
@@ -162,7 +170,7 @@
       },
       "source_cell": "3.9",
       "status": "computed",
-      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
+      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default turnover assumptions against the recorded capacity)"
     },
     "primary_benchmark_id": {
       "value": "odce",
@@ -170,9 +178,15 @@
       "status": "computed"
     },
     "selection_score": {
-      "value": 9,
+      "value": 7,
       "source_cell": "5.3",
       "status": "computed"
+    },
+    "slot_k_by_descriptor": {
+      "value": true,
+      "source_cell": "5.3",
+      "status": "computed",
+      "note": "the meaningful benchmark is a cited index whose series is not held (decision 8.5)"
     },
     "pme_public_proxy": {
       "value": 0.9453,

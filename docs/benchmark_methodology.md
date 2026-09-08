@@ -157,28 +157,36 @@ strategy_match Y/3)". A declared benchmark or SEC-required comparator that
 fails the gate stays on the card as a fact with that sentence, and its own
 comparison is still computed when its series is held (section 7).
 
-## 6. Scoring rubric v3, Slot K (12 points)
+## 6. Scoring rubric v3.1, Slot K (10 points)
+
+Four criteria. The fifth criterion of v3, pricing basis match, was a
+function of the same two inputs as the risk criterion (the fund's pricing
+class and the candidate's liquidity class) and double-counted them, so
+every cited appraisal index beat every held ETF by exactly one point.
+It is dropped (R3-P2-2). The threshold and the gate are fractions of
+their maxima, printed as "x of N" on every surface.
 
 | criterion | points | rule |
 |---|---:|---|
-| strategy_match | 0 to 3 | the matrix in section 5, gate below 2 |
-| risk_liquidity_match | 0 to 3 | read from the facts layer (dealing cadence, cap period, caps, gate history, program status) against the candidate's typed liquidity class, never from the cadence of the held return file. 3: an appraisal-based index of periodically dealt funds whose constituents' leverage regime is typed and equals the fund's. 2: an appraisal-based index against a NAV fund where the constituents' regime is not typed or the index has no dealing mechanism of its own, or a daily market series for an exchange-traded fund whose price tracks NAV. 1: a daily market series against a semi-liquid NAV fund (the case the PME construct exists for). 0: the fund's price is decoupled from its NAV, or an appraisal index for a market-priced fund. The reason prints the fund's terms ("quarterly dealing at NAV under 5% cap per quarter", "repurchases suspended", "requests prorated"). |
-| provider_independence | 0 or 2 | 0 when the registry's affiliation map ties the candidate's provider entity to one of the fund's adviser entities, and 0 makes the candidate ineligible for Slot K: an index the fund's own adviser publishes is never the fund's meaningful benchmark. 2 otherwise. Affiliation is a fact read from the map, never a string match. |
-| data_held | 0 or 2 | the one possession criterion. 2 when the candidate's series is in the record, public (Yahoo adjusted close) or published (an acquired headline series). 0 when it is cited or licensed and not held. Possession moves 2 of 12 points, not 4 (audit round 2 item 14). |
-| pricing_basis_match | 0 to 2 | 2 when the candidate prices the way the fund does (appraisal NAV against a NAV fund, market against an exchange-traded fund). 1 when a market-priced series stands in for an appraisal fund. 0 when an appraisal index is offered for a market-priced fund. |
+| strategy match | 0 to 3 | the matrix in section 5, gate below 2 of 3 |
+| risk and liquidity match | 0 to 3 | read from the facts layer (dealing cadence, caps, gating history, program status) against the candidate's typed liquidity class, never from the cadence of the held return file. 3: an appraisal-based index against a periodically dealt NAV fund whose filings disclose no proration and no suspension, or a daily market series against an exchange-traded fund whose price tracks NAV. 2: an appraisal-based index against a NAV fund that has prorated requests or suspended repurchases (the index carries no such gate). 1: a daily market series against a semi-liquid NAV fund (the case the PME construct exists for). 0: the fund's price is decoupled from its NAV, or an appraisal index for a market-priced fund. Every input that fires is named in the reason, and the gate asserts that perturbing gating history, program status or dealing cadence moves the criterion. A null gating history counts as "no proration or suspension disclosed in the filings on record", and the reason says so. |
+| provider independence | 0 or 2 | 0 when the registry's affiliation map ties the candidate's provider entity to one of the fund's adviser entities, and 0 makes the candidate ineligible for Slot K: an index the fund's own adviser publishes is never the fund's meaningful benchmark. 2 otherwise. Affiliation is a fact read from the map, never a string match. |
+| data held | 0 or 2 | the one possession criterion. 2 when the candidate's series is in the record, public (Yahoo adjusted close) or published (an acquired headline series). 0 when it is cited or licensed and not held. Possession moves 2 of 10 points. |
 
-Threshold 7. A synthetic candidate scores 12 and the gate asserts it. On
-the record today no candidate reaches `risk_liquidity_match` 3 because no
-index's constituent leverage regime is typed. The card prints "max
-attainable by an eligible candidate on held data N/12" per product, the
-highest score any eligible candidate reaches, so the reader sees the
-ceiling the data sets.
+Threshold: six tenths of the maximum, 6 of 10 (the nearest tenth at or
+above the 7 of 12 the v3 rubric used). Gate: strategy match 2 of 3. A
+synthetic candidate scores 10 of 10 and the gate asserts it. On the record
+today the strategy-exact appraisal indices reach 3 of 3 on the risk
+criterion for every NAV fund whose filings disclose no proration and no
+suspension. The card prints "max attainable by an eligible candidate on
+held data N of 10" per product.
 
 Properties the gate asserts: moving one input moves one criterion
-(affiliation moves independence alone, acquiring a series moves data_held
-alone, a sub-strategy change moves strategy_match alone), the held return
-file's cadence moves nothing, and the words "published by the fund's own
-adviser" appear only where the map says so.
+(affiliation moves independence alone, acquiring a series moves data held
+alone, a sub-strategy change moves strategy match alone), the held return
+file's cadence moves nothing, perturbing any typed liquidity fact moves the
+risk criterion for at least one candidate class, and the words "published
+by the fund's own adviser" appear only where the map says so.
 
 ## 7. Lanes, the reference comparison, escalation
 
@@ -187,45 +195,57 @@ adviser" appear only where the map says so.
   performance benchmark (dxyz's NASDAQ Composite, stepstone_spm's MSCI
   World, jll_ipt's NFI-ODCE). "SEC-required comparator": a broad-based
   index shown because the shareholder report or 10-K must show one (hl_paf,
-  amg_pantheon, ares_pmf, arkvx, ssss, pflex's ICE BofA US High Yield,
-  cion_ares's Credit Suisse Leveraged Loan, jll_ipt's S&P 500,
-  cliffwater_cclfx's two illustrative comparators). Both types are scored
-  in Slot K like any other candidate. The declaration itself earns no
-  points. Every Lane A entry with a held series gets its own fund-versus-
-  index comparison, shown on the card and in the memo even when it is not
-  selected. A product with no "declared" entry states why.
+  amg_pantheon, ares_pmf, arkvx, ssss's S&P 500 and Nasdaq index, pflex's
+  ICE BofA US High Yield, cion_ares's Credit Suisse Leveraged Loan,
+  jll_ipt's S&P 500, cliffwater_cclfx's two illustrative comparators). Both
+  types are scored in Slot K like any other candidate. The declaration
+  itself earns no points. Every Lane A entry with a held series gets its
+  own fund-versus-index comparison, shown on the card and in the memo even
+  when it is not selected, except for a fund whose price is decoupled from
+  its NAV (dxyz, ssss): no comparison is computed on a market-price series,
+  it would benchmark the premium, not the portfolio (R3-P2-4). A product
+  with no "declared" entry states why.
 - Lane B: exchange-traded strategy proxies with a held series.
 - Lane P: published strategy indices. Cited until their headline series is
   acquired (R2-P1-1, section 9.3), then held with a relative wealth ratio.
-- A cited candidate can be Slot K. It carries no number and the card says
-  "cited, series not in the record: no comparison computed". When Slot K
-  carries no number, the highest-ranked held public market series that
-  passes the gate and the affiliation rule is shown as the reference
-  comparison, named "reference comparison, not the meaningful benchmark",
-  on the card, in cell 1.8, in the facts and in the memo.
+- A cited candidate can be Slot K. It holds the slot by descriptor
+  (decision 8.5): the card, cell 5.3, the Screener, Compare and the record
+  print one sentence, "Meaningful benchmark by descriptor. No comparison
+  until its series is held.", and the selection record carries the typed
+  flag `by_descriptor`. When Slot K carries no number, the highest-ranked
+  held public market series that passes the gate and the affiliation rule
+  is shown as the reference comparison, named "reference comparison, not
+  the meaningful benchmark", on the card, in cell 1.8, in the facts, on the
+  Screener and Compare columns ("KS-PME vs reference proxy") and in the
+  memo. The reference loop continues past a held proxy whose comparison is
+  not computable and records the candidates it passed over with the reason
+  (`reference_skipped`, R3-P2-6).
 - Escalation is generated from the strategy's display name and the
-  candidates scored (R2-P1-7). Computable escalation: no candidate passes
-  the gate at or above 7, the text lists every candidate with its score and
-  the reason it fell and names what would change it (a held series for the
-  strategy-exact candidates on the menu, or a published index for the
-  strategy). Flag path: the fund's price is decoupled from NAV (dxyz,
+  candidates scored (R2-P1-7). Computable escalation: the text says which
+  of two things every candidate did, fail the strategy gate (strategy match
+  below 2 of 3) or score below the threshold (6 of 10), lists every
+  candidate with its score and the reason it fell, and names what would
+  change it. Flag path: the fund's price is decoupled from NAV (dxyz,
   ssss), the text says every candidate would benchmark the premium.
 
 ## 8. Ties, short windows, one basis
 
-Candidates are ordered by score, then strategy_match, then
-risk_liquidity_match, then data held, then candidate name. An eligible
-candidate with the same score as the selection is logged "tied: tied on
-score, ordered by strategy_match, then risk_liquidity_match, then data
-held, then alphabetical" and the card names it. The word "outranked" does
-not appear (audit round 2 item 18).
+Candidates are ordered by score, then strategy match, then risk and
+liquidity match, then data held, then candidate name. An eligible candidate
+with the same score as the selection carries the typed flag `tied` and the
+one tie sentence, "Tied on score. Ordered by strategy match, then risk and
+liquidity match, then data held, then name.", on the card, in cell 5.6 and
+in the memo. The word "outranked" does not appear (audit round 2 item 18).
 
 A comparison window shorter than 3 years is labeled "low confidence:
 N-year window" on the card and in the memo.
 
 One return basis per product (R2-P1-6): the registry's `held_returns` kind
 feeds every slot and every Lane A comparison, and the gate asserts that
-every comparison of a product names the same fund return source.
+every comparison of a product names the same fund return source. A NAV
+fund's held series is labeled "Yahoo adjusted close, approximates NAV total
+return". An exchange-traded fund's is labeled "Yahoo adjusted close, a
+market price with distributions reinvested, not NAV" (R3-P2-4).
 stepstone_spm uses its filed fiscal-year series (FY2022 to FY2026, Class
 I). kkr_kpec uses its filed GAAP-NAV calendar-year returns (2024 and 2025,
 Class I, the 2023 period from commencement is partial and excluded). The
@@ -256,15 +276,21 @@ member's return or "n/a", and n, the count of members reporting. It is
 printed for every cohort, refused or not.
 
 The composite is leave-one-out for the subject, equal-weight, formed only
-over periods that every peer reports on the same period kind with the
-same year-end month (identical start and end dates), with at least three
-peers. The ratio runs over the longest run of consecutive common periods
-the subject also reports. Refusals, each with its reason on the card and
-in cell 1.12: fewer than three peers (the non-traded REIT and venture
-cohorts), heterogeneous pricing bases (market price against appraisal
-NAV), members on different year ends (evergreen private equity: March and
-December), no common period. Calendar-quarter alignment waits for
-quarterly total returns, which no annual-tier member prints.
+over periods that every aligned peer reports on the subject's own period
+kind with the same year-end month (identical start and end dates), with at
+least three aligned peers. A peer on another basis is excluded from the
+composite by name with the reason, and stays in the side-by-side table
+with its own periods and n (R3-P2-5: evergreen private equity forms its
+composite over the four March-year-end members and excludes the
+December-year-end member, and that member as the subject is refused
+because no peer shares its basis). The ratio runs over the longest run of
+consecutive common periods the subject also reports. Refusals, each with
+its reason on the card and in cell 1.12: fewer than three peers (the
+non-traded REIT and venture cohorts), heterogeneous pricing bases (market
+price against appraisal NAV), fewer than three peers on the subject's
+basis, a member with no period returns on record (named), no common
+period. Calendar-quarter alignment waits for quarterly total returns, which
+no annual-tier member prints.
 
 Every Slot G block carries a survivorship sentence (the cohort is the
 roster's surviving, still-filing products, so a composite carries
@@ -298,15 +324,15 @@ card, in every memo and packet, and on the Screener's column headers.
 
 ### 11.1 cliffwater_cclfx
 
-Slot K. CDLI scores 7/12 (strategy 3, risk 2, independence 0, data held
-0, pricing basis 2) and is ineligible: Cliffwater publishes it and advises
-the fund, per the affiliation map. BKLN scores 8/12 (strategy 2, risk 1,
-independence 2, data held 2, pricing basis 1) and is selected. The three
-other credit indices (Morningstar LSTA, Credit Suisse Leveraged Loan,
-Bloomberg US Aggregate) score 6/12, cited, below the threshold. The
-comparison against BKLN over 2019-06-05 to 2026-07-17 on the fund's
-Yahoo adjusted close: KS-PME 1.2532, Direct Alpha 3.22%/yr, fund 7.89%/yr
-against the proxy's 4.52%/yr. Max attainable 8/12.
+Slot K. CDLI scores 6 of 10 (strategy 3, risk 3, independence 0, data held
+0) and is ineligible: Cliffwater publishes it and advises the fund, per the
+affiliation map. BKLN scores 7 of 10 (strategy 2, risk 1, independence 2,
+data held 2) and is selected. The three other credit indices (Morningstar
+LSTA, Credit Suisse Leveraged Loan, Bloomberg US Aggregate) score 5 of 10,
+cited, below the threshold. The comparison against BKLN over 2019-06-05 to
+2026-07-17 on the fund's Yahoo adjusted close: KS-PME 1.2532, Direct Alpha
+3.22%/yr, fund 7.89%/yr against the proxy's 4.52%/yr. Max attainable 7 of
+10.
 
 Slot G. Peers: bcred, pflex, cion_ares, ocic, each on its one basis
 (calendar years from the adjusted close for pflex and cion_ares, filed
@@ -318,19 +344,21 @@ recomputation against the three December-fiscal-year peers alone (item
 
 ### 11.2 hl_paf
 
-Slot K. The Cambridge Associates US PE benchmark scores 9/12 (strategy 3,
-risk 2, independence 2, data held 0, pricing basis 2) and is selected,
-cited and not held, so it carries no number. PSP scores 8/12 (strategy 2,
-risk 1, independence 2, data held 2, pricing basis 1) and is the reference
-comparison: KS-PME 1.9565 over 2021-03-31 to 2026-03-31 on the filed
-fiscal-year returns, named on the card as a reference and not the
-benchmark. The SEC-required comparators (S&P 500, MSCI World) fail the
-strategy gate at 7/12 and still show their own comparisons.
+Slot K. The Cambridge Associates US PE benchmark scores 8 of 10 (strategy
+3, risk 3, independence 2, data held 0) and is selected by descriptor,
+cited and not held, so it carries no number and the card prints the
+decided sentence. PSP scores 7 of 10 (strategy 2, risk 1, independence 2,
+data held 2) and is the reference comparison: KS-PME 1.9565 over
+2021-03-31 to 2026-03-31 on the filed fiscal-year returns, named on the
+card as a reference and not the benchmark. The SEC-required comparators
+(S&P 500, MSCI World) fail the strategy gate at 6 of 10 and still show
+their own comparisons.
 
-Slot G. The four peers report March fiscal years (stepstone_spm, ares_pmf,
-amg_pantheon) and calendar years (kkr_kpec), so the composite ratio is
-refused with that reason and the side-by-side table is shown with n per
-period.
+Slot G. Three of the four peers report March fiscal years (stepstone_spm,
+ares_pmf, amg_pantheon) and form the composite with the fund over FY2023
+to FY2026, n=3 in every period, relative wealth ratio 1.0971. kkr_kpec
+reports calendar years and is excluded by name with that reason, and stays
+in the side-by-side table.
 
 ## 12. Rule mapping
 
@@ -343,3 +371,20 @@ Independence, data held and pricing basis are process quality under the
 prudence standard, which the rule text does not enumerate. Until the
 authority text has been fetched and hashed into the build, no surface
 quotes the rule.
+
+## 13. The selection lock (R3-P2-19)
+
+Every selection record carries `recorded_at` (the record's as-of instant,
+midnight UTC of the as-of date in `data/as_of.json`, never a wall clock,
+so the producer run reproduces byte for byte), `rubric_version`, `inputs`
+(the filings by accession for the cells the rubric reads, each a manifest
+row with its form and filing date, the series files by content hash, and
+the descriptors read from the registry and the facts by a hash of the
+exact values), and `record_hash`, SHA-256 over the canonical JSON of the
+whole record without the hash field. The first time a record hash appears
+the runner keeps a dated copy under `data/benchmarks/history/<key>/`,
+named by the recorded date and the first eight characters of the hash, so
+a re-record never overwrites a prior record. The card prints "Selection
+recorded <date>, record <first 8 of the hash>", the memo prints the full
+hash, and the gate recomputes every hash and refuses a record where any
+differs.

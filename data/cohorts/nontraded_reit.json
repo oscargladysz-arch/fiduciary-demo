@@ -88,15 +88,16 @@
     },
     "net_assets_usd": {
       "field": "net_assets_usd",
-      "n": 0,
-      "median": null,
-      "min": null,
-      "max": null,
-      "values": {},
+      "n": 1,
+      "median": 8250000000,
+      "min": 8250000000,
+      "max": 8250000000,
+      "values": {
+        "sreit": 8250000000
+      },
       "missing": {
-        "breit": "aggregate NAV printed in the MD&A NAV-by-class table but not yet carried into a typed cell. Verification-queue item",
-        "sreit": "aggregate NAV not yet carried into a typed cell. Verification-queue item",
-        "jll_ipt": "aggregate NAV not yet carried into a typed cell. Verification-queue item"
+        "breit": "aggregate NAV printed in the MD&A NAV-by-class table but not yet carried into a fact on record. Verification-queue item",
+        "jll_ipt": "aggregate NAV not yet carried into a fact on record. Verification-queue item"
       }
     }
   },
@@ -147,7 +148,7 @@
           "sreit": -2.4,
           "jll_ipt": null
         },
-        "composite_return_pct": null
+        "composite_return_pct": 2.85
       }
     ],
     "member_source": {
@@ -160,12 +161,22 @@
       "sreit": "calendar_year",
       "jll_ipt": "none"
     },
-    "granularity": "mixed year ends: no common period, composite returns not formed",
-    "weighting": "equal-weight, only over periods every member reports on the same basis",
-    "composite_refused_reason": "members report on different year ends (breit: calendar years, sreit: calendar years, jll_ipt: no period returns), so no equal-weight composite return is formed. The table shows each member's own periods with n"
+    "composite_members": [
+      "breit",
+      "sreit"
+    ],
+    "excluded_members": [
+      {
+        "member": "JLL Income Property Trust, Inc.",
+        "reason": "no period returns on record for JLL Income Property Trust, Inc."
+      }
+    ],
+    "granularity": "no common period basis for 3 members, composite returns not formed",
+    "weighting": "equal-weight, only over periods every composite member reports on the same basis",
+    "composite_refused_reason": "no period returns on record for JLL Income Property Trust, Inc., so no equal-weight composite return is formed. The table shows each member's own periods with n"
   },
   "caveats": [
-    "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing. Volatility and drawdown comparisons inherit that difference (see de-smoothing lab). [typed per product: breit: monthly, jll_ipt: daily, sreit: monthly]"
+    "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing. Volatility and drawdown comparisons inherit that difference (see de-smoothing lab). [per product from the record: Blackstone Real Estate Income Trust Inc: monthly, JLL Income Property Trust, Inc.: daily, Starwood Real Estate Income Trust, Inc.: monthly]"
   ],
-  "exclusion_log": "data/roster_decisions.md"
+  "exclusion_log": "the roster decisions record"
 }
