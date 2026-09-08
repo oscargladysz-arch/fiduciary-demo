@@ -26,7 +26,7 @@ from tark_benchmark_common import (BY_DESCRIPTOR_SENTENCE as _BY_DESCRIPTOR_SENT
                                    STRATEGY_GATE_MIN as _STRATEGY_GATE_MIN, TIE_SENTENCE as _TIE_SENTENCE)
 from tark_display import (SLOT_LABELS, BASE_LABEL, CANDIDATE_SHORT, LANE_LABEL, RUBRIC_LABEL, STRATEGY_LABEL,
                           WRAPPER_LABEL, cell_display, display_path_free, facts_by_cell,
-                          plan_demand_sentence, reconciliation_sentence)
+                          display_copy, plan_demand_sentence, reconciliation_sentence)
 from tark_memo import write_all
 from tark_packet import write_all_packets
 from tark_data import (ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_CELLS, BASE, DATA, CELLS, FACTORS,
@@ -122,7 +122,7 @@ def crosscheck_summary() -> dict:
                      f"({ints['products']} products, {kv['date']}), "
                      f"{ints['confirmed']} confirmed, {ints['corrected']} corrected. "
                      f"Human verification: {verified}."),
-            "source": "docs/crosscheck_report.md"}
+            "source": "the crosscheck report"}
 
 
 
@@ -181,7 +181,7 @@ STRATEGY_DEFAULT_PROXY = {
     "pe_conglomerate": "psp", "nontraded_reit": "vnq", "preipo_venture": "psp",
 }
 PRICE_SERIES_WARNING = ("MARKET-PRICE series. Any PME here benchmarks the premium, "
-                        "not the portfolio. The engine formally escalated instead "
+                        "not the portfolio. The selection formally escalated instead "
                         "of selecting (5.6)")
 
 
@@ -367,7 +367,7 @@ def parse_verification_queue() -> dict:
                          ("extracted", "verified"))
                   for k in product_keys()}
     return {"queue": queue, "tiers": tiers, "verified": verified,
-            "verifiable": verifiable, "source": "docs/verification_queue.md"}
+            "verifiable": verifiable, "source": "the verification queue"}
 
 
 def census_chunk() -> str:
@@ -527,6 +527,7 @@ def main() -> None:
         pub = {kk: vv for kk, vv in p.items() if kk not in ("identity_private", "anonymization_rule")}
         # cell 3.7 for this plan, one sentence shared with the memo (R3-P2-11)
         pub["demand_sentence"] = plan_demand_sentence(p)
+        pub.pop("dictionary_cells", None)   # a maintainer's index of the file, read by no view
         plans_pub[k] = pub
 
     benchmarks = {}
@@ -645,7 +646,7 @@ def main() -> None:
     FIRST_PAINT_FIELDS = ("value", "status", "verified_by")
     DETAIL_FIELDS = ("source", "section", "quote", "extracted_by")
     # repository paths inside the record render as reader labels (R2-P0-3)
-    evidence_detail = {k: {cid: {f: display_path_free(c.get(f, "")) for f in DETAIL_FIELDS}
+    evidence_detail = {k: {cid: {f: (display_path_free(c.get(f, "")) if f == "quote" else display_copy(c.get(f, ""))) for f in DETAIL_FIELDS}
                            for cid, c in p["cells"].items()}
                        for k, p in products.items()}
     # the accession column and the resolved EDGAR filings per cell (P2-10)
@@ -676,7 +677,7 @@ def main() -> None:
     # the verifier rides the first paint only when a person has signed the
     # row (an empty string on 880 cells is 14 KB of nothing)
     products = {k: {**p, "cited": cited_cells[k],
-                    "cells": {cid: {f: (display_path_free(c.get(f, "")) if f == "value" else c.get(f, ""))
+                    "cells": {cid: {f: (display_copy(c.get(f, "")) if f == "value" else c.get(f, ""))
                                     for f in FIRST_PAINT_FIELDS
                                     if not (f == "verified_by" and not c.get(f))}
                               for cid, c in p["cells"].items()}}

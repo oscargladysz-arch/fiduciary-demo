@@ -417,7 +417,9 @@ out2 = plan_intake.intake(FORM_TOTALS)
 newp2 = json.loads(out2.read_text())
 _ship_bad = []
 for np_ in (newp, newp2):
-    pub = {k: v for k, v in np_.items() if k not in ("identity_private", "anonymization_rule")}
+    # the filter build_site applies to a plan before it ships (identity never,
+    # the internal rule sentence never, the maintainer's index of the file never)
+    pub = {k: v for k, v in np_.items() if k not in ("identity_private", "anonymization_rule", "dictionary_cells")}
     test_surfaces.HITS["bundle"].clear()
     test_surfaces.walk_strings(pub, "plans", "plans", [0])
     if test_surfaces.HITS["bundle"] or leaks(json.dumps(pub)):

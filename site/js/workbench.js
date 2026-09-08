@@ -171,7 +171,7 @@ export function viewScreener(root, state, setState) {
 
   root.innerHTML = `
     <div class="viewhead"><h1>Screener</h1>
-      <div class="sub">Typed projections of evidenced cells. Every value clicks through
+      <div class="sub">Facts read from evidenced cells. Every value clicks through
         to its citation, and gaps are honest, not blank.</div></div>
     <div class="filterbar">
       ${sel("f_cohort", "cohort", Object.keys(T.cohorts), (o) => T.cohorts[o].label)}
@@ -193,8 +193,8 @@ export function viewScreener(root, state, setState) {
     </div>
     ${F.f_vonly === "1" ? `<div class="banner amber vonly-banner">
       Independent human verification in progress: <b>${vc.verified} of ${vc.total}</b>
-      typed facts verified. This filter will fill up as the verification pass
-      (docs/verification_queue.md) lands in the evidence CSVs. Showing
+      facts verified. This filter will fill up as the verification pass
+      (the verification queue) lands in the evidence ledger. Showing
       ${rows.length} product(s) with any verified fact today is the honest state.</div>` : ""}
     <div class="tablewrap"><table class="grid screener">
       <thead><tr><th>Product</th>
@@ -205,7 +205,7 @@ export function viewScreener(root, state, setState) {
         ${visCols.map(([, , render]) => render(k, state)).join("")}
       </tr>`).join("")}</tbody></table></div>
     <p class="cap" style="margin-top:8px">${rows.length} of ${PRODUCTS.length}
-      products match. Facts layer: data/facts/*.json, zero new facts, every
+      products match. Facts layer: read from evidenced cells, zero new facts, every
       field carries its source cell (validator-enforced).</p>`;
 
   root.querySelectorAll("[data-f]").forEach((el) => el.addEventListener("change", () => {
@@ -350,8 +350,8 @@ export function viewCompare(root, state, setState) {
       <thead><tr><th style="min-width:170px">Fact</th>
         ${keys.map((k) => `<th class="prodcol">${esc(shortName(k))}</th>`).join("")}</tr></thead>
       <tbody>${body}${verdictRow}${benchRow}</tbody></table></div>
-    <p class="cap" style="margin-top:8px">Facts: typed projections with
-      source-cell provenance (data/facts). Status chips mirror the evidence
+    <p class="cap" style="margin-top:8px">Facts: each read from an evidenced cell,
+      with its source cell. Status chips mirror the evidence
       record. Nothing here is human-verified yet.</p>`;
   wireCompare(root, picked, setState);
   root.querySelectorAll("[data-goto-liq]").forEach((a) => a.addEventListener("click",
@@ -403,7 +403,7 @@ export function viewVerification(root, state, setState) {
     <div class="statrow">
       ${stat("Cells verified", `${totV}`, `of ${totA} at extracted-unverified/verified`)}
       ${stat("Progress", `${totA ? Math.round(totV / totA * 100) : 0}%`)}
-      ${stat("Queue source", `<span style="font-size:13px">docs/verification_queue.md</span>`)}
+      ${stat("Queue source", `<span style="font-size:13px">${esc(T.verification_queue.source)}</span>`)}
     </div>
     <div class="cardgrid g3" style="margin:14px 0">
       ${Object.keys(T.products).map((k) => {
@@ -439,8 +439,8 @@ export function viewVerification(root, state, setState) {
                 <summary class="cap">verify: value beside the verbatim quote, then sign</summary>
                 <div class="sidebyside">
                   <div><div class="cap">Value as recorded</div><div class="plain">${esc(cell.value || "")}</div></div>
-                  <div><div class="cap">Verbatim quote, ${esc(cell.source || "no source")}</div>
-                    <div class="quote">${cell.quote ? esc(cell.quote) : "no quote on record, this cell cannot be verified"}</div></div>
+                  <div><div class="cap provenance">Verbatim quote, ${esc(cell.source || "no source")}</div>
+                    <div class="quote provenance">${cell.quote ? esc(cell.quote) : "no quote on record, this cell cannot be verified"}</div></div>
                 </div>
                 <label class="cap">Signer (name and role)<input data-f="signer" type="text"></label>
                 <label class="cap">Date<input data-f="date" type="date"></label>
@@ -453,7 +453,7 @@ export function viewVerification(root, state, setState) {
     <p class="cap footer-rule">Verification flips a row to 'verified' and signs
       it in the evidence ledger and the product record (people only, through
       Tark's verification step, which refuses an empty signer or date and any
-      cell without a verbatim quote). The build and this site can never do this.</p>`;
+      cell without a verbatim quote). Nothing automated can do this.</p>`;
   root.querySelectorAll("[data-goto-cell]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault(); setState({ view: "evaluation", product: a.dataset.gotoCell }); }));
   root.querySelectorAll("[data-verify-form]").forEach((form) => {
@@ -472,7 +472,7 @@ export function viewVerification(root, state, setState) {
       }
       offerFile(form, out, `verify_${product}_${cid}.json`, JSON.stringify({ signature_request: "verify", product, cell: cid, signer, date,
         note: "Tark's verification step checks the quote against the filing before it writes verified" }, null, 2));
-      msg.textContent = "signature request ready. Send it to Tark as yourself, the site writes nothing";
+      msg.textContent = "signature request ready. Send it to Tark as yourself, this page writes nothing";
     });
   });
 }
@@ -558,7 +558,7 @@ export function viewPacket(root, state, setState) {
     <div class="viewhead"><h1>Packet</h1>
       <div class="sub">Your pinned figures and views. Reorder, then print the
         pinned exhibits. The committee packet and the decision memo (one each per
-        plan and product) are the build-side docx documents. This page is a
+        plan and product) are the generated documents. This page is a
         browser-side composition, nothing is uploaded anywhere.</div></div>
     <div class="packet-actions" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
       <button class="btn ghost" id="pinview">Pin current selections as a view</button>
@@ -620,10 +620,10 @@ export function initPalette(setState, VIEWS) {
   const el = document.createElement("div");
   el.id = "palette";
   el.innerHTML = `<div class="box">
-    <input placeholder="Jump to view, product, plan, cell (e.g. '2.1 hl_paf'), or 'compare a b'…" aria-label="Command palette">
+    <input placeholder="Jump to view, product, plan, cell (e.g. 'Hamilton Lane 2.1'), or 'compare a b'…" aria-label="Command palette">
     <div class="results"></div>
     <div class="hint"><kbd>↑↓</kbd> navigate · <kbd>↵</kbd> go · <kbd>esc</kbd> close ·
-      try: <i>screener</i>, <i>compare hl_paf breit</i>, <i>2.7 kkr</i>, <i>density compact</i></div>
+      try: <code>screener</code>, <code>compare hl_paf breit</code>, <code>2.7 kkr</code>, <code>density compact</code></div>
   </div>`;
   document.body.append(el);
   const input = el.querySelector("input");
@@ -757,6 +757,7 @@ export function viewCohorts(root, state, setState) {
       return `<td><span class="cap" title="${esc(rsn)}">n/a: ${esc(rsn.length > 46 ? rsn.slice(0, 46) + "…" : rsn)}</span></td>`;
     }
     let v = f.value;
+    if (field === "mgmt_fee_base") v = BASE_LABEL[v] || v;
     if (typeof v === "object") {
       v = v.present === false ? "none" :
           `${v.present ? "yes" : ""}${v.rate_pct != null ? " " + v.rate_pct + "%" : ""}${v.hurdle_pct != null ? " / " + v.hurdle_pct + "% hurdle" : ""}${v.window ? " " + v.window : ""}`;
@@ -835,11 +836,11 @@ export function viewCohorts(root, state, setState) {
     <h2 style="margin:18px 0 6px">Membership rationales</h2>
     ${members.map((k) => `<div class="cellrow"><div class="head">
         <span class="el">${esc(T.products[k].fund_name)}</span>
-        <span class="chip wrapper">${esc(C.members[k].wrapper_type)}</span></div>
+        <span class="chip wrapper">${esc(WRAPPER_LABEL[C.members[k].wrapper_type] || C.members[k].wrapper_type)}</span></div>
       <div class="plain">${esc(C.members[k].membership_rationale)}</div></div>`).join("")}
     <h2 style="margin:18px 0 6px">Exclusion log</h2>
     <div class="cap" style="margin-bottom:6px">Every candidate considered and not
-      admitted, with its reason (data/roster_decisions.md).</div>
+      admitted, with its reason (the roster decisions record).</div>
     <div class="cellrow"><div class="plain" style="white-space:pre-wrap">${esc(wordsForKeys(exclusions.trim()))}</div></div>`;
 
   root.querySelectorAll("[data-cohort]").forEach((a) => a.addEventListener("click",

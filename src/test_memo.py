@@ -54,7 +54,7 @@ check("liquidity match section is plan-specific (consulting memo carries the thi
 
 import re  # noqa: E402
 from tark_data import status_kind  # noqa: E402
-from tark_display import display_path_free, facts_by_cell, typed_headline  # noqa: E402
+from tark_display import display_copy, display_path_free, facts_by_cell, typed_headline  # noqa: E402
 from tark_memo import EVIDENCED, cell_title, first_sentence  # noqa: E402
 import json  # noqa: E402
 
@@ -76,7 +76,7 @@ for k, prod in prods.items():
         if status_kind(cell.get("status", "")) in EVIDENCED and v:
             # 3.7, 3.8 and 3.9 print the memo's own plan's sentence instead of
             # the record's plan-independent one (R2-P1-13), checked below
-            if cid not in ("3.7", "3.8", "3.9") and squash(first_sentence(display_path_free(v))) not in t:
+            if cid not in ("3.7", "3.8", "3.9") and squash(first_sentence(display_copy(v))) not in t:
                 missing.append(f"{k} {cid}")
             th = typed_headline(cid, fbc.get(cid, {}))
             if th and squash(th) not in t:
@@ -135,7 +135,7 @@ if _abbr_rows:
     print("   rows:", "; ".join(_abbr_rows[:6]))
 
 # P1-21: the four sections, in every plan x product memo
-SECTIONS = ("product-to-plan liquidity match", "structural verdict (typed facts, plan-independent)",
+SECTIONS = ("product-to-plan liquidity match", "structural verdict (dealing terms on record, plan-independent)",
             "scenario (illustrative, this plan)", "recommendation", "scope", "case law",
             "the fiduciary makes the decision on this record", "flags raised by the record")
 sec_missing, verdict_missing = [], []
@@ -244,7 +244,7 @@ for pl in plan_keys():
         t = squash(memo_text(pl, k))
         c57 = prods[k]["cells"]["5.7"]
         kind = status_kind(c57["status"])
-        lead = squash(first_sentence(display_path_free(c57["value"])).lower())
+        lead = squash(first_sentence(display_copy(c57["value"])).lower())
         if not (f"cell 5.7 ({_KL[kind]})" in t and lead in t
                 and "the court held" not in t and "holding of the court" not in t):
             cl_bad.append(f"{pl} {k}")
@@ -302,7 +302,7 @@ for pl in plan_keys():
                        r"\bto (?:qualify for|earn|keep|preserve) the safe harbor\b"):
                 if re.search(rx, t):
                     _rb_bad.append(f"{pl} {k}: states what the rule requires while the text is not in the build ({rx})")
-        if authority()["status"] != "fetched" and "not yet in this build" not in t:
+        if authority()["status"] != "fetched" and "not yet in the record" not in t:
             _rb_bad.append(f"{pl} {k}: verbatim-text status missing")
 check("regulatory basis: citation, links, paragraph mapping and basis in all 64, no paraphrase, no legal "
       "conclusion, no statement of what the rule requires while its text is absent", not _rb_bad)
@@ -343,7 +343,7 @@ for pl in plan_keys():
         if f"plan: {load_plan(pl)['display_label'].lower()}" not in t or "committee packet" not in t:
             _pk_bad.append(f"{pl} {k}: header")
         if (f"structural liquidity verdict: {mm['verdict']}" not in t
-                or f"(illustrative, default sliders): {(mm.get('scenario_verdict') or 'not computable')}" not in t):
+                or f"(illustrative, default turnover assumptions): {(mm.get('scenario_verdict') or 'not computable')}" not in t):
             _pk_bad.append(f"{pl} {k}: verdicts")
         if not all(x in t for x in ("exhibit a. benchmark selection", "exhibit c. fees and terms",
                                     "exhibit d. peer cohort placement", "verified by a person: 0",

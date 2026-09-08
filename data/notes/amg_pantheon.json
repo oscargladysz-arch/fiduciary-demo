@@ -1,6 +1,6 @@
 {
   "what": "analyst notes carried verbatim into owned cells by src/write_computed_cells.py",
   "cells": {
-    "5.6": "Product-side input on file is the self-declared MSCI World comparison in 5.1 (an equity index appended to an illiquid PE vehicle - suitability analysis belongs to the engine)."
+    "5.6": "Product-side input on file is the self-declared MSCI World comparison in 5.1 (an equity index appended to an illiquid PE vehicle - suitability analysis belongs to the benchmark selection)."
   }
 }

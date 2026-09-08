@@ -2,8 +2,8 @@
   "product_key": "amg_pantheon",
   "cohort_id": "evergreen_pe",
   "depth": "cohort",
-  "membership_rationale": "Evergreen PE (Pantheon) tender-offer LLC - wrapper and strategy twin of hl_paf/stepstone_spm.",
-  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
+  "membership_rationale": "Evergreen PE (Pantheon) tender-offer LLC - wrapper and strategy twin of Hamilton Lane Private Assets Fund and StepStone Private Markets.",
+  "what": "facts read from evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -60,7 +60,7 @@
     "gate_history": {
       "value": null,
       "source_cell": "3.3",
-      "reason": "no proration or oversubscription event is disclosed in the on-disk documents, but the tendered-versus-accepted amounts per offer are not printed either. Completed-tender dollars establish continuity, not full fills (R2-P1-12 rule)",
+      "reason": "no proration or oversubscription event is disclosed in the on-disk documents, but the tendered-versus-accepted amounts per offer are not printed either. Completed-tender dollars establish continuity, not full fills (the completed-tender rule)",
       "evidence_phrase": "No proration or oversubscription event is disclosed",
       "status": "extracted-unverified"
     },
@@ -90,7 +90,7 @@
     "net_assets_usd": {
       "value": null,
       "source_cell": "3.6",
-      "reason": "aggregate net assets not yet carried into a typed cell. Verification-queue item",
+      "reason": "aggregate net assets not yet carried into a fact on record. Verification-queue item",
       "status": "extracted-unverified"
     },
     "inception": {
@@ -110,7 +110,7 @@
     "filed_since_inception_return_pct": {
       "value": null,
       "source_cell": "1.2",
-      "reason": "since-inception annualized return not typed from cell 1.2 in this round",
+      "reason": "since-inception annualized return not read from cell 1.2 in this round",
       "status": "extracted-unverified"
     },
     "repurchase_program_status": {
@@ -156,7 +156,7 @@
       "value": "partial",
       "source_cell": "3.9",
       "status": "computed",
-      "note": "from typed facts only (cells 3.1, 3.3, 2.7), plan-independent"
+      "note": "from the dealing terms on record only (cells 3.1, 3.3, 2.7), plan-independent"
     },
     "liquidity_verdict_by_plan": {
       "value": {
@@ -167,7 +167,7 @@
       },
       "source_cell": "3.9",
       "status": "computed",
-      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
+      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default turnover assumptions against the recorded capacity)"
     },
     "primary_benchmark_id": {
       "value": "cambridge_pe",

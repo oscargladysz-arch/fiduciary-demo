@@ -42,12 +42,12 @@
   "schedule_h": {
     "benefit_payments_2e": {
       "value": null,
-      "reason": "not typed: Schedule H line 2e is not yet in the plan record",
+      "reason": "not on record: Schedule H line 2e is not yet in the plan record",
       "source": "Schedule H line 2e (benefit payments and payments to provide benefits)"
     },
     "participant_contributions_2a1b": {
       "value": null,
-      "reason": "not typed: Schedule H line 2a(1)(B) is not yet in the plan record",
+      "reason": "not on record: Schedule H line 2a(1)(B) is not yet in the plan record",
       "source": "Schedule H line 2a(1)(B) (participant contributions)"
     },
     "qdia_indicator": {
@@ -84,7 +84,7 @@
         "pulled": "2026-07-12"
       },
       "what": "a proxy for the plan's filed outflow rate while Schedule H line 2e (benefit payments) is not in the record. Total expenses less administrative expenses is an upper bound on benefit payments, because the remainder also holds the non-administrative expense lines the schedule reports besides benefits. The inputs are the financials block of this record, whose source is the source block above",
-      "used_as": "the base demand of the liquidity scenario layer: this rate applied to the plan's position in a product, compared with the wrapper's annual repurchase capacity. The turnover sliders are the stress around it, never the base"
+      "used_as": "the base demand of the liquidity scenario layer: this rate applied to the plan's position in a product, compared with the wrapper's annual repurchase capacity. The turnover assumptions are the stress around it, never the base"
     }
   },
   "derived": {

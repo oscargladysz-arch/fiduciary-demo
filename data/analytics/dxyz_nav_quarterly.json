@@ -7,7 +7,7 @@
   "local_file": "data/raw/dxyz/424B5_2026-05-26_dxyz102_424b5.htm",
   "extracted_by": "Claude Code (2026-08-09)",
   "status": "extracted-unverified",
-  "note": "Stored under data/analytics/ (not data/series/) because the series contract requires daily date,close,adj_close files with >=50 rows; this is a 9-row quarterly disclosure table. Parenthesized values in the filing's premium column are discounts (negative).",
+  "note": "Stored under data/analytics/ (not data/series/) because the series contract requires daily files with date, close and adjusted close columns with >=50 rows; this is a 9-row quarterly disclosure table. Parenthesized values in the filing's premium column are discounts (negative).",
   "rows": [
     {
       "period": "Q1 2024 (March 26, 2024 - March 28, 2024)",

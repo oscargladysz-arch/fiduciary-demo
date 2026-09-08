@@ -45,7 +45,7 @@ def fmt_incentive(v: dict | None) -> str:
         parts.append(_pct(v["rate_pct"]))
     if v.get("hurdle_pct") is not None:
         parts.append(f"{_pct(v['hurdle_pct'])} hurdle")
-    return " / ".join(parts) if parts else "present, rate not typed (see 2.2)"
+    return " / ".join(parts) if parts else "present, rate not on record (see 2.2)"
 
 
 def fmt_early(v: dict | None) -> str:
@@ -54,7 +54,7 @@ def fmt_early(v: dict | None) -> str:
     if not v.get("present"):
         return "none"
     rate = _pct(v["rate_pct"]) if v.get("rate_pct") is not None else \
-        "fee present, rate not typed (see 2.7)"
+        "fee present, rate not on record (see 2.7)"
     return f"{rate} {v['window']}" if v.get("window") else rate
 
 
@@ -119,7 +119,7 @@ def typed_headline(cid: str, fx: dict) -> str | None:
         return None
     g = lambda f: fx.get(f, {}).get("value")  # noqa: E731
     if cid == "2.1" and g("mgmt_fee_pct") is not None:
-        base = BASE_LABEL.get(g("mgmt_fee_base"), g("mgmt_fee_base") or "a base not typed")
+        base = BASE_LABEL.get(g("mgmt_fee_base"), g("mgmt_fee_base") or "a base not on record")
         return f"{g('mgmt_fee_pct'):.2f}% on {base}"
     if cid == "2.2" and "incentive_fee" in fx:
         return "incentive fee: " + fmt_incentive(g("incentive_fee"))
@@ -129,14 +129,14 @@ def typed_headline(cid: str, fx: dict) -> str | None:
         basis = (fx.get("expense_ratio_pct", {}).get("basis") or "").strip()
         if not basis:
             note = (fx.get("expense_ratio_pct", {}).get("note") or "").split(". ")[0].split(", ")[0].strip()
-            basis = note[:80] if note else "basis not typed"
+            basis = note[:80] if note else "basis not on record"
         return f"{g('expense_ratio_pct'):.2f}% expense ratio, {basis}"
     if cid == "2.4" and "affe" in fx:
         v = g("affe")
         if not v.get("present"):
             return "no AFFE line"
         return f"AFFE {v['rate_pct']:.2f}%" if v.get("rate_pct") is not None \
-            else "AFFE line present, rate not typed"
+            else "AFFE line present, rate not on record"
     if cid == "2.7" and "early_repurchase" in fx:
         return "early repurchase fee: " + fmt_early(g("early_repurchase"))
     if cid == "3.1":
@@ -269,7 +269,7 @@ def cell_display(cell: dict, cid: str = "", fx: dict | None = None) -> dict:
     boundary when long). No figure is ever extracted from prose by regex:
     that produced headlines that read the opposite of the finding."""
     st = str(cell.get("status", "pending"))
-    val = display_path_free(cell.get("value") or "")
+    val = display_copy(cell.get("value") or "")
     kind = status_kind(st)
     if kind == "n/a":
         reason = st.split(":", 1)[1].strip() if ":" in st else st[6:].strip(" -")
@@ -348,11 +348,11 @@ CANDIDATE_SHORT = {
 SLOT_LABELS = {"slot_k": "Meaningful benchmark (paragraph (k))",
                "slot_g": "Peer comparison (paragraphs (g) and (h))"}
 from tark_benchmark_common import RUBRIC_LABEL, RUBRIC_MAX, x_of_n  # noqa: E402,F401
-COMPUTED_WRITER_LABEL = "Tark computed-cells writer"
+COMPUTED_WRITER_LABEL = "Tark computed cells"
 SCHEDULE_H_ABSENT_SENTENCE = ("Schedule H benefit-payment line 2e is not yet in the plan record. "
                               "The filed outflow proxy (total expenses less administrative "
                               "expenses over beginning net assets) stands in for it as the base "
-                              "demand, and the turnover sliders are the stress around it.")
+                              "demand, and the turnover assumptions are the stress around it.")
 
 
 def strategy_label(key: str) -> str:
@@ -402,15 +402,106 @@ SURFACE_FORBIDDEN = [
 ]
 
 
+# The allowlist gate's second family (R3-P2-12, design system section 6).
+# Reader prose, meaning every bundle string a view prints, every rendered
+# view and every document paragraph, may not carry an internal token: a
+# snake_case key, a repository path or file name, a ticket reference, a
+# developer word, or "slider" outside the name of the figure the control
+# sets ("slider assumption") and the control's own label ("allocation
+# slider"). A field set in code style for provenance (a cited file name, an
+# accession column, a form's JSON) is exempt from this family and never from
+# SURFACE_FORBIDDEN. URLs are stripped before the rules run. Each entry is
+# (name, case-insensitive regular expression). Grow it, never prune it.
+PROSE_RULES = [
+    ("snake_case token", r"(?<![A-Za-z0-9_/.\-])[a-z][a-z0-9]*_[a-z0-9_]+(?![A-Za-z0-9_])"),
+    ("repository path or file name",
+     r"(?<![\w/])(?:data|docs|src|site|web)/[A-Za-z0-9_./\-]+"
+     r"|(?<![\w/.\-])[A-Za-z0-9_\-]{2,}\.(?:py|json|csv|md|js|htm|html|txt)\b"),
+    ("ticket reference", r"\bR[0-9]-P[0-9]-[0-9]+\b|\bR[0-9]-P[0-9]\b|\bP[0-9]-[0-9]+\b"),
+    ("developer word", r"\b(?:engine|artifacts?|typed|the writer|the build|this build|the site)\b"),
+    ("slider outside its label", r"(?<!allocation )\bsliders?\b(?! assumption\b)"),
+]
+PROSE_URL = re.compile(r"https?://\S+")
+
+
+def prose_hits(text: str) -> list[tuple[str, str]]:
+    """(rule name, matched text) for every PROSE_RULES hit in one string."""
+    t = PROSE_URL.sub(" ", text or "")
+    out = []
+    for name, rx in _PROSE_COMPILED:
+        for m in rx.finditer(t):
+            out.append((name, m.group(0)))
+    return out
+
+
+_PROSE_COMPILED = [(n, re.compile(p, re.IGNORECASE)) for n, p in PROSE_RULES]
+
+# Internal keys that reach reader prose from inside the record (a product
+# key in a cell's own text, a fact field name, a wrapper or base enum, a
+# series column) render as their words on every surface and in every
+# document (R3-P2-12). A verbatim quote is never rewritten.
+FACT_LABEL = {
+    "gate_history": "gating history",
+    "repurchase_cadence_per_year": "dealing cadence",
+    "repurchase_cap_pct": "repurchase cap",
+    "repurchase_program_status": "program status",
+    "repurchase_caps": "repurchase caps",
+    "net_assets_usd": "net assets",
+    "adj_close": "adjusted close",
+    "index_proxy": "public market proxy",
+    "series_manifest": "the series manifest",
+    # the N-CEN structured dataset's own field names, cited in cells 4.5 and 4.6
+    "PUB_ACCOUNTANT_NAME": "the accountant-name field",
+    "IS_ACCT_OPINION_QUALIFIED": "the opinion-qualified flag",
+    "IS_NAV_ERROR_CORRECTED": "the NAV-error-corrected flag",
+}
+
+
+def fact_label(field: str) -> str:
+    return FACT_LABEL.get(field, field.replace("_", " "))
+
+
+_KEY_LABELS: list[tuple[re.Pattern, str]] | None = None
+
+
+def _key_labels() -> list[tuple[re.Pattern, str]]:
+    global _KEY_LABELS
+    if _KEY_LABELS is None:
+        from tark_data import load_products
+        pairs: list[tuple[str, str]] = []
+        for key, p in load_products().items():
+            pairs.append((key, p["fund_name"].split(" (")[0]))
+        pairs += [(k, v) for k, v in WRAPPER_LABEL.items()]
+        pairs += [(k, v) for k, v in BASE_LABEL.items() if "_" in k]
+        pairs += list(FACT_LABEL.items())
+        # longest key first so a key that contains another is replaced whole
+        pairs.sort(key=lambda kv: -len(kv[0]))
+        _KEY_LABELS = [(re.compile(r"(?<![A-Za-z0-9_])" + re.escape(k) + r"(?![A-Za-z0-9_])"), v)
+                       for k, v in pairs if "_" in k]
+    return _KEY_LABELS
+
+
+def display_copy(text) -> str:
+    """Reader copy of a record string: repository paths become their labels
+    and internal keys become their words. Used for cell values, sources and
+    sections, never for a verbatim quote."""
+    out = display_path_free(text)
+    if not isinstance(out, str):
+        return out
+    for rx, label in _key_labels():
+        out = rx.sub(label, out)
+    return out
+
+
 # Repository paths inside cell text stay in the record (the validator checks
 # that every cited path exists) and render as reader labels on every surface
 # and in every document (R2-P0-3). Order matters: specific before generic.
 _PATH_LABELS = [
-    (re.compile(r"data/analytics/supplement\.json(?:\s*\(stress_windows\.[a-z_]+\))?"), "the analytics supplement artifact (stress windows)"),
-    (re.compile(r"data/analytics/metrics\.json"), "the analytics metrics artifact"),
-    (re.compile(r"data/cohorts/([a-z_]+)\.json"), lambda m: f"the cohort artifact ({cohort_label(m.group(1))})"),
-    (re.compile(r"data/liquidity/[A-Za-z0-9_.\-]*"), "the liquidity match artifacts"),
-    (re.compile(r"data/benchmarks/[A-Za-z0-9_.\-]*"), "the benchmark selection artifact"),
+    (re.compile(r"data/analytics/supplement\.json(?:\s*\(stress_windows\.[a-z_]+\))?"), "the analytics supplement (stress windows)"),
+    (re.compile(r"data/analytics/metrics\.json"), "the analytics metrics"),
+    (re.compile(r"data/cohorts/([a-z_]+)\.json"), lambda m: f"the cohort record ({cohort_label(m.group(1))})"),
+    (re.compile(r"data/liquidity/[A-Za-z0-9_.\-]*"), "the liquidity match records"),
+    (re.compile(r"data/benchmarks/[A-Za-z0-9_.\-]*"), "the benchmark selection record"),
     (re.compile(r"data/manifest\.csv"), "the filing manifest"),
     # no plan label here: cell 3.7 still cites one plan's record in every
     # product (audit item 30, owned per plan in R2-P1-13), and naming it would
@@ -425,7 +516,7 @@ _PATH_LABELS = [
     (re.compile(r"data/series_quarterly/manifest\.json"), "the quarterly NAV series manifest"),
     (re.compile(r"data/series_quarterly(?:/[A-Za-z0-9_.\-]*)?"), "the quarterly NAV series on record"),
     (re.compile(r"data/citations/[A-Za-z0-9_.\-]*"), "the citations record"),
-    (re.compile(r"data/facts(?:/[A-Za-z0-9_.\-]*)?"), "the typed facts"),
+    (re.compile(r"data/facts(?:/[A-Za-z0-9_.\-]*)?"), "the facts on record"),
     (re.compile(r"data/roster_decisions\.md"), "the roster decisions record"),
     (re.compile(r"data/evidence(?:/[A-Za-z0-9_.\-*]*)?"), "the evidence ledger"),
     (re.compile(r"data/[A-Za-z0-9_./\-]*"), "the record"),

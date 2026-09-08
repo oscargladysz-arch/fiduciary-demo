@@ -59,10 +59,10 @@
       "element": "Volatility & max drawdown",
       "value": "Computed from the held daily series NSLR (Yahoo daily close, a market price that includes premium and discount dynamics), 2016-08-15 to 2026-08-14: annualized volatility 47.5% on 120 monthly returns and 47.6% on daily returns, max drawdown -81.97% on the daily series (peak 2021-08-16 to trough 2023-03-17). A market-price series: the drawdown and the volatility include premium and discount swings and are not a measure of the portfolio.",
       "status": "computed",
-      "source": "analytics supplement artifact (series diagnostics)",
+      "source": "the analytics supplement (series diagnostics)",
       "section": "series diagnostics for this product",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "1.7": {
@@ -79,20 +79,20 @@
       "element": "Risk-adjusted metrics (PME etc)",
       "value": "No KS-PME or Direct Alpha computable for the meaningful-benchmark slot: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE for this pre-IPO and venture fund: its price is premium-driven and decoupled from NAV, so every candidate benchmarks the premium, not the portfolio. Required next: a NAV series from the filings and a premium to NAV decomposition before any comparator is defensible. SEC-required comparator S&P 500 (cell 5.1): held, scored 5 of 10, fund price decoupled from NAV. No comparison: fund price is premium-driven and decoupled from NAV: no comparison on a market-price series, it would benchmark the premium, not the portfolio. SEC-required comparator Nasdaq Stock Index (cell 5.1): cited, not held, scored 3 of 10, fund price decoupled from NAV. No comparison: fund price is premium-driven and decoupled from NAV: no comparison on a market-price series, it would benchmark the premium, not the portfolio. Return basis for every comparison: Yahoo adjusted close, a market price with distributions reinvested, not NAV (NSLR). The peer comparison (paragraphs (g) and (h)) is cell 1.12, never a PME. Window-sensitive: every figure on appraisal-lagged NAVs moves with the window (methodology section 3).",
       "status": "computed",
-      "source": "benchmark selection artifact (Neostellar Capital Corp.)",
+      "source": "the benchmark selection record (Neostellar Capital Corp.)",
       "section": "meaningful benchmark, reference and declared comparisons",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "1.9": {
       "element": "Stress-window performance",
       "value": "Computed stress-window performance from the held daily series (adjusted close, distributions reinvested). CY2022 rate shock: total return -70.17%, max drawdown -72.53%. COVID (Feb to Apr 2020): total return -6.55%, max drawdown -48.13%. Worst full-history peak-to-trough -81.97%.",
       "status": "computed",
-      "source": "analytics supplement artifact (stress windows)",
+      "source": "the analytics supplement (stress windows)",
       "section": "stress windows for this product",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "1.10": {
@@ -119,10 +119,10 @@
       "element": "Peer comparison (paragraphs (g) and (h))",
       "value": "Peer comparison (paragraphs (g) and (h)): pre-IPO and venture cohort, peers Destiny Tech100 Inc, ARK Venture Fund, fund return basis Yahoo adjusted close, a market price with distributions reinvested, not NAV (NSLR). Composite REFUSED: fewer than 3 peers remain after leaving Neostellar Capital Corp. out (2: Destiny Tech100 Inc, ARK Venture Fund). Side by side, every period any member reports, columns in this order: Destiny Tech100 Inc, ARK Venture Fund, Neostellar Capital Corp.. n = members reporting. 2017 (n=1): n/a / n/a / 8.35% | 2018 (n=1): n/a / n/a / -4.22% | 2019 (n=1): n/a / n/a / 31.56% | 2020 (n=1): n/a / n/a / 116.63% | 2021 (n=1): n/a / n/a / 72.61% | 2022 (n=1): n/a / n/a / -70.31% | 2023 (n=2): n/a / 61.25% / 3.68% | 2024 (n=2): n/a / 6.69% / 49.24% | 2025 (n=3): -47.96% / 55.68% / 69.91%. The cohort is the roster's 3 surviving, still-filing products. Funds that closed, merged, or stopped filing are not in it, so any composite carries survivorship bias in the fund's favor. Membership rationales and exclusions are in the roster record. Members span 3 wrapper types (interval fund (Rule 23c-3), listed BDC, listed closed-end fund) and 2 leverage regimes (1940-Act asset-coverage limits, BDC 150% asset-coverage regime). Fee bases, leverage and exit rights are not like-for-like, so the comparison is a history of similar investments, not a like-for-like index.",
       "status": "computed",
-      "source": "benchmark selection artifact (Neostellar Capital Corp.)",
+      "source": "the benchmark selection record (Neostellar Capital Corp.)",
       "section": "peer comparison: member table, composite or refusal, survivorship, heterogeneity",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "2.1": {
@@ -207,12 +207,12 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Cohort placement (pre-IPO and venture cohort): mgmt fee: below the cohort median of 2.5 (n=3, too small for percentile language) | expense ratio (bases differ, see notes): above the cohort median of 4.53 (n=3, too small for percentile language) | repurchase cap: fact unavailable for this member. Statistics and per-member values are in the cohort artifact, membership rationales in the typed facts.",
+      "value": "Cohort placement (pre-IPO and venture cohort): mgmt fee: below the cohort median of 2.5 (n=3, too small for percentile language) | expense ratio (bases differ, see notes): above the cohort median of 4.53 (n=3, too small for percentile language) | repurchase cap: fact unavailable for this member. Statistics and per-member values are in the cohort record, membership rationales in the facts on record.",
       "status": "computed",
-      "source": "cohort artifact (pre-IPO and venture cohort)",
+      "source": "the cohort record (pre-IPO and venture cohort)",
       "section": "statistics (mid-rank percentile phrasing)",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "2.10": {
@@ -292,27 +292,27 @@
       "source": "plan records on file (Form 5500), read per plan by the liquidity match",
       "section": "participant counts and filed outflow proxy, per plan",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "3.8": {
       "element": "Redemption stress test",
       "value": "Redemption stress test not applicable: the wrapper is exchange-traded with continuous dealing, so there is no wrapper capacity to stress. Exit is at the market price, whose premium or discount to NAV is the relevant risk (cell 1.10).",
       "status": "computed",
-      "source": "liquidity match artifacts (Neostellar Capital Corp., four reference plans)",
+      "source": "the liquidity match records (Neostellar Capital Corp., four reference plans)",
       "section": "stressed scenario and scenario across the four plan match files",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Structural liquidity verdict ALIGNED-MECHANICAL (typed facts, cells 3.1, 3.3, 2.7, plan-independent). Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): aligned-mechanical, US industrial manufacturer 401(k) plan (~$0.8B, OH): aligned-mechanical, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): aligned-mechanical, US media/technology company 401(k) plan (~$570M, New York): aligned-mechanical. Base demand is each plan's filed outflow proxy (Schedule H), the sliders set the stress. Daily exchange liquidity mechanically satisfies daily participant dealing (3.1). BUT price-vs-NAV decoupling means participants transact at the premium or discount, not at portfolio value. The liquidity is real, the price basis is not (1.10, 4.7). Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts and on the Liquidity view.",
+      "value": "Structural liquidity verdict ALIGNED-MECHANICAL (dealing terms on record, cells 3.1, 3.3, 2.7, plan-independent). Scenario verdicts (ILLUSTRATIVE, default turnover assumptions) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): aligned-mechanical, US industrial manufacturer 401(k) plan (~$0.8B, OH): aligned-mechanical, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): aligned-mechanical, US media/technology company 401(k) plan (~$570M, New York): aligned-mechanical. Base demand is each plan's filed outflow proxy (Schedule H), the turnover assumptions set the stress. Daily exchange liquidity mechanically satisfies daily participant dealing (3.1). BUT price-vs-NAV decoupling means participants transact at the premium or discount, not at portfolio value. The liquidity is real, the price basis is not (1.10, 4.7). Per-plan reasons, capacity and stressed outcomes are in the liquidity match records and on the Liquidity view.",
       "status": "computed",
-      "source": "liquidity match artifacts (Neostellar Capital Corp., four reference plans)",
+      "source": "the liquidity match records (Neostellar Capital Corp., four reference plans)",
       "section": "verdict, scenario verdict, missing facts and structural reasons across the four plan match files",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "4.1": {
@@ -379,10 +379,10 @@
       "element": "Premium/discount check",
       "value": "Premium or discount vs the printed quarterly NAV: -21.7% at the 2026-08-14 close ($10.52 vs NAV $13.44 at 2026-06-30). Across the 16 printed quarters the price stood between -57% and 16.7% of NAV, at a discount in 14 of them. Price at-or-before each printed quarter-end NAV. A persistent DISCOUNT is this fund's premium/discount signature, the mirror image of dxyz's premium.",
       "status": "computed",
-      "source": "analytics supplement artifact (premium block)",
+      "source": "the analytics supplement (premium block)",
       "section": "premium and discount to NAV",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "4.8": {
@@ -429,45 +429,45 @@
       "element": "Alt asset-class indices",
       "value": "Candidates evaluated for the meaningful-benchmark slot, paragraph (k) (Tark benchmark rubric, 10 points, threshold 6 of 10, strategy gate below 2 of 3 ineligible, an index published by the fund's own adviser ineligible). ESCALATED: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE for this pre-IPO and venture fund: its price is premium-driven and decoupled from NAV, so every candidate benchmarks the premium, not the portfolio. Required next: a NAV series from the filings and a premium to NAV decomposition before any comparator is defensible. REJECTED Listed private equity investable proxy (PSP) 5 of 10 (exchange-traded strategy proxy): fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio. REJECTED S&P 500 investable proxy (SPY) 5 of 10 (fund-declared benchmark or SEC-required comparator): fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio. REJECTED NASDAQ Composite Index 3 of 10 (fund-declared benchmark or SEC-required comparator): fund price is premium/discount-driven and decoupled from NAV. Benchmarking the price benchmarks the premium, not the portfolio. SEC-required comparator S&P 500 (cell 5.1): held, scored 5 of 10, fund price decoupled from NAV. No comparison: fund price is premium-driven and decoupled from NAV: no comparison on a market-price series, it would benchmark the premium, not the portfolio. SEC-required comparator Nasdaq Stock Index (cell 5.1): cited, not held, scored 3 of 10, fund price decoupled from NAV. No comparison: fund price is premium-driven and decoupled from NAV: no comparison on a market-price series, it would benchmark the premium, not the portfolio. The peer cohort is not a candidate here: it is the paragraph (g) and (h) comparison in cell 1.12.",
       "status": "computed",
-      "source": "benchmark selection artifact (Neostellar Capital Corp.)",
+      "source": "the benchmark selection record (Neostellar Capital Corp.)",
       "section": "selected, tied, rejected and declared candidates",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.4": {
       "element": "Peer universe & returns",
       "value": "Peer cohort: pre-IPO and venture cohort (n=3: Destiny Tech100 Inc, Neostellar Capital Corp., ARK Venture Fund). Composite REFUSED: members' pricing bases are heterogeneous (market price vs NAV). An equal-weight composite would average premium/discount dynamics against appraisal NAVs, so it is refused, not fudged. Wrapper types in the cohort: interval fund (Rule 23c-3), listed BDC, listed closed-end fund. Cross-wrapper differences are disclosed in the cohort caveat block (4 caveats). Membership rationales and exclusions are in the roster decisions record.",
       "status": "computed",
-      "source": "cohort artifact (pre-IPO and venture cohort)",
+      "source": "the cohort record (pre-IPO and venture cohort)",
       "section": "members, composite and caveats",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.5": {
       "element": "PME / Direct Alpha inputs",
       "value": "No public market series comparison is computable on held data, so no PME inputs exist for this product: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE for this pre-IPO and venture fund: its price is premium-driven and decoupled from NAV, so every candidate benchmarks the premium, not the portfolio. Required next: a NAV series from the filings and a premium to NAV decomposition before any comparator is defensible. Peer comparison inputs: composite refused (fewer than 3 peers remain after leaving Neostellar Capital Corp. out (2: Destiny Tech100 Inc, ARK Venture Fund)), see cell 1.12.",
       "status": "computed",
-      "source": "benchmark selection artifact (Neostellar Capital Corp.)",
+      "source": "the benchmark selection record (Neostellar Capital Corp.)",
       "section": "meaningful benchmark, reference and peer comparison inputs",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.6": {
       "element": "Benchmark suitability memo",
       "value": "Benchmark suitability (Tark benchmark rubric, 10 points). ESCALATED: NO MEANINGFUL BENCHMARK CONSTRUCTIBLE for this pre-IPO and venture fund: its price is premium-driven and decoupled from NAV, so every candidate benchmarks the premium, not the portfolio. Required next: a NAV series from the filings and a premium to NAV decomposition before any comparator is defensible. No candidate is eligible, so no maximum is attainable on held data. SEC-required comparator S&P 500 (cell 5.1): held, scored 5 of 10, fund price decoupled from NAV. No comparison: fund price is premium-driven and decoupled from NAV: no comparison on a market-price series, it would benchmark the premium, not the portfolio. SEC-required comparator Nasdaq Stock Index (cell 5.1): cited, not held, scored 3 of 10, fund price decoupled from NAV. No comparison: fund price is premium-driven and decoupled from NAV: no comparison on a market-price series, it would benchmark the premium, not the portfolio. Peer comparison (cell 1.12): composite refused, fewer than 3 peers remain after leaving Neostellar Capital Corp. out (2: Destiny Tech100 Inc, ARK Venture Fund). Not selected: 3 candidates, each with its reason in the ledger. The scoring rules are in the benchmark methodology document. Selection recorded 2026-09-04, record aa21b8a0 (rubric v3.1, full hash in the selection record).",
       "status": "computed",
-      "source": "benchmark selection artifact (Neostellar Capital Corp.)",
+      "source": "the benchmark selection record (Neostellar Capital Corp.)",
       "section": "meaningful benchmark, reference, maximum attainable, declared benchmarks, peer comparison",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.7": {
       "element": "Case-law tracker",
-      "value": "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498 (U.S.). Certiorari granted 2026-01-16 per the Supreme Court docket listing. Question presented, per the docket as relayed in search-result snippets: whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary breached the duty of prudence requires alleging a meaningful benchmark. The Ninth Circuit had required plaintiffs to identify a comparable alternative giving a sound basis for comparison, a meaningful benchmark. No holding exists yet, and this cell draws no consequence for the evaluation. Status partial: assembled from the docket listing and search snippets, not from the source documents, which this build could not fetch.",
+      "value": "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498 (U.S.). Certiorari granted 2026-01-16 per the Supreme Court docket listing. Question presented, per the docket as relayed in search-result snippets: whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary breached the duty of prudence requires alleging a meaningful benchmark. The Ninth Circuit had required plaintiffs to identify a comparable alternative giving a sound basis for comparison, a meaningful benchmark. No holding exists yet, and this cell draws no consequence for the evaluation. Status partial: assembled from the docket listing and search snippets, not from the source documents, which this record could not fetch.",
       "status": "partial - search snippets and docket listing only, source documents not fetched in this build",
       "source": "Supreme Court docket 25-498, https://www.supremecourt.gov/docket/docketfiles/html/public/25-498.html (grant date). SCOTUSblog case page, https://www.scotusblog.com/cases/anderson-v-intel-corp-investment-policy-comm/ and CRS Legal Sidebar LSB11396, https://www.congress.gov/crs-product/LSB11396 (question presented, argument term). Accessed 2026-09-04 through web-search snippets only.",
       "section": "docket listing and search-result snippets (question presented, argument scheduling)",

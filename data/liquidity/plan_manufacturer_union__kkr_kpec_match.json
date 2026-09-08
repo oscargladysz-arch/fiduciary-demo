@@ -5,32 +5,35 @@
   "scenario_verdict": "conditional",
   "structural_reasons": [
     "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity, whereas this wrapper deals quarterly with a 5% cap per quarter on aggregate NAV. Direct DIA use requires a bridging structure: CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
-    "Facts missing for a structural verdict: gate_history (shares requested versus repurchased: the 10-K prints repurchases by class and discloses no proration, deferral or unsatisfied-request event for 2024-2025, but the requested amounts are not printed, so a clean False would overclaim (R2-P1-12 rule)). The verdict stays partial until they are typed from the filings.",
+    "Facts missing for a structural verdict: gating history (shares requested versus repurchased: the 10-K prints repurchases by class and discloses no proration, deferral or unsatisfied-request event for 2024-2025, but the requested amounts are not printed, so a clean False would overclaim (the completed-tender rule)). The verdict stays partial until they are read from the filings.",
     "Early repurchase economics: 5% if held < 24 months (2.7). Relevant to participant-level churn (2.7)."
   ],
   "scenario_reasons": [
     "Capacity: 5% per quarter on aggregate NAV: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed.",
     "Filed outflow proxy (Schedule H, plan year 2024-01-01 to 2024-12-31): 11.5% of the position per year vs 20% annual wrapper capacity, the plan's total expenses less administrative expenses over beginning net assets, applied to the position. Adequate headroom at the filed rate if offers are not prorated.",
-    "Slider assumption (illustrative): 7.2% of the position per year vs 20% annual wrapper capacity, from tail turnover 20%/yr on the 14.9% of accounts that are separated and active turnover 5%/yr on the rest. Shown beside the filed rate, not blended with it. Within 60% of wrapper capacity at these sliders.",
+    "Slider assumption (illustrative): 7.2% of the position per year vs 20% annual wrapper capacity, from tail turnover 20%/yr on the 14.9% of accounts that are separated and active turnover 5%/yr on the rest. Shown beside the filed rate, not blended with it. Within 60% of wrapper capacity at these turnover assumptions.",
     "Fund capacity in dollars: 20% of approx. $9.5B net assets (cell 3.3) is $1.9B per year. At a 5% allocation ($39.6M) the plan's demand at the filed rate is $4.6M per year, 0.24% of that capacity. The cap is shared by every holder, so this is the plan's own claim on it, not the fund's total demand. The allocation moves these dollar figures and this share, never the percent-of-position ladder.",
-    "Scenario verdict (ILLUSTRATIVE, this plan): conditional. No rung fired: the filed outflow proxy 11.5% and the stressed demand 16.6% of the position per year both stay within the annual wrapper capacity 20% (binding cap 5% per quarter on aggregate NAV (3.1), quarterly offers (3.1), program active as of 2025-12-31 (3.1), gating history not typed (3.3)). Per quarter: filed 2.9% and stressed 4.2% of the position against the 5% cap. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
-    "Schedule H benefit-payment line 2e is not yet in the plan record. The filed outflow proxy (total expenses less administrative expenses over beginning net assets) stands in for it as the base demand, and the turnover sliders are the stress around it."
+    "Scenario verdict (ILLUSTRATIVE, this plan): conditional. No rung fired: the filed outflow proxy 11.5% and the stressed demand 16.6% of the position per year both stay within the annual wrapper capacity 20% (binding cap 5% per quarter on aggregate NAV (3.1), quarterly offers (3.1), program active as of 2025-12-31 (3.1), gating history not on record (3.3)). Per quarter: filed 2.9% and stressed 4.2% of the position against the 5% cap. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
+    "Schedule H benefit-payment line 2e is not yet in the plan record. The filed outflow proxy (total expenses less administrative expenses over beginning net assets) stands in for it as the base demand, and the turnover assumptions are the stress around it."
   ],
   "reasons": [
     "STRUCTURAL GAP: a participant-directed 404(c) menu assumes daily pricing and daily participant liquidity, whereas this wrapper deals quarterly with a 5% cap per quarter on aggregate NAV. Direct DIA use requires a bridging structure: CIT sleeve, managed account, or TDF sleeve (cell 3.5).",
-    "Facts missing for a structural verdict: gate_history (shares requested versus repurchased: the 10-K prints repurchases by class and discloses no proration, deferral or unsatisfied-request event for 2024-2025, but the requested amounts are not printed, so a clean False would overclaim (R2-P1-12 rule)). The verdict stays partial until they are typed from the filings.",
+    "Facts missing for a structural verdict: gating history (shares requested versus repurchased: the 10-K prints repurchases by class and discloses no proration, deferral or unsatisfied-request event for 2024-2025, but the requested amounts are not printed, so a clean False would overclaim (the completed-tender rule)). The verdict stays partial until they are read from the filings.",
     "Early repurchase economics: 5% if held < 24 months (2.7). Relevant to participant-level churn (2.7).",
     "Capacity: 5% per quarter on aggregate NAV: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed.",
     "Filed outflow proxy (Schedule H, plan year 2024-01-01 to 2024-12-31): 11.5% of the position per year vs 20% annual wrapper capacity, the plan's total expenses less administrative expenses over beginning net assets, applied to the position. Adequate headroom at the filed rate if offers are not prorated.",
-    "Slider assumption (illustrative): 7.2% of the position per year vs 20% annual wrapper capacity, from tail turnover 20%/yr on the 14.9% of accounts that are separated and active turnover 5%/yr on the rest. Shown beside the filed rate, not blended with it. Within 60% of wrapper capacity at these sliders.",
+    "Slider assumption (illustrative): 7.2% of the position per year vs 20% annual wrapper capacity, from tail turnover 20%/yr on the 14.9% of accounts that are separated and active turnover 5%/yr on the rest. Shown beside the filed rate, not blended with it. Within 60% of wrapper capacity at these turnover assumptions.",
     "Fund capacity in dollars: 20% of approx. $9.5B net assets (cell 3.3) is $1.9B per year. At a 5% allocation ($39.6M) the plan's demand at the filed rate is $4.6M per year, 0.24% of that capacity. The cap is shared by every holder, so this is the plan's own claim on it, not the fund's total demand. The allocation moves these dollar figures and this share, never the percent-of-position ladder.",
-    "Scenario verdict (ILLUSTRATIVE, this plan): conditional. No rung fired: the filed outflow proxy 11.5% and the stressed demand 16.6% of the position per year both stay within the annual wrapper capacity 20% (binding cap 5% per quarter on aggregate NAV (3.1), quarterly offers (3.1), program active as of 2025-12-31 (3.1), gating history not typed (3.3)). Per quarter: filed 2.9% and stressed 4.2% of the position against the 5% cap. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
-    "Schedule H benefit-payment line 2e is not yet in the plan record. The filed outflow proxy (total expenses less administrative expenses over beginning net assets) stands in for it as the base demand, and the turnover sliders are the stress around it."
+    "Scenario verdict (ILLUSTRATIVE, this plan): conditional. No rung fired: the filed outflow proxy 11.5% and the stressed demand 16.6% of the position per year both stay within the annual wrapper capacity 20% (binding cap 5% per quarter on aggregate NAV (3.1), quarterly offers (3.1), program active as of 2025-12-31 (3.1), gating history not on record (3.3)). Per quarter: filed 2.9% and stressed 4.2% of the position against the 5% cap. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
+    "Schedule H benefit-payment line 2e is not yet in the plan record. The filed outflow proxy (total expenses less administrative expenses over beginning net assets) stands in for it as the base demand, and the turnover assumptions are the stress around it."
   ],
   "missing_facts": [
     "gate_history"
   ],
-  "layers": "verdict is structural (typed facts, cells 3.1, 3.3, 2.7, plan-independent). scenario_verdict is ILLUSTRATIVE (the plan's filed outflow proxy as the base demand and the sliders as the stress, against the same capacity, per plan).",
+  "missing_facts_labels": [
+    "gating history"
+  ],
+  "layers": "The structural verdict reads the dealing terms on record (cells 3.1, 3.3, 2.7, plan-independent). The scenario verdict is ILLUSTRATIVE (the plan's filed outflow proxy as the base demand and the turnover assumptions as the stress, against the same capacity, per plan).",
   "filed_outflow": {
     "label": "filed outflow proxy",
     "rate_pct": 11.53,
@@ -47,7 +50,7 @@
   "stressed_scenario": {
     "illustrative": true,
     "base": "filed outflow proxy",
-    "assumptions": "the filed outflow proxy plus the increment the sliders add under stress (tail turnover x2, active turnover x1.5 over the slider assumption)",
+    "assumptions": "the filed outflow proxy plus the increment the stress multiples add under stress (tail turnover x2, active turnover x1.5 over the slider assumption)",
     "multiples": {
       "tail_multiple": 2.0,
       "active_multiple": 1.5
@@ -83,7 +86,7 @@
     "net_assets_cell": "3.3",
     "net_assets_approx": true,
     "null_reasons": {
-      "gate_history": "shares requested versus repurchased: the 10-K prints repurchases by class and discloses no proration, deferral or unsatisfied-request event for 2024-2025, but the requested amounts are not printed, so a clean False would overclaim (R2-P1-12 rule)"
+      "gate_history": "shares requested versus repurchased: the 10-K prints repurchases by class and discloses no proration, deferral or unsatisfied-request event for 2024-2025, but the requested amounts are not printed, so a clean False would overclaim (the completed-tender rule)"
     },
     "source_cell": "2.7, 3.1, 3.3, 6.1",
     "cells_read": [
@@ -164,11 +167,11 @@
         "filed_per_window_pct": 2.8825,
         "stressed_per_window_pct": 4.159730971128608
       },
-      "sentence": "No rung fired: the filed outflow proxy 11.5% and the stressed demand 16.6% of the position per year both stay within the annual wrapper capacity 20% (binding cap 5% per quarter on aggregate NAV (3.1), quarterly offers (3.1), program active as of 2025-12-31 (3.1), gating history not typed (3.3)). Per quarter: filed 2.9% and stressed 4.2% of the position against the 5% cap."
+      "sentence": "No rung fired: the filed outflow proxy 11.5% and the stressed demand 16.6% of the position per year both stay within the annual wrapper capacity 20% (binding cap 5% per quarter on aggregate NAV (3.1), quarterly offers (3.1), program active as of 2025-12-31 (3.1), gating history not on record (3.3)). Per quarter: filed 2.9% and stressed 4.2% of the position against the 5% cap."
     },
     "capacity_note": "5% per quarter on aggregate NAV: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed",
     "schedule_h_lines": [
-      "Schedule H benefit-payment line 2e is not yet in the plan record. The filed outflow proxy (total expenses less administrative expenses over beginning net assets) stands in for it as the base demand, and the turnover sliders are the stress around it."
+      "Schedule H benefit-payment line 2e is not yet in the plan record. The filed outflow proxy (total expenses less administrative expenses over beginning net assets) stands in for it as the base demand, and the turnover assumptions are the stress around it."
     ]
   },
   "plan_inputs": {
@@ -184,6 +187,6 @@
     "3.1",
     "3.3",
     "3.7",
-    "plan: plan_manufacturer_union.json (Form 5500, plan year 2024-01-01 to 2024-12-31)"
+    "the plan record on file (Form 5500, plan year 2024-01-01 to 2024-12-31)"
   ]
 }

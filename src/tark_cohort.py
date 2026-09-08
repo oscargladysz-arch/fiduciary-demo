@@ -127,7 +127,7 @@ def member_values(cohort_id: str, attr: str) -> tuple[dict[str, str], str]:
     reg = _registry()
     typed = {k: (reg.get(k) or {}).get(attr) for k in wts}
     if typed and all(v is not None for v in typed.values()):
-        return typed, "typed per product"
+        return typed, "per product from the record"
     attrs = json.loads((DATA / "cohorts" / "caveat_matrix.json").read_text())["wrapper_attributes"]
     return {k: attrs[w][attr] for k, w in wts.items()}, "by wrapper type"
 
@@ -273,7 +273,7 @@ def build_cohorts() -> None:
                       for f in STAT_FIELDS},
             "composite": composite(cid),
             "caveats": caveat_block(cid),
-            "exclusion_log": "data/roster_decisions.md",
+            "exclusion_log": "the roster decisions record",
         }
         (out_dir / f"{cid}.json").write_text(json.dumps(doc, indent=2))
         comp = doc["composite"]

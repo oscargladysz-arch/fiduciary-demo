@@ -3,7 +3,7 @@
   "cohort_id": "evergreen_pe",
   "depth": "full",
   "membership_rationale": "Evergreen PE multi-strategy (secondaries-led) tender-offer fund - founding cohort member.",
-  "what": "typed projections of evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
+  "what": "facts read from evidenced cells, zero new facts. Every field carries its source_cell and mirrors its status",
   "generated_by": "src/build_facts.py (hand-mapping machine-checked by validate_data.py)",
   "facts": {
     "wrapper_type": {
@@ -103,7 +103,7 @@
     "filed_since_inception_return_pct": {
       "value": null,
       "source_cell": "1.2",
-      "reason": "since-inception annualized return not typed from cell 1.2 in this round",
+      "reason": "since-inception annualized return not read from cell 1.2 in this round",
       "status": "extracted-unverified"
     },
     "repurchase_program_status": {
@@ -149,7 +149,7 @@
       "value": "partial",
       "source_cell": "3.9",
       "status": "computed",
-      "note": "from typed facts only (cells 3.1, 3.3, 2.7), plan-independent"
+      "note": "from the dealing terms on record only (cells 3.1, 3.3, 2.7), plan-independent"
     },
     "liquidity_verdict_by_plan": {
       "value": {
@@ -160,7 +160,7 @@
       },
       "source_cell": "3.9",
       "status": "computed",
-      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default sliders against the typed capacity)"
+      "note": "ILLUSTRATIVE scenario verdict per plan (demand model at the default turnover assumptions against the recorded capacity)"
     },
     "primary_benchmark_id": {
       "value": "cambridge_pe",

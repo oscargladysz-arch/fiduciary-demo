@@ -317,7 +317,7 @@ def fund_liquidity_terms(prof: dict) -> str:
     else:
         caps = prof.get("repurchase_caps") or []
         cap_txt = (" under " + " and ".join(f"{c['pct']:g}% cap per {c['period']}" for c in caps)
-                   if caps else " with no cap typed")
+                   if caps else " with no cap on record")
         base = f"{dc or 'periodic'} dealing at NAV{cap_txt}"
     if prof.get("gate_history") is True:
         base += ", requests prorated in the filings on record"

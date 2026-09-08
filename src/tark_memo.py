@@ -34,7 +34,8 @@ from tark_data import (ADVISOR_COMPLETED, ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_C
                        load_products, plan_keys, record_as_of, rule_ref, status_kind)
 from tark_benchmark_common import BY_DESCRIPTOR_SENTENCE, TIE_SENTENCE, x_of_n
 from tark_display import (WRAPPER_LABEL, _money as money, display_path_free, facts_by_cell,
-                          plan_demand_sentence, reconciliation_sentence, typed_headline)
+                          display_copy, fact_label, plan_demand_sentence, reconciliation_sentence,
+                          typed_headline)
 
 SITE_MEMOS = Path(__file__).resolve().parents[1] / "site" / "memos"
 
@@ -88,13 +89,13 @@ def _findings(product: dict, factor_label: str, fbc: dict, overrides: dict | Non
             th = typed_headline(cid, fbc.get(cid, {}))
             if th:
                 typed.append(f"{cid} {th}")
-            lines.append(f"{cid} {cell['element']} ({KIND_LABEL[kind]}): {first_sentence(display_path_free(v))}")
+            lines.append(f"{cid} {cell['element']} ({KIND_LABEL[kind]}): {first_sentence(display_copy(v))}")
         elif kind == "n/a":
             reason = st.split(":", 1)[1].strip() if ":" in st else st[3:].strip(" -")
             na.append(f"{cid} {reason}")
     out = []
     if typed:
-        out.append("Typed facts: " + ". ".join(typed) + ".")
+        out.append("Facts on record: " + ". ".join(typed) + ".")
     out.extend(lines)
     if na:
         out.append("Not applicable: " + ". ".join(na) + ".")
@@ -122,10 +123,10 @@ def _liquidity_section(doc: Document, m: dict | None, fdoc: dict, plan: dict, he
     if heading:
         doc.add_heading("Product-to-plan liquidity match", level=1)
     if m is None:
-        doc.add_paragraph("No liquidity match artifact exists for this plan and product.")
+        doc.add_paragraph("No liquidity match record exists for this plan and product.")
         return
     doc.add_paragraph(f"Plan: {plan['display_label']}. {m['layers']}")
-    doc.add_heading("Structural verdict (typed facts, plan-independent)", level=2)
+    doc.add_heading("Structural verdict (dealing terms on record, plan-independent)", level=2)
     doc.add_paragraph(m["verdict"].upper())
     for r in m["structural_reasons"]:
         doc.add_paragraph(r, style="List Bullet")
@@ -153,8 +154,8 @@ def _liquidity_section(doc: Document, m: dict | None, fdoc: dict, plan: dict, he
         c = t.add_row().cells
         c[0].text = label
         if shown is None:
-            reason = wf.get("null_reasons", {}).get(field) or null_reason or "not typed"
-            c[1].text = f"not typed: {reason}"
+            reason = wf.get("null_reasons", {}).get(field) or null_reason or "not on record"
+            c[1].text = f"not on record: {reason}"
         else:
             c[1].text = str(shown)
         c[2].text = src or ""
@@ -182,7 +183,7 @@ def _liquidity_section(doc: Document, m: dict | None, fdoc: dict, plan: dict, he
             f"{money(sc['filed_annual_demand_usd'])}/yr = {filed:.1f}% of the position per year "
             f"vs annual wrapper capacity {cap_text}.")
     doc.add_paragraph(
-        "Slider assumption (adjustable on the site, not a fact): tail turnover "
+        "Slider assumption (adjustable on the Liquidity view, not a fact): tail turnover "
         f"{sc['tail_annual_turnover_pct']:g}%/yr, active turnover "
         f"{sc['active_annual_turnover_pct']:g}%/yr, {sc['slider_assumption_pct']}% of the "
         f"position per year = {money(sc['slider_annual_demand_usd'])}/yr, shown beside the "
@@ -238,7 +239,7 @@ def _flags(sel: dict | None, m: dict | None, fdoc: dict) -> list[str]:
             out.append("Liquidity: gating precedent, repurchases prorated under stress (cell 3.3)")
         if m.get("missing_facts"):
             out.append("Liquidity: structural verdict partial, facts missing: "
-                       + ", ".join(m["missing_facts"]) + " (cells 3.1, 3.3)")
+                       + ", ".join(fact_label(n) for n in m["missing_facts"]) + " (cells 3.1, 3.3)")
         if m.get("scenario_verdict") in ("misaligned", "conditional-weak"):
             out.append(f"Liquidity: ILLUSTRATIVE scenario verdict {m['scenario_verdict']} "
                        "under this plan (the filed outflow proxy or the stressed demand above "
@@ -289,11 +290,11 @@ def _recommendation_section(doc: Document, sel: dict | None, m: dict | None,
     doc.add_heading("Recommendation", level=1)
     if m:
         doc.add_paragraph(
-            f"Structural liquidity verdict: {m['verdict'].upper()} (typed facts, plan-independent). "
+            f"Structural liquidity verdict: {m['verdict'].upper()} (dealing terms on record, plan-independent). "
             f"Scenario verdict under {plan['display_label']} (ILLUSTRATIVE): "
             f"{(m.get('scenario_verdict') or 'not computable').upper()}.")
     if sel is None:
-        doc.add_paragraph("Benchmark: no selection artifact for this product.")
+        doc.add_paragraph("Benchmark: no selection record for this product.")
     elif (sel.get("slot_k") or {}).get("escalation"):
         doc.add_paragraph("Benchmark: escalated. " + sel["slot_k"]["escalation"])
     else:
@@ -302,8 +303,8 @@ def _recommendation_section(doc: Document, sel: dict | None, m: dict | None,
                           + ("" if pr.get("held") else ", cited, series not in the record") + ". "
                           + _peer_line(sel))
     flags = _flags(sel, m, fdoc)
-    doc.add_paragraph("Flags raised by the record (each restates a typed value or verdict "
-                      "already in the artifacts, with its source):")
+    doc.add_paragraph("Flags raised by the record (each restates a recorded value or verdict "
+                      "already in the record, with its source):")
     if flags:
         for f in flags:
             doc.add_paragraph(f, style="List Bullet")
@@ -328,13 +329,13 @@ def _scope_section(doc: Document) -> None:
         "It is a selection record. It is not a monitoring record, and nothing in it "
         "states a monitoring cadence or a later review.")
     doc.add_paragraph(
-        "Every figure in it is a cited cell, a typed projection of a cited cell, or a "
+        "Every figure in it is a cited cell, a figure read from a cited cell, or a "
         "computation from cited series. Every scenario figure is labeled ILLUSTRATIVE. "
         "Cells marked extracted-unverified were extracted by an agent and not yet "
         "verified by a person. "
-        + ("Verbatim regulatory text is in this build and quoted where cited."
+        + ("Verbatim regulatory text is in this record and quoted where cited."
            if verbatim else
-           "Verbatim regulatory text is not in this build: the regulation is cited by "
+           "Verbatim regulatory text is not in this record: the regulation is cited by "
            "Federal Register citation and RIN, not paraphrased."))
 
 
@@ -346,8 +347,8 @@ def _case_law_section(doc: Document, product: dict) -> None:
     kind = status_kind(st)
     v = (c.get("value") or "").strip()
     if kind in EVIDENCED and v:
-        doc.add_paragraph(f"Cell 5.7 ({KIND_LABEL[kind]}): {display_path_free(v)}")
-        src = display_path_free(c.get("source") or c.get("source_doc") or "")
+        doc.add_paragraph(f"Cell 5.7 ({KIND_LABEL[kind]}): {display_copy(v)}")
+        src = display_copy(c.get("source") or c.get("source_doc") or "")
         if src:
             doc.add_paragraph(f"Source: {src}" + (f". Extracted: {c['extracted_by']}" if c.get("extracted_by") else ""))
     else:
@@ -408,7 +409,7 @@ def _provenance_section(doc: Document, key: str, product: dict, plan: dict) -> N
         + ("Verified cells have been independently re-checked by a person."
            if cov["verified"] > 0 else
            "No cell is verified: no cell has been independently re-checked by a person, "
-           "and verified_by is empty on every row.")
+           "and the verifier column is empty on every row.")
         + " Cells marked extracted-unverified were extracted by an agent from the cited "
         "document."
         + (" Cells marked structured come directly from machine-readable regulatory "
@@ -431,7 +432,7 @@ def _provenance_section(doc: Document, key: str, product: dict, plan: dict) -> N
             lines = ["accession not on record: no filing reference in the source field"]
         row = t.add_row().cells
         row[0].text = cid
-        row[1].text = display_path_free(c.get("source") or "")
+        row[1].text = display_copy(c.get("source") or "")
         _fill(row[2], lines)
     for row in t.rows:
         row.cells[0].width, row.cells[1].width, row.cells[2].width = Inches(0.5), Inches(2.4), Inches(3.6)
@@ -656,7 +657,7 @@ def plan_findings(plan: dict, m: dict | None) -> dict[str, str]:
                           f"{sc.get('slider_assumption_pct', 'n/a')}%, stressed demand {ss.get('demand_pct_of_position')}% "
                           f"vs {cap:g}% annual wrapper capacity, {str(ss.get('outcome', '')).rstrip('.')}. "
                           "Source: this plan's liquidity match.")
-        out["3.9"] = (f"Structural liquidity verdict {str(m.get('verdict', '')).upper()} (typed facts, plan-independent). "
+        out["3.9"] = (f"Structural liquidity verdict {str(m.get('verdict', '')).upper()} (dealing terms on record, plan-independent). "
                       f"Scenario verdict under this plan (ILLUSTRATIVE): "
                       f"{str(m.get('scenario_verdict') or 'not computable').upper()}. Source: this plan's liquidity match.")
     return out
@@ -714,11 +715,11 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
     _plan_lines = plan_findings(anchor, json.loads(_mp.read_text()) if _mp.exists() else None)
     doc.add_heading("Six-factor findings", level=1)
     doc.add_paragraph(
-        "Per factor: the typed facts the engines read (each cites its cell), "
+        "Per factor: the facts on record the computations read (each cites its cell), "
         "then the complete first sentence of every evidenced cell with its "
         "status, then the cells marked not applicable with the reason. The "
         "full sourced text, quote and document of every cell is in "
-        "the evidence ledger and on the site's Evaluation view.")
+        "the evidence ledger and on the Evaluation view.")
     table = doc.add_table(rows=1, cols=2)
     table.style = "Table Grid"
     hdr = table.rows[0].cells
@@ -732,7 +733,7 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
 
     doc.add_heading("Benchmark selection and justification", level=1)
     if sel is None:
-        doc.add_paragraph("Engine profile pending for this product: "
+        doc.add_paragraph("Selection pending for this product: "
                           "extraction depth required before selection.")
     else:
         _benchmark_section(doc, sel, fdoc)
@@ -752,10 +753,10 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
             doc.add_paragraph(
                 f"Evidence depth tier: {fdoc.get('depth', 'cohort').upper()}. "
                 f"Cohort: {co['label']} (n={co['n']}). Membership rationale: "
-                f"{fdoc.get('membership_rationale', '')}")
+                f"{display_copy(fdoc.get('membership_rationale', ''))}")
             v29 = p["cells"]["2.9"].get("value")
             if v29:
-                doc.add_paragraph(display_path_free(v29))
+                doc.add_paragraph(display_copy(v29))
             comp = co.get("composite", {})
             if comp.get("refused"):
                 doc.add_paragraph("Cohort composite: REFUSED, "
@@ -764,11 +765,11 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
                 doc.add_paragraph("Cohort composite return: not formed, "
                                   + comp["composite_refused_reason"].rstrip(".") + ".")
             for cv in co.get("caveats", []):
-                doc.add_paragraph(f"Caveat: {cv}", style="List Bullet")
+                doc.add_paragraph(f"Caveat: {display_copy(cv)}", style="List Bullet")
             doc.add_paragraph(
                 "Cohort exclusion log: every candidate considered and not "
                 "admitted is recorded with its reason in the roster decisions "
-                "record (rendered on the site's Cohorts view). Membership is an "
+                "record (shown on the Cohorts view). Membership is an "
                 "argued judgment, not a tag.")
 
     stated = _advisor_section(doc, key, plan_key, anchor)

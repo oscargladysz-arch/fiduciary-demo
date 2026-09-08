@@ -124,7 +124,7 @@ function headroom(pct, cap, subject, baseClause) {
 function vsCapacity(pct, cap) {
   if (cap === null) {
     return `${pct.toFixed(1)}% of the position per year, no annual wrapper capacity to ` +
-      "compare against until the cap is typed (3.1)";
+      "compare against until the cap is on record (3.1)";
   }
   return `${pct.toFixed(1)}% of the position per year vs ${cap.toFixed(0)}% annual wrapper capacity`;
 }
@@ -140,15 +140,15 @@ function driverFacts(d) {
     parts.push(`binding cap ${cap.pct}% per ${cap.period} on ${d.cap_base} (3.1)`);
     if (DEALING_NOUN[d.dealing_cadence]) parts.push(`${DEALING_NOUN[d.dealing_cadence]} (3.1)`);
   } else {
-    parts.push("repurchase cap not typed (3.1)");
+    parts.push("repurchase cap not on record (3.1)");
   }
   if (d.program_status === "active") {
     parts.push("program active" + (d.program_status_as_of ? ` as of ${d.program_status_as_of}` : "") + " (3.1)");
   } else if (!isNum(d.program_status)) {
-    parts.push("program status not typed (3.1)");
+    parts.push("program status not on record (3.1)");
   }
   parts.push(d.gate_history ? "prorated under stress before (3.3)"
-    : d.gate_history === false ? "no proration identified (3.3)" : "gating history not typed (3.3)");
+    : d.gate_history === false ? "no proration identified (3.3)" : "gating history not on record (3.3)");
   return parts.join(", ");
 }
 
@@ -237,13 +237,13 @@ export function scenarioBullets(m, out, params, profile, verdict) {
   }
   if (!isNum(filed)) {
     bullets.push({ kind: "filed", text: "Filed outflow proxy: not in the plan record, so the scenario has no base demand and no " +
-      "scenario verdict until the Schedule H totals are typed." });
+      "scenario verdict until the Schedule H totals are on record." });
   } else {
     bullets.push({ kind: "filed", text: `Filed outflow proxy (Schedule H, plan year ${pi.plan_year}): ${vsCapacity(filed, cap)}, ${FILED_WORDS}.` +
       headroom(filed, cap, "filed rate", "Adequate headroom at the filed rate if offers are not prorated.") });
   }
   bullets.push({ kind: "slider", text: `Slider assumption (illustrative): ${vsCapacity(sliderPct, cap)}, ${sliderWords}.` +
-    headroom(sliderPct, cap, "slider assumption", "Within 60% of wrapper capacity at these sliders.") });
+    headroom(sliderPct, cap, "slider assumption", "Within 60% of wrapper capacity at these turnover assumptions.") });
   const fc = out.fund_capacity;
   if (fc.available) {
     const approx = profile.net_assets_approx ? "approx. " : "";

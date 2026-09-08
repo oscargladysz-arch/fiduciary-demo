@@ -77,7 +77,7 @@
     },
     "1.8": {
       "element": "Risk-adjusted metrics (PME etc)",
-      "value": "No PME constructible: annual returns are printed only as per-class RANGES (e.g. '3.0% to 3.8%'), not point values - a return series cannot be typed without fabrication. Verification-queue item (a fact-sheet point series may exist behind attestation).",
+      "value": "No PME constructible: annual returns are printed only as per-class RANGES (e.g. '3.0% to 3.8%'), not point values - a return series cannot be built without fabrication. Verification-queue item (a fact-sheet point series may exist behind attestation).",
       "status": "n/a - not publicly available: annual returns printed only as per-class ranges; no point series to benchmark",
       "source": "data/series_annual/jll_ipt.csv (range-only notes)",
       "section": "granularity rationale",
@@ -119,10 +119,10 @@
       "element": "Peer comparison (paragraphs (g) and (h))",
       "value": "Peer comparison (paragraphs (g) and (h)): non-traded real estate cohort, peers Blackstone Real Estate Income Trust Inc, Starwood Real Estate Income Trust, Inc., fund return basis no computable return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2). Composite REFUSED: fewer than 3 peers remain after leaving JLL Income Property Trust, Inc. out (2: Blackstone Real Estate Income Trust Inc, Starwood Real Estate Income Trust, Inc.). Side by side, every period any member reports, columns in this order: Blackstone Real Estate Income Trust Inc, Starwood Real Estate Income Trust, Inc., JLL Income Property Trust, Inc.. n = members reporting. 2023 (n=1): -0.5% / n/a / n/a | 2024 (n=1): 2% / n/a / n/a | 2025 (n=2): 8.1% / -2.4% / n/a. The cohort is the roster's 3 surviving, still-filing products. Funds that closed, merged, or stopped filing are not in it, so any composite carries survivorship bias in the fund's favor. Membership rationales and exclusions are in the roster record. Members span one wrapper type (non-traded REIT) and one leverage regime (charter-level borrowing limits, no 1940-Act coverage test). Fee bases, leverage and exit rights are not like-for-like, so the comparison is a history of similar investments, not a like-for-like index.",
       "status": "computed",
-      "source": "benchmark selection artifact (JLL Income Property Trust, Inc.)",
+      "source": "the benchmark selection record (JLL Income Property Trust, Inc.)",
       "section": "peer comparison: member table, composite or refusal, survivorship, heterogeneity",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "2.1": {
@@ -207,12 +207,12 @@
     },
     "2.9": {
       "element": "Fee peer percentile",
-      "value": "Cohort placement (non-traded real estate cohort): mgmt fee: at the cohort median of 1.25 (n=3, too small for percentile language) | expense ratio (bases differ, see notes): fact unavailable for this member | repurchase cap: above the cohort median of 2 (n=3, too small for percentile language). Statistics and per-member values are in the cohort artifact, membership rationales in the typed facts.",
+      "value": "Cohort placement (non-traded real estate cohort): mgmt fee: at the cohort median of 1.25 (n=3, too small for percentile language) | expense ratio (bases differ, see notes): fact unavailable for this member | repurchase cap: above the cohort median of 2 (n=3, too small for percentile language). Statistics and per-member values are in the cohort record, membership rationales in the facts on record.",
       "status": "computed",
-      "source": "cohort artifact (non-traded real estate cohort)",
+      "source": "the cohort record (non-traded real estate cohort)",
       "section": "statistics (mid-rank percentile phrasing)",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "2.10": {
@@ -292,27 +292,27 @@
       "source": "plan records on file (Form 5500), read per plan by the liquidity match",
       "section": "participant counts and filed outflow proxy, per plan",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "3.8": {
       "element": "Redemption stress test",
-      "value": "ILLUSTRATIVE redemption stress test (computed for all four reference plans): base demand is each plan's filed outflow proxy (Schedule H, total expenses less administrative expenses over beginning net assets), stressed demand is the filed outflow proxy plus the increment the sliders add under stress (tail turnover x2, active turnover x1.5 over the slider assumption), default sliders allocation 5% of plan, tail turnover 20%/yr, active turnover 5%/yr. Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): filed outflow proxy 6.5% of the position per year, slider assumption 13.7%, stressed demand 19.2% vs 20% annual wrapper capacity, within wrapper capacity (19.2% vs 20%) IF offers are not prorated. US industrial manufacturer 401(k) plan (~$0.8B, OH): filed outflow proxy 11.5% of the position per year, slider assumption 7.2%, stressed demand 16.6% vs 20% annual wrapper capacity, within wrapper capacity (16.6% vs 20%) IF offers are not prorated. US casual-dining restaurant group 401(k) plan (~$1.6B, FL): filed outflow proxy 10.8% of the position per year, slider assumption 9.2%, stressed demand 18.2% vs 20% annual wrapper capacity, within wrapper capacity (18.2% vs 20%) IF offers are not prorated. US media/technology company 401(k) plan (~$570M, New York): filed outflow proxy 11.7% of the position per year, slider assumption 10.4%, stressed demand 20.5% vs 20% annual wrapper capacity, EXCEEDS annual wrapper capacity (20.5% vs 20%). Unmet demand rolls into later windows (gating-equivalent outcome). Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
+      "value": "ILLUSTRATIVE redemption stress test (computed for all four reference plans): base demand is each plan's filed outflow proxy (Schedule H, total expenses less administrative expenses over beginning net assets), stressed demand is the filed outflow proxy plus the increment the stress multiples add under stress (tail turnover x2, active turnover x1.5 over the slider assumption), default turnover assumptions allocation 5% of plan, tail turnover 20%/yr, active turnover 5%/yr. Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): filed outflow proxy 6.5% of the position per year, slider assumption 13.7%, stressed demand 19.2% vs 20% annual wrapper capacity, within wrapper capacity (19.2% vs 20%) IF offers are not prorated. US industrial manufacturer 401(k) plan (~$0.8B, OH): filed outflow proxy 11.5% of the position per year, slider assumption 7.2%, stressed demand 16.6% vs 20% annual wrapper capacity, within wrapper capacity (16.6% vs 20%) IF offers are not prorated. US casual-dining restaurant group 401(k) plan (~$1.6B, FL): filed outflow proxy 10.8% of the position per year, slider assumption 9.2%, stressed demand 18.2% vs 20% annual wrapper capacity, within wrapper capacity (18.2% vs 20%) IF offers are not prorated. US media/technology company 401(k) plan (~$570M, New York): filed outflow proxy 11.7% of the position per year, slider assumption 10.4%, stressed demand 20.5% vs 20% annual wrapper capacity, EXCEEDS annual wrapper capacity (20.5% vs 20%). Unmet demand rolls into later windows (gating-equivalent outcome). Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
       "status": "computed",
-      "source": "liquidity match artifacts (JLL Income Property Trust, Inc., four reference plans)",
+      "source": "the liquidity match records (JLL Income Property Trust, Inc., four reference plans)",
       "section": "stressed scenario and scenario across the four plan match files",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "3.9": {
       "element": "Product-to-plan liquidity match",
-      "value": "Structural liquidity verdict CONDITIONAL (typed facts, cells 3.1, 3.3, 2.7, plan-independent). Scenario verdicts (ILLUSTRATIVE, default sliders) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): conditional, US industrial manufacturer 401(k) plan (~$0.8B, OH): conditional, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): conditional, US media/technology company 401(k) plan (~$570M, New York): conditional-weak. Base demand is each plan's filed outflow proxy (Schedule H), the sliders set the stress. STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed). A trustee-directed sleeve could hold this wrapper directly (cell 3.5), and the daily-menu constraint applies only to the participant-directed portion, where the menu assumes daily liquidity whereas this wrapper deals daily but only within a 5% cap per quarter on NAV. Per-plan reasons, capacity and stressed outcomes are in the liquidity match artifacts and on the Liquidity view.",
+      "value": "Structural liquidity verdict CONDITIONAL (dealing terms on record, cells 3.1, 3.3, 2.7, plan-independent). Scenario verdicts (ILLUSTRATIVE, default turnover assumptions) by reference plan: Global management-consulting firm profit-sharing/401(k) plan (~$9.8B, NY): conditional, US industrial manufacturer 401(k) plan (~$0.8B, OH): conditional, US casual-dining restaurant group 401(k) plan (~$1.6B, FL): conditional, US media/technology company 401(k) plan (~$570M, New York): conditional-weak. Base demand is each plan's filed outflow proxy (Schedule H), the turnover assumptions set the stress. STRUCTURAL GAP (narrowed): this plan is PARTIALLY participant-directed per its own Form 5500 codes (2H, no 2G/404(c) code filed). A trustee-directed sleeve could hold this wrapper directly (cell 3.5), and the daily-menu constraint applies only to the participant-directed portion, where the menu assumes daily liquidity whereas this wrapper deals daily but only within a 5% cap per quarter on NAV. Per-plan reasons, capacity and stressed outcomes are in the liquidity match records and on the Liquidity view.",
       "status": "computed",
-      "source": "liquidity match artifacts (JLL Income Property Trust, Inc., four reference plans)",
+      "source": "the liquidity match records (JLL Income Property Trust, Inc., four reference plans)",
       "section": "verdict, scenario verdict, missing facts and structural reasons across the four plan match files",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "4.1": {
@@ -427,7 +427,7 @@
     },
     "5.3": {
       "element": "Alt asset-class indices",
-      "value": "No selection run: no computable return profile exists (see 1.8). The cohort artifact carries this member's comparative context instead.",
+      "value": "No selection run: no computable return profile exists (see 1.8). The cohort record carries this member's comparative context instead.",
       "status": "n/a - not publicly available: no computable return profile (range-only annual prints)",
       "source": "data/cohorts/nontraded_reit.json",
       "section": "membership context",
@@ -439,10 +439,10 @@
       "element": "Peer universe & returns",
       "value": "Peer cohort: non-traded real estate cohort (n=3: Blackstone Real Estate Income Trust Inc, Starwood Real Estate Income Trust, Inc., JLL Income Property Trust, Inc.). No composite return is formed: no period returns on record for JLL Income Property Trust, Inc., so no equal-weight composite return is formed. The table shows each member's own periods with n. Periods on record, n = members reporting: 2023 (n=1), 2024 (n=1), 2025 (n=2). Wrapper types in the cohort: non-traded REIT. Cross-wrapper differences are disclosed in the cohort caveat block (1 caveat). Membership rationales and exclusions are in the roster decisions record.",
       "status": "computed",
-      "source": "cohort artifact (non-traded real estate cohort)",
+      "source": "the cohort record (non-traded real estate cohort)",
       "section": "members, composite and caveats",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.5": {
@@ -459,15 +459,15 @@
       "element": "Benchmark suitability memo",
       "value": "Benchmark suitability (Tark benchmark rubric, 10 points). Meaningful benchmark (paragraph (k)): NCREIF Fund Index - ODCE (private core RE) (fund-declared benchmark or SEC-required comparator) scored 8 of 10. Meaningful benchmark by descriptor. No comparison until its series is held. Max attainable by an eligible candidate on held data 8 of 10. Declared benchmark NFI-ODCE (cell 5.1): cited, not held, scored 8 of 10, selected for Slot K. No comparison: no computable fund return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2). SEC-required comparator S&P 500 (cell 5.1): held, scored 5 of 10, fails the strategy gate (strategy match 0 of 3). No comparison: no computable fund return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2). Peer comparison (cell 1.12): composite refused, fewer than 3 peers remain after leaving JLL Income Property Trust, Inc. out (2: Blackstone Real Estate Income Trust Inc, Starwood Real Estate Income Trust, Inc.). Not selected: 2 candidates, each with its reason in the ledger. The scoring rules are in the benchmark methodology document. Selection recorded 2026-09-04, record d693827f (rubric v3.1, full hash in the selection record).",
       "status": "computed",
-      "source": "benchmark selection artifact (JLL Income Property Trust, Inc.)",
+      "source": "the benchmark selection record (JLL Income Property Trust, Inc.)",
       "section": "meaningful benchmark, reference, maximum attainable, declared benchmarks, peer comparison",
       "quote": "",
-      "extracted_by": "Tark computed-cells writer (as-of 2026-09-04)",
+      "extracted_by": "Tark computed cells (as-of 2026-09-04)",
       "verified_by": ""
     },
     "5.7": {
       "element": "Case-law tracker",
-      "value": "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498 (U.S.). Certiorari granted 2026-01-16 per the Supreme Court docket listing. Question presented, per the docket as relayed in search-result snippets: whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary breached the duty of prudence requires alleging a meaningful benchmark. The Ninth Circuit had required plaintiffs to identify a comparable alternative giving a sound basis for comparison, a meaningful benchmark. No holding exists yet, and this cell draws no consequence for the evaluation. Status partial: assembled from the docket listing and search snippets, not from the source documents, which this build could not fetch.",
+      "value": "Anderson v. Intel Corp. Investment Policy Committee, No. 25-498 (U.S.). Certiorari granted 2026-01-16 per the Supreme Court docket listing. Question presented, per the docket as relayed in search-result snippets: whether, for claims predicated on fund underperformance, pleading that an ERISA fiduciary breached the duty of prudence requires alleging a meaningful benchmark. The Ninth Circuit had required plaintiffs to identify a comparable alternative giving a sound basis for comparison, a meaningful benchmark. No holding exists yet, and this cell draws no consequence for the evaluation. Status partial: assembled from the docket listing and search snippets, not from the source documents, which this record could not fetch.",
       "status": "partial - search snippets and docket listing only, source documents not fetched in this build",
       "source": "Supreme Court docket 25-498, https://www.supremecourt.gov/docket/docketfiles/html/public/25-498.html (grant date). SCOTUSblog case page, https://www.scotusblog.com/cases/anderson-v-intel-corp-investment-policy-comm/ and CRS Legal Sidebar LSB11396, https://www.congress.gov/crs-product/LSB11396 (question presented, argument term). Accessed 2026-09-04 through web-search snippets only.",
       "section": "docket listing and search-result snippets (question presented, argument scheduling)",

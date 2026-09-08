@@ -97,7 +97,7 @@ MAPPING_BASIS = ("factor order per the 2026-09-03 audit's check of 91 FR 16088, 
                  "paragraphs (g) to (l) of proposed 29 CFR 2550.404a-6")
 # the one sentence every surface prints while the verbatim text is absent
 # (R2-P0-3): no instruction, no script name, no environment excuse
-NOT_FETCHED_SENTENCE = ("The verbatim text of paragraphs (g) to (l) is not yet in this build. "
+NOT_FETCHED_SENTENCE = ("The verbatim text of paragraphs (g) to (l) is not yet in the record. "
                         "The Federal Register document is linked above.")
 
 
@@ -176,7 +176,7 @@ def authority() -> dict:
         rel = str(path.relative_to(BASE))
     except ValueError:
         rel = str(path)
-    return {"status": "fetched", "note": "verbatim Federal Register text is in this build",
+    return {"status": "fetched", "note": "verbatim Federal Register text is in the record",
             "file": rel, "paragraphs": paras, "url": row.get("source_url"),
             "sha256": row.get("content_sha256"), "fetched_at": row.get("fetched_at_utc")}
 
@@ -188,8 +188,8 @@ def rule_ref(cid: str, auth: dict | None = None) -> dict:
     letter = FACTOR_PARAS[cid.split(".")[0]]
     verbatim = auth["status"] == "fetched"
     return {"para": f"({letter})",
-            "basis": MAPPING_BASIS + (", verbatim text in this build" if verbatim
-                                      else ", verbatim text not in this build"),
+            "basis": MAPPING_BASIS + (", verbatim text in the record" if verbatim
+                                      else ", verbatim text not in the record"),
             "verbatim": verbatim,
             "advisor_completed": cid in ADVISOR_COMPLETED}
 

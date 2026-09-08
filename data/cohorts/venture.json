@@ -96,8 +96,8 @@
         "dxyz": 438000000
       },
       "missing": {
-        "ssss": "aggregate net assets not yet carried into a typed cell. Verification-queue item",
-        "arkvx": "aggregate net assets not yet carried into a typed cell. Verification-queue item"
+        "ssss": "aggregate net assets not yet carried into a fact on record. Verification-queue item",
+        "arkvx": "aggregate net assets not yet carried into a fact on record. Verification-queue item"
       }
     }
   },
@@ -108,10 +108,10 @@
     "member_source": {}
   },
   "caveats": [
-    "PRICING-BASIS MIX: some members transact at NAV, others at exchange market price. Return comparisons mix appraisal dynamics with premium/discount dynamics, so composites across this line are refused, not averaged. [typed per product: ARK Venture Fund: NAV, Destiny Tech100 Inc: market price, Neostellar Capital Corp.: market price]",
-    "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds. Fee bases and return volatility are not like-for-like. [typed per product: ARK Venture Fund: 1940-Act asset-coverage limits, Destiny Tech100 Inc: 1940-Act asset-coverage limits, Neostellar Capital Corp.: BDC 150% asset-coverage regime]",
+    "PRICING-BASIS MIX: some members transact at NAV, others at exchange market price. Return comparisons mix appraisal dynamics with premium/discount dynamics, so composites across this line are refused, not averaged. [per product from the record: ARK Venture Fund: NAV, Destiny Tech100 Inc: market price, Neostellar Capital Corp.: market price]",
+    "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds. Fee bases and return volatility are not like-for-like. [per product from the record: ARK Venture Fund: 1940-Act asset-coverage limits, Destiny Tech100 Inc: 1940-Act asset-coverage limits, Neostellar Capital Corp.: BDC 150% asset-coverage regime]",
     "LIQUIDITY-LAW MIX: Rule 23c-3 obligations, discretionary tenders, and repurchase plans give different worst-case exit rights. Cadence numbers alone overstate comparability. [by wrapper type: ARK Venture Fund: Rule 23c-3 OBLIGATION (board cannot skip a window), Destiny Tech100 Inc: continuous exchange dealing, Neostellar Capital Corp.: continuous exchange dealing]",
-    "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing. Volatility and drawdown comparisons inherit that difference (see de-smoothing lab). [typed per product: ARK Venture Fund: daily, Destiny Tech100 Inc: quarterly, Neostellar Capital Corp.: quarterly]"
+    "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing. Volatility and drawdown comparisons inherit that difference (see de-smoothing lab). [per product from the record: ARK Venture Fund: daily, Destiny Tech100 Inc: quarterly, Neostellar Capital Corp.: quarterly]"
   ],
-  "exclusion_log": "data/roster_decisions.md"
+  "exclusion_log": "the roster decisions record"
 }

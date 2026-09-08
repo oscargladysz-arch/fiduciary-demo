@@ -112,9 +112,9 @@ absent_lines, _ = schedule_h_lines({"financials": {"net_assets_boy": 1.0}, "sche
 # R2-P1-10: it names the filed outflow proxy as what stands in for line 2e
 # and the sliders as the stress, never as the base
 check("schedule H absent: the match says line 2e is not yet in the plan record, names the filed outflow proxy as "
-      "what stands in for it and the sliders as the stress",
+      "what stands in for it and the turnover assumptions as the stress",
       any(x == SCHEDULE_H_ABSENT and "line 2e is not yet in the plan record" in x
-          and "filed outflow proxy" in x and "stands in for it" in x and "sliders are the stress" in x
+          and "filed outflow proxy" in x and "stands in for it" in x and "assumptions are the stress" in x
           for x in absent_lines)
       and "not typed in the test" not in " ".join(absent_lines))
 check("today's four plans carry Schedule H as null-with-reason and every non-exchange match says so",
@@ -200,7 +200,7 @@ for (pk, k), m in matches.items():
 check("no match cites cell 3.9 or a cell whose status is n/a for that product", not bad_cites,
       "; ".join(sorted(set(bad_cites))[:6]))
 check("every match cites cell 3.1 and the plan, and 2.7 wherever the product's 2.7 is not n/a",
-      all("3.1" in m["citations"] and any(c.startswith("plan: ") for c in m["citations"])
+      all("3.1" in m["citations"] and any(c.startswith("the plan record on file (Form 5500") for c in m["citations"])
           and (("2.7" in m["citations"])
                == (status_kind(str(load_product(k)["cells"]["2.7"].get("status", ""))) != "n/a"))
           for (pk, k), m in matches.items()))
@@ -344,7 +344,7 @@ check("the drivers sentence prints every fact it read with its cell: the rung wo
       "program status with its as-of date, the gating history (hl_paf under the tech plan)",
       all(x in matches[("plan_tech_media", "hl_paf")]["scenario"]["drivers"]["sentence"]
           for x in ("Stress rung", "binding cap 5% per quarter on net assets (3.1)", "quarterly offers (3.1)",
-                    "program active as of 2026-03-31 (3.1)", "gating history not typed (3.3)", "Per quarter: filed 2.9% and stressed 5.1%")))
+                    "program active as of 2026-03-31 (3.1)", "gating history not on record (3.3)", "Per quarter: filed 2.9% and stressed 5.1%")))
 check("sreit's sentence names the base rung, the suspension and the proration precedent, and prints no window against the 0% cap",
       "Base rung" in matches[("plan_tech_media", "sreit")]["scenario"]["drivers"]["sentence"]
       and "repurchases suspended (3.1)" in matches[("plan_tech_media", "sreit")]["scenario"]["drivers"]["sentence"]
@@ -447,8 +447,8 @@ check("where the fund's dollar capacity is not computable, the match carries one
            and not any(r.startswith("Fund capacity in dollars") for r in m["scenario_reasons"])
            and "plan_share_of_fund_capacity_pct" not in fc)
           for m in matches.values() for fc in [m["scenario"]["fund_capacity"]] if not fc["available"]))
-check("the reason for a missing slider names the cause (net assets not typed, exchange-listed, or a 0% or unknown cap)",
-      all(("net assets are not typed" in fc["reason"] or "exchange-listed" in fc["reason"]
+check("the reason for a missing slider names the cause (net assets not on record, exchange-listed, or a 0% or unknown cap)",
+      all(("net assets are not on record" in fc["reason"] or "exchange-listed" in fc["reason"]
            or "0% while repurchases are suspended" in fc["reason"] or "not computable (3.1)" in fc["reason"])
           for m in matches.values() for fc in [m["scenario"]["fund_capacity"]] if not fc["available"]))
 

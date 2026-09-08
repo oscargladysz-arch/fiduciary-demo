@@ -44,7 +44,7 @@ a null input names its reason, and the proration assumption is printed.
 import json
 
 from tark_data import DATA, load_plan, load_product, load_products, plan_keys, status_kind
-from tark_display import BASE_LABEL, SCHEDULE_H_ABSENT_SENTENCE, _money as money
+from tark_display import BASE_LABEL, SCHEDULE_H_ABSENT_SENTENCE, _money as money, fact_label
 
 ANCHOR_PLAN_KEY = "plan_tech_media"
 REGISTRY = json.loads((DATA / "registry.json").read_text())["products"]
@@ -82,7 +82,7 @@ def load_facts(key: str) -> dict:
 
 def early_fee_text(f) -> str:
     if f is None:
-        return "not typed (2.7)"
+        return "not on record (2.7)"
     if not f.get("present"):
         return "none at fund level (2.7)"
     parts = []
@@ -90,7 +90,7 @@ def early_fee_text(f) -> str:
         parts.append(f"{f['rate_pct']:g}%")
     if f.get("window"):
         parts.append(f"if held {f['window']}")
-    return (" ".join(parts) or "present, terms not typed") + " (2.7)"
+    return (" ".join(parts) or "present, terms not on record") + " (2.7)"
 
 
 # ---------------------------------------------------------------- capacity
@@ -127,7 +127,7 @@ def capacity_from_facts(wf: dict) -> tuple[float | None, str]:
     capacity, cap = binding_cap(caps)
     if capacity is None:
         reason = wf.get("null_reasons", {}).get("repurchase_caps")
-        return None, ("annual capacity not computable: the repurchase cap is not typed (3.1)"
+        return None, ("annual capacity not computable: the repurchase cap is not on record (3.1)"
                       + (f", {reason}" if reason else ""))
     base = wf["cap_base"]
     if capacity == 0:
@@ -153,7 +153,7 @@ def dealing_clause(wf: dict) -> str:
         return "repurchases are suspended (cell 3.1)"
     dc = wf.get("dealing_cadence")
     if dc not in ("daily", "monthly", "quarterly"):
-        return "this wrapper's dealing cadence is not typed (3.1)"
+        return "this wrapper's dealing cadence is not on record (3.1)"
     caps = wf.get("caps")
     if not caps:
         return f"this wrapper deals {dc}"
@@ -172,7 +172,7 @@ def dealing_label(wf: dict, since: str | None = None) -> str:
         return "repurchases suspended" + (f" since the {since}" if since else "") + " (3.1)"
     dc = wf.get("dealing_cadence")
     if dc not in DEALING_NOUN:
-        return "dealing cadence not typed (3.1)"
+        return "dealing cadence not on record (3.1)"
     caps = wf.get("caps")
     if not caps:
         return DEALING_NOUN[dc]
@@ -188,7 +188,7 @@ def caps_label(wf: dict) -> str:
     caps = wf.get("caps")
     capacity = wf.get("annual_capacity_pct")
     if not caps or capacity is None:
-        return "repurchase cap not typed (3.1)"
+        return "repurchase cap not on record (3.1)"
     if wf.get("program_status") == "suspended":
         return f"{caps_phrase(caps)} for ordinary requests (suspended), 0% per year"
     if len(caps) > 1:
@@ -212,7 +212,7 @@ def wrapper_facts(key: str) -> dict:
         "cap_pct": g("repurchase_cap_pct"),
         "cap_period": g("cap_period"),
         "caps": g("repurchase_caps"),
-        "cap_base": ("not typed" if raw_base is None
+        "cap_base": ("not on record" if raw_base is None
                      else BASE_LABEL.get(raw_base, raw_base.replace("_", " "))),
         "exchange": REGISTRY[key]["pricing_class"] == "MARKET",
         "gate_history": g("gate_history"),
@@ -264,8 +264,7 @@ def citations(key: str, wf: dict, plan_key: str, plan: dict,
     out = {c for c in set(wf["cells_read"]) | set(PLAN_SIDE_CELLS) | set(extra_cells)
            if c in cells and status_kind(str(cells[c].get("status", ""))) != "n/a"}
     out.discard("3.9")
-    return sorted(out) + [f"plan: {plan_key}.json (Form 5500, plan year "
-                          f"{plan.get('plan_year', '?')})"]
+    return sorted(out) + [f"the plan record on file (Form 5500, plan year {plan.get('plan_year', '?')})"]
 
 
 def structural_verdict(wf: dict) -> tuple[str, list[str], list[str]]:
@@ -288,10 +287,10 @@ def structural_verdict(wf: dict) -> tuple[str, list[str], list[str]]:
         {"repurchase_cadence_per_year": "cadence_per_year", "repurchase_cap_pct": "cap_pct",
          "gate_history": "gate_history"}[n]] is None]
     if missing:
-        detail = "; ".join(f"{n} ({wf['null_reasons'].get(n, 'not typed')})" for n in missing)
+        detail = "; ".join(f"{fact_label(n)} ({wf['null_reasons'].get(n, 'not on record')})" for n in missing)
         return "partial", [
             "Facts missing for a structural verdict: " + detail.replace("; ", ". ")
-            + ". The verdict stays partial until they are typed from the filings."], missing
+            + ". The verdict stays partial until they are read from the filings."], missing
     if wf["gate_history"]:
         return "conditional-weak", [
             "Gating precedent: this issuer has prorated repurchases when requests "
@@ -372,18 +371,18 @@ def _driver_facts(d: dict) -> str:
         if dc in DEALING_NOUN:
             parts.append(f"{DEALING_NOUN[dc]} (3.1)")
     else:
-        parts.append("repurchase cap not typed (3.1)")
+        parts.append("repurchase cap not on record (3.1)")
     ps = d.get("program_status")
     if ps == "active":
         parts.append("program active"
                      + (f" as of {d['program_status_as_of']}" if d.get("program_status_as_of") else "")
                      + " (3.1)")
     elif ps is None:
-        parts.append("program status not typed (3.1)")
+        parts.append("program status not on record (3.1)")
     gh = d.get("gate_history")
     parts.append("prorated under stress before (3.3)" if gh
                  else "no proration identified (3.3)" if gh is False
-                 else "gating history not typed (3.3)")
+                 else "gating history not on record (3.3)")
     return ", ".join(parts)
 
 
@@ -463,7 +462,7 @@ def fund_capacity(wf: dict, alloc_usd: float, filed_rate: float | None,
     if na is None:
         why = wf.get("null_reasons", {}).get("net_assets_usd", "no reason recorded")
         return {"available": False,
-                "reason": (f"the fund's net assets are not typed in the record ({why}), so "
+                "reason": (f"the fund's net assets are not on record ({why}), so "
                            "the plan's dollar demand cannot be set against the fund's dollar "
                            "capacity and the allocation slider is not shown")}
     if capacity_pct is None:
@@ -497,7 +496,7 @@ def fund_capacity(wf: dict, alloc_usd: float, filed_rate: float | None,
 def _vs_capacity(pct: float, capacity: float | None) -> str:
     if capacity is None:
         return (f"{pct:.1f}% of the position per year, no annual wrapper capacity to compare "
-                "against until the cap is typed (3.1)")
+                "against until the cap is on record (3.1)")
     return f"{pct:.1f}% of the position per year vs {capacity:.0f}% annual wrapper capacity"
 
 
@@ -629,7 +628,7 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
         if filed_rate is None:
             scenario_reasons.append(
                 "Filed outflow proxy: not in the plan record, so the scenario has no base "
-                "demand and no scenario verdict until the Schedule H totals are typed.")
+                "demand and no scenario verdict until the Schedule H totals are on record.")
         else:
             scenario_reasons.append(
                 f"Filed outflow proxy (Schedule H, plan year {py}): "
@@ -640,7 +639,7 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
             f"Slider assumption (illustrative): {_vs_capacity(slider_pct, capacity)}, "
             f"{slider_words}."
             + _headroom(slider_pct, capacity, "slider assumption",
-                        "Within 60% of wrapper capacity at these sliders."))
+                        "Within 60% of wrapper capacity at these turnover assumptions."))
         if fc["available"]:
             approx = "approx. " if fc["net_assets_approx"] else ""
             scenario_reasons.append(
@@ -658,7 +657,7 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
     if wf["exchange"]:
         outcome = "daily exchange liquidity, so stress transmits to price, not to a fund gate"
     elif capacity is None:
-        outcome = "not computable until the capacity facts are typed (3.1)"
+        outcome = "not computable until the capacity facts are on record (3.1)"
     elif stressed_pct is None:
         outcome = "not computable: the plan record carries no filed outflow proxy"
     elif stressed_pct > capacity:
@@ -670,7 +669,7 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
                                      if wf["gate_history"] else ""))
     stressed = {"illustrative": True,
                 "base": FILED_LABEL,
-                "assumptions": ("the filed outflow proxy plus the increment the sliders add "
+                "assumptions": ("the filed outflow proxy plus the increment the stress multiples add "
                                 f"under stress (tail turnover x{STRESS['tail_multiple']:.0f}, "
                                 f"active turnover x{STRESS['active_multiple']:.1f} over the "
                                 "slider assumption)"),
@@ -700,9 +699,11 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
         "scenario_reasons": scenario_reasons,
         "reasons": structural + scenario_reasons,
         "missing_facts": missing,
-        "layers": ("verdict is structural (typed facts, cells 3.1, 3.3, 2.7, plan-independent). "
-                   "scenario_verdict is ILLUSTRATIVE (the plan's filed outflow proxy as the base "
-                   "demand and the sliders as the stress, against the same capacity, per plan)."),
+        "missing_facts_labels": [fact_label(n) for n in missing],
+        "layers": ("The structural verdict reads the dealing terms on record (cells 3.1, 3.3, 2.7, "
+                   "plan-independent). The scenario verdict is ILLUSTRATIVE (the plan's filed outflow "
+                   "proxy as the base demand and the turnover assumptions as the stress, against the "
+                   "same capacity, per plan)."),
         "filed_outflow": fo,
         "stressed_scenario": stressed,
         "plan_display_label": a["display_label"],

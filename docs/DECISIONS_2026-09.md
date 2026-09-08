@@ -2342,3 +2342,57 @@ Decided by the cloud session on 2026-09-08 as defaults.
   memo: the two figures, the window each covers, and the three reasons they
   differ (end date, reinvestment convention, share class). Neither is
   restated and the comparison uses the series.
+
+### 8.32 R3-P2-12: the allowlist gate over the bundle, the views and the documents (default, reversible)
+
+Decided by the cloud session on 2026-09-08 as a default. The round-2 gate
+scanned three surfaces for a fixed list of forbidden strings. Rule 11 of
+the round-3 brief names a family, not a list: no snake_case token, path,
+bare registry key, ticket reference, or the words engine, artifact, typed,
+writer, slider, the site and build in reader prose, unless through the copy
+layer.
+
+- The family is five rules in `tark_display.PROSE_RULES`, shared by the
+  gate and the writers, case-insensitive, run after URLs are stripped: a
+  snake_case token, a repository path or a file name with a code extension,
+  a ticket reference, a developer word (engine, artifact, typed, the writer,
+  the build, this build, the site) and slider outside "slider assumption"
+  (the figure the control sets) and "allocation slider" (the control's own
+  label). "Typed" is a whole word: the record's figures are "on record" or
+  "read from" a cell, never typed. The forbidden-string list stays as it was
+  and the gate refuses to prune either.
+- What counts as reader prose: every bundle string a view prints, every
+  rendered view and every document paragraph. What is exempt, and only from
+  the family: the evidence ledger's source column and verbatim quote (a
+  quote is never rewritten), the closed-vocabulary fact values the views
+  map to words (wrapper, base, cadence, period, program status, tax form,
+  pricing class), the wire keys the views decode (file stems, series
+  columns and roles, census row fields and entity rows, cohort member lists
+  and statistic field names, the plan order, a cited local file), on a page
+  an element with the `provenance` or `cmd` class, a `pre` or `code`
+  element and a slider control's own row, and in a document the "Source as
+  written" and "Accession and EDGAR URL" columns. The report names the rule
+  and the location of every hit.
+- The copy layer: `display_copy` prints repository paths and internal keys
+  as their words (a product key as the fund's name, a field name as its
+  label, a wrapper or base enum as its label, a dataset column as its
+  meaning) on every surface and in every document. The record keeps its
+  keys. The writers' own prose was rewritten at the source: "artifact" is
+  "record", "typed facts" is "the dealing terms on record" or "the facts on
+  record", "the sliders" is "the turnover assumptions", "the engine" is "the
+  selection" or "the rubric", "this build" is "this record", "the site" is
+  the view's name.
+- Thirty cells of the record carried the extractor's own developer words
+  ("which this build could not fetch", "XBRL context-ID artifacts", "the
+  engine must construct", local text file names, "annual_series payload").
+  Each was reworded with no figure or finding changed, under an evidence
+  allowlist row per protected row and a corrections row per owned cell. The
+  N-CEN dataset's field names cited in cells 4.5 and 4.6 stay in the record
+  and print as their meaning ("the opinion-qualified flag").
+- The plan record's maintainer index (`dictionary_cells`) no longer ships.
+  The census method notes, the caveat matrix note, the DXYZ quarterly NAV
+  note, two cohort rationales and the fallback note in the registry, the
+  four plans' Schedule H reasons and the verification queue's tier
+  headings were reworded at their source.
+Reverse by: `PROSE_RULES` and `display_copy` in `src/tark_display.py`, the
+exemptions in `src/test_surfaces.py`.

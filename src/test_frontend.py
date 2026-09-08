@@ -541,7 +541,7 @@ with sync_playwright() as pw:
     # CCLFX has ever prorated (cell 3.3 holds N-23C3A notifications, not
     # results), so gate_history is null and the structural verdict says so
     check("liquidity cclfx: PARTIAL structural verdict, the missing fact named",
-          "STRUCTURAL VERDICT: PARTIAL" in t.upper() and "Facts missing" in t and "gate_history" in t)
+          "STRUCTURAL VERDICT: PARTIAL" in t.upper() and "Facts missing" in t and "gating history" in t)
     check("liquidity cclfx: structural gap named", "STRUCTURAL GAP" in t)
     check("liquidity cclfx: scenario verdict banner labeled ILLUSTRATIVE",
           "SCENARIO VERDICT" in t.upper() and "ILLUSTRATIVE" in t)
@@ -1057,7 +1057,7 @@ with sync_playwright() as pw:
               f"&proxy=spy", wait_until="networkidle")
     vtext = page.locator("#verdictcard").inner_text()
     check("URL round-trip: lab proxy restored; off-menu proxy graded by the real scorer",
-          "not on the engine's menu" in vtext and "Not eligible" in vtext
+          "not on the record's candidate menu" in vtext and "Not eligible" in vtext
           and "strategy gate" in vtext)
     # sponsor sweep over generated URLs
     url_now = page.evaluate("() => location.href").lower()
@@ -1079,7 +1079,7 @@ with sync_playwright() as pw:
     check("breit lab: annual-tier PME vs VNQ reproduces the committed reference KS-PME",
           abs(float(page.locator("#pme_ks").inner_text()) - _breit_ks) < 1e-4)
     check("breit lab: the verdict card names the meaningful benchmark and says the lab opens on the reference",
-          "Engine's meaningful benchmark for this product" in page.locator("#verdictcard").inner_text()
+          "The record's meaningful benchmark for this product" in page.locator("#verdictcard").inner_text()
           and "The lab opens on the reference comparison, not the meaningful benchmark"
           in page.locator("#verdictcard").inner_text()
           and page.locator("[data-lab-peer]").count() == 1
@@ -1480,7 +1480,7 @@ with sync_playwright() as pw:
           and bundle["rule"]["docket"] in auth_t)
     check("authority panel: verbatim status is the build's, never text from memory",
           page.locator("#auth_status").inner_text() == bundle["rule"]["authority"]["status"]
-          and (bundle["rule"]["authority"]["status"] == "fetched" or "not yet in this build" in auth_t))
+          and (bundle["rule"]["authority"]["status"] == "fetched" or "not yet in the record" in auth_t))
     check("authority panel: scope sentence (selection, not monitoring) and advisor-completed cells",
           "Monitoring is not documented here" in auth_t and "6.6 and 6.8" in auth_t)
     # once the text is fetched, the panel quotes the rule paragraph under
