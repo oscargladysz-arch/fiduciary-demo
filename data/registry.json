@@ -1026,6 +1026,11 @@
           "name": "S&P 500",
           "candidate": "spy",
           "type": "sec_required_comparator"
+        },
+        {
+          "name": "Nasdaq Stock Index",
+          "candidate": "nasdaq_comp",
+          "type": "sec_required_comparator"
         }
       ],
       "source_cells": [

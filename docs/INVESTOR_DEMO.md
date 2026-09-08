@@ -84,7 +84,7 @@ surfaces recompute them from the record. Where each number lives:
   row through `src/verify_cell.py`.
 - **Roster:** 16 products. The count on the Candidate Roster header comes
   from the record.
-- **Benchmark card figures** (score out of 12, the statistic the card names,
+- **Benchmark card figures** (score out of 10, the statistic the card names,
   the effective window, the fund return source): read them from the card.
   The card carries two named comparisons (decision 7.1). "Meaningful
   benchmark (paragraph (k))" is the highest-scoring independent index or

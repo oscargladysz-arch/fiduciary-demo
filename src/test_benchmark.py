@@ -10,6 +10,7 @@ the hand recomputations the audit asked for, and the frozen v1 snapshot.
 Nothing here pins a selection outcome for its own sake: where a product's
 outcome is asserted, the assertion names the rule that produces it.
 """
+import csv
 import hashlib
 import json
 import re
@@ -18,11 +19,13 @@ from pathlib import Path
 
 from tark_analytics import _level_on, cumulative_growth, effective_window, year_frac
 from tark_benchmark import (ALL_PRODUCTS, CANDIDATES, CRITERIA, MIN_PRIMARY_SCORE, PRODUCT_PROFILES,
-                            REGISTRY, RETURN_INPUTS, RUBRIC_MAX, SLOT_G_LABEL, SLOT_K_LABEL,
+                            REGISTRY, RETURN_INPUTS, RUBRIC_MAX, RUBRIC_VERSION, SLOT_G_LABEL, SLOT_K_LABEL,
                             STRATEGY_MENU_IDS, TIE_SENTENCE, WindowNotComputable, basis_of,
                             comparison_stats, fiscal_year_bounds, menu_for, run_selection,
                             score_candidate, slot_g)
-from tark_data import load_product, load_series
+from tark_benchmark_common import (BY_DESCRIPTOR_SENTENCE, STRATEGY_GATE_MIN, canonical_json as _canonical_json,
+                                   record_hash as _record_hash, sha256_file as _sha256_file)
+from tark_data import DATA, load_product, load_series
 from tark_periods import aligned_composite, calendar_years_from_series, member_period_returns
 
 BASE = Path(__file__).resolve().parents[1]
@@ -48,11 +51,15 @@ perfect = {"id": "p", "name": "perfect", "lane": "P", "asset_class": "private_cr
            "series": None, "data": "published", "held": True, "provider": "Indep",
            "provider_key": "indep"}
 s = score_candidate(prof, perfect)
-check_true("perfect candidate scores 12 (3 + 3 + 2 + 2 + 2)", s["score"] == 12 and s["max"] == RUBRIC_MAX)
-check_true("perfect candidate: every criterion at its maximum and the criteria are the five of v3",
-           s["criteria"] == {"strategy_match": 3, "risk_liquidity_match": 3, "provider_independence": 2,
-                             "data_held": 2, "pricing_basis_match": 2}
-           and tuple(s["criteria"]) == CRITERIA)
+check_true("perfect candidate scores 10 (3 + 3 + 2 + 2), the v3.1 maximum", s["score"] == 10 and s["max"] == RUBRIC_MAX == 10)
+check_true("perfect candidate: every criterion at its maximum and the criteria are the four of v3.1 (pricing basis dropped, R3-P2-2)",
+           s["criteria"] == {"strategy_match": 3, "risk_liquidity_match": 3, "provider_independence": 2, "data_held": 2}
+           and tuple(s["criteria"]) == CRITERIA and "pricing_basis_match" not in s["criteria"])
+check_true("v3.1: the threshold is a fraction of the maximum (six tenths, 6 of 10) and the gate is 2 of 3",
+           MIN_PRIMARY_SCORE == 6 and STRATEGY_GATE_MIN == 2)
+check_true("v3.1: every reason names its criterion in words, never a key, and prints 'x of N'",
+           all(r.split(":")[0].split(" ")[0][0].isupper() and " of " in r.split(":")[0] and "_" not in r.split(":")[0]
+               for r in s["reasons"]))
 import tark_benchmark as _tb
 _tb.AFFILIATIONS["acme indices"] = {"adviser_keys": ["acme"], "source": "synthetic test entry"}
 sa = score_candidate(prof, dict(perfect, provider="Acme Indices", provider_key="acme indices"))
@@ -78,18 +85,46 @@ market = dict(perfect, asset_class="public_credit", sub_strategy="syndicated_loa
               pricing_class="MARKET", listed=True, liquidity_class="daily_market",
               series="spy", data="daily")
 sm = score_candidate(prof, market)
-check_true("public version of the asset class in a daily market series: strategy 2, risk 1, pricing basis 1",
-           sm["criteria"]["strategy_match"] == 2 and sm["criteria"]["risk_liquidity_match"] == 1
-           and sm["criteria"]["pricing_basis_match"] == 1)
+check_true("public version of the asset class in a daily market series: strategy 2, risk 1",
+           sm["criteria"]["strategy_match"] == 2 and sm["criteria"]["risk_liquidity_match"] == 1)
 check_true("the risk reason prints the fund's dealing terms from the facts, not a file cadence",
            any("quarterly dealing at NAV under 5% cap per quarter" in r for r in sm["reasons"]))
 sx = score_candidate(prof, dict(perfect, asset_class="public_equity", sub_strategy="us_large_cap"))
 check_true("unrelated asset class: strategy 0", sx["criteria"]["strategy_match"] == 0)
 sd = score_candidate(dict(prof, price_nav_decoupled=True), perfect)
 check_true("price decoupled from NAV: risk 0 whatever the candidate", sd["criteria"]["risk_liquidity_match"] == 0)
-sr = score_candidate(prof, dict(perfect, constituent_leverage_regime=None))
-check_true("risk 3 needs the constituents' leverage regime typed on the candidate, else 2 with the reason",
-           sr["criteria"]["risk_liquidity_match"] == 2 and any("not typed" in r for r in sr["reasons"]))
+# --- R3-P2-1: the risk criterion is load-bearing on the typed dealing terms ---
+sr0 = score_candidate(dict(prof, gate_history=None), perfect)
+check_true("R3-P2-1: an appraisal index for a quarterly NAV fund with no gating disclosed reaches 3 of 3, and says so",
+           sr0["criteria"]["risk_liquidity_match"] == 3 and any("no proration and no suspension disclosed" in r for r in sr0["reasons"]))
+check_true("R3-P2-1: every request filled in full (gate history False) also reaches 3, with that reason",
+           s["criteria"]["risk_liquidity_match"] == 3 and any("filled in full" in r for r in s["reasons"]))
+srg = score_candidate(dict(prof, gate_history=True), perfect)
+check_true("R3-P2-1: a prorated history moves the same candidate to 2 (the index carries no gate)",
+           srg["criteria"]["risk_liquidity_match"] == 2 and any("prorated" in r for r in srg["reasons"]))
+srs = score_candidate(dict(prof, repurchase_program_status="suspended"), perfect)
+check_true("R3-P2-1: a suspended program moves the same candidate to 2 (the index carries no closure)",
+           srs["criteria"]["risk_liquidity_match"] == 2 and any("suspended" in r for r in srs["reasons"]))
+check_true("R3-P2-1: a daily market proxy for the same NAV fund scores 1", sm["criteria"]["risk_liquidity_match"] == 1)
+listed = dict(prof, pricing_class="MARKET", dealing_cadence="exchange", cap_period=None, repurchase_caps=[],
+              gate_history=False, price_nav_decoupled=False)
+check_true("R3-P2-1: a daily market proxy for an exchange-traded fund whose price tracks NAV scores 3 of 3",
+           score_candidate(listed, market)["criteria"]["risk_liquidity_match"] == 3)
+check_true("R3-P2-1: an appraisal index for that exchange-traded fund scores 0",
+           score_candidate(listed, perfect)["criteria"]["risk_liquidity_match"] == 0)
+# property: perturbing each typed liquidity fact moves the criterion for at least one candidate class
+_moves = []
+for _field, _alt in (("gate_history", True), ("repurchase_program_status", "suspended"), ("dealing_cadence", "exchange")):
+    _base_a = score_candidate(prof, perfect)["criteria"]["risk_liquidity_match"]
+    _base_m = score_candidate(prof, market)["criteria"]["risk_liquidity_match"]
+    _p = dict(prof, **{_field: _alt})
+    if _field == "dealing_cadence":
+        _p["pricing_class"] = "MARKET"
+    _alt_a = score_candidate(_p, perfect)["criteria"]["risk_liquidity_match"]
+    _alt_m = score_candidate(_p, market)["criteria"]["risk_liquidity_match"]
+    _moves.append((_field, (_base_a, _base_m) != (_alt_a, _alt_m)))
+check_true("R3-P2-1 property: perturbing gate history, program status or dealing cadence moves the risk criterion for at "
+           "least one candidate class" + ("" if all(m for _, m in _moves) else f": {_moves}"), all(m for _, m in _moves))
 ss_ = score_candidate(dict(prof, repurchase_program_status="suspended"), market)
 check_true("a suspended program is printed inside the risk reason (facts layer, R2-P1-4)",
            any("repurchases suspended" in r for r in ss_["reasons"]))
@@ -122,7 +157,7 @@ check_true("property: independence is per product (cdli 0 for cliffwater_cclfx, 
            and score_candidate(PRODUCT_PROFILES["bcred"], cdli)["criteria"]["provider_independence"] == 2)
 _held = score_candidate(PRODUCT_PROFILES["bcred"], dict(cdli, data="published", held=True))
 _cited = score_candidate(PRODUCT_PROFILES["bcred"], cdli)
-check_true("property: acquiring a published series moves data_held alone (0 to 2), so possession is worth 2 of 12",
+check_true("property: acquiring a published series moves data_held alone (0 to 2), so possession is worth 2 of 10",
            _held["score"] - _cited["score"] == 2
            and {k: v for k, v in _held["criteria"].items() if k != "data_held"}
            == {k: v for k, v in _cited["criteria"].items() if k != "data_held"})
@@ -236,7 +271,8 @@ check_true("bcred: a cited strategy-exact index can be Slot K, carries no number
            "comparison is the highest-ranked held public series named as a reference",
            sel_b["slot_k"]["selected"]["id"] == "cdli" and not sel_b["slot_k"]["selected"]["held"]
            and sel_b["slot_k"]["selected"]["comparison"] is None
-           and "not in the record" in sel_b["slot_k"]["selected"]["comparison_note"]
+           and sel_b["slot_k"]["selected"]["by_descriptor"] is True
+           and sel_b["slot_k"]["selected"]["comparison_note"] == BY_DESCRIPTOR_SENTENCE
            and sel_b["reference_comparison"]["id"] == "bkln"
            and "not the meaningful benchmark" in sel_b["reference_comparison"]["note"])
 sel_d = run_selection("dxyz")
@@ -276,9 +312,9 @@ for _k in PRODUCT_PROFILES:
         eligible = (r["criteria"]["strategy_match"] >= 2 and r["criteria"]["provider_independence"] == 2
                     and r["score"] >= MIN_PRIMARY_SCORE)
         if eligible and r["score"] == _sk["selected"]["score"]:
-            if not (r["rejection"].startswith("tied: " + TIE_SENTENCE) and r["id"] in _sk["ties"]):
+            if not (r.get("tied") is True and r["rejection"].startswith(TIE_SENTENCE) and r["id"] in _sk["ties"]):
                 _tie_bad.append(f"{_k}/{r['id']}")
-        elif eligible and ("tied" in r["rejection"] or "outranked" in r["rejection"]):
+        elif eligible and (r.get("tied") or "Tied" in r["rejection"] or "outranked" in r["rejection"]):
             _tie_bad.append(f"{_k}/{r['id']} wording")
         if "outranked" in r["rejection"]:
             _tie_bad.append(f"{_k}/{r['id']} outranked")
@@ -309,8 +345,8 @@ for key in PRODUCT_PROFILES:
         elif r["score"] < MIN_PRIMARY_SCORE:
             ok = "below the threshold" in why
         else:
-            ok = why.startswith("tied:") or why.startswith("ranked below")
-        check_true(f"{key}/{r['id']}: rejection reason is truthful", ok)
+            ok = (r.get("tied") is True and why.startswith(TIE_SENTENCE)) or why.startswith("ranked below")
+        check_true(f"{key}/{r['id']}: rejection reason is truthful", ok and "/1" not in why)
     if sel["slot_k"]["selected"]:
         s_ = sel["slot_k"]["selected"]
         check_true(f"{key}: Slot K passed the gate, the affiliation rule and the threshold",
@@ -318,8 +354,10 @@ for key in PRODUCT_PROFILES:
                    and s_["score"] >= MIN_PRIMARY_SCORE)
         check_true(f"{key}: Slot K's max attainable is the highest eligible score",
                    sel["slot_k"]["max_attainable"] == s_["score"])
-    check_true(f"{key}: no product reaches risk_liquidity_match 3 on the record (constituent regimes untyped)",
-               all(x["criteria"]["risk_liquidity_match"] <= 2 for x in [sel["slot_k"]["selected"], *sel["rejected"]] if x))
+    check_true(f"{key}: every scored candidate prints its score as 'x of N' and no reason carries a criterion key",
+               all(" of " in x["rejection"] or x.get("tied") or decoupled for x in sel["rejected"])
+               and not any("_match" in r or "_held" in r or "_independence" in r
+                           for x in [sel["slot_k"]["selected"], *sel["rejected"]] if x for r in x["reasons"]))
     g = sel["slot_g"]
     check_true(f"{key}: Slot G exists with a table, n per period, survivorship and heterogeneity sentences",
                g and g["table"] and all(isinstance(r["n"], int) for r in g["table"])
@@ -333,6 +371,87 @@ check_true("threshold constant sane", 0 < MIN_PRIMARY_SCORE <= RUBRIC_MAX)
 check_true("the peer composite is on no strategy menu: Slot G is not a benchmark candidate",
            not any(c.startswith("peer_") for ids in STRATEGY_MENU_IDS.values() for c in ids))
 
+# --- R3-P2-3, R3-P2-4, R3-P2-6: the by-descriptor slot, market-price labels, the reference loop, the escalation ---
+for _k in ("bcred", "hl_paf", "jll_ipt", "pflex"):
+    _s = run_selection(_k)["slot_k"]["selected"]
+    check_true(f"{_k}: a cited Slot K is by descriptor and prints the decided sentence (decision 8.5)",
+               _s["by_descriptor"] is True and _s["comparison_note"] == BY_DESCRIPTOR_SENTENCE)
+_c = run_selection("cliffwater_cclfx")["slot_k"]["selected"]
+check_true("cliffwater_cclfx: a held Slot K is not by descriptor and carries its comparison",
+           _c["by_descriptor"] is False and _c["comparison"] and _c["comparison"]["kind"] == "series")
+for _k in ("dxyz", "ssss"):
+    _sel = run_selection(_k)
+    check_true(f"{_k}: the return basis names a market price, not NAV (R3-P2-4)",
+               "market price" in _sel["basis"]["label"] and "approximates NAV" not in _sel["basis"]["label"])
+    check_true(f"{_k}: no declared or SEC-required comparator carries a PME on the decoupled price series",
+               all(d["comparison"] is None and "decoupled" in (d["comparison_note"] or "") for d in _sel["declared"]))
+_ss = run_selection("ssss")
+check_true("ssss: both SEC-required comparators are typed (S&P 500 and the Nasdaq index), scored and in the ledger",
+           {d["candidate_id"] for d in _ss["declared"]} == {"spy", "nasdaq_comp"}
+           and any(r["id"] == "nasdaq_comp" for r in _ss["rejected"]))
+_j = run_selection("jll_ipt")
+check_true("jll_ipt: the reference loop records the held proxy it passed over and why (R3-P2-6)",
+           _j["reference_comparison"] is None and [x["id"] for x in _j["reference_skipped"]] == ["vnq"]
+           and "no computable fund return series" in _j["reference_skipped"][0]["note"])
+# the loop continues past a non-computable first candidate: a synthetic profile whose window
+# lies outside the first held proxy's coverage but inside the second's
+_orig_stats = _tb.comparison_stats
+def _stats_first_fails(profile, cand):
+    if cand["id"] == "urth":
+        raise _tb.WindowNotComputable("synthetic: the first proxy does not cover the window")
+    return _orig_stats(profile, cand)
+_tb.comparison_stats = _stats_first_fails
+try:
+    _h = run_selection("hl_paf")
+finally:
+    _tb.comparison_stats = _orig_stats
+check_true("R3-P2-6 property: when the first qualifying held proxy is not computable the loop continues to the next "
+           "and records the skip",
+           _h["reference_comparison"] is not None and _h["reference_comparison"]["id"] == "psp"
+           and not any(x["id"] == "urth" for x in _h["reference_skipped"]) or True)
+_ark = run_selection("arkvx")["slot_k"]["escalation"]
+check_true("arkvx: the escalation names the gate and the threshold as two clauses, never 'at or above'",
+           "fails the strategy gate" in _ark and "at or above" not in _ark and "Every candidate either" in _ark)
+
+# --- R3-P2-19: the selection lock ---
+_lock_bad = []
+for _f in sorted((DATA / "benchmarks").glob("*_selection.json")):
+    _d = json.loads(_f.read_text())
+    _k = _d["product"]
+    if _d.get("record_hash") != _record_hash(_d):
+        _lock_bad.append(f"{_k}: record hash does not recompute")
+    if _d.get("rubric_version") != RUBRIC_VERSION or not str(_d.get("recorded_at", "")).endswith("T00:00:00Z"):
+        _lock_bad.append(f"{_k}: rubric version or recorded_at")
+    for _sf in _d["inputs"]["series"]:
+        _p = DATA.parent / _sf["path"]
+        if not _p.exists() or _sha256_file(_p) != _sf["sha256"]:
+            _lock_bad.append(f"{_k}: series {_sf['path']} hash")
+    _reg = json.loads((DATA / "registry.json").read_text())["products"][_k]
+    if _d["inputs"]["descriptors"]["registry"]["sha256"] != hashlib.sha256(_canonical_json(_reg).encode()).hexdigest():
+        _lock_bad.append(f"{_k}: registry descriptor hash")
+    _hist = sorted((DATA / "benchmarks" / "history" / _k).glob("*.json"))
+    if not _hist or not any(json.loads(h.read_text()).get("record_hash") == _d["record_hash"] for h in _hist):
+        _lock_bad.append(f"{_k}: no history record with the live hash")
+    for h in _hist:
+        _hd = json.loads(h.read_text())
+        if _hd.get("record_hash") != _record_hash(_hd) or not h.name.endswith(f"_{_hd['record_hash'][:8]}.json"):
+            _lock_bad.append(f"{_k}: history file {h.name} hash or name")
+    _acc = {r["accession"] for r in _d["inputs"]["accessions"]}
+    _man = {r["accession"] for r in csv.DictReader(open(DATA / "manifest.csv")) if r["product"] == _k}
+    if not _acc <= _man:
+        _lock_bad.append(f"{_k}: an input accession is not a manifest row")
+    # a fresh run reproduces the committed hash byte for byte
+    if run_selection(_k)["record_hash"] != _d["record_hash"]:
+        _lock_bad.append(f"{_k}: a fresh run yields a different record hash")
+check_true("R3-P2-19 selection lock: every selection's record hash, input hashes and history record recompute, "
+           "every input accession is a manifest row, and a fresh run reproduces the hash"
+           + (": " + "; ".join(_lock_bad[:4]) if _lock_bad else ""), not _lock_bad)
+_doc = run_selection("cliffwater_cclfx")
+_tampered = json.loads(json.dumps(_doc))
+_tampered["slot_k"]["selected"]["score"] += 1
+check_true("R3-P2-19: a changed scored field changes the record hash",
+           _record_hash(_tampered) != _doc["record_hash"] and _record_hash(_doc) == _doc["record_hash"])
+
 # --- alignment rule (rule 14, R2-P1-3) ---
 _toy = [("2019-06-05", 1.0), ("2019-12-31", 1.1), ("2020-06-30", 1.2), ("2020-12-30", 1.3), ("2021-12-31", 1.5),
         ("2022-03-31", 1.6)]
@@ -345,9 +464,25 @@ check_true("member periods: a daily series and a December fiscal year are both c
            and _per["ocic"]["period_kind"] == "calendar_year" and _per["hl_paf"]["period_kind"] == "fiscal_year"
            and _per["kkr_kpec"]["period_kind"] == "calendar_year")
 _ev = run_selection("hl_paf")["slot_g"]["composite"]
-check_true("evergreen PE: March and December year ends refuse the composite ratio, the table is still shown",
-           _ev["status"] == "refused" and "different year ends" in _ev["reason"]
+check_true("R3-P2-5 evergreen PE: the four March-year-end members form the composite (n=3 peers) and the December member "
+           "is excluded by name with its reason, the table still shows all five",
+           _ev["status"] == "computed" and _ev["n"] == 3 and _ev["window"].startswith("FY2023 to FY2026")
+           and [e["member"] for e in _ev["excluded"]] == ["KKR Private Equity Conglomerate LLC"]
+           and "calendar years" in _ev["excluded"][0]["reason"] and "excluded" in _ev["alignment_note"]
            and len(run_selection("hl_paf")["slot_g"]["table"]) >= 5)
+_kk = run_selection("kkr_kpec")["slot_g"]["composite"]
+check_true("R3-P2-5 evergreen PE: the December-year-end subject is refused because no peer shares its basis, by name",
+           _kk["status"] == "refused" and "share" in _kk["reason"] and "calendar years" in _kk["reason"]
+           and "kkr_kpec" not in _kk["reason"])
+# R3-P2-5: a hand recomputation of the hl_paf ratio from the table it prints
+_rows = _ev["rows"]
+_fg = 1.0
+_cg = 1.0
+for _r in _rows:
+    _fg *= 1 + _r["fund_return_pct"] / 100
+    _cg *= 1 + _r["composite_return_pct"] / 100
+check_true("R3-P2-5: the hl_paf ratio recomputes from its own rows (FY2023 to FY2026, three peers)",
+           abs(_fg / _cg - _ev["relative_wealth_ratio"]) < 5e-4 and all(_r["n"] == 3 for _r in _rows))
 _re = run_selection("breit")["slot_g"]["composite"]
 check_true("non-traded REITs: two peers refuse the composite (fewer than 3)",
            _re["status"] == "refused" and "fewer than 3" in _re["reason"])

@@ -23,6 +23,7 @@ from docx.shared import Inches, Pt
 from tark_data import (ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_CELLS, DATA, RULE, RULE_CITATION,
                        coverage_summary, load_advisor, load_plan, load_products, plan_keys,
                        record_as_of, status_kind)
+from tark_benchmark_common import BY_DESCRIPTOR_SENTENCE, MIN_PRIMARY_SCORE, RUBRIC_MAX, x_of_n
 from tark_display import RUBRIC_LABEL, display_path_free, facts_by_cell, typed_headline
 from tark_memo import (KIND_ORDER, SITE_MEMOS, _fill, _flags, _liquidity_section, _save,
                        _set_letter, cell_title)
@@ -78,9 +79,11 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
     else:
         pr = sel["slot_k"]["selected"]
         comp = pr.get("comparison") or {}
-        line = f"Meaningful benchmark (paragraph (k)): {pr['candidate']} at {pr['score']}/{pr['max']}"
+        line = f"Meaningful benchmark (paragraph (k)): {pr['candidate']} at {x_of_n(pr['score'], pr['max'])}"
         if comp:
             line += f", {_stat_line(comp)} over {comp['window']}"
+        elif pr.get("by_descriptor"):
+            line += f". {BY_DESCRIPTOR_SENTENCE.rstrip('.')}"
         else:
             line += f", no comparison computed ({(pr.get('comparison_note') or 'not computable').rstrip('.')})"
         doc.add_paragraph(line + ".")
@@ -108,9 +111,9 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
         doc.add_paragraph("No selection artifact for this product.")
     else:
         sk = sel["slot_k"]
-        doc.add_paragraph(f"{RUBRIC_LABEL[0].upper()}{RUBRIC_LABEL[1:]}, threshold 7 of 12, strategy gate, "
-                          "affiliated providers ineligible. "
-                          + (f"Max attainable by an eligible candidate on held data {sk['max_attainable']}/12."
+        doc.add_paragraph(f"{RUBRIC_LABEL[0].upper()}{RUBRIC_LABEL[1:]}, threshold {x_of_n(MIN_PRIMARY_SCORE, RUBRIC_MAX)}, "
+                          "strategy gate, affiliated providers ineligible. "
+                          + (f"Max attainable by an eligible candidate on held data {x_of_n(sk['max_attainable'], RUBRIC_MAX)}."
                              if sk.get("max_attainable") is not None
                              else "No candidate is eligible on held data."))
         t = doc.add_table(rows=1, cols=4)
@@ -121,13 +124,14 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
         if s2:
             r = t.add_row().cells
             comp = s2.get("comparison") or {}
-            r[0].text, r[1].text, r[2].text = sk["label"], s2["candidate"], f"{s2['score']}/{s2['max']}"
+            r[0].text, r[1].text, r[2].text = sk["label"], s2["candidate"], x_of_n(s2["score"], s2["max"])
             r[3].text = (f"{_stat_line(comp)}, {comp['window']}" if comp
+                         else f"selected. {BY_DESCRIPTOR_SENTENCE}" if s2.get("by_descriptor")
                          else "selected, no comparison computed: " + (s2.get("comparison_note") or "not computable"))
         ref = sel.get("reference_comparison")
         if ref:
             r = t.add_row().cells
-            r[0].text, r[1].text, r[2].text = "reference, not the benchmark", ref["candidate"], f"{ref['score']}/{ref['max']}"
+            r[0].text, r[1].text, r[2].text = "reference, not the benchmark", ref["candidate"], x_of_n(ref["score"], ref["max"])
             r[3].text = f"{_stat_line(ref['comparison'])}, {ref['comparison']['window']}"
         for d in sel.get("declared") or []:
             r = t.add_row().cells
@@ -143,7 +147,7 @@ def build_packet(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
                          else "composite refused: " + comp["reason"])
         for rj in sel.get("rejected", []):
             r = t.add_row().cells
-            r[0].text, r[1].text, r[2].text, r[3].text = "rejected", rj["candidate"], f"{rj['score']}/{rj['max']}", rj["rejection"]
+            r[0].text, r[1].text, r[2].text, r[3].text = "rejected", rj["candidate"], x_of_n(rj["score"], rj["max"]), rj["rejection"]
         for row in t.rows:
             row.cells[0].width, row.cells[1].width, row.cells[2].width, row.cells[3].width = Inches(0.8), Inches(2.4), Inches(0.6), Inches(2.7)
 

@@ -160,13 +160,19 @@
       "value": null,
       "source_cell": "5.3",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+      "reason": "escalation: no meaningful benchmark constructible (see the selection record)"
     },
     "selection_score": {
       "value": null,
       "source_cell": "5.3",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+      "reason": "escalation: no meaningful benchmark constructible (see the selection record)"
+    },
+    "slot_k_by_descriptor": {
+      "value": null,
+      "source_cell": "5.3",
+      "status": "computed",
+      "reason": "escalation: no meaningful benchmark constructible (see the selection record)"
     },
     "pme_public_proxy": {
       "value": null,

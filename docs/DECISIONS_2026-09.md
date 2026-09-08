@@ -2189,3 +2189,49 @@ runbook and the deploy log.
 - The route list the gate walks grows with each rebuilt view. Today it is
   `design` alone. R3-P1 exits when it is every route.
 Reverse by: the checkpoint. Oscar's choices land as 8.21.
+
+### 8.28 R3-P2-1 to R3-P2-6, R3-P2-19: rubric v3.1 and the selection lock (default, reversible)
+- The risk criterion reads the typed dealing terms and moves on them: an
+  appraisal index against a NAV fund scores 3 when the filings disclose no
+  proration and no suspension, 2 when they disclose either, a daily proxy
+  scores 1 against a NAV fund and 3 against an exchange-traded fund whose
+  price tracks NAV, 0 stays for a decoupled price. A null gating history is
+  read as "no proration or suspension disclosed in the filings on record"
+  and the reason says exactly that, never "never gated". The constituent
+  leverage regime branch is gone: no candidate typed it and it made 3
+  unreachable.
+- Pricing basis match is dropped, not redefined. It was the same two
+  inputs as the risk criterion. The maximum becomes 10 and the threshold a
+  fraction, six tenths, 6 of 10 (the nearest tenth at or above the old 7
+  of 12). The gate stays strategy match 2 of 3. Every surface prints "x of
+  N" through one helper. Slot K identity is unchanged for all 16 products
+  under the new rubric (checked before committing), five products now tie
+  their cited index with the held ETF (pflex, cion_ares, bcred, breit,
+  sreit) and the ties resolve on the risk criterion or the strategy match,
+  as the tie sentence says.
+- Reasons print the criterion's display name ("Strategy match 3 of 3"),
+  never its key. The tie is a typed flag plus one sentence. The escalation
+  names the gate and the threshold as two clauses. The reference loop
+  continues past a held proxy whose comparison is not computable and
+  records the skip (jll_ipt's VNQ is the live case).
+- A cited Slot K is `by_descriptor: true` and every surface prints the
+  decided sentence (8.5) verbatim, never through a period-stripping
+  wrapper. The Lane A note for a non-selected cited index keeps its own
+  wording so cell 1.8 does not print the Slot K sentence for it.
+- dxyz and ssss: the basis and every fund return source read "a market
+  price with distributions reinvested, not NAV". No comparison is computed
+  on a decoupled price series for any Lane A entry. ssss's second
+  SEC-required comparator (the Nasdaq index, cell 5.1) is typed.
+- The lock: `recorded_at` is the record's as-of instant (midnight UTC of
+  `data/as_of.json`), never a wall clock, because the freshness gate
+  requires a producer run to reproduce the artifact byte for byte and a
+  hash over a wall clock would never reproduce. A new recording on a later
+  day bumps the as-of date. `inputs` lock the filings by accession (the
+  record holds no filing bytes), the series files by content hash and the
+  descriptors by a hash of the exact values read. History files are named
+  `<date>_<hash8>.json` so two recordings on one date cannot collide. The
+  lock checks live in the benchmark gate (the hook has 20 gates, none is
+  added for this). The investor sentence about a lock is true from the
+  commit that carries this decision.
+Reverse by: the rubric section of the methodology and the constants in
+`src/tark_benchmark_common.py`.

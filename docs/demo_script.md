@@ -64,27 +64,29 @@ an expense ratio exists in the record."
 **2:30, Benchmark Selection, cliffwater_cclfx.** "Cell 5.1: the fund
 expressly declares no benchmark, and the card says so instead of hiding a
 placeholder. Two comparisons, each named for the paragraph it answers.
-Meaningful benchmark, paragraph (k): BKLN, the senior loan proxy, 8 of 12 on
+Meaningful benchmark, paragraph (k): BKLN, the senior loan proxy, 7 of 10 on
 the Tark benchmark rubric, twelve points, five criteria, every point traced
 to a typed descriptor. KS-PME 1.2532 over 2019-06-05 to 2026-07-17, computed
 on Yahoo adjusted close, which approximates NAV total return, and the card
 names that source beside the fund return. The ledger: CDLI, the
-strategy-exact index, scores 7 of 12 and is ineligible, because it is
+strategy-exact index, scores 6 of 10 and is ineligible, because it is
 published by the fund's own adviser, a fact from the affiliation map and not
 a string match. Peer comparison, paragraphs (g) and (h): the four other
 private credit products on identical calendar years, 2021 to 2025, n equals
 four in every period, relative wealth ratio 1.0613. That is a history of
 similar investments, not a benchmark and not a PME, and the card says so
 twice." Switch to hl_paf. "Here the meaningful benchmark is the Cambridge
-Associates private equity benchmark, 9 of 12, cited and not held, so the
+Associates private equity benchmark, 8 of 10, cited and not held, so the
 card shows no number for it and says why. The reference comparison, named as
 a reference and not the benchmark, is PSP, the listed private equity proxy,
 KS-PME 1.9565 on filed fiscal-year returns. The fund's own S&P 500 and MSCI
-World are SEC-required comparators, 7 of 12 each, they fail the strategy
+World are SEC-required comparators, 6 of 10 each, they fail the strategy
 gate at 1 of 3, and each still gets its own comparison on the card. A
 comparator earns no points for being named in a filing. The peer comparison
-here is refused: the four peers report on March and December year ends, so
-the card shows the side-by-side table and no ratio." Switch to arkvx. "And
+here is formed over the three peers that share the fund's March year end,
+FY2023 to FY2026, n equals three in every period, relative wealth ratio
+1.0971. The fourth peer reports calendar years and is excluded by name, with
+the reason printed, and stays in the side-by-side table." Switch to arkvx. "And
 when nothing passes the gate the engine escalates: no meaningful benchmark
 constructible, with every candidate scored and the required next step
 printed. It does not pick the least bad ETF."
@@ -160,12 +162,13 @@ surfaces by the reconcile gate. The peer ratio is spoken with its label
 | Schedule K-1 | Fee Matrix | kkr_kpec cell 6.4 |
 | 1.36% expense ratio before waivers, excluding interest expense, 3.31% including interest | Fee Matrix, Screener, Evaluation | cliffwater_cclfx cell 2.3 (typed fact expense_ratio_pct with its basis) |
 | the fund expressly declares no benchmark | Benchmark Selection | cliffwater_cclfx cell 5.1 |
-| meaningful benchmark BKLN 8 of 12, KS-PME 1.2532, 2019-06-05 to 2026-07-17, Yahoo adjusted close | Benchmark Selection, Screener, cell 1.8, memo | `data/benchmarks/cliffwater_cclfx_selection.json`, slot_k |
-| CDLI 7 of 12, ineligible, affiliated with the fund's adviser | Benchmark Selection ledger | same artifact, rejected list, and the affiliation map in `data/registry.json` |
+| meaningful benchmark BKLN 7 of 10, KS-PME 1.2532, 2019-06-05 to 2026-07-17, Yahoo adjusted close | Benchmark Selection, Screener, cell 1.8, memo | `data/benchmarks/cliffwater_cclfx_selection.json`, slot_k |
+| CDLI 6 of 10, ineligible, affiliated with the fund's adviser | Benchmark Selection ledger | same artifact, rejected list, and the affiliation map in `data/registry.json` |
 | peer comparison 2021 to 2025, n=4, relative wealth ratio 1.0613, not a benchmark, not a PME | Benchmark Selection, cell 1.12, memo | same artifact, slot_g |
-| Cambridge PE benchmark 9 of 12, cited, not held, no number | Benchmark Selection | hl_paf cell 5.3 and `data/benchmarks/hl_paf_selection.json`, slot_k |
+| Cambridge PE benchmark 8 of 10, cited, not held, no number, "Meaningful benchmark by descriptor. No comparison until its series is held." | Benchmark Selection | hl_paf cell 5.3 and `data/benchmarks/hl_paf_selection.json`, slot_k |
+| peer comparison over the three March-year-end peers, FY2023 to FY2026, n=3, relative wealth ratio 1.0971, KKR excluded by name | Benchmark Selection, cell 1.12, memo | same artifact, slot_g |
 | reference comparison PSP, KS-PME 1.9565, filed fiscal-year returns | Benchmark Selection, cell 1.8, memo | same artifact, reference_comparison |
-| S&P 500 and MSCI World SEC-required comparators, 7 of 12 each, strategy match 1 of 3 | Benchmark Selection | hl_paf cell 5.1 and the same artifact, declared |
+| S&P 500 and MSCI World SEC-required comparators, 6 of 10 each, strategy match 1 of 3 | Benchmark Selection | hl_paf cell 5.1 and the same artifact, declared |
 | no meaningful benchmark constructible | Benchmark Selection | arkvx cell 5.1 and `data/benchmarks/arkvx_selection.json` |
 | repurchases suspended since the April 29, 2026 amendment, 0% cap on aggregate NAV, gating yes, structural verdict misaligned | Liquidity Match | sreit cells 3.1 and 3.3, `data/liquidity/<plan>__sreit_match.json` |
 | quarterly offers, 5% per quarter on net assets, 20% per year | Liquidity Match | hl_paf cell 3.1, `data/liquidity/<plan>__hl_paf_match.json` |
@@ -181,7 +184,7 @@ named view under the named plan. Format: view | product | plan | text on
 screen. The drawer rows name the cell in the plan column. A "-" product means
 the view does not depend on the product.
 
-- screener | - | plan_tech_media | KS-PME vs public proxy
+- screener | - | plan_tech_media | KS-PME vs reference proxy
 - screener | - | plan_tech_media | Peer relative wealth ratio (cell 1.12)
 - evaluation | hl_paf | plan_tech_media | 1.40% on managed assets
 - drawer | hl_paf | 2.1 | 0001213900-26-066804
@@ -192,23 +195,25 @@ the view does not depend on the product.
 - evaluation | cliffwater_cclfx | plan_tech_media | 1.36% expense ratio, before waivers, excluding interest expense
 - benchmarks | cliffwater_cclfx | plan_tech_media | expressly declares no
 - benchmarks | cliffwater_cclfx | plan_tech_media | Meaningful benchmark (paragraph (k))
-- benchmarks | cliffwater_cclfx | plan_tech_media | 8/12
+- benchmarks | cliffwater_cclfx | plan_tech_media | 7 of 10
 - benchmarks | cliffwater_cclfx | plan_tech_media | 1.2532
 - benchmarks | cliffwater_cclfx | plan_tech_media | 2019-06-05 to 2026-07-17
 - benchmarks | cliffwater_cclfx | plan_tech_media | Yahoo adjusted close
-- benchmarks | cliffwater_cclfx | plan_tech_media | 7/12
+- benchmarks | cliffwater_cclfx | plan_tech_media | 6 of 10
 - benchmarks | cliffwater_cclfx | plan_tech_media | affiliated provider
 - benchmarks | cliffwater_cclfx | plan_tech_media | Peer comparison (paragraphs (g) and (h))
 - benchmarks | cliffwater_cclfx | plan_tech_media | Relative wealth ratio vs peer composite
 - benchmarks | cliffwater_cclfx | plan_tech_media | 1.0613
 - benchmarks | cliffwater_cclfx | plan_tech_media | 2021 to 2025
 - benchmarks | cliffwater_cclfx | plan_tech_media | Never a benchmark and never a PME
-- benchmarks | hl_paf | plan_tech_media | 9/12
-- benchmarks | hl_paf | plan_tech_media | not in the record
+- benchmarks | hl_paf | plan_tech_media | 8 of 10
+- benchmarks | hl_paf | plan_tech_media | No comparison until its series is held
 - benchmarks | hl_paf | plan_tech_media | Reference comparison, not the meaningful benchmark
 - benchmarks | hl_paf | plan_tech_media | 1.9565
 - benchmarks | hl_paf | plan_tech_media | SEC-required comparator
-- benchmarks | hl_paf | plan_tech_media | Composite refused
+- benchmarks | hl_paf | plan_tech_media | 1.0971
+- benchmarks | hl_paf | plan_tech_media | FY2023 to FY2026
+- benchmarks | hl_paf | plan_tech_media | excluded from the composite
 - benchmarks | arkvx | plan_tech_media | NO MEANINGFUL BENCHMARK CONSTRUCTIBLE
 - liquidity | sreit | plan_tech_media | suspended since the April 29, 2026 amendment
 - liquidity | sreit | plan_tech_media | misaligned

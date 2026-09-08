@@ -9,11 +9,25 @@ included (facts live in the data layer, not in engine code).
 """
 import json
 
-from tark_benchmark import PRODUCT_PROFILES, run_selection
+from tark_benchmark import PRODUCT_PROFILES, RUBRIC_MAX, run_selection, x_of_n
 from tark_data import DATA
 
 outdir = DATA / "benchmarks"
 outdir.mkdir(exist_ok=True)
+history = outdir / "history"
+
+
+def keep_history(key: str, sel: dict) -> None:
+    """The selection lock's history (R3-P2-19): a dated copy is kept the
+    first time a record hash appears, named by the recorded date and the
+    first eight characters of the hash, so a re-record on the same date
+    never overwrites a prior record."""
+    h = sel["record_hash"]
+    folder = history / key
+    folder.mkdir(parents=True, exist_ok=True)
+    if any(json.loads(f.read_text()).get("record_hash") == h for f in folder.glob("*.json")):
+        return
+    (folder / f"{sel['recorded_at'][:10]}_{h[:8]}.json").write_text(json.dumps(sel, indent=2))
 
 
 def _stat(c: dict) -> str:
@@ -25,11 +39,13 @@ def _stat(c: dict) -> str:
 for key in PRODUCT_PROFILES:
     sel = run_selection(key)
     (outdir / f"{key}_selection.json").write_text(json.dumps(sel, indent=2))
+    keep_history(key, sel)
     sk = sel["slot_k"]
-    print(f"\n=== {key} ({sel['strategy']}) max attainable {sk['max_attainable']}/12, basis: {sel['basis']['label']} ===")
+    print(f"\n=== {key} ({sel['strategy']}) max attainable {sk['max_attainable']} of {RUBRIC_MAX}, "
+          f"basis: {sel['basis']['label']}, record {sel['record_hash'][:8]} ===")
     if sk["selected"]:
         p = sk["selected"]
-        print(f"  SLOT K    {p['candidate']}  [{p['score']}/12]" + ("" if p["held"] else "  (cited, not held)"))
+        print(f"  SLOT K    {p['candidate']}  [{x_of_n(p['score'], RUBRIC_MAX)}]" + ("" if p["held"] else "  (cited, not held)"))
         c = p.get("comparison")
         if c:
             print(f"            window {c['window']}: fund {c['fund_growth_x']}x ({c['fund_ann_pct']}%/yr) vs "
@@ -49,4 +65,4 @@ for key in PRODUCT_PROFILES:
     for d in sel.get("declared") or []:
         print(f"  lane A    {d['type_label']:<24} {d['name']:<36} {d['status'][:60]}")
     for r in sel["rejected"]:
-        print(f"  rejected  {r['id']:16s} {r['score']:2d}/12  {r['rejection'][:80]}")
+        print(f"  rejected  {r['id']:16s} {x_of_n(r['score'], RUBRIC_MAX):>8s}  {r['rejection'][:80]}")

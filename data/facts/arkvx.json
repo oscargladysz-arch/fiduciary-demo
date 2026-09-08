@@ -162,31 +162,37 @@
       "value": null,
       "source_cell": "5.3",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+      "reason": "escalation: no meaningful benchmark constructible (see the selection record)"
     },
     "selection_score": {
       "value": null,
       "source_cell": "5.3",
       "status": "computed",
-      "reason": "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+      "reason": "escalation: no meaningful benchmark constructible (see the selection record)"
+    },
+    "slot_k_by_descriptor": {
+      "value": null,
+      "source_cell": "5.3",
+      "status": "computed",
+      "reason": "escalation: no meaningful benchmark constructible (see the selection record)"
     },
     "pme_public_proxy": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this pre-IPO and venture fund: no candidate passes the strategy gate at or above 7/12. Scored: PSP 7/12 (fails the strategy gate (1/3)), URTH 7/12 (fails the strategy gate (1/3)), SPY 7/12 (fails the strategy gate (1/3)). Required next: a published pre-IPO and venture strategy index with a series the record can hold."
+      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this pre-IPO and venture fund. Every candidate either fails the strategy gate (strategy match below 2 of 3). Scored: PSP 6 of 10 (fails the strategy gate (strategy match 1 of 3)), URTH 6 of 10 (fails the strategy gate (strategy match 1 of 3)), SPY 6 of 10 (fails the strategy gate (strategy match 1 of 3)). Required next: a published pre-IPO and venture strategy index with a series the record can hold."
     },
     "pme_public_proxy_name": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this pre-IPO and venture fund: no candidate passes the strategy gate at or above 7/12. Scored: PSP 7/12 (fails the strategy gate (1/3)), URTH 7/12 (fails the strategy gate (1/3)), SPY 7/12 (fails the strategy gate (1/3)). Required next: a published pre-IPO and venture strategy index with a series the record can hold."
+      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this pre-IPO and venture fund. Every candidate either fails the strategy gate (strategy match below 2 of 3). Scored: PSP 6 of 10 (fails the strategy gate (strategy match 1 of 3)), URTH 6 of 10 (fails the strategy gate (strategy match 1 of 3)), SPY 6 of 10 (fails the strategy gate (strategy match 1 of 3)). Required next: a published pre-IPO and venture strategy index with a series the record can hold."
     },
     "direct_alpha_public_proxy": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this pre-IPO and venture fund: no candidate passes the strategy gate at or above 7/12. Scored: PSP 7/12 (fails the strategy gate (1/3)), URTH 7/12 (fails the strategy gate (1/3)), SPY 7/12 (fails the strategy gate (1/3)). Required next: a published pre-IPO and venture strategy index with a series the record can hold."
+      "reason": "NO MEANINGFUL BENCHMARK CONSTRUCTIBLE from the candidates scored for this pre-IPO and venture fund. Every candidate either fails the strategy gate (strategy match below 2 of 3). Scored: PSP 6 of 10 (fails the strategy gate (strategy match 1 of 3)), URTH 6 of 10 (fails the strategy gate (strategy match 1 of 3)), SPY 6 of 10 (fails the strategy gate (strategy match 1 of 3)). Required next: a published pre-IPO and venture strategy index with a series the record can hold."
     },
     "slot_k_relative_wealth_ratio": {
       "value": null,

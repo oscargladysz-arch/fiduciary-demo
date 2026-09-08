@@ -744,9 +744,12 @@ def validate_facts() -> list[str]:
             # whatever its value. Checked whenever present.
             phrase = f.get("evidence_phrase")
             pending = str(f.get("status", "")) == "pending"
+            # an engine-owned computed field (status computed) is not typed
+            # from a cell and carries no phrase
+            computed = str(f.get("status", "")) == "computed"
             needs_phrase = not pending and (
                 field in PHRASE_ALWAYS
-                or (f.get("value") is not None
+                or (f.get("value") is not None and not computed
                     and (field in EVIDENCE_FIELDS or isinstance(f.get("value"), bool))))
             if needs_phrase and not (isinstance(phrase, str) and phrase.strip()):
                 errs.append(f"facts:{key}:{field}: no evidence_phrase (a boolean or a "

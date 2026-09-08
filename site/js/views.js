@@ -642,7 +642,7 @@ export function viewBenchmarks(root, state, setState) {
   // has no number of its own, and named for what it is
   const refBlock = ref ? `<div data-reference="true" style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)">
       <div class="cap" style="font-weight:600;color:var(--plum-800)">Reference comparison, not the meaningful benchmark</div>
-      <div style="margin:4px 0 2px"><b>${esc(ref.candidate)}</b> <span class="num">${numOr(ref.score)}/${numOr(ref.max)}</span></div>
+      <div style="margin:4px 0 2px"><b>${esc(ref.candidate)}</b> <span class="num">${numOr(ref.score)} of ${numOr(ref.max)}</span></div>
       ${ref.comparison && ref.comparison.kind === "series" ? seriesStatBlock(ref.comparison)
         : `<div class="cap">No comparison computed on held data.</div>`}
       <div class="cap">${esc(ref.note || "reference comparison on the highest-ranked held public market series")}.</div>
@@ -654,25 +654,35 @@ export function viewBenchmarks(root, state, setState) {
       const escal = sk.escalation || "No candidate selected and no escalation recorded";
       const head = escal.split(".")[0];
       const rest = escal.split(".").slice(1).join(".").trim();
+      const lockE = sel.record_hash
+        ? `<div class="cap" data-lock style="margin-top:8px">Selection recorded ${esc(String(sel.recorded_at || "").slice(0, 10))},
+            record <span class="num">${esc(String(sel.record_hash).slice(0, 8))}</span></div>` : "";
       return `<div class="card" data-slot="k">${slotBadge(label)}
         <h3 style="color:var(--alarm)">${esc(head)}.</h3>
         ${rest ? `<div class="cap">${esc(rest)}</div>` : ""}
-        ${refBlock}</div>`;
+        ${refBlock}${lockE}</div>`;
     }
     const comp = picked.comparison || null;
+    // decision 8.5: a cited index with no held series holds the slot and
+    // prints one sentence until its series is held
     const body = kind === "series" ? seriesStatBlock(comp)
       : kind === "published_index" ? publishedStatBlock(comp)
-      : `<div class="cap">No comparison computed on held data: ${esc(picked.comparison_note
+      : picked.by_descriptor
+        ? `<div class="cap" data-by-descriptor>${esc(T.by_descriptor_sentence)}</div>${refBlock}`
+        : `<div class="cap">No comparison computed on held data: ${esc(picked.comparison_note
           || "the candidate is cited and its series is not in the record")}.</div>${refBlock}`;
     const ties = (sk.ties || []).length
-      ? `<div class="cap" data-ties style="margin-top:8px">Tied on score with
-          ${sk.ties.map((id) => `<b>${esc(nameOf(id))}</b>`).join(", ")}: ordered by strategy_match,
-          then risk_liquidity_match, then data held, then alphabetical.</div>` : "";
+      ? `<div class="cap" data-ties style="margin-top:8px">${esc(T.tie_sentence)} Tied with
+          ${sk.ties.map((id) => `<b>${esc(nameOf(id))}</b>`).join(", ")}.</div>` : "";
+    // the selection lock line (R3-P2-19)
+    const lock = sel.record_hash
+      ? `<div class="cap" data-lock style="margin-top:8px">Selection recorded ${esc(String(sel.recorded_at || "").slice(0, 10))},
+          record <span class="num">${esc(String(sel.record_hash).slice(0, 8))}</span></div>` : "";
     return `<div class="card" data-slot="k">${slotBadge(label)}
       <h3>${esc(picked.candidate)}</h3>
-      <div class="num" style="font-size:15px;margin-top:2px">${numOr(picked.score)}/${numOr(picked.max)}</div>
+      <div class="num" style="font-size:15px;margin-top:2px">${numOr(picked.score)} of ${numOr(picked.max)}</div>
       <div class="scorebar"><div class="fill" style="width:${(picked.score / (picked.max || 1)) * 100}%"></div></div>
-      ${body}${ties}
+      ${body}${ties}${lock}
       <details style="margin-top:10px"><summary class="cap" style="cursor:pointer">Scoring rationale</summary>
         <ul style="margin:8px 0 0 18px; font-size:12.5px">
           ${(picked.reasons || []).map((r) => `<li>${esc(r)}</li>`).join("")}</ul></details>
@@ -717,11 +727,11 @@ export function viewBenchmarks(root, state, setState) {
     <div class="cap" style="margin:0 0 10px" data-basis>Return basis for every comparison: ${esc((sel.basis || {}).label || "not stated")}.</div>`;
 
   const rejRows = rejected.map((r, i) => {
-    const tied = String(r.rejection || "").startsWith("tied");
+    const tied = r.tied === true;
     return `<tr${tied ? ' data-tied-row="true"' : ""}>
       <td class="entryno">${String(i + 1).padStart(2, "0")}</td>
       <td>${esc(r.candidate)}</td><td>${esc(T.lane_labels[r.lane] || "lane not labeled")}</td>
-      <td class="num">${numOr(r.score)}/${numOr(r.max)}</td>
+      <td class="num">${numOr(r.score)} of ${numOr(r.max)}</td>
       <td>${tied ? '<span class="chip plain" data-tied-chip>TIED</span> ' : ""}${esc(r.rejection || "no reason logged")}
         <div class="cap" style="margin-top:5px">${(r.reasons || []).map(esc).join(" · ")}</div>
       </td></tr>`;
@@ -731,9 +741,9 @@ export function viewBenchmarks(root, state, setState) {
     <div class="viewhead"><h1>Benchmark Selection</h1>
       <div class="sub">${esc(p.fund_name)} · ${esc(T.strategy_labels[sel.strategy] || "strategy not labeled")} · two comparisons,
         each named for the paragraph it answers (${gloss("meaningful benchmark")}, ${gloss("peer comparison")}).
-        ${esc(T.rubric_label)}, strategy gate below 2, affiliated providers ineligible,
-        threshold ${T.min_primary_score}/12,
-        max attainable by an eligible candidate ${sk.max_attainable == null ? "none eligible" : `${sk.max_attainable}/12`},
+        ${esc(T.rubric_label)}, strategy gate below ${T.strategy_gate_min} of 3, affiliated providers ineligible,
+        threshold ${T.min_primary_score} of ${T.rubric_max},
+        max attainable by an eligible candidate ${sk.max_attainable == null ? "none eligible" : `${sk.max_attainable} of ${T.rubric_max}`},
         and every rejection on the record.</div></div>
     ${declStrip}
     ${sk.escalation ? `<div class="notice">

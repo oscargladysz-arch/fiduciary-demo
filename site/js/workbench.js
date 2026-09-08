@@ -70,14 +70,21 @@ const COLS = [
       (v) => v === "K-1")],
   ["big4", "Big-4 audit", (k) => factCell(k, fact(k, "big4"),
       (v) => v ? "yes" : "no")],
-  ["pme", "KS-PME vs public proxy", (k) => factCell(k, fact(k, "pme_public_proxy"),
+  ["pme", "KS-PME vs reference proxy", (k) => factCell(k, fact(k, "pme_public_proxy"),
       (v) => v.toFixed(4))],
-  ["alpha", "Direct Alpha vs public proxy", (k) => factCell(k, fact(k, "direct_alpha_public_proxy"),
+  ["alpha", "Direct Alpha vs reference proxy", (k) => factCell(k, fact(k, "direct_alpha_public_proxy"),
       (v) => v.toFixed(2) + "%/yr")],
   ["peer", "Peer relative wealth ratio (cell 1.12)", (k) => factCell(k, fact(k, "peer_relative_wealth_ratio"),
       (v) => v.toFixed(4))],
-  ["score", "Engine score", (k) => factCell(k, fact(k, "selection_score"),
-      (v) => v + "/12")],
+  ["score", "Rubric score", (k) => factCell(k, fact(k, "selection_score"),
+      (v) => `${v} of ${T.rubric_max}`)],
+  ["bydesc", "Meaningful benchmark comparison", (k) => {
+    const f = fact(k, "slot_k_by_descriptor");
+    // decision 8.5: the by-descriptor sentence wherever the slot has no number
+    return f && f.value === true
+      ? `<td><span class="cap" data-by-descriptor>${esc(T.by_descriptor_sentence)}</span> ${citeBtn(k, f.source_cell)}</td>`
+      : factCell(k, fact(k, "pme_public_proxy_name"), (v) => `computed vs ${esc(String(v))}`);
+  }],
   ["verdict", "Liquidity (structural)", (k) => {
     const f = fact(k, "liquidity_structural_verdict");
     return factCell(k, f, esc, (x) => x === "conditional-weak" || x === "misaligned");
@@ -168,7 +175,7 @@ export function viewScreener(root, state, setState) {
       ${sel("f_gate", "gate hist", ["yes", "no"])}
       ${sel("f_big4", "big-4", ["yes", "no"])}
       ${sel("f_verdict", "liquidity (structural)", ["aligned-mechanical", "conditional", "conditional-weak", "misaligned", "partial"])}
-      <span class="lbl">KS-PME vs public proxy ≥</span><input type="number" step="0.05" style="width:70px" data-f="pme_min" value="${esc(F.pme_min || "")}">
+      <span class="lbl">KS-PME vs reference proxy ≥</span><input type="number" step="0.05" style="width:70px" data-f="pme_min" value="${esc(F.pme_min || "")}">
       <span class="lbl">≤</span><input type="number" step="0.05" style="width:70px" data-f="pme_max" value="${esc(F.pme_max || "")}">
       <label class="lbl" style="cursor:pointer"><input type="checkbox" data-f="f_vonly" ${F.f_vonly === "1" ? "checked" : ""}> verified only</label>
       <details style="font-size:11px"><summary class="lbl" style="cursor:pointer">columns</summary>
@@ -234,9 +241,10 @@ const CMP_ROWS = [
   ["Auditor", "auditor", (v) => v, null],
   ["Big-4", "big4", (v) => v ? "yes" : "no", null],
   ["Meaningful benchmark (paragraph (k))", "primary_benchmark_id", (v) => T.candidate_short[v] || "candidate without a short name", null],
-  ["Engine score", "selection_score", (v) => v + "/12", null],
-  ["KS-PME vs public proxy", "pme_public_proxy", (v) => v.toFixed(4), (v) => v < 1],
-  ["Direct Alpha vs public proxy", "direct_alpha_public_proxy", (v) => v.toFixed(2) + "%/yr", (v) => v < 0],
+  ["Meaningful benchmark comparison", "slot_k_by_descriptor", (v) => v === true ? T.by_descriptor_sentence : "computed, see the KS-PME or ratio rows", null],
+  ["Rubric score", "selection_score", (v) => `${v} of ${T.rubric_max}`, null],
+  ["KS-PME vs reference proxy (reference, not the benchmark)", "pme_public_proxy", (v) => v.toFixed(4), (v) => v < 1],
+  ["Direct Alpha vs reference proxy (reference, not the benchmark)", "direct_alpha_public_proxy", (v) => v.toFixed(2) + "%/yr", (v) => v < 0],
   ["Peer relative wealth ratio (cell 1.12)", "peer_relative_wealth_ratio", (v) => v.toFixed(4), (v) => v < 1],
   ["Track record", "track_record_years", (v) => v + " yrs", null],
   ["Net assets", "net_assets_usd", (v) => money(v), null],
@@ -813,6 +821,7 @@ export function viewCohorts(root, state, setState) {
             <td class="num">${nOr(r.n)}</td></tr>`).join("")}</tbody>
         </table></div></div>`
       : `<div class="chartbox"><div id="compchart"></div>
+         ${comp.composite_note ? `<div class="chartnote" data-composite-note>${esc(wordsForKeys(comp.composite_note))}.</div>` : ""}
          <div class="chartnote">${esc(comp.granularity || "granularity not stated")} · ${esc(comp.weighting || "weighting not stated")}.
            n per period is shown in the tooltip. A composite return exists only where every
            member reports the period (${charted.length} of ${compRows.length} periods on record).</div></div>`}
@@ -824,7 +833,7 @@ export function viewCohorts(root, state, setState) {
     <h2 style="margin:18px 0 6px">Exclusion log</h2>
     <div class="cap" style="margin-bottom:6px">Every candidate considered and not
       admitted, with its reason (data/roster_decisions.md).</div>
-    <div class="cellrow"><div class="plain" style="white-space:pre-wrap">${esc(exclusions.trim())}</div></div>`;
+    <div class="cellrow"><div class="plain" style="white-space:pre-wrap">${esc(wordsForKeys(exclusions.trim()))}</div></div>`;
 
   root.querySelectorAll("[data-cohort]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault(); setState({ view: "cohorts", cohort: a.dataset.cohort }); }));

@@ -165,9 +165,15 @@
       "status": "computed"
     },
     "selection_score": {
-      "value": 8,
+      "value": 7,
       "source_cell": "5.3",
       "status": "computed"
+    },
+    "slot_k_by_descriptor": {
+      "value": true,
+      "source_cell": "5.3",
+      "status": "computed",
+      "note": "the meaningful benchmark is a cited index whose series is not held (decision 8.5)"
     },
     "pme_public_proxy": {
       "value": 1.1089,

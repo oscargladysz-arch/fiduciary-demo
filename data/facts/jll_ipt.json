@@ -168,27 +168,33 @@
       "status": "computed"
     },
     "selection_score": {
-      "value": 9,
+      "value": 8,
       "source_cell": "5.3",
       "status": "computed"
+    },
+    "slot_k_by_descriptor": {
+      "value": true,
+      "source_cell": "5.3",
+      "status": "computed",
+      "note": "the meaningful benchmark is a cited index whose series is not held (decision 8.5)"
     },
     "pme_public_proxy": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "no computable fund return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
+      "reason": "Meaningful benchmark by descriptor. No comparison until its series is held."
     },
     "pme_public_proxy_name": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "no computable fund return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
+      "reason": "Meaningful benchmark by descriptor. No comparison until its series is held."
     },
     "direct_alpha_public_proxy": {
       "value": null,
       "source_cell": "1.8",
       "status": "computed",
-      "reason": "no computable fund return series on record: no multi-year per-class return series is printed: the FY2025 10-K gives net total return only as a 3.0% to 3.8% range across classes and an 8-quarter NAV path without distributions (cells 1.1 and 1.2)"
+      "reason": "Meaningful benchmark by descriptor. No comparison until its series is held."
     },
     "slot_k_relative_wealth_ratio": {
       "value": null,

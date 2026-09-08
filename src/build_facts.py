@@ -892,7 +892,7 @@ def main() -> None:
         # every surface).
         ENGINE_NULL = ("primary_benchmark_id", "selection_score", "pme_public_proxy",
                        "pme_public_proxy_name", "direct_alpha_public_proxy", "peer_relative_wealth_ratio",
-                       "slot_k_relative_wealth_ratio")
+                       "slot_k_relative_wealth_ratio", "slot_k_by_descriptor")
         sk = (sel or {}).get("slot_k") or {}
         if sel is None or "slot_k" not in sel:
             for fld in ENGINE_NULL:
@@ -905,10 +905,15 @@ def main() -> None:
             if selected:
                 facts["primary_benchmark_id"] = F(selected["id"], "5.3", status="computed")
                 facts["selection_score"] = F(selected["score"], "5.3", status="computed")
+                facts["slot_k_by_descriptor"] = F(bool(selected.get("by_descriptor")), "5.3", status="computed",
+                                                  note=("the meaningful benchmark is a cited index whose series is "
+                                                        "not held (decision 8.5)" if selected.get("by_descriptor")
+                                                        else "the meaningful benchmark carries its own comparison"))
             else:
-                esc = "engine escalation: no meaningful benchmark constructible (see the selection artifact)"
+                esc = "escalation: no meaningful benchmark constructible (see the selection record)"
                 facts["primary_benchmark_id"] = {"value": None, "source_cell": "5.3", "status": "computed", "reason": esc}
                 facts["selection_score"] = {"value": None, "source_cell": "5.3", "status": "computed", "reason": esc}
+                facts["slot_k_by_descriptor"] = {"value": None, "source_cell": "5.3", "status": "computed", "reason": esc}
             # the public-series PME: Slot K's own when Slot K is a public
             # market series, else the reference comparison, named as such
             comp_k = (selected or {}).get("comparison") or {}

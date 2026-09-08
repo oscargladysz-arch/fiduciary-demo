@@ -167,9 +167,15 @@
       "status": "computed"
     },
     "selection_score": {
-      "value": 9,
+      "value": 8,
       "source_cell": "5.3",
       "status": "computed"
+    },
+    "slot_k_by_descriptor": {
+      "value": true,
+      "source_cell": "5.3",
+      "status": "computed",
+      "note": "the meaningful benchmark is a cited index whose series is not held (decision 8.5)"
     },
     "pme_public_proxy": {
       "value": 1.5919,
@@ -195,10 +201,10 @@
       "reason": "the meaningful benchmark is not a held appraisal-based series"
     },
     "peer_relative_wealth_ratio": {
-      "value": null,
+      "value": 0.8813,
       "source_cell": "1.12",
       "status": "computed",
-      "reason": "peer composite refused: members report on different year ends and no member has a series that builds a common calendar period (Hamilton Lane Private Assets Fund fiscal years to month 03, StepStone Private Markets fiscal years to month 03, KKR Private Equity Conglomerate LLC calendar years, Ares Private Markets Fund fiscal years to month 03, AMG Pantheon Fund, LLC fiscal years to month 03). A composite needs identical start and end dates for every member"
+      "note": "relative wealth ratio vs the peer composite over FY2023 to FY2026 (years to 03-31) (n=3), fund return source: filed fiscal-year returns. Not a public market equivalent"
     }
   }
 }

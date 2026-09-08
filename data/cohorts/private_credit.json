@@ -300,13 +300,21 @@
       "cion_ares": "calendar_year",
       "ocic": "calendar_year"
     },
+    "composite_members": [
+      "cliffwater_cclfx",
+      "bcred",
+      "pflex",
+      "cion_ares",
+      "ocic"
+    ],
+    "excluded_members": [],
     "granularity": "calendar years, identical start and end dates for every member",
-    "weighting": "equal-weight, only over periods every member reports on the same basis"
+    "weighting": "equal-weight, only over periods every composite member reports on the same basis"
   },
   "caveats": [
-    "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds. Fee bases and return volatility are not like-for-like. [typed per product: bcred: BDC 150% asset-coverage regime, cion_ares: 1940-Act asset-coverage limits, cliffwater_cclfx: 1940-Act asset-coverage limits, ocic: BDC 150% asset-coverage regime, pflex: 1940-Act asset-coverage limits]",
-    "LIQUIDITY-LAW MIX: Rule 23c-3 obligations, discretionary tenders, and repurchase plans give different worst-case exit rights. Cadence numbers alone overstate comparability. [by wrapper type: bcred: board-discretionary share repurchases, cion_ares: Rule 23c-3 OBLIGATION (board cannot skip a window), cliffwater_cclfx: Rule 23c-3 OBLIGATION (board cannot skip a window), ocic: board-discretionary share repurchases, pflex: Rule 23c-3 OBLIGATION (board cannot skip a window)]",
-    "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing. Volatility and drawdown comparisons inherit that difference (see de-smoothing lab). [typed per product: bcred: monthly, cion_ares: daily, cliffwater_cclfx: daily, ocic: quarterly, pflex: daily]"
+    "LEVERAGE-REGIME MIX: BDC 150% coverage and non-1940-Act wrappers allow materially more leverage than 1940-Act funds. Fee bases and return volatility are not like-for-like. [typed per product: Blackstone Private Credit Fund: BDC 150% asset-coverage regime, Blue Owl Credit Income Corp.: BDC 150% asset-coverage regime, CION Ares Diversified Credit Fund: 1940-Act asset-coverage limits, Cliffwater Corporate Lending Fund: 1940-Act asset-coverage limits, PIMCO Flexible Credit Income Fund: 1940-Act asset-coverage limits]",
+    "LIQUIDITY-LAW MIX: Rule 23c-3 obligations, discretionary tenders, and repurchase plans give different worst-case exit rights. Cadence numbers alone overstate comparability. [by wrapper type: Blackstone Private Credit Fund: board-discretionary share repurchases, Blue Owl Credit Income Corp.: board-discretionary share repurchases, CION Ares Diversified Credit Fund: Rule 23c-3 OBLIGATION (board cannot skip a window), Cliffwater Corporate Lending Fund: Rule 23c-3 OBLIGATION (board cannot skip a window), PIMCO Flexible Credit Income Fund: Rule 23c-3 OBLIGATION (board cannot skip a window)]",
+    "NAV-CADENCE MIX: daily, monthly, and quarterly NAV processes embed different appraisal smoothing. Volatility and drawdown comparisons inherit that difference (see de-smoothing lab). [typed per product: Blackstone Private Credit Fund: monthly, Blue Owl Credit Income Corp.: quarterly, CION Ares Diversified Credit Fund: daily, Cliffwater Corporate Lending Fund: daily, PIMCO Flexible Credit Income Fund: daily]"
   ],
   "exclusion_log": "data/roster_decisions.md"
 }

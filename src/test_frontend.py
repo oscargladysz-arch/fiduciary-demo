@@ -196,17 +196,18 @@ check("benchmarks bundle: no peer composite carries a PME key or name", all(
     "ks_pme" not in comp and "direct_alpha_pct" not in comp and comp["statistic"].startswith("relative wealth ratio")
     for k in PRODUCTS for comp in [_peer_composite(k)] if comp))
 sm = json.loads((SITE / "series.js").read_text().split("\n")[2][len("window.TARK_LAB = "):-1])
-check("lab matrix: every product x proxy pair carries a real v3 score, the five v3 criteria and eligibility",
+check("lab matrix: every product x proxy pair carries a real v3.1 score, the four v3.1 criteria and eligibility",
       all(isinstance(v["score"], int) and set(v["criteria"]) == {"strategy_match", "risk_liquidity_match",
-          "provider_independence", "data_held", "pricing_basis_match"} and isinstance(v["eligible"], bool)
+          "provider_independence", "data_held"} and isinstance(v["eligible"], bool)
           and v["reasons"] for prod in sm.values() for v in prod.values())
       and all(set(prod) == set(bundle["proxy_library"]) for prod in sm.values()))
 check("lab matrix: cclfx x BKLN eligible and on the menu, cclfx x SPY not eligible and off the menu",
       sm["cliffwater_cclfx"]["bkln"]["eligible"] and sm["cliffwater_cclfx"]["bkln"]["on_menu"]
       and not sm["cliffwater_cclfx"]["spy"]["eligible"] and not sm["cliffwater_cclfx"]["spy"]["on_menu"])
-check("benchmarks bundle: rubric v3 on every selection, Slot K with its ceiling, the declared record and Slot G "
-      "present, the v2 keys gone", all(
-    sel.get("rubric_version") == "v3" and "max_attainable" in (sel.get("slot_k") or {})
+check("benchmarks bundle: rubric v3.1 on every selection, Slot K with its ceiling, the declared record, Slot G and "
+      "the selection lock present, the v2 keys and the lock's input list gone", all(
+    sel.get("rubric_version") == "v3.1" and "max_attainable" in (sel.get("slot_k") or {})
+    and len(sel.get("record_hash", "")) == 64 and sel.get("recorded_at") and "inputs" not in sel
     and "declared" in sel and bool(sel.get("slot_g"))
     and not any(old in sel for old in ("primary", "secondary", "secondary_note", "declared_benchmarks", "escalation"))
     for sel in bundle["benchmarks"].values()))
@@ -414,8 +415,11 @@ with sync_playwright() as pw:
           _k_card.locator('[data-stat-kind="series"]').count() == 1 and "KS-PME" in _k_text
           and "yahoo adjusted close" in _k_text.lower() and _k_card.locator('[data-reference="true"]').count() == 0)
     _scr = view_text("screener")
-    check("screener: the PME column is split into KS-PME vs public proxy and peer relative wealth ratio",
-          "KS-PME vs public proxy" in _scr and "Peer relative wealth ratio" in _scr)
+    check("screener: the PME column is split into KS-PME vs reference proxy and peer relative wealth ratio, and the "
+          "by-descriptor sentence prints for every product whose Slot K has no number (decision 8.5)",
+          "KS-PME vs reference proxy" in _scr and "Peer relative wealth ratio" in _scr
+          and page.locator("#view [data-by-descriptor]").count()
+          == sum(1 for k in PRODUCTS if (bundle["facts"][k].get("slot_k_by_descriptor") or {}).get("value") is True))
     tl = t.lower()   # stat labels render uppercase (CSS), inner_text follows
     check("benchmark cclfx: monthly-schedule row labeled ILLUSTRATIVE, two-point stated primary",
           "monthly schedule" in tl and "illustrative" in tl and "two-point figure is primary" in tl
@@ -828,8 +832,8 @@ with sync_playwright() as pw:
           "low confidence" in t_s.lower() and "shorter than 3 years" in t_s)
     t_c = view_text("benchmarks", product="cliffwater_cclfx")
     check("cclfx: no low-confidence label on its windows", "low confidence" not in t_c.lower())
-    check("breit: the cited Slot K states that no comparison was computed on held data",
-          "ODCE" in t and "No comparison computed on held data" in t)
+    check("breit: the cited Slot K holds the slot by descriptor and prints the decided sentence (decision 8.5)",
+          "ODCE" in t and bundle["by_descriptor_sentence"] in t and "No comparison computed on held data" not in t)
     t = view_text("desmooth", product="breit")
     check("breit de-smoothing from printed monthly NAV (rho 0.483)",
           "0.483" in t)
@@ -886,15 +890,25 @@ with sync_playwright() as pw:
         leaked = [k2 for k2 in PRODUCTS if re.search(rf"(?<![A-Za-z0-9_]){re.escape(k2)}(?![A-Za-z0-9_])", raw)]
         if leaked:
             slot_bad.append(f"{pr}: bare key {leaked[0]}")
-        tied = [r for r in sel["rejected"] if str(r["rejection"]).startswith("tied")]
+        tied = [r for r in sel["rejected"] if r.get("tied") is True]
         chips = page.locator("[data-tied-chip]")
         if chips.count() != len(tied) or any(chips.nth(i).inner_text() != "TIED" for i in range(len(tied))):
             slot_bad.append(f"{pr}: TIED chip count")
         if bool(tied) != bool(sel["slot_k"].get("ties")):
             slot_bad.append(f"{pr}: ledger ties and slot_k.ties disagree")
-        if tied and ("Tied on score with" not in tt or any(r["candidate"] not in tt for r in tied)
-                     or "ordered by strategy_match, then risk_liquidity_match, then data held, then alphabetical" not in tt):
+        if tied and (bundle["tie_sentence"] not in tt or any(r["candidate"] not in tt for r in tied)):
             slot_bad.append(f"{pr}: tie sentence")
+        if picked_k_pre := (sel["slot_k"].get("selected") or {}):
+            if picked_k_pre.get("by_descriptor") and (page.locator('[data-slot="k"] [data-by-descriptor]').count() != 1
+                                                       or bundle["by_descriptor_sentence"] not in tt):
+                slot_bad.append(f"{pr}: by-descriptor sentence")
+            if not picked_k_pre.get("by_descriptor") and page.locator('[data-slot="k"] [data-by-descriptor]').count():
+                slot_bad.append(f"{pr}: by-descriptor sentence where Slot K has a number")
+        if sel.get("record_hash") and (page.locator('[data-slot="k"] [data-lock]').count() != 1
+                                       or sel["record_hash"][:8] not in tt or "Selection recorded" not in tt):
+            slot_bad.append(f"{pr}: selection lock line")
+        if "/10" in tt or "/12" in tt:
+            slot_bad.append(f"{pr}: a slash score survives")
         picked_k = sel["slot_k"].get("selected") or {}
         if sel.get("reference_comparison") and not picked_k.get("comparison"):
             if (page.locator('[data-slot="k"] [data-reference="true"]').count() != 1
@@ -927,7 +941,7 @@ with sync_playwright() as pw:
     check("benchmarks: every product shows one Slot K and one Slot G card, prints no PRIMARY or SECONDARY and no "
           "bare product key, marks every tied ledger row TIED beside the tie sentence, shows the reference block "
           "only where Slot K has no number, and prints the declared record and the return basis",
-          not slot_bad and any(str(r["rejection"]).startswith("tied")
+          not slot_bad and any(r.get("tied") is True
                                for s in bundle["benchmarks"].values() for r in s["rejected"]),
           "; ".join(slot_bad[:6]))
 
@@ -1477,11 +1491,14 @@ with sync_playwright() as pw:
         cohort: 'evergreen_pe'}); return document.getElementById('view').innerText; }""")
     check("evergreen cohort carries the kkr fallback note",
           "authorized fallback" in t)
-    check("evergreen private equity cohort: no composite return formed, the reason and each period's n on screen",
-          "no composite return formed" in t.lower() and "different year ends" in t
-          and page.locator("[data-no-composite] table tbody tr").count()
-          == len(bundle["cohorts"]["evergreen_pe"]["composite"]["rows"])
-          and page.locator("#compchart").count() == 0)
+    _evc = bundle["cohorts"]["evergreen_pe"]["composite"]
+    check("evergreen private equity cohort (R3-P2-5): the composite is formed over the four March-year-end members, "
+          "the December member is excluded by name with its reason on screen, and no product key prints",
+          page.locator("#compchart svg").count() == 1 and page.locator("[data-composite-note]").count() == 1
+          and "KKR Private Equity Conglomerate LLC" in t and "calendar years" in t
+          and _evc.get("composite_members") and len(_evc["composite_members"]) == 4
+          and [e["member"] for e in _evc["excluded_members"]] == ["KKR Private Equity Conglomerate LLC"]
+          and "kkr_kpec" not in t)
     page.evaluate("() => window.tarkSetState({view: 'cohorts', cohort: 'private_credit'})")
     page.wait_for_selector("#compchart svg", timeout=5000)
     _pc_rows = bundle["cohorts"]["private_credit"]["composite"]["rows"]

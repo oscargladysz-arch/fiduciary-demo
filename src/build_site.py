@@ -22,6 +22,8 @@ from datetime import date
 from pathlib import Path
 
 from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
+from tark_benchmark_common import (BY_DESCRIPTOR_SENTENCE as _BY_DESCRIPTOR_SENTENCE, RUBRIC_MAX as _RUBRIC_MAX,
+                                   STRATEGY_GATE_MIN as _STRATEGY_GATE_MIN, TIE_SENTENCE as _TIE_SENTENCE)
 from tark_display import (SLOT_LABELS, BASE_LABEL, CANDIDATE_SHORT, LANE_LABEL, RUBRIC_LABEL, STRATEGY_LABEL,
                           WRAPPER_LABEL, cell_display, display_path_free, facts_by_cell)
 from tark_memo import write_all
@@ -280,8 +282,8 @@ def swap_matrix() -> dict:
     would be eligible (passes the strategy gate and the threshold) and
     whether it sits on the engine's menu for the product, so the lab grades
     any choice instead of declaring some choices ungradeable."""
-    from tark_benchmark import (CANDIDATES, MIN_PRIMARY_SCORE, PRODUCT_PROFILES,
-                                menu_for, score_candidate)
+    from tark_benchmark import (CANDIDATES, MIN_PRIMARY_SCORE, PRODUCT_PROFILES, STRATEGY_GATE_MIN,
+                                eligible as _eligible, menu_for, score_candidate, x_of_n)
     out: dict = {}
     for key, prof in PRODUCT_PROFILES.items():
         if prof.get("held_kind") == "none":
@@ -296,21 +298,22 @@ def swap_matrix() -> dict:
             s = score_candidate(prof, cand)
             sm = s["criteria"]["strategy_match"]
             decoupled = bool(prof.get("price_nav_decoupled"))
-            gate = sm >= 2
+            gate = sm >= STRATEGY_GATE_MIN
             independent = s["criteria"]["provider_independence"] == 2
-            eligible = gate and independent and s["score"] >= MIN_PRIMARY_SCORE and not decoupled
+            # one eligibility rule, the engine's own (R3-P2-2)
+            eligible = _eligible(s, decoupled)
             if decoupled:
                 verdict = ("not eligible: the fund's price is decoupled from its NAV, so no "
                            "proxy benchmarks the portfolio")
             elif not gate:
-                verdict = f"not eligible: fails the strategy gate (strategy_match {sm}/3)"
+                verdict = f"not eligible: fails the strategy gate (strategy match {x_of_n(sm, 3)})"
             elif not independent:
                 verdict = "not eligible: the provider is affiliated with the fund's adviser"
             elif s["score"] < MIN_PRIMARY_SCORE:
-                verdict = (f"not eligible: {s['score']}/{s['max']} is below the "
-                           f"{MIN_PRIMARY_SCORE}/{s['max']} threshold")
+                verdict = (f"not eligible: {x_of_n(s['score'], s['max'])} is below the "
+                           f"{x_of_n(MIN_PRIMARY_SCORE, s['max'])} threshold")
             else:
-                verdict = (f"eligible under the {RUBRIC_LABEL}: {s['score']}/{s['max']} passes the "
+                verdict = (f"eligible under the {RUBRIC_LABEL}: {x_of_n(s['score'], s['max'])} passes the "
                            "strategy gate and the threshold")
             by_series[proxy] = {"score": s["score"], "max": s["max"],
                                 "criteria": s["criteria"], "reasons": s["reasons"],
@@ -547,6 +550,11 @@ def main() -> None:
         # the rubric caption ships once (rubric_caption) and the per-criterion
         # integers are printed through the reasons, which every card carries
         sel.pop("rubric", None)
+        # the lock's input list names series files: it stays in the record,
+        # the card prints the recorded date and the record hash (R3-P2-19)
+        sel.pop("inputs", None)
+        sel.pop("threshold", None)
+        sel.pop("reference_skipped", None)
         for x in [sel["slot_k"].get("selected")] + sel.get("rejected", []):
             if x:
                 x.pop("criteria", None)
@@ -656,9 +664,12 @@ def main() -> None:
     # short string per product, to stay under the bundle's size pin)
     cited_cells = {k: ",".join(cid for cid, c in p["cells"].items() if c.get("source"))
                    for k, p in products.items()}
+    # the verifier rides the first paint only when a person has signed the
+    # row (an empty string on 880 cells is 14 KB of nothing)
     products = {k: {**p, "cited": cited_cells[k],
                     "cells": {cid: {f: (display_path_free(c.get(f, "")) if f == "value" else c.get(f, ""))
-                                    for f in FIRST_PAINT_FIELDS}
+                                    for f in FIRST_PAINT_FIELDS
+                                    if not (f == "verified_by" and not c.get(f))}
                               for cid, c in p["cells"].items()}}
                 for k, p in products.items()}
     _reg = json.loads((DATA / "registry.json").read_text())["products"]
@@ -712,6 +723,10 @@ def main() -> None:
                                              if k != "plan_tech_media"],
         "benchmarks": benchmarks,
         "min_primary_score": MIN_PRIMARY_SCORE,
+        "rubric_max": _RUBRIC_MAX,
+        "strategy_gate_min": _STRATEGY_GATE_MIN,
+        "tie_sentence": _TIE_SENTENCE,
+        "by_descriptor_sentence": _BY_DESCRIPTOR_SENTENCE,
         # per-plan liquidity match artifacts ride the lazy series chunk —
         # only the Liquidity view reads them; merged by ensureSeries()
         "liquidity": None,

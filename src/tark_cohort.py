@@ -20,6 +20,7 @@ Run:  python src/tark_cohort.py   -> data/cohorts/<id>.json
 from __future__ import annotations
 
 import json
+import re
 from statistics import median
 
 from tark_data import DATA
@@ -137,15 +138,28 @@ def caveat_block(cohort_id: str) -> list[str]:
     caveat that the typed facts contradict (five NAV-priced members, one
     pricing caveat) is not written."""
     matrix = json.loads((DATA / "cohorts" / "caveat_matrix.json").read_text())
+    from tark_display import BASE_LABEL, WRAPPER_LABEL
+    from tark_data import load_product
+    # a caveat names the fund and prints the value's display label, never a
+    # registry key or an enum value (rule 11)
+    labels = {"NAV": "NAV", "MARKET": "market price", **BASE_LABEL, **WRAPPER_LABEL}
+
+    def _name(k: str) -> str:
+        return (load_product(k)["fund_name"].split(" (")[0]
+                if (DATA / "products" / f"{k}.json").exists() else k)
     out = []
     for rule in matrix["pair_caveats"]:
         attr = rule["attrs"][0]
         values, basis = member_values(cohort_id, attr)
         if len(set(values.values())) > 1:
-            detail = ", ".join(f"{k}: {v}" for k, v in sorted(values.items()))
+            detail = ", ".join(f"{_name(k)}: {labels.get(v, str(v).replace('_', ' '))}"
+                               for k, v in sorted(values.items(), key=lambda kv: _name(kv[0])))
             out.append(f"{rule['caveat']} [{basis}: {detail}]")
     fb = COHORTS[cohort_id].get("fallback_note")
     if fb:
+        # the registry's note names members by key: the surface prints names
+        for k in sorted(COHORTS[cohort_id]["members"], key=len, reverse=True):
+            fb = re.sub(rf"(?<![A-Za-z0-9_]){re.escape(k)}(?![A-Za-z0-9_])", _name(k), fb)
         out.append(fb)
     return out
 
@@ -179,21 +193,59 @@ def composite(cohort_id: str) -> dict:
                      "n": r["n"], "members": sorted(have), "returns": r["returns"],
                      "composite_return_pct": (round(sum(r["returns"][m] for m in have) / len(have), 2)
                                               if full and r["period_kind"] != "mixed" else None)})
-    aligned = (len(set(kinds.values())) == 1 and "none" not in kinds.values()
-               and len(set(months.values())) == 1)
+    from tark_data import DATA as _DATA, load_product
+
+    def _short(m: str) -> str:
+        # a synthetic member (the toy cohorts of the gate) has no product file
+        return load_product(m)["fund_name"].split(" (")[0] if (_DATA / "products" / f"{m}.json").exists() else m
+    short = {m: _short(m) for m in members}
+
+    def basis_words(m: str) -> str:
+        return ("calendar years" if kinds[m] == "calendar_year"
+                else f"fiscal years to month {months[m]}" if kinds[m] == "fiscal_year" else "no period returns")
+    no_returns = [m for m in members if kinds[m] == "none"]
+    with_returns = [m for m in members if kinds[m] != "none"]
+    # R3-P2-5: the members that share the majority period basis form the
+    # composite; a member on another basis is excluded by name with the
+    # reason and stays in the table with its own periods and n
+    bases: dict[tuple, list[str]] = {}
+    for m in with_returns:
+        bases.setdefault((kinds[m], months[m]), []).append(m)
+    core = max(bases.values(), key=len) if bases else []
+    excluded = [{"member": short[m], "reason": (f"{short[m]} reports {basis_words(m)}, the composite members report "
+                                                 f"{basis_words(core[0])}" if core else f"{short[m]} reports {basis_words(m)}")}
+                for m in with_returns if m not in core]
+    excluded += [{"member": short[m], "reason": f"no period returns on record for {short[m]}"} for m in no_returns]
+    aligned = len(core) >= 3 and len(core) == len(members)
+    partial = len(core) >= 3 and not aligned
+    # composite returns only over the core members, and only where every one of them reports
+    for r in rows:
+        have_core = [m for m in core if r["returns"].get(m) is not None]
+        r["composite_return_pct"] = (round(sum(r["returns"][m] for m in have_core) / len(have_core), 2)
+                                     if core and len(have_core) == len(core) and r["period_kind"] != "mixed" else None)
     out = {"refused": False, "rows": rows,
            "member_source": {m: per[m]["source"] for m in members},
            "member_period_kind": kinds,
+           "composite_members": core,
+           "excluded_members": excluded,
            "granularity": ("calendar years, identical start and end dates for every member"
                            if aligned and kinds[members[0]] == "calendar_year" else
                            "fiscal years to the same month for every member"
-                           if aligned else "mixed year ends: no common period, composite returns not formed"),
-           "weighting": "equal-weight, only over periods every member reports on the same basis"}
-    if not aligned:
+                           if aligned else
+                           f"{basis_words(core[0])} for the {len(core)} composite members, {len(excluded)} excluded by name"
+                           if partial else "no common period basis for 3 members, composite returns not formed"),
+           "weighting": "equal-weight, only over periods every composite member reports on the same basis"}
+    if no_returns and not partial and not aligned:
         out["composite_refused_reason"] = (
-            "members report on different year ends (" + ", ".join(
-                f"{m}: {'calendar years' if kinds[m] == 'calendar_year' else 'fiscal years to month ' + str(months[m]) if kinds[m] == 'fiscal_year' else 'no period returns'}"
-                for m in members) + "), so no equal-weight composite return is formed. The table shows each member's own periods with n")
+            "no period returns on record for " + ", ".join(short[m] for m in no_returns)
+            + ", so no equal-weight composite return is formed. The table shows each member's own periods with n")
+    elif not aligned and not partial:
+        out["composite_refused_reason"] = (
+            "fewer than 3 members share one period basis (" + ", ".join(f"{short[m]}: {basis_words(m)}" for m in members)
+            + "), so no equal-weight composite return is formed. The table shows each member's own periods with n")
+    elif partial:
+        out["composite_note"] = ("composite over " + ", ".join(short[m] for m in core) + " only. "
+                                 + " ".join(e["reason"] for e in excluded))
     return out
 
 

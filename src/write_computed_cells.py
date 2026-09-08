@@ -30,6 +30,8 @@ from pathlib import Path
 
 from tark_data import (CELLS, DATA, EVIDENCE_COLUMNS, load_evidence,
                        load_product, product_keys, record_as_of, status_kind)
+from tark_benchmark_common import (BY_DESCRIPTOR_SENTENCE, MIN_PRIMARY_SCORE, RUBRIC_MAX,
+                                   STRATEGY_GATE_MIN, TIE_SENTENCE, x_of_n)
 from tark_display import (COMPUTED_WRITER_LABEL, RUBRIC_LABEL, WRAPPER_LABEL, cohort_label,
                           lane_label)
 
@@ -202,8 +204,10 @@ def cell_1_8(key: str) -> dict | None:
             parts.append(_series_sentence(f"{sk['label']},", s["candidate"], c))
         elif c:
             parts.append(_ratio_sentence(f"{sk['label']},", s["candidate"], c))
+        elif s.get("by_descriptor"):
+            parts.append(f"{sk['label']}, {s['candidate']} scored {x_of_n(s['score'], s['max'])}. {BY_DESCRIPTOR_SENTENCE}")
         else:
-            parts.append(f"{sk['label']}, {s['candidate']} scored {s['score']}/{s['max']}: no comparison computed "
+            parts.append(f"{sk['label']}, {s['candidate']} scored {x_of_n(s['score'], s['max'])}: no comparison computed "
                          f"({(s.get('comparison_note') or 'not computable on held data').rstrip('.')}).")
         if c and c.get("low_confidence"):
             lows.append(c["low_confidence"])
@@ -286,17 +290,18 @@ def cell_5_3(key: str) -> dict | None:
     src = f"benchmark selection artifact ({_fund_short(key)})"
     sk = sel["slot_k"]
     parts = [f"Candidates evaluated for the meaningful-benchmark slot, paragraph (k) ({RUBRIC_LABEL}, "
-             "threshold 7 of 12, strategy gate below 2 of 3 ineligible, an index published by the fund's "
-             "own adviser ineligible)."]
+             f"threshold {x_of_n(MIN_PRIMARY_SCORE, RUBRIC_MAX)}, strategy gate below {x_of_n(STRATEGY_GATE_MIN, 3)} "
+             "ineligible, an index published by the fund's own adviser ineligible)."]
     if sk.get("escalation"):
         parts.append("ESCALATED: " + sk["escalation"].rstrip(".") + ".")
     else:
         s = sk["selected"]
-        parts.append(f"SELECTED {s['candidate']} {s['score']}/{s['max']} ({lane_label(s['lane'])}"
-                     + (", series held" if s.get("held") else ", cited, series not in the record") + ").")
+        parts.append(f"SELECTED {s['candidate']} {x_of_n(s['score'], s['max'])} ({lane_label(s['lane'])}"
+                     + (", series held" if s.get("held") else ", cited, series not in the record") + ")."
+                     + (f" {BY_DESCRIPTOR_SENTENCE}" if s.get("by_descriptor") else ""))
     for r in sel.get("rejected", []):
-        tag = "TIED" if r["rejection"].startswith("tied") else "REJECTED"
-        parts.append(f"{tag} {r['candidate']} {r['score']}/{r['max']} ({lane_label(r['lane'])}): "
+        tag = "TIED" if r.get("tied") else "REJECTED"
+        parts.append(f"{tag} {r['candidate']} {x_of_n(r['score'], r['max'])} ({lane_label(r['lane'])}): "
                      + r["rejection"].rstrip(".") + ".")
     parts.extend(_lane_a_sentences(sel))
     parts.append("The peer cohort is not a candidate here: it is the paragraph (g) and (h) comparison in cell 1.12.")
@@ -344,6 +349,8 @@ def cell_5_5(key: str) -> dict | None:
                          f"{c['relative_wealth_ratio']} = fund growth {c['fund_growth_x']}x / index growth "
                          f"{c['index_growth_x']}x over {c['window']}, fund return source: {c['fund_return_source']}. "
                          f"{c['not_pme_note']}")
+        elif not c and s.get("by_descriptor"):
+            parts.append(f"Meaningful benchmark {s['candidate']}: no inputs. {BY_DESCRIPTOR_SENTENCE}")
         elif not c:
             parts.append(f"Meaningful benchmark {s['candidate']}: no inputs, "
                          f"{(s.get('comparison_note') or 'not computable').rstrip('.')}.")
@@ -374,7 +381,7 @@ def cell_5_6(key: str) -> dict | None:
         return None
     sk = sel["slot_k"]
     ma = sk.get("max_attainable")
-    ma_txt = (f"Max attainable by an eligible candidate on held data {ma}/12." if ma is not None
+    ma_txt = (f"Max attainable by an eligible candidate on held data {x_of_n(ma, RUBRIC_MAX)}." if ma is not None
               else "No candidate is eligible, so no maximum is attainable on held data.")
     parts = [f"Benchmark suitability ({RUBRIC_LABEL})."]
     if sk.get("escalation"):
@@ -382,21 +389,22 @@ def cell_5_6(key: str) -> dict | None:
     else:
         s = sk["selected"]
         comp = s.get("comparison") or {}
-        line = f"{sk['label']}: {s['candidate']} ({lane_label(s['lane'])}) scored {s['score']}/{s['max']}"
+        line = f"{sk['label']}: {s['candidate']} ({lane_label(s['lane'])}) scored {x_of_n(s['score'], s['max'])}"
         if comp and comp["kind"] == "series":
             line += (f" with a {comp['statistic']} over {comp['window']}: "
                      f"KS-PME {comp['ks_pme']}, Direct Alpha {comp['direct_alpha_pct']}%/yr")
         elif comp:
             line += (f" with a {comp['statistic']} over {comp['window']}: relative wealth ratio "
                      f"{comp['relative_wealth_ratio']}, annualized excess return {comp['excess_return_pct']}%/yr")
+        elif s.get("by_descriptor"):
+            line += f". {BY_DESCRIPTOR_SENTENCE.rstrip('.')}"
         else:
             line += f", no comparison computed ({(s.get('comparison_note') or 'not computable on held data').rstrip('.')})"
         if comp and comp.get("low_confidence"):
             line += f" ({comp['low_confidence']})"
         parts.append(line + ".")
         if sk.get("ties"):
-            parts.append("Tied on score: " + ", ".join(_cand_name(sel, i) for i in sk["ties"])
-                         + ", ordered by strategy_match, then risk_liquidity_match, then data held, then alphabetical.")
+            parts.append(f"{TIE_SENTENCE} Tied with: " + ", ".join(_cand_name(sel, i) for i in sk["ties"]) + ".")
     ref = sel.get("reference_comparison")
     if ref:
         c = ref["comparison"]
@@ -412,6 +420,9 @@ def cell_5_6(key: str) -> dict | None:
         parts.append("Peer comparison (cell 1.12): composite refused, " + g["reason"].rstrip(".") + ".")
     parts.append(f"Not selected: {len(sel.get('rejected', []))} candidates, each with its reason in "
                  "the ledger. The scoring rules are in the benchmark methodology document.")
+    if sel.get("record_hash"):
+        parts.append(f"Selection recorded {sel['recorded_at'][:10]}, record {sel['record_hash'][:8]} "
+                     f"(rubric {sel.get('rubric_version')}, full hash in the selection record).")
     text = " ".join(parts)
     note = analyst_note(key, "5.6")
     if note:

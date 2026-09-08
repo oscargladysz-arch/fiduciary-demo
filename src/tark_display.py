@@ -154,8 +154,10 @@ def typed_headline(cid: str, fx: dict) -> str | None:
         return ", ".join(parts)
     if cid == "5.3" and g("primary_benchmark_id"):
         sc = g("selection_score")
+        by_desc = g("slot_k_by_descriptor") is True
         return (f"{candidate_short(g('primary_benchmark_id'))} selected"
-                + (f", {sc}/12" if sc is not None else ""))
+                + (" by descriptor" if by_desc else "")
+                + (f", {x_of_n(sc, RUBRIC_MAX)}" if sc is not None else ""))
     if cid == "3.9" and g("liquidity_structural_verdict"):
         # the headline is the structural layer only (typed facts, plan-
         # independent). The per-plan scenario verdicts are ILLUSTRATIVE and
@@ -299,7 +301,7 @@ CANDIDATE_SHORT = {
 }
 SLOT_LABELS = {"slot_k": "Meaningful benchmark (paragraph (k))",
                "slot_g": "Peer comparison (paragraphs (g) and (h))"}
-RUBRIC_LABEL = "Tark benchmark rubric, 12 points"
+from tark_benchmark_common import RUBRIC_LABEL, RUBRIC_MAX, x_of_n  # noqa: E402,F401
 COMPUTED_WRITER_LABEL = "Tark computed-cells writer"
 SCHEDULE_H_ABSENT_SENTENCE = ("Schedule H benefit-payment line 2e is not yet in the plan record. "
                               "The filed outflow proxy (total expenses less administrative "

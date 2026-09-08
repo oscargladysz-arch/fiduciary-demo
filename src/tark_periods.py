@@ -30,6 +30,7 @@ from tark_data import DATA, load_series
 MIN_PEERS = 3
 _STUB = re.compile(r"stub|not annualized|commencement|partial", re.I)
 YAHOO_SOURCE = "Yahoo adjusted close, approximates NAV total return"
+MARKET_SOURCE = "Yahoo adjusted close, a market price with distributions reinvested, not NAV"
 FILED_CY_SOURCE = "filed calendar-year returns (December fiscal year)"
 FILED_FY_SOURCE = "filed fiscal-year returns"
 
@@ -88,7 +89,8 @@ def member_period_returns(key: str, reg: dict | None = None) -> dict:
     held = reg[key]["held_returns"]
     if held["kind"] == "series":
         series = load_series(held["series"], "adj_close")
-        return {"period_kind": "calendar_year", "basis": "series", "source": YAHOO_SOURCE,
+        src = MARKET_SOURCE if reg[key].get("pricing_class") == "MARKET" else YAHOO_SOURCE
+        return {"period_kind": "calendar_year", "basis": "series", "source": src,
                 "fy_end_month": "12", "periods": calendar_years_from_series(series)}
     if held["kind"] == "fy_returns":
         rows = filed_years(key)
@@ -169,14 +171,31 @@ def aligned_composite(subject: str, peers: list[str], reg: dict | None = None,
         return {**base, "status": "refused",
                 "reason": f"no period returns on record for {', '.join(missing)}"}
     months = {m: per[m]["fy_end_month"] for m in peers + [subject]}
-    if len(set(kinds.values())) > 1 or len(set(months.values())) > 1:
-        desc = ", ".join(f"{name(m)} {'calendar years' if kinds[m] == 'calendar_year' else 'fiscal years to month ' + months[m]}"
-                         for m in peers + [subject])
+
+    def basis_words(m: str) -> str:
+        return ("calendar years" if kinds[m] == "calendar_year"
+                else f"fiscal years to month {months[m]}")
+    # R3-P2-5: the peers that report on the subject's own period basis
+    # (same kind, same year-end month) form the composite. A peer on another
+    # basis is excluded by name with the reason, and stays in the table.
+    all_peers = list(peers)
+    aligned = [m for m in peers if kinds[m] == kinds[subject] and months[m] == months[subject]]
+    excluded = [{"member": name(m), "reason": (f"{name(m)} reports {basis_words(m)}. {name(subject)} and the "
+                                                f"aligned peers report {basis_words(subject)}, so it is excluded "
+                                                "from the composite and stays in the side-by-side table")}
+                for m in peers if m not in aligned]
+    base["excluded"] = excluded
+    if len(aligned) < MIN_PEERS:
+        others = ", ".join(f"{name(m)} ({basis_words(m)})" for m in peers if m not in aligned)
         return {**base, "status": "refused",
-                "reason": ("members report on different year ends and no member has a series that "
-                           f"builds a common calendar period ({desc}). A composite needs identical "
-                           "start and end dates for every member")}
-    # common periods: every peer reports it
+                "reason": (f"fewer than {MIN_PEERS} peers share {name(subject)}'s period basis "
+                           f"({basis_words(subject)}): {len(aligned)} aligned"
+                           + (f", the rest report on another basis ({others})" if others else "")
+                           + ". A composite needs identical start and end dates for every member")}
+    peers = aligned
+    base["members"] = peers
+    base["n_peers"] = len(peers)
+    # common periods: every aligned peer reports it
     common = [pid for pid in sorted(per[peers[0]]["periods"]) if all(pid in per[m]["periods"] for m in peers)]
     run = [pid for pid in common if pid in per[subject]["periods"]]
     # the longest run of consecutive periods, latest first
@@ -211,7 +230,9 @@ def aligned_composite(subject: str, peers: list[str], reg: dict | None = None,
     align = (f"{yrs} {unit} period(s) with identical start and end dates for every member "
              f"({per[subject]['periods'][best[0]]['start']} to {per[subject]['periods'][best[-1]]['end']}), "
              f"n={len(peers)} peers in every period. Member return sources: "
-             + "; ".join(f"{name(m)}: {per[m]['source']}" for m in peers))
+             + "; ".join(f"{name(m)}: {per[m]['source']}" for m in peers)
+             + (". Excluded from the composite: " + " ".join(e["reason"] for e in excluded) if excluded else "")
+             + (f". {len(all_peers) - len(peers)} of {len(all_peers)} peers excluded" if excluded else ""))
     rows = [{"period": pid, "label": per[subject]["periods"][pid]["label"], "n": len(peers),
              "composite_return_pct": _pct(c), "fund_return_pct": _pct(f),
              "members": {name(m): _pct(per[m]["periods"][pid]["return"]) for m in peers}}

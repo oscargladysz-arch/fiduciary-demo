@@ -32,6 +32,7 @@ from tark_data import (ADVISOR_COMPLETED, ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_C
                        DATA, FACTOR_PARAS, FACTORS, RULE, RULE_CITATION, authority,
                        cells_by_factor, coverage_summary, load_advisor, load_plan,
                        load_products, plan_keys, record_as_of, rule_ref, status_kind)
+from tark_benchmark_common import BY_DESCRIPTOR_SENTENCE, TIE_SENTENCE, x_of_n
 from tark_display import (WRAPPER_LABEL, _money as money, display_path_free, facts_by_cell,
                           typed_headline)
 
@@ -512,18 +513,24 @@ def _benchmark_section(doc: Document, sel: dict) -> None:
             "is identified. This memo does not decide.")
     else:
         s = sk["selected"]
-        doc.add_heading(f"{sk['label']}: {s['candidate']} (score {s['score']}/{s['max']})", level=2)
+        doc.add_heading(f"{sk['label']}: {s['candidate']} (score {x_of_n(s['score'], s['max'])})", level=2)
         comp = s.get("comparison")
         if comp:
             _comparison_paragraphs(doc, comp, "the benchmark")
+        elif s.get("by_descriptor"):
+            doc.add_paragraph(f"{BY_DESCRIPTOR_SENTENCE} The candidate is selected on its own descriptors. "
+                              "No number is substituted.")
         else:
             doc.add_paragraph("Comparison not computed: "
                               f"{(s.get('comparison_note') or 'not computable on held data').rstrip('.')}. "
                               "The candidate is selected on its own descriptors. No number is substituted.")
         if sk.get("ties"):
-            doc.add_paragraph("Tied on score with " + ", ".join(
-                next((r["candidate"] for r in sel["rejected"] if r["id"] == t), t) for t in sk["ties"])
-                + ": ordered by strategy_match, then risk_liquidity_match, then data held, then alphabetical.")
+            doc.add_paragraph(f"{TIE_SENTENCE} Tied with " + ", ".join(
+                next((r["candidate"] for r in sel["rejected"] if r["id"] == t), t) for t in sk["ties"]) + ".")
+        if sel.get("record_hash"):
+            doc.add_paragraph(f"Selection recorded {sel['recorded_at'][:10]}, record {sel['record_hash'][:8]}. "
+                              f"Rubric {sel.get('rubric_version')}. The full record hash is "
+                              f"{sel['record_hash']}.")
         for r in s["reasons"]:
             doc.add_paragraph(r, style="List Bullet")
     ref = sel.get("reference_comparison")
@@ -583,7 +590,7 @@ def _benchmark_section(doc: Document, sel: dict) -> None:
     for r in sel["rejected"]:
         c = rt.add_row().cells
         c[0].text = r["candidate"]
-        c[1].text = f"{r['score']}/{r['max']}"
+        c[1].text = x_of_n(r["score"], r["max"])
         # the criteria ride with the reason so a reader sees whether a
         # candidate lost on fit or on data absence (audit round 2 item 14)
         c[2].text = r["rejection"] + " Criteria: " + ", ".join(r["reasons"]) + "."

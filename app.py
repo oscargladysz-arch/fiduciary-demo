@@ -179,7 +179,7 @@ def render_benchmark():
     sel = json.loads(sel_path.read_text())
     st.caption(f"Strategy: {sel['strategy']} · engine inputs from cells "
                f"{', '.join(sel['source_cells'])} · {sel.get('rubric', 'rubric not recorded')}"
-               + (f" · max attainable on held data {sel['max_attainable']}/12"
+               + (f" · max attainable on held data {sel['max_attainable']} of {sel.get('threshold', {}).get('max', 10)}"
                   if sel.get("max_attainable") is not None else ""))
 
     sk = sel["slot_k"]
