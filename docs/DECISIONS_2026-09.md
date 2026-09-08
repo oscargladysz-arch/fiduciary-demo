@@ -2633,3 +2633,38 @@ The tenancy tests of R3-P4-3 still run from the outside against a project,
 which this session cannot create (8.4, 8.24), so R3-P4-3 is not complete:
 the review and its fixes are, the tests against a project are not.
 Reverse by: the fix commit, which is one commit and touches no record data.
+
+### 8.37 R3-P1 data access: one view builder, three servers (default, reversible)
+The brief asks for the JSON shapes now, so R3-P4 serves the same ones the
+rebuilt frontend reads. They are built in one place, `src/tark_views.py`,
+and used by three:
+- `src/build_site.py` writes them as JSON chunks under `site/data/` beside
+  the legacy bundle (`src/site_chunks.py`): an index, a screener chunk, and
+  per product a record, a selection, a cohort, a facts chunk and, per plan,
+  a liquidity and a documents chunk. 195 files.
+- the workspace API answers the reference routes from the same builder, so
+  a reference product read through the API and the same product read from
+  the static build are byte for byte the same shape.
+- a job's worker writes a partner's record with it.
+Every shape carries its schema name (`tark.record.v1` and so on) and the
+manifest lists them. When a shape changes, its version changes with it and
+the readers change in the same commit.
+The adapter (`web/src/data/`) is the interface the views will use:
+`StaticAdapter` fetches `data/...` relative to the document, which is
+correct at the site root and under a pull request preview, `ApiAdapter`
+fetches the API with the reader's own session token, and the build flag
+picks one. A view never learns which it has.
+Two judgment calls:
+- The screener chunk carries the typed facts and, per product, the list of
+  cells that have a source, not the sourced text. That is 100 KB rather
+  than 436 KB, every citation button is still on the first paint (rule 20),
+  and the drawer's text arrives with the product's own chunk when a reader
+  opens one.
+- The chunks are a surface, so the allowlist gate scans them like the
+  bundle and the documents (17,803 string values, clean on the first run,
+  because they come from the same record and the same copy layer).
+This is data, not views: it is not gated by the design checkpoint (8.2 and
+8.21), and no view is rebuilt here. It is what R3-P1's views will read the
+day the checkpoint is approved.
+Reverse by: `src/site_chunks.py`, the call in `src/build_site.py`, and
+`web/src/data/`.

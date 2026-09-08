@@ -98,7 +98,7 @@ ANY = re.compile("|".join(f"(?:{p})" for p in SURFACE_FORBIDDEN), re.IGNORECASE)
 
 FAILS: list[str] = []
 # family -> list of (pattern, location, excerpt)
-HITS: dict[str, list[tuple[str, str, str]]] = {"bundle": [], "views": [], "documents": []}
+HITS: dict[str, list[tuple[str, str, str]]] = {"bundle": [], "chunks": [], "views": [], "documents": []}
 
 
 def check(name: str, cond: bool, extra: str = "") -> None:
@@ -173,6 +173,18 @@ def bundle_objects() -> dict[str, object]:
     m = re.match(r"^window\.(\w+) = (\{.*\})", raw, re.S)
     objs[m.group(1)] = json.loads(m.group(2))
     return objs
+
+
+def scan_chunks() -> tuple[int, int]:
+    """The JSON chunks the rebuilt frontend fetches (site/data/). They are a
+    surface like any other: what a view paints comes out of them, so the same
+    rules apply. Returns the number of files and of string values scanned."""
+    out = SITE / "data"
+    files = sorted(out.rglob("*.json")) if out.exists() else []
+    count = [0]
+    for f in files:
+        walk_strings(json.loads(f.read_text()), "chunks", str(f.relative_to(out)), count)
+    return len(files), count[0]
 
 
 def walk_strings(node, key: str, path: str, count: list[int], parent: str = "") -> None:
@@ -448,12 +460,16 @@ def main() -> int:
           not HITS["views"] and not errors,
           f"{len(HITS['views'])} hits, {len(errors)} page errors" + (f", first: {errors[0][:120]}" if errors else ""))
 
+    n_chunks, n_chunk_strings = scan_chunks()
+    check(f"chunks: none in {n_chunk_strings} string values of {n_chunks} JSON chunks the rebuilt frontend fetches",
+          n_chunks > 0 and not HITS["chunks"], f"{len(HITS['chunks'])} hits")
+
     n_docs = scan_documents()
     check(f"documents: none in {n_docs} generated documents",
           n_docs > 0 and not HITS["documents"], f"{len(HITS['documents'])} hits")
 
     if FAILS:
-        for family in ("bundle", "views", "documents"):
+        for family in ("bundle", "chunks", "views", "documents"):
             report(family)
         if errors:
             print(f"\n  page errors ({len(errors)}):")

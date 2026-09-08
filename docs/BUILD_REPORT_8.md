@@ -34,7 +34,7 @@ auth code was written, no service was created and no money was spent.
 | R3-P2 complete | Sep 25 | 2026-09-08, `f2925c0`, `13b9b94`, `a484b77`, `b6027f8`, pull request 6, CI green, preview `previews/6/` | cloud |
 | Index series, case law, census fields, identity out of the tree (R3-P3-1, -2, -7, -9) | Sep 25 | Not run here (network). The laptop session's. | laptop |
 | Supabase project, Render service, private repository exist, schema and policies applied (R3-P4-1, -2) | Sep 25 | The schema, the policies, the storage rules and the runbook steps exist, pull request 8. No project, service or repository was created (Oscar's actions). | cloud, Oscar |
-| R3-P1 passes every gate on a preview, old `site/js` deleted | Oct 2 | The views are not started and are blocked on the checkpoint approval (decisions 8.2 and 8.21). What exists: the design system, the components, the router and the web gate. What is missing and is not blocked: the data adapter and the JSON chunks the views will read. | cloud |
+| R3-P1 passes every gate on a preview, old `site/js` deleted | Oct 2 | The views are not started and are blocked on the checkpoint approval (decisions 8.2 and 8.21). What exists: the design system, the components, the router, the web gate, and the data layer the views will read (the JSON chunks and the adapter, decision 8.37). | cloud |
 | Workspace: invite, login, plan intake, fund submission, job status. The Actions worker runs a mocked-model job end to end | Oct 9 | The API, the admin CLI, the worker and the workflow templates exist and a mocked-model job runs end to end against a fake Supabase in the hook (`worker/test_worker.py`). Not run in Actions (no private repository yet). The frontend routes (R3-P4-5) wait on R3-P1. | cloud, laptop |
 | The proof run within the $50 cap (R3-P4-8), the fallback rehearsed (R3-P4-9) | Oct 16 | Not run. The unattended path has not passed R3-P4-8. | laptop |
 | Keep-alive, backup restored once, runbook complete, three concurrent mocked jobs | Oct 23 | The workflows and scripts exist. None has run against a host. | laptop |
@@ -84,6 +84,24 @@ both themes, axe-core with zero findings at any level in
 checks, the theme toggle, reduced motion, the preview subpath, the legacy
 redirect). Eight screenshots under `docs/screenshots/design_checkpoint/`.
 No view rebuilt: the checkpoint comes first (decision 8.2).
+
+### R3-P1 data access, the chunks and the adapter (decision 8.37)
+The view shapes live once, in `src/tark_views.py`. The site build writes
+them as 195 JSON chunks under `site/data/` (an index, a screener chunk, and
+per product a record, selection, cohort and facts chunk with a liquidity
+and a documents chunk per plan), the workspace API answers its reference
+routes from the same builder, and a job's worker writes a partner's record
+with it. `web/src/data/` is the adapter the views will use: the static one
+fetches the chunks relative to the document, which is correct at the site
+root and under a pull request preview, the workspace one fetches the API
+with the reader's session token, and the build flag picks one.
+
+The gates that hold it: the allowlist scanner now reads the chunks as a
+surface (17,803 string values across 195 files), the web gate runs the
+adapter's unit tests and then fetches every chunk it declares from a page
+served at the root and under `previews/999/`, and the workspace gate reads
+the reference routes for their schema names. No view is rebuilt: this is
+data, and it is not what the checkpoint gates.
 
 ### R3-P2, the record and the documents (pull request 6)
 - `f2925c0` R3-P2-1 to -6, -17e, -19 (decision 8.28): rubric v3.1 with a

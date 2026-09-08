@@ -69,6 +69,9 @@ if not args.no_build:
         sys.exit(1)
     r = subprocess.run(["npx", "tsc", "--noEmit"], cwd=WEB, capture_output=True, text=True)
     check("web: typecheck is clean", r.returncode == 0, r.stdout[-400:])
+    r = subprocess.run(["npx", "vitest", "run", "--reporter", "dot"], cwd=WEB, capture_output=True, text=True)
+    check("web: the unit tests pass (the data adapter's chunk layout, its routes, its cache and its sentences)",
+          r.returncode == 0, (r.stdout + r.stderr)[-500:])
 
 css_files = sorted((OUT / "assets").glob("*.css"))
 js_files = sorted((OUT / "assets").glob("*.js"))
@@ -150,6 +153,12 @@ class Quiet(SimpleHTTPRequestHandler):
         pass
 
 root_dir = OUT
+# the JSON chunks the build wrote, beside the application that fetches them:
+# on the deployed site they sit at data/ under the same root
+chunks_src = BASE / "site" / "data"
+if chunks_src.exists():
+    import shutil as _sh
+    _sh.copytree(chunks_src, OUT / "data", dirs_exist_ok=True)
 sub_root = BASE / ".preview_root"
 if sub_root.exists():
     import shutil
@@ -372,6 +381,32 @@ with sync_playwright() as pw:
         if p3.locator("h1").count() == 0:
             bad.append(route)
     check("preview subpath (h): the build served under /previews/999/ loads every route", not bad and not sub_err, f"{bad} {sub_err[:1]}")
+    # (i) the chunks the data adapter reads resolve against the document, so
+    # the same build finds them at the site root and under a preview subpath
+    read_chunks = """async () => {
+      const base = new URL('data/', document.baseURI).toString();
+      const want = ['index.json', 'screener.json', 'manifest.json',
+                    'product/hl_paf/record.json', 'product/hl_paf/liquidity/plan_tech_media.json'];
+      const out = {};
+      for (const name of want) {
+        const r = await fetch(base + name);
+        out[name] = r.ok ? (await r.json()).schema : 'HTTP ' + r.status;
+      }
+      out.base = base;
+      return out;
+    }"""
+    want_schema = {"index.json": "tark.index.v1", "screener.json": "tark.screener.v1",
+                   "manifest.json": "tark.chunks.v1", "product/hl_paf/record.json": "tark.record.v1",
+                   "product/hl_paf/liquidity/plan_tech_media.json": "tark.liquidity.v1"}
+    at_sub = p3.evaluate(read_chunks)
+    p3.goto(f"{ROOT}#/design", wait_until="networkidle")
+    at_root = p3.evaluate(read_chunks)
+    check("data (i): every chunk the adapter reads resolves against the document at the site root and under the "
+          "preview subpath, each answering with its own schema name",
+          all(at_root.get(k) == v for k, v in want_schema.items())
+          and all(at_sub.get(k) == v for k, v in want_schema.items())
+          and at_sub["base"].endswith("/previews/999/data/"),
+          f"root {at_root}, preview {at_sub}")
     # legacy URL redirects
     p3.goto(f"{ROOT}#view=evaluation&plan=plan_tech_media&product=hl_paf", wait_until="networkidle")
     p3.wait_for_timeout(200)

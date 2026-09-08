@@ -109,7 +109,8 @@ routes = sorted({rt.path for rt in app.routes if getattr(rt, "methods", None)})
 check("routes: exactly the R3-P4-4 surface, no docs pages",
       routes == sorted(["/api/health", "/api/me", "/api/plans", "/api/products", "/api/jobs", "/api/jobs/{job_id}",
                         "/api/records/{record_id}/{view}.json", "/api/documents/{document_id}",
-                        "/api/reference/index.json", "/api/reference/{key}/{view}.json"])
+                        "/api/reference/index.json", "/api/reference/screener.json",
+                        "/api/reference/{key}/{view}.json"])
       and app.docs_url is None and app.openapi_url is None, str(routes))
 
 # ---------------- tokens: missing, malformed, expired, wrong secret, wrong audience
@@ -376,16 +377,31 @@ check("admin: a running job is requeued only with the flag, and delete-workspace
 
 # ---------------- references, read-only, the public record
 r = tc.get("/api/reference/index.json", headers=hdr(tok_a))
-check("reference: the index lists the 16 products and the four anonymized plans with no sponsor identity",
-      r.status_code == 200 and len(r.json()["products"]) == 16 and len(r.json()["plans"]) == 4
-      and "identity_private" not in r.text and all(KEY in ("plans", "products", "schema") for KEY in r.json()))
+_idx = r.json()
+check("reference: the index lists the 16 products and the four anonymized plans with no sponsor identity, in the "
+      "shape the static build writes",
+      r.status_code == 200 and _idx["schema"] == "tark.index.v1" and len(_idx["products"]) == 16
+      and len(_idx["plans"]) == 4 and "identity_private" not in r.text
+      and _idx["human_verification"] == "pending"
+      and all("cited" in p and "coverage" in p for p in _idx["products"]), r.text[:200])
+_scr = tc.get("/api/reference/screener.json", headers=hdr(tok_a)).json()
+check("reference: the screener view carries every product's typed facts and the cells that have a source",
+      _scr["schema"] == "tark.screener.v1" and len(_scr["products"]) == 16
+      and _scr["products"]["hl_paf"]["cited"] and _scr["products"]["hl_paf"]["facts"])
 r = tc.get("/api/reference/hl_paf/record.json", headers=hdr(tok_a))
 r_liq = tc.get("/api/reference/hl_paf/liquidity.json?plan=plan_tech_media", headers=hdr(tok_a))
-check("reference: a product's record, selection, liquidity for a plan and cohort read from the record files",
-      r.status_code == 200 and r.json()["product_key"] == "hl_paf" and len(r.json()["cells"]) == 55
-      and tc.get("/api/reference/hl_paf/selection.json", headers=hdr(tok_a)).json().get("record_hash")
-      and r_liq.status_code == 200 and "verdict" in r_liq.json()
-      and tc.get("/api/reference/hl_paf/cohort.json", headers=hdr(tok_a)).status_code == 200)
+_sel = tc.get("/api/reference/hl_paf/selection.json", headers=hdr(tok_a)).json()
+_doc = tc.get("/api/reference/hl_paf/documents.json?plan=plan_tech_media", headers=hdr(tok_a)).json()
+check("reference: a product's record, selection, liquidity for a plan, cohort and documents come from the one "
+      "view builder, each with its schema name",
+      r.status_code == 200 and r.json()["schema"] == "tark.record.v1" and r.json()["product_key"] == "hl_paf"
+      and len(r.json()["cells"]) == 55 and r.json()["cells"]["2.1"]["display"]["headline"]
+      and _sel["schema"] == "tark.selection.v1" and _sel["selection"]["record_hash"]
+      and r_liq.status_code == 200 and r_liq.json()["schema"] == "tark.liquidity.v1"
+      and "verdict" in r_liq.json()["match"]
+      and _doc["schema"] == "tark.documents.v1" and _doc["record"].endswith("_selection_record.docx")
+      and tc.get("/api/reference/hl_paf/cohort.json", headers=hdr(tok_a)).json()["schema"] == "tark.cohort.v1",
+      r.text[:160])
 check("reference: an unknown key, a path-like key and a missing plan are each not found",
       tc.get("/api/reference/nobody/record.json", headers=hdr(tok_a)).status_code == 404
       and tc.get("/api/reference/..%2Fregistry/record.json", headers=hdr(tok_a)).status_code in (404, 422)

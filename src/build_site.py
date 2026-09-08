@@ -27,7 +27,8 @@ from tark_benchmark_common import (BY_DESCRIPTOR_SENTENCE as _BY_DESCRIPTOR_SENT
 from tark_display import (SLOT_LABELS, BASE_LABEL, CANDIDATE_SHORT, LANE_LABEL, RUBRIC_LABEL, STRATEGY_LABEL,
                           WRAPPER_LABEL, cell_display, display_path_free, facts_by_cell,
                           display_copy, plan_demand_sentence, reconciliation_sentence)
-from tark_memo import attachment_path, write_all
+from tark_memo import attachment_path, record_name, write_all
+from site_chunks import write_chunks
 from tark_data import (ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_CELLS, BASE, DATA, CELLS, FACTORS,
                        RULE, advisor_entries, authority,
                        coverage_summary, rule_ref,
@@ -836,9 +837,16 @@ def main() -> None:
     (SITE / "census.data.js").write_text("window.TARK_CENSUS = "
                                          + census_payload + ";\n")
 
+    # the same record as JSON chunks, in the shapes the workspace API serves
+    # (R3-P1 data access): the rebuilt frontend reads these, the legacy views
+    # read the bundle above, and both come from one build
+    chunks = write_chunks(SITE, record_name=record_name, attachment=bundle["attachment"] or "")
+
     print(f"site/data.js written ({len(payload):,} bytes), census chunk "
           f"{len(census_payload):,} bytes, {len(bundle['memos'])} selection records and "
           f"{1 if bundle['attachment'] else 0} attachment generated, sponsor tokens screened: {len(sponsor_names)}")
+    print(f"site/data/ written: {chunks['files']} chunks, {chunks['bytes']:,} bytes "
+          f"(index {chunks['index_bytes']:,}, screener {chunks['screener_bytes']:,})")
 
 
 if __name__ == "__main__":
