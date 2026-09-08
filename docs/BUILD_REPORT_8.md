@@ -65,7 +65,7 @@ under `gh-pages/previews/<pr>/` with the URL posted on the pull request
 and the folder removed on close, the root deploy from a green `main` with
 the deploy-log entry in a commit marked to skip CI. The workflow never
 receives a model key, never runs the ingest, never sees partner data.
-Twenty runs so far: run 1 exited in 20 ms before any gate (dash treats
+Twenty six runs so far: run 1 exited in 20 ms before any gate (dash treats
 a dot-source of a missing file as fatal, fixed by `3f4886b`), every run
 after it green, listed in section 5.
 
@@ -188,13 +188,18 @@ typed is stated in the runbook and in decision 8.35, not dressed up.
 | R3-P4 runbook commit hook | `2e87656` | 22 | 1,243 | 0 |
 | R3-P4 security fixes commit hook | `65f2757` | 22 | 1,252 | 0 |
 | R3-P4 second-pass fixes commit hook | `493c797` | 22 | 1,258 | 0 |
+| This report's own commit hook | `b77f0f9` | 22 | 1,259 | 0 |
+| R3-P1 data access commit hook | `c2a24c6` | 22 | 1,263 | 0 |
 
-The gates that grew or joined: `test_web` (20th, R3-P1-6), the allowlist
+The gates that grew or joined: `test_web` (20th, R3-P1-6, which now also
+runs the data adapter's unit tests and reads every chunk from a served
+page), the allowlist
 family in `test_surfaces` (R3-P2-12), the selection lock and the
 perturbation checks in `test_benchmark` and `test_liquidity` (R3-P2-1,
 -7, -19), the record gate `test_memo` (R3-P2-18), the ingest gate's 32
 new checks (R3-P3-3), `test_workspace` and `test_worker` (21st and 22nd,
-R3-P4). Every earlier check is kept.
+R3-P4), and the allowlist scanner's new chunk family (R3-P1 data access).
+Every earlier check is kept.
 
 ## 4. The verification protocol (section 9 of the brief), what ran here
 
@@ -252,6 +257,11 @@ R3-P4). Every earlier check is kept.
 | 17 | push | working branch | `65f2757` | green |
 | 18 | push | working branch | `493c797` | green |
 | 19, 20 | push, pull request 8 | `round-3-cloud-p4` | `493c797` | green, preview `previews/8/` |
+| 21, 22, 23 | push, push, pull request 8 | working branch, `round-3-cloud-p4` | `b77f0f9` | green |
+| 24, 25, 26 | push, push, pull request 9 | working branch, `round-3-cloud-p1-data` | `c2a24c6` | green, preview `previews/9/` |
+
+Every run after the first is green. Runs later than 26 are in the
+repository's own list: this report was written from the tree of `c2a24c6`.
 
 The root deploy job is skipped on every run because no run is on `main`
 yet. It fires on the first merge.
@@ -505,7 +515,22 @@ been rehearsed. The concurrent mocked jobs have not run in Actions. The
 mocked-model job that runs end to end in the hook (`worker/test_worker.py`)
 is a rehearsal against a fake Supabase, not the workspace.
 
-## 12. Decisions taken by this session
+## 12. The pull requests
+
+| Number | Phase | Head | State |
+|---|---|---|---|
+| 4 | R3-P0-2, the Tuesday patch | `949ef7d` | open, Oscar merges and deploys it after the last send |
+| 5 | R3-P1-5 and R3-P1-6, the design system and the checkpoint | `d053954` | open, waiting on Oscar's approval (8.21) |
+| 6 | R3-P2, the record and the documents | `b6027f8` | open |
+| 7 | R3-P3-3, the ingest hardened | `2cb593e` | open |
+| 8 | R3-P4, the workspace, network-free | `b77f0f9` | open |
+| 9 | R3-P1 data access, the chunks and the adapter | `c2a24c6` | open |
+
+Each is stacked on the one before it, because each phase builds on the
+last and `main` is untouched. Merging them in order, oldest first, is the
+shortest path. Every one is green in CI on its own head.
+
+## 13. Decisions taken by this session
 
 8.21 to 8.35 in `docs/DECISIONS_2026-09.md`, each default and reversible,
 with 8.21 and 8.22 reserved for Oscar and the sample. The ones a reader
@@ -515,11 +540,12 @@ coverage arithmetic), 8.32 (the allowlist gate), 8.33 (the record), 8.34
 (the ingest hardened, the price list as unconfirmed configuration), 8.35
 (the workspace code, what a job yields for an untyped fund).
 
-## 13. Open items, in the order they block
+## 14. Open items, in the order they block
 
 1. Oscar merges pull request 4 and deploys entry 3 after 1:02pm Eastern
    on September 8, then opens the checkpoint at `previews/5/#/design` and
-   records 8.21. R3-P1's views start on that approval.
+   records 8.21. R3-P1's views start on that approval, and they have their
+   data layer waiting for them (pull request 9).
 2. Oscar creates the Supabase project, the Render service and the private
    repository per `docs/WORKSPACE.md` sections 2 to 4, and fills the
    free-tier table.
