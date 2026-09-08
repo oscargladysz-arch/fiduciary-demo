@@ -134,5 +134,30 @@ br4 = (BASE / "docs" / "BUILD_REPORT_4.md").read_text()
 check("BUILD_REPORT_4 Lane C claim is marked superseded",
       "Lane C fed" in br4 and "Superseded (2026-09)" in br4)
 
+
+# ---- R3-P0-3: the workflow's deploy-log entry writer produces an entry the
+# copy gate accepts, numbered after the last entry in the log
+import subprocess
+_dry = subprocess.run([sys.executable, str(BASE / "src" / "ci_deploy_entry.py"),
+                       "--source-commit", "0123456789abcdef", "--pages-commit", "abcdef0",
+                       "--started", "2026-09-18T10:00:00Z", "--finished", "2026-09-18T10:05:00Z",
+                       "--wall-seconds", "300", "--pass-count", "1100",
+                       "--edgar", "exit 0, 9 distinct EDGAR URLs, every one answered 200",
+                       "--run-url", "https://github.com/oscargladysz-arch/fiduciary-demo/actions/runs/1",
+                       "--dry-run"], capture_output=True, text=True)
+_log = (BASE / "docs" / "DEPLOY_LOG.md").read_text()
+_last = max(int(n) for n in re.findall(r"^## Entry (\d+),", _log, flags=re.M))
+check("deploy-log entry writer: dry run exits 0 and carries no em dash or semicolon",
+      _dry.returncode == 0 and "\u2014" not in _dry.stdout and ";" not in _dry.stdout, _dry.stderr[-200:])
+check("deploy-log entry writer: numbers the entry after the last one in the log",
+      f"## Entry {_last + 1}," in _dry.stdout, _dry.stdout[:80])
+check("deploy-log entry writer: names the source commit, the gh-pages commit, the gate list and the EDGAR result",
+      all(x in _dry.stdout for x in ("`0123456`", "`abcdef0`", "test_frontend", "every one answered 200")))
+check("gates workflow exists, runs the hook, and never names a model key",
+      (BASE / ".github" / "workflows" / "gates.yml").exists()
+      and "sh hooks/pre-commit" in (BASE / ".github" / "workflows" / "gates.yml").read_text()
+      and "ANTHROPIC_API_KEY" not in (BASE / ".github" / "workflows" / "gates.yml").read_text().replace(
+          "never receives ANTHROPIC_API_KEY", ""))
+
 print(f"\n{len(FAILS)} failure(s)." if FAILS else "\nDocs agree with the hook, the record and the app.")
 sys.exit(1 if FAILS else 0)

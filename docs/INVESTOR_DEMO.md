@@ -28,6 +28,19 @@ reaches sec.gov, `python src/check_edgar_urls.py` must report 200 for every
 Tier 1 EDGAR URL first (it needs `TARK_SEC_CONTACT`). The build container
 cannot run that check, so a deploy from it is logged as pending that check
 and a person runs it before the meeting.
+
+From R3-P0-3 the workflow `.github/workflows/gates.yml` does this on its
+own: on every push and pull request it installs Python, the pinned
+Playwright with its Chromium and LibreOffice, and runs the full hook with
+`TARK_SEC_CONTACT` from the repository secrets (Oscar adds that one secret,
+the workflow never receives a model key). On a pull request it publishes
+the built site to `gh-pages` under `previews/<number>/` and posts the URL
+as a comment (the folder is removed when the pull request closes). On a
+green run on `main` it replaces the `gh-pages` root (previews kept), runs
+the EDGAR check against the deployed tree, and appends the deploy-log entry
+in a commit marked to skip CI. Hand deploys stop the day that workflow is
+green on `main`. The recipe below stays for a rollback or for a day the
+workflow is down, and every hand deploy still gets its entry.
 ```
 . .venv/bin/activate && sh hooks/pre-commit && python src/build_site.py
 python src/check_edgar_urls.py

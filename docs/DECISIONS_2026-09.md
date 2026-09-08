@@ -2127,3 +2127,29 @@ each a prefix of the working branch `claude/r3-parallel-sessions-qw0o1f`,
 so the merges line up and nothing is duplicated. The brief's "one pull
 request per phase" is honored and the working branch is the harness's.
 Reverse by: re-point a pull request at the working branch.
+
+### 8.26 R3-P0-3: CI on the public repository, previews per pull request, root deploy from green main (default, reversible)
+- One workflow, `.github/workflows/gates.yml`, four jobs. `gates` runs the
+  full hook on every push and pull request with the pinned Playwright
+  1.56.0, its Chromium and LibreOffice from apt, then the Tier 1 EDGAR
+  check when `TARK_SEC_CONTACT` is in the repository secrets (Oscar adds
+  that one secret, nothing else). `preview` publishes the built site under
+  `previews/<number>/` on `gh-pages` and posts one comment it keeps
+  updating. `cleanup` removes the folder when the pull request closes.
+  `deploy` runs only on a green push to `main`: it replaces the `gh-pages`
+  root (previews and `.nojekyll` kept), diffs the deployed root against the
+  build, runs the EDGAR check, and appends the deploy-log entry through
+  `src/ci_deploy_entry.py` in a commit marked `[skip ci]`.
+- Only GitHub's own actions are used (checkout, setup-python, artifacts,
+  github-script). The gh-pages commits are plain commits with a bot
+  identity, never force-pushed, so the history the deploy log points at is
+  kept. The three gh-pages jobs share one concurrency group so two runs
+  cannot race on the branch.
+- The workflow never receives `ANTHROPIC_API_KEY`, never runs the ingest,
+  and never sees partner data. The docs gate asserts the workflow file
+  exists, runs the hook, and does not name the model key.
+- Not verified from this container: a real Actions run. The first green
+  run on `main` is the evidence and is recorded in the build report. Until
+  then hand deploys per the deploy log stand.
+Reverse by: delete the workflow and the two paragraphs it added to the
+runbook and the deploy log.
