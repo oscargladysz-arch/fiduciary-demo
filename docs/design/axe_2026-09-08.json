@@ -1,0 +1,12 @@
+{
+ "date": "2026-09-08",
+ "routes": [
+  "design"
+ ],
+ "reports": {
+  "design light 1440px": [],
+  "design light 390px": [],
+  "design dark 1440px": [],
+  "design dark 390px": []
+ }
+}

@@ -1,0 +1,87 @@
+/* Base styles: fonts, reset, typography classes, focus. Every value is a
+   token from tokens.css. */
+@font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap;
+  src: url("/fonts/inter-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 500; font-style: normal; font-display: swap;
+  src: url("/fonts/inter-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 600; font-style: normal; font-display: swap;
+  src: url("/fonts/inter-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Fraunces"; font-weight: 600; font-style: normal; font-display: swap;
+  src: url("/fonts/fraunces-latin-600-normal.woff2") format("woff2"); }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--text);
+  font-family: var(--font-text);
+  font-size: var(--fs-14);
+  line-height: var(--lh-14);
+  font-weight: var(--fw-regular);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+::selection { background: var(--selection); }
+h1, h2, h3, h4 { margin: 0; font-weight: var(--fw-semibold); text-wrap: balance; color: var(--text); }
+h1 { font-size: var(--fs-24); line-height: var(--lh-24); }
+h2 { font-size: var(--fs-20); line-height: var(--lh-20); }
+h3 { font-size: var(--fs-16); line-height: var(--lh-16); }
+h4 { font-size: var(--fs-14); line-height: var(--lh-14); }
+p { margin: 0; }
+p + p { margin-top: var(--s-3); }
+a { color: var(--link); text-decoration: underline; text-underline-offset: 0.15em; text-decoration-thickness: var(--bw); }
+a:hover { color: var(--link-hover); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+img, svg { max-width: 100%; }
+table { border-collapse: collapse; }
+code, kbd, .t-code { font-family: var(--font-mono); font-size: var(--fs-12); line-height: var(--lh-12); }
+[hidden] { display: none !important; }
+
+/* one focus style for everything: a two-tone ring visible on any surface */
+:focus { outline: none; }
+:focus-visible {
+  outline: var(--bw-2) solid var(--focus);
+  outline-offset: var(--bw-2);
+  box-shadow: 0 0 0 var(--bw-2) var(--focus-inner);
+  border-radius: var(--r-1);
+}
+
+/* typography utilities (the six steps and the landing H1) */
+.t-12 { font-size: var(--fs-12); line-height: var(--lh-12); }
+.t-13 { font-size: var(--fs-13); line-height: var(--lh-13); }
+.t-14 { font-size: var(--fs-14); line-height: var(--lh-14); }
+.t-16 { font-size: var(--fs-16); line-height: var(--lh-16); }
+.t-20 { font-size: var(--fs-20); line-height: var(--lh-20); }
+.t-24 { font-size: var(--fs-24); line-height: var(--lh-24); }
+.t-32 { font-size: var(--fs-32); line-height: var(--lh-32); }
+.t-display { font-family: var(--font-display); font-weight: var(--fw-semibold); }
+.t-2 { color: var(--text-2); }
+.t-3 { color: var(--text-3); }
+.t-num, .tabular { font-variant-numeric: tabular-nums; }
+.t-eyebrow { font-size: var(--fs-12); line-height: var(--lh-12); font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; color: var(--text-3); }
+.t-medium { font-weight: var(--fw-medium); }
+.t-semibold { font-weight: var(--fw-semibold); }
+.t-balance { text-wrap: balance; }
+.t-pretty { text-wrap: pretty; }
+.nowrap { white-space: nowrap; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+[translate="no"] { }
+
+/* layout helpers */
+.stack > * + * { margin-top: var(--s-3); }
+.stack-2 > * + * { margin-top: var(--s-2); }
+.stack-4 > * + * { margin-top: var(--s-4); }
+.stack-5 > * + * { margin-top: var(--s-5); }
+.row { display: flex; align-items: center; gap: var(--s-2); flex-wrap: wrap; }
+.row-3 { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+.grid-2 { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fill, minmax(min(var(--content-half-min), 100%), 1fr)); }
+.grid-3 { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fill, minmax(min(var(--content-third-min), 100%), 1fr)); }
+.spacer { flex: 1; }

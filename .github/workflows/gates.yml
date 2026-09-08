@@ -1,0 +1,287 @@
+# Tark gates in CI (R3-P0-3, decision 8.15).
+#
+# On every push and pull request: the full hook (every gate, in order, never
+# weakened) with the pinned Playwright, its Chromium and LibreOffice, then
+# the EDGAR HTTP 200 check for the Tier 1 URLs when TARK_SEC_CONTACT is set.
+# On a pull request: the built site is published to gh-pages under
+# previews/<number>/ and the URL is posted as a comment. When the pull
+# request closes, the folder is removed.
+# On a green run on main: the built site is deployed to the gh-pages root
+# (previews kept), the EDGAR check runs against the deployed tree, and the
+# deploy-log entry is appended to docs/DEPLOY_LOG.md in a commit marked to
+# skip CI.
+#
+# This workflow never receives ANTHROPIC_API_KEY, never runs the ingest and
+# never sees partner data. It runs only on this public repository.
+name: gates
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  PLAYWRIGHT_VERSION: "1.56.0"
+  PYTHON_VERSION: "3.11"
+  PAGES_URL: https://oscargladysz-arch.github.io/fiduciary-demo
+
+jobs:
+  gates:
+    name: every gate, in order
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    concurrency:
+      group: gates-${{ github.event_name }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+      - name: Install Python dependencies and the pinned Playwright
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install "playwright==${PLAYWRIGHT_VERSION}"
+          python -m playwright install --with-deps chromium
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install the web application's dependencies
+        run: npm ci --prefix web --no-audit --no-fund
+      - name: Install LibreOffice (document conversion gate)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends libreoffice-writer
+          soffice --version
+      - name: Fetch main for the immutability and corrections gates
+        run: git fetch origin main:refs/remotes/origin/main || true
+      - name: Run the hook (every gate)
+        id: hook
+        env:
+          TARK_SEC_CONTACT: ${{ secrets.TARK_SEC_CONTACT }}
+        run: |
+          start=$(date -u +%s)
+          started=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          set +e
+          sh hooks/pre-commit 2>&1 | tee hook_run.log
+          code=${PIPESTATUS[0]}
+          set -e
+          end=$(date -u +%s)
+          echo "exit=$code" >> hook_run.log
+          echo "pass_count=$(grep -c '\[PASS\]' hook_run.log || true)" >> "$GITHUB_OUTPUT"
+          echo "fail_count=$(grep -c '\[FAIL\]' hook_run.log || true)" >> "$GITHUB_OUTPUT"
+          echo "wall_seconds=$((end - start))" >> "$GITHUB_OUTPUT"
+          echo "started=$started" >> "$GITHUB_OUTPUT"
+          echo "finished=$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> "$GITHUB_OUTPUT"
+          exit $code
+      - name: EDGAR HTTP 200 check (Tier 1 URLs, needs TARK_SEC_CONTACT)
+        if: always() && steps.hook.outcome == 'success'
+        env:
+          TARK_SEC_CONTACT: ${{ secrets.TARK_SEC_CONTACT }}
+        run: |
+          if [ -z "$TARK_SEC_CONTACT" ]; then
+            echo "TARK_SEC_CONTACT is not set in this repository's secrets: EDGAR check skipped." | tee edgar_check.log
+            exit 0
+          fi
+          python src/check_edgar_urls.py 2>&1 | tee edgar_check.log
+      - name: Keep the run log and the built site
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hook-run-${{ github.run_id }}
+          path: |
+            hook_run.log
+            edgar_check.log
+          if-no-files-found: ignore
+      - name: Keep the built site for the preview and the deploy
+        if: steps.hook.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-${{ github.run_id }}
+          path: site
+          if-no-files-found: error
+    outputs:
+      pass_count: ${{ steps.hook.outputs.pass_count }}
+      fail_count: ${{ steps.hook.outputs.fail_count }}
+      wall_seconds: ${{ steps.hook.outputs.wall_seconds }}
+      started: ${{ steps.hook.outputs.started }}
+      finished: ${{ steps.hook.outputs.finished }}
+
+  preview:
+    name: preview build for the pull request
+    needs: gates
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: gh-pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-${{ github.run_id }}
+          path: site
+      - name: Check out gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: pages
+          fetch-depth: 1
+      - name: Publish under previews/<number>/ (existing files kept)
+        env:
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          rm -rf "pages/previews/$PR"
+          mkdir -p "pages/previews/$PR"
+          cp -R site/. "pages/previews/$PR/"
+          touch pages/.nojekyll
+          cd pages
+          git config user.name "tark-gates"
+          git config user.email "gates@users.noreply.github.com"
+          git add -A
+          git commit -q -m "preview: pull request $PR at $HEAD_SHA" || echo "nothing to commit"
+          git push origin gh-pages
+      - name: Post the preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request.number;
+            const url = `${process.env.PAGES_URL}/previews/${pr}/`;
+            const sha = context.payload.pull_request.head.sha.slice(0, 7);
+            const marker = '<!-- tark-preview -->';
+            const body = `${marker}\nPreview build of \`${sha}\`: ${url}\n\nGates: ${{ needs.gates.outputs.pass_count }} PASS, ${{ needs.gates.outputs.fail_count }} FAIL, ${{ needs.gates.outputs.wall_seconds }} s. Run log: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const { data: comments } = await github.rest.issues.listComments({ ...context.repo, issue_number: pr, per_page: 100 });
+            const mine = comments.find((c) => c.body && c.body.startsWith(marker));
+            if (mine) await github.rest.issues.updateComment({ ...context.repo, comment_id: mine.id, body });
+            else await github.rest.issues.createComment({ ...context.repo, issue_number: pr, body });
+
+  cleanup:
+    name: remove the preview when the pull request closes
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: gh-pages
+      cancel-in-progress: false
+    steps:
+      - name: Check out gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: pages
+          fetch-depth: 1
+      - name: Remove previews/<number>/
+        env:
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          cd pages
+          if [ -d "previews/$PR" ]; then
+            git rm -r -q "previews/$PR"
+            git config user.name "tark-gates"
+            git config user.email "gates@users.noreply.github.com"
+            git commit -q -m "preview removed: pull request $PR closed"
+            git push origin gh-pages
+          else
+            echo "no preview folder for pull request $PR"
+          fi
+
+  deploy:
+    name: deploy the gh-pages root from green main
+    needs: gates
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: gh-pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install the requests dependency of the EDGAR check
+        run: pip install requests
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-${{ github.run_id }}
+          path: site
+      - name: Check out gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: pages
+          fetch-depth: 1
+      - name: Replace the root (previews kept), commit, push
+        id: pages
+        run: |
+          cd pages
+          find . -mindepth 1 -maxdepth 1 ! -name previews ! -name .git ! -name .nojekyll -exec rm -rf {} +
+          cp -R ../site/. .
+          touch .nojekyll
+          git config user.name "tark-gates"
+          git config user.email "gates@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "pages_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+            echo "the deployed tree already equals the build"
+          else
+            git commit -q -m "deploy: main ${GITHUB_SHA} from workflow run ${GITHUB_RUN_ID}"
+            git push origin gh-pages
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "pages_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          fi
+          diff -r --exclude=.git --exclude=previews --exclude=.nojekyll . ../site && echo "deployed tree equals the build"
+      - name: EDGAR HTTP 200 check against the deployed bundle
+        id: edgar
+        env:
+          TARK_SEC_CONTACT: ${{ secrets.TARK_SEC_CONTACT }}
+        run: |
+          if [ -z "$TARK_SEC_CONTACT" ]; then
+            echo "TARK_SEC_CONTACT is not set: EDGAR check NOT DONE by the workflow" | tee edgar_deploy.log
+            echo "result=not done (TARK_SEC_CONTACT unset)" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          set +e
+          python src/check_edgar_urls.py 2>&1 | tee edgar_deploy.log
+          code=${PIPESTATUS[0]}
+          set -e
+          summary=$(grep -E "distinct|answered|200|exit" edgar_deploy.log | tail -3 | tr '\n' ' ')
+          echo "result=exit $code, $summary" >> "$GITHUB_OUTPUT"
+          exit $code
+      - name: Append the deploy-log entry (commit marked to skip CI)
+        if: steps.pages.outputs.changed == 'true'
+        env:
+          PASS_COUNT: ${{ needs.gates.outputs.pass_count }}
+          WALL_SECONDS: ${{ needs.gates.outputs.wall_seconds }}
+          STARTED: ${{ needs.gates.outputs.started }}
+          FINISHED: ${{ needs.gates.outputs.finished }}
+          PAGES_SHA: ${{ steps.pages.outputs.pages_sha }}
+          EDGAR_RESULT: ${{ steps.edgar.outputs.result }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python src/ci_deploy_entry.py \
+            --source-commit "$GITHUB_SHA" --pages-commit "$PAGES_SHA" \
+            --started "$STARTED" --finished "$FINISHED" --wall-seconds "$WALL_SECONDS" \
+            --pass-count "$PASS_COUNT" --edgar "$EDGAR_RESULT" --run-url "$RUN_URL" \
+            --site-dir site
+          git config user.name "tark-gates"
+          git config user.email "gates@users.noreply.github.com"
+          git add docs/DEPLOY_LOG.md
+          git commit -q -m "Deploy log: workflow deploy of ${GITHUB_SHA::7} to gh-pages ${PAGES_SHA} [skip ci]"
+          git push origin main

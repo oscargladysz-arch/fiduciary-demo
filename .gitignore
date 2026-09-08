@@ -15,3 +15,8 @@ data/census/raw/
 
 # agent worktrees are never part of the record
 .claude/worktrees/
+
+# the rebuilt frontend's build output and the web gate's scratch root
+site_next/
+.preview_root/
+web/node_modules/

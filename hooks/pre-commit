@@ -1,7 +1,9 @@
 #!/bin/sh
 # Tark gate. Every commit must pass the FULL suite set. Never weaken.
 # Install: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
-. .venv/bin/activate 2>/dev/null
+# activate the venv when there is one (dash exits on a failed dot-source,
+# which is what a CI runner without a venv would hit)
+[ -f .venv/bin/activate ] && . .venv/bin/activate
 python src/validate_data.py && \
 python src/validate_census.py && \
 python src/test_evidence_immutable.py && \
@@ -20,4 +22,5 @@ python src/test_artifacts_fresh.py && \
 python src/build_site.py && \
 python src/reconcile.py && \
 python src/test_surfaces.py && \
-python src/test_frontend.py
+python src/test_frontend.py && \
+python src/test_web.py

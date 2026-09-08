@@ -18,6 +18,13 @@ Pre-deploy steps, in order:
    (needs `TARK_SEC_CONTACT`). Every Tier 1 URL must answer 200.
 4. Deploy per `docs/INVESTOR_DEMO.md`, then write the entry below.
 
+From R3-P0-3 the gates workflow (`.github/workflows/gates.yml`) performs
+steps 1 to 4 on every green run on `main` and appends the entry itself
+(`src/ci_deploy_entry.py`) in a commit marked to skip CI. A hand deploy is
+then the exception (a rollback, or a day the workflow is down) and is
+recorded here the same way. Pull request preview builds under
+`previews/<number>/` on `gh-pages` are not deploys and get no entry.
+
 ## Entry 1, 2026-09-05, R2-P0 (the Tuesday cut)
 
 - Source commit: `0d37757` on `claude/tark-round-2-audit-jl9q4q`
