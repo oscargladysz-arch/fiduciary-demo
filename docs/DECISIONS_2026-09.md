@@ -2693,3 +2693,39 @@ This is data, not views: it is not gated by the design checkpoint (8.2 and
 day the checkpoint is approved.
 Reverse by: `src/site_chunks.py`, the call in `src/build_site.py`, and
 `web/src/data/`.
+
+### 8.38 R3-P1 data access: the chunks the remaining routes need (default, reversible)
+The first pass (8.37) shipped the shapes a product's own routes read. The
+rebuilt frontend also has to serve the universe, the funnel, coverage, the
+verification queue, the authority panel, evidence search, cohorts, the
+analysis lab and the plans, and none of those had a shape. They do now, in
+the same builder and under the same rule: a chunk names its shape, the
+manifest lists it, and the gate walks the manifest rather than a list a
+person keeps up to date.
+What was added, all as `tark.<name>.v1`: `plans`, `funnel`, `coverage`,
+`verification`, `authority`, `evidence`, `cohorts`, `lab`, `census` (an
+index, 64 detail shards and a text sidecar) and, per product, `series`.
+Three judgment calls:
+- The record view now carries what the citation drawer opens: the
+  accession the ledger names and the filings it resolves to, from the
+  manifest through the citations file, never a link a view assembled
+  (rule 15). It also carries the six factor rollups on the record's own
+  coverage arithmetic, so a tile cannot recompute it differently in the
+  browser.
+- The demo-global views take their inputs rather than reading them. The
+  universe, the queue, the lab matrix and the held series are computed by
+  the public build, and passing them in keeps the one view builder free of
+  any dependency on the static-site builder, which the workspace API and
+  the job runner also import.
+- `series` joins the per product views, so the workspace serves it too. A
+  workspace record with no held series answers with empty arrays, which is
+  the truth about that record rather than a missing route.
+The considered-and-excluded log is parsed into a name and a reason per
+row instead of being reprinted as markup, which is both what a committee
+asks for and how the separator characters leave the surface.
+Sizes: the first paint is unchanged (the index chunk is 3.7 KB compressed,
+the screener 12.8 KB). The heaviest new chunk is evidence search at 275 KB
+compressed, and it is fetched only by the route that searches.
+Reverse by: the view functions added to `src/tark_views.py`, the writer
+block in `src/site_chunks.py`, and the `demo` argument at the one call in
+`src/build_site.py`.

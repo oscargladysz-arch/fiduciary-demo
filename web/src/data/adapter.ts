@@ -8,8 +8,10 @@
 // The adapter is chosen at build time by TARK_ADAPTER (see vite.config.ts).
 
 import type {
-  CohortView, DocumentsView, FactsView, IndexView, LiquidityView,
-  Manifest, RecordView, ScreenerView, SelectionView,
+  AuthorityView, CensusView, CohortView, CohortsView, CoverageView, DocumentsView,
+  EvidenceView, FactsView, FunnelView, IndexView, LabView, LiquidityView,
+  Manifest, PlansView, RecordView, ScreenerView, SelectionView, SeriesView,
+  VerificationView,
 } from "./types";
 
 export interface TarkData {
@@ -21,10 +23,25 @@ export interface TarkData {
   getSelection(productKey: string): Promise<SelectionView>;
   getCohort(productKey: string): Promise<CohortView>;
   getFacts(productKey: string): Promise<FactsView>;
+  getSeries(productKey: string): Promise<SeriesView>;
   getLiquidity(planKey: string, productKey: string): Promise<LiquidityView>;
   getDocuments(planKey: string, productKey: string): Promise<DocumentsView>;
   /** The manifest, where the source has one. The static build does. */
   getManifest?(): Promise<Manifest>;
+  /* The reference set the public demo describes. A workspace has its own
+   * record and no universe, so these are optional and a view that wants one
+   * asks whether the source has it before it renders a route that needs it. */
+  getPlans?(): Promise<PlansView>;
+  getFunnel?(): Promise<FunnelView>;
+  getCoverage?(): Promise<CoverageView>;
+  getVerification?(): Promise<VerificationView>;
+  getAuthority?(): Promise<AuthorityView>;
+  getEvidence?(): Promise<EvidenceView>;
+  getCohorts?(): Promise<CohortsView>;
+  getLab?(): Promise<LabView>;
+  getCensus?(): Promise<CensusView>;
+  getCensusShard?(n: number): Promise<Record<string, Record<string, unknown>>>;
+  getCensusSearch?(): Promise<Record<string, string>>;
 }
 
 export class DataError extends Error {

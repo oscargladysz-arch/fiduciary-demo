@@ -29,6 +29,7 @@ from tark_display import (SLOT_LABELS, BASE_LABEL, CANDIDATE_SHORT, LANE_LABEL, 
                           display_copy, plan_demand_sentence, reconciliation_sentence)
 from tark_memo import attachment_path, record_name, write_all
 from site_chunks import write_chunks
+from tark_views import exclusion_log
 from tark_data import (ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_CELLS, BASE, DATA, CELLS, FACTORS,
                        RULE, advisor_entries, authority,
                        coverage_summary, rule_ref,
@@ -370,9 +371,11 @@ def parse_verification_queue() -> dict:
             "verifiable": verifiable, "source": "the verification queue"}
 
 
-def census_chunk() -> str:
+def census_chunk() -> tuple[str, dict, dict, dict]:
     """site/census.data.js — the lazy T1 universe chunk. Compact keys, every
-    field keeps its {source, ref, as_of} provenance (C3). Budget: <=500KB."""
+    field keeps its {source, ref, as_of} provenance (C3). Budget: <=500KB.
+    Returns the legacy payload plus the index, the detail shards and the text
+    sidecar, so the JSON chunk writer reuses this one pass."""
     census = json.loads((DATA / "census" / "census.json").read_text())
     uni = json.loads((DATA / "census" / "universe.json").read_text())
 
@@ -511,7 +514,7 @@ def census_chunk() -> str:
         raise SystemExit(f"census chunk {len(payload):,}B exceeds the 500KB "
                          "lazy-chunk budget. Trim the transform, do not "
                          "ship a bloated first-class page.")
-    return payload
+    return payload, doc, shards, search
 
 
 def main() -> None:
@@ -805,7 +808,7 @@ def main() -> None:
         "vnq": daily_series("vnq"),
     }.items()}, separators=(",", ":"))
 
-    census_payload = census_chunk()
+    census_payload, census_doc, census_shards, census_search = census_chunk()
     payload = json.dumps(bundle, separators=(",", ":"))
     lab_payload = json.dumps(swap_matrix(), separators=(",", ":"))
     evidence_payload = json.dumps(evidence_detail, separators=(",", ":"))
@@ -840,7 +843,29 @@ def main() -> None:
     # the same record as JSON chunks, in the shapes the workspace API serves
     # (R3-P1 data access): the rebuilt frontend reads these, the legacy views
     # read the bundle above, and both come from one build
-    chunks = write_chunks(SITE, record_name=record_name, attachment=bundle["attachment"] or "")
+    per_product_series = {}
+    for k in products:
+        d = bundle["daily_series"].get(k)
+        per_product_series[k] = {
+            "annual": series_annual.get(k, []),
+            "monthly": monthly.get("breit_nav", []) if k == "breit" else [],
+            "quarterly": bundle["series_quarterly"].get(k, []),
+            "daily": d,
+            "sources": bundle["series_sources"],
+            "supplement": {n: s for n, s in bundle["supplement"].items() if n.startswith(k)},
+        }
+    chunks = write_chunks(
+        SITE, record_name=record_name, attachment=bundle["attachment"] or "",
+        demo={
+            "plans": plans_pub, "plan_order": bundle["plan_order"],
+            "census": census_doc, "census_shards": census_shards, "census_search": census_search,
+            "crosscheck": bundle["crosscheck"], "verification": bundle["verification_queue"],
+            "authority": authority(), "cohorts": bundle["cohorts"],
+            "caveats": bundle["caveat_matrix"], "exclusions": exclusion_log(),
+            "swap_matrix": swap_matrix(), "pme_profiles": bundle["pme_profiles"],
+            "proxy_library": PROXY_LIBRARY, "series_sources": bundle["series_sources"],
+            "series": per_product_series,
+        })
 
     print(f"site/data.js written ({len(payload):,} bytes), census chunk "
           f"{len(census_payload):,} bytes, {len(bundle['memos'])} selection records and "

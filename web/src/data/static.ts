@@ -5,8 +5,10 @@
 
 import { fetchJson, once, type TarkData } from "./adapter";
 import type {
-  CohortView, DocumentsView, FactsView, IndexView, LiquidityView,
-  Manifest, RecordView, ScreenerView, SelectionView,
+  AuthorityView, CensusView, CohortView, CohortsView, CoverageView, DocumentsView,
+  EvidenceView, FactsView, FunnelView, IndexView, LabView, LiquidityView,
+  Manifest, PlansView, RecordView, ScreenerView, SelectionView, SeriesView,
+  VerificationView,
 } from "./types";
 
 export class StaticAdapter implements TarkData {
@@ -36,5 +38,22 @@ export class StaticAdapter implements TarkData {
   }
   getDocuments(plan: string, k: string): Promise<DocumentsView> {
     return this.get<DocumentsView>(`product/${k}/documents/${plan}.json`);
+  }
+  getSeries(k: string): Promise<SeriesView> { return this.get<SeriesView>(`product/${k}/series.json`); }
+
+  getPlans(): Promise<PlansView> { return this.get<PlansView>("plans.json"); }
+  getFunnel(): Promise<FunnelView> { return this.get<FunnelView>("funnel.json"); }
+  getCoverage(): Promise<CoverageView> { return this.get<CoverageView>("coverage.json"); }
+  getVerification(): Promise<VerificationView> { return this.get<VerificationView>("verification.json"); }
+  getAuthority(): Promise<AuthorityView> { return this.get<AuthorityView>("authority.json"); }
+  getEvidence(): Promise<EvidenceView> { return this.get<EvidenceView>("evidence.json"); }
+  getCohorts(): Promise<CohortsView> { return this.get<CohortsView>("cohorts.json"); }
+  getLab(): Promise<LabView> { return this.get<LabView>("lab.json"); }
+  getCensus(): Promise<CensusView> { return this.get<CensusView>("census/index.json"); }
+  getCensusShard(n: number): Promise<Record<string, Record<string, unknown>>> {
+    return this.get<Record<string, Record<string, unknown>>>(`census/d/${n}.json`);
+  }
+  getCensusSearch(): Promise<Record<string, string>> {
+    return this.get<Record<string, string>>("census/search.json");
   }
 }

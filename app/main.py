@@ -34,8 +34,8 @@ BASE = Path(__file__).resolve().parents[1]
 if str(BASE / "src") not in sys.path:
     sys.path.insert(0, str(BASE / "src"))
 
-VIEWS = ("record", "selection", "liquidity", "cohort", "facts", "documents", "report")
-REFERENCE_VIEWS = ("record", "selection", "liquidity", "cohort", "facts", "documents")
+VIEWS = ("record", "selection", "liquidity", "cohort", "facts", "series", "documents", "report")
+REFERENCE_VIEWS = ("record", "selection", "liquidity", "cohort", "facts", "series", "documents")
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 KEY_RE = re.compile(r"^[a-z0-9_]{2,32}$")
 SECURITY_HEADERS = {

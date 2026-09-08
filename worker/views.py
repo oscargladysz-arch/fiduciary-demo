@@ -34,6 +34,7 @@ def write_views(data: Path, key: str, plan_key: str, out: Path, report_path: Pat
     put("liquidity", tark_views.liquidity_view(plan_key, key))
     put("cohort", tark_views.cohort_view(key))
     put("facts", tark_views.facts_view(key))
+    put("series", tark_views.series_view(key))
     report = json.loads(report_path.read_text()) if report_path and report_path.exists() else None
     put("report", tark_views.report_view(key, report))
     return written

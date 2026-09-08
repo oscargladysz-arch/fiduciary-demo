@@ -383,30 +383,36 @@ with sync_playwright() as pw:
     check("preview subpath (h): the build served under /previews/999/ loads every route", not bad and not sub_err, f"{bad} {sub_err[:1]}")
     # (i) the chunks the data adapter reads resolve against the document, so
     # the same build finds them at the site root and under a preview subpath
+    # the manifest drives the check, so a chunk added later cannot escape it
     read_chunks = """async () => {
       const base = new URL('data/', document.baseURI).toString();
-      const want = ['index.json', 'screener.json', 'manifest.json',
-                    'product/hl_paf/record.json', 'product/hl_paf/liquidity/plan_tech_media.json'];
-      const out = {};
-      for (const name of want) {
+      const m = await fetch(base + 'manifest.json');
+      if (!m.ok) return {base, fatal: 'manifest HTTP ' + m.status};
+      const manifest = await m.json();
+      const shapes = new Set(Object.values(manifest.shapes));
+      const missing = [], wrong = [];
+      for (const name of Object.keys(manifest.files)) {
         const r = await fetch(base + name);
-        out[name] = r.ok ? (await r.json()).schema : 'HTTP ' + r.status;
+        if (!r.ok) { missing.push(name + ' HTTP ' + r.status); continue; }
+        const body = await r.json();
+        // every chunk that names a shape must name one the manifest declares
+        if (body && body.schema && !shapes.has(body.schema)) wrong.push(name + ' ' + body.schema);
       }
-      out.base = base;
-      return out;
+      return {base, count: Object.keys(manifest.files).length, missing, wrong,
+              manifest_schema: manifest.schema,
+              index: (await (await fetch(base + 'index.json')).json()).schema};
     }"""
-    want_schema = {"index.json": "tark.index.v1", "screener.json": "tark.screener.v1",
-                   "manifest.json": "tark.chunks.v1", "product/hl_paf/record.json": "tark.record.v1",
-                   "product/hl_paf/liquidity/plan_tech_media.json": "tark.liquidity.v1"}
     at_sub = p3.evaluate(read_chunks)
     p3.goto(f"{ROOT}#/design", wait_until="networkidle")
     at_root = p3.evaluate(read_chunks)
-    check("data (i): every chunk the adapter reads resolves against the document at the site root and under the "
-          "preview subpath, each answering with its own schema name",
-          all(at_root.get(k) == v for k, v in want_schema.items())
-          and all(at_sub.get(k) == v for k, v in want_schema.items())
+    check("data (i): every chunk the manifest lists resolves against the document at the site root and under the "
+          "preview subpath, and every one that names a shape names a declared shape",
+          at_root.get("count", 0) > 200 and at_root.get("count") == at_sub.get("count")
+          and not at_root.get("missing") and not at_root.get("wrong")
+          and not at_sub.get("missing") and not at_sub.get("wrong")
+          and at_root.get("manifest_schema") == "tark.chunks.v1" and at_root.get("index") == "tark.index.v1"
           and at_sub["base"].endswith("/previews/999/data/"),
-          f"root {at_root}, preview {at_sub}")
+          f"root {str(at_root)[:400]}, preview {str(at_sub)[:200]}")
     # legacy URL redirects
     p3.goto(f"{ROOT}#view=evaluation&plan=plan_tech_media&product=hl_paf", wait_until="networkidle")
     p3.wait_for_timeout(200)

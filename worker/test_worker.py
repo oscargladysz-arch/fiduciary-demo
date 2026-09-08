@@ -107,8 +107,9 @@ for d in docs:
 check("storage: every documents row's object is in the bucket under the workspace prefix with the recorded hash and size",
       not _bad_hash and f"workspace/{ws}/{job['id']}/manifest.json" in fake.objects, str(_bad_hash[:3]))
 views = {d["storage_path"].rsplit("/", 1)[-1] for d in docs if d["kind"] == "view"}
-check("views: record, selection, liquidity, cohort, facts and report views were written for the workspace",
-      views == {"record.json", "selection.json", "liquidity.json", "cohort.json", "facts.json", "report.json"}, str(views))
+check("views: record, selection, liquidity, cohort, facts, series and report views were written for the workspace",
+      views == {"record.json", "selection.json", "liquidity.json", "cohort.json", "facts.json",
+                "series.json", "report.json"}, str(views))
 rec_view = json.loads(fake.objects[f"workspace/{ws}/{job['id']}/views/record.json"])
 check("views: the record view carries the 55 cells, the coverage, the pending verification and the default registry marker",
       rec_view["schema"] == "tark.record.v1" and len(rec_view["cells"]) == 55 and rec_view["human_verification"] == "pending"

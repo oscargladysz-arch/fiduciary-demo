@@ -6,7 +6,7 @@
 import { fetchJson, once, type TarkData } from "./adapter";
 import type {
   CohortView, DocumentsView, FactsView, IndexView, LiquidityView,
-  RecordView, ScreenerView, SelectionView, ViewName,
+  RecordView, ScreenerView, SelectionView, SeriesView, ViewName,
 } from "./types";
 
 export type TokenSource = () => string | null | Promise<string | null>;
@@ -45,6 +45,7 @@ export class ApiAdapter implements TarkData {
   getSelection(k: string): Promise<SelectionView> { return this.get<SelectionView>(this.view("selection", k)); }
   getCohort(k: string): Promise<CohortView> { return this.get<CohortView>(this.view("cohort", k)); }
   getFacts(k: string): Promise<FactsView> { return this.get<FactsView>(this.view("facts", k)); }
+  getSeries(k: string): Promise<SeriesView> { return this.get<SeriesView>(this.view("series", k)); }
   getLiquidity(plan: string, k: string): Promise<LiquidityView> {
     return this.get<LiquidityView>(this.view("liquidity", k, plan));
   }
