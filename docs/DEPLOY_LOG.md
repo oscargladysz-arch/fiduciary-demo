@@ -129,3 +129,28 @@ recorded here the same way. Pull request preview builds under
   headline series, the case-law source documents, the calibration run and
   the 17th product.
 - Rollback: `d74e91c` (entry 1) stays in the `gh-pages` history.
+
+## Entry 3, 2026-09-08, workflow deploy from main
+
+- Source commit: `d0bd630` on `main`, deployed by the gates
+  workflow (R3-P0-3) from the run at https://github.com/oscargladysz-arch/fiduciary-demo/actions/runs/34255089279. The tree deployed is the
+  built site of that commit.
+- Machine: a GitHub-hosted Ubuntu runner (Python 3.11, Playwright
+  1.56.0, LibreOffice from apt). It reaches sec.gov.
+- Hook run that authorized the deploy: `sh hooks/pre-commit` on the tree of
+  `d0bd630`, started 2026-09-08T17:09:07Z, finished 2026-09-08T17:13:13Z, exit 0,
+  1,264 `[PASS]` lines, wall time 246 s.
+  Gates in order, each green: validate_data, validate_census, test_evidence_immutable, corrections_log check, test_invariants, test_copy, test_docs, test_analytics, test_cohort, test_benchmark, test_liquidity, test_ingest, test_memo, test_app, test_artifacts_fresh, build_site, reconcile, test_surfaces, test_frontend.
+- Build outputs from that run: `site/data.js` 1,189,866 bytes, `site/series.js` 1,200,089 bytes, `site/census.data.js` 303,176 bytes, 65 documents under `site/memos/`. The
+  anonymization gate in the build passed.
+- Deploy: the built `site/` replaced the `gh-pages` root (every prior root
+  file removed first, `previews/` and `.nojekyll` kept), committed as
+  `77e2bb9` and pushed without force. A recursive diff between
+  `site/` and the deployed root shows no difference apart from `.nojekyll`
+  and `previews/`.
+- Tier 1 drawer check: green in the authorizing run (the frontend gate's
+  automated drawer check against the evidence CSV).
+- EDGAR HTTP 200 check: not done (TARK_SEC_CONTACT unset).
+- Demo script surface check: green in the same run (the frontend gate
+  renders every spoken text on its named view).
+- Rollback: the previous `gh-pages` commit stays in the branch history.
