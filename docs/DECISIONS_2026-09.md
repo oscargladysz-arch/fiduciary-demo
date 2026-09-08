@@ -1966,3 +1966,164 @@ recorded run when they land. The Tuesday cut `d74e91c` stays in the
 `gh-pages` history as the rollback. The live check of the Tier 1 drawers
 on the deployed page is Oscar's, on his machine, since the container does
 not reach the live URL.
+
+## 8. Round 3 (2026-09)
+
+Specification: `docs/GAP_ANALYSIS_2026-09-07.md` (sections 4, 5, 6 and 8
+are the specification for R3-P1 and R3-P2) and the round-3 brief. Two
+sessions work this round in parallel from the same `main`: the cloud
+session (R3-P0-2, R3-P0-3, R3-P1, R3-P2 and the network-free code of
+R3-P4) and the laptop session (R3-P3 and the account-bound parts of
+R3-P4). Entries 8.1 to 8.17 were decided by Oscar on 2026-09-07 and are
+not defaults. Entries 8.18 to 8.20 are defaults, reversible by Oscar.
+Entry 8.21 is reserved for Oscar's approval of the design system at the
+checkpoint and 8.22 for the reconciliation with the committee packet
+sample. Judgment calls taken by the engineer are appended from 8.23 on,
+each marked "default, reversible".
+
+### 8.1 Frontend rebuild (decided by Oscar on 2026-09-07)
+Rebuild the frontend in TypeScript with React, Vite and a hash router that
+pushes history entries, consuming JSON chunks through one adapter
+interface, and delete `site/js` when the new build passes every gate.
+Every Python producer, every data file and every gate on the record and
+the documents stays unchanged. One frontend, never two.
+
+### 8.2 Design (decided by Oscar on 2026-09-07)
+No brand inputs exist. Claude Code proposes the design system (tokens,
+components, the `#/design` kitchen-sink route) and Oscar approves it at
+the design checkpoint, on a preview build, both themes, 1440 and 390 px,
+before any view is rebuilt. The approval is recorded in a pull request
+comment and as decision 8.21.
+
+### 8.3 Tuesday (decided by Oscar on 2026-09-07)
+No deploy before the sends. The three-fix patch (citation buttons on a
+fresh load, the Back button, the donut size) is prepared before them and
+deployed by Oscar after the last send, 1:02pm Eastern, as deploy entry 3
+from a recorded green run with the EDGAR check.
+
+### 8.4 Sessions (decided by Oscar on 2026-09-07)
+Two sessions in parallel: the cloud session for R3-P0-2, R3-P0-3, R3-P1,
+R3-P2 and the network-free parts of R3-P4, Oscar's laptop for R3-P3 and
+the account-bound parts of R3-P4. Each session says which it is in every
+build report section it writes. No R3-P3 or R3-P4 task is described as
+done unless it ran with network and the service it needs.
+
+### 8.5 Slot K (decided by Oscar on 2026-09-07)
+A cited published index with no held series holds Slot K. Every surface
+(the card, cell 5.3, the Screener, Compare and the record) prints one
+sentence, "Meaningful benchmark by descriptor. No comparison until its
+series is held.", until its series is held. The held ETF stays the
+paragraphs (g) and (h) reference comparison and is never presentable as
+the benchmark.
+
+### 8.6 Documents (decided by Oscar on 2026-09-07)
+One Investment Selection Record with attachments replaces the memo and
+packet pair. A real committee packet sample, when Oscar adds it under
+`docs/reference/committee_packet_sample/`, is the model for its shape.
+
+### 8.7 October (decided by Oscar on 2026-09-07)
+Self-serve on free tiers with a pre-authorized laptop fallback. This
+supersedes the afternoon's "self-serve or nothing". A design partner logs
+in, submits their fund and gets the record. If the unattended path is not
+ready or the budget blocks it, Oscar runs the same job from his laptop and
+the partner sees the same result.
+
+### 8.8 Workspace stack (decided by Oscar on 2026-09-07)
+Supabase free tier (Postgres, Auth, Storage), FastAPI on Render's free web
+service tier, the worker as a GitHub Actions workflow in a private
+repository. This supersedes the afternoon's self-built auth and
+self-hosted Postgres.
+
+### 8.9 Money (decided by Oscar on 2026-09-07)
+Free tiers only. A card on file is allowed. Nothing charges without
+Oscar's approval. No paid tier, add-on, seat, domain or upgrade is enabled
+by Claude Code.
+
+### 8.10 Repository (decided by Oscar on 2026-09-07)
+Public code, private `tark-workspace` for the worker workflow, the
+secrets, the job logs and the sponsor identity. No git history rewrite.
+`identity_private` leaves the public tree.
+
+### 8.11 Domain (decided by Oscar on 2026-09-07)
+The hosts' default URLs through October. No custom domain.
+
+### 8.12 Human verification (decided by Oscar on 2026-09-07)
+Deferred. Nobody signs a cell this round. Every surface says pending. It
+becomes the first task after the first letter of intent.
+
+### 8.13 Model spend (decided by Oscar on 2026-09-07)
+One proof run, $50 total cap, calibration only from what remains. The
+budget guard defaults to 50 and is raised only by Oscar, in the
+environment, never by Claude Code.
+
+### 8.14 Merge (decided by Oscar on 2026-09-07)
+Claude Code merges the round-2 branch into `main` as its first commit.
+Done on 2026-09-07: `5efcb2c`, "Merge round-2 branch into main
+(R2-P1-16, R2-P2-1 to R2-P2-3, skill move, deploy 2 record)", no
+conflicts, `e404d2c` is an ancestor of `origin/main`, the skill file, the
+audit and the deploy log are all present, no root `SKILL.md` remains.
+
+### 8.15 Reviews (decided by Oscar on 2026-09-07)
+GitHub Pages preview builds from Actions on every pull request, root
+deploy from green `main` by the workflow. Oscar and Justin review more
+than 10 hours a week.
+
+### 8.16 Networked free runs (decided by Oscar on 2026-09-07)
+The laptop session runs the index fetch, the case law fetch, the census
+fields and the identity move this month. No licensed data is bought.
+
+### 8.17 Ingest tests (decided by Oscar on 2026-09-07)
+Ingest tests run against a mocked model. No test calls the real API.
+
+### 8.18 API host (default, reversible)
+Render as the API host. Google Cloud Run's free tier is the alternative
+if Render's free tier changes, recorded when chosen.
+
+### 8.19 Document and backup storage (default, reversible)
+Supabase Storage for documents and backups (one vendor, free tier).
+Cloudflare R2's free tier is the alternative if the storage limit binds.
+
+### 8.20 Extraction model (default, reversible)
+The one `src/ingest.py` uses today, made a config value, with the proof
+run's cost per cell reported so Oscar can choose a cheaper model for
+partner funds.
+
+### 8.21 Design checkpoint approval (reserved for Oscar)
+Pending. Written when Oscar approves the design system on the preview
+build at the checkpoint, with the pull request comment it points to.
+
+### 8.22 Reconciliation with the committee packet sample (reserved)
+Pending. Written in R3-P2-13 when `docs/reference/committee_packet_sample/`
+exists, recording what was taken from it and what was changed. If it is
+absent when R3-P2-13 lands, the default order from the brief is built and
+"reconcile with the sample" stays an open task in the report.
+
+### 8.23 Branch names (default, reversible)
+The brief names `round-3-cloud` and `round-3-laptop`. The session harness
+assigns `claude/r3-parallel-sessions-qw0o1f` to the cloud session and
+forbids pushing elsewhere without permission, so the cloud session's work
+is on that branch, and every place the brief says `round-3-cloud` reads
+that name. Oscar can rename or re-point the pull requests. Same situation
+and same resolution as decision 7.7.
+
+### 8.24 Environment facts that constrain the cloud session (2026-09-07)
+Linux container, Python 3.11.15, Node 22.22.2, LibreOffice present,
+`pdftotext` absent (poppler library present, the binary is not), Playwright
+pinned to 1.56.0 to match the shipped Chromium build 1194 (the `pip`
+resolver installs 1.62.0 by default, which does not launch that build).
+Outbound HTTPS goes through the harness proxy: `raw.githubusercontent.com`
+and `api.github.com` answer, sec.gov, federalregister.gov, cliffwater.com,
+ncreif.org, supremecourt.gov and github.io are for the laptop session.
+No `ANTHROPIC_API_KEY`. Nothing is faked in place of a networked step.
+
+### 8.25 One branch per phase for the pull requests (default, reversible)
+The Tuesday patch must be mergeable and deployable on its own on Tuesday
+afternoon while the cloud session keeps committing R3-P0-3 and R3-P2 work.
+A pull request follows its branch head, so a pull request opened from the
+session's working branch would grow past the patch before Oscar merges it.
+Each phase pull request is therefore opened from its own branch cut at the
+phase's last commit (`round-3-cloud-p0` for R3-P0-2, then one per phase),
+each a prefix of the working branch `claude/r3-parallel-sessions-qw0o1f`,
+so the merges line up and nothing is duplicated. The brief's "one pull
+request per phase" is honored and the working branch is the harness's.
+Reverse by: re-point a pull request at the working branch.
