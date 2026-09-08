@@ -38,6 +38,11 @@ the evidence row). Only a human editing `data/evidence/*.csv` can set
   under an anonymized label (`plan_intake.py`), the site build
   (`build_site.py`), the
   validators and gates (`validate_*.py`, `test_*.py`, `corrections_log.py`).
+- The view shapes live once, in `src/tark_views.py`: the site build writes
+  them as JSON chunks under `site/data/` (`src/site_chunks.py`), the
+  workspace API answers its reference routes with them, and a job's worker
+  writes a partner's record with them, so one adapter reads all three
+  (`web/src/data/`, decision 8.37).
 - `app/`, `worker/`, `db/`: the workspace (decision 8.8, `docs/WORKSPACE.md`).
   The API (`app/main.py`, FastAPI, no secrets in the request path, the
   Supabase token verified and forwarded so row-level security decides), the

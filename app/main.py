@@ -35,6 +35,7 @@ if str(BASE / "src") not in sys.path:
     sys.path.insert(0, str(BASE / "src"))
 
 VIEWS = ("record", "selection", "liquidity", "cohort", "facts", "documents", "report")
+REFERENCE_VIEWS = ("record", "selection", "liquidity", "cohort", "facts", "documents")
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 KEY_RE = re.compile(r"^[a-z0-9_]{2,32}$")
 SECURITY_HEADERS = {
@@ -96,13 +97,16 @@ def as_sentence(text: str) -> str:
 
 
 class Reference:
-    """The 16 reference products and the four anonymized plans, read once
-    from the public record, served read-only."""
+    """The 16 reference products and the four anonymized plans, read-only.
+    Every view comes from src/tark_views.py, the same builder the site build
+    and the job runner use, so a reader of this API and a reader of the
+    static demo are handed the same shape."""
 
     def __init__(self, data_dir: Path):
         self.data = data_dir
         self._census = None
         self._index = None
+        self._screener = None
 
     def census_entity(self, cik: str) -> dict | None:
         if self._census is None:
@@ -112,42 +116,30 @@ class Reference:
 
     def index(self) -> dict:
         if self._index is None:
-            reg = json.loads((self.data / "registry.json").read_text())["products"]
-            products = []
-            for key in sorted(reg):
-                pj = self.data / "products" / f"{key}.json"
-                if pj.exists():
-                    d = json.loads(pj.read_text())
-                    products.append({"key": key, "name": d["fund_name"], "cik": d["cik"], "wrapper": d.get("wrapper", "")})
-            plans = []
-            for pp in sorted((self.data / "plans").glob("*.json")):
-                d = json.loads(pp.read_text())
-                plans.append({"key": d["plan_key"], "label": d.get("display_label", ""), "plan_year": d.get("plan_year", "")})
-            self._index = {"schema": "tark.reference.v1", "products": products, "plans": plans}
+            import tark_views
+            self._index = tark_views.index_view()
         return self._index
 
+    def screener(self) -> dict:
+        if self._screener is None:
+            import tark_views
+            self._screener = tark_views.screener_view()
+        return self._screener
+
     def view(self, key: str, view: str, plan_key: str = "") -> dict | None:
-        if not KEY_RE.match(key) or view not in VIEWS:
+        import tark_views
+        if not KEY_RE.fullmatch(key) or view not in VIEWS:
             return None
-        if view == "record":
-            p = self.data / "products" / f"{key}.json"
-        elif view == "selection":
-            p = self.data / "benchmarks" / f"{key}_selection.json"
-        elif view == "facts":
-            p = self.data / "facts" / f"{key}.json"
-        elif view == "liquidity":
-            if not KEY_RE.match(plan_key or ""):
-                return None
-            p = self.data / "liquidity" / f"{plan_key}__{key}_match.json"
-        elif view == "cohort":
-            reg = json.loads((self.data / "registry.json").read_text())
-            cid = (reg["products"].get(key) or {}).get("cohort", "")
-            p = self.data / "cohorts" / f"{cid}.json"
-        else:
+        if view in ("liquidity", "documents") and not KEY_RE.fullmatch(plan_key or ""):
             return None
-        if not p.exists():
+        try:
+            if view == "documents":
+                from tark_memo import attachment_name, record_name
+                return tark_views.documents_view(plan_key, key, record_name(plan_key, key),
+                                                 attachment_name() or "")
+            return tark_views.product_view(view, key, plan_key)
+        except (KeyError, FileNotFoundError):
             return None
-        return json.loads(p.read_text())
 
 
 def create_app(settings: Settings | None = None, *, verifier: Verifier | None = None,
@@ -387,6 +379,10 @@ def create_app(settings: Settings | None = None, *, verifier: Verifier | None = 
     @app.get("/api/reference/index.json")
     def reference_index(c: Claims = Depends(claims)):
         return ref.index()
+
+    @app.get("/api/reference/screener.json")
+    def reference_screener(c: Claims = Depends(claims)):
+        return ref.screener()
 
     @app.get("/api/reference/{key}/{view}.json")
     def reference_view(key: str, view: str, plan: str = "", c: Claims = Depends(claims)):
