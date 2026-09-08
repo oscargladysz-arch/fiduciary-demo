@@ -26,7 +26,7 @@ def check(name: str, cond: bool, extra: str = "") -> None:
 
 hook = (BASE / "hooks" / "pre-commit").read_text()
 gate_stems = [m.split("/")[-1] for m in
-              re.findall(r"^python src/([\w/]+)\.py", hook, re.M)]
+              re.findall(r"^python (?:src|app|worker)/([\w/]+)\.py", hook, re.M)]
 # markdown wraps sentences, so every phrase search runs on whitespace-
 # normalized text
 runbook = re.sub(r"\s+", " ", (BASE / "docs" / "INVESTOR_DEMO.md").read_text())

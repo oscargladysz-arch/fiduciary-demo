@@ -42,12 +42,17 @@ NUMERIC = ("net_assets_eoy", "net_assets_boy", "tot_admin_expenses", "with_accou
 
 
 class Refused(SystemExit):
-    pass
+    """Exit 1 on the command line, the sentence readable by a caller (the
+    workspace API answers with it)."""
+
+    def __init__(self, message: str):
+        super().__init__(1)
+        self.message = message
 
 
 def refuse(msg: str) -> None:
     print(f"refused: {msg}")
-    raise Refused(1)
+    raise Refused(msg)
 
 
 def plan_key_from(label: str) -> str:

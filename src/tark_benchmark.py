@@ -269,7 +269,9 @@ def menu_for(key: str) -> list[dict]:
     present. A menu candidate that is also declared is tagged Lane A."""
     prof = ALL_PRODUCTS[key]
     out: list[dict] = []
-    for cid in STRATEGY_MENU_IDS[prof["strategy"]]:
+    # a strategy nobody has judged yet (a workspace job's default registry
+    # entry) has no menu: the selection escalates instead of guessing
+    for cid in STRATEGY_MENU_IDS.get(prof["strategy"], ()):
         out.append(_with_holding({**CANDIDATES[cid], "id": cid}))
     decl = declared_entries(key)
     declared_ids = {d["candidate"]: d["type"] for d in decl}

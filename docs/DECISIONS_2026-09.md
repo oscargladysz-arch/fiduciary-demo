@@ -2532,3 +2532,73 @@ dry run ran against a faked network in the gate only. The calibration
 (R3-P3-4) and the proof run (R3-P4-8) are the laptop session's.
 Reverse by: `PRICES_USD_PER_MTOK`, `DEFAULT_BUDGET_USD`,
 `DEFAULT_CONTEXT_TOKENS` and `OUTPUT_TOKENS_PER_CALL` in `src/ingest.py`.
+
+### 8.35 R3-P4, the network-free part: the workspace code, schema, policies, worker and runbook (default, reversible)
+What exists in the public repository after this entry, all of it run only
+against a fake Supabase and the mocked model (decisions 8.4, 8.17, 8.24:
+no host was created or reached from the cloud session):
+- `db/001_schema.sql`, `002_policies.sql`, `003_storage.sql`: the tables of
+  R3-P4-1 with `workspace_id` on every tenant table, `products.registry_entry`
+  for a person's registry judgment, one active job per product and plan
+  pair, row-level security on every table through one security-definer
+  membership function, no grant to the anon role, a private bucket whose
+  read policy is the first folder's workspace membership and whose writes
+  are the service role's only, `spend_total()` for the budget guard,
+  `ping()` for the keep-alive.
+- `app/`: the API of R3-P4-4 (FastAPI, no docs pages, one CORS origin,
+  security headers on every response, `Cache-Control: no-store`). The
+  Supabase JWT is verified (JWKS by kid for projects with signing keys,
+  HS256 with the project secret for legacy projects, audience
+  `authenticated`) and forwarded as the caller's own token, so the
+  policies decide every read and write. No service key in the request
+  path. A plan goes through `plan_intake.scaffold`, the same validator as
+  the command line, with the field names as words. A product comes from
+  the census by CIK, a reference product is refused toward the references.
+  A job pins the pipeline commit and wakes the private repository's worker
+  through `repository_dispatch` with a token that can only do that, and
+  says in one sentence when it could not. Views and documents come through
+  storage under the user's token, documents as signed URLs with a short
+  expiry. Every error is a plain sentence that passes the allowlist rules.
+  `app/admin.py`: workspace, invite, set-registry, requeue, jobs, budget,
+  with the service key from Oscar's shell.
+- `worker/`: `run_job(job_id, model_client)` claims the job by a
+  conditional update, reads the spend ledger against `TARK_BUDGET_USD`
+  (a total, rule 23) and refuses in words when it is spent, builds a
+  working copy of the public record with the workspace plan and the
+  registry entry, runs `worker.pipeline` as a child process inside the
+  pinned checkout (the ingest of R3-P3-3, the producers, the record
+  writer, the views), relays every step to the jobs row, uploads under the
+  workspace prefix, writes the records, documents and spend rows with
+  hashes, and marks done or failed with the reason. A failed job creates
+  no record and the census it touched is the job's own copy. A done job is
+  never run again. `--mock` runs the same path with the mocked model and
+  the synthetic filing (the rehearsal of R3-P4-9, the concurrency test of
+  R3-P4-8). `worker/templates/` holds the three private-repository
+  workflows. `worker/backup.py` and `worker/restore.py` are the nightly
+  backup and the restore test.
+- A fund nobody has typed yet gets a default registry entry from the
+  census wrapper class (the wrapper's peers' document sets, every judged
+  field marked pending, its own one-member cohort). The benchmark engine
+  now escalates on a strategy it has no menu for instead of failing, and
+  the record writer states a stress test whose capacity is not on record
+  instead of formatting a null. What such a job yields is written plainly
+  in `docs/WORKSPACE.md` section 7: the 55 cells, a liquidity match whose
+  capacity side is not on record, an escalated benchmark, and a record
+  that says so. The reference products' depth needs a person's registry
+  entry and a facts mapping, which for the proof run is the laptop
+  session's work before October 16.
+- Gates: `app/test_workspace.py` and `worker/test_worker.py` join the hook
+  and CI after `test_ingest` (22 gates). `tests/tenancy/test_tenancy.py`
+  is generated from the schema and runs from the outside against a project
+  (the laptop session). `docs/security/asvs_review_2026-09-08.md` is the
+  review of R3-P4-3 on this code, by a fresh subagent, with its fails
+  listed for fixing before R3-P4 exits.
+- `service/` is deleted (R3-P3-6 withdrawn). The census card's
+  `service_url` left the bundle. `requirements.txt` gains `pyjwt[crypto]`.
+Not done, by 8.4: no Supabase project, Render service or private
+repository exists. The tenancy tests, the keep-alive, the backup, the
+restore, the proof run, the fallback rehearsal and the concurrency test
+have not run. The frontend routes of R3-P4-5 wait on R3-P1. The
+unattended path has not passed R3-P4-8, in those words.
+Reverse by: the folders `app/`, `worker/`, `db/`, `tests/tenancy/` and the
+two hook lines.

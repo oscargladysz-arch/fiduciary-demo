@@ -147,8 +147,9 @@ file as a named download and a copy button (decision 7.31).
   `python src/ingest.py <cik> --key <key>`, which runs identity check,
   filing fetch, structured extraction under a verbatim-quote contract, and
   the validator. Needs network, `TARK_SEC_CONTACT` and `ANTHROPIC_API_KEY`.
-  The one-endpoint service (`service/app.py`, URL from `TARK_SERVICE_URL`)
-  does the same for a hosted deployment and keeps no job state.
+  The hosted path is the workspace (`docs/WORKSPACE.md`): a partner logs
+  in, submits the fund by CIK, and the worker runs the same pipeline. The
+  workspace's hosts are not created yet, so do not describe it as live.
 
 ## Known rough edges
 - Search queries and pins are local (localStorage) by design. They never
@@ -193,7 +194,7 @@ file as a named download and a copy button (decision 7.31).
    accession column included.
 
 ## What is enforced by machines (say this in the meeting)
-- Pre-commit runs 20 gates, in this order: `validate_data` (data contract,
+- Pre-commit runs 22 gates, in this order: `validate_data` (data contract,
   registry, advisor files, accessions, no laptop paths), `validate_census`
   (T1 census), `test_evidence_immutable` (T2 rows change only through an
   allowlisted correction), `corrections_log` (every changed published number
@@ -202,7 +203,11 @@ file as a named download and a copy button (decision 7.31).
   user-facing copy), `test_docs` (this runbook agrees with the hook, the
   record and the app), `test_analytics`, `test_cohort`, `test_benchmark`,
   `test_liquidity` (two verdict layers, never blurred), `test_ingest` (the
-  extraction contract, offline with a mock client), `test_memo` (all 64
+  extraction contract and the hardened loop, offline with a mock client),
+  `test_workspace` (the workspace API against a fake Supabase: tokens,
+  tenancy, one job per pair, signed URLs, headers, plain-sentence errors),
+  `test_worker` (a mocked-model job end to end: claim, budget, pipeline,
+  upload, records, documents, spend), `test_memo` (all 64
   Investment Selection Records, their layout and the attachment),
   `test_app` (Streamlit suite), `test_artifacts_fresh`
   (committed artifacts reproduce from a clean producer run), `build_site`

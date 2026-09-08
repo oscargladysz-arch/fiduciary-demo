@@ -36,9 +36,17 @@ the evidence row). Only a human editing `data/evidence/*.csv` can set
   verification of one cell (`verify_cell.py`,
   signer and date required, the only path that writes verified), plan intake
   under an anonymized label (`plan_intake.py`), the site build
-  (`build_site.py`), the one-endpoint
-  evaluation service (`service/app.py`, see `service/README.md`), the
+  (`build_site.py`), the
   validators and gates (`validate_*.py`, `test_*.py`, `corrections_log.py`).
+- `app/`, `worker/`, `db/`: the workspace (decision 8.8, `docs/WORKSPACE.md`).
+  The API (`app/main.py`, FastAPI, no secrets in the request path, the
+  Supabase token verified and forwarded so row-level security decides), the
+  admin command line (`app/admin.py`), the job runner (`worker/run_job.py`,
+  the pipeline as a child process inside the pinned public checkout), the
+  schema and policies (`db/*.sql`), the private repository's workflow
+  templates (`worker/templates/`), the offline gates (`app/test_workspace.py`,
+  `worker/test_worker.py`) and the tenancy tests that run from the outside
+  (`tests/tenancy/`).
 - `site/`: the static frontend. Vanilla JS, hash-routed, reads only the
   bundles the build writes (`data.js`, `series.js`, `census.data.js`,
   `census/`), which are gitignored.
