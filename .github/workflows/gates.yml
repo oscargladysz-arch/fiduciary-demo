@@ -52,6 +52,13 @@ jobs:
           pip install -r requirements.txt
           pip install "playwright==${PLAYWRIGHT_VERSION}"
           python -m playwright install --with-deps chromium
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install the web application's dependencies
+        run: npm ci --prefix web --no-audit --no-fund
       - name: Install LibreOffice (document conversion gate)
         run: |
           sudo apt-get update -q

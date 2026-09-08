@@ -1,0 +1,4 @@
+Fonts committed in this directory:
+- Fraunces (600, 700) - SIL Open Font License 1.1 - (c) The Fraunces Project Authors, https://github.com/undercasetype/Fraunces
+- Inter (400, 500, 600) - SIL Open Font License 1.1 - (c) The Inter Project Authors, https://github.com/rsms/inter
+Subset: latin. Retrieved via Fontsource (jsDelivr) 2026-08-09. Served locally; no runtime CDN calls.

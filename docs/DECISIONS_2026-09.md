@@ -2153,3 +2153,39 @@ Reverse by: re-point a pull request at the working branch.
   then hand deploys per the deploy log stand.
 Reverse by: delete the workflow and the two paragraphs it added to the
 runbook and the deploy log.
+
+### 8.27 R3-P1-5 and R3-P1-6: the design system proposal (default, reversible at the checkpoint)
+- Stack: Vite 6, React 18, TypeScript 5.9, TanStack Table and Virtual, no
+  UI library. Everything under `web/`, built to `site_next/` until the
+  switch, `base: "./"` so one build serves the root, a preview subpath and
+  the workspace. The adapter is a build flag (`TARK_ADAPTER=static|api`).
+- Tokens: `web/src/design/tokens.css` is the only file with literals. The
+  accent is the existing plum re-tuned (`#593380` text, `#8961b6`
+  non-text, light), with an ink-blue alternative offered. Fraunces is kept
+  for the wordmark and the landing H1 (proposal A) with Inter-only as
+  proposal B. The focus ring is a blue (`#2f5fd0`), not the accent, so it
+  stays visible on plum buttons. Every pair in both themes was computed
+  (48 pairs, lowest 4.87:1 for text, 3.65:1 for non-text).
+- The web gate (`src/test_web.py`) is the 20th gate in the hook and in
+  CI. Its rules are properties: literals, formatting calls, focus rings,
+  labels, names, heading order, the skip link, text size, contrast
+  computed from the rendered colors, `transition: all` with a duration,
+  horizontal scroll, tap targets, the H1 offset on mobile, table wrappers
+  and captions, title-only text, live regions, Back with scroll, a sort
+  change with focus, the palette and drawer by keyboard, the theme toggle,
+  reduced motion, the preview subpath, legacy URL rewriting, and axe-core.
+  Two exemptions are written into the tap-target rule: a text link is
+  governed by its line box (WCAG 2.5.8 exempts inline links), and a
+  focusable region (a tab panel, a scroll container) is a keyboard target,
+  not a tap target. Chart data points carry a 24 px transparent hit circle.
+- What the gate found on the first runs, all fixed before this commit: a
+  crash on `navigator.languages` reporting `en-US@posix` (Intl refuses the
+  tag, so the formatter now validates each tag), layout tokens that had
+  leaked into the component stylesheet, a temporal dead zone in the router
+  when a legacy URL is the first load, three `toFixed` calls in chart
+  geometry, an opacity on banner text that cut its contrast under 4.5:1,
+  `aria-label` on SVG shapes without a role, grids whose minimum column
+  overflowed a 390 px viewport, and 8 px chart points as tap targets.
+- The route list the gate walks grows with each rebuilt view. Today it is
+  `design` alone. R3-P1 exits when it is every route.
+Reverse by: the checkpoint. Oscar's choices land as 8.21.

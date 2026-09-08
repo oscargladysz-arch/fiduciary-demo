@@ -186,7 +186,7 @@ file as a named download and a copy button (decision 7.31).
    accession column included.
 
 ## What is enforced by machines (say this in the meeting)
-- Pre-commit runs 19 gates, in this order: `validate_data` (data contract,
+- Pre-commit runs 20 gates, in this order: `validate_data` (data contract,
   registry, advisor files, accessions, no laptop paths), `validate_census`
   (T1 census), `test_evidence_immutable` (T2 rows change only through an
   allowlisted correction), `corrections_log` (every changed published number
@@ -208,10 +208,14 @@ file as a named download and a copy button (decision 7.31).
   `test_frontend` (render sweep across every view, product and plan with the
   HTML parsed, anonymization, JS/Python parity, runtime dead-key check,
   mobile and print renders, Tier 1 drawer against the CSV, and every
-  on-screen text the demo script's surface-check block names). The full
-  hook ran in 139 seconds on 2026-09-05 in the remote build container
-  (`docs/DEPLOY_LOG.md` keeps each recorded run). There is no CI yet
-  (round 2, P3).
+  on-screen text the demo script's surface-check block names), `test_web`
+  (the rebuilt frontend under `web/`: the token gate, the formatting gate,
+  the guideline audit on every rebuilt route at 1440 and 390 px in both
+  themes, axe-core with zero serious or critical findings, the performance
+  budget and the preview-subpath check). The full hook ran in 240 seconds
+  on 2026-09-07 in the remote build container (`docs/DEPLOY_LOG.md` keeps
+  each recorded run). CI runs the same hook on every push and pull request
+  (`.github/workflows/gates.yml`, R3-P0-3).
 - No number reaches a surface unless it is in the cited data layer or is
   recomputed live from it. Scenario math is always labeled ILLUSTRATIVE.
 - `verified` status can only be set by a human through `src/verify_cell.py`
