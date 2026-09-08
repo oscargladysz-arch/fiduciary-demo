@@ -445,6 +445,14 @@ def plan_findings(plan: dict, m: dict | None) -> dict[str, str]:
         if (m.get("wrapper_facts") or {}).get("exchange"):
             out["3.8"] = ("Redemption stress test not applicable: the wrapper is exchange-traded with continuous "
                           "dealing, so there is no wrapper capacity to stress.")
+        elif ss and cap is None:
+            # the wrapper's capacity is not typed (a fund whose dealing terms
+            # are not on record yet): the demand side is stated, the outcome
+            # says what is missing, no figure is invented
+            out["3.8"] = (f"ILLUSTRATIVE redemption stress test for this plan: filed outflow proxy "
+                          f"{sc.get('filed_outflow_proxy_pct', 'n/a')}% of the position, stressed demand "
+                          f"{ss.get('demand_pct_of_position')}%, against an annual wrapper capacity that is not on record, "
+                          f"{str(ss.get('outcome', '')).rstrip('.')}. Source: this plan's liquidity match.")
         elif ss:
             out["3.8"] = (f"ILLUSTRATIVE redemption stress test for this plan: filed outflow proxy "
                           f"{sc.get('filed_outflow_proxy_pct', 'n/a')}% of the position, slider assumption "

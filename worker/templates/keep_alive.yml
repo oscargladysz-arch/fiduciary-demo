@@ -1,0 +1,24 @@
+# Keep-alive for the free tiers (R3-P4-7), in the private repository.
+# Render's free web service sleeps when idle: a call every 10 minutes keeps
+# a partner from meeting a cold start. Supabase pauses an inactive project:
+# one trivial query a day through the API's health check keeps it awake.
+name: keep_alive
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TARK_API_URL: ${{ vars.TARK_API_URL }}
+    steps:
+      - name: wake the API
+        run: curl -sS --fail --max-time 60 "$TARK_API_URL/api/health"
+      - name: one query a day so the database project does not pause
+        if: github.event.schedule == '17 6 * * *' || github.event_name == 'workflow_dispatch'
+        run: curl -sS --fail --max-time 60 "$TARK_API_URL/api/health?db_check=1" | grep -q '"database": *"ok"'

@@ -1,0 +1,34 @@
+# Nightly backup (R3-P4-7), in the private repository: pg_dump plus a
+# listing of the storage bucket, uploaded under backups/<date>/ with 30-day
+# retention. DATABASE_URL is the project's direct connection string.
+name: backup
+on:
+  schedule:
+    - cron: "43 7 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: OWNER/fiduciary-demo
+          ref: ${{ vars.TARK_PIPELINE_REF || 'main' }}   # pin to a commit in the variable once the proof run passes
+          path: pipeline
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends postgresql-client
+          python -m pip install -q -r pipeline/requirements.txt
+      - name: dump, list, upload, prune
+        working-directory: pipeline
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python -m worker.backup --keep-days 30

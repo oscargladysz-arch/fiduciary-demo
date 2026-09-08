@@ -703,8 +703,6 @@ def main() -> None:
         "advisor": advisor_entries(),
         "advisor_cells": list(ADVISOR_STATED_CELLS),
         "advisor_not_evidence": ADVISOR_NOT_EVIDENCE,
-        # an evaluation service, when one is connected at build time (P2-5)
-        "service_url": (os.environ.get("TARK_SERVICE_URL") or "").rstrip("/") or None,
         # the verbatim paragraphs (about 60 KB) ride the lazy chunk as
         # TARK_AUTHORITY and are merged back on load, so the first-paint
         # bundle carries the status, the hash and the note only

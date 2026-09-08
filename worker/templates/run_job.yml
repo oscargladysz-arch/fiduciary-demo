@@ -1,0 +1,65 @@
+# The worker workflow for the private repository tark-workspace (R3-P4-6).
+# Copy to .github/workflows/run_job.yml there. It checks out the PUBLIC
+# pipeline at the commit the job pinned, receives the secrets from THIS
+# repository's settings, and never runs on the public repository.
+name: run_job
+on:
+  repository_dispatch:
+    types: [run_job]
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: the job id
+        required: true
+      pipeline_commit:
+        description: the public pipeline commit to check out
+        required: false
+        default: main
+concurrency:
+  group: job-${{ github.event.client_payload.job_id || inputs.job_id }}
+  cancel-in-progress: false
+permissions:
+  contents: read                # the job token can write nothing in this repository
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100          # the wall-time budget plus the fetch, the producers and the upload
+    env:
+      JOB_ID: ${{ github.event.client_payload.job_id || inputs.job_id }}
+      PIPELINE_COMMIT: ${{ github.event.client_payload.pipeline_commit || inputs.pipeline_commit }}
+    steps:
+      - name: check out the public pipeline at the pinned commit
+        uses: actions/checkout@v4
+        with:
+          repository: OWNER/fiduciary-demo
+          ref: ${{ github.event.client_payload.pipeline_commit || inputs.pipeline_commit }}
+          path: pipeline
+          fetch-depth: 0
+      - name: the commit must be on the public main branch, never a fork or a stray branch
+        working-directory: pipeline
+        run: |
+          git fetch --quiet origin main
+          git merge-base --is-ancestor HEAD origin/main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pipeline/requirements.txt
+      - name: install the pipeline and the readers
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends poppler-utils
+          python -m pip install -q -r pipeline/requirements.txt
+      - name: run the job
+        working-directory: pipeline
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TARK_SEC_CONTACT: ${{ secrets.TARK_SEC_CONTACT }}
+          TARK_BUDGET_USD: ${{ vars.TARK_BUDGET_USD || '50' }}
+          TARK_TIME_BUDGET_S: ${{ vars.TARK_TIME_BUDGET_S || '4800' }}
+          TARK_INGEST_MODEL: ${{ vars.TARK_INGEST_MODEL || 'claude-opus-5' }}
+          TARK_PRICES_JSON: ${{ vars.TARK_PRICES_JSON }}
+          TARK_RUNNER: actions
+        run: python -m worker.run_job "$JOB_ID" --runner actions

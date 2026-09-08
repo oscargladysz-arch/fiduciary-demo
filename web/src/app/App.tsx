@@ -59,7 +59,7 @@ export default function App() {
   const items: PaletteItem[] = GROUPS.flatMap((g) => g.items.map((it) => ({ id: it.to, label: it.label, kind: "View", run: () => navigate(it.to) })));
   return (
     <ToastProvider>
-      <AppShell groups={GROUPS} footer={<p className="t-12 t-3">Every figure is real and cited, or labeled illustrative. Plan sponsors are anonymized on every surface. Human verification: pending.</p>}>
+      <AppShell groups={GROUPS} footer={<p className="t-12 t-3">Every figure is real and cited, or labeled illustrative. Plan sponsors are anonymized on every surface. Human verification: pending. To remove a workspace and everything in it, ask the administrator.</p>}>
         <RouteSwitch />
       </AppShell>
       <Palette open={palette} onClose={() => setPalette(false)} items={items} />
