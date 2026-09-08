@@ -54,7 +54,7 @@ def check(name: str, cond: bool, extra: str = "") -> None:
 
 # ---------------------------------------------------------------- build
 ap = argparse.ArgumentParser()
-ap.add_argument("--routes", default="design")
+ap.add_argument("--routes", default="design,start")
 ap.add_argument("--out", default="site_next")
 ap.add_argument("--no-build", action="store_true")
 ap.add_argument("--port", type=int, default=8478)
@@ -296,12 +296,21 @@ with sync_playwright() as pw:
             page.on("pageerror", lambda e: errors.append(str(e)))
             for route in ROUTES:
                 page.goto(f"{ROOT}#/{route}", wait_until="networkidle")
+                # a hash change is not a load: reload so every route is audited as a
+                # reader meets it from a pasted link, with no focus, scroll or state
+                # carried over from the route before it
+                page.reload(wait_until="networkidle")
                 page.wait_for_timeout(300)
-                res = page.evaluate(AUDIT_JS)
-                # focus-visible rings must be visible when focused by keyboard: simulate Tab
+                # the first Tab is read on the fresh route, before the audit focuses
+                # anything: once a control has been focused and blurred the browser
+                # keeps it as the sequential starting point, and Tab would continue
+                # from there rather than from the top of the document
                 page.keyboard.press("Tab")
                 ring = page.evaluate("""() => { const el = document.activeElement; if (!el || el === document.body) return 'none';
                     const cs = getComputedStyle(el); return (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) > 0) ? 'ring' : 'no-ring'; }""")
+                first_tab = page.evaluate("() => document.activeElement && document.activeElement.className")
+                page.evaluate("() => document.activeElement && document.activeElement.blur()")
+                res = page.evaluate(AUDIT_JS)
                 label = f"{route} {theme} {width}px"
                 fails = res["fails"]
                 by_rule: dict[str, int] = {}
@@ -310,7 +319,8 @@ with sync_playwright() as pw:
                 check(f"guideline audit (a) {label}: {res['counts'].get('textNodes', 0)} text nodes, {res['counts'].get('interactive', 0)} controls, "
                       f"{res['counts'].get('headings', 0)} headings, no violations",
                       not fails and not errors, f"{by_rule} e.g. " + "; ".join(fails[:4]) + (f" errors={errors[:1]}" if errors else ""))
-                check(f"guideline audit (a) {label}: the first Tab lands on a control with a visible ring", ring == "ring", ring)
+                check(f"guideline audit (a) {label}: the first Tab lands on the skip link with a visible ring",
+                      ring == "ring" and "skiplink" in str(first_tab), f"{ring} {first_tab}")
                 # axe
                 page.add_script_tag(content=AXE)
                 axe = page.evaluate("""async () => { const r = await axe.run(document, { resultTypes: ['violations'] });

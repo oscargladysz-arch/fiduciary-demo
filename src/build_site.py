@@ -24,7 +24,7 @@ from pathlib import Path
 from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
 from tark_benchmark_common import (BY_DESCRIPTOR_SENTENCE as _BY_DESCRIPTOR_SENTENCE, RUBRIC_MAX as _RUBRIC_MAX,
                                    STRATEGY_GATE_MIN as _STRATEGY_GATE_MIN, TIE_SENTENCE as _TIE_SENTENCE)
-from tark_display import (SLOT_LABELS, BASE_LABEL, CANDIDATE_SHORT, LANE_LABEL, RUBRIC_LABEL, STRATEGY_LABEL,
+from tark_display import (GLOSSARY, SLOT_LABELS, BASE_LABEL, CANDIDATE_SHORT, LANE_LABEL, RUBRIC_LABEL, STRATEGY_LABEL,
                           WRAPPER_LABEL, cell_display, display_path_free, facts_by_cell,
                           display_copy, plan_demand_sentence, reconciliation_sentence)
 from tark_memo import attachment_path, record_name, write_all
@@ -42,49 +42,6 @@ from tark_anon import docx_text, forbidden_tokens, leaks
 SITE = BASE / "site"
 
 
-# glossary: plain-language primary, term-of-art secondary. Rendered as chips
-# with hover definitions wherever these terms appear in headline lines.
-GLOSSARY = {
-    "PME": "Did the fund beat simply buying an index with the same cash, at the same times? Above 1.0 = yes. (Kaplan-Schoar Public Market Equivalent)",
-    "KS-PME": "Did the fund beat simply buying an index with the same cash, at the same times? Above 1.0 = yes. (Kaplan-Schoar Public Market Equivalent)",
-    "Direct Alpha": "The fund's yearly edge over the index, as a percentage. Zero = index-like. (Gredil/Griffiths/Stucke annualized excess IRR)",
-    "relative wealth ratio": "The fund's cumulative growth divided by the comparator's over identical periods. Above 1.0 = the fund grew more. Not a PME: the comparator is appraisal-based and cannot be bought.",
-    "meaningful benchmark": "The paragraph (k) comparison: the highest-scoring independent public index, exchange-traded proxy or published strategy index for the fund's strategy. A PME only when the comparator is a public market series.",
-    "peer comparison": "The paragraph (g) and (h) comparison: the cohort side by side over identical periods with n per period, and an equal-weight composite only where every peer reports the period. Never the benchmark, never a PME.",
-    "AFFE": "Fees of the funds this fund invests in, passed through to you on top of its own fees. (Acquired Fund Fees & Expenses)",
-    "TER": "Everything the fund charges in a year as a percent of assets. (Total Expense Ratio)",
-    "Rule 23c-3": "The SEC rule forcing an interval fund to offer buybacks on a fixed schedule - liquidity by law, not by choice.",
-    "interval fund": "A fund legally committed to periodic buyback windows (SEC Rule 23c-3).",
-    "tender offer": "The fund's board CHOOSES each buyback window - nothing legally requires the next one.",
-    "DIA": "An investment option on a 401(k) menu that participants pick themselves. (Designated Investment Alternative)",
-    "404(c)": "The ERISA section that shields plan sponsors when participants direct their own accounts - assumes daily menus.",
-    "de-smoothing": "Un-flattering correction: appraisal prices understate risk. This statistically restores the hidden volatility. (Geltner AR(1) unsmoothing)",
-    "high-water mark": "The manager earns performance fees only above the previous peak - no double-charging for recovered losses.",
-    "hurdle": "Minimum return the fund must clear before performance fees start.",
-    "catch-up": "After the hurdle, the manager temporarily takes ALL profit until they hold their full share.",
-    "NAV": "What one share is worth by the fund's own books. (Net Asset Value)",
-    "Transactional NAV": "The NAV at which the fund actually sells and buys back shares (can differ from GAAP NAV).",
-    "premium/discount": "The gap between what the market pays and what the fund says a share is worth.",
-    "K-1": "The partnership tax form: arrives late, complicates filing. Retirement recordkeepers hate it. (Schedule K-1)",
-    "1099": "The ordinary dividend tax form retirement plans handle automatically. (Form 1099-DIV/-B)",
-    "RIC": "A fund taxed like a mutual fund: no fund-level tax, 1099s to investors. (Regulated Investment Company)",
-    "REIT": "A tax structure for property funds: must pay out 90% of income. Investors get 1099s. (Real Estate Investment Trust)",
-    "QDIA": "The menu option your money lands in when you never choose. (Qualified Default Investment Alternative)",
-    "DRIP": "Distributions automatically buy more shares unless you opt out. (Distribution Reinvestment Plan)",
-    "proration": "When buyback requests exceed the cap, everyone gets only a slice - the rest waits for the next window.",
-    "gating": "The fund limiting or suspending buybacks - the semi-liquid wrapper's stress behavior.",
-    "Managed Assets": "A fee base that INCLUDES borrowed money - the fund earns fees on leverage.",
-    "gross assets": "A fee base that INCLUDES assets bought with borrowings - fees on leverage.",
-    "ASC 820": "The accounting rulebook for fair value: Level 1 = market prices, Level 3 = the fund's own models.",
-    "Level 3": "Assets valued by the fund's own models and judgment - no market price exists. (ASC 820 fair-value hierarchy)",
-    "NAV practical expedient": "Holdings valued at whatever the underlying fund reports - trusted, not re-derived.",
-    "ITD": "Since the fund's first day. (Inception-to-date)",
-    "ROC": "Distributions that are your own money coming back, not earnings. (Return of Capital)",
-    "smoothing": "Appraisal-based prices react late and move little - reported volatility understates real risk.",
-    "expense limitation": "The adviser's promise to absorb costs above a cap - often reclaimable for 3 years.",
-    "PCAOB": "The audit regulator. Registration means the auditor is inspected. (Public Company Accounting Oversight Board)",
-    "N-23C3A": "The SEC form an interval fund files for EVERY buyback window - a public paper trail of kept promises.",
-}
 
 def _path_free(obj):
     """Every string inside a shipped structure with repository paths rendered

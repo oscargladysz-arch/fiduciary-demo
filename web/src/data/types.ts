@@ -88,8 +88,28 @@ export interface IndexView {
   cohorts: Record<string, { label: string; members: string[] }>;
   cells: Record<string, { label: string; factor: string }>;
   factors: Record<string, string>;
-  labels: { wrapper: Record<string, string>; base: Record<string, string> };
-  coverage_totals: Record<string, number | string>;
+  labels: {
+    wrapper: Record<string, string>;
+    base: Record<string, string>;
+    strategy: Record<string, string>;
+    lane: Record<string, string>;
+    candidate: Record<string, string>;
+    slot: Record<string, string>;
+  };
+  glossary: Record<string, string>;
+  rubric: {
+    label: string;
+    max: number;
+    threshold: number;
+    gate_min: number;
+    criteria: string[];
+    criterion_label: Record<string, string>;
+    criterion_max: Record<string, number>;
+    criterion_definition: Record<string, string>;
+    tie_sentence: string;
+    by_descriptor_sentence: string;
+  };
+  coverage_totals: { counts: Record<string, number>; [k: string]: unknown };
   rule: { citation: string; paragraphs: string; title: string };
   human_verification: string;
 }

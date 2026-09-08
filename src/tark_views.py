@@ -27,7 +27,11 @@ from tark_data import (CELLS, DATA, FACTORS, RULE, RULE_CITATION, coverage_summa
                        coverage_totals, load_plan, load_product, load_products, plan_keys,
                        product_keys)
 from tark_data import authority, load_evidence, rule_ref, status_kind
-from tark_display import (BASE_LABEL, WRAPPER_LABEL, cell_display, display_copy,
+from tark_benchmark_common import (BY_DESCRIPTOR_SENTENCE, CRITERIA, CRITERION_DEFINITION,
+                                   CRITERION_LABEL, CRITERION_MAX, MIN_PRIMARY_SCORE, RUBRIC_LABEL,
+                                   RUBRIC_MAX, STRATEGY_GATE_MIN, TIE_SENTENCE)
+from tark_display import (BASE_LABEL, CANDIDATE_SHORT, GLOSSARY, LANE_LABEL, SLOT_LABELS,
+                          STRATEGY_LABEL, WRAPPER_LABEL, cell_display, display_copy,
                           display_path_free, facts_by_cell, plan_demand_sentence)
 
 # the per-product views, in the order a reader meets them
@@ -243,7 +247,17 @@ def index_view() -> dict:
         "cohorts": cohorts,
         "cells": {cid: {"label": label, "factor": cid.split(".")[0]} for cid, label in CELLS.items()},
         "factors": dict(FACTORS),
-        "labels": {"wrapper": dict(WRAPPER_LABEL), "base": dict(BASE_LABEL)},
+        # one copy layer, shipped: no surface maps an internal name itself
+        "labels": {"wrapper": dict(WRAPPER_LABEL), "base": dict(BASE_LABEL),
+                   "strategy": dict(STRATEGY_LABEL), "lane": dict(LANE_LABEL),
+                   "candidate": dict(CANDIDATE_SHORT), "slot": dict(SLOT_LABELS)},
+        "glossary": dict(GLOSSARY),
+        "rubric": {"label": RUBRIC_LABEL, "max": RUBRIC_MAX, "threshold": MIN_PRIMARY_SCORE,
+                   "gate_min": STRATEGY_GATE_MIN, "criteria": list(CRITERIA),
+                   "criterion_label": dict(CRITERION_LABEL),
+                   "criterion_max": dict(CRITERION_MAX),
+                   "criterion_definition": dict(CRITERION_DEFINITION),
+                   "tie_sentence": TIE_SENTENCE, "by_descriptor_sentence": BY_DESCRIPTOR_SENTENCE},
         "coverage_totals": coverage_totals(),
         "rule": {"citation": RULE_CITATION, "paragraphs": RULE.get("paragraphs", ""),
                  "title": RULE.get("title", "")},
