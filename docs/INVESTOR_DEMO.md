@@ -181,6 +181,15 @@ file as a named download and a copy button (decision 7.31).
   an already-evaluated product (R3-P3-4) and the 17th product (the proof
   run, R3-P4-8) have not run yet. Do not describe either as done. The price
   list the estimate uses is unconfirmed until the laptop session checks it.
+- The rebuilt frontend exists as a design system, a component set and the
+  `#/design` route on a preview build (pull request 5). No view is rebuilt
+  until Oscar approves the checkpoint (decision 8.21), so the demo runs on
+  the current views and demo script v10. Do not show `#/design` as the
+  product.
+- The workspace (`docs/WORKSPACE.md`) exists as code, schema, policies,
+  worker and runbook, gated against a fake database and the mocked model.
+  No Supabase project, Render service or private repository exists yet, so
+  nobody can log in. Do not describe self-serve as live.
 
 ## Fallback plan (in order)
 1. Pages URL fails: local `http.server` (step above, 10 seconds).

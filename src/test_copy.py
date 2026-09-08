@@ -37,7 +37,8 @@ SURFACE_MODULES = [
 # console-only scripts (validators, tests, fetchers, shots, produce) print to
 # the developer, not to a surface, and stay out of scope
 OWNED_DOCS = ["docs/DECISIONS_2026-09.md", "docs/BUILD_REPORT_6.md",
-              "docs/BUILD_REPORT_7.md", "docs/DEPLOY_LOG.md",
+              "docs/BUILD_REPORT_7.md", "docs/BUILD_REPORT_8.md", "docs/WORKSPACE.md",
+              "docs/DEPLOY_LOG.md",
               "docs/demo_script.md",
               "README.md", "docs/INVESTOR_DEMO.md",
               "docs/benchmark_methodology.md"]
