@@ -166,14 +166,28 @@ window.addEventListener("click", (e) => {
   const b = e.target.closest("[data-cite]");
   if (b) {
     const { key, cid } = b.dataset;
-    const cell = T.products[key].cells[cid];
-    openCite(cell, `${cid} · ${T.cell_labels[cid]} (${T.products[key].fund_name})`);
+    // the drawer detail (document, section, quote, EDGAR link) rides the
+    // lazy chunk: a click on a fresh Screener load fetches it first
+    window.tarkLoadSeries(() => {
+      const cell = T.products[key].cells[cid];
+      openCite(cell, `${cid} · ${T.cell_labels[cid]} (${T.products[key].fund_name})`);
+    });
   }
 });
 
+/* R3-P0-2: the first paint names the cells that have a source (the
+ * product's `cited` list), so the button renders before the lazy chunk
+ * carries the source text */
+const citedSets = {};
+function hasSource(key, cid) {
+  const p = T.products[key];
+  if (!p) return false;
+  if (p.cells?.[cid]?.source) return true;
+  if (!citedSets[key]) citedSets[key] = new Set((p.cited || "").split(",").filter(Boolean));
+  return citedSets[key].has(cid);
+}
 export function citeBtn(key, cid) {
-  const cell = T.products[key]?.cells?.[cid];
-  if (!cell || !cell.source) return "";
+  if (!hasSource(key, cid)) return "";
   return `<button class="citebtn" data-cite data-key="${esc(key)}" data-cid="${esc(cid)}">source</button>`;
 }
 

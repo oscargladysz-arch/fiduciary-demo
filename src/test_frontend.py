@@ -1638,6 +1638,120 @@ with sync_playwright() as pw:
                   or "filed fiscal-year returns" in _spoken[max(0, m.start() - 500):m.end() + 500].lower()
                   for m in re.finditer(r"KS-PME \d\.\d{4}", _spoken)))
 
+    # ---------- R3-P0-2: the three Tuesday fixes, each in a fresh browser context
+    # (1) a fresh load of the Screener and of the Comparison renders a citation
+    # button on every fact cell whose cell has a source, before the lazy chunk
+    # carries the drawer detail, and the count equals the count after the chunk
+    def _expected_cite_count(pg):
+        return pg.evaluate("""() => {
+            const T = window.TARK; let n = 0;
+            for (const b of document.querySelectorAll('#view [data-cite]')) {
+              const { key, cid } = b.dataset;
+              if ((T.products[key].cited || '').split(',').includes(cid)) n += 1;
+            }
+            return [document.querySelectorAll('#view [data-cite]').length, n];
+        }""")
+    _fresh = browser.new_context()
+    _fp = _fresh.new_page(); _ferr = []
+    _fp.on("pageerror", lambda e: _ferr.append(str(e)))
+    _fp.goto(f"http://127.0.0.1:{PORT}/", wait_until="networkidle")
+    _chunk_before = _fp.evaluate("() => !!window.TARK.series")
+    _total, _cited = _expected_cite_count(_fp)
+    _rows_without = _fp.evaluate("""() => [...document.querySelectorAll('#view table.screener tbody tr')]
+        .filter((tr) => !tr.querySelector('[data-cite]')).length""")
+    check("R3-P0-2 (1): a fresh Screener load renders a citation button on every cited fact cell "
+          "(no lazy chunk loaded yet, every button names a cited cell, no product row without one)",
+          not _chunk_before and _total > 0 and _total == _cited and _rows_without == 0 and not _ferr,
+          f"chunk loaded before render={_chunk_before}, buttons={_total}, cited={_cited}, "
+          f"rows without a button={_rows_without}, errors={_ferr[:1]}")
+    _fp.locator("#view [data-cite]").first.click()
+    _fp.wait_for_timeout(600)
+    _drawer_doc = _fp.evaluate("() => document.getElementById('drawer').classList.contains('open') "
+                               "? (document.querySelector('#drawer .dbody .v') || {}).innerText || '' : ''")
+    check("R3-P0-2 (1): clicking a citation on the fresh load opens the drawer with the document name "
+          "after the chunk arrives", bool(_drawer_doc.strip()) and _fp.evaluate("() => !!window.TARK.series"),
+          _drawer_doc[:60])
+    _fp.evaluate("() => window.tarkSetState({view: 'screener'})")
+    _fp.wait_for_timeout(200)
+    _after = _expected_cite_count(_fp)
+    check("R3-P0-2 (1): the Screener's citation count is the same before and after the lazy chunk",
+          _after[0] == _total, f"{_total} before, {_after[0]} after")
+    # the first-paint list is exactly the set of cells whose drawer detail
+    # carries a source, product by product, once the chunk is merged
+    _list_vs_chunk = _fp.evaluate("""() => {
+        const T = window.TARK; const bad = [];
+        for (const [k, p] of Object.entries(T.products)) {
+          const listed = (p.cited || '').split(',').filter(Boolean).sort().join(',');
+          const sourced = Object.entries(p.cells).filter(([, c]) => c.source).map(([cid]) => cid).sort().join(',');
+          if (listed !== sourced) bad.push(k);
+        }
+        return bad;
+    }""")
+    check("R3-P0-2 (1): the first-paint cited list equals the set of cells with a source in the chunk, "
+          "all 16 products", not _list_vs_chunk, ", ".join(_list_vs_chunk))
+    _cp = browser.new_context().new_page()
+    _cp.goto(f"http://127.0.0.1:{PORT}/#view=compare&plan=plan_tech_media&product=hl_paf"
+             f"&compare=hl_paf,cliffwater_cclfx", wait_until="networkidle")
+    _ct, _cc = _expected_cite_count(_cp)
+    check("R3-P0-2 (1): a fresh Comparison load renders its citation buttons before the lazy chunk",
+          not _cp.evaluate("() => !!window.TARK.series") and _ct > 0 and _ct == _cc,
+          f"buttons={_ct}, cited={_cc}")
+    _cp.context.close()
+    _fresh.close()
+
+    # (2) the browser Back button: three navigations by real clicks on the nav,
+    # then three Backs, return to the landing route with the site still open,
+    # Forward works, and a filter change adds no history entry
+    _bc = browser.new_context(); _bp = _bc.new_page(); _berr = []
+    _bp.on("pageerror", lambda e: _berr.append(str(e)))
+    _bp.goto(f"http://127.0.0.1:{PORT}/", wait_until="networkidle")
+    _landing = _bp.evaluate("() => location.hash")
+    _h1s = []
+    for _v in ("roster", "plans", "coverage"):
+        _bp.click(f"button.navitem[data-view={_v}]")
+        _bp.wait_for_timeout(150)
+    _h1s.append(_bp.locator("#view h1").first.inner_text())
+    for _ in range(3):
+        _bp.go_back()
+        _bp.wait_for_timeout(250)
+        _h1s.append(_bp.locator("#view h1").first.inner_text())
+    _on_site = _bp.url.startswith(f"http://127.0.0.1:{PORT}/")
+    check("R3-P0-2 (2): three navigations then three Backs return to the landing route with the site open",
+          _on_site and _bp.evaluate("() => location.hash") == _landing
+          and _h1s == ["Coverage & Provenance", "Reference Plans", "Candidate Roster", "Screener"]
+          and not _berr, f"on site={_on_site}, hash={_bp.evaluate('() => location.hash')}, h1s={_h1s}, {_berr[:1]}")
+    _bp.go_forward()
+    _bp.wait_for_timeout(250)
+    check("R3-P0-2 (2): Forward re-renders the next route",
+          _bp.locator("#view h1").first.inner_text() == "Candidate Roster")
+    _bp.go_back(); _bp.wait_for_timeout(250)
+    _len0 = _bp.evaluate("() => history.length")
+    _bp.select_option("select[data-f=f_tax]", "K-1"); _bp.wait_for_timeout(150)
+    _bp.select_option("select[data-f=f_tax]", "1099"); _bp.wait_for_timeout(150)
+    check("R3-P0-2 (2): a filter change replaces the history entry instead of pushing one",
+          _bp.evaluate("() => history.length") == _len0
+          and "f_tax=1099" in _bp.evaluate("() => location.hash"))
+    _bp.evaluate("() => window.tarkSetState({product: 'cliffwater_cclfx', view: 'evaluation'})")
+    _bp.wait_for_timeout(300)
+    _bp.go_back(); _bp.wait_for_timeout(250)
+    check("R3-P0-2 (2): a product change pushes an entry and Back restores the previous product and view",
+          _bp.evaluate("() => location.hash").startswith("#view=screener&plan=plan_tech_media&product=hl_paf"))
+    _bc.close()
+
+    # (3) every coverage ring on the Roster and on Coverage has a nonzero
+    # rendered size (they rendered at 0 by 0 before, 37 invisible rings)
+    _sizes = {}
+    for _v in ("roster", "coverage"):
+        page.evaluate(f"() => window.tarkSetState({{view: '{_v}', plan: 'plan_tech_media', product: 'hl_paf'}})")
+        page.wait_for_timeout(300)
+        _sizes[_v] = page.evaluate("() => [...document.querySelectorAll('#view svg[data-donut]')].map("
+                                   "(s) => { const r = s.getBoundingClientRect(); return [r.width, r.height]; })")
+    check("R3-P0-2 (3): every donut on the Roster (16) and Coverage (17) has a nonzero rendered size",
+          len(_sizes["roster"]) == 16 and len(_sizes["coverage"]) == 17
+          and all(w >= 48 and h >= 48 for v in _sizes.values() for w, h in v),
+          f"roster={len(_sizes['roster'])} coverage={len(_sizes['coverage'])} "
+          f"min={min((min(w, h) for v in _sizes.values() for w, h in v), default=None)}")
+
     # ---------- VERIFY 5: mobile (390 px) and print renders of Roster, Evaluation, Benchmarks
     mobile = browser.new_page(viewport={"width": 390, "height": 844})
     m_err = []

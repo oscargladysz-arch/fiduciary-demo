@@ -57,6 +57,8 @@ ack ids) would leak.
    `docs/demo_script.md` (v10, the advisor workflow) says where to go from
    there, and its closing table names the record location of every number
    it speaks.
+6. Present at 125% browser zoom (Cmd+Plus twice from 100%). The calls are
+   screen-shared and the current type sizes are small at 100%.
 
 ## Numbers to say out loud
 Say only numbers you read off a surface during the meeting. Do not memorize

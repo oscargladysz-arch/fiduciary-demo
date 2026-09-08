@@ -45,6 +45,12 @@ const state = {
   c_class: "", c_listed: "", c_interval: "", c_tender: "", c_eval: "",
   c_amin: "", c_amax: "", c_hint: "", c_cik: "",
 };
+/* R3-P0-2: the browser Back button is a site affordance. A change of view,
+ * plan, product, cohort or census entity pushes a history entry, everything
+ * else (filters, sort, columns, window, density, sliders) replaces it, and
+ * Back or Forward re-renders the route the URL names. */
+const DEFAULTS = { ...state, cohort: "", f_cohort: "", f_depth: "" };
+const NAV_KEYS = ["view", "plan", "product", "cohort", "c_cik"];
 const VALID = {
   view: (v) => VIEWS.some(([id]) => id === v),
   plan: (v) => !!T.plans[v],
@@ -92,19 +98,28 @@ function readHash() {
   }
 }
 
-function writeHash() {
+function currentHash() {
   const h = new URLSearchParams();
   for (const k of Object.keys(VALID)) {
     if (state[k] && !(k === "density" && state[k] === "comfortable")) {
       h.set(k, state[k]);
     }
   }
-  history.replaceState(null, "", "#" + h.toString());
+  return "#" + h.toString();
+}
+
+let renderedHash = "";
+function writeHash(push = false) {
+  const next = currentHash();
+  if (push && next !== location.hash) history.pushState(null, "", next);
+  else history.replaceState(null, "", next);
+  renderedHash = next;
 }
 
 export function setState(patch) {
+  const push = NAV_KEYS.some((k) => k in patch && String(patch[k]) !== String(state[k]));
   Object.assign(state, patch);
-  writeHash();
+  writeHash(push);
   render();
 }
 window.tarkSetState = setState; // for tests + palette
@@ -207,6 +222,7 @@ function buildTopbar() {
 const SERIES_VIEWS = new Set(["evaluation", "pme", "dxyz", "desmooth",
                               "liquidity", "cohorts", "search", "packet",
                               "verification", "fees"]);
+window.tarkLoadSeries = (then) => loadSeriesChunk(then);
 window.tarkMergeLazy = function () {
   // the chunk ships each series as a first date, day offsets and values:
   // expand back to [[date, value], ...] once, so every chart and lab reads
@@ -319,12 +335,19 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") document.getElementById("drawer").classList.remove("open");
 });
 
-/* same-document hash navigation (pasted share-links, back/forward) must
- * re-read state and re-render — the URL is the source of truth */
-window.addEventListener("hashchange", () => {
+/* same-document navigation (Back, Forward, a pasted share-link) re-reads
+ * the whole state from the URL, defaults first, so a key the URL no longer
+ * carries does not survive from the previous route. popstate and
+ * hashchange both fire on a fragment navigation: the second is a no-op. */
+function routeFromUrl() {
+  if (location.hash === renderedHash) return;
+  Object.assign(state, DEFAULTS);
   readHash();
+  renderedHash = location.hash;
   render();
-});
+}
+window.addEventListener("popstate", routeFromUrl);
+window.addEventListener("hashchange", routeFromUrl);
 
 readHash();
 writeHash();
