@@ -293,8 +293,10 @@ class FakeSupabase:
                 del self.objects[k]
             return self._json(200, [{"name": k.split("/", 1)[1]} for k in gone])
         if action == "list":
-            prefix = json.loads(request.content).get("prefix", "")
-            items = [{"name": k.split("/", 1)[1], "size": len(v)} for k, v in self.objects.items()
-                     if k.startswith(f"{bucket}/{prefix}") and allowed(k.split("/", 1)[1])]
-            return self._json(200, items)
+            body = json.loads(request.content)
+            prefix, limit, offset = body.get("prefix", ""), int(body.get("limit") or 100), int(body.get("offset") or 0)
+            items = sorted(({"name": k.split("/", 1)[1], "size": len(v)} for k, v in self.objects.items()
+                            if k.startswith(f"{bucket}/{prefix}") and allowed(k.split("/", 1)[1])),
+                           key=lambda r: r["name"])
+            return self._json(200, items[offset:offset + limit])
         return self._json(405, {"message": "method not allowed"})

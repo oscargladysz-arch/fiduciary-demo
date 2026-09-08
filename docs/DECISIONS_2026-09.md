@@ -2602,3 +2602,34 @@ have not run. The frontend routes of R3-P4-5 wait on R3-P1. The
 unattended path has not passed R3-P4-8, in those words.
 Reverse by: the folders `app/`, `worker/`, `db/`, `tests/tenancy/` and the
 two hook lines.
+
+### 8.36 R3-P4-3: the security review is a gate, not a reading (default, reversible)
+The review of R3-P4-3 ran as the brief asks, by a fresh subagent that read
+only the policies, the schema, the storage rules, the auth module, the API,
+the admin command line, the job runner and the three workflow templates
+against the OWASP ASVS 4.0.3 Level 1 controls that apply to a hosted-auth
+application, with a verdict and file evidence per control
+(`docs/security/asvs_review_2026-09-08.md`). Two judgment calls beyond the
+brief:
+- Every fail is fixed in the same phase, and each fix is held by a check in
+  `app/test_workspace.py` or `worker/test_worker.py`, so the finding cannot
+  come back quietly. The offline gate now exercises the database path
+  directly, not only the API, because the browser holds a token and the
+  anon key and can reach the database itself. That is where the worst
+  finding lived: a member could write a job row naming another workspace's
+  plan, and the runner would have run it.
+- Where a control needs an account setting rather than code (multi-factor
+  authentication on the two accounts, the access token lifetime), it is
+  written into the runbook as Oscar's action at setup and named in the
+  build report, never marked fixed here.
+- The review is re-run over its own fixes by a second fresh reviewer, which
+  is the only way to learn whether a fix holds. It earned its keep: it
+  found that the first fix for the key-set flood did not bite on a project
+  that publishes no keys, that the body cap measured only a request that
+  declared its length, and that the size cap the API applied was missing
+  from the column a member can reach directly. Its pass is appended to the
+  same file, so the record carries both passes and not a tidied summary.
+The tenancy tests of R3-P4-3 still run from the outside against a project,
+which this session cannot create (8.4, 8.24), so R3-P4-3 is not complete:
+the review and its fixes are, the tests against a project are not.
+Reverse by: the fix commit, which is one commit and touches no record data.

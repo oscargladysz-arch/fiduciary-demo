@@ -79,10 +79,16 @@ def delete_workspace(sb: Supabase, workspace: str) -> dict:
     tenant table. Members lose the membership with the cascade, the auth
     user stays (Supabase Auth is the identity provider)."""
     ws = workspace_id(sb, workspace)
-    objects = [o["name"] for o in sb.list_objects("workspace", f"{ws}/") if o.get("name")]
+    objects = [o["name"] for o in sb.list_all_objects("workspace", f"{ws}/") if o.get("name")]
     removed = 0
     for i in range(0, len(objects), 100):
         removed += len(sb.delete_objects("workspace", objects[i:i + 100]))
+    left = [o["name"] for o in sb.list_all_objects("workspace", f"{ws}/") if o.get("name")]
+    if left:
+        # the rows name the objects: while an object is still there, keeping
+        # the row is the honest state, and the command says what is left
+        raise SystemExit(f"refused to finish: {len(left)} object(s) under the workspace prefix could not be "
+                         f"removed, the rows are untouched. First: {left[0]}")
     rows = sb.delete("workspaces", {"id": ws})
     return {"workspace_id": ws, "objects_removed": removed, "rows_removed": len(rows)}
 

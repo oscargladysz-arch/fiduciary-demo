@@ -39,6 +39,12 @@ reads nothing (no grant to the anon role).
 2. Read the free-tier limits on the day and fill section 12.
 3. In the SQL editor, run `db/001_schema.sql`, then `db/002_policies.sql`,
    then `db/003_storage.sql`, in that order. Each is re-runnable.
+   Every time a table or a function is added later, in a file or through the
+   dashboard, revoke the default grants on it before anyone can reach it.
+   The database gives every new object to the anon and the authenticated
+   roles by default, and `alter default privileges` covers tables only, and
+   only for the role that ran the file. A new table needs its own policies
+   and its own revoke, a new function needs its own revoke.
 4. In Authentication settings: enable email and password, disable public
    sign-ups (invite only), set the site URL to the app's URL, and set the
    invite email's redirect to the app's login route.
@@ -107,10 +113,13 @@ login route. The membership row is written by the CLI and the invite is in
 `audit_log`. One user per workspace this round (R3-P4-0).
 
 Removal is by request to the admin: `python -m app.admin delete-workspace
-"<name>"` removes every object under the workspace's storage prefix and
-then the workspace row, which cascades through every table. The auth user
-stays in Supabase Auth and is deleted there by hand. The app's notice says
-so in one sentence.
+"<name>"` removes every object under the workspace's storage prefix, one
+page of the listing at a time, and then the workspace row, which cascades
+through every table. If an object is still there after the removal pass,
+the command refuses to delete the rows and names what is left, because a
+row that names an object is the honest state while the object exists. The
+auth user stays in Supabase Auth and is deleted there by hand. The app's
+notice says removal is by request.
 
 ## 7. Run a job, read its log, and what to do when it fails
 

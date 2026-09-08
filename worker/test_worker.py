@@ -178,6 +178,8 @@ check("isolation: a job whose plan belongs to another workspace fails before any
       and sb.select("records", filters={"job_id": job4["id"]}) == [] and not any("preparing" in ln and job4["id"][:8] in ln for ln in logs[-3:]))
 check("isolation: a job id that is not a uuid is refused before any query",
       (lambda r: not r.claimed and "job id" in r.reason)(run_job("../etc/passwd", "mock", sb=sb, pipeline_dir=BASE, log=logs.append)))
+check("isolation: an id or a key that only trails a newline is not the id or the key it trails",
+      (lambda r: not r.claimed and "job id" in r.reason)(run_job(job["id"] + "\n", "mock", sb=sb, pipeline_dir=BASE, log=logs.append)))
 check("copy: every failure reason is a sentence with no semicolon or em dash",
       all(";" not in r["failure_reason"] and "—" not in r["failure_reason"] for r in fake.tables["jobs"]))
 

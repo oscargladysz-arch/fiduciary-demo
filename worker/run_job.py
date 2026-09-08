@@ -27,6 +27,7 @@ import argparse
 import json
 import os
 import re
+from urllib.parse import unquote
 import shutil
 import subprocess
 import sys
@@ -103,7 +104,7 @@ def run_job(job_id: str, model_client=None, *, runner: str = "actions", sb: Supa
     def say(line: str) -> None:
         log(redact(f"[job {job_id[:8]}] {line}"))
 
-    if not UUID_RE.match(str(job_id)):
+    if not UUID_RE.fullmatch(str(job_id)):
         res.reason = "the job id is not one the runner accepts"
         say(res.reason)
         return res
@@ -155,7 +156,7 @@ def run_job(job_id: str, model_client=None, *, runner: str = "actions", sb: Supa
     if product.get("workspace_id") != ws or plan.get("workspace_id") != ws:
         return fail("the job names a product or a plan outside its workspace, nothing was run")
     plan_obj = plan.get("intake") or {}
-    if not KEY_RE.match(str(plan_obj.get("plan_key", ""))) or not KEY_RE.match(str(product.get("product_key", ""))):
+    if not KEY_RE.fullmatch(str(plan_obj.get("plan_key", ""))) or not KEY_RE.fullmatch(str(product.get("product_key", ""))):
         return fail("the plan key or the product key is not one the runner accepts")
     spent = float(sb.rpc("spend_total") or 0.0)
     if spent >= budget:
@@ -163,6 +164,7 @@ def run_job(job_id: str, model_client=None, *, runner: str = "actions", sb: Supa
 
     wd = Path(workdir) if workdir else Path(tempfile.mkdtemp(prefix="tark_job_"))
     res.workdir = str(wd)
+    err_fh = None
     try:
         sys.path.insert(0, str(pipeline / "src"))
         from ingest import dry_run_copy  # the pinned checkout's own copy helper
@@ -238,7 +240,9 @@ def run_job(job_id: str, model_client=None, *, runner: str = "actions", sb: Supa
         uploaded = []
         for f in manifest["files"]:
             rel = str(f["path"])
-            if rel.startswith("/") or ".." in rel.split("/"):
+            decoded = unquote(rel)
+            if (rel.startswith("/") or ".." in rel.split("/")
+                    or decoded.startswith("/") or ".." in decoded.replace("\\", "/").split("/")):
                 return fail("the pipeline manifest names a path outside the job's output, nothing was uploaded")
             p = out / rel
             ctype = CONTENT_TYPES.get(p.suffix.lower())
@@ -273,6 +277,10 @@ def run_job(job_id: str, model_client=None, *, runner: str = "actions", sb: Supa
         say(f"unexpected {type(e).__name__}: {str(e)[:200]}")
         return fail(f"the runner hit an unexpected {type(e).__name__}, the job can be requeued")
     finally:
+        # the child's error file is closed on every path out, not only the
+        # one that reaches the end of the run
+        if err_fh is not None and not err_fh.closed:
+            err_fh.close()
         if not keep_workdir and not workdir:
             shutil.rmtree(wd, ignore_errors=True)
 

@@ -103,10 +103,24 @@ class Supabase:
             url += ("&" if "?" in url else "?") + "download=" + httpx.QueryParams({"d": download_name})["d"]
         return url
 
-    def list_objects(self, bucket: str, prefix: str, limit: int = 1000) -> list[dict]:
+    def list_objects(self, bucket: str, prefix: str, limit: int = 1000, offset: int = 0) -> list[dict]:
         r = self._request("POST", f"/storage/v1/object/list/{bucket}",
-                          json_body={"prefix": prefix, "limit": limit, "offset": 0})
+                          json_body={"prefix": prefix, "limit": limit, "offset": offset})
         return r.json()
+
+    def list_all_objects(self, bucket: str, prefix: str, page: int = 1000, max_pages: int = 1000) -> list[dict]:
+        """Every object under the prefix, one page at a time. The caller that
+        deletes needs all of them, and a listing that stops at the first page
+        would leave objects behind with no row that names them."""
+        out: list[dict] = []
+        for _ in range(max_pages):
+            page_rows = self.list_objects(bucket, prefix, limit=page, offset=len(out))
+            if not page_rows:
+                break
+            out.extend(page_rows)
+            if len(page_rows) < page:
+                break
+        return out
 
     def delete_objects(self, bucket: str, paths: list[str]) -> list[dict]:
         return self._request("DELETE", f"/storage/v1/object/{bucket}", json_body={"prefixes": paths}).json()

@@ -48,25 +48,29 @@ class Verifier:
         self.refresh_window = refresh_window_s
         self._keys: dict[str, jwt.PyJWK] = {}
         self._fetched = 0.0
-        self._forced = 0.0
+        self._attempted = 0.0
 
     @property
     def issuer(self) -> str:
         return f"{self.url}/auth/v1"
 
     def _jwks(self, force: bool = False) -> dict[str, jwt.PyJWK]:
-        if force:
-            # an unknown kid forces one refetch per window, so a flood of bad
-            # tokens cannot turn into a flood of key-set requests
-            if time.time() - self._forced < self.refresh_window:
-                return self._keys
-            self._forced = time.time()
-        if force or not self._keys or time.time() - self._fetched > self.ttl:
-            with httpx.Client(base_url=self.url, transport=self.transport, timeout=10.0) as c:
-                r = c.get("/auth/v1/.well-known/jwks.json")
-            r.raise_for_status()
-            self._keys = {k["kid"]: jwt.PyJWK(k) for k in r.json().get("keys", []) if k.get("kid")}
-            self._fetched = time.time()
+        """The project's published keys, at most one outbound request per
+        refresh window whatever the cache holds. A project that publishes no
+        keys (it signs with a secret) caches that emptiness like any other
+        answer, so a sender whose token merely claims an asymmetric algorithm
+        cannot turn one request into one fetch."""
+        stale = time.time() - self._fetched > self.ttl
+        if not (force or stale or self._fetched == 0.0):
+            return self._keys
+        if time.time() - self._attempted < self.refresh_window:
+            return self._keys
+        self._attempted = time.time()
+        with httpx.Client(base_url=self.url, transport=self.transport, timeout=10.0) as c:
+            r = c.get("/auth/v1/.well-known/jwks.json")
+        r.raise_for_status()
+        self._keys = {k["kid"]: jwt.PyJWK(k) for k in r.json().get("keys", []) if k.get("kid")}
+        self._fetched = time.time()
         return self._keys
 
     def verify(self, token: str) -> Claims:

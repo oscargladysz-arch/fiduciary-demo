@@ -24,8 +24,8 @@ create index if not exists workspace_members_user_idx on public.workspace_member
 create table if not exists public.plans (
   id           uuid primary key default gen_random_uuid(),
   workspace_id uuid not null references public.workspaces(id) on delete cascade,
-  intake       jsonb not null,
-  source_note  text not null default '',
+  intake       jsonb not null check (pg_column_size(intake) <= 262144),
+  source_note  text not null default '' check (length(source_note) <= 2000),
   created_at   timestamptz not null default now(),
   unique (id, workspace_id)        -- the target of the jobs composite key (ASVS 4.1.2)
 );
@@ -75,6 +75,14 @@ create index if not exists jobs_workspace_idx on public.jobs (workspace_id, crea
 -- the same composite keys on a project created from an earlier version of this file
 do $$
 begin
+  -- the same caps on a project created from an earlier version of this file:
+  -- the API caps them too, and a member can reach the table directly
+  if not exists (select 1 from pg_constraint where conname = 'plans_source_note_len') then
+    alter table public.plans add constraint plans_source_note_len check (length(source_note) <= 2000);
+  end if;
+  if not exists (select 1 from pg_constraint where conname = 'plans_intake_size') then
+    alter table public.plans add constraint plans_intake_size check (pg_column_size(intake) <= 262144);
+  end if;
   if not exists (select 1 from pg_constraint where conname = 'products_id_workspace_id_key') then
     alter table public.products add constraint products_id_workspace_id_key unique (id, workspace_id);
   end if;

@@ -97,6 +97,12 @@ check("health: answers without a token, names the pipeline commit and no secret"
 r2 = tc.get("/api/health?db_check=1")
 check("health: the database check runs the ping function with the anon key only",
       r2.json().get("database") == "ok" and ("POST", "/rest/v1/rpc/ping") in fake.requests)
+_pings = fake.requests.count(("POST", "/rest/v1/rpc/ping"))
+for _ in range(5):
+    tc.get("/api/health?db_check=1")
+check("health: the unauthenticated database check answers from a short cache, so a flood of calls is not a flood of queries",
+      fake.requests.count(("POST", "/rest/v1/rpc/ping")) == _pings
+      and tc.get("/api/health?db_check=1").json()["database"] == "ok")
 check("headers: every response carries the security headers and no-store",
       all(r.headers.get(k) == v for k, v in SECURITY_HEADERS.items()))
 routes = sorted({rt.path for rt in app.routes if getattr(rt, "methods", None)})
@@ -135,7 +141,7 @@ priv = ec.generate_private_key(ec.SECP256R1())
 jwk = json.loads(jwt.algorithms.ECAlgorithm.to_jwk(priv.public_key()))
 jwk.update({"kid": "key-1", "alg": "ES256", "use": "sig"})
 fake.jwks = {"keys": [jwk]}
-ver = Verifier("https://project.supabase.test", "", transport=fake.transport)
+ver = Verifier("https://project.supabase.test", "", transport=fake.transport, refresh_window_s=0)
 es_tok = make_token("", alice, "alice@example.test", alg="ES256", key=priv, kid="key-1")
 c = ver.verify(es_tok)
 check("jwks: an ES256 token signed by a published key verifies by kid, the claims carry the user",
@@ -146,15 +152,31 @@ try:
     rotated = False
 except AuthError as e:
     rotated = "signing key" in str(e) and fake.requests.count(("GET", "/auth/v1/.well-known/jwks.json")) >= 2
-check("jwks: an unknown kid refetches the key set once and is refused when still unknown", rotated)
+check("jwks: with the window open, an unknown kid refetches the key set once and is refused when it is still unknown",
+      rotated)
+_ver_window = Verifier("https://project.supabase.test", "", transport=fake.transport)
+_ver_window.verify(es_tok)          # one fetch, the key set is now cached
 _n_before = fake.requests.count(("GET", "/auth/v1/.well-known/jwks.json"))
 for _k in ("key-3", "key-4", "key-5"):
     try:
-        ver.verify(make_token("", alice, alg="ES256", key=priv2, kid=_k))
+        _ver_window.verify(make_token("", alice, alg="ES256", key=priv2, kid=_k))
     except AuthError:
         pass
 check("jwks: a run of unknown kids inside the refresh window fetches the key set no more than once",
-      fake.requests.count(("GET", "/auth/v1/.well-known/jwks.json")) - _n_before <= 1)
+      fake.requests.count(("GET", "/auth/v1/.well-known/jwks.json")) - _n_before <= 1,
+      str(fake.requests.count(("GET", "/auth/v1/.well-known/jwks.json")) - _n_before))
+# a project that publishes no keys (it signs with a secret): a sender whose
+# token merely claims an asymmetric algorithm must not cost one fetch each
+_empty = FakeSupabase(jwks={"keys": []})
+_ver2 = Verifier("https://project.supabase.test", "", transport=_empty.transport)
+for _ in range(6):
+    try:
+        _ver2.verify(make_token("", alice, alg="ES256", key=priv, kid="key-1"))
+    except AuthError:
+        pass
+check("jwks: on a project that publishes no keys, a run of asymmetric tokens still costs at most one fetch",
+      _empty.requests.count(("GET", "/auth/v1/.well-known/jwks.json")) == 1,
+      str(_empty.requests.count(("GET", "/auth/v1/.well-known/jwks.json"))))
 try:
     Verifier("https://project.supabase.test", "", transport=fake.transport).verify(tok_a)
     hs_without = False
@@ -202,6 +224,16 @@ r_big = tc.post("/api/plans", headers={**hdr(tok_a), "Content-Length": "300001"}
 check("bodies: a malformed body is refused in one sentence and a body over the cap is refused before it is read",
       r.status_code == 422 and r.json()["detail"].startswith("the request is missing") and r_big.status_code == 413
       and "larger" in r_big.json()["detail"], f"{r.status_code} {r_big.status_code}")
+# a body that declares no length cannot be measured before it is read: httpx
+# sends an iterator chunked, and this API refuses that rather than read it
+r_chunk = tc.post("/api/plans", headers=hdr(tok_a), content=iter([b"x" * 70_000 for _ in range(5)]))
+r_chunk_small = tc.post("/api/plans", headers=hdr(tok_a),
+                        content=iter([json.dumps({"workspace_id": ws_a, "intake": INTAKE}).encode()]))
+check("bodies: a body that declares no length is refused whatever its size, and a declared body under the cap is served",
+      r_chunk.status_code == 411 and r_chunk_small.status_code == 411
+      and "declare the length" in r_chunk.json()["detail"]
+      and tc.get("/api/plans", headers=hdr(tok_a)).status_code == 200,
+      f"{r_chunk.status_code} {r_chunk_small.status_code}")
 check("plans: listing under A's token shows A's plan and none of B's",
       [p["id"] for p in tc.get("/api/plans", headers=hdr(tok_a)).json()["plans"]] == [plan_a["id"]]
       and tc.get("/api/plans", headers=hdr(tok_b)).json()["plans"] == [])
@@ -302,6 +334,10 @@ check("records: a view that was not written and a view that does not exist are e
       and "views are" in tc.get(f"/api/records/{rec['id']}/nope.json", headers=hdr(tok_a)).json()["detail"])
 check("records: B cannot read A's record by id",
       tc.get(f"/api/records/{rec['id']}/record.json", headers=hdr(tok_b)).status_code == 404)
+check("ids: an id with a trailing newline is not the id it trails, on every id-addressed route",
+      tc.get(f"/api/records/{rec['id']}%0A/record.json", headers=hdr(tok_a)).status_code == 404
+      and tc.get(f"/api/documents/{doc['id']}%0A", headers=hdr(tok_a)).status_code == 404
+      and tc.get(f"/api/jobs/{job_a['id']}%0A", headers=hdr(tok_a)).status_code == 404)
 r = tc.get(f"/api/documents/{doc['id']}", headers=hdr(tok_a))
 check("documents: a signed URL with the expiry and the filename, audited as a download, never the service key",
       r.status_code == 200 and r.json()["expires_in"] == 120 and r.json()["filename"] == "record.docx"
@@ -321,6 +357,16 @@ _ws_c = fake.seed_workspace("Workspace C", bob)
 fake.objects[f"workspace/{_ws_c}/x/views/record.json"] = b"{}"
 fake.tables["plans"].append({"id": str(uuid.uuid4()), "workspace_id": _ws_c, "intake": {}, "source_note": "", "created_at": "2026-09-08T00:00:00+00:00"})
 _res = delete_workspace(_admin, "Workspace C")
+_ws_d = fake.seed_workspace("Workspace D", bob)
+for _i in range(1500):
+    fake.objects[f"workspace/{_ws_d}/artifacts/{_i:05d}.json"] = b"{}"
+fake.tables["plans"].append({"id": str(uuid.uuid4()), "workspace_id": _ws_d, "intake": {}, "source_note": "",
+                             "created_at": "2026-09-08T00:00:00+00:00"})
+_res_d = delete_workspace(_admin_for_paging := Supabase("https://project.supabase.test", fake.service_key, transport=fake.transport),
+                          "Workspace D")
+check("admin: delete-workspace pages the listing, so a workspace with more objects than one page keeps none of them",
+      _res_d["objects_removed"] == 1500 and not any(k.startswith(f"workspace/{_ws_d}/") for k in fake.objects)
+      and not any(p["workspace_id"] == _ws_d for p in fake.tables["plans"]), str(_res_d))
 check("admin: a running job is requeued only with the flag, and delete-workspace removes the storage prefix and every row of the workspace and nothing else",
       _req_failed and _req_ok and _res["objects_removed"] == 1 and _res["rows_removed"] == 1
       and not any(k.startswith(f"workspace/{_ws_c}/") for k in fake.objects)

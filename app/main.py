@@ -47,6 +47,8 @@ SECURITY_HEADERS = {
     "Content-Disposition": "attachment; filename=api.json",  # copy-exempt: a header value, a JSON answer is never rendered as a page
 }
 MAX_BODY_BYTES = 262_144        # an intake is a few kilobytes, nothing here needs more
+BODY_METHODS = ("POST", "PUT", "PATCH")
+HEALTH_DB_CACHE_S = 60          # the keep-alive calls this every ten minutes
 UUID_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
 
 
@@ -157,6 +159,7 @@ def create_app(settings: Settings | None = None, *, verifier: Verifier | None = 
     ref = reference or Reference(Path(s.reference_dir) if s.reference_dir else BASE / "data")
     app.state.settings = s
     app.state.log = []                      # the last lines, every one redacted
+    app.state.health_db = None              # (when, answer) for the unauthenticated database check
     if s.app_origin:
         app.add_middleware(CORSMiddleware, allow_origins=[s.app_origin], allow_methods=["GET", "POST"],
                            allow_headers=["authorization", "content-type"], max_age=600)
@@ -165,12 +168,21 @@ def create_app(settings: Settings | None = None, *, verifier: Verifier | None = 
         app.state.log.append(redact(line))
         del app.state.log[:-200]
 
+    def too_large() -> JSONResponse:
+        return JSONResponse({"detail": "the request body is larger than anything this workspace accepts"},
+                            status_code=413, headers=SECURITY_HEADERS)
+
     @app.middleware("http")
     async def security_headers(request: Request, call_next):
         length = request.headers.get("content-length")
         if length and length.isdigit() and int(length) > MAX_BODY_BYTES:
-            return JSONResponse({"detail": "the request body is larger than anything this workspace accepts"},
-                                status_code=413, headers=SECURITY_HEADERS)
+            return too_large()
+        if request.method in BODY_METHODS and not (length and length.isdigit()):
+            # a body that declares no length cannot be measured before it is
+            # read, so this API does not take one. Every client of it sends a
+            # JSON object, which declares its length.
+            return JSONResponse({"detail": "the request must declare the length of its body"},
+                                status_code=411, headers=SECURITY_HEADERS)
         try:
             response = await call_next(request)
         except Exception as e:  # noqa: BLE001  (never a stack trace to a client, never a secret in the log)
@@ -218,7 +230,7 @@ def create_app(settings: Settings | None = None, *, verifier: Verifier | None = 
             log(f"audit {event} failed {e.status}")
 
     def one(sb: Supabase, table: str, row_id: str, what: str) -> dict:
-        if not UUID_RE.match(row_id or ""):
+        if not UUID_RE.fullmatch(row_id or ""):
             raise refuse(404, f"no {what} with that id is in your workspace")
         rows = sb.select(table, filters={"id": row_id})
         if not rows:
@@ -230,11 +242,18 @@ def create_app(settings: Settings | None = None, *, verifier: Verifier | None = 
     def health(db_check: str = ""):
         out = {"status": "ok", "time": now_iso(), "pipeline_commit": s.pipeline_commit[:12]}
         if db_check and s.ready:
+            # the answer is cached for a minute: this route takes no token, so
+            # it must not turn one request into one database query
+            cached = app.state.health_db
+            if cached and time.monotonic() - cached[0] < HEALTH_DB_CACHE_S:
+                out["database"] = cached[1]
+                return out
             try:
                 Supabase(s.supabase_url, s.supabase_anon_key, transport=transport).rpc("ping")
                 out["database"] = "ok"
             except (SupabaseError, httpx.HTTPError):
                 out["database"] = "unreachable"
+            app.state.health_db = (time.monotonic(), out["database"])
         return out
 
     # ---------------------------------------------------------------- me
