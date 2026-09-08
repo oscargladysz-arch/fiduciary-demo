@@ -21,8 +21,8 @@ CRITERION_LABEL = {"strategy_match": "Strategy match",
 CRITERION_DEFINITION = {
     "strategy_match": "how closely the candidate's asset class and sub-strategy match the fund's, "
                       "3 for the same sub-strategy, 2 for the same asset class, 1 for an adjacent one",
-    "risk_liquidity_match": "whether the candidate's liquidity process matches the fund's typed dealing "
-                            "terms (cadence, caps, gating, program status), 3 for a like-for-like process",
+    "risk_liquidity_match": "whether the candidate's liquidity process matches the fund's dealing "
+                            "terms on record (cadence, caps, gating, program status), 3 for a like-for-like process",
     "provider_independence": "2 unless the registry's affiliation map ties the candidate's publisher to "
                              "one of the fund's advisers, in which case 0 and the candidate is ineligible",
     "data_held": "2 when the candidate's series is in the record, 0 when it is only cited",
@@ -45,6 +45,16 @@ TIE_SENTENCE = ("Tied on score. Ordered by strategy match, then risk and liquidi
 # decision 8.5: a cited published index with no held series holds Slot K and
 # every surface prints this one sentence until its series is held
 BY_DESCRIPTOR_SENTENCE = "Meaningful benchmark by descriptor. No comparison until its series is held."
+# the three comparison metrics, each defined once for every surface and document
+METRIC_DEFINITION = {
+    "KS-PME": ("the fund's growth divided by the growth of the same cash in the public market series over the "
+               "same window (Kaplan-Schoar public market equivalent). Above 1.0 the fund led the series."),
+    "Direct Alpha": ("the fund's annualized excess return over the public market series on the same two flows "
+                     "(Gredil, Griffiths and Stucke). Zero is series-like."),
+    "relative wealth ratio": ("the fund's cumulative growth divided by the comparator's over identical periods. "
+                              "Above 1.0 the fund grew more. Not a PME: the comparator is appraisal-based and "
+                              "cannot be bought."),
+}
 
 
 def low_confidence(window_years: float, unit: str = "year") -> str | None:

@@ -2107,7 +2107,9 @@ that name. Oscar can rename or re-point the pull requests. Same situation
 and same resolution as decision 7.7.
 
 ### 8.24 Environment facts that constrain the cloud session (2026-09-07)
-Linux container, Python 3.11.15, Node 22.22.2, LibreOffice present,
+Linux container, Python 3.11.15, Node 22.22.2, LibreOffice core present
+without Writer (`soffice --convert-to` answers "source file could not be
+loaded", CI installs `libreoffice-writer`, amended 2026-09-08 under 8.33),
 `pdftotext` absent (poppler library present, the binary is not), Playwright
 pinned to 1.56.0 to match the shipped Chromium build 1194 (the `pip`
 resolver installs 1.62.0 by default, which does not launch that build).
@@ -2396,3 +2398,61 @@ layer.
   headings were reworded at their source.
 Reverse by: `PROSE_RULES` and `display_copy` in `src/tark_display.py`, the
 exemptions in `src/test_surfaces.py`.
+
+### 8.33 R3-P2-13 to R3-P2-17: the Investment Selection Record (default, reversible)
+
+Decided by the cloud session on 2026-09-08 as a default, under 8.6 (one
+record with attachments replaces the memo and packet pair). No committee
+packet sample exists under `docs/reference/committee_packet_sample/`, so
+8.22 stays reserved and the order below is the brief's default.
+
+- One document per plan and product,
+  `<plan>__<product>_selection_record.docx`, written by `src/tark_memo.py`
+  (the module keeps its name and its older entry points so the gates, the
+  app and reconcile keep importing it). `tark_packet.py` is gone.
+- Page one is the decision summary: both liquidity verdicts, the
+  meaningful benchmark with its statistic, the reference comparison, the
+  peer ratio, the coverage headline with the signed count, the adviser
+  inputs count, the flags, the sentence that the record does not decide
+  with the committee cells and their state, then the committee action and
+  signature table (select, decline, defer, the adopting fiduciary, the
+  adviser, the committee secretary). A signature adopts the record as
+  read, it does not verify a cell.
+- Then a contents field, the regulatory basis (the rule quoted verbatim
+  under each letter, the attachment cited by its full content hash), the
+  six-factor findings (one sentence per factor generated from the facts on
+  record with a cell behind every clause, then the facts on record, the
+  first sentence of every evidenced cell, the not-applicable cells), the
+  fees and terms on record, the benchmark selection (the ledger of every
+  candidate with its lane, score and outcome, the rubric's criteria and the
+  three metrics defined once, the selected slot, the reference, the
+  declared comparators, the peer comparison with its table, the rejection
+  log, the lock line), the product-to-plan liquidity match, the peer cohort
+  placement, the adviser inputs, scope and case law, provenance grouped by
+  filing (one row per filing with the cells that cite it, then the cells
+  whose reference does not resolve, then the plan record), and the
+  attachments list.
+- Attachment A is the verbatim text of paragraphs (g) to (l), one file
+  shared by every record, `attachment_a_rule_text_<hash12>.docx`, nothing
+  in it through the copy layer, screened by the same forbidden list and
+  sponsor screen as the records.
+- Layout: letter page, one-inch margins, every table on a fixed grid whose
+  columns sum to the text width with the header row repeated and no row
+  split across pages, headings kept with the next paragraph, a running
+  header, a footer with the page count, the as-of date and the DRAFT mark,
+  core properties from the record's as-of date (never the wall clock, so
+  the bytes reproduce), a contents field Word refreshes on open.
+- Copy: every string the writer emits goes through `display_copy`, which
+  now also applies the punctuation rule (an em dash or a semicolon becomes
+  a comma, a double period one period, a spaced hyphen between words a
+  comma, "period(s)" "periods"), on the site and in the documents alike.
+  The quoted rule paragraphs and the attachment are verbatim and exempt.
+  The gates compare their expectations through the same function.
+- The record gate (`test_memo`, R3-P2-18) reads the document XML for the
+  layout and exports through LibreOffice Writer where it is installed. In
+  this environment only `libreoffice-core` is present (Writer is not:
+  "source file could not be loaded"), so the export prints a named skip
+  here and runs in CI, which installs `libreoffice-writer`. 8.24 is
+  amended accordingly.
+Reverse by: `src/tark_memo.py` section order, `punctuate` in
+`src/tark_display.py`.

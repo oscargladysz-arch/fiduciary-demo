@@ -481,16 +481,45 @@ def _key_labels() -> list[tuple[re.Pattern, str]]:
     return _KEY_LABELS
 
 
+_EM_DASH = re.compile(r"\s*\u2014\s*")
+_SEMICOLON = re.compile(r";\s*")
+_DOUBLE_PERIOD = re.compile(r"(?<!\.)\.\.(?!\.)")
+_SPACED_HYPHEN = re.compile(r"(?<=[A-Za-z)\.%']) - (?=[A-Za-z(\'])")
+_PERIODS = re.compile(r"\bperiod\(s\)")
+
+
+def punctuate(text: str) -> str:
+    """The copy rule on punctuation (R3-P2-17): no em dash and no semicolon
+    in reader prose (each becomes a comma), no double period, no spaced
+    hyphen between words (a comma), and "periods" for "period(s)". URLs are
+    left alone. Applied to record text on every surface and in every
+    document, never to a verbatim quote."""
+    parts = re.split(r"(https?://\S+)", text)
+    for i in range(0, len(parts), 2):
+        t = parts[i]
+        t = _EM_DASH.sub(", ", t)
+        t = _SEMICOLON.sub(", ", t)
+        t = _DOUBLE_PERIOD.sub(".", t)
+        t = _SPACED_HYPHEN.sub(", ", t)
+        t = _PERIODS.sub("periods", t)
+        parts[i] = t
+    return "".join(parts)
+
+
 def display_copy(text) -> str:
-    """Reader copy of a record string: repository paths become their labels
-    and internal keys become their words. Used for cell values, sources and
-    sections, never for a verbatim quote."""
-    out = display_path_free(text)
-    if not isinstance(out, str):
-        return out
-    for rx, label in _key_labels():
-        out = rx.sub(label, out)
-    return out
+    """Reader copy of a record string: repository paths become their labels,
+    internal keys become their words and the punctuation rule applies. A URL
+    inside the string is left exactly as written. Used for cell values,
+    sources and sections, never for a verbatim quote."""
+    if not isinstance(text, str):
+        return text
+    parts = re.split(r"(https?://\S+)", text)
+    for i in range(0, len(parts), 2):
+        out = display_path_free(parts[i])
+        for rx, label in _key_labels():
+            out = rx.sub(label, out)
+        parts[i] = punctuate(out)
+    return "".join(parts)
 
 
 # Repository paths inside cell text stay in the record (the validator checks

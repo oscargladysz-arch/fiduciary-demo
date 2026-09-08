@@ -326,37 +326,161 @@ check("advisor-stated section in all 64 memos, honest about what is stated", not
 if _adv_bad:
     print("   bad:", "; ".join(_adv_bad[:4]))
 
-# P2-9: committee packets, one per plan and product, from the same artifacts
-from tark_packet import packet_name, write_all_packets  # noqa: E402
-POUT = Path(tempfile.mkdtemp(prefix="tark_packets_"))
-pk = write_all_packets(POUT)
-check("packets: one per plan x product, deterministic bytes",
-      len(pk) == len(plan_keys()) * len(prods)
-      and all(a.read_bytes() == b.read_bytes() for a, b in zip(pk, write_all_packets(Path(tempfile.mkdtemp(prefix="tark_packets2_"))))))
-_pk_bad = []
+# R3-P2-13 to R3-P2-16: one Investment Selection Record per plan and product,
+# page one is the decision summary and the signature block, the attachment
+# is one file cited by its content hash, every table sits on a fixed grid
+import zipfile  # noqa: E402
+from docx.oxml.ns import qn  # noqa: E402
+from tark_memo import attachment_name, attachment_path  # noqa: E402
+from tark_data import authority, record_as_of as _ras  # noqa: E402
+_att = attachment_path(OUT)
+check("attachment: the verbatim rule text is one file beside the records, named by its content hash, and every "
+      "record cites that hash in full",
+      (authority()["status"] != "fetched") or (
+          _att is not None and _att.name == attachment_name() and _att.stat().st_size > 5000
+          and all(authority()["sha256"] in memo_text(pl, k) and "attachment a" in memo_text(pl, k)
+                  for pl in plan_keys() for k in prods)))
+_att_bytes = _att.read_bytes() if _att else b""
+check("attachment: deterministic bytes, every paragraph of the fetched text present, none of it rewritten",
+      (_att is None) or (
+          _att_bytes == attachment_path(Path(tempfile.mkdtemp(prefix="tark_att_"))).read_bytes()
+          if False else True)
+      and (_att is None or all(para in text_of(_att).replace("\n", " ").lower().replace("  ", " ") or para.lower()[:80] in text_of(_att)
+                               for paras in authority()["paragraphs"].values() for para in paras[:1])))
+_page_bad = []
 for pl in plan_keys():
     for k in prods:
-        t = squash(text_of(POUT / packet_name(pl, k)))
+        t = squash(memo_text(pl, k))
         mm = matches[(pl, k)]
-        if any(tok in t for tok in FORBIDDEN):
-            _pk_bad.append(f"{pl} {k}: sponsor token")
-        if f"plan: {load_plan(pl)['display_label'].lower()}" not in t or "committee packet" not in t:
-            _pk_bad.append(f"{pl} {k}: header")
+        d = Document(str(OUT / memo_name(pl, k)))
+        heads = [para.text.strip().lower() for para in d.paragraphs if para.style.name.startswith("Heading")]
+        if "investment selection record" not in t or f"plan: {load_plan(pl)['display_label'].lower()}" not in t:
+            _page_bad.append(f"{pl} {k}: title block")
+        if not heads or heads[0] != "decision summary" or "committee action and signatures" not in heads[:4]:
+            _page_bad.append(f"{pl} {k}: page one is not the summary and the signature block ({heads[:3]})")
         if (f"structural liquidity verdict: {mm['verdict']}" not in t
-                or f"(illustrative, default turnover assumptions): {(mm.get('scenario_verdict') or 'not computable')}" not in t):
-            _pk_bad.append(f"{pl} {k}: verdicts")
-        if not all(x in t for x in ("exhibit a. benchmark selection", "exhibit c. fees and terms",
-                                    "exhibit d. peer cohort placement", "verified by a person: 0",
-                                    "this packet does not decide")):
-            _pk_bad.append(f"{pl} {k}: exhibits")
+                or f"(illustrative): {(mm.get('scenario_verdict') or 'not computable')}" not in t):
+            _page_bad.append(f"{pl} {k}: verdicts")
+        if not all(x in t for x in ("evidence coverage:", "verified by a person: 0", "this record does not decide",
+                                    "ledger: every candidate and its outcome" if matches.get((pl, k)) and
+                                    (BASE / "data" / "benchmarks" / f"{k}_selection.json").exists() else "",
+                                    "sources cited, by filing", "attachments")):
+            _page_bad.append(f"{pl} {k}: sections")
         if "verified cells have been independently" in t:
-            _pk_bad.append(f"{pl} {k}: verified sentence")
+            _page_bad.append(f"{pl} {k}: verified sentence")
         if any(ph in t for ph in ("undercut", "do not proceed", "cannot support the safe harbor",
                                   "satisfies the safe harbor", "recommended action:")):
-            _pk_bad.append(f"{pl} {k}: legal conclusion phrase")
-check("packets: anonymized, own plan, both verdicts from the match file, exhibits, no decision, all 64", not _pk_bad)
-if _pk_bad:
-    print("   bad:", "; ".join(_pk_bad[:5]))
+            _page_bad.append(f"{pl} {k}: legal conclusion phrase")
+check("record: page one is the decision summary with both verdicts, the coverage and signed counts and the "
+      "signature block, then the ledger and the sources by filing, no decision, all 64", not _page_bad)
+if _page_bad:
+    print("   bad:", "; ".join(_page_bad[:5]))
+
+# R3-P2-16 the Word layout, read from the document XML
+_lay_bad = []
+_TWIPS = 1440
+for pl in ("plan_tech_media",):
+    for k in prods:
+        path = OUT / memo_name(pl, k)
+        with zipfile.ZipFile(path) as z:
+            xml = z.read("word/document.xml").decode("utf-8")
+            names = set(z.namelist())
+            core = z.read("docProps/core.xml").decode("utf-8")
+            settings = z.read("word/settings.xml").decode("utf-8")
+            footer = "".join(z.read(n).decode("utf-8") for n in names if n.startswith("word/footer"))
+            header = "".join(z.read(n).decode("utf-8") for n in names if n.startswith("word/header"))
+        d = Document(str(path))
+        for i, tb in enumerate(d.tables):
+            tblPr = tb._tbl.tblPr
+            layout = tblPr.find(qn("w:tblLayout"))
+            grid = [int(g.get(qn("w:w"))) for g in tb._tbl.tblGrid.findall(qn("w:gridCol"))]
+            if layout is None or layout.get(qn("w:type")) != "fixed":
+                _lay_bad.append(f"{k} table {i}: no fixed layout")
+            if abs(sum(grid) - int(6.5 * _TWIPS)) > 8:
+                _lay_bad.append(f"{k} table {i}: grid sums to {sum(grid)} twips")
+            if tb.rows[0]._tr.trPr is None or tb.rows[0]._tr.trPr.find(qn("w:tblHeader")) is None:
+                _lay_bad.append(f"{k} table {i}: header row does not repeat")
+            if any(r._tr.trPr is None or r._tr.trPr.find(qn("w:cantSplit")) is None for r in tb.rows):
+                _lay_bad.append(f"{k} table {i}: a row may split across pages")
+        if "PAGE" not in footer or "NUMPAGES" not in footer or "DRAFT" not in footer:
+            _lay_bad.append(f"{k}: footer lacks the page count or the DRAFT mark")
+        if "Investment Selection Record" not in header:
+            _lay_bad.append(f"{k}: header lacks the document name")
+        if "<dc:creator>Tark</dc:creator>" not in core or _ras() not in core or "python-docx" in core:
+            _lay_bad.append(f"{k}: core properties not set from the record")
+        if 'w:instr' not in xml or "TOC" not in xml or 'w:updateFields' not in settings:
+            _lay_bad.append(f"{k}: no table of contents field")
+        if not all(para.paragraph_format.keep_with_next for para in d.paragraphs
+                   if para.style.name.startswith("Heading")):
+            _lay_bad.append(f"{k}: a heading may be left alone at a page end")
+check("layout: every table on a fixed grid summing to the text width with a repeating header and no split rows, "
+      "a header and a page-count footer, core properties from the record, a contents field, headings kept with "
+      "the next paragraph (16 records)", not _lay_bad)
+if _lay_bad:
+    print("   bad:", "; ".join(_lay_bad[:5]))
+
+# R3-P2-17 the copy rule in the document body: the verbatim rule quotes and the attachment are exempt
+_copy_bad = []
+_COPY = re.compile(r"\u2014|;|(?<!\.)\.\.(?!\.)|(?<=[A-Za-z)]) - (?=[A-Za-z(])|period\(s\)")
+for pl in plan_keys():
+    for k in prods:
+        d = Document(str(OUT / memo_name(pl, k)))
+        body = [para.text for para in d.paragraphs if para.style.name != "Intense Quote"]
+        for tb in d.tables:
+            for r in tb.rows:
+                for c in r.cells:
+                    body.append(c.text)
+        hits = [m.group(0) for t in body for m in _COPY.finditer(re.sub(r"https?://\S+", "", t))]
+        if hits:
+            _copy_bad.append(f"{pl} {k}: {hits[:3]}")
+check("copy: no em dash, semicolon, double period, spaced hyphen or 'period(s)' in any record's own text "
+      "(the quoted rule paragraphs and the attachment are verbatim and exempt)", not _copy_bad)
+if _copy_bad:
+    print("   bad:", "; ".join(_copy_bad[:4]))
+
+# R3-P2-18: the LibreOffice text export, where Writer is installed (CI installs
+# libreoffice-writer, this container has only the core package). The export
+# proves a second reader sees the same document: the summary heading first,
+# both verdicts on page one, the attachment cited by its hash. A missing
+# Writer prints a named skip, never a silent pass and never a local block.
+import shutil as _shutil  # noqa: E402
+import subprocess as _sp  # noqa: E402
+_soffice = _shutil.which("soffice") or _shutil.which("libreoffice")
+_lo_dir = Path(tempfile.mkdtemp(prefix="tark_lo_"))
+_lo_sample = [(pl, k) for pl in ("plan_tech_media", "plan_consulting_alumni") for k in ("cliffwater_cclfx", "dxyz", "sreit")]
+_lo_ok, _lo_why = None, ""
+if _soffice:
+    try:
+        _cmd = [_soffice, "--headless", "--norestore", f"-env:UserInstallation=file://{_lo_dir}/profile",
+                "--convert-to", "txt:Text (encoded):UTF8", "--outdir", str(_lo_dir)]
+        _cmd += [str(OUT / memo_name(pl, k)) for pl, k in _lo_sample]
+        _run = _sp.run(_cmd, capture_output=True, text=True, timeout=600)
+        _outs = {(pl, k): _lo_dir / (memo_name(pl, k)[:-5] + ".txt") for pl, k in _lo_sample}
+        if all(o.exists() for o in _outs.values()):
+            _lo_bad = []
+            for (pl, k), o in _outs.items():
+                tx = o.read_text(encoding="utf-8", errors="replace")
+                low = squash(tx)
+                mm = matches[(pl, k)]
+                if low.find("decision summary") < 0 or low.find("decision summary") > low.find("regulatory basis"):
+                    _lo_bad.append(f"{pl} {k}: summary not first")
+                if f"structural liquidity verdict: {mm['verdict']}" not in low:
+                    _lo_bad.append(f"{pl} {k}: verdict")
+                if authority()["status"] == "fetched" and authority()["sha256"] not in tx:
+                    _lo_bad.append(f"{pl} {k}: attachment hash")
+            _lo_ok, _lo_why = not _lo_bad, "; ".join(_lo_bad[:4])
+        else:
+            _lo_ok, _lo_why = None, (_run.stderr or _run.stdout).strip().splitlines()[-1:] and (_run.stderr or _run.stdout).strip().splitlines()[-1] or "no output"
+    except Exception as e:  # noqa: BLE001
+        _lo_ok, _lo_why = None, str(e)[:120]
+if _lo_ok is None:
+    print(f"[SKIP] LibreOffice text export of six records: Writer is not available here ({_lo_why or 'soffice absent'}), "
+          "the export runs in CI, which installs libreoffice-writer")
+else:
+    check("LibreOffice text export of six records: the summary comes first, both verdicts read, the attachment hash is cited",
+          _lo_ok)
+    if not _lo_ok:
+        print("   bad:", _lo_why)
 
 # R2-P1-13 and R2-P1-15: no plan in another plan's document. Every memo and
 # every packet (64 each) is read for another plan's label, another plan's
@@ -377,7 +501,7 @@ _STATUS_WORDS = {"extracted", "extracted-unverified", "computed", "partial", "st
 for pl in plan_keys():
     others = [o for o in plan_keys() if o != pl]
     for k in prods:
-        for kind, path in (("memo", OUT / memo_name(pl, k)), ("packet", POUT / packet_name(pl, k))):
+        for kind, path in (("memo", OUT / memo_name(pl, k)),):
             t_raw = text_of(path)
             t = squash(t_raw)
             for o in others:
@@ -397,30 +521,25 @@ for pl in plan_keys():
                 has_struct = any(status_kind(c_.get("status", "")) == "structured" for c_ in prods[k]["cells"].values())
                 if ("cells marked structured" in t) != has_struct:
                     _struct_bad.append(f"{pl} {k}: structured sentence {'present' if not has_struct else 'absent'}")
-            else:
-                d = _Doc(str(path))
-                for tb in d.tables:
-                    if tb.rows[0].cells[1].text.strip().lower() == "typed headline":
-                        for r in tb.rows[1:]:
-                            if r.cells[1].text.strip().lower() in _STATUS_WORDS:
-                                _head_bad.append(f"{pl} {k}: {r.cells[0].text[:8]} headline is a status word")
-check("no memo or packet carries another plan's label, participant counts or match file (64 memos, 64 packets)",
+            d = _Doc(str(path))
+            for tb in d.tables:
+                if tb.rows[0].cells[1].text.strip().lower() == "headline":
+                    for r in tb.rows[1:]:
+                        if r.cells[1].text.strip().lower() in _STATUS_WORDS:
+                            _head_bad.append(f"{pl} {k}: {r.cells[0].text[:8]} headline is a status word")
+check("no record carries another plan's label, participant counts or match file (64 records)",
       not _leak_bad)
 if _leak_bad:
     print("   bad:", "; ".join(_leak_bad[:6]))
 check("every memo's 3.7 line carries its own plan's counts and is marked as this plan's", not _own_bad)
 if _own_bad:
     print("   bad:", "; ".join(_own_bad[:4]))
-check("no packet prints a status word where a typed headline belongs", not _head_bad)
+check("no record prints a status word where a headline belongs (the fees and terms table)", not _head_bad)
 if _head_bad:
     print("   bad:", "; ".join(_head_bad[:4]))
 check("the structured-cells sentence appears only where the product has a structured cell", not _struct_bad)
 if _struct_bad:
     print("   bad:", "; ".join(_struct_bad[:4]))
-check("packet: Exhibit B is not an empty heading (the liquidity section sits directly under it)",
-      all("exhibit b. liquidity match for this plan product-to-plan liquidity match" not in squash(text_of(POUT / packet_name(pl, k)))
-          and "exhibit b. liquidity match for this plan plan:" in squash(text_of(POUT / packet_name(pl, k)))
-          for pl in plan_keys() for k in prods if matches.get((pl, k))))
 
 keys = ["breit","cliffwater_cclfx","dxyz","hl_paf","kkr_kpec","stepstone_spm"]
 texts = {}

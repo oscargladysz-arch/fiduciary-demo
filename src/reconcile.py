@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from tark_anon import docx_text  # noqa: E402
 from tark_data import BASE, DATA, load_products  # noqa: E402
-from tark_display import BASE_LABEL, facts_by_cell, typed_headline  # noqa: E402
+from tark_display import display_copy, BASE_LABEL, facts_by_cell, typed_headline  # noqa: E402
 from tark_memo import memo_name  # noqa: E402
 
 SITE = BASE / "site"
@@ -155,7 +155,7 @@ def main() -> int:
                 bad["pme"].append(f"{k} slot_g: bundle {bg.get('relative_wealth_ratio')} vs artifact {rr}")
             if f"relative wealth ratio {rr}" not in c112 or g["alignment_note"][:60] not in c112:
                 bad["pme"].append(f"{k}: cell 1.12 lacks relative wealth ratio {rr} or the alignment note")
-            if not all(f"relative wealth ratio {rr}" in mt and g["alignment_note"].lower()[:60] in mt
+            if not all(f"relative wealth ratio {rr}" in mt and display_copy(g["alignment_note"]).lower()[:60] in mt
                        for mt in memos.values()):
                 bad["pme"].append(f"{k} slot_g: a memo lacks relative wealth ratio {rr} or the alignment note")
             if peer_fact != rr:

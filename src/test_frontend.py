@@ -1353,33 +1353,33 @@ with sync_playwright() as pw:
     for k in bundle["memos"]:
         try:
             with urllib.request.urlopen(
-                    f"http://127.0.0.1:{PORT}/memos/{k}_decision_memo.docx") as resp:
+                    f"http://127.0.0.1:{PORT}/memos/{k}_selection_record.docx") as resp:
                 if resp.status != 200 or int(resp.headers["Content-Length"]) < 5000:
                     memo_bad.append(k)
         except Exception:  # noqa: BLE001
             memo_bad.append(k)
-    check("all decision memos served", not memo_bad, "; ".join(memo_bad))
-    packet_bad = []
-    for k in bundle["packets"]:
+    check("all Investment Selection Records served", not memo_bad, "; ".join(memo_bad))
+    att_ok = False
+    if bundle.get("attachment"):
         try:
-            with urllib.request.urlopen(f"http://127.0.0.1:{PORT}/memos/{k}_committee_packet.docx") as resp:
-                if resp.status != 200 or int(resp.headers["Content-Length"]) < 5000:
-                    packet_bad.append(k)
+            with urllib.request.urlopen(f"http://127.0.0.1:{PORT}/memos/{bundle['attachment']}") as resp:
+                att_ok = resp.status == 200 and int(resp.headers["Content-Length"]) > 5000
         except Exception:  # noqa: BLE001
-            packet_bad.append(k)
-    check("all committee packets served, one per plan x product",
-          not packet_bad and len(bundle["packets"]) == len(bundle["plan_order"]) * len(bundle["products"]))
+            att_ok = False
+    check("the attachment (verbatim rule text) is one file served beside the records, named by its content hash",
+          bundle.get("attachment") and bundle["attachment"].startswith("attachment_a_rule_text_") and att_ok)
     view_text("packet", product="cliffwater_cclfx", plan="plan_consulting_alumni")
-    check("packet view: the committee packet link follows the selected plan",
-          page.locator("#packetlink").get_attribute("href")
-          == "memos/plan_consulting_alumni__cliffwater_cclfx_committee_packet.docx")
+    check("packet view: the record link follows the selected plan and the attachment link is beside it",
+          page.locator("#recordlink").get_attribute("href")
+          == "memos/plan_consulting_alumni__cliffwater_cclfx_selection_record.docx"
+          and page.locator("#attachmentlink").get_attribute("href") == f"memos/{bundle['attachment']}")
     printed = page.evaluate("""() => new Promise((res) => {
         window.print = () => res(document.body.className);
         document.querySelector('[data-print-pins]').click();
       })""")
     check("packet view: printing covers the pinned exhibits only (print class on during the dialog, off after)",
           "print-pins" in printed and "print-pins" not in page.evaluate("() => document.body.className"))
-    check("one memo per plan x product in the bundle",
+    check("one record per plan x product in the bundle",
           len(bundle["memos"]) == len(bundle["plan_order"]) * len(bundle["products"])
           and all(f"{pl}__{pk}" in bundle["memos"]
                   for pl in bundle["plan_order"] for pk in bundle["products"]))
@@ -1387,9 +1387,9 @@ with sync_playwright() as pw:
     href_tech = page.locator("#memolink").get_attribute("href")
     view_text("benchmarks", product="cliffwater_cclfx", plan="plan_consulting_alumni")
     href_cons = page.locator("#memolink").get_attribute("href")
-    check("benchmark memo link follows the selected plan",
-          href_tech == "memos/plan_tech_media__cliffwater_cclfx_decision_memo.docx"
-          and href_cons == "memos/plan_consulting_alumni__cliffwater_cclfx_decision_memo.docx",
+    check("benchmark record link follows the selected plan",
+          href_tech == "memos/plan_tech_media__cliffwater_cclfx_selection_record.docx"
+          and href_cons == "memos/plan_consulting_alumni__cliffwater_cclfx_selection_record.docx",
           f"{href_tech} / {href_cons}")
 
     # ---------- P2-8: plan intake form emits the intake file, refuses a sponsor-like label

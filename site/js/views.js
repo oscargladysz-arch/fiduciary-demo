@@ -386,7 +386,7 @@ export function viewRoster(root, state, setState) {
       <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap">
         <button class="btn ghost" data-goto="evaluation" data-key="${k}">Six-factor record</button>
         <button class="btn ghost" data-goto="benchmarks" data-key="${k}">Benchmark</button>
-        ${T.memos.includes(`${state.plan}__${k}`) ? `<a class="btn ghost" href="memos/${state.plan}__${k}_decision_memo.docx" download>Memo ↓</a>` : ""}
+        ${T.memos.includes(`${state.plan}__${k}`) ? `<a class="btn ghost" href="memos/${state.plan}__${k}_selection_record.docx" download>Record ↓</a>` : ""}
       </div>`;
     card.querySelector("[data-ring]").append(kindDonut(c, 64));
     grid.append(card);
@@ -774,7 +774,7 @@ export function viewBenchmarks(root, state, setState) {
         <th class="sortable" data-col="3">Score</th><th>Reason as logged</th></tr></thead>
       <tbody>${rejRows}</tbody></table></div>
     ${T.memos.includes(`${state.plan}__${key}`) ? `<div style="margin-top:16px">
-      <a class="btn" id="memolink" href="memos/${state.plan}__${key}_decision_memo.docx" download>Download decision memo (.docx) for ${esc(T.plans[state.plan].display_label)}</a></div>` : ""}`;
+      <a class="btn" id="memolink" href="memos/${state.plan}__${key}_selection_record.docx" download>Download the Investment Selection Record (.docx) for ${esc(T.plans[state.plan].display_label)}</a></div>` : ""}`;
 
   root.querySelectorAll("[data-goto]").forEach((a) => a.addEventListener("click",
     (e) => { e.preventDefault(); setState({ view: a.dataset.goto }); }));

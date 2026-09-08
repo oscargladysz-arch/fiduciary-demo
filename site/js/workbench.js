@@ -557,16 +557,16 @@ export function viewPacket(root, state, setState) {
   root.innerHTML = `
     <div class="viewhead"><h1>Packet</h1>
       <div class="sub">Your pinned figures and views. Reorder, then print the
-        pinned exhibits. The committee packet and the decision memo (one each per
-        plan and product) are the generated documents. This page is a
+        pinned exhibits. The Investment Selection Record (one per plan and
+        product, with its attachment) is the generated document. This page is a
         browser-side composition, nothing is uploaded anywhere.</div></div>
     <div class="packet-actions" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
       <button class="btn ghost" id="pinview">Pin current selections as a view</button>
       <button class="btn" id="printpins" data-print-pins>Print pinned exhibits</button>
-      ${T.packets.includes(`${state.plan}__${state.product}`) ? `<a class="btn ghost" id="packetlink"
-        href="memos/${state.plan}__${state.product}_committee_packet.docx" download>Committee packet (docx) for ${esc(T.plans[state.plan].display_label)} ↓</a>` : ""}
-      ${T.memos.includes(`${state.plan}__${state.product}`) ? `<a class="btn ghost"
-        href="memos/${state.plan}__${state.product}_decision_memo.docx" download>Decision memo (docx) ↓</a>` : ""}
+      ${T.memos.includes(`${state.plan}__${state.product}`) ? `<a class="btn ghost" id="recordlink"
+        href="memos/${state.plan}__${state.product}_selection_record.docx" download>Investment Selection Record (docx) for ${esc(T.plans[state.plan].display_label)} ↓</a>` : ""}
+      ${T.attachment ? `<a class="btn ghost" id="attachmentlink"
+        href="memos/${esc(T.attachment)}" download>Attachment A, the rule text (docx) ↓</a>` : ""}
     </div>
     <div id="pinlist">${pins.length ? "" : `<p class="cap">Nothing pinned yet. Use the ⌖ buttons on evaluation cells, or 'Pin current selections'.</p>`}</div>`;
   const list = root.querySelector("#pinlist");

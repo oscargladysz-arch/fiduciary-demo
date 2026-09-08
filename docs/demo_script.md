@@ -116,19 +116,20 @@ complexity factor. "Cells 6.6 and 6.8 belong to paragraph (l): operational
 fit and the fiduciary's own capacity. They are advisor-completed, never
 extracted. The form makes a statement file that the advisor sends to Tark,
 the status is advisor-stated with its own badge and its own coverage
-segment, the memo carries it in its own section, and it is never counted as
+segment, the record carries it in its own section, and it is never counted as
 evidence."
 
-**5:20, Packet.** "Download the decision memo and the committee packet for
-the plan in the header. The file name carries the plan. Sections: the
-regulatory basis with the paragraph numbers and the rule paragraph under
-each letter quoted verbatim, with the full text as the last appendix,
-six-factor findings as complete
-sentences with the typed facts, benchmark selection with the ledger and the
-alignment note, liquidity match with the structural verdict and the
-ILLUSTRATIVE scenario, a recommendation section that lists the flags and
-says the memo does not decide, case law at cell 5.7 marked partial, and a
-provenance section with the true counts. It says zero verified because zero
+**5:20, Packet.** "Download the Investment Selection Record for the plan
+in the header, and the rule text as its attachment. The file name carries
+the plan. Page one is the decision summary and the signature block. Then
+the regulatory basis with the paragraph numbers and the rule paragraph under
+each letter quoted verbatim, the attachment cited by its content hash,
+six-factor findings as complete sentences from the facts on record,
+benchmark selection with the ledger of every candidate, the rubric defined
+once and the alignment note, the liquidity match with the structural verdict
+and the ILLUSTRATIVE scenario, the flags and the sentence that the record
+does not decide, case law at cell 5.7 marked partial, and provenance grouped
+by filing with the true counts. It says zero verified because zero
 are."
 
 **6:00, Verification.** "Tier 1 first, the rows this script just spoke

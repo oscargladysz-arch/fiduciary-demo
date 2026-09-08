@@ -31,7 +31,7 @@ SURFACE_MODULES = [
     "run_benchmark.py", "coverage.py", "corrections_log.py", "promote.py",
     "resolve_citations.py", "tark_display.py", "fetch_caselaw.py", "strip_caselaw_timing.py",
     "fetch_authority.py", "ingest.py",
-    "calibrate_ingest.py", "verify_cell.py", "plan_intake.py", "tark_packet.py", "purge_paths.py",
+    "calibrate_ingest.py", "verify_cell.py", "plan_intake.py", "purge_paths.py",
     "census/build_census.py", "census/enumerate.py", "census/classify.py",
 ]
 # console-only scripts (validators, tests, fetchers, shots, produce) print to

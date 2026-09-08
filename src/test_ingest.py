@@ -408,7 +408,6 @@ check("intake: a labeled plan reads as fully participant-directed from its codes
 import test_surfaces  # noqa: E402
 import tark_liquidity  # noqa: E402
 import tark_memo  # noqa: E402
-import tark_packet  # noqa: E402
 from tark_anon import docx_text, leaks  # noqa: E402
 shutil.copytree(BASE / "data" / "facts", SCRATCH / "data" / "facts", dirs_exist_ok=True)
 FORM_TOTALS = {**FORM, "display_label": "US regional clinic 403(b) plan (~$400M, OH)",
@@ -440,7 +439,7 @@ for np_ in (newp, newp2):
     mtext = json.dumps(m)
     if test_surfaces.ANY.search(mtext) or leaks(mtext):
         _doc_bad.append(f"{np_['plan_key']} match: {test_surfaces.ANY.search(mtext)}")
-    for builder, label in ((tark_memo.build_memo, "memo"), (tark_packet.build_packet, "packet")):
+    for builder, label in ((tark_memo.build_record, "record"),):
         path = builder("hl_paf", np_["plan_key"], out_dir=SCRATCH / "out")
         text = docx_text(path)
         test_surfaces.HITS["documents"].clear()
@@ -449,7 +448,7 @@ for np_ in (newp, newp2):
             _doc_bad.append(f"{np_['plan_key']} {label}: {test_surfaces.HITS['documents'][:2]}")
         if np_["display_label"].lower() not in text.lower():
             _doc_bad.append(f"{np_['plan_key']} {label}: the plan label is missing")
-check("intake: the liquidity match, the decision memo and the committee packet for an intake plan carry no forbidden "
+check("intake: the liquidity match and the Investment Selection Record for an intake plan carry no forbidden "
       "string and no sponsor token, and name the plan by its anonymized label", not _doc_bad, "; ".join(_doc_bad[:3]))
 check("intake: without the Schedule H totals the scenario has no verdict and says so, with them it has one",
       json.loads((SCRATCH / "data" / "liquidity" / f"{newp['plan_key']}__hl_paf_match.json").read_text())["scenario_verdict"] is None

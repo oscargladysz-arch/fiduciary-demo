@@ -71,7 +71,7 @@ IDENTIFIER_KEYS = {
     # maps to labels, the census row field names it decodes, the fact keys a
     # match lists (its labels ride beside them), the roster decisions
     # markdown the Cohorts view renders through its key-to-words map
-    "memos", "packets", "files", "column", "role", "row_fields", "missing_facts", "cells_read",
+    "memos", "attachment", "files", "column", "role", "row_fields", "missing_facts", "cells_read",
     "roster_decisions_md",
     # cohort member lists and statistic field names, the caveat matrix's
     # attribute keys, a cited local file, the plan order, the census entity rows
