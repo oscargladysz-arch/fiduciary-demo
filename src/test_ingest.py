@@ -400,6 +400,59 @@ check("intake: Schedule H lines left empty are null with a reason, never zero",
 check("intake: the same key twice is refused", intake_refused(FORM))
 check("intake: a labeled plan reads as fully participant-directed from its codes",
       __import__("tark_liquidity").plan_direction(newp) == "total")
+# R3-P2-10: the plan an advisor enters passes the surfaces gate on every shape
+# the hook ships or writes: the bundle's plan object, the liquidity match, the
+# decision memo and the committee packet. The scratch record gains the facts
+# the match reads. A second intake carries the Schedule H totals so the
+# computed proxy's copy of the provenance is covered too.
+import test_surfaces  # noqa: E402
+import tark_liquidity  # noqa: E402
+import tark_memo  # noqa: E402
+import tark_packet  # noqa: E402
+from tark_anon import docx_text, leaks  # noqa: E402
+shutil.copytree(BASE / "data" / "facts", SCRATCH / "data" / "facts", dirs_exist_ok=True)
+FORM_TOTALS = {**FORM, "display_label": "US regional clinic 403(b) plan (~$400M, OH)",
+               "anonymization_label": "US regional clinic 403(b) plan (~$400M, OH)", "tot_expenses": 30_000_000}
+out2 = plan_intake.intake(FORM_TOTALS)
+newp2 = json.loads(out2.read_text())
+_ship_bad = []
+for np_ in (newp, newp2):
+    pub = {k: v for k, v in np_.items() if k not in ("identity_private", "anonymization_rule")}
+    test_surfaces.HITS["bundle"].clear()
+    test_surfaces.walk_strings(pub, "plans", "plans", [0])
+    if test_surfaces.HITS["bundle"] or leaks(json.dumps(pub)):
+        _ship_bad.append(f"{np_['plan_key']}: {test_surfaces.HITS['bundle'][:2]}")
+    if not (pub["source"]["note"].startswith("plan intake, ") and pub["source"]["pulled"]
+            and pub["source"]["note"].endswith(pub["source"]["pulled"] + ", figures as the advisor supplied them")):
+        _ship_bad.append(f"{np_['plan_key']}: provenance {pub['source']}")
+check("intake: the shipped plan object carries no developer string, path or script name and no sponsor token, and its "
+      "provenance reads 'plan intake, <date>'", not _ship_bad, "; ".join(_ship_bad[:2]))
+check("intake: the computed filed outflow proxy copies the same display-safe provenance",
+      newp2["schedule_h"]["filed_outflow_proxy"]["value"] == 8.11
+      and newp2["schedule_h"]["filed_outflow_proxy"]["source"]["note"].startswith("plan intake, "))
+(SCRATCH / "data" / "liquidity").mkdir(exist_ok=True)
+_doc_bad = []
+for np_ in (newp, newp2):
+    m = tark_liquidity.run_match("hl_paf", np_["plan_key"])
+    (SCRATCH / "data" / "liquidity" / f"{np_['plan_key']}__hl_paf_match.json").write_text(json.dumps(m))
+    mtext = json.dumps(m)
+    if test_surfaces.ANY.search(mtext) or leaks(mtext):
+        _doc_bad.append(f"{np_['plan_key']} match: {test_surfaces.ANY.search(mtext)}")
+    for builder, label in ((tark_memo.build_memo, "memo"), (tark_packet.build_packet, "packet")):
+        path = builder("hl_paf", np_["plan_key"], out_dir=SCRATCH / "out")
+        text = docx_text(path)
+        test_surfaces.HITS["documents"].clear()
+        test_surfaces.scan(text, "documents", f"docx {path.name}")
+        if test_surfaces.HITS["documents"] or leaks(text):
+            _doc_bad.append(f"{np_['plan_key']} {label}: {test_surfaces.HITS['documents'][:2]}")
+        if np_["display_label"].lower() not in text.lower():
+            _doc_bad.append(f"{np_['plan_key']} {label}: the plan label is missing")
+check("intake: the liquidity match, the decision memo and the committee packet for an intake plan carry no forbidden "
+      "string and no sponsor token, and name the plan by its anonymized label", not _doc_bad, "; ".join(_doc_bad[:3]))
+check("intake: without the Schedule H totals the scenario has no verdict and says so, with them it has one",
+      json.loads((SCRATCH / "data" / "liquidity" / f"{newp['plan_key']}__hl_paf_match.json").read_text())["scenario_verdict"] is None
+      and json.loads((SCRATCH / "data" / "liquidity" / f"{newp2['plan_key']}__hl_paf_match.json").read_text())["scenario_verdict"] is not None)
+out2.unlink()
 out.unlink()
 
 # ---------------- the service: one endpoint, honest refusals, no job state

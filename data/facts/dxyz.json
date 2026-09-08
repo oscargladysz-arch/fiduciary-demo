@@ -106,6 +106,12 @@
       "source_cell": "2.4",
       "status": "extracted-unverified"
     },
+    "filed_since_inception_return_pct": {
+      "value": null,
+      "source_cell": "1.2",
+      "reason": "since-inception annualized return not typed from cell 1.2 in this round",
+      "status": "extracted-unverified"
+    },
     "repurchase_program_status": {
       "value": null,
       "source_cell": "3.1",

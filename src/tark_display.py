@@ -10,6 +10,7 @@ so the site and the memo can never disagree on a headline.
 from __future__ import annotations
 
 import re
+from decimal import ROUND_HALF_UP, Decimal
 
 from tark_data import NOT_FETCHED_SENTENCE, status_kind  # noqa: F401 (re-exported)
 
@@ -57,12 +58,49 @@ def fmt_early(v: dict | None) -> str:
     return f"{rate} {v['window']}" if v.get("window") else rate
 
 
+def _fixed1(v: float) -> str:
+    """One decimal, an exact binary tie rounded up, the rule the site's
+    JavaScript toFixed applies, so the memo and the site print one figure."""
+    return str(Decimal(v).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
+
+
 def _money(x) -> str:
     if x >= 1e9:
-        return f"${x / 1e9:.1f}B"
+        return f"${_fixed1(x / 1e9)}B"
     if x >= 1e6:
-        return f"${x / 1e6:.1f}M"
+        return f"${_fixed1(x / 1e6)}M"
     return f"${round(x):,}"
+
+
+def plan_demand_sentence(plan: dict) -> str | None:
+    """Cell 3.7 for one plan (R3-P2-11): the plan's own participant counts
+    and filed outflow proxy, from its record. One builder for the memo and
+    the site, so the two never drift. None when the plan carries no counts."""
+    part = plan.get("participants") or {}
+    wab = part.get("with_account_balances")
+    if not wab:
+        return None
+    sep = part.get("separated_deferred_vested") or 0
+    act = part.get("active_eoy") or 0
+    ret = part.get("retired_receiving") or 0
+    fo = ((plan.get("schedule_h") or {}).get("filed_outflow_proxy") or {})
+    tail = f"{sep:,.0f} separated participants with balances = {sep / wab * 100:.1f}% of {wab:,.0f} accounts"
+    return (f"Plan-side demand profile for this plan (Form 5500, plan year {plan.get('plan_year', 'on file')}): "
+            f"{tail} (the near-term liquidity tail), {act:,.0f} active, {ret:,.0f} retirees in pay status"
+            + (f", filed outflow proxy {fo['value']:g}% of beginning net assets (Schedule H totals)."
+               if fo.get("value") is not None else "."))
+
+
+def reconciliation_sentence(filed_pct: float, note: str, comp: dict) -> str:
+    """The filed since-inception return beside the held series' annualized
+    return, with why the two differ (R3-P2-17d). Neither is restated and
+    the comparison uses the series. One builder for the cells, the memo
+    and the site."""
+    return (f"Reconciliation: the filed since-inception annualized return is {filed_pct:g}% "
+            f"({note}, cell 1.2) and the held series annualizes to {comp['fund_ann_pct']}%/yr over "
+            f"{comp['window']}. The two differ by end date, by the adjusted-close reinvestment "
+            "convention against the fund's own total-return calculation, and by share class. "
+            "Neither is restated and the comparison uses the series.")
 
 
 def facts_by_cell(facts: dict) -> dict[str, dict]:
@@ -102,6 +140,14 @@ def typed_headline(cid: str, fx: dict) -> str | None:
     if cid == "2.7" and "early_repurchase" in fx:
         return "early repurchase fee: " + fmt_early(g("early_repurchase"))
     if cid == "3.1":
+        # the program status precedes the cadence (R3-P2-7): a suspended
+        # plan's cadence is not a dealing term a holder can use
+        if g("repurchase_program_status") == "suspended":
+            since = fx["repurchase_program_status"].get("since")
+            dc = g("dealing_cadence")
+            return ("repurchases suspended" + (f" since the {since}" if since else "")
+                    + (f", the {dc} plan is closed to ordinary requests" if dc in ("daily", "monthly", "quarterly")
+                       else ", the plan is closed to ordinary requests"))
         # dealing cadence and cap period are two facts (R2-P0-5): jll_ipt deals
         # daily under a quarterly cap, breit has a monthly and a quarterly cap
         parts = []

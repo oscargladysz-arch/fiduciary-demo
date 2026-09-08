@@ -11,7 +11,7 @@
     "Capacity: 5% per quarter on outstanding shares: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed.",
     "Filed outflow proxy (Schedule H, plan year 2024-01-01 to 2024-12-31): 11.7% of the position per year vs 20% annual wrapper capacity, the plan's total expenses less administrative expenses over beginning net assets, applied to the position. Adequate headroom at the filed rate if offers are not prorated.",
     "Slider assumption (illustrative): 10.4% of the position per year vs 20% annual wrapper capacity, from tail turnover 20%/yr on the 36.1% of accounts that are separated and active turnover 5%/yr on the rest. Shown beside the filed rate, not blended with it. Within 60% of wrapper capacity at these sliders.",
-    "Scenario verdict (ILLUSTRATIVE, this plan): conditional-weak. Misaligned when the filed outflow proxy exceeds the annual wrapper capacity, conditional-weak when the stressed demand exceeds it, conditional otherwise. It moves with the plan's filing and the sliders. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
+    "Scenario verdict (ILLUSTRATIVE, this plan): conditional-weak. Stress rung: the filed outflow proxy 11.7% of the position per year stays within the annual wrapper capacity 20% and the stressed demand 20.5% exceeds it (binding cap 5% per quarter on outstanding shares (3.1), quarterly offers (3.1), program active as of 2025-07-31 (3.1), gating history not typed (3.3)). Per quarter: filed 2.9% and stressed 5.1% of the position against the 5% cap. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
     "Schedule H benefit-payment line 2e is not yet in the plan record. The filed outflow proxy (total expenses less administrative expenses over beginning net assets) stands in for it as the base demand, and the turnover sliders are the stress around it."
   ],
   "reasons": [
@@ -20,7 +20,7 @@
     "Capacity: 5% per quarter on outstanding shares: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed.",
     "Filed outflow proxy (Schedule H, plan year 2024-01-01 to 2024-12-31): 11.7% of the position per year vs 20% annual wrapper capacity, the plan's total expenses less administrative expenses over beginning net assets, applied to the position. Adequate headroom at the filed rate if offers are not prorated.",
     "Slider assumption (illustrative): 10.4% of the position per year vs 20% annual wrapper capacity, from tail turnover 20%/yr on the 36.1% of accounts that are separated and active turnover 5%/yr on the rest. Shown beside the filed rate, not blended with it. Within 60% of wrapper capacity at these sliders.",
-    "Scenario verdict (ILLUSTRATIVE, this plan): conditional-weak. Misaligned when the filed outflow proxy exceeds the annual wrapper capacity, conditional-weak when the stressed demand exceeds it, conditional otherwise. It moves with the plan's filing and the sliders. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
+    "Scenario verdict (ILLUSTRATIVE, this plan): conditional-weak. Stress rung: the filed outflow proxy 11.7% of the position per year stays within the annual wrapper capacity 20% and the stressed demand 20.5% exceeds it (binding cap 5% per quarter on outstanding shares (3.1), quarterly offers (3.1), program active as of 2025-07-31 (3.1), gating history not typed (3.3)). Per quarter: filed 2.9% and stressed 5.1% of the position against the 5% cap. Proration assumption: an oversubscribed offer is filled pro rata and the unfilled remainder waits for the next window.",
     "Schedule H benefit-payment line 2e is not yet in the plan record. The filed outflow proxy (total expenses less administrative expenses over beginning net assets) stands in for it as the base demand, and the turnover sliders are the stress around it."
   ],
   "missing_facts": [
@@ -73,14 +73,13 @@
     "cap_base": "outstanding shares",
     "exchange": false,
     "gate_history": null,
-    "program_status": null,
+    "program_status": "active",
     "early_fee": "none at fund level (2.7)",
     "net_assets_usd": null,
     "net_assets_cell": "3.6",
     "net_assets_approx": false,
     "null_reasons": {
       "gate_history": "no gating, suspension or postponement is disclosed, but the tendered-versus-accepted amounts are not printed: the Sep-2024 offer was fully utilized at its cap with proration, if any, not stated (R2-P1-12 rule)",
-      "repurchase_program_status": "no suspension language in 3.1 or 3.3 as of 2025-07-31",
       "net_assets_usd": "aggregate net assets not yet carried into a typed cell. Verification-queue item"
     },
     "source_cell": "2.7, 3.1, 3.3, 6.1",
@@ -89,9 +88,26 @@
       "3.1",
       "3.3"
     ],
+    "program_status_as_of": "2025-07-31",
     "annual_capacity_pct": 20.0,
     "dealing_label": "quarterly offers, 5% cap per quarter on outstanding shares",
-    "caps_label": "5% per quarter, 20% per year"
+    "caps_label": "5% per quarter, 20% per year",
+    "scenario_inputs": {
+      "binding_cap": {
+        "pct": 5.0,
+        "period": "quarter"
+      },
+      "cap_base": "outstanding shares",
+      "dealing_cadence": "quarterly",
+      "cadence_per_year": 4,
+      "program_status": "active",
+      "program_status_as_of": "2025-07-31",
+      "gate_history": null,
+      "source_cells": [
+        "3.1",
+        "3.3"
+      ]
+    }
   },
   "scenario": {
     "allocation_pct_of_plan": 5.0,
@@ -110,7 +126,41 @@
     "fund_capacity": {
       "available": false,
       "reason": "the fund's net assets are not typed in the record (aggregate net assets not yet carried into a typed cell. Verification-queue item), so the plan's dollar demand cannot be set against the fund's dollar capacity and the allocation slider is not shown"
-    }
+    },
+    "drivers": {
+      "rung": "stress",
+      "compared": {
+        "filed_pct": 11.69,
+        "stressed_pct": 20.502988281249998,
+        "capacity_pct": 20.0
+      },
+      "binding_cap": {
+        "pct": 5.0,
+        "period": "quarter"
+      },
+      "cap_base": "outstanding shares",
+      "dealing_cadence": "quarterly",
+      "cadence_per_year": 4,
+      "program_status": "active",
+      "program_status_as_of": "2025-07-31",
+      "gate_history": null,
+      "source_cells": [
+        "3.1",
+        "3.3"
+      ],
+      "window": {
+        "period": "quarter",
+        "windows_per_year": 4,
+        "cap_per_window_pct": 5.0,
+        "filed_per_window_pct": 2.9225,
+        "stressed_per_window_pct": 5.125747070312499
+      },
+      "sentence": "Stress rung: the filed outflow proxy 11.7% of the position per year stays within the annual wrapper capacity 20% and the stressed demand 20.5% exceeds it (binding cap 5% per quarter on outstanding shares (3.1), quarterly offers (3.1), program active as of 2025-07-31 (3.1), gating history not typed (3.3)). Per quarter: filed 2.9% and stressed 5.1% of the position against the 5% cap."
+    },
+    "capacity_note": "5% per quarter on outstanding shares: at most 20% of the position per year. This is a FUND-level cap shared by every holder, so the plan's position is served only while offers are not oversubscribed",
+    "schedule_h_lines": [
+      "Schedule H benefit-payment line 2e is not yet in the plan record. The filed outflow proxy (total expenses less administrative expenses over beginning net assets) stands in for it as the base demand, and the turnover sliders are the stress around it."
+    ]
   },
   "plan_inputs": {
     "net_assets": 565838485.0,

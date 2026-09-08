@@ -33,7 +33,7 @@ from tark_data import (CELLS, DATA, EVIDENCE_COLUMNS, load_evidence,
 from tark_benchmark_common import (BY_DESCRIPTOR_SENTENCE, MIN_PRIMARY_SCORE, RUBRIC_MAX,
                                    STRATEGY_GATE_MIN, TIE_SENTENCE, x_of_n)
 from tark_display import (COMPUTED_WRITER_LABEL, RUBRIC_LABEL, WRAPPER_LABEL, cohort_label,
-                          lane_label)
+                          lane_label, reconciliation_sentence)
 
 
 def _fund_short(key: str) -> str:
@@ -182,6 +182,18 @@ def _ratio_sentence(label: str, cand: str, c: dict) -> str:
             f"source: {c['fund_return_source']}. {c['not_pme_note']} Alignment: {c['alignment_note'].rstrip('.')}.")
 
 
+def _reconciliation(key: str, c: dict) -> str | None:
+    """The filed since-inception return beside the series figure, when the
+    fact is typed and the comparison is a series comparison (R3-P2-17d)."""
+    fp = DATA / "facts" / f"{key}.json"
+    if not fp.exists() or c.get("kind") != "series":
+        return None
+    f = (json.loads(fp.read_text()).get("facts") or {}).get("filed_since_inception_return_pct") or {}
+    if f.get("value") is None:
+        return None
+    return reconciliation_sentence(f["value"], f.get("note", ""), c)
+
+
 def cell_1_8(key: str) -> dict | None:
     """Risk-adjusted metrics: Slot K's comparison named for its comparator,
     the reference comparison when Slot K has no number, and every Lane A
@@ -202,6 +214,8 @@ def cell_1_8(key: str) -> dict | None:
         c = s.get("comparison")
         if c and c["kind"] == "series":
             parts.append(_series_sentence(f"{sk['label']},", s["candidate"], c))
+            if _reconciliation(key, c):
+                parts.append(_reconciliation(key, c))
         elif c:
             parts.append(_ratio_sentence(f"{sk['label']},", s["candidate"], c))
         elif s.get("by_descriptor"):
@@ -334,6 +348,8 @@ def cell_5_5(key: str) -> dict | None:
         parts.append(f"KS-PME {c['ks_pme']} = fund growth / proxy growth. Direct Alpha "
                      f"{_signed(c['direct_alpha_pct'])}%/yr is the annualized form of the same two flows "
                      f"(fund {c['fund_ann_pct']}%/yr vs proxy {c['index_ann_pct']}%/yr).")
+        if lab == "meaningful benchmark" and _reconciliation(key, c):
+            parts.append(_reconciliation(key, c))
         if c.get("ks_pme_monthly_schedule") is not None:
             parts.append(f"ILLUSTRATIVE monthly-schedule KS-PME {c['ks_pme_monthly_schedule']} "
                          f"({c['schedule_contributions']} equal contributions at the window start and each "

@@ -23,6 +23,7 @@ import argparse
 import json
 import re
 import sys
+from datetime import date
 from pathlib import Path
 
 from tark_anon import leaks
@@ -35,7 +36,7 @@ from tark_data import DATA, load_plan, validate_plan
 SPONSOR_HINT = re.compile(r"\b(inc|llc|l\.l\.c|corp|corporation|ltd|limited|lp|l\.p|plc|holdings)\b\.?"
                           r"|\b\d{2}-\d{7}\b", re.I)
 ANON_RULE = ("Sponsor name never appears on demo surfaces. The plan entered the record through "
-             "src/plan_intake.py under an anonymized label and no identity block is stored.")
+             "plan intake under an anonymized label and no identity block is stored.")
 NUMERIC = ("net_assets_eoy", "net_assets_boy", "tot_admin_expenses", "with_account_balances",
            "active_eoy", "separated_deferred_vested", "retired_receiving")
 
@@ -111,9 +112,13 @@ def scaffold(form: dict) -> dict:
 
     ref = load_plan("plan_tech_media")
     plan_year = str(form.get("plan_year") or "")
+    # provenance a reader can meet (R3-P2-10): the publisher, the date the
+    # figures were entered (the form's date, else today: an intake is an
+    # action on a day, not a build output) and one note with no path in it
+    pulled = str(form.get("pulled") or date.today().isoformat())
     source = {"publisher": str(form.get("publisher") or "advisor intake (Form 5500 and Schedule H of the plan)"),
-              "pulled": str(form.get("pulled") or ""),
-              "note": "entered through src/plan_intake.py, figures as the advisor supplied them"}
+              "pulled": pulled,
+              "note": f"plan intake, {pulled}, figures as the advisor supplied them"}
     # the filed outflow proxy (R2-P1-10) is the scenario layer's base demand:
     # computed here only from the three totals the advisor supplied, else
     # null with the reason, never a default

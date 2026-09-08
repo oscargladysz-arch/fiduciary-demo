@@ -101,10 +101,18 @@
       "source_cell": "2.4",
       "status": "extracted-unverified"
     },
+    "filed_since_inception_return_pct": {
+      "value": 9.34,
+      "source_cell": "1.2",
+      "note": "average annual total return since inception on 6/5/2019 to 3/31/2026 as printed in the N-CSR",
+      "status": "extracted-unverified"
+    },
     "repurchase_program_status": {
-      "value": null,
+      "value": "active",
       "source_cell": "3.1",
-      "reason": "no suspension language in 3.1 or 3.3 as of 2026-03-31",
+      "as_of": "2026-03-31",
+      "evidence_phrase": "Rule 23c-3 periodic repurchase offer: up to five percent (5%) of outstanding shares, quarterly",
+      "note": "offers being made per cell 3.1, no suspension language in 3.1 or 3.3 as of 2026-03-31",
       "status": "extracted-unverified"
     },
     "dealing_cadence": {

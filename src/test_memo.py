@@ -55,7 +55,7 @@ check("liquidity match section is plan-specific (consulting memo carries the thi
 import re  # noqa: E402
 from tark_data import status_kind  # noqa: E402
 from tark_display import display_path_free, facts_by_cell, typed_headline  # noqa: E402
-from tark_memo import EVIDENCED, first_sentence  # noqa: E402
+from tark_memo import EVIDENCED, cell_title, first_sentence  # noqa: E402
 import json  # noqa: E402
 
 def squash(t):
@@ -205,6 +205,28 @@ for k in prods:
                     acc_missing.append(f"{k} {cid} {a}")
     not_on_record += t.count("accession not on record")
 check("provenance: the coverage headline from the one formula is in every memo", not cov_missing)
+# R3-P2-17a: the provenance counts the same set the headline counts as resolved
+_t_sreit = squash(memo_text("plan_tech_media", "sreit"))
+_cov_sreit = coverage_summary("sreit")
+check("provenance: the resolved count in the prose is the headline's resolved count and the soft cells are named as "
+      "not resolved (sreit)",
+      f"of the {_cov_sreit['resolved']} resolved cells (structured, extracted-unverified, verified and computed)" in _t_sreit
+      and f"{_cov_sreit['soft']} cells are partial or fetched and are not counted as resolved" in _t_sreit
+      and "of the 41 evidenced cells" not in _t_sreit)
+# R3-P2-17b: a committee cell that is n/a for the product is not called open
+_na_bad = []
+for k in prods:
+    t = squash(memo_text("plan_tech_media", k))
+    for cid in ("2.8", "3.5", "4.9"):
+        st = str(prods[k]["cells"][cid].get("status", ""))
+        if status_kind(st) == "n/a" and f"{cid} {cell_title(cid).lower()} (open)" in t:
+            _na_bad.append(f"{k} {cid}")
+        if status_kind(st) == "n/a" and f"{cid} {cell_title(cid).lower()} (not applicable" not in t:
+            _na_bad.append(f"{k} {cid} missing")
+check("recommendation: a committee cell the record marks n/a for the product is listed as not applicable with the "
+      "reason, never as open", not _na_bad)
+if _na_bad:
+    print("   n/a committee cells called open:", "; ".join(_na_bad[:4]))
 check("provenance: the verified sentence is never written while verified is 0", not false_verified)
 check("provenance: every resolved accession and URL for an evidenced cell is in the memo", not acc_missing)
 if acc_missing:

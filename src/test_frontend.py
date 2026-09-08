@@ -548,6 +548,44 @@ with sync_playwright() as pw:
     t = view_text("liquidity", product="sreit")
     check("liquidity sreit: MISALIGNED on the suspended program, capacity 0%",
           "MISALIGNED" in t and "suspended" in t and "0%" in t and "far inside" not in t)
+    check("liquidity sreit: the fund's net assets are typed from cell 3.4 and printed as approximate",
+          "approx. $8.3B (3.4)" in t)
+    # R3-P2-7 (b): the program status precedes the cadence on every surface
+    t = view_text("screener")
+    check("screener: sreit's dealing column reads suspended, not monthly",
+          "suspended" in page.locator('tr[data-key="sreit"]').first.inner_text()
+          and "monthly" not in page.locator('tr[data-key="sreit"]').first.inner_text())
+    t = view_text("evaluation", product="sreit")
+    check("evaluation sreit: the cell 3.1 headline reads suspended before any cadence word",
+          "repurchases suspended since the April 29, 2026 amendment" in t)
+    # R3-P2-11: cell 3.7 shows the selected plan's own demand sentence
+    t_tech = view_text("evaluation", plan="plan_tech_media", product="hl_paf")
+    s_tech = page.locator('[data-plan-cell="3.7"]').inner_text()
+    t_cons = view_text("evaluation", plan="plan_consulting_alumni", product="hl_paf")
+    s_cons = page.locator('[data-plan-cell="3.7"]').inner_text()
+    check("evaluation: cell 3.7 leads with the selected plan's own demand sentence and it changes with the plan",
+          s_tech == bundle["plans"]["plan_tech_media"]["demand_sentence"]
+          and s_cons == bundle["plans"]["plan_consulting_alumni"]["demand_sentence"] and s_tech != s_cons
+          and s_tech in t_tech and s_tech not in t_cons)
+    # R3-P2-8: the rollup tiles count on the record's one arithmetic
+    t = view_text("evaluation", product="sreit")
+    roll = bundle["factor_rollups"]["sreit"]
+    check("evaluation: the factor rollups count evidenced as T1 plus T2 plus T3, name the soft cells, and sum to the "
+          "coverage headline's resolved count",
+          sum(r["evidenced"] + r["computed"] for r in roll.values()) == bundle["evidence_counts"]["sreit"]["resolved"]
+          and sum(r["soft"] for r in roll.values()) == bundle["evidence_counts"]["sreit"]["soft"]
+          and any(f"{r['soft']} partial" in t for r in roll.values() if r["soft"]))
+    check("coverage: resolved is structured plus extracted plus verified plus computed for every product, and the "
+          "headline prints the four counts side by side with the signed count last",
+          all(c["resolved"] == c["structured"] + c["extracted"] + c["verified"] + c["computed"]
+              and c["headline"].endswith(f"{c['verified']} verified by a person")
+              and f"{c['evidenced']} evidenced, {c['computed']} computed, {c['soft']} partial, {c['na']} n/a" in c["headline"]
+              for c in bundle["evidence_counts"].values()))
+    # R3-P2-17d: the filed since-inception return beside the series figure
+    t = view_text("benchmarks", product="cliffwater_cclfx")
+    check("cclfx card: the reconciliation names the filed 9.34% since inception and the series' 7.89%/yr with why they differ",
+          page.locator("[data-reconciliation]").count() == 1 and "9.34%" in t and "7.89%/yr" in t
+          and "differ by end date" in t and bundle["reconciliation"]["cliffwater_cclfx"] in t)
     t = view_text("liquidity", product="breit")
     check("liquidity breit: CONDITIONAL-WEAK on gating precedent",
           "CONDITIONAL-WEAK" in t and "prorated" in t)
@@ -655,12 +693,12 @@ with sync_playwright() as pw:
     check("liquidity: the allocation slider exists exactly where the fund's dollar capacity is computable, with the "
           "dollar figures printed, and one sentence explains its absence elsewhere", not alloc_bad, "; ".join(alloc_bad[:4]))
     view_text("liquidity", plan="plan_tech_media", product="hl_paf")
-    fund0 = page.locator("#o_fund").inner_text()
+    fund0 = page.locator('[data-bullet="fund"]').inner_text()
     pct0 = (page.locator("#o_filed").inner_text(), page.locator("#o_slider").inner_text(),
             page.locator("#o_stressed").inner_text(), page.locator("#o_verdict").inner_text())
     page.evaluate("""() => { const s = document.getElementById('s_alloc');
         s.value = '10'; s.dispatchEvent(new Event('input')); }""")
-    fund1 = page.locator("#o_fund").inner_text()
+    fund1 = page.locator('[data-bullet="fund"]').inner_text()
     pct1 = (page.locator("#o_filed").inner_text(), page.locator("#o_slider").inner_text(),
             page.locator("#o_stressed").inner_text(), page.locator("#o_verdict").inner_text())
     check("liquidity hl_paf: moving the allocation slider changes the plan's dollar demand and share of the fund's "
@@ -762,6 +800,40 @@ with sync_playwright() as pw:
     }""")
     check(f"parity: JS scenario verdict matches all {len(bundle_liq)} bundled matches",
           not vmism, "; ".join(vmism[:4]))
+    # R3-P1-10 and R3-P2-7: at the default sliders the bullets the view
+    # rebuilds live and the drivers line are the record's own sentences,
+    # word for word, for every bundled match
+    smism = page.evaluate("""() => {
+      const T = window.TARK, L = window.TarkLiquidity, out = [];
+      for (const [k, m] of Object.entries(T.liquidity)) {
+        const sc = L.computeScenario(m.plan_inputs, m.wrapper_facts, m.scenario, m.stressed_scenario.multiples);
+        const v = L.scenarioVerdict(sc, sc._stressed_exact, m.wrapper_facts.exchange);
+        const d = L.scenarioDrivers(sc, sc._stressed_exact, m.wrapper_facts, v);
+        if (d.sentence !== m.scenario.drivers.sentence || d.rung !== m.scenario.drivers.rung) out.push(`${k}: drivers`);
+        const bullets = L.scenarioBullets(m, sc, m.scenario, m.wrapper_facts, v).map((b) => b.text);
+        if (JSON.stringify(bullets) !== JSON.stringify(m.scenario_reasons)) {
+          const i = bullets.findIndex((b, j) => b !== m.scenario_reasons[j]);
+          out.push(`${k}: bullet ${i}: ${String(bullets[i]).slice(0, 80)} | ${String(m.scenario_reasons[i]).slice(0, 80)}`);
+        }
+      }
+      return out;
+    }""")
+    check(f"parity: at the default sliders the live bullets and the drivers line equal the record's sentences for all "
+          f"{len(bundle_liq)} matches, word for word", not smism, "; ".join(smism[:3]))
+    view_text("liquidity", plan="plan_consulting_alumni", product="hl_paf")
+    drv0 = page.locator("[data-drivers]").inner_text()
+    verdict_bullet0 = page.locator('[data-bullet="verdict"]').inner_text()
+    page.evaluate("""() => { const s = document.getElementById('s_tail');
+        s.value = '45'; s.dispatchEvent(new Event('input')); }""")
+    drv1 = page.locator("[data-drivers]").inner_text()
+    verdict_bullet1 = page.locator('[data-bullet="verdict"]').inner_text()
+    check("liquidity: the drivers line and the verdict bullet move with the sliders from the one live state (hl_paf under "
+          "the consulting plan: no rung at the defaults, the stress rung at tail turnover 45)",
+          "No rung fired" in drv0 and "Stress rung" in drv1 and "No rung fired" in verdict_bullet0
+          and "Stress rung" in verdict_bullet1 and "conditional-weak" in verdict_bullet1
+          and page.locator("#o_verdict").inner_text() == "CONDITIONAL-WEAK", f"{drv0[:60]} -> {drv1[:60]}")
+    check("liquidity: the program status row prints the typed status and the date it was read at",
+          "active as of 2026-03-31 (3.1)" in page.locator("#view").inner_text())
     check("scenario verdict varies with the plan for at least one product (bundled)",
           any(bundle_liq[f"plan_tech_media__{pr}"]["scenario_verdict"]
               != bundle_liq[f"plan_consulting_alumni__{pr}"]["scenario_verdict"] for pr in PRODUCTS))

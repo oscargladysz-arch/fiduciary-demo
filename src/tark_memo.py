@@ -34,7 +34,7 @@ from tark_data import (ADVISOR_COMPLETED, ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_C
                        load_products, plan_keys, record_as_of, rule_ref, status_kind)
 from tark_benchmark_common import BY_DESCRIPTOR_SENTENCE, TIE_SENTENCE, x_of_n
 from tark_display import (WRAPPER_LABEL, _money as money, display_path_free, facts_by_cell,
-                          typed_headline)
+                          plan_demand_sentence, reconciliation_sentence, typed_headline)
 
 SITE_MEMOS = Path(__file__).resolve().parents[1] / "site" / "memos"
 
@@ -141,7 +141,9 @@ def _liquidity_section(doc: Document, m: dict | None, fdoc: dict, plan: dict, he
              None if wf.get("annual_capacity_pct") is None else f"{wf['annual_capacity_pct']:g}% of the position per year"),
             ("Gating history", "gate_history",
              None if wf.get("gate_history") is None else ("yes, prorated under stress" if wf["gate_history"] else "none identified in the filings on record")),
-            ("Repurchase program status", "repurchase_program_status", wf.get("program_status")),
+            ("Repurchase program status", "repurchase_program_status",
+             None if wf.get("program_status") is None
+             else wf["program_status"] + (f" as of {wf['program_status_as_of']}" if wf.get("program_status_as_of") else "")),
             ("Early repurchase fee", "early_repurchase", wf.get("early_fee")),
             ("Fund net assets (for the dollar capacity)", "net_assets_usd",
              None if wf.get("net_assets_usd") is None
@@ -270,8 +272,20 @@ def _advisor_section(doc: Document, key: str, plan_key: str, plan: dict) -> dict
     return entries
 
 
+def committee_cell_state(cid: str, product: dict, stated: dict) -> str:
+    """stated, not applicable with the record's reason, or open (R3-P2-17b)."""
+    if cid in stated:
+        return "stated"
+    st = str((product.get("cells", {}).get(cid) or {}).get("status", ""))
+    if status_kind(st) == "n/a":
+        reason = st.split(":", 1)[1].strip() if ":" in st else st[3:].strip(" -")
+        return "not applicable" + (f": {reason.rstrip('.')}" if reason else "")
+    return "open"
+
+
 def _recommendation_section(doc: Document, sel: dict | None, m: dict | None,
-                            fdoc: dict, plan: dict, stated: dict | None = None) -> None:
+                            fdoc: dict, plan: dict, stated: dict | None = None,
+                            product: dict | None = None) -> None:
     doc.add_heading("Recommendation", level=1)
     if m:
         doc.add_paragraph(
@@ -299,7 +313,7 @@ def _recommendation_section(doc: Document, sel: dict | None, m: dict | None,
     doc.add_paragraph(
         "This memo does not decide. The fiduciary makes the decision on this record. "
         "The committee-completed cells stay the committee's to complete for its own plan "
-        "before it does: " + ", ".join(f"{c} {cell_title(c)} ({'stated' if c in stated else 'open'})"
+        "before it does: " + ", ".join(f"{c} {cell_title(c)} ({committee_cell_state(c, product or {}, stated)})"
                                        for c in COMMITTEE_CELLS) + ".")
 
 
@@ -343,6 +357,7 @@ def _case_law_section(doc: Document, product: dict) -> None:
                           + " This memo makes no case-law statement beyond that cell.")
 
 
+RESOLVED_KINDS = ("structured", "extracted", "verified", "computed")
 KIND_ORDER = (("structured", "structured"), ("extracted", "extracted-unverified"),
               ("verified", "verified"), ("computed", "computed"), ("partial", "partial"),
               ("fetched", "fetched"), ("na", "n/a"), ("pending", "pending"))
@@ -374,16 +389,22 @@ def _provenance_section(doc: Document, key: str, product: dict, plan: dict) -> N
         "Cell status for this product, from the record's one coverage formula: "
         + ", ".join(f"{label} {cov[k]}" for k, label in KIND_ORDER)
         + f". {cov['headline']}.")
+    # the same set the coverage headline counts as resolved (R3-P2-17a):
+    # structured, extracted, verified and computed. Partial and fetched cells
+    # are soft and are said to be so, never folded into either count
     ev = [(cid, c) for cid, c in product["cells"].items()
-          if status_kind(c.get("status", "")) in EVIDENCED and (c.get("value") or "").strip()]
+          if status_kind(c.get("status", "")) in RESOLVED_KINDS]
     n = len(ev)
+    assert n == cov["resolved"], (n, cov["resolved"])
     have = {f: sum(1 for _, c in ev if (c.get(f) or "").strip())
             for f in ("source", "section", "quote", "extracted_by")}
     doc.add_paragraph(
-        f"Of the {n} evidenced cells, {have['source']} carry a source document, "
+        f"Of the {n} resolved cells (structured, extracted-unverified, verified and computed), "
+        f"{have['source']} carry a source document, "
         f"{have['section']} a section, {have['quote']} a verbatim quote (computed cells "
         f"carry their computation and inputs instead of a quote) and {have['extracted_by']} "
-        "an extractor. "
+        f"an extractor. {cov['soft']} cells are partial or fetched and are not counted as "
+        "resolved. "
         + ("Verified cells have been independently re-checked by a person."
            if cov["verified"] > 0 else
            "No cell is verified: no cell has been independently re-checked by a person, "
@@ -461,12 +482,16 @@ def _peer_line(sel: dict) -> str:
     return "Peer comparison (paragraphs (g) and (h)): no cohort on record."
 
 
-def _comparison_paragraphs(doc: Document, comp: dict, comparator: str) -> None:
+def _comparison_paragraphs(doc: Document, comp: dict, comparator: str,
+                           fdoc: dict | None = None) -> None:
     """The comparison named for its comparator (rule 12): KS-PME and Direct
     Alpha against a public market series, a relative wealth ratio against
     an appraisal-based comparator, each with its window and fund source."""
     lc = (f" {comp['low_confidence'][0].upper()}{comp['low_confidence'][1:]}."
           if comp.get("low_confidence") else "")
+    filed = ((fdoc or {}).get("facts") or {}).get("filed_since_inception_return_pct") or {}
+    if comp.get("kind") == "series" and filed.get("value") is not None:
+        lc += " " + reconciliation_sentence(filed["value"], filed.get("note", ""), comp)
     if comp.get("kind") == "series":
         doc.add_paragraph(
             f"Window {comp['window']}"
@@ -497,7 +522,7 @@ def _comparison_paragraphs(doc: Document, comp: dict, comparator: str) -> None:
             "over the same periods.")
 
 
-def _benchmark_section(doc: Document, sel: dict) -> None:
+def _benchmark_section(doc: Document, sel: dict, fdoc: dict | None = None) -> None:
     """Slot K, the reference comparison, the Lane A record, Slot G with its
     table, then the ledger (decision 7.1)."""
     sk = sel["slot_k"]
@@ -516,7 +541,7 @@ def _benchmark_section(doc: Document, sel: dict) -> None:
         doc.add_heading(f"{sk['label']}: {s['candidate']} (score {x_of_n(s['score'], s['max'])})", level=2)
         comp = s.get("comparison")
         if comp:
-            _comparison_paragraphs(doc, comp, "the benchmark")
+            _comparison_paragraphs(doc, comp, "the benchmark", fdoc)
         elif s.get("by_descriptor"):
             doc.add_paragraph(f"{BY_DESCRIPTOR_SENTENCE} The candidate is selected on its own descriptors. "
                               "No number is substituted.")
@@ -615,13 +640,9 @@ def plan_findings(plan: dict, m: dict | None) -> dict[str, str]:
     sep = part.get("separated_deferred_vested")
     act = part.get("active_eoy")
     ret = part.get("retired_receiving")
-    fo = ((plan.get("schedule_h") or {}).get("filed_outflow_proxy") or {})
+    del sep, act, ret
     if wab:
-        tail = f"{sep:,.0f} separated participants with balances = {sep / wab * 100:.1f}% of {wab:,.0f} accounts"
-        out["3.7"] = (f"Plan-side demand profile for this plan (Form 5500, plan year {plan.get('plan_year', 'on file')}): "
-                      f"{tail} (the near-term liquidity tail), {act:,.0f} active, {ret:,.0f} retirees in pay status"
-                      + (f", filed outflow proxy {fo['value']:g}% of beginning net assets (Schedule H totals)."
-                         if fo.get("value") is not None else "."))
+        out["3.7"] = plan_demand_sentence(plan)
     if m:
         ss = m.get("stressed_scenario") or {}
         sc = m.get("scenario") or {}
@@ -714,7 +735,7 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
         doc.add_paragraph("Engine profile pending for this product: "
                           "extraction depth required before selection.")
     else:
-        _benchmark_section(doc, sel)
+        _benchmark_section(doc, sel, fdoc)
 
     # ---- product-to-plan liquidity match for THIS plan ----
     mp = DATA / "liquidity" / f"{plan_key}__{key}_match.json"
@@ -751,7 +772,7 @@ def build_memo(key: str, plan_key: str, out_dir: Path | None = None) -> Path:
                 "argued judgment, not a tag.")
 
     stated = _advisor_section(doc, key, plan_key, anchor)
-    _recommendation_section(doc, sel, m, fdoc, anchor, stated)
+    _recommendation_section(doc, sel, m, fdoc, anchor, stated, p)
     _scope_section(doc)
     _case_law_section(doc, p)
 

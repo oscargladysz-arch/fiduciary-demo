@@ -481,8 +481,10 @@ MAPPING = {
         "big4": F(True, "4.5"),
         "expense_ratio_pct": null("no TER line exists for this '34-Act "
                                   "wrapper. Components in 2.1/2.2/2.6", "2.3"),
-        "net_assets_usd": null("aggregate NAV not yet carried into a typed "
-                               "cell. Verification-queue item", "1.1"),
+        "net_assets_usd": F(8250000000, "3.4", approx=True,
+                            note="NAV $8.25B at December 31, 2025 as printed in the liquidity "
+                                 "discussion of cell 3.4 (10-K FY2025), before the 2026 "
+                                 "repurchases recorded in cell 3.3"),
         "inception": F("2017-12-27", "1.11", note="IPO commencement"),
     },
     "jll_ipt": {
@@ -684,21 +686,65 @@ for _k, _b in EXPENSE_BASIS.items():
     assert MAPPING[_k]["expense_ratio_pct"]["value"] is not None, _k
     MAPPING[_k]["expense_ratio_pct"]["basis"] = _b
 
-# repurchase_program_status (P1-17): "suspended" only where cell 3.1 or 3.3
-# carries suspension language. Everything else is null with the reason, so
-# nothing is ever "active" by default.
+# filed since-inception annualized return (R3-P2-17d): typed only where cell
+# 1.2 prints one and the number was read here, so the reconciliation against
+# the held series prints a cited figure beside the series figure. Null with
+# the reason elsewhere in this round.
+FILED_SI_RETURN = {
+    "cliffwater_cclfx": (9.34, "average annual total return since inception on 6/5/2019 "
+                               "to 3/31/2026 as printed in the N-CSR"),
+}
 for _key, _m in MAPPING.items():
-    if _key == "sreit":
+    if _key in FILED_SI_RETURN:
+        _v, _n = FILED_SI_RETURN[_key]
+        _m["filed_since_inception_return_pct"] = F(_v, "1.2", note=_n)
+    else:
+        _m["filed_since_inception_return_pct"] = null(
+            "since-inception annualized return not typed from cell 1.2 in this round", "1.2")
+
+# repurchase_program_status (P1-17, retyped R3-P2-7): one row per product, and
+# a product missing from the table fails the build, so nothing is "active" by
+# default. "active" is typed only from a verbatim run of cell 3.1's words that
+# show offers being made or requests being taken at the record's as-of date,
+# with no suspension language in 3.1 or 3.3. "suspended" carries the
+# amendment it dates from. An exchange-listed wrapper has no repurchase
+# program and stays null with that reason. Row: (status, the words of cell
+# 3.1 behind it, or the null reason).
+PROGRAM_STATUS = {
+    "hl_paf": ("active", "Most recent: up to 5.00% of net assets"),
+    "cliffwater_cclfx": ("active", "Rule 23c-3 periodic repurchase offer: up to five percent "
+                                   "(5%) of outstanding shares, quarterly"),
+    "kkr_kpec": ("active", "Quarterly share repurchase plan: limited to 5.0% of aggregate NAV"),
+    "breit": ("active", "Repurchase caps: 2% of aggregate NAV per MONTH, 5% per QUARTER"),
+    "bcred": ("active", "Current SC TO-I (2026-08-04): up to 90,421,330 shares"),
+    "pflex": ("active", "currently expects 5% per quarter"),
+    "ocic": ("active", "quarterly issuer tender offers at the current net offering price per class"),
+    "cion_ares": ("active", "Quarterly repurchases occur in March, June, September and December"),
+    "ares_pmf": ("active", "Live offer (SC TO-I filed 2026-06-01)"),
+    "amg_pantheon": ("active", "the live Aug-2026 offer is sized at approx. 5% of Units outstanding"),
+    "jll_ipt": ("active", "stockholders may request repurchase of all or part of their shares any day"),
+    "arkvx": ("active", "every actual offer to date has been, the 5% minimum"),
+    "stepstone_spm": ("active", "Quarterly tender offers: up to 5% of OUTSTANDING SHARES"),
+    "sreit": ("suspended", "we suspended our share repurchase program"),
+    "dxyz": (None, "exchange-listed, no repurchase program"),
+    "ssss": (None, "exchange-listed, no repurchase program"),
+}
+assert set(PROGRAM_STATUS) == set(MAPPING), sorted(set(PROGRAM_STATUS) ^ set(MAPPING))
+for _key, (_status, _words) in PROGRAM_STATUS.items():
+    _m = MAPPING[_key]
+    if _status is None:
+        _m["repurchase_program_status"] = null(_words, "3.1")
+    elif _status == "suspended":
         _m["repurchase_program_status"] = F(
-            "suspended", "3.1", since="April 29, 2026 amendment",
+            "suspended", "3.1", since="April 29, 2026 amendment", as_of=AS_OF[_key],
             note="April 29, 2026 amendment: 'no repurchase requests will be accepted' "
                  "except death, qualifying disability and accounts below $5,000",
-            evidence_phrase="we suspended our share repurchase program")
-    elif _m["wrapper_type"]["value"] in ("listed_cef", "listed_bdc"):
-        _m["repurchase_program_status"] = null("exchange-listed, no repurchase program", "3.1")
+            evidence_phrase=_words)
     else:
-        _m["repurchase_program_status"] = null(
-            f"no suspension language in 3.1 or 3.3 as of {AS_OF[_key]}", "3.1")
+        _m["repurchase_program_status"] = F(
+            "active", "3.1", as_of=AS_OF[_key], evidence_phrase=_words,
+            note=f"offers being made per cell 3.1, no suspension language in 3.1 or 3.3 "
+                 f"as of {AS_OF[_key]}")
 
 # Dealing cadence and repurchase caps (R2-P0-5), typed from cell 3.1's own
 # words. The dealing cadence is how often a holder can deal (daily, monthly,

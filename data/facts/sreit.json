@@ -89,9 +89,10 @@
       "status": "n/a - not publicly available: no TER disclosure exists for a '34-Act non-traded REIT - zero hits for 'expense ratio' in the stripped FY2025 10-K and Q2-2026 10-Q; fee-burden components evidenced in 2.1/2.2/2.6/2.7"
     },
     "net_assets_usd": {
-      "value": null,
-      "source_cell": "1.1",
-      "reason": "aggregate NAV not yet carried into a typed cell. Verification-queue item",
+      "value": 8250000000,
+      "source_cell": "3.4",
+      "approx": true,
+      "note": "NAV $8.25B at December 31, 2025 as printed in the liquidity discussion of cell 3.4 (10-K FY2025), before the 2026 repurchases recorded in cell 3.3",
       "status": "extracted-unverified"
     },
     "inception": {
@@ -108,10 +109,17 @@
       "note": "10-K REIT, no 1940-Act fee table, so no AFFE line exists",
       "status": "extracted-unverified"
     },
+    "filed_since_inception_return_pct": {
+      "value": null,
+      "source_cell": "1.2",
+      "reason": "since-inception annualized return not typed from cell 1.2 in this round",
+      "status": "extracted-unverified"
+    },
     "repurchase_program_status": {
       "value": "suspended",
       "source_cell": "3.1",
       "since": "April 29, 2026 amendment",
+      "as_of": "2025-12-31",
       "note": "April 29, 2026 amendment: 'no repurchase requests will be accepted' except death, qualifying disability and accounts below $5,000",
       "evidence_phrase": "we suspended our share repurchase program",
       "status": "extracted-unverified"

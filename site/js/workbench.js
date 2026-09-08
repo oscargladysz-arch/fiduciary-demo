@@ -13,6 +13,13 @@ export function fact(key, field) {
   return T.facts[key]?.[field] ?? { value: null, reason: "field unmapped" };
 }
 
+/* the program status precedes the cadence (R3-P2-7): a suspended plan's
+ * cadence is not a dealing term a holder can use */
+function dealingFact(k) {
+  const f = fact(k, "dealing_cadence");
+  return fact(k, "repurchase_program_status").value === "suspended" ? { ...f, value: "suspended" } : f;
+}
+
 function shortName(key) {
   return T.products[key].fund_name.split(" (")[0]
     .replace("Blackstone Real Estate Income Trust", "BREIT")
@@ -61,7 +68,7 @@ const COLS = [
     if (f.value === null) return factCell(k, f);
     return factCell(k, { ...f, value: fmtEarly(f.value) });
   }],
-  ["cadence", "Dealing", (k) => factCell(k, fact(k, "dealing_cadence"), esc)],
+  ["cadence", "Dealing", (k) => factCell(k, dealingFact(k), esc)],
   ["cap", "Cap", (k) => factCell(k, fact(k, "repurchase_cap_pct"),
       (v) => v + "%")],
   ["gate", "Gate history", (k) => factCell(k, fact(k, "gate_history"),
@@ -193,7 +200,7 @@ export function viewScreener(root, state, setState) {
       <thead><tr><th>Product</th>
         ${visCols.map(([id, label]) => `<th class="${SORT_VAL[id] ? "sortable" : ""}" data-sort="${id}">${esc(label)}${F.sort === id ? (F.dir === "desc" ? " ↓" : " ↑") : ""}</th>`).join("")}
       </tr></thead>
-      <tbody>${rows.map((k) => `<tr>
+      <tbody>${rows.map((k) => `<tr data-key="${esc(k)}">
         <td><a href="#" data-goto-prod="${k}" style="font-weight:600">${esc(shortName(k))}</a></td>
         ${visCols.map(([, , render]) => render(k, state)).join("")}
       </tr>`).join("")}</tbody></table></div>
@@ -306,7 +313,7 @@ export function viewCompare(root, state, setState) {
   };
 
   const body = CMP_ROWS.map(([label, field, fmt, trap]) => {
-    const vals = keys.map((k) => fact(k, field));
+    const vals = keys.map((k) => field === "dealing_cadence" ? dealingFact(k) : fact(k, field));
     const cls = diffClass(vals, trap);
     return `<tr><td style="font-weight:600">${gloss(label)}</td>
       ${keys.map((k, i) => {

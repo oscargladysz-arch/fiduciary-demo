@@ -71,9 +71,9 @@ DEALING_NOUN = {"daily": "daily repurchase requests", "monthly": "monthly repurc
 SCHEDULE_H_ABSENT = SCHEDULE_H_ABSENT_SENTENCE
 PRORATION = ("Proration assumption: an oversubscribed offer is filled pro rata and the "
              "unfilled remainder waits for the next window.")
-LADDER = ("Misaligned when the filed outflow proxy exceeds the annual wrapper capacity, "
-          "conditional-weak when the stressed demand exceeds it, conditional otherwise. "
-          "It moves with the plan's filing and the sliders.")
+# the rung of the ILLUSTRATIVE ladder each scenario verdict names (R3-P2-7)
+RUNG_OF = {"misaligned": "base", "conditional-weak": "stress", "conditional": "none",
+           "aligned-mechanical": "exchange", None: "not_computable"}
 
 
 def load_facts(key: str) -> dict:
@@ -226,11 +226,30 @@ def wrapper_facts(key: str) -> dict:
                          if n in fx and fx[n].get("value") is None and fx[n].get("reason")},
         "source_cell": ", ".join(sorted({fx[n]["source_cell"] for n in names})),
         "cells_read": sorted({fx[n]["source_cell"] for n in LIQUIDITY_FACTS}),
+        # the date the program status was read at (R3-P2-7)
+        "program_status_as_of": fx["repurchase_program_status"].get("as_of"),
     }
     wf["annual_capacity_pct"] = capacity_from_facts(wf)[0]
     wf["dealing_label"] = dealing_label(wf, fx["repurchase_program_status"].get("since"))
     wf["caps_label"] = caps_label(wf)
+    wf["scenario_inputs"] = scenario_inputs(wf)
     return wf
+
+
+def scenario_inputs(wf: dict) -> dict:
+    """The plan-independent product facts the scenario ladder reads, as one
+    typed record (R3-P2-7): the cap that binds and its base, the dealing
+    cadence, the program status with the date it was read at, and the gating
+    history, from cells 3.1 and 3.3."""
+    _, cap = binding_cap(wf.get("caps"))
+    return {"binding_cap": cap,
+            "cap_base": wf.get("cap_base"),
+            "dealing_cadence": wf.get("dealing_cadence"),
+            "cadence_per_year": wf.get("cadence_per_year"),
+            "program_status": wf.get("program_status"),
+            "program_status_as_of": wf.get("program_status_as_of"),
+            "gate_history": wf.get("gate_history"),
+            "source_cells": ["3.1", "3.3"]}
 
 
 def citations(key: str, wf: dict, plan_key: str, plan: dict,
@@ -339,6 +358,93 @@ def scenario_verdict(filed_pct: float | None, stressed_pct: float | None,
     if stressed_pct > capacity_pct:
         return "conditional-weak"
     return "conditional"
+
+
+def _driver_facts(d: dict) -> str:
+    """The product facts behind the capacity, each with its cell."""
+    cap = d.get("binding_cap")
+    parts = []
+    if d.get("program_status") == "suspended":
+        parts.append("repurchases suspended (3.1)")
+    elif cap:
+        parts.append(f"binding cap {cap['pct']:g}% per {cap['period']} on {d.get('cap_base')} (3.1)")
+        dc = d.get("dealing_cadence")
+        if dc in DEALING_NOUN:
+            parts.append(f"{DEALING_NOUN[dc]} (3.1)")
+    else:
+        parts.append("repurchase cap not typed (3.1)")
+    ps = d.get("program_status")
+    if ps == "active":
+        parts.append("program active"
+                     + (f" as of {d['program_status_as_of']}" if d.get("program_status_as_of") else "")
+                     + " (3.1)")
+    elif ps is None:
+        parts.append("program status not typed (3.1)")
+    gh = d.get("gate_history")
+    parts.append("prorated under stress before (3.3)" if gh
+                 else "no proration identified (3.3)" if gh is False
+                 else "gating history not typed (3.3)")
+    return ", ".join(parts)
+
+
+def drivers_sentence(d: dict) -> str:
+    """One sentence naming the rung that fired and the product facts the
+    ladder read, printed in the verdict bullet, on the card and in the memo.
+    The per-window figures restate the annual test over the binding cap's
+    own window (the binding annual figure is that cap times its windows per
+    year), so they explain the rung and never change it."""
+    c = d["compared"]
+    if d["rung"] == "exchange":
+        return ("No rung: the wrapper is exchange-listed, so both rates are selling rates "
+                "against market depth and no fund cap applies (3.1).")
+    facts = _driver_facts(d)
+    cap_pct = c["capacity_pct"]
+    if d["rung"] == "not_computable":
+        why = ("the plan record carries no filed outflow proxy" if c["filed_pct"] is None
+               else "the annual wrapper capacity is not computable")
+        return f"No rung fired: {why} ({facts})."
+    if d["rung"] == "base":
+        head = (f"Base rung: the filed outflow proxy {c['filed_pct']:.1f}% of the position per year "
+                f"exceeds the annual wrapper capacity {cap_pct:.0f}%")
+    elif d["rung"] == "stress":
+        head = (f"Stress rung: the filed outflow proxy {c['filed_pct']:.1f}% of the position per year "
+                f"stays within the annual wrapper capacity {cap_pct:.0f}% and the stressed demand "
+                f"{c['stressed_pct']:.1f}% exceeds it")
+    else:
+        head = (f"No rung fired: the filed outflow proxy {c['filed_pct']:.1f}% and the stressed demand "
+                f"{c['stressed_pct']:.1f}% of the position per year both stay within the annual "
+                f"wrapper capacity {cap_pct:.0f}%")
+    w = d.get("window")
+    per = ""
+    if w:
+        per = (f" Per {w['period']}: filed {w['filed_per_window_pct']:.1f}% and stressed "
+               f"{w['stressed_per_window_pct']:.1f}% of the position against the "
+               f"{w['cap_per_window_pct']:g}% cap.")
+    return f"{head} ({facts}).{per}"
+
+
+def scenario_drivers(filed_pct: float | None, stressed_pct: float | None,
+                     capacity_pct: float | None, wf: dict, verdict: str | None) -> dict:
+    """The typed record of what the ladder read for one plan and product and
+    which rung fired (R3-P2-7): the two demand figures and the capacity, the
+    product facts behind the capacity (wrapper_facts.scenario_inputs) and the
+    same test per dealing window, plus the sentence that prints them."""
+    si = wf.get("scenario_inputs") or scenario_inputs(wf)
+    cap = si.get("binding_cap")
+    rung = "exchange" if wf["exchange"] else RUNG_OF.get(verdict, "not_computable")
+    window = None
+    if cap and not wf["exchange"] and capacity_pct and filed_pct is not None and stressed_pct is not None:
+        n = PERIODS_PER_YEAR[cap["period"]]
+        window = {"period": cap["period"], "windows_per_year": n,
+                  "cap_per_window_pct": cap["pct"],
+                  "filed_per_window_pct": filed_pct / n,
+                  "stressed_per_window_pct": stressed_pct / n}
+    d = {"rung": rung,
+         "compared": {"filed_pct": filed_pct, "stressed_pct": stressed_pct,
+                      "capacity_pct": capacity_pct},
+         **si, "window": window}
+    d["sentence"] = drivers_sentence(d)
+    return d
 
 
 def fund_capacity(wf: dict, alloc_usd: float, filed_rate: float | None,
@@ -502,6 +608,7 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
     # ---- layer 2: ILLUSTRATIVE scenario, per plan ----
     capacity, capacity_note = capacity_from_facts(wf)
     scv = scenario_verdict(filed_rate, stressed_pct, capacity, wf["exchange"])
+    drivers = scenario_drivers(filed_rate, stressed_pct, capacity, wf, scv)
     fc = fund_capacity(wf, alloc, filed_rate, capacity)
     scenario_reasons = [f"Capacity: {capacity_note}."]
     filed_words = ("the plan's total expenses less administrative expenses over beginning "
@@ -575,12 +682,10 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
                 "demand_pct_of_position": None if stressed_pct is None else round(stressed_pct, 1),
                 "annual_wrapper_capacity_pct": capacity,
                 "outcome": outcome}
-    if scv and not wf["exchange"]:
+    if not wf["exchange"]:
         scenario_reasons.append(
-            f"Scenario verdict (ILLUSTRATIVE, this plan): {scv}. {LADDER} {PRORATION}")
-    elif not wf["exchange"]:
-        scenario_reasons.append(
-            f"Scenario verdict (ILLUSTRATIVE, this plan): not computable. {LADDER} {PRORATION}")
+            f"Scenario verdict (ILLUSTRATIVE, this plan): {scv or 'not computable'}. "
+            f"{drivers['sentence']} {PRORATION}")
     sh_scenario, sh_structural = schedule_h_lines(a)
     if not wf["exchange"]:
         scenario_reasons.extend(sh_scenario)
@@ -615,7 +720,14 @@ def run_match(key: str, plan_key: str = ANCHOR_PLAN_KEY,
                      "demand_pct_of_position": filed_rate,
                      "annual_demand_usd": None if filed_demand is None else round(filed_demand),
                      "annual_wrapper_capacity_pct": capacity,
-                     "fund_capacity": fc},
+                     "fund_capacity": fc,
+                     # what fired and what it read (R3-P2-7), and the two
+                     # slider-independent pieces of the bullets, typed, so
+                     # the view rebuilds every bullet from one live state
+                     # (R3-P1-10) and the sentences stay the record's
+                     "drivers": drivers,
+                     "capacity_note": capacity_note,
+                     "schedule_h_lines": [] if wf["exchange"] else sh_scenario},
         "plan_inputs": {"net_assets": net,
                         "tail_share_pct": round(tail_share * 100, 1),
                         # the unrounded share, so the JavaScript port reproduces

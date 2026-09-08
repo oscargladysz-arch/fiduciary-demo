@@ -82,9 +82,23 @@
       "3.1",
       "3.3"
     ],
+    "program_status_as_of": null,
     "annual_capacity_pct": null,
     "dealing_label": "daily on-exchange dealing, no fund-level cap (3.1)",
-    "caps_label": "no fund-level cap, capacity is market depth"
+    "caps_label": "no fund-level cap, capacity is market depth",
+    "scenario_inputs": {
+      "binding_cap": null,
+      "cap_base": "not typed",
+      "dealing_cadence": "exchange",
+      "cadence_per_year": 252,
+      "program_status": null,
+      "program_status_as_of": null,
+      "gate_history": false,
+      "source_cells": [
+        "3.1",
+        "3.3"
+      ]
+    }
   },
   "scenario": {
     "allocation_pct_of_plan": 5.0,
@@ -103,7 +117,30 @@
     "fund_capacity": {
       "available": false,
       "reason": "an exchange-listed wrapper has no fund-level repurchase capacity to share, exit is at the market price, so the allocation slider is not shown"
-    }
+    },
+    "drivers": {
+      "rung": "exchange",
+      "compared": {
+        "filed_pct": 6.5,
+        "stressed_pct": 19.17709469936255,
+        "capacity_pct": null
+      },
+      "binding_cap": null,
+      "cap_base": "not typed",
+      "dealing_cadence": "exchange",
+      "cadence_per_year": 252,
+      "program_status": null,
+      "program_status_as_of": null,
+      "gate_history": false,
+      "source_cells": [
+        "3.1",
+        "3.3"
+      ],
+      "window": null,
+      "sentence": "No rung: the wrapper is exchange-listed, so both rates are selling rates against market depth and no fund cap applies (3.1)."
+    },
+    "capacity_note": "daily on-exchange liquidity. Capacity is market depth, not a fund cap",
+    "schedule_h_lines": []
   },
   "plan_inputs": {
     "net_assets": 9810269680.0,

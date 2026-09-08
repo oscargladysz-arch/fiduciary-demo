@@ -88,14 +88,15 @@
     },
     "net_assets_usd": {
       "field": "net_assets_usd",
-      "n": 0,
-      "median": null,
-      "min": null,
-      "max": null,
-      "values": {},
+      "n": 1,
+      "median": 8250000000,
+      "min": 8250000000,
+      "max": 8250000000,
+      "values": {
+        "sreit": 8250000000
+      },
       "missing": {
         "breit": "aggregate NAV printed in the MD&A NAV-by-class table but not yet carried into a typed cell. Verification-queue item",
-        "sreit": "aggregate NAV not yet carried into a typed cell. Verification-queue item",
         "jll_ipt": "aggregate NAV not yet carried into a typed cell. Verification-queue item"
       }
     }

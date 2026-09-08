@@ -11,7 +11,7 @@ import { annVol, beta, calendarYearReturns, desmoothGeltner, directAlpha,
          lag1Autocorr, levelOn, monthlyScheduleFlows,
          monthEndPoints, periodReturns, rollingReturns,
          rollingVol } from "./analytics.js";
-import { computeScenario, scenarioReason, scenarioVerdict, stressedDemandPct } from "./liquidity.js";
+import { computeScenario, scenarioBullets, scenarioDrivers, scenarioVerdict, stressedDemandPct } from "./liquidity.js";
 import { lineChart, barChart, donut } from "./charts.js";
 
 const T = window.TARK;
@@ -407,7 +407,7 @@ export function viewEvaluation(root, state) {
     return `<a href="#f${n}" data-anchor="f${n}">
       <div class="fnum">${r.evidenced + r.computed}<span style="font-size:11px;color:var(--ink-3)">/${r.total - r.na}</span></div>
       <div class="fname">${n} · ${esc(label)}</div>
-      <div class="fmeta">${r.evidenced} evidenced · ${r.computed} computed${r.na ? ` · ${r.na} n/a` : ""}</div>
+      <div class="fmeta">${r.evidenced} evidenced · ${r.computed} computed${r.soft ? ` · ${r.soft} partial` : ""}${r.na ? ` · ${r.na} n/a` : ""}</div>
     </a>`;
   }).join("");
 
@@ -425,7 +425,14 @@ export function viewEvaluation(root, state) {
         } else if (!cell.value) {
           body = `<div class="muted">pending: pointer in data/evidence/${esc(key)}_evidence.csv</div>`;
         } else {
-          body = `<div class="headline">${gloss(disp.headline)}</div>
+          // cell 3.7 is a property of the plan: the selected plan's own
+          // sentence leads, the product record's cell follows (R3-P2-11)
+          const planSentence = cid === "3.7" ? (T.plans[state.plan] || {}).demand_sentence : null;
+          const planBlock = planSentence
+            ? `<div class="headline" data-plan-cell="3.7">${esc(planSentence)}</div>
+               <div class="cap">Computed for ${esc(T.plans[state.plan].display_label)} from its own Form 5500
+               record, this plan. The product record's cell follows.</div>` : "";
+          body = `${planBlock}<div class="headline">${gloss(disp.headline)}</div>
             <div class="plain">${esc(disp.plain)}</div>
             <details class="src"><summary>Full text & provenance</summary>
               <div class="fulltext">${esc(cell.value)}</div></details>`;
@@ -678,11 +685,13 @@ export function viewBenchmarks(root, state, setState) {
     const lock = sel.record_hash
       ? `<div class="cap" data-lock style="margin-top:8px">Selection recorded ${esc(String(sel.recorded_at || "").slice(0, 10))},
           record <span class="num">${esc(String(sel.record_hash).slice(0, 8))}</span></div>` : "";
+    const recon = T.reconciliation[key]
+      ? `<div class="cap" data-reconciliation style="margin-top:8px">${esc(T.reconciliation[key])}</div>` : "";
     return `<div class="card" data-slot="k">${slotBadge(label)}
       <h3>${esc(picked.candidate)}</h3>
       <div class="num" style="font-size:15px;margin-top:2px">${numOr(picked.score)} of ${numOr(picked.max)}</div>
       <div class="scorebar"><div class="fill" style="width:${(picked.score / (picked.max || 1)) * 100}%"></div></div>
-      ${body}${ties}${lock}
+      ${body}${recon}${ties}${lock}
       <details style="margin-top:10px"><summary class="cap" style="cursor:pointer">Scoring rationale</summary>
         <ul style="margin:8px 0 0 18px; font-size:12.5px">
           ${(picked.reasons || []).map((r) => `<li>${esc(r)}</li>`).join("")}</ul></details>
@@ -1163,9 +1172,9 @@ export function viewLiquidity(root, state) {
         sliders are the stress around it. Misaligned when the filed rate exceeds the annual
         capacity, conditional-weak when the stressed demand exceeds it, conditional otherwise.
         It moves with the plan's filing and the sliders. Proration assumption: an oversubscribed
-        offer is filled pro rata and the unfilled remainder waits for the next window.</div></div>
-    <ul style="margin:0 0 16px 18px; font-size:13.5px" id="screasons">
-      ${m.scenario_reasons.map((r) => `<li style="margin-bottom:6px">${esc(r)}</li>`).join("")}</ul>
+        offer is filled pro rata and the unfilled remainder waits for the next window.</div>
+      <div class="cap" data-drivers style="margin-top:6px">${esc(sc.drivers.sentence)}</div></div>
+    <ul style="margin:0 0 16px 18px; font-size:13.5px" id="screasons"></ul>
     <div class="cardgrid g2">
       <div class="card">
         <h3>Capacity vs demand <span class="chip illustrative">ILLUSTRATIVE</span></h3>
@@ -1184,7 +1193,6 @@ export function viewLiquidity(root, state) {
             value="${sc.active_annual_turnover_pct}"><span class="out" id="o_act"></span></div>
         <div id="capchart" style="margin-top:8px"></div>
         <div class="cap" id="o_reason" style="margin-top:6px"></div>
-        <div class="cap" id="o_fund" style="margin-top:6px"></div>
       </div>
       <div class="card"><h3>Wrapper facts</h3>
         <table class="grid" style="border:0;margin-top:8px">
@@ -1195,7 +1203,8 @@ export function viewLiquidity(root, state) {
           <tr><td>Exchange-listed</td><td class="num">${profile.exchange ? "yes" : "no"}</td></tr>
           <tr><td>Gating history</td><td class="num">${profile.gate_history === true ? "YES (3.3)"
             : profile.gate_history === false ? "none identified (3.3)" : `not typed: ${esc(profile.null_reasons.gate_history || "no reason recorded")}`}</td></tr>
-          <tr><td>Program status</td><td>${profile.program_status ? esc(profile.program_status) + " (3.1)"
+          <tr><td>Program status</td><td>${profile.program_status ? esc(profile.program_status)
+            + (profile.program_status_as_of ? ` as of ${esc(profile.program_status_as_of)}` : "") + " (3.1)"
             : esc(profile.null_reasons.repurchase_program_status || "not typed")}</td></tr>
           <tr><td>Early repurchase</td><td>${esc(profile.early_fee)}</td></tr>
           <tr><td>Fund net assets</td><td class="num">${profile.net_assets_usd == null
@@ -1320,6 +1329,12 @@ export function viewLiquidity(root, state) {
       ov.textContent = (liveVerdict || "not computable").toUpperCase();
       root.querySelector("#scenario_banner").className = `banner ${cls(liveVerdict)}`;
     }
+    // the bullets and the drivers line come from the same live state as
+    // the stress block (R3-P1-10, R3-P2-7): one figure, stated once
+    root.querySelector("[data-drivers]").textContent =
+      scenarioDrivers(out, out._stressed_exact, profile, liveVerdict).sentence;
+    root.querySelector("#screasons").innerHTML = scenarioBullets(m, out, params, profile, liveVerdict)
+      .map((b) => `<li style="margin-bottom:6px" data-bullet="${b.kind}">${esc(b.text)}</li>`).join("");
     const cap = out.annual_wrapper_capacity_pct;
     barChart(root.querySelector("#capchart"), {
       items: [
@@ -1346,17 +1361,8 @@ export function viewLiquidity(root, state) {
     ].filter(Boolean).join(", ");
     root.querySelector("#o_reason").innerHTML =
       `<span class="num">${money(out.plan_allocation_usd)}</span> position · ${dollars}. ` +
-      esc(profile.exchange ? "Exchange-listed: capacity is market depth, not a fund cap." : scenarioReason(out)) +
-      ` <b>[ILLUSTRATIVE]</b>`;
-    const fc = out.fund_capacity;
-    root.querySelector("#o_fund").innerHTML = !fc.available ? "" :
-      `Fund capacity in dollars: <span class="num">${money(fc.annual_capacity_usd)}</span> per year
-       (${cap.toFixed(0)}% of ${profile.net_assets_approx ? "approx. " : ""}${money(profile.net_assets_usd)}
-       net assets, cell ${esc(String(profile.net_assets_cell))}). At a ${params.allocation_pct_of_plan.toFixed(1)}%
-       allocation the plan's demand at the filed rate is <span class="num">${money(fc.plan_annual_demand_usd)}</span>
-       per year, <span class="num">${fc.plan_share_of_fund_capacity_pct.toFixed(2)}%</span> of that capacity,
-       a claim shared with every other holder. The allocation moves these dollar figures and this share,
-       never the percent-of-position ladder.`;
+      (profile.exchange ? "Exchange-listed: capacity is market depth, not a fund cap. " : "") +
+      `<b>[ILLUSTRATIVE]</b>`;
   }
   Object.values(els).filter(Boolean).forEach((e) => e.addEventListener("input", () => { update(); renderScenarios(); }));
   update();

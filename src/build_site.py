@@ -25,7 +25,8 @@ from tark_benchmark import MIN_PRIMARY_SCORE, PRODUCT_PROFILES
 from tark_benchmark_common import (BY_DESCRIPTOR_SENTENCE as _BY_DESCRIPTOR_SENTENCE, RUBRIC_MAX as _RUBRIC_MAX,
                                    STRATEGY_GATE_MIN as _STRATEGY_GATE_MIN, TIE_SENTENCE as _TIE_SENTENCE)
 from tark_display import (SLOT_LABELS, BASE_LABEL, CANDIDATE_SHORT, LANE_LABEL, RUBRIC_LABEL, STRATEGY_LABEL,
-                          WRAPPER_LABEL, cell_display, display_path_free, facts_by_cell)
+                          WRAPPER_LABEL, cell_display, display_path_free, facts_by_cell,
+                          plan_demand_sentence, reconciliation_sentence)
 from tark_memo import write_all
 from tark_packet import write_all_packets
 from tark_data import (ADVISOR_NOT_EVIDENCE, ADVISOR_STATED_CELLS, BASE, DATA, CELLS, FACTORS,
@@ -524,6 +525,8 @@ def main() -> None:
         # identity never ships, and the internal anonymization rule string is
         # not a surface sentence (R2-P0-3)
         pub = {kk: vv for kk, vv in p.items() if kk not in ("identity_private", "anonymization_rule")}
+        # cell 3.7 for this plan, one sentence shared with the memo (R3-P2-11)
+        pub["demand_sentence"] = plan_demand_sentence(p)
         plans_pub[k] = pub
 
     benchmarks = {}
@@ -591,6 +594,10 @@ def main() -> None:
     facts = {}
     for f in sorted((DATA / "facts").glob("*.json")):
         facts[f.stem] = json.loads(f.read_text())["facts"]
+        # the evidence phrase is the gate's input, not a view's: it stays in
+        # the record and off the first paint
+        for fact in facts[f.stem].values():
+            fact.pop("evidence_phrase", None)
     display = {}
     for k, p in products.items():
         fbc = facts_by_cell(facts.get(k, {}))
@@ -603,11 +610,13 @@ def main() -> None:
             cells = [c for cid, c in p["cells"].items()
                      if cid.split(".")[0] == n]
             kinds = [status_kind(str(c.get("status", "pending"))) for c in cells]
+            # the factor's counts on the record's one arithmetic (R3-P2-8):
+            # evidenced is T1 plus T2 plus T3, soft is partial plus fetched
             by[n] = {"label": label, "total": len(cells),
-                     "evidenced": sum(kind in ("extracted", "verified",
-                                               "partial", "fetched")
+                     "evidenced": sum(kind in ("structured", "extracted", "verified")
                                       for kind in kinds),
                      "computed": kinds.count("computed"),
+                     "soft": sum(kind in ("partial", "fetched") for kind in kinds),
                      "na": kinds.count("n/a")}
         rollups[k] = by
 
@@ -676,9 +685,19 @@ def main() -> None:
     descriptors = {k: {a: _reg[k].get(a) for a in ("wrapper_type", "pricing_class",
                                                     "nav_cadence", "leverage_regime")}
                    for k in products}
+    # the filed since-inception return beside the series figure, one sentence
+    # per product where the fact is typed and the selected slot is a series
+    # comparison (R3-P2-17d), the same sentence cells 1.8 and 5.5 carry
+    reconciliation = {}
+    for k, sel in benchmarks.items():
+        f = (facts.get(k) or {}).get("filed_since_inception_return_pct") or {}
+        comp = ((sel.get("slot_k") or {}).get("selected") or {}).get("comparison") or {}
+        if f.get("value") is not None and comp.get("kind") == "series":
+            reconciliation[k] = reconciliation_sentence(f["value"], f.get("note", ""), comp)
     bundle = {
         "generated": date.today().isoformat(),
         "facts": facts,
+        "reconciliation": reconciliation,
         # the rule record once, the mapping basis once, per cell only what differs
         # advisor-stated inputs per plan and product (P2-6), inputs not evidence
         "advisor": advisor_entries(),

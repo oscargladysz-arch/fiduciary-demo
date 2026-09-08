@@ -2235,3 +2235,110 @@ Reverse by: the checkpoint. Oscar's choices land as 8.21.
   commit that carries this decision.
 Reverse by: the rubric section of the methodology and the constants in
 `src/tark_benchmark_common.py`.
+
+### 8.29 R3-P2-7: the scenario ladder keeps three rungs, the record types what fired, and the program status is typed from the filings' own words (default, reversible)
+
+Decided by the cloud session on 2026-09-08 as a default. The round-2 ladder
+(misaligned when the filed outflow proxy exceeds the annual wrapper
+capacity, conditional-weak when the stressed demand exceeds it, conditional
+otherwise) read one product input, the scalar capacity, so the thirteen
+products with identical typed terms (5% per quarter, quarterly offers, no
+suspension) shared one verdict under any plan and the card could not say
+which product fact had fired.
+
+- The verdict vocabulary does not grow. Three rungs, the exchange case and
+  "not computable" stay the closed set the Screener filter, the colours, the
+  memo and the reconcile gate read. A product-specific verdict on identical
+  typed terms would be a verdict on nothing.
+- What changes is the record: `scenario.drivers` types the rung that fired,
+  the three figures compared, the cap that binds with its base, the dealing
+  cadence, the program status with the date it was read at, the gating
+  history and the same test per dealing window (filed and stressed demand
+  per quarter or month against the cap for that window). The per-window
+  figures restate the annual test, since the binding annual figure is the
+  smallest cap times its windows per year, so they explain the rung and
+  never change it, and the gate proves that. One sentence prints them in
+  the verdict bullet, on the card under the banner and in the memo.
+  `wrapper_facts.scenario_inputs` carries the plan-independent half once
+  per product.
+- The property the gate holds: perturbing one product's cap moves that
+  product's verdict and no other match (hl_paf at 10% per quarter drops from
+  the stress rung to none under the tech plan, the fifteen other matches are
+  byte for byte the record's).
+- `repurchase_program_status` is typed for every product that has a
+  program: "active" from a verbatim run of cell 3.1's words that show
+  offers being made or requests being taken (a live tender, a stated
+  cadence in operation), with the record's as-of date and no suspension
+  language in 3.1 or 3.3, "suspended" with the amendment it dates from, and
+  null with the reason only for the two exchange-listed wrappers. A product
+  missing from the table fails the build, so nothing is active by default.
+  This reverses the round-2 null-by-default (7.x: "never active") because a
+  null that a reader had to interpret as "probably open" was a judgment the
+  record was not making. The status is a lock input, so the thirteen record
+  hashes moved with it (cell 5.6, corrections rows under R3-P2-7).
+- The program status precedes the cadence on every surface: sreit reads
+  "repurchases suspended since the April 29, 2026 amendment" in its cell 3.1
+  headline, the Screener and Compare dealing columns, the liquidity view and
+  the memo, never "monthly".
+- The liquidity view rebuilds every scenario bullet and the drivers line
+  from the one live state the stress block reads (R3-P1-10): at the default
+  sliders the bullets equal the record's sentences word for word, and the
+  gate compares all 64. The slider-independent pieces (the capacity note,
+  the Schedule H lines) ride the match typed. The duplicate dollar block
+  under the chart is gone, the page states each figure once.
+Reverse by: `RUNG_OF` and `scenario_drivers` in `src/tark_liquidity.py`,
+`PROGRAM_STATUS` in `src/build_facts.py`.
+
+### 8.30 R3-P2-8 and R3-P2-17a: resolved is T1 plus T2 plus T3 plus computed, and the memo counts the same set (default, reversible)
+
+Decided by the cloud session on 2026-09-08 as a default. "685 of 685
+resolvable cells resolved" counted 75 partial and 16 fetched cells as
+resolved, and the memo's provenance paragraph counted a different set one
+paragraph below the headline.
+
+- `resolved` = structured + extracted + verified + computed. Partial and
+  fetched are `soft` and stay in the denominator unresolved. The record
+  reads 594 of 685.
+- The headline prints the four counts side by side, then the signed count:
+  "35 of 42 resolved: 24 evidenced, 11 computed, 7 partial, 13 n/a, 0
+  verified by a person". "Evidenced" is T1 plus T2 plus T3. The factor
+  rollups on the Evaluation view count the same way and name the soft
+  cells.
+- The memo's provenance paragraph counts source, section, quote and
+  extractor over the resolved set and says how many cells are partial or
+  fetched and not counted, so the two paragraphs agree by construction (the
+  writer asserts it).
+Reverse by: `coverage_summary` in `src/tark_data.py`.
+
+### 8.31 R3-P2-9, R3-P2-10, R3-P2-11, R3-P2-17b to d: four small rules (default, reversible)
+
+Decided by the cloud session on 2026-09-08 as defaults.
+
+- R3-P2-9: an accession in an evidence row must be a manifest row for that
+  product. The "written in its citation" escape is gone from the validator
+  (no row used it, decision 7.10 already said manifest only).
+- R3-P2-10: an intake plan's provenance reads "plan intake, <date>, figures
+  as the advisor supplied them" and `pulled` is the form's date, else the
+  day of the intake (an intake is an action on a day, not a build output, so
+  the wall clock is the fact). No path, no script name. The gate builds an
+  intake plan's shipped object, its liquidity match, its memo and its packet
+  in scratch and scans all four with the surfaces rules, with and without
+  the Schedule H totals.
+- R3-P2-11: cell 3.7 on the Evaluation view leads with the selected plan's
+  own demand sentence, built once in `tark_display.plan_demand_sentence` and
+  shared with the memo, shipped per plan in the first paint. The product
+  record's cell keeps holding no plan's counts.
+- R3-P2-17b: a committee cell the record marks n/a for the product is
+  listed as "not applicable: <reason>" in the recommendation, never as
+  "open". "Stated" still wins.
+- R3-P2-17c: sreit's net assets are typed approx from cell 3.4 (NAV $8.25B
+  at December 31, 2025, before the 2026 repurchases in 3.3). The capacity
+  stays 0% while the program is suspended, so the dollar capacity stays not
+  computable, and the reason now says why rather than "not typed".
+- R3-P2-17d: the filed since-inception return is a typed fact
+  (`filed_since_inception_return_pct`, 9.34% for cclfx from cell 1.2, null
+  with the reason for the other fifteen in this round) and one reconciliation
+  sentence, built once, prints in cells 1.8 and 5.5, on the card and in the
+  memo: the two figures, the window each covers, and the three reasons they
+  differ (end date, reinvestment convention, share class). Neither is
+  restated and the comparison uses the series.

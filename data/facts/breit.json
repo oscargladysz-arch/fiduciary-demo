@@ -108,10 +108,18 @@
       "note": "10-K REIT, no 1940-Act fee table, so no AFFE line exists",
       "status": "extracted-unverified"
     },
-    "repurchase_program_status": {
+    "filed_since_inception_return_pct": {
       "value": null,
+      "source_cell": "1.2",
+      "reason": "since-inception annualized return not typed from cell 1.2 in this round",
+      "status": "extracted-unverified"
+    },
+    "repurchase_program_status": {
+      "value": "active",
       "source_cell": "3.1",
-      "reason": "no suspension language in 3.1 or 3.3 as of 2025-12-31",
+      "as_of": "2025-12-31",
+      "evidence_phrase": "Repurchase caps: 2% of aggregate NAV per MONTH, 5% per QUARTER",
+      "note": "offers being made per cell 3.1, no suspension language in 3.1 or 3.3 as of 2025-12-31",
       "status": "extracted-unverified"
     },
     "dealing_cadence": {
