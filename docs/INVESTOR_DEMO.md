@@ -173,9 +173,13 @@ file as a named download and a copy button (decision 7.31).
   panel once, at 0:40.
 - Cell 5.7 (case law) is `partial` on all 16 products: docket listing and
   search snippets, not the source documents. The record labels it so.
-- The ingestion pipeline is tested offline with a mock client. Its
-  calibration run against an already-evaluated product (P2-3) and the 17th
-  product (P2-4) have not run yet. Do not describe either as done.
+- The ingestion pipeline is tested offline with a mock client (the
+  hardened loop of R3-P3-3: accounting, estimate, budget and time stops,
+  per-cell writes, retry, page retrieval, inline XBRL stripping, the PDF
+  splitter, exhibits, the library entry point). Its calibration run against
+  an already-evaluated product (R3-P3-4) and the 17th product (the proof
+  run, R3-P4-8) have not run yet. Do not describe either as done. The price
+  list the estimate uses is unconfirmed until the laptop session checks it.
 
 ## Fallback plan (in order)
 1. Pages URL fails: local `http.server` (step above, 10 seconds).
@@ -232,7 +236,12 @@ file as a named download and a copy button (decision 7.31).
 `python src/promote.py <cik> --key <key>`: R1 identity check against live
 EDGAR, 55-cell scaffold, census answers prefilled at status `structured`,
 extraction worklist printed. `python src/ingest.py <cik> --key <key>` runs
-promote, fetch and the structured extraction in one pass. Both need network
-and `TARK_SEC_CONTACT`, ingest also needs `ANTHROPIC_API_KEY`. Without
-network, narrate from the two shipped case studies (ocic, cion_ares) and the
-census panel's command.
+promote, fetch and the structured extraction in one pass: a cost estimate
+before the first call, refused over the budget (`TARK_BUDGET_USD`, 50 by
+default, decision 8.13), a stop at the budget or the wall-time limit with
+every finished cell kept, a write after every cell, one retry at reduced
+context, the cost line and the report in `data/ingest/`. `--dry-run DIR`
+runs against a copy of the record. Both need network and
+`TARK_SEC_CONTACT`, ingest also needs `ANTHROPIC_API_KEY`. Without network,
+narrate from the two shipped case studies (ocic, cion_ares) and the census
+panel's command.

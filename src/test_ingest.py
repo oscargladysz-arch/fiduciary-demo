@@ -7,7 +7,15 @@ a verbatim quote makes extracted-unverified, a quote the document does not
 contain downgrades to partial with the reason, not found leaves the cell
 pending, evidence and structured cells are never overwritten, nothing is
 ever verified, the JSON and the CSV agree, and the source string resolves
-through the offline citation resolver.
+through the offline citation resolver. Then the hardened loop (R3-P3-3):
+token and dollar accounting at a configured price list, the cost estimate
+before the first call, the progress callback, a write after every cell that
+survives an interrupt, one retry at reduced context, the time and cost stops,
+per-cell page retrieval under a small context cap, inline XBRL and hidden
+blocks stripped, the PDF splitter, exhibits on one accession, promote and the
+fetcher as library calls under the data root with a faked network, and
+run_product as the one entry the worker calls. The model client is always the
+mock in src/mock_model.py (decision 8.17).
 
 Run: python src/test_ingest.py   (exit 0 = all pass)
 """
@@ -17,6 +25,7 @@ import csv
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -47,19 +56,17 @@ def check(name, cond, detail=""):
 
 # ---------------- a synthetic fund: scaffold, one filing, one manifest row
 KEY, CIK = "zz_synthetic", "9999999"
-FILING = """<html><body>
-<div><b>PROSPECTUS</b></div>
-<p>The Fund pays the Adviser a management fee at an annual rate of 1.25% of the Fund&rsquo;s average daily Managed Assets.</p>
-<table><tr><td>Acquired Fund Fees and Expenses</td><td>0.42%</td></tr></table>
-<hr style="page-break-after:always">
-<p>The Fund does not charge an early repurchase fee.</p>
-<p>The Fund will make quarterly repurchase offers for 5% of its outstanding Shares.</p>
-<hr style="page-break-before: always">
-<p>Shareholders receive Form 1099-DIV. The Fund has elected to be treated as a RIC.</p>
-</body></html>"""
+from mock_model import (IXBRL_PATH, FILING_PATH, PDFTEXT_PATH, FakeClock, MockClient,  # noqa: E402
+                        canned_answers, context_error)
+FILING = FILING_PATH.read_text()
 raw_dir = SCRATCH / "data" / "raw" / KEY
 raw_dir.mkdir(parents=True)
 (raw_dir / "486BPOS_2026-05-01_synthetic.htm").write_text(FILING)
+# the price list for the mock model, in USD per million tokens: the run
+# refuses an unpriced model before any call (every dollar figure is an
+# estimate at this list)
+PRICES = {"input": 5.0, "output": 25.0, "cache_write": 6.25, "cache_read": 0.5}
+os.environ["TARK_PRICES_JSON"] = json.dumps({"mock-model": PRICES})
 row = {"product": KEY, "fund_name": "Synthetic Interval Fund", "cik": CIK, "doc_set": "prospectus",
        "form": "486BPOS", "filing_date": "2026-05-01", "accession": "0009999999-26-000001",
        "primary_document": "synthetic.htm",
@@ -107,48 +114,12 @@ check("contract: instructions carry no semicolon or em dash",
       and ";" not in ingest.SYSTEM)
 
 
-# ---------------- a mock client with canned answers, one deliberate lie
-CANNED = {
-    "2.1": CellExtraction(found=True,
-                          value="Management fee 1.25% per year on average daily Managed Assets (a leverage-inclusive base).",
-                          quote="management fee at an annual rate of 1.25% of the Fund's average daily Managed Assets",
-                          source_doc=doc.label, section="Management fee", not_found_reason=""),
-    "2.4": CellExtraction(found=True, value="AFFE line present at 0.42%.",
-                          quote="Acquired Fund Fees and Expenses 0.42%", source_doc=doc.label,
-                          section="fee table", not_found_reason=""),
-    "2.7": CellExtraction(found=True, value="No early repurchase fee.",
-                          quote="The Fund does not charge an early repurchase fee.", source_doc=doc.label,
-                          section="Repurchases", not_found_reason=""),
-    # the lie: a figure the document does not contain
-    "3.1": CellExtraction(found=True, value="Quarterly repurchase offers for 25% of outstanding Shares.",
-                          quote="quarterly repurchase offers for 25% of its outstanding Shares",
-                          source_doc=doc.label, section="Repurchases", not_found_reason=""),
-    "6.4": CellExtraction(found=True, value="Form 1099-DIV, RIC status.",
-                          quote="Shareholders receive Form 1099-DIV. The Fund has elected to be treated as a RIC.",
-                          source_doc="a document that is not on record", section="Taxes", not_found_reason=""),
-}
-calls = []
-
-
-class _Resp:
-    def __init__(self, parsed):
-        self.parsed_output = parsed
-        self.stop_reason = "end_turn"
-
-
-class _Messages:
-    def parse(self, **kw):
-        calls.append(kw)
-        cid = kw["messages"][0]["content"][1]["text"].split(",")[0].replace("Cell ", "")
-        return _Resp(CANNED.get(cid, CellExtraction(found=False, value="", quote="", source_doc="",
-                                                    section="", not_found_reason=f"no passage for {cid}")))
-
-
-class MockClient:
-    messages = _Messages()
-
-
-outcomes = run_extraction(MockClient(), KEY, [doc], model="mock-model", today="2026-09-04")
+# ---------------- the mock client: canned answers from the fixture, one deliberate lie
+answers, usage_by, default_usage = canned_answers(doc.label)
+client = MockClient(answers, usage_by, default_usage)
+calls = client.calls
+events = []
+outcomes = run_extraction(client, KEY, [doc], model="mock-model", today="2026-09-04", on_progress=events.append)
 by = {o.cid: o for o in outcomes}
 prod = load_product(KEY)
 
@@ -200,7 +171,8 @@ check("the scratch run never touched the repository's data",
 
 # ---------------- a second run is refused where a cell became evidence
 try:
-    run_extraction(MockClient(), KEY, [doc], only={"2.1"}, model="mock-model", today="2026-09-04")
+    run_extraction(MockClient(answers, usage_by, default_usage), KEY, [doc], only={"2.1"}, model="mock-model",
+                   today="2026-09-04")
     second_ok = True
 except SystemExit:
     second_ok = False
@@ -227,6 +199,382 @@ check("calibration: a pending cell scores as not located with no document compar
 summ = summarize(rows)
 check("calibration: the summary counts cells, located, partial and pending",
       summ["cells"] == 3 and summ["located"] == 1 and summ["partial"] == 1 and summ["pending"] == 1)
+
+
+# ---------------- R3-P3-3: the hardened loop, against the same mock
+from ingest import (ReaderMissing, Refusal, documents_for, dry_run_copy, filing_from_row,  # noqa: E402
+                    pdf_pages, run_product, split_form_feeds, usd_of)
+from promote import blank_cell as _blank  # noqa: E402
+from tark_data import validate_product  # noqa: E402
+
+_cell_of = client.messages.cell_of
+_exp_usd = sum(usd_of(usage_by.get(_cell_of(c)) or default_usage, PRICES) for c in calls)
+_exp_out = sum((usage_by.get(_cell_of(c)) or default_usage)["output_tokens"] for c in calls)
+check("accounting: the run's calls, tokens and dollars are the sum of what every response reported, at the price list",
+      outcomes.cost.calls == len(calls) and outcomes.cost.output_tokens == _exp_out
+      and abs(outcomes.cost.usd - _exp_usd) < 1e-9 and rep["cost"]["calls"] == len(calls)
+      and abs(rep["cost"]["usd"] - round(_exp_usd, 6)) < 1e-9 and rep["cost"]["model"] == "mock-model",
+      f"{outcomes.cost.as_dict()} vs {_exp_usd}")
+check("accounting: the per-cell rows carry tokens, dollars, seconds, attempts and the pages sent",
+      all({"tokens", "usd", "seconds", "attempts", "pages_sent"} <= set(o) for o in rep["outcomes"])
+      and by["2.1"].tokens == usage_by["2.1"] and abs(by["2.1"].usd - usd_of(usage_by["2.1"], PRICES)) < 1e-12
+      and by["2.1"].attempts == 1)
+check("estimate: computed before the first call from the client's own token count, labeled an estimate, in the report",
+      events[0]["event"] == "run_start" and events[0]["estimate"]["method"] == "count_tokens"
+      and events[0]["estimate"]["usd"] > 0 and "estimate" in events[0]["estimate"]["note"]
+      and rep["estimate"] == events[0]["estimate"] and client.count_calls >= 1
+      and events[0]["estimate"]["calls"] == len(calls), str(events[0].get("estimate")))
+_kinds = [e["event"] for e in events]
+check("progress: run_start, then cell_start and cell_done for every contract cell, then run_end, each with the documented keys",
+      _kinds[0] == "run_start" and _kinds[-1] == "run_end" and _kinds[1:-1] == ["cell_start", "cell_done"] * len(ex_cells)
+      and all({"cell", "index", "total", "elapsed_s", "usd_so_far"} <= set(e) for e in events if e["event"] == "cell_start")
+      and all({"cell", "status", "reason", "tokens", "usd", "seconds", "attempts", "usd_so_far"} <= set(e)
+              for e in events if e["event"] == "cell_done")
+      and events[-1]["cost"]["calls"] == len(calls) and events[-1]["stopped"] is None
+      and events[-1]["written"] == outcomes.written, str(_kinds[:4]))
+check("progress: a kept evidence cell is reported as kept, never sent",
+      any(e["event"] == "cell_done" and e["cell"] == "2.3" and e["reason"] == "kept: extracted cell" for e in events))
+_r = run_extraction(MockClient(answers, usage_by, default_usage), KEY, [doc], only={"1.1"}, model="mock-model",
+                    today="2026-09-04", on_progress=lambda e: 1 / 0)
+check("progress: a callback that raises is recorded in the report and never aborts the run",
+      _r.stopped is None and len(_r.callback_errors) == 4 and all("ZeroDivisionError" in x for x in _r.callback_errors)
+      and json.loads(_r.report_path.read_text())["callback_errors"] == _r.callback_errors)
+check("writes: no temporary file is left beside the product JSON, the ledger or the report",
+      not list((DATA / "products").glob("*.tmp")) and not list((DATA / "evidence").glob("*.tmp"))
+      and not list((DATA / "ingest").glob("*.tmp")))
+check("context: the whole corpus fits the cap, so every call carries one identical cached prefix and no page selection",
+      rep["context"]["whole_corpus"] and len({c["messages"][0]["content"][0]["text"] for c in calls}) == 1
+      and all(o["pages_sent"] == "all" for o in rep["outcomes"] if o["attempts"]))
+check("report: the progress block says the run finished, the stop is null, the documents carry kind, pages and accession",
+      rep["progress"] == {"done": len(ex_cells), "total": len(ex_cells), "final": True} and rep["stopped"] is None
+      and rep["documents"][0]["kind"] == "html" and rep["documents"][0]["pages"] == 3)
+try:
+    run_extraction(MockClient(answers, usage_by, default_usage), KEY, [doc], only={"1.1"}, model="unpriced-model")
+    unpriced = False
+except Refusal as e:
+    unpriced = "no price list for model unpriced-model" in str(e)
+check("prices: a model without a price list is refused before any call, with the override named", unpriced)
+
+
+def reset_cells(key, keep=("2.3", "4.5")):
+    """Every cell back to pending except the evidence ones, in the JSON and the ledger."""
+    pr = load_product(key)
+    for cid in pr["cells"]:
+        if cid not in keep:
+            pr["cells"][cid] = _blank(CELLS[cid])
+    (DATA / "products" / f"{key}.json").write_text(json.dumps(pr, indent=2))
+    rws = load_evidence(key)
+    for r_ in rws:
+        if r_["cell_id"] not in keep:
+            r_.update({"value": "", "source_doc": "", "source_section": "", "quote": "", "local_file": "",
+                       "accession": "", "date_pulled": "", "extracted_by": "", "verified_by": "",
+                       "status": "pending extraction"})
+    with open(DATA / "evidence" / f"{key}_evidence.csv", "w", newline="") as fh:
+        w_ = csv.DictWriter(fh, fieldnames=EVIDENCE_COLUMNS)
+        w_.writeheader()
+        w_.writerows(rws)
+
+
+# retry at reduced context, an error that is not retried, the loop kept
+reset_cells(KEY)
+c2 = MockClient(answers, usage_by, default_usage,
+                fail={"2.1": [context_error()], "2.4": [context_error(), context_error()],
+                      "2.7": [RuntimeError("connection dropped")]})
+out2 = run_extraction(c2, KEY, [doc], model="mock-model", today="2026-09-04")
+b2 = {o.cid: o for o in out2}
+_calls21 = [c for c in c2.calls if _cell_of(c) == "2.1"]
+check("retry: a request-too-large error is retried once at half the context with the pages ranked for the cell, and the cell is extracted",
+      b2["2.1"].status == "extracted-unverified" and b2["2.1"].attempts == 2 and b2["2.1"].pages_sent
+      and len(_calls21) == 2 and _calls21[0]["messages"][0]["content"][0]["text"] != _calls21[1]["messages"][0]["content"][0]["text"]
+      and load_product(KEY)["cells"]["2.1"]["status"] == "extracted-unverified", str(b2["2.1"]))
+check("retry: a second failure leaves the cell pending with the error named, and the loop goes on",
+      b2["2.4"].status == "pending extraction" and b2["2.4"].reason.startswith("extraction error: BadRequestError")
+      and b2["2.4"].attempts == 2 and b2["3.1"].status.startswith("partial"), b2["2.4"].reason)
+check("retry: any other error is recorded after one attempt, not retried, and the cell stays pending with nothing written",
+      b2["2.7"].status == "pending extraction" and b2["2.7"].reason == "extraction error: RuntimeError: connection dropped"
+      and b2["2.7"].attempts == 1 and load_product(KEY)["cells"]["2.7"]["status"] == "pending extraction"
+      and json.loads(out2.report_path.read_text())["outcomes"][ex_cells.index("2.7")]["reason"].startswith("extraction error"))
+
+# a write after every cell: an interrupt on cell 3.1 loses nothing before it
+reset_cells(KEY)
+c3 = MockClient(answers, usage_by, default_usage, fail={"3.1": [KeyboardInterrupt()]})
+try:
+    run_extraction(c3, KEY, [doc], model="mock-model", today="2026-09-04")
+    crashed = False
+except KeyboardInterrupt:
+    crashed = True
+p3 = load_product(KEY)
+rep3 = json.loads((DATA / "ingest" / f"{KEY}_report.json").read_text())
+ev3 = {r["cell_id"]: r for r in load_evidence(KEY)}
+check("writes after every cell: an interrupt on cell 3.1 leaves 2.1, 2.4 and 2.7 on disk in the JSON and the ledger, and the report says how far the run got",
+      crashed and p3["cells"]["2.1"]["status"] == "extracted-unverified" and p3["cells"]["2.7"]["status"] == "extracted-unverified"
+      and ev3["2.1"]["status"] == "extracted-unverified" and ev3["2.4"]["accession"] == "0009999999-26-000001"
+      and p3["cells"]["3.1"]["status"] == "pending extraction"
+      and rep3["progress"] == {"done": ex_cells.index("3.1"), "total": len(ex_cells), "final": False}
+      and rep3["cost"]["calls"] == len(c3.calls) - 1, str(rep3["progress"]))
+
+# the wall-time budget with a clock the mock advances
+reset_cells(KEY)
+clk = FakeClock()
+c4 = MockClient(answers, usage_by, default_usage, clock=clk, latency_s=10.0)
+out4 = run_extraction(c4, KEY, [doc], model="mock-model", today="2026-09-04", time_budget_s=25.0, clock=clk)
+_stopped4 = [o for o in out4 if o.reason.startswith("stopped: the wall-time budget of 25 s ran out after 3 calls")]
+check("time budget: with 10 s per call and a 25 s budget the run makes three calls, leaves the rest pending with the reason, and the report says time",
+      out4.cost.calls == 3 and out4.stopped["reason"] == "time" and out4.stopped["after_cells"] == 3
+      and len(_stopped4) == len(ex_cells) - 3 - 1 and out4.cost.wall_seconds == 30.0
+      and json.loads(out4.report_path.read_text())["stopped"]["reason"] == "time"
+      and all(o.status == "pending extraction" and o.record is None for o in _stopped4),
+      f"{out4.cost.calls} calls, {out4.stopped}, {len(_stopped4)} stopped")
+
+# the cost budget: the estimate passes, the first measured call does not
+reset_cells(KEY)
+big = {**default_usage, "output_tokens": 50_000}    # $1.25 per call at the list
+c5 = MockClient(answers, {}, big)
+out5 = run_extraction(c5, KEY, [doc], model="mock-model", today="2026-09-04", budget_usd=1.0)
+check("cost budget: the estimate is under the budget, the first call's reported cost is over it, so the run stops after one call and says budget",
+      out5.estimate["usd"] < 1.0 and out5.cost.calls == 1 and out5.stopped["reason"] == "budget"
+      and out5.stopped["after_cells"] == 1 and abs(out5.cost.usd - usd_of(big, PRICES)) < 1e-9
+      and sum(1 for o in out5 if o.reason.startswith("stopped: the running cost estimate reached the budget of $1.00")) == len(ex_cells) - 2,
+      f"estimate {out5.estimate['usd']}, calls {out5.cost.calls}, {out5.stopped}")
+reset_cells(KEY)
+c5b = MockClient(answers, usage_by, default_usage)
+out5b = run_extraction(c5b, KEY, [doc], model="mock-model", today="2026-09-04", budget_usd=1.0, spent_before_usd=0.5)
+check("cost budget: an estimate that, with what earlier runs spent, exceeds the budget is refused before any call, and the report says so",
+      c5b.calls == [] and out5b.stopped["reason"] == "estimate over budget" and out5b.cost.calls == 0
+      and all(o.reason.startswith("stopped: the cost estimate") for o in out5b if o.cid != "2.3")
+      and json.loads(out5b.report_path.read_text())["spent_before_usd"] == 0.5, str(out5b.stopped))
+
+# per-cell page retrieval under a small context cap
+reset_cells(KEY)
+c6 = MockClient(answers, usage_by, default_usage)
+out6 = run_extraction(c6, KEY, [doc], only={"3.1", "6.4"}, model="mock-model", today="2026-09-04", context_tokens=60)
+b6 = {o.cid: o for o in out6}
+_blk = {_cell_of(c): c["messages"][0]["content"][0]["text"] for c in c6.calls}
+check("retrieval: under a cap the corpus does not fit, each cell receives the pages its terms rank first, with the true page anchors",
+      b6["3.1"].pages_sent == {doc.label: [2]} and b6["6.4"].pages_sent == {doc.label: [3]}
+      and "quarterly repurchase offers" in _blk["3.1"] and "Form 1099-DIV" not in _blk["3.1"]
+      and "[page 2]" in _blk["3.1"] and "(pages 2 of 3)" in _blk["3.1"]
+      and "Form 1099-DIV" in _blk["6.4"] and "Managed Assets" not in _blk["6.4"]
+      and not json.loads(out6.report_path.read_text())["context"]["whole_corpus"]
+      and out6.estimate["whole_corpus"] is False,
+      f"{b6['3.1'].pages_sent} {b6['6.4'].pages_sent}")
+check("retrieval: the verify step still scans the whole document, so the lie in 3.1 is still caught on the pages that were not sent",
+      b6["3.1"].status.startswith("partial - quote not located verbatim"))
+
+# inline XBRL: the header block and every hidden block never reach the text
+ix = filing_text(IXBRL_PATH, "IXBRL synthetic")
+check("iXBRL: the ix:header block and every display:none block are stripped, the visible facts and inline tags stay, pages still split",
+      len(ix.pages) == 2 and ix.page_of("management fee of 1.00% of net assets") == 1
+      and ix.page_of("1,234,567 total assets") == 2 and ix.page_of("Visible after the hidden block") == 2
+      and all(t not in ix.text for t in ("HIDDEN CONTEXT", "99.99%", "77.77%", "66.66%")), ix.text[:200])
+
+# PDF: the splitter always, the binary when it is installed here
+_pp = split_form_feeds(PDFTEXT_PATH.read_text())
+check("PDF: pdftotext output splits into pages on the form feed, the empty tail dropped",
+      len(_pp) == 3 and _pp[0].startswith("SYNTHETIC PDFTOTEXT OUTPUT") and "0.90%" in _pp[0] and _pp[2] == "Page three text.")
+
+
+def minimal_pdf(text: str) -> bytes:
+    content = f"BT /F1 12 Tf 72 720 Td ({text}) Tj ET".encode()
+    objs = [b"<< /Type /Catalog /Pages 2 0 R >>",
+            b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+            b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>",
+            b"<< /Length " + str(len(content)).encode() + b" >>\nstream\n" + content + b"\nendstream",
+            b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"]
+    out = b"%PDF-1.4\n"
+    offsets = []
+    for n, o in enumerate(objs, 1):
+        offsets.append(len(out))
+        out += f"{n} 0 obj\n".encode() + o + b"\nendobj\n"
+    xref = len(out)
+    out += f"xref\n0 {len(objs) + 1}\n0000000000 65535 f \n".encode()
+    for off in offsets:
+        out += f"{off:010d} 00000 n \n".encode()
+    out += f"trailer\n<< /Size {len(objs) + 1} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n".encode()
+    return out
+
+
+if shutil.which("pdftotext"):
+    _pdf = SCRATCH / "synthetic.pdf"
+    _pdf.write_bytes(minimal_pdf("Synthetic PDF page one. Fee 0.80% of net assets."))
+    _pages = pdf_pages(_pdf)
+    check("PDF: a one-page PDF reads through pdftotext into one page with its text",
+          len(_pages) == 1 and "0.80%" in _pages[0], str(_pages)[:120])
+else:
+    _fake = raw_dir / "N-2_2026-01-01_exhibit.pdf"
+    _fake.write_bytes(b"%PDF-1.4 not a document")
+    try:
+        pdf_pages(_fake)
+        _missing = False
+    except ReaderMissing as e:
+        _missing = "pdftotext" in str(e) and "poppler-utils" in str(e)
+    check("PDF: without pdftotext the reader refuses by name instead of reading the bytes as text", _missing)
+    print("[SKIP] PDF through pdftotext: the binary is not installed here (CI installs poppler-utils)")
+    _fake.unlink()
+
+# exhibits: two documents on one accession, labels that name the document
+row_ex = {**row, "primary_document": "ex99-1.htm", "local_path": f"data/raw/{KEY}/486BPOS_2026-05-01_ex99-1.htm"}
+(raw_dir / "486BPOS_2026-05-01_ex99-1.htm").write_text(
+    "<html><body><p>Exhibit text: an early repurchase fee of 2.00% applies within one year.</p></body></html>")
+label_a, label_b = doc_label(row, [row, row_ex]), doc_label(row_ex, [row, row_ex])
+check("exhibits: two documents on one accession get labels that name the document, both still parse through the citation resolver, a lone document keeps the old label",
+      label_a.endswith(", document synthetic.htm)") and label_b.endswith(", document ex99-1.htm)")
+      and references(label_a)[0]["accessions"] == ["0009999999-26-000001"] and references(label_b)[0]["form"] == "486BPOS"
+      and references(label_b)[0]["filed"] == ["2026-05-01"] and doc_label(row) == doc.label, label_b)
+fx = filing_from_row(row_ex, [row, row_ex])
+check("manifest: a document built from its manifest row carries the row's accession, record path, document set and form, so the ledger never re-parses a label",
+      fx is not None and fx.accession == "0009999999-26-000001" and fx.local_path == row_ex["local_path"]
+      and fx.doc_set == "prospectus" and fx.form == "486BPOS" and fx.label == label_b and fx.kind == "html")
+reset_cells(KEY)
+c8 = MockClient({"2.7": CellExtraction(found=True, value="Early repurchase fee 2.00% within one year.",
+                                       quote="an early repurchase fee of 2.00% applies within one year",
+                                       source_doc=label_b, section="Exhibit", not_found_reason="")}, {}, default_usage)
+out8 = run_extraction(c8, KEY, [filing_from_row(row, [row, row_ex]), fx], only={"2.7"}, model="mock-model", today="2026-09-04")
+_ev8 = {r["cell_id"]: r for r in load_evidence(KEY)}
+check("exhibits: a quote located in the exhibit writes the exhibit's own path and the shared accession into the ledger",
+      out8[0].status == "extracted-unverified" and _ev8["2.7"]["local_file"] == row_ex["local_path"]
+      and _ev8["2.7"]["accession"] == "0009999999-26-000001" and label_b in _ev8["2.7"]["source_doc"])
+
+# promote and the fetcher as library calls under the data root, the network faked
+KEY2, CIK2 = "zz_synth_two", "9999998"
+(SCRATCH / "data" / "census").mkdir(exist_ok=True)
+shutil.copy(BASE / "data" / "census" / "census.json", SCRATCH / "data" / "census" / "census.json")
+import promote  # noqa: E402
+import fetch_edgar  # noqa: E402
+check("data root: promote, the fetcher and the census cache all bind under TARK_DATA_DIR, never the repository",
+      promote.CENSUS == SCRATCH / "data" / "census" / "census.json" and fetch_edgar.MANIFEST == SCRATCH / "data" / "manifest.csv"
+      and fetch_edgar.RAW_DIR == SCRATCH / "data" / "raw"
+      and sys.modules["edgar_api"].RAW == SCRATCH / "data" / "census" / "raw")
+_cen = json.loads(promote.CENSUS.read_text())
+_cen["entities"][CIK2] = {"name": "Synthetic Two Fund", "wrapper_class": "interval_23c3", "detection_evidence": ["synthetic"],
+                          "listed": {"value": False}, "exchanges": {"value": []}, "promotion": {"status": "none"},
+                          "ncen": {"investment_company_type": {"ref": "0009999998-26-000009", "as_of": "2025-12-31"},
+                                   "auditor": {"value": "Example Two LLP"}, "opinion_qualified": {"value": "N"},
+                                   "nav_error_corrected": {"value": "N"}}}
+promote.CENSUS.write_text(json.dumps(_cen))
+_subs_fn = lambda cik: {"name": "Synthetic Two Fund", "formerNames": [{"name": "Old Synthetic Fund"}]}  # noqa: E731
+sc = promote.scaffold(CIK2, KEY2, submissions_fn=_subs_fn)
+check("scaffold: promote as a library writes the product JSON, the ledger and the census promotion under the data root, prefills the census cells and returns the worklist and identity",
+      sc["product_path"] == DATA / "products" / f"{KEY2}.json" and sc["product_path"].exists()
+      and (DATA / "evidence" / f"{KEY2}_evidence.csv").exists()
+      and set(sc["prefilled"]) == {"4.5", "4.6", "1.10"} and "2.1" in sc["worklist"]
+      and json.loads(promote.CENSUS.read_text())["entities"][CIK2]["promotion"] == {"status": "evaluated", "product_key": KEY2}
+      and sc["identity"]["former_names"] == ["Old Synthetic Fund"] and not sc["name_drift"]
+      and validate_product(KEY2) == [] and not (BASE / "data" / "products" / f"{KEY2}.json").exists(), str(sc)[:300])
+try:
+    promote.scaffold(CIK2, KEY2, submissions_fn=_subs_fn)
+    refused2 = False
+except promote.ScaffoldRefused as e:
+    refused2 = "already promoted" in str(e)
+try:
+    promote.scaffold("1", "zz_nobody", submissions_fn=_subs_fn)
+    refused3 = False
+except promote.ScaffoldRefused as e:
+    refused3 = "not in the census universe" in str(e)
+check("scaffold: a promoted CIK and a CIK outside the census are refused by name, nothing written", refused2 and refused3
+      and not (DATA / "products" / "zz_nobody.json").exists())
+
+_regp = DATA / "registry.json"
+_reg_before = _regp.read_text()
+_reg = json.loads(_reg_before)
+_reg["products"][KEY2] = {"filings": {"prospectus": ["486BPOS"], "annual_report": ["N-CSR"]},
+                          "exhibits": {"N-CSR": ["ex99*"]}, "sources": {"filings": "synthetic", "exhibits": "synthetic"}}
+_regp.write_text(json.dumps(_reg))
+_SUBS = {"filings": {"recent": {"form": ["N-CSR", "486BPOS", "N-23C3A"], "filingDate": ["2026-06-01", "2026-05-01", "2026-04-01"],
+                                "accessionNumber": ["0009999998-26-000002", "0009999998-26-000001", "0009999998-26-000003"],
+                                "primaryDocument": ["ncsr.htm", "synthetic2.htm", "n23c3a.htm"]}}}
+_INDEX = {"directory": {"item": [{"name": "ncsr.htm"}, {"name": "ex99-1.htm"}, {"name": "ex99-2.pdf"},
+                                 {"name": "0009999998-26-000002-index.htm"}, {"name": "FilingSummary.xml"}, {"name": "index.json"}]}}
+_gets = []
+
+
+def _fake_get(url, as_json=False):
+    _gets.append(url)
+    if url.endswith("index.json"):
+        return _INDEX
+    name = url.rsplit("/", 1)[-1]
+    if name == "synthetic2.htm":
+        return FILING.encode()
+    return f"<html><body><p>Synthetic document {name}: the Fund's total annual expenses are 2.34%.</p></body></html>".encode()
+
+
+fetch_edgar.polite_get = _fake_get
+fetch_edgar.load_submissions = lambda cik: _SUBS
+rows2 = fetch_edgar.fetch_product(KEY2)
+_man2 = [r for r in fetch_edgar.read_manifest() if r["product"] == KEY2]
+check("fetch: the fetcher reads the registry's document sets and named exhibits, saves every document under the data root's raw folder, "
+      "records one manifest row per document with a record-relative path, and returns the product's rows",
+      len(rows2) == 4 and rows2 == _man2
+      and {r["primary_document"] for r in rows2} == {"synthetic2.htm", "ncsr.htm", "ex99-1.htm", "ex99-2.pdf"}
+      and all(r["local_path"].startswith(f"data/raw/{KEY2}/") and (SCRATCH / r["local_path"]).is_file() for r in rows2)
+      and sum(1 for r in rows2 if r["accession"] == "0009999998-26-000002") == 3
+      and all(r["url"].startswith("https://www.sec.gov/Archives/edgar/data/9999998/") for r in rows2)
+      and not (BASE / "data" / "raw").exists() and any(u.endswith("/000999999826000002/index.json") for u in _gets)
+      and not any(u.endswith("/000999999826000001/index.json") for u in _gets),
+      f"{len(rows2)} rows, {[r['primary_document'] for r in rows2]}")
+check("fetch: a second run is idempotent, no download repeats and no manifest row duplicates",
+      (lambda n: fetch_edgar.fetch_product(KEY2) == rows2 and len(_gets) == n)(len(_gets)))
+docs2, skipped2 = documents_for(KEY2)
+check("documents: every held document reads to text with its accession and path, the PDF exhibit is skipped with the reason, the exhibit labels name the document",
+      len(docs2) == 3 and len(skipped2) == 1 and "ex99-2.pdf" in skipped2[0]["document"]
+      and ("pdftotext" in skipped2[0]["reason"])
+      and sum(1 for d in docs2 if ", document " in d.label) == 2
+      and all(d.accession and d.local_path.startswith(f"data/raw/{KEY2}/") for d in docs2), str(skipped2))
+
+# run_product: the one call the worker makes
+_lab2 = next(d.label for d in docs2 if d.form == "486BPOS")
+answers2, usage2, default2 = canned_answers(_lab2)
+c7 = MockClient(answers2, usage2, default2)
+_pev = []
+res = run_product(CIK2, SCRATCH, on_progress=_pev.append, model_client=c7, skip_fetch=True, today="2026-09-04")
+_p2 = load_product(KEY2)
+check("run_product: resolves the key from the CIK, reads the held filings, runs the loop, validates, and returns the result with the report on disk",
+      res.product == KEY2 and res.cik == CIK2 and res.ok and len(res.outcomes) == len(ex_cells) and res.report_path.exists()
+      and res.cost.calls == len(c7.calls) and "2.1" in res.written and res.validate_errors == []
+      and len(res.documents) == 3 and len(res.skipped_documents) == 1 and _pev[0]["event"] == "run_start"
+      and _pev[-1]["event"] == "run_end" and res.stopped is None
+      and _p2["cells"]["2.1"]["status"] == "extracted-unverified" and _p2["cells"]["4.5"]["status"] == "structured"
+      and res.summary().startswith(f"{KEY2}: 3 documents, "), res.summary())
+_refusals = {}
+for _name, _kw in (("unknown cik", dict(cik="1234", key=None)), ("no registry entry", dict(cik=CIK2, key="zz_nowhere")),
+                   ("wrong workdir", dict(cik=CIK2, key=KEY2, workdir=SCRATCH / "elsewhere"))):
+    try:
+        run_product(_kw["cik"], _kw.get("workdir", SCRATCH), model_client=c7, key=_kw["key"], skip_fetch=True)
+        _refusals[_name] = None
+    except Refusal as e:
+        _refusals[_name] = e
+check("run_product: an unknown CIK, a key without a registry entry and a workdir that is not the bound data root are each refused with the reason and the hand commands, no call made",
+      "no product key for CIK 1234" in str(_refusals["unknown cik"]) and any("promote.py" in c for c in _refusals["unknown cik"].commands)
+      and "no entry for zz_nowhere" in str(_refusals["no registry entry"])
+      and "data root bound at import" in str(_refusals["wrong workdir"]) and len(c7.calls) == res.cost.calls,
+      str({k: str(v)[:60] for k, v in _refusals.items()}))
+check("run_product: a second run keeps every extracted cell and sends nothing that is already evidence",
+      (lambda r2: r2.ok and r2.cost.calls == len(c7.calls) - res.cost.calls
+       and all(o.reason.startswith("kept: extracted") for o in r2.outcomes if o.cid in ("2.1", "2.4", "2.7")))(
+          run_product(CIK2, SCRATCH, model_client=c7, skip_fetch=True, today="2026-09-04")))
+
+# the dry-run copy and the library import from the repository root
+_dd = SCRATCH / "dry"
+dry_run_copy(DATA, _dd / "data", KEY2, CIK2)
+check("dry run: the copy carries the record, the census and this product's raw filings only, so a run against it reaches extraction without the repository",
+      (_dd / "data" / "raw" / KEY2).is_dir() and not (_dd / "data" / "raw" / KEY).exists()
+      and (_dd / "data" / "census" / "census.json").exists() and (_dd / "data" / "products" / f"{KEY2}.json").exists()
+      and (_dd / "data" / "manifest.csv").exists() and not (_dd / "data" / "memos").exists())
+_imp = subprocess.run([sys.executable, "-c", "import src.ingest as m, src.mock_model as mm; print(m.run_product.__name__, m.DATA, mm.MockClient.__name__)"],
+                      cwd=BASE, capture_output=True, text=True, env={**os.environ, "TARK_DATA_DIR": str(SCRATCH / "data")})
+check("library: src.ingest and src.mock_model import from the repository root with TARK_DATA_DIR bound",
+      _imp.returncode == 0 and "run_product" in _imp.stdout and str(SCRATCH / "data") in _imp.stdout, _imp.stderr[-300:])
+_cli = subprocess.run([sys.executable, str(BASE / "src" / "ingest.py"), "1", "--key", "zz_nowhere", "--skip-fetch"],
+                      cwd=BASE, capture_output=True, text=True, env={**os.environ, "TARK_DATA_DIR": str(SCRATCH / "data")})
+check("command line: a refusal prints the reason and the hand commands and exits 1 before any client is built",
+      _cli.returncode == 1 and "refused: data/registry.json has no entry for zz_nowhere" in _cli.stdout
+      and "python src/promote.py 1 --key zz_nowhere" in _cli.stdout, _cli.stdout[-300:] + _cli.stderr[-300:])
+_regp.write_text(_reg_before)
+# the synthetic product back to the state of the first run, for the blocks below
+reset_cells(KEY)
+run_extraction(MockClient(answers, usage_by, default_usage), KEY, [doc], model="mock-model", today="2026-09-04")
+check("state: the synthetic product is back to the first run's outcome for the later blocks",
+      load_product(KEY)["cells"]["2.1"] == prod["cells"]["2.1"])
 
 # ---------------- advisor-stated files (P2-6): validator and the not-evidence rule
 from tark_data import validate_advisor, validate_product, ADVISOR_STATED_CELLS  # noqa: E402

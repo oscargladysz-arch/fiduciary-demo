@@ -1,4 +1,6 @@
 data/raw/
+# ingest reports carry wall time and cost, decision 8.34
+data/ingest/
 __pycache__/
 .DS_Store
 

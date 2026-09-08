@@ -1,0 +1,7 @@
+SYNTHETIC PDFTOTEXT OUTPUT, page one.
+A management fee of 0.90%.
+
+Page two text.
+
+Page three text.
+
