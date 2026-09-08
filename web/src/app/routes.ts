@@ -27,7 +27,7 @@ export const GLOBAL: RouteDef[] = [
   { id: "start", label: "Start", icon: "arrowRight", view: lazy(() => import("../views/StartView")) },
   { id: "universe", label: "Universe", icon: "search" },
   { id: "funnel", label: "From the universe to the record", icon: "chart" },
-  { id: "screener", label: "Screener", icon: "table" },
+  { id: "screener", label: "Screener", icon: "table", view: lazy(() => import("../views/ScreenerView")) },
   { id: "compare", label: "Compare", icon: "compare" },
   { id: "roster", label: "Roster", icon: "evaluate" },
   { id: "plans", label: "Plans", icon: "plan", plan: true },
@@ -39,7 +39,7 @@ export const GLOBAL: RouteDef[] = [
 ];
 
 export const PANELS: RouteDef[] = [
-  { id: "record", label: "Record", icon: "table", plan: true },
+  { id: "record", label: "Record", icon: "table", plan: true, view: lazy(() => import("../views/RecordView")) },
   { id: "benchmark", label: "Benchmark", icon: "chart", plan: true },
   { id: "liquidity", label: "Liquidity", icon: "plan", plan: true },
   { id: "cohort", label: "Cohort", icon: "compare" },

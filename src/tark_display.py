@@ -262,6 +262,81 @@ def ends_at_abbreviation(text) -> bool:
     return low in SENTENCE_ABBREVIATIONS or bool(_INITIAL.match(tok)) or bool(_DOTTED.match(tok))
 
 
+# A leading word that only repeats the status the chip already carries. The
+# headline says what the row found, never what tier it sits in (R3-P1-10).
+_STATUS_LEAD = re.compile(
+    r"^(PARTIAL|ABSENCE DOCUMENTED|DOCUMENTED ABSENCE|STRUCTURED SERIES FETCHED|"
+    r"SCOPE LIMIT|COMPUTED|FETCHED|N/A)\b\s*[:\u2014-]?\s*")
+# Acronyms that are the word, not shouting.
+_KEEP_CAPS = {"NAV", "AFFE", "TER", "PME", "ROC", "ITD", "GAAP", "REIT", "RIC", "BDC",
+              "IRR", "SEC", "ERISA", "QDIA", "DIA", "DRIP", "PCAOB", "ASC", "LLC", "US",
+              "UK", "OP", "JV", "ID", "FFO", "K-1", "N-2", "N-CSR"}
+
+
+def _unshout(label: str) -> str:
+    """A leading all-capitals label reads as a label, not as shouting. Known
+    acronyms keep their capitals."""
+    words = label.split()
+    if not words or not all(w.isupper() for w in words if w.isalpha()):
+        return label
+    out = [words[0] if words[0] in _KEEP_CAPS else words[0].capitalize()]
+    out += [w if w in _KEEP_CAPS else w.lower() for w in words[1:]]
+    return " ".join(out)
+
+
+def headline_copy(sentence: str, limit: int = 140) -> str:
+    """A headline: the finding, in one line, with no status word in front of
+    it and no trailing ellipsis. A sentence too long for the line is cut at
+    its last clause boundary and closed, because a headline that trails off
+    tells a reader nothing (R3-P1-10)."""
+    s = _STATUS_LEAD.sub("", sentence).strip()
+    head, sep, rest = s.partition(":")
+    if sep and len(head) <= 40 and head.isupper():
+        s = _unshout(head) + ":" + rest
+    # a headline that is one shouted word is the word, not the shout
+    bare = s.rstrip(".!? ")
+    if bare and bare.isupper() and len(bare.split()) <= 3 and bare not in _KEEP_CAPS:
+        s = _unshout(bare) + s[len(bare):]
+    if len(s) <= limit:
+        return s
+    # candidate cuts, outside brackets only, so a headline never stops inside
+    # a parenthesis it never closes
+    depth, breaks, words = 0, [], []
+    for i, ch in enumerate(s[:limit]):
+        if ch in "([":
+            if depth == 0:
+                breaks.append(i)
+            depth += 1
+        elif ch in ")]":
+            depth = max(0, depth - 1)
+        elif depth == 0 and ch == " ":
+            words.append(i)
+            if i and s[i - 1] in ",;:":
+                breaks.append(i - 1)
+    # a headline must not stop at an abbreviation, an initial or a dotted
+    # acronym, which would read as a sentence that ended there, and it must
+    # not stop inside a bracket it never closes: walk the boundaries back
+    # until the closing word is a word
+    for cut in sorted({*breaks, *words, limit}, reverse=True):
+        head = _balanced(s[:cut]).rstrip(" ,;:(")
+        if len(head) >= limit // 4 and not ends_at_abbreviation(head + "."):
+            return head + "."
+    # nothing in the line closes cleanly: the record's own first words, marked
+    return _balanced(s[:limit]).rstrip(" ,;:(") + "\u2026"
+
+
+def _balanced(s: str) -> str:
+    """The text up to the last bracket it leaves open, so a cut line never
+    shows half a parenthesis."""
+    stack = []
+    for i, ch in enumerate(s):
+        if ch in "([":
+            stack.append(i)
+        elif ch in ")]" and stack:
+            stack.pop()
+    return s[:stack[0]] if stack else s
+
+
 def cell_display(cell: dict, cid: str = "", fx: dict | None = None) -> dict:
     """Display derivation (display-only; the full sourced text stays one
     disclosure away). headline = the typed fact that cites the cell when one
@@ -283,14 +358,9 @@ def cell_display(cell: dict, cid: str = "", fx: dict | None = None) -> dict:
     typed = typed_headline(cid, fx or {})
     if typed:
         return {"headline": typed, "plain": plain, "typed": True}
-    if len(sentence) <= 140:
-        headline = sentence
-    else:
-        cut = sentence[:137]
-        headline = cut[: cut.rfind(" ")].rstrip(" ,;:") + "…" if " " in cut else cut + "…"
     # no "typed" key when false: the views read a missing key as false and
     # the bundle saves 880 copies of the flag
-    return {"headline": headline, "plain": plain}
+    return {"headline": headline_copy(sentence), "plain": plain}
 
 
 # ------------------------------------------------------------ R2-P0-3 maps

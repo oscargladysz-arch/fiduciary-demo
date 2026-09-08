@@ -54,7 +54,7 @@ def check(name: str, cond: bool, extra: str = "") -> None:
 
 # ---------------------------------------------------------------- build
 ap = argparse.ArgumentParser()
-ap.add_argument("--routes", default="design,start")
+ap.add_argument("--routes", default="design,start,screener,product/hl_paf/record")
 ap.add_argument("--out", default="site_next")
 ap.add_argument("--no-build", action="store_true")
 ap.add_argument("--port", type=int, default=8478)
