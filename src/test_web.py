@@ -149,6 +149,10 @@ check("performance (f): base JS and CSS under 120 KB gzipped", base_bytes <= 120
 check("performance (f): fonts are preloaded", 'rel="preload"' in html and 'as="font"' in html)
 check("performance (f): route chunks are preloaded with modulepreload", "modulepreload" in html)
 check("performance (f): no synchronous data script", not re.search(r"<script src=\"[^\"]*data[^\"]*\.js\"", html))
+_base_json = BASE / "site" / "data" / "index.json"
+_base_json_gz = len(gzip.compress(_base_json.read_bytes())) if _base_json.exists() else 0
+check("performance (f): the first paint's data is under 250 KB gzipped",
+      0 < _base_json_gz <= 250_000, f"{_base_json_gz:,} bytes")
 
 # --------------------------------------------- no figure is typed into a view
 # Rule 2 and rule 3 on the frontend: every number on a surface comes from the
@@ -635,6 +639,32 @@ with sync_playwright() as pw:
     check("plan intake: the file carries the reader's figures and nothing about how it was made",
           intake.get("produced") and not _bad_intake, f"tokens found: {_bad_intake}")
     pv.close()
+
+    # the landing route on the connection the brief names: 9 Mbps, 70 ms. The
+    # budget is about what a reader waits for, so it is measured on a cold
+    # cache with the network throttled, not on this machine's loopback.
+    slow = browser.new_context(viewport={"width": 1440, "height": 900})
+    slow_page = slow.new_page()
+    cdp = slow.new_cdp_session(slow_page)
+    cdp.send("Network.enable")
+    cdp.send("Network.emulateNetworkConditions", {
+        "offline": False, "latency": 70,
+        "downloadThroughput": int(9_000_000 / 8), "uploadThroughput": int(1_000_000 / 8)})
+    slow_page.goto(f"{ROOT}#/start", wait_until="load")
+    slow_page.wait_for_selector("h1", timeout=15_000)
+    slow_page.wait_for_function(
+        "() => (document.getElementById('main') || {}).innerText && "
+        "document.getElementById('main').innerText.length > 400", timeout=15_000)
+    painted = slow_page.evaluate("""() => {
+      const nav = performance.getEntriesByType('navigation')[0];
+      const paint = performance.getEntriesByType('paint').find((p) => p.name === 'first-contentful-paint');
+      return {fcp: paint ? Math.round(paint.startTime) : null,
+              complete: Math.round(performance.now() - (nav ? nav.startTime : 0))};
+    }""")
+    check("performance (f): the landing route is complete within a second at 9 Mbps and 70 ms",
+          (painted.get("complete") or 99_999) <= 1000,
+          f"first paint {painted.get('fcp')} ms, complete {painted.get('complete')} ms")
+    slow.close()
 
     # the packet's own states: a page with nothing pinned is audited above, and
     # what a reader actually does with it is checked here. The old view printed
