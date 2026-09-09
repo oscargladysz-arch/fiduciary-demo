@@ -10,18 +10,25 @@ import { Checkbox, DateInput, Field, FileDownload, Input, NumberInput, PasswordI
 import { Table, Gap } from "../components/table";
 import type { SortState } from "../components/table";
 import { ProgressList } from "../components/progress";
+import { SAY, STATUS_ORDER, status as statusCopy, verdict as verdictCopy } from "../copy/copy";
 import { fmtDate, fmtInt, fmtMoneyCompact, fmtN, fmtOf, fmtPct, fmtRatio, NBSP } from "../format/format";
 import { LineChart, Donut, BarChart } from "../charts/charts";
 
 const INK = ["900", "800", "700", "600", "500", "400", "300", "200", "100", "50"];
 const ACCENT = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900"];
-const STATUS: { kind: ChipKind; label: string }[] = [
-  { kind: "structured", label: "Structured" }, { kind: "extracted", label: "Extracted, unverified" }, { kind: "verified", label: "Verified" },
-  { kind: "computed", label: "Computed" }, { kind: "partial", label: "Partial" }, { kind: "na", label: "Not applicable" }, { kind: "advisor", label: "Adviser input" },
-];
+// the sample chips read the copy layer rather than keeping their own list:
+// this page is the reference for the words, so it cannot be allowed to drift
+// from the words every view actually prints
+const STATUS: { kind: ChipKind; label: string }[] = STATUS_ORDER.map((s) => {
+  const c = statusCopy(s);
+  return { kind: c.kind, label: c.label };
+});
 const VERDICTS: { kind: ChipKind; label: string }[] = [
-  { kind: "aligned", label: "Aligned" }, { kind: "conditional", label: "Conditional" }, { kind: "weak", label: "Conditional, weak" }, { kind: "misaligned", label: "Misaligned" },
-  { kind: "illustrative", label: "Illustrative" }, { kind: "pending", label: "Pending" },
+  ...["aligned", "conditional", "conditional_weak", "misaligned"].map((v) => {
+    const c = verdictCopy(v);
+    return { kind: c.kind, label: c.label };
+  }),
+  { kind: "illustrative", label: SAY.illustrative }, { kind: "pending", label: "Pending" },
 ];
 const ICONS: IconName[] = ["search", "menu", "close", "chevron", "chevronDown", "external", "cite", "pin", "check", "info", "download", "copy", "up", "down", "trash", "table", "chart", "sun", "moon", "plus", "arrowRight", "arrowLeft", "evaluate", "compare", "document", "plan"];
 
