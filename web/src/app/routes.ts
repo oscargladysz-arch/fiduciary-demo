@@ -33,8 +33,8 @@ export const GLOBAL: RouteDef[] = [
   { id: "plans", label: "Plans", icon: "plan", plan: true, view: lazy(() => import("../views/PlansView")) },
   { id: "search", label: "Evidence search", icon: "search", view: lazy(() => import("../views/SearchView")) },
   { id: "packet", label: "Packet", icon: "pin", plan: true, view: lazy(() => import("../views/PacketView")) },
-  { id: "coverage", label: "Coverage", icon: "check" },
-  { id: "verification", label: "Verification", icon: "document" },
+  { id: "coverage", label: "Coverage", icon: "check", view: lazy(() => import("../views/CoverageView")) },
+  { id: "verification", label: "Verification", icon: "document", view: lazy(() => import("../views/VerificationView")) },
   { id: "design", label: "Design system", icon: "info", view: lazy(() => import("../views/DesignView")) },
 ];
 

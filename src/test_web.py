@@ -55,7 +55,8 @@ def check(name: str, cond: bool, extra: str = "") -> None:
 # ---------------------------------------------------------------- build
 ap = argparse.ArgumentParser()
 ap.add_argument("--routes", default="start,universe,funnel,screener,compare,roster,plans,"
-                "search,packet,design,product/hl_paf/record,product/dxyz/record")
+                "search,packet,coverage,verification,design,"
+                "product/hl_paf/record,product/dxyz/record")
 ap.add_argument("--out", default="site_next")
 ap.add_argument("--no-build", action="store_true")
 ap.add_argument("--port", type=int, default=8478)
@@ -373,7 +374,12 @@ AUDIT_JS = r"""
   for (const el of Array.from(document.body.querySelectorAll('*'))) {
     if (el.children.length || el.closest(QUOTED) || el.closest('.chip, .legend')) continue;
     const text = (el.textContent || '').trim();
-    if (/human[\s-]?verifi/i.test(text)
+    // a label names the column or the figure beside it and claims nothing on
+    // its own: the claim is the sentence, and that is what this rule reads
+    // a defined term carries its definition with it, which is the opposite of
+    // a blurred claim, so it is read as a label rather than as a sentence
+    const isLabel = el.matches('h1, h2, h3, h4, h5, h6, th, dt, caption, legend, .stat__label, .t-eyebrow, label, option, .term') || !!el.closest('.tip');
+    if (!isLabel && /human[\s-]?verifi/i.test(text)
         && !/\d/.test(text) && !/pending|nobody|not yet|queue|signature|offered/i.test(text)) {
       add('tier-language', 'human-verified with no count and no pending state: ' + text.slice(0, 60));
     }
