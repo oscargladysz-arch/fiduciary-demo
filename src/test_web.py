@@ -292,6 +292,9 @@ AUDIT_JS = r"""
     else if (/\s"[A-Za-z]/.test(text)) add('straight-quote', text.slice(0, 60));
     else if (/[A-Za-z]\.\.\.(\s|$)/.test(text)) add('three-dot-ellipsis', text.slice(0, 60));
     else if (/\u2014/.test(text)) add('em-dash', text.slice(0, 60));
+    // a semicolon in reader prose. A list of clauses is a list of sentences,
+    // and the rule holds on every surface and in every document.
+    else if (/[a-z];\s/i.test(text)) add('semicolon', text.slice(0, 60));
   }
 
   // interactive elements: focusable, named, hit targets, focus ring
