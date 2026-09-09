@@ -216,7 +216,11 @@ export default function SearchView() {
       cell: (h) => {
         const inQuote = !!needle && h.quote.includes(needle);
         return (
-          <div className="stack-2">
+          // the record writes a value as one slash-joined run where the filing
+          // did ("purchases/repurchases/distributions"), and a browser breaks
+          // neither slashes nor an accession: at 390 px such a run leaves the
+          // column and then the viewport unless it is told it may break
+          <div className="stack-2" style={{ overflowWrap: "anywhere" }}>
             <span className="t-13"><Marked text={excerpt(h.row.value, needle)} needle={needle} /></span>
             {inQuote && (
               <span className="t-12 t-3" data-verbatim="true">

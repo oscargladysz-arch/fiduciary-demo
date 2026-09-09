@@ -32,48 +32,8 @@ import { useAsync, useIndex } from "../data/hooks";
 import { data } from "../data/index";
 import { fmtDate, fmtInt, fmtMoney, fmtMoneyCompact, fmtNum, fmtPct, withUnit } from "../format/format";
 import type { LiquidityView as LiquidityShape } from "../data/types";
-
-/* ------------------------------------------------------------- the shape */
-/* The liquidity chunk carries its match as an open map, so the fields this
- * panel reads are named here rather than in the shared types. */
-interface FiledOutflow {
-  formula?: string; inputs?: Record<string, number>; label?: string;
-  plan_year?: string; rate_pct?: number; source?: string; what?: string;
-}
-interface PlanInputs {
-  filed_outflow_proxy_pct?: number; net_assets?: number; plan_year?: string;
-  separated_with_balances?: number; tail_share?: number; tail_share_pct?: number;
-}
-interface WindowFacts { cap_per_window_pct?: number; period?: string; windows_per_year?: number }
-interface Drivers {
-  binding_cap?: { pct?: number; period?: string } | null;
-  cadence_per_year?: number; rung?: string; sentence?: string; window?: WindowFacts | null;
-}
-interface FundCapacity {
-  available?: boolean; annual_capacity_usd?: number; fund_net_assets_usd?: number;
-  net_assets_approx?: boolean; net_assets_cell?: string;
-}
-interface Scenario {
-  active_annual_turnover_pct?: number; allocation_pct_of_plan?: number;
-  annual_wrapper_capacity_pct?: number | null; capacity_note?: string; drivers?: Drivers;
-  filed_outflow_proxy_pct?: number; fund_capacity?: FundCapacity; plan_allocation_usd?: number;
-  schedule_h_lines?: string[]; tail_annual_turnover_pct?: number;
-}
-interface Stressed { multiples?: { active_multiple?: number; tail_multiple?: number }; outcome?: string }
-interface WrapperFacts {
-  annual_capacity_pct?: number | null; cadence_per_year?: number; cap_base?: string;
-  cap_pct?: number | null; cap_period?: string | null; caps_label?: string; dealing_label?: string;
-  early_fee?: string; exchange?: boolean; gate_history?: boolean; net_assets_cell?: string;
-  program_status?: string | null; program_status_as_of?: string | null;
-}
-interface Match {
-  citations?: string[]; filed_outflow?: FiledOutflow; layers?: string; missing_facts?: string[];
-  missing_facts_labels?: string[]; plan_direction?: string; plan_display_label?: string;
-  plan_inputs?: PlanInputs; scenario?: Scenario; scenario_verdict?: string; stressed_scenario?: Stressed;
-  structural_reasons?: string[]; verdict?: string; wrapper_facts?: WrapperFacts;
-  /* the sentences the document for this plan carries, unedited */
-  scenario_reasons?: string[];
-}
+import { compute } from "../analytics/liquidity";
+import type { Inputs, Live, Match } from "../analytics/liquidity";
 
 /* --------------------------------------------------------- reader words */
 /* Record values the copy layer does not map, said in plain words here. */
@@ -136,7 +96,6 @@ function sentenceCase(s: string | undefined): string {
 /* ------------------------------------------------------------ the state */
 /* One object. Four numbers the record itself carries, each of which the
  * reader can move, and nothing on the page that is not computed from them. */
-interface Inputs { allocation: number; outflow: number; tail: number; active: number }
 interface Span { min: number; max: number; step: number }
 type Field = keyof Inputs;
 
@@ -172,69 +131,6 @@ function readInputs(params: URLSearchParams, d: Inputs, s: Record<Field, Span>):
 }
 function sameInputs(a: Inputs, b: Inputs): boolean {
   return FIELDS.every((f) => Math.abs(a[f] - b[f]) < 1e-9);
-}
-
-/* ------------------------------------------------------- the arithmetic */
-interface Live {
-  positionUsd: number | null;
-  filedPct: number; turnoverPct: number; stressedPct: number; incrementPct: number;
-  filedUsd: number | null; turnoverUsd: number | null; stressedUsd: number | null;
-  capacityPct: number | null; capacityUsd: number | null;
-  windows: number | null; capPerWindowPct: number | null;
-  filedPerWindow: number | null; turnoverPerWindow: number | null; stressedPerWindow: number | null;
-  headroomPct: number | null; fundSharePct: number | null;
-  rung: string;
-}
-
-function compute(inputs: Inputs, m: Match): Live {
-  const pi = m.plan_inputs || {};
-  const sc = m.scenario || {};
-  const wf = m.wrapper_facts || {};
-  const mult = m.stressed_scenario?.multiples || {};
-  const tailShare = typeof pi.tail_share === "number" ? pi.tail_share : 0;
-  const tailMult = typeof mult.tail_multiple === "number" ? mult.tail_multiple : 1;
-  const activeMult = typeof mult.active_multiple === "number" ? mult.active_multiple : 1;
-  const netAssets = typeof pi.net_assets === "number" ? pi.net_assets : null;
-
-  const positionUsd = netAssets === null ? null : (netAssets * inputs.allocation) / 100;
-  const turnoverPct = inputs.tail * tailShare + inputs.active * (1 - tailShare);
-  const stressedTurnover = inputs.tail * tailMult * tailShare + inputs.active * activeMult * (1 - tailShare);
-  const incrementPct = stressedTurnover - turnoverPct;
-  const stressedPct = inputs.outflow + incrementPct;
-
-  const capacityPct = typeof sc.annual_wrapper_capacity_pct === "number" ? sc.annual_wrapper_capacity_pct
-    : typeof wf.annual_capacity_pct === "number" ? wf.annual_capacity_pct : null;
-  /* a wrapper can carry two caps, and the binding one decides the window: the
-   * record names it, so it is read rather than picked here */
-  const bound = sc.drivers?.window?.cap_per_window_pct ?? sc.drivers?.binding_cap?.pct;
-  const capPerWindowPct = typeof bound === "number" ? bound
-    : typeof wf.cap_pct === "number" ? wf.cap_pct : null;
-  const perYear = sc.drivers?.window?.windows_per_year;
-  const windows = typeof perYear === "number" ? perYear
-    : typeof wf.cadence_per_year === "number" && capPerWindowPct !== null ? wf.cadence_per_year : null;
-
-  const share = (pct: number) => (positionUsd === null ? null : (positionUsd * pct) / 100);
-  const perWindow = (pct: number) => (windows && windows > 0 && capPerWindowPct !== null ? pct / windows : null);
-  const fundCapacityUsd = m.scenario?.fund_capacity?.annual_capacity_usd;
-  const filedUsd = share(inputs.outflow);
-
-  return {
-    positionUsd,
-    filedPct: inputs.outflow, turnoverPct, stressedPct, incrementPct,
-    filedUsd, turnoverUsd: share(turnoverPct), stressedUsd: share(stressedPct),
-    capacityPct, capacityUsd: capacityPct === null ? null : share(capacityPct),
-    windows, capPerWindowPct,
-    filedPerWindow: perWindow(inputs.outflow),
-    turnoverPerWindow: perWindow(turnoverPct),
-    stressedPerWindow: perWindow(stressedPct),
-    headroomPct: capacityPct === null ? null : capacityPct - stressedPct,
-    fundSharePct: filedUsd !== null && typeof fundCapacityUsd === "number" && fundCapacityUsd > 0
-      ? (filedUsd / fundCapacityUsd) * 100 : null,
-    rung: wf.exchange ? "exchange"
-      : capacityPct === null ? "unknown"
-        : inputs.outflow > capacityPct ? "base"
-          : stressedPct > capacityPct ? "stress" : "none",
-  };
 }
 
 /** The sentence for the positions the reader is holding. The record’s own
