@@ -25,10 +25,10 @@ export interface RouteDef {
 
 export const GLOBAL: RouteDef[] = [
   { id: "start", label: "Start", icon: "arrowRight", view: lazy(() => import("../views/StartView")) },
-  { id: "universe", label: "Universe", icon: "search" },
-  { id: "funnel", label: "From the universe to the record", icon: "chart" },
+  { id: "universe", label: "Universe", icon: "search", view: lazy(() => import("../views/UniverseView")) },
+  { id: "funnel", label: "From the universe to the record", icon: "chart", view: lazy(() => import("../views/FunnelView")) },
   { id: "screener", label: "Screener", icon: "table", view: lazy(() => import("../views/ScreenerView")) },
-  { id: "compare", label: "Compare", icon: "compare" },
+  { id: "compare", label: "Compare", icon: "compare", view: lazy(() => import("../views/CompareView")) },
   { id: "roster", label: "Roster", icon: "evaluate" },
   { id: "plans", label: "Plans", icon: "plan", plan: true },
   { id: "search", label: "Evidence search", icon: "search" },

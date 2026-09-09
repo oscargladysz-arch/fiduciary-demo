@@ -59,13 +59,14 @@ export function Table<Row>({ caption, columns, rows, rowKey, sort = null, onSort
   const sorted = useMemo(() => sortRows(rows, columns, sort), [rows, columns, sort]);
   const virtual = sorted.length > virtualAbove;
   const wrapRef = useRef<HTMLDivElement>(null);
+  const [narrow, setNarrow] = useState(false);
   const rowVirtualizer = useVirtualizer({
     count: virtual ? sorted.length : 0,
     getScrollElement: () => wrapRef.current,
-    estimateSize: () => 40,
+    // a card is taller than a row, so the estimate follows the layout
+    estimateSize: () => (narrow ? 260 : 40),
     overscan: 12,
   });
-  const [narrow, setNarrow] = useState(false);
   useEffect(() => {
     const bp = getComputedStyle(document.documentElement).getPropertyValue("--bp-table-cards").trim();
     if (!bp) return;
@@ -74,7 +75,10 @@ export function Table<Row>({ caption, columns, rows, rowKey, sort = null, onSort
     on(); mq.addEventListener("change", on);
     return () => mq.removeEventListener("change", on);
   }, []);
-  const useVirtual = virtual && !narrow;
+  // a long list is virtualized in both layouts. It was skipped in the card
+  // layout, which put every row of a long list in the document at exactly the
+  // viewport that can least afford it.
+  const useVirtual = virtual;
   const toggleSort = (c: Column<Row>) => {
     if (!c.sortValue || !onSort) return;
     if (sort?.id === c.id) onSort(sort.dir === "asc" ? { id: c.id, dir: "desc" } : null);
@@ -127,7 +131,10 @@ export function Table<Row>({ caption, columns, rows, rowKey, sort = null, onSort
           </Disclosure>
         </div>
       )}
-      <div className="tblwrap" ref={wrapRef} style={maxHeight ? { maxHeight } : undefined} tabIndex={0} role="region" aria-label={typeof caption === "string" ? caption : undefined} id={id}>
+      {/* a virtualized list needs a scroll element with a height: without one
+          the container grows to the content and every row renders anyway */}
+      <div className="tblwrap" ref={wrapRef}
+        style={{ maxHeight: maxHeight || (virtual ? "var(--table-max)" : undefined) }} tabIndex={0} role="region" aria-label={typeof caption === "string" ? caption : undefined} id={id}>
         <table className={`tbl${cards ? " tbl--cards" : ""}`}>
           <caption>{caption}</caption>
           {header}
