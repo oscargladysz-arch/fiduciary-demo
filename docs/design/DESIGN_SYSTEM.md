@@ -133,6 +133,8 @@ ARIA behavior, by component:
 | Tooltip and Term | Enter or Space toggles, Esc closes and returns focus, tap toggles | `role=tooltip`, `aria-expanded`, `aria-controls`, `aria-describedby` while open. The glossary lives here, nothing is hover only |
 | Icon | none | `aria-hidden` unless it is the only content of a button, one inline set of 27 glyphs |
 | Charts | data points and bars are focusable with a name, a Table toggle on every chart | `figure` with `aria-labelledby` and `aria-describedby`, text at token sizes in CSS pixels, scales computed per container width, a legend |
+| CiteButton and the citation drawer | Enter opens, Esc closes and returns focus to the button that opened it | the button's accessible name says which row and which fund it opens, so fifty on one page are fifty distinct names. The drawer carries the document, the section, the verbatim sentence, who read it, whether anyone has signed it, and a link to every filing the accession resolves to, all from the manifest through the record chunk |
+| PremiumPanel | the chart and its table alternative | the exhibit for a fund whose shares trade at a price of their own, inside that fund's record under the factors it speaks to. Every figure is the fund's own filed table or the held market-price series, and the series is labeled a market price wherever it appears |
 
 ## 3. Copy rules
 
@@ -182,6 +184,45 @@ output: the token gate, the copy allowlist gate, the formatting gate, the
 guideline audit on every route at 1440 and 390 px in both themes, axe-core
 with zero serious or critical findings, the performance budget, and the
 preview-subpath check.
+
+The guideline audit asserts the pinned rule set in
+`docs/design/web-interface-guidelines_2026-09-07.md` in full. Per route, at
+both widths, in both themes:
+
+- Accessibility: every interactive element focusable with a visible ring,
+  every form control labeled, every icon-only button named, every icon
+  hidden or named, every image with alternative text, strict heading order
+  with exactly one H1, a skip link that works, no text under 12 px, every
+  text pair at 4.5:1 (3:1 at 24 px and up), no information carried by a
+  `title` alone, a live region on every page.
+- Interaction: tap targets at 24 px and 44 px for a primary action on
+  mobile, the double-tap delay removed on every control, nothing that is
+  not a control looking clickable, at most one element claiming the focus
+  and none on a narrow viewport, an overlay that contains its own scroll.
+- Forms: an autocomplete on every field, an inputmode on every numeric
+  field, a placeholder that ends with an ellipsis and shows the pattern, no
+  spellcheck on a code or an address.
+- Layout: no horizontal scroll of the page body, the H1 within the first
+  200 px on mobile, a table inside its own scroll container with a sticky
+  header and a caption, a list over sixty rows virtualized rather than put
+  in the document whole, an image with its dimensions.
+- Typography, read from the rendered text rather than from a string
+  literal, because an apostrophe ends a string literal and the check could
+  never see it: no straight apostrophe, no straight quotation mark, no
+  three-dot ellipsis, no em dash. A verbatim quote from a filing is exempt,
+  because it is the document's own text and is never edited.
+- Theming: the root declares its colour scheme, the browser chrome gets the
+  theme colour, a native select paints its own background and colour, and
+  zoom is never disabled.
+- Navigation: Back returns to the previous route with its scroll position,
+  a filter or sort change keeps focus and scroll, the palette and the
+  drawer take and return focus, the theme choice survives a reload, and
+  reduced motion collapses every duration.
+
+Once over the built output: every font face declares its swap, the layout
+applies the safe-area insets, the tap highlight is set on purpose, every
+control has a hover state, the focus ring is drawn on `:focus-visible`,
+paste is never blocked, and the page fetches nothing from another host.
 
 ## 6. Checkpoint record
 

@@ -147,6 +147,7 @@ h2, h3 { scroll-margin-top: calc(var(--topbar-h) + var(--s-3)); }
 .tbl tbody tr:hover td { background: var(--ink-50); }
 .tbl tbody tr:hover td:first-child { background: var(--ink-50); }
 .tbl .sortbtn { display: inline-flex; align-items: center; gap: var(--s-1); background: none; border: 0; padding: 0;
+  min-width: var(--hit-min); min-height: var(--hit-min); touch-action: manipulation;
   color: inherit; font: inherit; cursor: pointer; min-height: var(--hit-min); }
 .tbl .sortbtn:hover { color: var(--text); }
 .tbl__gap { color: var(--text-3); }
