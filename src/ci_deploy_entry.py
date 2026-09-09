@@ -36,11 +36,17 @@ def next_entry_number(text: str) -> int:
 
 
 def build_outputs(site: Path) -> str:
+    """What was deployed, in the sizes a later reader can check against the
+    tree the deploy commit carries."""
     parts = []
-    for name in ("data.js", "series.js", "census.data.js"):
-        f = site / name
-        if f.exists():
-            parts.append(f"`site/{name}` {f.stat().st_size:,} bytes")
+    assets = sorted((site / "assets").glob("*")) if (site / "assets").exists() else []
+    if assets:
+        parts.append(f"{len(assets)} application files, "
+                     f"{sum(f.stat().st_size for f in assets):,} bytes")
+    chunks = sorted((site / "data").rglob("*.json")) if (site / "data").exists() else []
+    if chunks:
+        parts.append(f"{len(chunks)} record chunks, "
+                     f"{sum(f.stat().st_size for f in chunks):,} bytes")
     memos = list((site / "memos").glob("*.docx")) if (site / "memos").exists() else []
     if memos:
         parts.append(f"{len(memos)} documents under `site/memos/`")

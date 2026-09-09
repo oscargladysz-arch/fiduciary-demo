@@ -261,7 +261,7 @@ export interface AuthorityView {
   schema: "tark.authority.v1";
   rule: Record<string, unknown>;
   citation: string;
-  authority: { paragraphs?: Record<string, string>; [k: string]: unknown };
+  authority: { paragraphs?: Record<string, string[]>; [k: string]: unknown };
   cells: Record<string, Record<string, unknown>>;
 }
 

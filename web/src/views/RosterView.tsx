@@ -20,7 +20,7 @@ import { Field, Select } from "../components/form";
 import { Card, CardHead, Chip, EmptyState, Legend, Link, Skeleton, Stat, StatRow }
   from "../components/primitives";
 import { PageHeader } from "../components/shell";
-import { SAY, TIERS, routeTitle } from "../copy/copy";
+import { SAY, routeTitle } from "../copy/copy";
 import { useIndex } from "../data/hooks";
 import { fmtInt, fmtOf } from "../format/format";
 import type { ProductSummary } from "../data/types";
@@ -66,7 +66,7 @@ export default function RosterView() {
 
   const counts = index.coverage_totals.counts || {};
   const signed = counts.verified || 0;
-  const cells = Number(index.coverage_totals.total || 0);
+  const cells = counts.total || 0;
   const filtered = !!cohort || !!wrapper;
   const label = planLabel(index, plan);
 
@@ -74,11 +74,12 @@ export default function RosterView() {
     .map(([id, c]) => ({ value: id, label: c.label }))
     .sort((a, b) => (a.label < b.label ? -1 : 1))];
 
+  /* a wrapper the record has no words for is left out of the filter rather
+   * than offered to a reader under the name the data holds it by */
   const wrappers = new Map<string, string>();
   for (const p of index.products) {
-    if (!wrappers.has(p.wrapper_type)) {
-      wrappers.set(p.wrapper_type, p.wrapper_label || index.labels.wrapper[p.wrapper_type] || p.wrapper_type);
-    }
+    const text = p.wrapper_label || index.labels.wrapper[p.wrapper_type] || "";
+    if (text && !wrappers.has(p.wrapper_type)) wrappers.set(p.wrapper_type, text);
   }
   const wrapperOptions = [{ value: EVERY, label: "Every wrapper" }, ...Array.from(wrappers)
     .map(([value, text]) => ({ value, label: text }))
@@ -130,7 +131,8 @@ export default function RosterView() {
 
         {shown.length === 0 && (
           <EmptyState title="No fund matches what you have selected"
-            action={<Link to="/roster" replace>Clear the filters</Link>}>
+            action={<Link to="/roster" replace
+              aria-label="Clear the filters and show every evaluated fund">Clear the filters</Link>}>
             {index.products.length > 0
               ? "Widen the cohort or the wrapper to see the rest of the roster."
               : "A fund appears here once its record holds the rows the six factors ask for."}
@@ -196,9 +198,8 @@ export default function RosterView() {
           on record means part of the answer is disclosed and the rest is not. A not applicable row carries
           the reason the question does not apply to that wrapper.
         </p>
-        <Legend label="Tiers" items={TIERS.map((t, i) => ({
-          label: t.label, kind: (["structured", "extracted", "verified"] as const)[i],
-        }))} />
+        <Legend label="What each part of a ring counts"
+          items={KINDS.map((k) => ({ label: k.label, color: k.color }))} />
         <p className="t-13 t-3">
           {SAY.verificationCount(signed, cells)}{" "}
           <Link to="/verification">See the verification queue</Link>

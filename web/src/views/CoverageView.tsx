@@ -52,12 +52,32 @@ interface FundRow { key: string; name: string; cov: Coverage }
 const RING: Record<string, string> = {
   structured: "var(--status-structured-fg)",
   extracted: "var(--status-extracted-fg)",
-  verified: "var(--status-verified-bg)",
+  verified: "var(--status-verified-fg)",
   computed: "var(--status-computed-fg)",
   partial: "var(--status-partial-fg)",
   na: "var(--status-na-fg)",
   pending: "var(--pending-fg)",
 };
+
+/* A sentence the record holds in its own words reaches a reader only when it
+ * carries nothing internal: a folder, a file name, a name joined by an
+ * underscore, a ticket, a code value, or one of the words that belong to the
+ * people who build this rather than to a reader. Such a value is held back
+ * rather than rewritten, and the row it would have filled is dropped. */
+const INTERNAL: RegExp[] = [
+  /[A-Za-z0-9]_[A-Za-z0-9]/,
+  /\.(json|py|csv|md|txt|ya?ml|js|html?)\b/i,
+  /\b(data|docs|src|site|web)\//i,
+  /\bR\d+-P\d+(-\d+)?\b/,
+  /\bP\d-\d+\b/,
+  /\b(null|None|True|False|NaN)\b/,
+  /\b(engine|artifacts?|typed|the writer|the build|this build|the site)\b/i,
+  /\bsliders?\b/i,
+];
+function readable(note: string | undefined | null): string {
+  const s = String(note || "").trim();
+  return s && !INTERNAL.some((re) => re.test(s)) ? s : "";
+}
 
 const COUNTED = {
   resolved: "Counts as resolved",
@@ -103,19 +123,49 @@ export default function CoverageView() {
     .map(([key, p]) => ({ key, name: p.fund_name, cov: p.coverage })), [cov]);
 
   const columns = useMemo<Column<FundRow>[]>(() => fundColumns(), []);
+  const kindCols = useMemo<Column<KindRow>[]>(() => kindColumns(), []);
 
   const sort: SortState | null = r.params.get("sort")
     ? { id: r.params.get("sort")!, dir: r.params.get("dir") === "desc" ? "desc" : "asc" }
     : null;
   const visible = r.params.get("cols") ? r.params.get("cols")!.split(".") : null;
 
-  if (error) return <EmptyState title={SAY.noRecord}>{error}</EmptyState>;
-  if (loading) return <Skeleton lines={10} label={SAY.loadingRecord} />;
+  /* Loading, error and nothing-published are states of this route, not pages
+   * of their own: each keeps the H1 the route is named by, so the page has
+   * one heading and the heading order holds in every state. */
+  const head = (
+    <PageHeader
+      title="Coverage and provenance"
+      sub={"What the record holds, and how each cell is counted. The resolved figure is printed with the "
+        + "base it is taken from, so a cell that is only partly on record never counts as a whole one."}
+      actions={<Link to="/verification">Go to verification</Link>}
+    />
+  );
+
+  if (error) {
+    return (
+      <div className="stack-5">
+        {head}
+        <EmptyState title={SAY.noRecord}>{error}</EmptyState>
+      </div>
+    );
+  }
+  if (loading) {
+    return (
+      <div className="stack-5">
+        {head}
+        <Skeleton lines={10} label={SAY.loadingRecord} />
+      </div>
+    );
+  }
   if (!cov) {
     return (
-      <EmptyState title={SAY.noRecord}>
-        This source answers one record at a time and carries no count across the whole record.
-      </EmptyState>
+      <div className="stack-5">
+        {head}
+        <EmptyState title={SAY.noRecord}>
+          This source answers one record at a time and carries no count across the whole record.
+        </EmptyState>
+      </div>
     );
   }
 
@@ -168,17 +218,13 @@ export default function CoverageView() {
     { term: "Could not be found again", value: cc.unlocatable === undefined ? "" : fmtInt(cc.unlocatable) },
     { term: "Funds covered", value: cc.products === undefined ? "" : fmtInt(cc.products) },
     { term: "Date of the pass", value: fmtDate(cc.date) },
-    { term: "Where the pass is written down", value: cc.source || "" },
+    { term: "Where the pass is written down", value: readable(cc.source) },
     { term: "Signed by a person", value: cc.human_verified === undefined ? "" : fmtInt(cc.human_verified) },
   ].filter((p) => p.value !== "");
 
   return (
     <div className="stack-5">
-      <PageHeader
-        title="Coverage and provenance"
-        sub={`What the record holds, and how each cell is counted. The resolved figure is printed with the base it is taken from, so a cell that is only partly on record never counts as a whole one.`}
-        actions={<Link to="/verification">Go to verification</Link>}
-      />
+      {head}
 
       <StatRow>
         <Stat label="Cells on the record" value={fmtInt(total)} source={`Across ${fmtInt(funds)} funds`} />
@@ -196,7 +242,6 @@ export default function CoverageView() {
             <CardHead title="Every cell on the record" level={3} />
             <Donut
               title="The whole record by kind"
-              size={200}
               center={fmtInt(total)}
               centerSub="cells"
               segments={wholeSegments}
@@ -229,7 +274,7 @@ export default function CoverageView() {
         <Table
           id="coverage-kinds"
           caption="Every kind of cell on the record, what it means, and how the count treats it."
-          columns={kindColumns()}
+          columns={kindCols}
           rows={kinds}
           rowKey={(k) => k.id}
           empty="No kind of cell is on the record yet."
@@ -273,12 +318,16 @@ export default function CoverageView() {
             {rows.map((row) => (
               <Card key={row.key} as="article" className="stack-2">
                 <CardHead
-                  title={<Link to={`/product/${row.key}/record`} translate="no">{row.name}</Link>}
+                  title={(
+                    /* the same fund is linked from the table above, so each
+                     * link says which of the two a reader is following */
+                    <Link to={`/product/${row.key}/record`} translate="no"
+                      aria-label={`${row.name}, the record behind this ring`}>{row.name}</Link>
+                  )}
                   level={3}
                 />
                 <Donut
                   title={`${row.name}, cells by kind`}
-                  size={120}
                   center={fmtPct(shareOf(row.cov), 0)}
                   centerSub="resolved"
                   segments={fundSegments(row.cov)}
@@ -301,7 +350,7 @@ export default function CoverageView() {
         ) : (
           <Card className="stack-2">
             <CardHead title="An agent pass over the cited cells" level={3}>
-              <Chip kind="pending">Not verification</Chip>
+              <Chip kind="accent">Agent pass</Chip>
             </CardHead>
             <p className="t-14 t-2">
               {cc.products !== undefined && cc.cells_checked !== undefined
@@ -378,7 +427,10 @@ function fundColumns(): Column<FundRow>[] {
     {
       id: "fund", header: "Fund", label: "Fund", fixed: true,
       sortValue: (row) => row.name,
-      cell: (row) => <Link to={`/product/${row.key}/record`} translate="no">{row.name}</Link>,
+      cell: (row) => (
+        <Link to={`/product/${row.key}/record`} translate="no"
+          aria-label={`${row.name}, the record of this fund`}>{row.name}</Link>
+      ),
     },
     {
       id: "evidenced", header: "With a filing behind them", label: "With a filing behind them",

@@ -86,11 +86,6 @@ REQUIRED_RULES = ("snake_case token", "repository path or file name", "ticket re
                   "slider outside its label")
 
 # views whose content does not depend on the selected product: rendered once
-PRODUCT_INDEPENDENT = {"census", "funnel", "screener", "search", "plans", "roster",
-                       "cohorts", "fees", "coverage", "verification"}
-# the product-dependent views that also render for the reference product
-# under every other plan (their text changes with the plan)
-PLAN_SENSITIVE = ("plans", "liquidity", "packet", "evaluation")
 
 PATTERNS = [(p, re.compile(p, re.IGNORECASE)) for p in SURFACE_FORBIDDEN]
 # one alternation as a fast pre-filter, the per-pattern pass names the hit
@@ -129,7 +124,11 @@ def scan(text: str, family: str, location: str, prose: bool = True) -> None:
 
 # ------------------------------------------------------------ precondition
 def ensure_built() -> None:
-    needed = [SITE / "data.js", SITE / "series.js", SITE / "census.data.js"]
+    # the chunks the frontend reads, the bundle the reconciliation reads, and
+    # the documents. The bundle is a verification artifact and is pruned from
+    # the deployable tree after the gates run, so a missing one means the build
+    # has not run in this tree rather than that anything is wrong.
+    needed = [SITE / "data" / "index.json", SITE / "data.js"]
     if all(p.exists() for p in needed) and any((SITE / "memos").glob("*.docx")):
         return
     print("site not built, running build_site.py first")
@@ -275,143 +274,6 @@ def surface_texts(html: str) -> tuple[str, str]:
     return "\n".join(p.parts), "\n".join(p.code_parts)
 
 
-class QuietHandler(SimpleHTTPRequestHandler):
-    def log_message(self, *args) -> None:  # the request log is noise in a gate
-        pass
-
-
-def serve() -> ThreadingHTTPServer:
-    handler = partial(QuietHandler, directory=str(SITE))
-    httpd = ThreadingHTTPServer(("127.0.0.1", PORT), handler)
-    threading.Thread(target=httpd.serve_forever, daemon=True).start()
-    return httpd
-
-
-def scan_views(bundle: dict) -> tuple[int, list[str]]:
-    from playwright.sync_api import sync_playwright
-
-    main_js = (SITE / "js" / "main.js").read_text()
-    view_ids = re.findall(r'^\s*\["(\w+)", "[^"]+", view\w+, "\w+"\]', main_js, re.M)
-    check("views: the route registry in main.js was read", bool(view_ids))
-    products = list(bundle["products"].keys())
-    plans = list(bundle["plan_order"])
-    other = "cliffwater_cclfx" if REF_PRODUCT != "cliffwater_cclfx" else products[0]
-
-    states: list[tuple[str, str, str]] = []
-    for v in view_ids:
-        if v in PRODUCT_INDEPENDENT:
-            states.append((v, REF_PRODUCT, REF_PLAN))
-        else:
-            states.extend((v, k, REF_PLAN) for k in products)
-    for pl in plans:
-        if pl != REF_PLAN:
-            states.extend((v, REF_PRODUCT, pl) for v in PLAN_SENSITIVE)
-
-    errors: list[str] = []
-    rendered = [0]
-    current = ["boot"]
-    httpd = serve()
-    time.sleep(0.2)
-    with sync_playwright() as pw:
-        browser = pw.chromium.launch()
-        page = browser.new_page(viewport={"width": 1280, "height": 900})
-        page.on("pageerror", lambda e: errors.append(f"{current[0]}: {e}"))
-
-        def render(view: str, product: str, plan: str) -> None:
-            current[0] = f"view {view} product {product} plan {plan}"
-            pair = f"&compare={product},{other if other != product else REF_PRODUCT}" \
-                if view == "compare" else ""
-            page.goto(f"http://127.0.0.1:{PORT}/#view={view}&plan={plan}&product={product}{pair}",
-                      wait_until="networkidle")
-            page.wait_for_timeout(150)
-
-        def scan_page(view: str, product: str, plan: str) -> None:
-            rendered[0] += 1
-            prose, code = surface_texts(page.content())
-            scan(prose, "views", f"view {view} product {product} plan {plan}")
-            scan(code, "views", f"view {view} product {product} plan {plan} (code-styled)", prose=False)
-
-        # the Authority panel lives in the top bar of every page: open it once
-        # and scan (its text is in the DOM either way, open makes the intent plain)
-        render(view_ids[0], REF_PRODUCT, REF_PLAN)
-        page.evaluate("() => document.querySelectorAll('details.authority').forEach((d) => { d.open = true })")
-        scan_page(f"{view_ids[0]}+authority-open", REF_PRODUCT, REF_PLAN)
-
-        for view, product, plan in states:
-            render(view, product, plan)
-            scan_page(view, product, plan)
-
-        # census entity detail for an unevaluated fund (the ingest command surface)
-        render("census", REF_PRODUCT, REF_PLAN)
-        page.evaluate("() => window.tarkSetState({view: 'census', c_cik: '1467631'})")
-        page.wait_for_selector("#view [data-back]", timeout=15000)
-        scan_page("census+entity-1467631", REF_PRODUCT, REF_PLAN)
-
-        # advisor form on the evaluation view, filled and made
-        render("evaluation", REF_PRODUCT, REF_PLAN)
-        form = page.locator("[data-advisor-form]")
-        if form.count():
-            form = form.first
-            form.evaluate("(d) => { d.open = true }")
-            form.locator('[data-f="value"]').fill("Recordkeeper confirmed quarterly window handling.")
-            form.locator('[data-f="signer"]').fill("A. Person, committee chair")
-            form.locator('[data-f="date"]').fill("2026-09-04")
-            form.locator("[data-advisor-make]").click()
-            page.wait_for_timeout(100)
-            scan_page("evaluation+advisor-form", REF_PRODUCT, REF_PLAN)
-        else:
-            check("views: an advisor form exists on the reference evaluation page", False)
-
-        # citation drawer on the evaluation view, three cells in turn
-        for cid in ("2.1", "5.4", "5.6"):
-            btn = page.locator(f'[data-cite][data-cid="{cid}"]')
-            if not btn.count():
-                check(f"views: a citation button for cell {cid} exists on the reference evaluation page", False)
-                continue
-            btn.first.click()
-            page.wait_for_timeout(100)
-            scan_page(f"evaluation+drawer-{cid}", REF_PRODUCT, REF_PLAN)
-
-        # plan intake form on the plans view, filled, confirmed and made
-        render("plans", REF_PRODUCT, REF_PLAN)
-        pf = page.locator("[data-plan-form]")
-        if pf.count():
-            pf = pf.first
-            pf.evaluate("(d) => { d.open = true }")
-            for f, v in (("display_label", "US regional hospital 403(b) plan (~$400M, OH)"),
-                         ("plan_year", "2024-01-01 to 2024-12-31"), ("net_assets_eoy", "400000000"),
-                         ("net_assets_boy", "380000000"), ("tot_admin_expenses", "300000"),
-                         ("with_account_balances", "5000"), ("active_eoy", "3000"),
-                         ("separated_deferred_vested", "1500"), ("retired_receiving", "100"),
-                         ("pension_benefit_codes", "2E2G2J2K")):
-                pf.locator(f'[data-f="{f}"]').fill(v)
-            pf.locator('[data-f="anonymization_label"]').check()
-            pf.locator("[data-plan-make]").click()
-            page.wait_for_timeout(100)
-            scan_page("plans+intake-form", REF_PRODUCT, REF_PLAN)
-        else:
-            check("views: the plan intake form exists on the plans page", False)
-
-        # verification form, signed and made
-        render("verification", REF_PRODUCT, REF_PLAN)
-        vf = page.locator("[data-verify-form]")
-        if vf.count():
-            vf = vf.first
-            vf.evaluate("(d) => { d.open = true }")
-            vf.locator('[data-f="signer"]').fill("A. Person, committee chair")
-            vf.locator('[data-f="date"]').fill("2026-09-04")
-            vf.locator("[data-verify-make]").click()
-            page.wait_for_timeout(100)
-            scan_page("verification+verify-form", REF_PRODUCT, REF_PLAN)
-        else:
-            check("views: a verification form exists on the verification page", False)
-
-        browser.close()
-    httpd.shutdown()
-    return rendered[0], errors
-
-
-# ------------------------------------------------------------ 3. the documents
 def scan_documents() -> int:
     docs = sorted((SITE / "memos").glob("*.docx"))
     for p in docs:
@@ -455,11 +317,9 @@ def main() -> int:
     check(f"bundle: no developer string, file path, script name, internal key, ticket, developer word or bare "
           f"slider in {n_strings} string values", not HITS["bundle"], f"{len(HITS['bundle'])} hits")
 
-    n_states, errors = scan_views(bundle)
-    check(f"views: none in {n_states} rendered states, no page error",
-          not HITS["views"] and not errors,
-          f"{len(HITS['views'])} hits, {len(errors)} page errors" + (f", first: {errors[0][:120]}" if errors else ""))
-
+    # the rendered sweep moved to the web gate with the frontend it sweeps:
+    # src/test_web.py walks the rebuilt routes with the same scanner and the
+    # same token list, every disclosure open
     n_chunks, n_chunk_strings = scan_chunks()
     check(f"chunks: none in {n_chunk_strings} string values of {n_chunks} JSON chunks the rebuilt frontend fetches",
           n_chunks > 0 and not HITS["chunks"], f"{len(HITS['chunks'])} hits")
@@ -471,10 +331,6 @@ def main() -> int:
     if FAILS:
         for family in ("bundle", "chunks", "views", "documents"):
             report(family)
-        if errors:
-            print(f"\n  page errors ({len(errors)}):")
-            for e in errors[:10]:
-                print("    " + e[:200])
     print(f"\n{len(FAILS)} failure(s) in {time.time() - t0:.1f}s." if FAILS
           else f"\nEvery surface and document is clean ({time.time() - t0:.1f}s).")
     return 1 if FAILS else 0

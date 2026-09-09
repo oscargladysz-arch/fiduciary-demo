@@ -62,9 +62,10 @@ function groupsOf(queue: VerificationShape | null): Group[] {
   return out;
 }
 
-/** A file name a person can find again, from the fund and the row. */
+/** A file name a person can find again, from the fund and the row. The trim
+ *  runs after the cut, so a name cut mid-word never ends on a hyphen. */
 function slug(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40).replace(/^-+|-+$/g, "");
 }
 
 /* --------------------------------------------------------- the one form */
@@ -165,13 +166,19 @@ function RequestForm({ row, onClose }: { row: VerificationRow; onClose: () => vo
 /* ------------------------------------------------------------- the queue */
 
 /** The columns of one group. The request button opens the one dialog: no row
- *  carries a form of its own. */
+ *  carries a form of its own.
+ *
+ *  One fund holds up to nine rows of this queue, so the same fund name is the
+ *  visible text of several links in one table, each opening the record at a
+ *  different row. The name a reader hears carries the row as well, so the
+ *  links are told apart by what they open rather than by their position. */
 function columnsOf(onPrepare: (row: VerificationRow) => void): Column<VerificationRow>[] {
   return [
     {
       id: "fund", header: "Fund", label: "Fund", fixed: true,
       cell: (row) => (
-        <Link to={`/product/${row.product_key}/record`} params={{ factor: row.cell.split(".")[0] }} translate="no">
+        <Link to={`/product/${row.product_key}/record`} params={{ factor: row.cell.split(".")[0] }} translate="no"
+          aria-label={`${row.fund_name}, the record open at ${row.cell}, ${row.element || "this row"}`}>
           {row.fund_name}
         </Link>
       ),
@@ -209,10 +216,15 @@ function columnsOf(onPrepare: (row: VerificationRow) => void): Column<Verificati
     },
     {
       id: "request", header: "Signature request", label: "Signature request",
+      /* The visible words are short because a button never wraps: the longer
+         label made this cell wider than the narrow card layout can hold, which
+         put the action of the row behind a sideways scroll. The name a reader
+         hears still carries the row, and it opens with the words on the
+         button, so the two agree. */
       cell: (row) => (
         <Button icon="document" aria-haspopup="dialog" onClick={() => onPrepare(row)}
-          aria-label={`Prepare a signature request for ${row.cell}, ${row.element || "row"}, ${row.fund_name}`}>
-          Prepare a signature request
+          aria-label={`Request a signature for ${row.cell}, ${row.element || "this row"}, ${row.fund_name}`}>
+          Request a signature
         </Button>
       ),
     },
@@ -264,8 +276,8 @@ export default function VerificationView() {
         </StatRow>
 
         <p className="t-13 t-3" aria-live="polite">
-          {fmtInt(queue.rows.length)} rows are in the queue, in {fmtInt(groups.length)}{" "}
-          {groups.length === 1 ? "group" : "groups"}.
+          {fmtInt(queue.rows.length)} {queue.rows.length === 1 ? "row is" : "rows are"} in the queue, in{" "}
+          {fmtInt(groups.length)} {groups.length === 1 ? "group" : "groups"}.
         </p>
 
         <Card className="stack-2">
@@ -297,8 +309,8 @@ export default function VerificationView() {
               {fmtInt(g.rows.length)} {g.rows.length === 1 ? "row" : "rows"}, in the order the queue sets.
             </p>
             <Table
-              caption={`${fmtInt(g.rows.length)} rows of the queue under ${g.title}, in the order the queue sets. `
-                + SAY.verificationPending}
+              caption={`${fmtInt(g.rows.length)} ${g.rows.length === 1 ? "row" : "rows"} of the queue under `
+                + `${g.title}, in the order the queue sets. ` + SAY.verificationPending}
               columns={columns}
               rows={g.rows}
               rowKey={(row) => `${row.product_key}:${row.cell}`}
@@ -319,11 +331,18 @@ export default function VerificationView() {
           </p>
         </Card>
 
-        <Card sunken>
+        <Card sunken className="stack-2">
           <CardHead title="How to read this queue" level={2} />
           <Legend label="Tiers" items={TIERS.map((t, i) => ({
             label: t.label, kind: (["structured", "extracted", "verified"] as const)[i],
           }))} />
+          {/* the page says tier in two senses, so the card says which is which:
+              the chip on a row is how that row is evidenced, the heading over a
+              table is the order the queue itself sets */}
+          <p className="t-13 t-3">
+            The three tiers name how a row is evidenced. The headings above name the order the queue sets,
+            and that order is not a tier.
+          </p>
           <p className="t-13 t-3">
             {SAY.verificationPending} {SAY.verificationCount(queue.signed, cells)}{" "}
             <Link to="/screener">Open the screener</Link>

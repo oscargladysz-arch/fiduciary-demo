@@ -23,14 +23,13 @@ from playwright.sync_api import sync_playwright
 BASE = Path(__file__).resolve().parents[1]
 SITE = BASE / "site"
 
-# views whose content does not depend on the selected product: shot once
-PRODUCT_INDEPENDENT = {"census", "funnel", "screener", "search", "plans",
-                       "roster", "cohorts", "fees", "coverage", "verification"}
-
-# the 18 route ids, in site/js/main.js VIEWS order
-VIEWS = ["census", "funnel", "screener", "compare", "search", "packet",
-         "plans", "roster", "evaluation", "benchmarks", "cohorts", "fees",
-         "liquidity", "pme", "dxyz", "desmooth", "coverage", "verification"]
+# the routes that do not depend on a product: shot once
+GLOBAL_ROUTES = ["start", "universe", "funnel", "screener", "compare", "roster",
+                 "plans", "search", "packet", "coverage", "verification", "design"]
+# the panels under one fund: shot per product
+PANELS = ["record", "benchmark", "liquidity", "cohort", "lab", "documents"]
+VIEWS = GLOBAL_ROUTES + PANELS
+PRODUCT_INDEPENDENT = set(GLOBAL_ROUTES)
 
 
 def serve(port: int) -> ThreadingHTTPServer:
@@ -75,11 +74,14 @@ def main() -> None:
                 if pi > 0 and view in PRODUCT_INDEPENDENT:
                     continue
                 other = args.compare_with if args.compare_with != key else products[0]
-                extra = f"&compare={key},{other}" if view == "compare" else ""
-                url = (f"http://127.0.0.1:{args.port}/#view={view}"
-                       f"&plan={args.plan}&product={key}{extra}")
+                path = f"/{view}" if view in PRODUCT_INDEPENDENT else f"/product/{key}/{view}"
+                query = f"?plan={args.plan}"
+                if view == "compare":
+                    query += f"&compare={key}.{other}"
+                url = f"http://127.0.0.1:{args.port}/#{path}{query}"
                 page.goto(url, wait_until="networkidle")
-                page.wait_for_timeout(250)
+                page.reload(wait_until="networkidle")   # a hash change is not a load
+                page.wait_for_timeout(400)
                 name = (f"{i:02d}_{view}" if view in PRODUCT_INDEPENDENT
                         else f"{key}__{i:02d}_{view}")
                 path = out / f"{name}.{args.format}"

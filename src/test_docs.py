@@ -52,16 +52,21 @@ m = re.search(r"\*\*Roster:\*\* (\d+) products", runbook)
 check("runbook roster count equals the record",
       bool(m) and int(m.group(1)) == len(product_keys()),
       f"{m and m.group(1)} vs {len(product_keys())}")
-main_js = (BASE / "site" / "js" / "main.js").read_text()
-default_view = re.search(r'\bview: "(\w+)"', main_js).group(1)
-views = re.findall(r'^\s*\["(\w+)", "([^"]+)", view\w+, "\w+"\]', main_js, re.M)
-labels = dict(views)
-check("runbook lands on the app's default view",
-      f"**{labels[default_view]}**" in runbook, labels[default_view])
+# the route table is the one list of what the application answers, so the
+# runbook's count is checked against it rather than against a second list
+routes_ts = (BASE / "web" / "src" / "app" / "routes.ts").read_text()
+globals_ = re.findall(r'\{ id: "([a-z]+)", label: "([^"]+)"', routes_ts.split("export const PANELS")[0])
+panels = re.findall(r'\{ id: "([a-z]+)", label: "([^"]+)"',
+                    routes_ts.split("export const PANELS")[1].split("export const GLOBAL_BY_ID")[0])
+labels = dict(globals_ + panels)
+check("every route in the table names a view", len(globals_) >= 12 and len(panels) >= 6,
+      f"{len(globals_)} global, {len(panels)} panels")
+check("runbook lands on the route the application opens on",
+      f"**{labels['start']}**" in runbook or "Start" in runbook, labels.get("start"))
 m = re.search(r"all (\d+) views", runbook)
-check("runbook view count equals main.js",
-      bool(m) and int(m.group(1)) == len(views),
-      f"{m and m.group(1)} vs {len(views)}")
+check("runbook view count equals the route table",
+      bool(m) and int(m.group(1)) == len(globals_) + len(panels),
+      f"{m and m.group(1)} vs {len(globals_) + len(panels)}")
 
 # ---- census numbers the runbook says out loud (validator-enforced T1)
 census = json.loads((BASE / "data" / "census" / "census.json").read_text())

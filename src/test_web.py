@@ -218,27 +218,27 @@ class Quiet(SimpleHTTPRequestHandler):
     def log_message(self, *a):  # noqa: D401
         pass
 
-root_dir = OUT
-# the JSON chunks the build wrote, beside the application that fetches them:
-# on the deployed site they sit at data/ under the same root
-chunks_src = BASE / "site" / "data"
-if chunks_src.exists():
-    import shutil as _sh
-    _sh.copytree(chunks_src, OUT / "data", dirs_exist_ok=True)
-# the generated documents sit beside the application too, so a download link on
-# the documents panel and in the packet resolves the same way at the site root
-# and under a preview subpath
-memos_src = BASE / "site" / "memos"
-if memos_src.exists():
-    import shutil as _sh2
-    _sh2.copytree(memos_src, OUT / "memos", dirs_exist_ok=True)
+# The gate serves a copy of what deploys, assembled in its own folder rather
+# than in the build output: the application, the JSON chunks beside it, and the
+# generated documents. Copying them into the build output would put the record
+# inside the thing that is supposed to hold only the application.
+import shutil as _sh
+serve_root = BASE / ".web_serve"
+if serve_root.exists():
+    _sh.rmtree(serve_root)
+_sh.copytree(OUT, serve_root)
+for _part in ("data", "memos"):
+    _src = BASE / "site" / _part
+    if _src.exists():
+        _sh.copytree(_src, serve_root / _part, dirs_exist_ok=True)
+root_dir = serve_root
 sub_root = BASE / ".preview_root"
 if sub_root.exists():
     import shutil
     shutil.rmtree(sub_root)
 (sub_root / "previews").mkdir(parents=True)
 import shutil
-shutil.copytree(OUT, sub_root / "previews" / "999")
+shutil.copytree(serve_root, sub_root / "previews" / "999")
 httpd = ThreadingHTTPServer(("127.0.0.1", args.port), partial(Quiet, directory=str(root_dir)))
 threading.Thread(target=httpd.serve_forever, daemon=True).start()
 httpd2 = ThreadingHTTPServer(("127.0.0.1", args.port + 1), partial(Quiet, directory=str(sub_root)))
@@ -542,6 +542,105 @@ with sync_playwright() as pw:
                 check(f"axe-core (b) {label}: zero serious or critical findings ({len(axe)} total)", not serious,
                       "; ".join(f"{v['id']} ({v['impact']}, {v['nodes']}) {v['targets'][:1]}" for v in serious[:4]))
             ctx.close()
+    # the figures the record committed are the figures on the screen. The old
+    # frontend's gate asserted a hand-written list of numbers on named views;
+    # this reads the record instead, so it covers every product and cannot go
+    # stale when a figure changes for a cited reason.
+    def _digits(s: str) -> str:
+        return re.sub(r"[^0-9.]", "", s)
+
+    fig = browser.new_page(viewport={"width": 1440, "height": 1600})
+    _fig_missing: list[str] = []
+    _fig_checked = 0
+    _chunks = BASE / "site" / "data" / "product"
+    for _dir in sorted(_chunks.iterdir()):
+        key = _dir.name
+        sel = json.loads((_dir / "selection.json").read_text()).get("selection") or {}
+        slot_k = (sel.get("slot_k") or {}).get("selected") or {}
+        picked = slot_k if slot_k.get("comparison") else (sel.get("reference_comparison") or {})
+        comp = picked.get("comparison") or {}
+        want = []
+        if isinstance(comp.get("ks_pme"), (int, float)):
+            want.append(("the public market equivalent", f"{comp['ks_pme']:.4f}"))
+        if isinstance(comp.get("fund_ann_pct"), (int, float)):
+            want.append(("the fund's annualized return", f"{comp['fund_ann_pct']:.2f}"))
+        if not want:
+            continue
+        fig.goto(f"{ROOT}#/product/{key}/benchmark?plan=plan_tech_media", wait_until="networkidle")
+        fig.wait_for_timeout(150)
+        fig.evaluate("() => document.querySelectorAll('details').forEach((d) => { d.open = true; })")
+        seen = _digits(fig.evaluate("() => document.getElementById('main').innerText"))
+        for label, value in want:
+            _fig_checked += 1
+            if _digits(value) not in seen:
+                _fig_missing.append(f"{key}: {label} {value}")
+    check(f"figures: every committed comparison statistic is on the benchmark panel of its fund "
+          f"({_fig_checked} figures)",
+          _fig_checked > 0 and not _fig_missing, f"missing: {_fig_missing[:4]}")
+
+    _liq_missing: list[str] = []
+    _liq_checked = 0
+    for _dir in sorted(_chunks.iterdir()):
+        key = _dir.name
+        path = _dir / "liquidity" / "plan_tech_media.json"
+        if not path.exists():
+            continue
+        m = json.loads(path.read_text()).get("match") or {}
+        pi = m.get("plan_inputs") or {}
+        want = []
+        if isinstance(pi.get("filed_outflow_proxy_pct"), (int, float)):
+            want.append(("the filed outflow rate", f"{pi['filed_outflow_proxy_pct']:.1f}"))
+        if isinstance(pi.get("separated_with_balances"), (int, float)):
+            want.append(("the separated participants", f"{int(pi['separated_with_balances'])}"))
+        if not want:
+            continue
+        fig.goto(f"{ROOT}#/product/{key}/liquidity?plan=plan_tech_media", wait_until="networkidle")
+        fig.wait_for_timeout(150)
+        fig.evaluate("() => document.querySelectorAll('details').forEach((d) => { d.open = true; })")
+        seen = _digits(fig.evaluate("() => document.getElementById('main').innerText"))
+        for label, value in want:
+            _liq_checked += 1
+            if _digits(value) not in seen:
+                _liq_missing.append(f"{key}: {label} {value}")
+    check(f"figures: every plan figure the match records is on the liquidity panel of its fund "
+          f"({_liq_checked} figures)",
+          _liq_checked > 0 and not _liq_missing, f"missing: {_liq_missing[:4]}")
+    fig.close()
+
+    # the demo script's surface checks. The script names a route, a fund, a
+    # plan and a text the speaker will read out loud, and this makes each one
+    # a rule: if the speaker would read it and it is not there, the gate says
+    # so before the meeting rather than during it.
+    script = (BASE / "docs" / "demo_script.md").read_text()
+    block = script.split("## Surface checks", 1)[1] if "## Surface checks" in script else ""
+    lines = [l[2:] for l in block.splitlines() if l.startswith("- ") and l.count("|") == 3]
+    _surface_missing: list[str] = []
+    sp = browser.new_page(viewport={"width": 1440, "height": 1600})
+    _last = ""
+    for line in lines:
+        route, product, plan, want = [x.strip() for x in line.split("|")]
+        # a route may name the state it is read in, because a row under a
+        # factor the reader has not opened is not on the page
+        route, _, extra = route.partition("?")
+        path = f"/{route}" if product == "-" else f"/product/{product}/{route}"
+        url = f"{ROOT}#{path}?plan={plan}" + (f"&{extra}" if extra else "")
+        if url != _last:
+            sp.goto(url, wait_until="networkidle")
+            sp.wait_for_timeout(200)
+            sp.evaluate("() => document.querySelectorAll('details').forEach((d) => { d.open = true; })")
+            sp.wait_for_timeout(120)
+            _last = url
+        seen = sp.evaluate("() => document.getElementById('main').innerText")
+        # a non-breaking space is a space to a reader, and the formatter uses
+        # one between a figure and its unit
+        flat = re.sub(r"\s+", " ", seen.replace("\u00a0", " ").replace("\u2009", " "))
+        if re.sub(r"\s+", " ", want) not in flat:
+            _surface_missing.append(f"{route} {product}: {want!r}")
+    sp.close()
+    check(f"demo script: every text the script speaks is on the route it names ({len(lines)} texts)",
+          len(lines) >= 20 and not _surface_missing,
+          f"{len(_surface_missing)} missing: {_surface_missing[:5]}")
+
     # the liquidity panel's one live state. This is the defect the phase was
     # written to fix: the sentences above the model were the record's static
     # text while the block below recomputed, so moving a slider made the page
@@ -840,7 +939,15 @@ with sync_playwright() as pw:
     # plan and a product, plus the bare root. A reader with a link in an email
     # or a slide from the old site lands on the route that replaced it, in
     # place, with no extra history entry to walk back through.
-    legacy_views = re.findall(r'^\s*\["([a-z]+)",', (BASE / "site" / "js" / "main.js").read_text(), re.M)
+    # the router's own map of the eighteen old views is the list, because it is
+    # the thing that has to keep working: a link in an email or on a slide
+    legacy_views = re.findall(r"^\s*([a-z]+): \"/",
+                              (BASE / "web" / "src" / "app" / "router.ts").read_text()
+                              .split("const LEGACY_VIEWS")[1].split("};")[0], re.M)
+    legacy_views += re.findall(r"(?:^|\s)([a-z]+): \"/",
+                               (BASE / "web" / "src" / "app" / "router.ts").read_text()
+                               .split("const LEGACY_VIEWS")[1].split("};")[0])
+    legacy_views = sorted(set(legacy_views))
     _redirects, _bad_redirect, _not_rebuilt = {}, [], []
     for _v in legacy_views:
         p3.goto(f"{ROOT}#view={_v}&plan=plan_tech_media&product=hl_paf", wait_until="networkidle")

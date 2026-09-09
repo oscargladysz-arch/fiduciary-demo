@@ -5,6 +5,7 @@ import { navigate, useRoute } from "../app/router";
 import { Button, Icon, Link } from "./primitives";
 import type { IconName } from "./primitives";
 import { useFocusTrap } from "./overlay";
+import { AuthorityButton } from "./authority";
 
 export interface NavItem { to: string; label: string; icon?: IconName; match?: (segments: string[]) => boolean }
 export interface NavGroup { label: string; items: NavItem[] }
@@ -85,12 +86,14 @@ export function AppShell({ groups, header, children, footer }: { groups: NavGrou
           <Button variant="icon" icon="menu" label="Open navigation" onClick={() => setSheet(true)} aria-expanded={sheet} />
           <Link to="/start" quiet className="wordmark" aria-label="Tark, start">TARK</Link>
           <span className="spacer" />
+          <AuthorityButton />
           <ThemeToggle />
         </header>
         <header className="topbar">
           <Button variant="icon" icon="menu" label={collapsed ? "Show the sidebar" : "Hide the sidebar"} onClick={toggle} aria-expanded={!collapsed} />
           {header}
           <span className="spacer" />
+          <AuthorityButton />
           <ThemeToggle />
         </header>
         <main id="main" className="shell__content" tabIndex={-1}>{children}</main>

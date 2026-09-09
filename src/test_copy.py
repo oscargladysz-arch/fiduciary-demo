@@ -2,7 +2,6 @@
     python src/test_copy.py [--only <path>] [--show N]
 
 Scope
-  - every string and template literal in site/js/*.js
   - every string constant in the Python modules that write surface text
     (SURFACE_MODULES below) and in app.py
   - the documents this engagement owns (OWNED_DOCS), outside fenced code
@@ -245,8 +244,11 @@ def scan(path: Path):
 
 
 def targets():
-    files = sorted((BASE / "site" / "js").glob("*.js"))
-    files += [BASE / "src" / m for m in SURFACE_MODULES]
+    # the frontend's own copy is checked where it is rendered, by the web
+    # gate's typography rules, which read the text a reader sees rather than a
+    # string literal. What is checked here is the Python that writes surface
+    # text and the documents this engagement owns.
+    files = [BASE / "src" / m for m in SURFACE_MODULES]
     files += [BASE / "app.py"]
     files += [BASE / d for d in OWNED_DOCS]
     return [f for f in files if f.exists()]

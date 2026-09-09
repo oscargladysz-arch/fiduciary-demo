@@ -22,4 +22,5 @@ data/census/raw/
 # the rebuilt frontend's build output and the web gate's scratch root
 site_next/
 .preview_root/
+.web_serve/
 web/node_modules/

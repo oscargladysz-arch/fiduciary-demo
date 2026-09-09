@@ -1,9 +1,10 @@
 /* Reference plans, a global route.
  *
- * Four anonymized plans and the intake form for a fifth. Every figure on a
- * plan card is read from that plan record and formatted here, never restated
- * in prose, and a figure the record does not hold prints the reason the
- * record gives beside its label rather than a bare dash.
+ * The anonymized plans the record holds, and the intake form for one more.
+ * How many there are is read from the record and never written into prose.
+ * Every figure on a plan card is read from that plan record and formatted
+ * here, never restated in prose, and a figure the record does not hold prints
+ * the reason the record gives beside its label rather than a bare dash.
  *
  * Choosing a plan is a navigation and not a filter: it goes through the plan
  * selector, so the choice rides in the address, a link carries it and Back
@@ -61,7 +62,8 @@ interface PlanDoc {
 /** A plan year as the filing states it, both ends through the date layer. */
 function planYear(raw: string | undefined): string {
   const m = /^\s*(\d{4}-\d{2}-\d{2})\s+to\s+(\d{4}-\d{2}-\d{2})\s*$/.exec(raw || "");
-  return m ? `${fmtDateShort(m[1])} to ${fmtDateShort(m[2])}` : (raw || "");
+  if (m) return `${fmtDateShort(m[1])} to ${fmtDateShort(m[2])}`;
+  return (raw || "").trim() || "Not on record";
 }
 
 /** A figure the record holds, or the reason the record gives for not holding
@@ -116,7 +118,8 @@ function PlanCard({ planKey, doc, selected }: { planKey: string; doc: PlanDoc; s
 
       {doc.demand_sentence && <p className="t-14 t-2">{doc.demand_sentence}</p>}
 
-      <Disclosure summary="What is behind these figures">
+      <Disclosure summary={<>What is behind these figures
+        <span className="sr-only"> for {doc.display_label || "this plan on record"}</span></>}>
         <div className="stack-4">
           {proxy.what && <p className="t-13 t-2">{proxy.what}</p>}
           {proxy.formula && (
@@ -154,7 +157,8 @@ function PlanCard({ planKey, doc, selected }: { planKey: string; doc: PlanDoc; s
 
       {selected
         ? <p className="t-13 t-3">Every panel that follows the plan is reading this one.</p>
-        : <Link to="/plans" params={{ plan: planKey }}>Use this plan</Link>}
+        : <Link to="/plans" params={{ plan: planKey }}
+          aria-label={`Use this plan, ${doc.display_label || "a plan on record"}`}>Use this plan</Link>}
     </Card>
   );
 }
@@ -315,7 +319,7 @@ function IntakeForm() {
           <FileDownload name={fileName} text={fileText} label="Download the plan profile"
             description={`Written on ${fmtDate(new Date())}. It carries the fields you entered and the date, and nothing else.`} />
           <p className="t-14 t-2">
-            Send the file to the person who runs your evaluation. They load it as a fifth plan, and every panel
+            Send the file to the person who runs your evaluation. They load it as one more plan, and every panel
             that follows the plan then reads your own filed figures instead of a reference plan. Keep the label
             free of the sponsor name and the file stays anonymous.
           </p>
@@ -326,7 +330,7 @@ function IntakeForm() {
 }
 
 /* ------------------------------------------------------------- the route */
-const INTRO = `These four plans are anonymized stand-ins for the sponsors we work with, each one assembled from a filed plan record. Every figure below comes from that plan record, and nothing here names or identifies a sponsor. ${SAY.anonymized}`;
+const INTRO = `These plans are anonymized stand-ins for the sponsors we work with, each one assembled from a filed plan record. Every figure below comes from that plan record, and nothing here names or identifies a sponsor. ${SAY.anonymized}`;
 
 export default function PlansView() {
   const { value: index, error: indexError, loading: indexLoading } = useIndex();
@@ -360,8 +364,8 @@ export default function PlansView() {
         <Stat label="Signed by a person" value={fmtInt(counts.verified || 0)} source={SAY.verificationPending} />
       </StatRow>
 
-      <section className="stack-4" aria-labelledby="plans-four">
-        <h2 id="plans-four" className="t-20">The four plans</h2>
+      <section className="stack-4" aria-labelledby="plans-record">
+        <h2 id="plans-record" className="t-20">The plans on record</h2>
 
         <Card className="stack-2">
           <ContextChip id="plans-plan" label="Plan" value={plan} options={planOptions(index)} onChange={setPlan}

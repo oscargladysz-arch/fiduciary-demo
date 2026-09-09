@@ -117,7 +117,7 @@ interface SlotG {
   label?: string;
   member_names?: string[];
   member_period_kind?: Record<string, string>;
-  member_source?: Record<string, string>;
+  member_source?: Record<string, string | null>;
   members?: string[];
   survivorship_note?: string;
   table?: PeerRow[];
@@ -192,6 +192,17 @@ const PERIOD_KIND: Record<string, string> = {
 function plainWords(name: string): string {
   const t = String(name || "").replace(/_/g, " ").trim();
   return t ? t.charAt(0).toUpperCase() + t.slice(1) : "";
+}
+
+/** The name the record gives a held series, as a reader can read it. The field
+ *  holds a stored location on some records, so anything shaped like one is
+ *  left out rather than printed: a name for a reader has words in it. */
+function readerName(name: string | undefined): string {
+  const t = String(name || "").trim();
+  if (!t) return "";
+  if (/(^|[\s(])(?:data|docs|src|site|web)\//i.test(t)) return "";
+  if (!/\s/.test(t) && (/[/\\]/.test(t) || /\.[A-Za-z0-9]{1,5}$/.test(t))) return "";
+  return t;
 }
 
 /** The first sentence of a note. The rest goes behind Method, so the card
@@ -390,17 +401,28 @@ export default function BenchmarkView() {
   const gLabel = slotG?.label || index.labels.slot.slot_g || "Peer comparison";
   const recordedAt = sel.inputs?.recorded_at || sel.recorded_at || "";
   const recordHash = sel.inputs?.record_hash || sel.record_hash || "";
+  // a held series is listed only where the record both names it in reader
+  // words and locks it by content, so no row prints a stored location and no
+  // row prints a blank where a name or a lock belongs
+  const heldSeries = (sel.inputs?.series || [])
+    .map((held) => ({ name: readerName(held.path), lock: hashPrefix(held.sha256) }))
+    .filter((held) => held.name && held.lock);
   // the reference block belongs only where the meaningful benchmark carries
   // no comparison of its own, so it can never read as the answer
   const reference = !picked?.comparison ? sel.reference_comparison || null : null;
   const referenceStat = statisticOf(reference?.comparison);
   const ties = (sel.rejected || []).filter((x) => x.tied === true);
 
-  const decided = picked && !picked.comparison
-    ? (picked.by_descriptor ? rubric.by_descriptor_sentence : "")
-      || picked.comparison_note
-      || "No comparison is computed for this candidate on the record."
-    : "";
+  // what the card says in place of a statistic. A candidate can carry no
+  // comparison at all, or carry one the record gives no ratio for, and neither
+  // may render as a blank where a figure belongs.
+  const decided = !picked
+    ? ""
+    : picked.comparison
+      ? "The record computes no ratio from the comparison it holds for this candidate."
+      : (picked.by_descriptor ? rubric.by_descriptor_sentence : "")
+        || picked.comparison_note
+        || "No comparison is computed for this candidate on the record.";
 
   // one alignment sentence on the card, in the words of the record: the
   // criterion that asks whether the two liquidity processes match. The rest
@@ -666,6 +688,10 @@ export default function BenchmarkView() {
                   <p className="t-13 t-2">{firstSentence(composite.alignment_note)}</p>
                 )}
               </>
+            ) : compositeComputed ? (
+              <p className="t-14">
+                The cohort carries a composite on the record, and the record computes no ratio from it.
+              </p>
             ) : (
               <p className="t-14">
                 Composite refused: {composite?.reason || "no reason is on record."}
@@ -687,20 +713,24 @@ export default function BenchmarkView() {
                     ))}
                   </ul>
                 )}
-                {slotG.member_source && (
+                {slotG.member_source && Object.keys(slotG.member_source).length > 0 && (
                   <dl className="field-list">
-                    {Object.entries(slotG.member_source).map(([name, source]) => (
-                      <Fragment key={name}>
-                        <dt>{name}</dt>
-                        <dd>
-                          {source}
-                          {slotG.member_period_kind?.[name]
-                            && PERIOD_KIND[slotG.member_period_kind[name]]
-                            ? `, on a ${PERIOD_KIND[slotG.member_period_kind[name]]} basis`
-                            : ""}
-                        </dd>
-                      </Fragment>
-                    ))}
+                    {Object.entries(slotG.member_source).map(([name, source]) => {
+                      const kind = slotG.member_period_kind?.[name] || "";
+                      const basis = PERIOD_KIND[kind] || "";
+                      return (
+                        <Fragment key={name}>
+                          <dt>{name}</dt>
+                          <dd>
+                            {source
+                              ? `${source}${basis ? `, on a ${basis} basis` : ""}`
+                              : basis
+                                ? `No return source is on record, and this member reports on a ${basis} basis.`
+                                : "No return source is on record for this member."}
+                          </dd>
+                        </Fragment>
+                      );
+                    })}
                   </dl>
                 )}
                 {compositeComputed && composite && (
@@ -796,7 +826,7 @@ export default function BenchmarkView() {
           </p>
         </Card>
         <Table
-          id="ledger"
+          id="ledger-table"
           caption={`Every candidate scored for ${fundName || "this fund"}, what kind of comparator it is, `
             + "its score and what became of it."}
           columns={LEDGER_COLUMNS}
@@ -834,14 +864,14 @@ export default function BenchmarkView() {
               </div>
             </div>
           )}
-          {(sel.inputs?.series || []).length > 0 && (
+          {heldSeries.length > 0 && (
             <div className="stack-2">
               <h3 className="t-14 t-semibold">Series held, each locked by its content</h3>
               <dl className="field-list">
-                {(sel.inputs?.series || []).map((held) => (
-                  <Fragment key={held.path}>
-                    <dt>{held.path}</dt>
-                    <dd className="provenance">{hashPrefix(held.sha256)}</dd>
+                {heldSeries.map((held) => (
+                  <Fragment key={held.lock + held.name}>
+                    <dt>{held.name}</dt>
+                    <dd className="provenance">{held.lock}</dd>
                   </Fragment>
                 ))}
               </dl>
@@ -876,6 +906,11 @@ function PeerChart({ rows, fundName, compositeName, window: windowLabel }:
   const usable = rows.filter((row) =>
     typeof row.fund_return_pct === "number" && typeof row.composite_return_pct === "number");
   if (usable.length < 2) return null;
+  // the count of members behind the composite is stated only where every
+  // period plotted reports the same one, because the sentence says every period
+  const counts = usable.map((row) => row.n);
+  const members = typeof counts[0] === "number" && counts.every((n) => n === counts[0])
+    ? counts[0] : null;
   return (
     <LineChart
       title={`Return by period, this fund beside the peer composite${windowLabel ? `, ${windowLabel}` : ""}`}
@@ -893,7 +928,7 @@ function PeerChart({ rows, fundName, compositeName, window: windowLabel }:
       ]}
       yFormat={(v) => fmtPct(v)}
       footer={"Each point is the return of that period on its own, never a cumulative figure."
-        + (typeof usable[0].n === "number" ? ` Peers reporting every period shown: ${fmtN(usable[0].n)}.` : "")} />
+        + (members !== null ? ` Peers reporting every period shown: ${fmtN(members)}.` : "")} />
   );
 }
 
@@ -922,8 +957,12 @@ function PeerTable({ slotG, fundName, sort }:
         </span>
       ),
     }];
+    // the index carries the fund's full registered name and the cohort table
+    // its short one, so the column is marked on either
+    const short = fundName.split(" (")[0].trim();
     names.forEach((name, i) => {
-      const header = name === fundName ? `${name} (this fund)` : name;
+      const isFund = !!fundName && (name === fundName || (!!short && name === short));
+      const header = isFund ? `${name} (this fund)` : name;
       out.push({
         id: `m${i}`, header, label: header, numeric: true,
         sortValue: (row) => (typeof row.returns[name] === "number" ? (row.returns[name] as number) : null),
@@ -1075,7 +1114,9 @@ function ledgerRows(sel: Selection | null, index: IndexView | null): LedgerRow[]
       lane: "Peer cohort", score: "Not scored", scoreValue: null, tied: false,
       outcome: stat
         ? `${stat.label} ${stat.value}, over ${composite.window || "the periods on record"}`
-        : `Composite refused: ${composite.reason || "no reason is on record."}`,
+        : composite.status === "computed"
+          ? "A composite is on record for this cohort, and the record computes no ratio from it."
+          : `Composite refused: ${composite.reason || "no reason is on record."}`,
     });
   }
 

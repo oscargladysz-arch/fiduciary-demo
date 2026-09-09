@@ -65,12 +65,13 @@ ack ids) would leak.
 2. `sh hooks/pre-commit` (every gate, see the list below)
 3. `python src/build_site.py`
 4. Open the Pages URL and hard-refresh (Cmd+Shift+R) to bust the module
-   cache. The series and census chunks lazy-load, so hard-refresh twice
-   after a redeploy.
-5. The app opens on the **Screener** with the tech/media plan selected.
-   `docs/demo_script.md` (v10, the advisor workflow) says where to go from
-   there, and its closing table names the record location of every number
-   it speaks.
+   cache. Each route loads its own chunk, so hard-refresh once after a
+   redeploy and the first route you open pulls what it needs.
+5. The app opens on the **Start** route with the tech/media plan selected.
+   Start is built on the three tasks an adviser comes here to do, and every
+   other route is one click from it. `docs/demo_script.md` (v11, the adviser workflow on the rebuilt
+   routes) says where to go from there, and its closing table names the record location of every
+   number it speaks.
 6. Present at 125% browser zoom (Cmd+Plus twice from 100%). The calls are
    screen-shared and the current type sizes are small at 100%.
 
@@ -193,17 +194,17 @@ file as a named download and a copy button (decision 7.31).
 
 ## Fallback plan (in order)
 1. Pages URL fails: local `http.server` (step above, 10 seconds).
-2. Laptop dies: `docs/screenshots/after_r2/` holds all 18 views for four
-   products under the tech/media plan as JPEG, shot from the round-2 build
-   that was deployed. `docs/screenshots/baseline_r2/` holds the same 42
-   shots before round 2, and the `_2026-09` pair holds round 1's before and
-   after, for a before-and-after.
+2. Laptop dies: `docs/screenshots/after_r3/` holds all 18 views for four
+   products under the tech/media plan as JPEG, shot from the rebuilt
+   frontend. `docs/screenshots/baseline_r3/` holds the same set before the
+   rebuild, and the earlier pairs hold rounds 1 and 2, for a
+   before-and-after.
 3. Deep questions on provenance: open `data/evidence/<product>_evidence.csv`
    live. It is the human-verification interface and reads like a ledger,
    accession column included.
 
 ## What is enforced by machines (say this in the meeting)
-- Pre-commit runs 22 gates, in this order: `validate_data` (data contract,
+- Pre-commit runs 23 gates, in this order: `validate_data` (data contract,
   registry, advisor files, accessions, no laptop paths), `validate_census`
   (T1 census), `test_evidence_immutable` (T2 rows change only through an
   allowlisted correction), `corrections_log` (every changed published number
@@ -227,14 +228,17 @@ file as a named download and a copy button (decision 7.31).
   drawer is the manifest's URL), `test_surfaces`
   (no developer instruction, file path, script name or internal key on any
   rendered view, in the bundle or in any generated document),
-  `test_frontend` (render sweep across every view, product and plan with the
-  HTML parsed, anonymization, JS/Python parity, runtime dead-key check,
-  mobile and print renders, Tier 1 drawer against the CSV, and every
-  on-screen text the demo script's surface-check block names), `test_web`
-  (the rebuilt frontend under `web/`: the token gate, the formatting gate,
-  the guideline audit on every rebuilt route at 1440 and 390 px in both
-  themes, axe-core with zero serious or critical findings, the performance
-  budget and the preview-subpath check). The full hook ran in 240 seconds
+  `test_web` (the frontend under `web/`: the unit tests including the parity
+  of its arithmetic against the engine, the token gate, the formatting gate,
+  the guideline audit on all 18 views at 1440 and 390 px in both themes,
+  axe-core with zero serious or critical findings, the forbidden-string sweep
+  over every rendered route, the committed figures on the panel of every
+  fund, the packet and liquidity interactions, every legacy address, the
+  performance budget measured at 9 Mbps and 70 ms, and the preview subpath),
+  `test_frontend` (the data behind the screen: the typed facts, the lab
+  matrix and every selection), `assemble_site` (the application and the
+  record composed into the one tree that deploys, with the verification
+  bundle kept out of it). The full hook ran in 240 seconds
   on 2026-09-07 in the remote build container (`docs/DEPLOY_LOG.md` keeps
   each recorded run). CI runs the same hook on every push and pull request
   (`.github/workflows/gates.yml`, R3-P0-3).

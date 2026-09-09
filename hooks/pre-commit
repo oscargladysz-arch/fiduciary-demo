@@ -24,5 +24,6 @@ python src/test_artifacts_fresh.py && \
 python src/build_site.py && \
 python src/reconcile.py && \
 python src/test_surfaces.py && \
+python src/test_web.py && \
 python src/test_frontend.py && \
-python src/test_web.py
+python src/assemble_site.py

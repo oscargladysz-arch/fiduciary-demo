@@ -26,7 +26,11 @@ SITE = BASE / "site"              # the deployable tree
 
 # what the record owns. The application may not write any of these, and this
 # script never deletes them.
-RECORD_DIRS = ("data", "memos", "census")
+RECORD_DIRS = ("data", "memos")
+# the bundle the old frontend read. It is still written, because the
+# reconciliation and the bundle checks read it and they verify the record, but
+# nothing serves it any more, so it does not go into the deployable tree.
+VERIFY_ONLY = ("data.js", "series.js", "census.data.js", "census")
 
 
 def assemble(app: Path = APP, site: Path = SITE) -> dict:
@@ -61,14 +65,22 @@ def assemble(app: Path = APP, site: Path = SITE) -> dict:
             shutil.copy2(entry, target)
         copied.append(entry.name)
 
+    pruned = []
+    for name in VERIFY_ONLY:
+        target = site / name
+        if target.exists():
+            shutil.rmtree(target) if target.is_dir() else target.unlink()
+            pruned.append(name)
+
     missing = [d for d in RECORD_DIRS if not (site / d).exists()]
-    return {"copied": copied, "removed": removed, "record_missing": missing}
+    return {"copied": copied, "removed": removed, "pruned": pruned, "record_missing": missing}
 
 
 def main() -> None:
     out = assemble()
     print(f"site/ assembled: {len(out['copied'])} entries from the application "
-          f"({', '.join(out['copied'])}), {len(out['removed'])} replaced")
+          f"({', '.join(out['copied'])}), {len(out['removed'])} replaced, "
+          f"{len(out['pruned'])} verification-only file(s) kept out of the deploy")
     if out["record_missing"]:
         print(f"the record's folders are not all present: {out['record_missing']}. "
               "Run python src/build_site.py.", file=sys.stderr)
