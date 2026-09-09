@@ -32,8 +32,8 @@ import type { DocumentsView as DocumentsShape, SelectionView } from "../data/typ
 /* The documents chunk names the two files and the verification state. A later
  * record may also list the sections of the document, in the order it wrote
  * them, and the contents list prints them where it does. Both are optional,
- * because this build carries neither and the panel says so rather than
- * inventing a list. */
+ * because the record here carries neither and the panel says so rather
+ * than inventing a list. */
 interface DocumentsChunk extends DocumentsShape {
   sections?: string[];
   contents?: string[];
@@ -50,6 +50,15 @@ interface Lock {
  *  so the same page serves the site root and a preview under a subpath. */
 function memoHref(name: string): string {
   return new URL("memos/" + name, document.baseURI).toString();
+}
+
+/** A section name is printed only where it reads as a reader’s words. An
+ *  entry that carries an internal key, a path or a file name is skipped
+ *  rather than printed under a name that is not a reader’s. */
+function readerWords(part: string): boolean {
+  const s = (part || "").trim();
+  if (!s || s.includes("_") || s.includes("/")) return false;
+  return /[A-Za-z]{2,}\s+[A-Za-z]{2,}/.test(s);
 }
 
 /** One real download: the document named in reader words, the link, and one
@@ -82,8 +91,9 @@ export default function DocumentsView() {
 
   const { value: docs, error, loading } = useAsync<DocumentsChunk | null>(
     () => (plan && key ? data().getDocuments(plan, key) : Promise.resolve(null)), [plan, key]);
-  const { value: selection } = useAsync<SelectionView | null>(
-    () => (key ? data().getSelection(key) : Promise.resolve(null)), [key]);
+  const { value: selection, error: selectionError, loading: selectionLoading } =
+    useAsync<SelectionView | null>(
+      () => (key ? data().getSelection(key) : Promise.resolve(null)), [key]);
 
   if (error || indexError) {
     return <EmptyState title={SAY.noRecord}>{error || indexError}</EmptyState>;
@@ -94,7 +104,7 @@ export default function DocumentsView() {
   if (!plan) {
     return (
       <EmptyState title={SAY.noRecord}>
-        This build carries no reference plan, and these two documents are written for one plan at a time.
+        No reference plan is on file here, and these two documents are written for one plan at a time.
       </EmptyState>
     );
   }
@@ -108,7 +118,7 @@ export default function DocumentsView() {
 
   const fundName = index.products.find((p) => p.key === key)?.fund_name || "";
   const label = planLabel(index, plan);
-  const contents = docs.sections || docs.contents || [];
+  const contents = (docs.sections || docs.contents || []).filter(readerWords);
   const lock = ((selection?.selection || null) as unknown) as Lock | null;
   const recordedAt = lock?.recorded_at || "";
   const recordHash = lock?.record_hash || "";
@@ -163,19 +173,23 @@ export default function DocumentsView() {
         <h2 id="docs-contents" className="t-20">What is inside the record</h2>
         {contents.length > 0 ? (
           <ol className="stack-2">
-            {contents.map((part) => <li key={part} className="t-14 t-2">{part}</li>)}
+            {contents.map((part, i) => <li key={`${i}-${part}`} className="t-14 t-2">{part}</li>)}
           </ol>
         ) : (
           <p className="t-14 t-2">
-            The contents are not listed here. Open the document to read them, in the order it
-            read its sections in the order it wrote them.
+            The contents are not listed here. Open the document to read its sections in the order
+            it sets them out.
           </p>
         )}
       </section>
 
       <section className="stack-4" aria-labelledby="docs-lock">
         <h2 id="docs-lock" className="t-20">The selection behind it</h2>
-        {locked ? (
+        {selectionLoading ? (
+          <Skeleton lines={2} label={SAY.loadingRecord} />
+        ) : selectionError ? (
+          <p className="t-14 t-2">{selectionError}</p>
+        ) : locked ? (
           <Card className="stack-2">
             <p className="t-14 t-2">
               The benchmark selection this record rests on carries the date it was recorded and a hash of the
@@ -208,9 +222,10 @@ export default function DocumentsView() {
           Nothing in either document is a legal conclusion. The record answers paragraphs{" "}
           {index.rule.paragraphs} of {index.rule.citation}, and the attachment carries that text unedited.
         </p>
-        <p className="t-13 t-3">
+        <p className="t-13 t-3" aria-live="polite">
           {SAY.verificationPending}{" "}
-          {SAY.verificationCount(index.coverage_totals.counts.verified, index.coverage_totals.counts.total)}{" "}
+          {SAY.verificationCount(index.coverage_totals.counts.verified || 0,
+            index.coverage_totals.counts.total || 0)}{" "}
           <Link to="/verification">See the verification queue</Link>
         </p>
       </Card>

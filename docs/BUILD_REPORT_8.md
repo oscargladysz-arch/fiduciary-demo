@@ -103,6 +103,72 @@ served at the root and under `previews/999/`, and the workspace gate reads
 the reference routes for their schema names. No view is rebuilt: this is
 data, and it is not what the checkpoint gates.
 
+### R3-P1, the frontend rebuilt and the old one deleted
+
+All eighteen views. The route table is one list that the switch, the four
+sidebar groups, the palette and the gate all read, so a route cannot exist in
+one and not the other. Twelve global routes and six panels under a fund, with
+the panels sharing a header that carries the fund, its wrapper, what the
+record holds on it, and the plan selector only where the figures move with
+the plan.
+
+How it was built (decision 8.39): fourteen views in parallel, one agent per
+view, each writing exactly one file against the design system, the copy
+layer, the formatting layer and the adapter, each followed by an adversarial
+pass over its own file. The route table, the stylesheet and every shared
+component stayed in one pair of hands, and every view was integrated one at a
+time through the gate. Eleven of the fourteen passed the guideline audit and
+axe-core on the first run, and with one exception the defects the gate found
+were in shared components rather than in views, so fixing one fixed every
+view at once.
+
+The defects the audit named, in the order it found them:
+- a cell card was an h4 under an h2
+- the note beside an inline control pushed a row past a 390 px viewport
+- a table virtualized in one layout only and, when it did, rendered every row
+  anyway because nothing bounded its container
+- a sort button in a table header was a pixel under the tap target
+- an inline popover button was squeezed under it by the line box around it
+- a date field and a text area offered a password manager the chance to fill a
+  plan's net assets
+- a placeholder showed its example with no ellipsis
+- links, navigation items and tabs left the double-tap delay in place
+- a download link had a line box's hit target rather than a control's
+- a gap cell printed a bare dash with its reason reachable only by hovering
+
+Three defects the gate could not have found before this round, because the
+rules that find them did not exist (decision 8.40). A route that renders
+nothing passes every structural rule, so the audit now asserts each route
+renders the record. A figure that renders blank passes too, which is how the
+record's totals were found to nest their counts where a product's coverage
+carries them flat. And a numeral written into a view's markup is a number
+nobody can trace, so the gate scans every component and view for one.
+
+Two capabilities the rebuild had lost and this restored: the analysis lab
+recomputes the public market equivalent and the yearly edge against any proxy
+and any window, which the first pass had reduced to two growth lines, and the
+rule text is reachable from every route again, which the first pass had
+dropped entirely (the paragraphs shipped in the chunks and no view opened
+them).
+
+The old application is deleted: its markup, its stylesheet, its eighteen views
+and the gate that walked them. That gate had 242 checks and 227 of them
+walked the old application. None were dropped. The rendered sweep for
+developer strings moved to the web gate, over 120 rendered states of the
+rebuilt routes. The figures on screen moved there too and are now read out of
+the record rather than a hand-written list, 56 figures across all sixteen
+funds. The interactive recompute is the liquidity panel's live-state checks.
+The parity of the analytics moved to `web/src/analytics/*.test.ts`, which is
+where a parity check belongs.
+
+What deploys is assembled by one script (`src/assemble_site.py`) that puts the
+built application and the record into one tree, refuses to run if the
+application would overwrite the record's own folders, and keeps the
+verification bundle out of the deployable tree. The bundle is still written,
+because the reconciliation and the bundle checks read it, but nothing serves
+it. The follow-up that would finish the job is to point the reconciliation at
+the chunks and stop writing the bundle at all.
+
 ### R3-P2, the record and the documents (pull request 6)
 - `f2925c0` R3-P2-1 to -6, -17e, -19 (decision 8.28): rubric v3.1 with a
   load-bearing risk and liquidity criterion read from the dealing terms on

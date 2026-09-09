@@ -165,7 +165,7 @@ h2, h3 { scroll-margin-top: calc(var(--topbar-h) + var(--s-3)); }
 
 /* ------------------------------------------------------------ drawer, dialog, palette */
 .drawer { position: fixed; inset: 0; z-index: 70; display: grid; grid-template-columns: minmax(0, 1fr) min(var(--drawer-w), 100%); }
-.drawer__scrim { background: var(--overlay); border: 0; padding: 0; }
+.drawer__scrim { background: var(--overlay); border: 0; padding: 0; overscroll-behavior: contain; }
 .drawer__panel { background: var(--panel); overflow: auto; overscroll-behavior: contain; box-shadow: var(--shadow-3);
   display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom); }
 .drawer__head { position: sticky; top: 0; display: flex; align-items: center; gap: var(--s-2); padding: var(--s-3) var(--s-4);
@@ -177,7 +177,8 @@ h2, h3 { scroll-margin-top: calc(var(--topbar-h) + var(--s-3)); }
 .field-list dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .quote { border-left: var(--bw-2) solid var(--accent-nontext); padding: var(--s-2) var(--s-3); background: var(--panel-sunken);
   border-radius: var(--r-1); font-style: normal; }
-.dialog { position: fixed; inset: 0; z-index: 80; display: grid; place-items: start center; padding: var(--s-8) var(--s-4); background: var(--overlay); }
+.dialog { position: fixed; inset: 0; z-index: 80; display: grid; place-items: start center; padding: var(--s-8) var(--s-4);
+  background: var(--overlay); overflow: auto; overscroll-behavior: contain; }
 .dialog__panel { width: min(var(--dialog-w), 100%); background: var(--panel); border-radius: var(--r-2); box-shadow: var(--shadow-3);
   overflow: hidden; max-height: calc(100vh - var(--s-8) * 2); display: flex; flex-direction: column; }
 .palette__input { width: 100%; padding: var(--s-3) var(--s-4); border: 0; border-bottom: var(--bw) solid var(--line);

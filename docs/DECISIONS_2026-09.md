@@ -2785,3 +2785,50 @@ inputs. Three gates hold it: the sentences are on the page unedited, the
 control moves and says its own value, and moving an input recomputes the
 live area and leaves no sentence in it stating the filed inputs.
 Reverse by: the block at the end of the explanation disclosure.
+
+### 8.42 R3-P1: what deploys, and what the bundle is for now (default, reversible)
+The old application is deleted, which decision 8.1 requires and which is what
+"do not keep two frontends" means. Two things followed from it and are
+decided here rather than left implicit.
+
+What deploys is assembled by one script. `src/assemble_site.py` puts the
+built application and the record into one tree: it refuses to run if the
+application would overwrite `data/` or `memos/`, it replaces the previous
+application's files rather than leaving two builds side by side (their names
+carry a content hash, so keeping both would deploy both), and it runs last in
+the hook, after the gates that read what it prunes. CI uploads that tree
+unchanged, so a deploy cannot be assembled a second way by hand.
+
+The bundle the old application read is still written and is no longer served.
+`src/reconcile.py` and the bundle checks read it, and what they verify is the
+record rather than any frontend: every figure tied across the facts, the
+headlines, the cards, cells 1.8, 1.12 and 3.9, the match files and the
+documents, and every EDGAR link against the manifest. Re-pointing that at the
+JSON chunks is a real piece of work and doing it badly would lose the
+strongest check in the tree, so the bundle stays as a verification artifact
+and the assembler keeps it out of the deployable tree. Named as the follow-up
+rather than left as a surprise: point the reconciliation at the chunks and
+stop writing the bundle.
+
+The 227 checks that walked the old application did not walk anything after it
+was deleted, so each moved to where its subject now lives rather than being
+dropped. The rendered sweep and the figures on screen went to the web gate,
+the figures read out of the record rather than a hand-written list. The
+interactive recompute became the liquidity panel's live-state checks. The
+parity of the analytics went to `web/src/analytics/*.test.ts`. The 15 checks
+about the data behind the screen stayed where they were.
+Reverse by: `git revert` of the deletion commit, which restores the old
+application and its gate. Nothing else depends on them.
+
+### 8.43 R3-P1: the demo script's surface checks are a gate (default, reversible)
+The script names a route, a fund, a plan and a text the speaker will read out
+loud. The web gate reads that block and fails when the text is not on the
+route, so a script that has gone stale fails before the meeting rather than
+during it. 34 texts.
+Two mismatches on its first run were both real and both are now rules the
+script states rather than exceptions the gate makes: a figure and its unit are
+joined by a non-breaking space, so the comparison flattens whitespace, and a
+row under a factor the route has not opened is not on the page, so a line may
+name the state it is read in (`record?factor=2`).
+Reverse by: the block at the end of `docs/demo_script.md` and the check that
+reads it.

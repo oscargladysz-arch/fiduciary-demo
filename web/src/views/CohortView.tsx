@@ -15,7 +15,9 @@
  *
  * A composite is only formed where every peer in it reports the period on
  * the same basis, so periods short of that are named in the table and left
- * off the chart rather than averaged across two bases. */
+ * unaveraged rather than averaged across two bases. A line is only drawn
+ * where the record forms a composite and does not refuse one, and no
+ * sentence on the panel points at a chart that is not there. */
 import { Fragment, useMemo } from "react";
 import { setParams, useRoute } from "../app/router";
 import { LineChart } from "../charts/charts";
@@ -86,15 +88,19 @@ const PERIOD_BASIS: Record<string, string> = {
  * lowered when the label is sentence-cased. */
 const KEPT_UP = new Set(["NAV", "BDC", "REIT", "PE", "LLC", "CEF", "IPO"]);
 
-/* A name only the record understands. A caveat or an entry carrying one is
- * withheld and counted rather than printed at a reader. */
+/* A name only the record understands. A caveat, an entry or any other line
+ * of the record carrying one is withheld and counted rather than printed at
+ * a reader. The list is the surface rule set the gate holds, kept a little
+ * wider than the gate so this panel withholds before the gate has to. */
 const INTERNAL: RegExp[] = [
-  /[A-Za-z0-9]_[A-Za-z0-9]/,
-  /\.(?:json|py|csv|md|ts|tsx|js|yaml|yml)\b/i,
-  /\b(?:data|docs|src|site|web|tests)\//i,
-  /\bR\d+(?:-P\d+)?\b/,
-  /\b(?:engine|artifact|writer)\b/i,
+  /[A-Za-z0-9]_[A-Za-z0-9]/,                                      // a key the record files something under
+  /\.(?:json|py|csv|md|ts|tsx|js|jsx|yaml|yml|html?|txt)\b/i,     // a file
+  /\b(?:data|docs|src|site|web|tests)\//i,                        // a path in the repository
+  /\bR\d(?:-P\d)?(?:-\d+)?\b|\bP\d-\d+\b/,                        // a ticket
+  /\b(?:engines?|artifacts?|typed|writers?|builds?|sliders?)\b/i, // a word from the workshop
 ];
+/** What the panel says in place of a line it will not print. */
+const SHORTHAND = "The record states this in shorthand of its own rather than in words a reader can check.";
 /** The keys the record files each fund under. They are names for the record,
  *  not for a reader, so a sentence carrying one is withheld. Matched in the
  *  lower case the record files them in, which leaves a fund’s own market name
@@ -155,6 +161,16 @@ function prose(s: string | null | undefined, byKey: Record<string, string>): str
 function stop(s: string): string {
   return s && !/[.?!]$/.test(s) ? `${s}.` : s;
 }
+/** One line of the record on its way to the DOM: named for a reader, and
+ *  withheld for the sentence `instead` when it still carries a name only the
+ *  record understands. Every string this panel takes from the chunk goes
+ *  through here, so no line reaches a reader unchecked. */
+function readable(s: string | null | undefined, byKey: Record<string, string>,
+  keys: RegExp | null, instead: string): string {
+  const out = prose(s, byKey);
+  if (!out) return "";
+  return hasInternal(out, keys) ? instead : out;
+}
 /** A shouted label, lowered word by word, with the acronyms a reader knows
  *  left standing. */
 function unshout(label: string): string {
@@ -214,9 +230,10 @@ function cutCaveat(raw: string, names: string[]): Caveat | null {
 /* ---------------------------------------------------------- the composite */
 /** The period in words, from the date the record holds, never as the record
  *  spells the period out. */
-function periodLabel(row: PeriodRow): string {
+function periodLabel(row: PeriodRow, byKey: Record<string, string>, keys: RegExp | null): string {
   const when = fmtDate(row.period);
-  if (!when) return clean(row.label) || "Period not dated on the record";
+  if (!when) return readable(row.label, byKey, keys, "Period named in shorthand of its own")
+    || "Period not dated on the record";
   const kind = row.period_kind === "fiscal_year" ? "Fiscal year to "
     : row.period_kind === "calendar_year" ? "Calendar year to " : "";
   return `${kind}${when}`;
@@ -276,11 +293,12 @@ export default function CohortView() {
       const name = product?.fund_name || "A fund this panel cannot name";
       const source = composite.member_source?.[k];
       const stated = left.find((e) => e.member === name);
+      const shorthandBasis = "Stated on the record in shorthand of its own";
       const basis = source
-        ? sentenceCase(prose(source, byKey))
-        : stated ? stop(sentenceCase(prose(stated.reason, byKey)))
+        ? sentenceCase(readable(source, byKey, keys, shorthandBasis))
+        : stated ? stop(sentenceCase(readable(stated.reason, byKey, keys, shorthandBasis)))
           : PERIOD_BASIS[String(composite.member_period_kind?.[k] || "")] || "Not on record";
-      const why = stop(prose(entry.membership_rationale, byKey));
+      const why = stop(readable(entry.membership_rationale, byKey, keys, SHORTHAND));
       return {
         key: k,
         name,
@@ -288,10 +306,8 @@ export default function CohortView() {
           || product?.wrapper_label || "Not on record",
         subject: k === key,
         depth: DEPTH[String(entry.depth || "")] || "Not stated on the record",
-        periods: hasInternal(basis, keys) ? "Stated on the record in shorthand of its own" : basis,
-        why: !why ? "No reason on record"
-          : hasInternal(why, keys) ? "The record states this in shorthand of its own rather than in words a reader can check."
-            : why,
+        periods: basis || "Not on record",
+        why: why || "No reason on record",
       };
     });
   }, [cohort, index, memberKeys, key, keys, byKey]);
@@ -323,9 +339,12 @@ export default function CohortView() {
   if (loading || indexLoading || !chunk || !index) return <Skeleton lines={10} label={SAY.loadingRecord} />;
 
   const subject = index.products.find((p) => p.key === key);
-  const label = prose(cohort?.label, byKey) || index.cohorts?.[cohortId]?.label || "";
+  // the cohort’s own name, and a plain one to head the panel with when the
+  // record names it in shorthand a reader cannot check
+  const named = prose(cohort?.label, byKey) || prose(index.cohorts?.[cohortId]?.label, byKey);
+  const label = named && !hasInternal(named, keys) ? named : "This fund’s cohort";
 
-  if (!cohort || !label) {
+  if (!cohort || !named) {
     return (
       <EmptyState title="No cohort on record for this fund">
         A cohort appears here once the record admits at least two peers this fund can be set beside on the
@@ -340,14 +359,19 @@ export default function CohortView() {
   const charted = periods.filter((row) => typeof row.composite_return_pct === "number");
   const offChart = periods.length - charted.length;
   const refusal = composite.refused
-    ? stop(sentenceCase(prose(composite.reason, byKey)))
-    : composite.composite_refused_reason ? stop(sentenceCase(prose(composite.composite_refused_reason, byKey))) : "";
+    ? stop(sentenceCase(readable(composite.reason, byKey, keys, SHORTHAND)))
+    : composite.composite_refused_reason
+      ? stop(sentenceCase(readable(composite.composite_refused_reason, byKey, keys, SHORTHAND))) : "";
   const left = composite.excluded_members || [];
+  // a line is only drawn where the record forms a composite for two periods
+  // and does not refuse one, so the sentences below never point at a chart
+  // that is not there
+  const drawn = !refusal && charted.length >= 2;
 
   return (
     <div className="stack-5">
       <section className="stack-4" aria-labelledby="cohort-head">
-        <h2 id="cohort-head" className="t-24 t-balance">{label}</h2>
+        <h2 id="cohort-head" className="t-20 t-balance">{label}</h2>
         <p className="t-14 t-2">
           The funds the record sets {subject?.fund_name || "this fund"} beside, what the comparison can carry
           and where it stops carrying. Every figure here is the record’s own.
@@ -367,12 +391,13 @@ export default function CohortView() {
       <section className="stack-4" aria-labelledby="cohort-members">
         <h2 id="cohort-members" className="t-20">The funds in this cohort</h2>
         <p className="t-13 t-3" aria-live="polite">
-          {fmtInt(rows.length)} funds, and the reason the record gives for each one being here.
+          {fmtInt(rows.length)} {rows.length === 1 ? "fund" : "funds"}, and the reason the record gives for
+          each one being here.
         </p>
         <Table
           id="cohort-members-table"
           caption={`The funds in ${label}, the wrapper each one uses and why the record admitted it. ${SAY.verificationPending}`}
-          columns={memberColumns()}
+          columns={MEMBER_COLUMNS}
           rows={rows}
           rowKey={(row) => row.key}
           sort={sort}
@@ -396,8 +421,8 @@ export default function CohortView() {
           </EmptyState>
         )}
         <div className="stack-4">
-          {caveats.shown.map((caveat) => (
-            <Card key={caveat.label + caveat.body.slice(0, 24)} as="article" className="stack-2">
+          {caveats.shown.map((caveat, i) => (
+            <Card key={`${i}-${caveat.label}`} as="article" className="stack-2">
               <CardHead title={caveat.label} level={3} />
               <p className="t-14">{caveat.body}</p>
               {caveat.items.length > 0 && (
@@ -438,7 +463,7 @@ export default function CohortView() {
             <CardHead title="What the record says about forming this composite" level={3} />
             <p className="t-14">{refusal}</p>
           </Card>
-        ) : charted.length >= 2 ? (
+        ) : drawn ? (
           <Card className="stack-2">
             <LineChart
               title={`Composite return by period, ${label}`}
@@ -459,7 +484,7 @@ export default function CohortView() {
             <CardHead title="Too few periods to draw a line" level={3} />
             <p className="t-14">
               A line needs at least two periods every peer in the composite reports. The record forms{" "}
-              {fmtInt(charted.length)} of {fmtInt(periods.length)}. The table below carries them all.
+              {fmtOf(charted.length, periods.length)}. The table below carries them all.
             </p>
           </Card>
         )}
@@ -467,17 +492,18 @@ export default function CohortView() {
         {offChart > 0 && (
           <p className="t-13 t-3">
             {fmtOf(charted.length, periods.length)} periods carry a composite. The other {fmtInt(offChart)}{" "}
-            {offChart === 1 ? "is" : "are"} left off the chart because fewer than the{" "}
-            {peers.length ? fmtInt(peers.length) : fmtInt(0)} peers of the composite report{" "}
-            {offChart === 1 ? "it" : "them"} on the same basis.
+            {offChart === 1 ? "is" : "are"}{" "}
+            {drawn ? "left off the line and named in the table" : "named in the table and not averaged"},
+            because fewer than the {peers.length ? fmtInt(peers.length) : fmtInt(0)} peers of the composite
+            report {offChart === 1 ? "it" : "them"} on the same basis.
           </p>
         )}
 
         <Table
           id="cohort-periods-table"
           caption={`Every period the record holds for ${label}, the funds reporting it, and the composite `
-            + `return where one is formed. This is the table behind the chart.`}
-          columns={periodColumns(index, peers.length)}
+            + `return where one is formed.${drawn ? " This is the table behind the chart." : ""}`}
+          columns={periodColumns(index, peers.length, byKey, keys)}
           rows={periods}
           rowKey={(row) => `${row.period}-${row.period_kind || "period"}`}
           empty="The record holds no periods for this cohort." />
@@ -486,10 +512,11 @@ export default function CohortView() {
           <Card as="article" className="stack-2">
             <CardHead title="Funds left out of the composite" level={3} />
             <dl className="field-list">
-              {left.map((entry) => (
-                <Fragment key={entry.member}>
-                  <dt translate="no">{prose(entry.member, byKey)}</dt>
-                  <dd>{stop(sentenceCase(prose(entry.reason, byKey)))}</dd>
+              {left.map((entry, i) => (
+                <Fragment key={`${i}-${entry.member}`}>
+                  <dt translate="no">{readable(entry.member, byKey, keys, "A fund this panel cannot name")
+                    || "A fund this panel cannot name"}</dt>
+                  <dd>{stop(sentenceCase(readable(entry.reason, byKey, keys, SHORTHAND))) || "No reason on record"}</dd>
                 </Fragment>
               ))}
             </dl>
@@ -500,11 +527,15 @@ export default function CohortView() {
           <CardHead title="How this composite is formed" level={3} />
           <dl className="field-list">
             <dt>Weighting</dt>
-            <dd>{stop(sentenceCase(prose(composite.weighting, byKey))) || "Not on record"}</dd>
+            <dd>{stop(sentenceCase(readable(composite.weighting, byKey, keys, SHORTHAND))) || "Not on record"}</dd>
             <dt>Periods</dt>
-            <dd>{stop(sentenceCase(prose(composite.granularity, byKey))) || "Not on record"}</dd>
+            <dd>{stop(sentenceCase(readable(composite.granularity, byKey, keys, SHORTHAND))) || "Not on record"}</dd>
             {composite.composite_note && (
-              <><dt>What it covers</dt><dd>{stop(sentenceCase(prose(composite.composite_note, byKey)))}</dd></>
+              <>
+                <dt>What it covers</dt>
+                <dd>{stop(sentenceCase(readable(composite.composite_note, byKey, keys, SHORTHAND)))
+                  || "Not on record"}</dd>
+              </>
             )}
           </dl>
         </Card>
@@ -564,45 +595,46 @@ export default function CohortView() {
 }
 
 /* ------------------------------------------------------------- columns */
-function memberColumns(): Column<MemberRow>[] {
-  return [
-    {
-      id: "name", header: "Fund", label: "Fund", fixed: true,
-      sortValue: (row) => row.name,
-      cell: (row) => <Link to={`/product/${row.key}/record`} translate="no">{row.name}</Link>,
-    },
-    {
-      id: "wrapper", header: "Wrapper", label: "Wrapper",
-      sortValue: (row) => row.wrapper,
-      cell: (row) => <span className="t-13">{row.wrapper}</span>,
-    },
-    {
-      id: "here", header: "In this panel", label: "In this panel",
-      sortValue: (row) => (row.subject ? 0 : 1),
-      cell: (row) => <Chip kind={row.subject ? "accent" : "neutral"}>{row.subject ? "Subject" : "Peer"}</Chip>,
-    },
-    {
-      id: "depth", header: "Record depth", label: "Record depth",
-      sortValue: (row) => row.depth,
-      cell: (row) => <span className="t-13">{row.depth}</span>,
-    },
-    {
-      id: "periods", header: "Returns on record", label: "Returns on record",
-      cell: (row) => <span className="t-13 t-2">{row.periods}</span>,
-    },
-    {
-      id: "why", header: "Why it is here", label: "Why it is here",
-      cell: (row) => <span className="t-13 t-2">{row.why}</span>,
-    },
-  ];
-}
+/* One array, built once: a new array on every render would re-sort the table
+ * on every render and throw away the work the table memoizes. */
+const MEMBER_COLUMNS: Column<MemberRow>[] = [
+  {
+    id: "name", header: "Fund", label: "Fund", fixed: true,
+    sortValue: (row) => row.name,
+    cell: (row) => <Link to={`/product/${row.key}/record`} translate="no">{row.name}</Link>,
+  },
+  {
+    id: "wrapper", header: "Wrapper", label: "Wrapper",
+    sortValue: (row) => row.wrapper,
+    cell: (row) => <span className="t-13">{row.wrapper}</span>,
+  },
+  {
+    id: "here", header: "In this panel", label: "In this panel",
+    sortValue: (row) => (row.subject ? 0 : 1),
+    cell: (row) => <Chip kind={row.subject ? "accent" : "neutral"}>{row.subject ? "Subject" : "Peer"}</Chip>,
+  },
+  {
+    id: "depth", header: "Record depth", label: "Record depth",
+    sortValue: (row) => row.depth,
+    cell: (row) => <span className="t-13">{row.depth}</span>,
+  },
+  {
+    id: "periods", header: "Returns on record", label: "Returns on record",
+    cell: (row) => <span className="t-13 t-2">{row.periods}</span>,
+  },
+  {
+    id: "why", header: "Why it is here", label: "Why it is here",
+    cell: (row) => <span className="t-13 t-2">{row.why}</span>,
+  },
+];
 
-function periodColumns(index: IndexView, peerCount: number): Column<PeriodRow>[] {
+function periodColumns(index: IndexView, peerCount: number, byKey: Record<string, string>,
+  keys: RegExp | null): Column<PeriodRow>[] {
   const nameOf = (k: string) => index.products.find((p) => p.key === k)?.fund_name || "";
   return [
     {
       id: "period", header: "Period", label: "Period", fixed: true,
-      cell: (row) => <span className="t-13">{periodLabel(row)}</span>,
+      cell: (row) => <span className="t-13">{periodLabel(row, byKey, keys)}</span>,
     },
     {
       id: "n", header: "Funds reporting", label: "Funds reporting", numeric: true,

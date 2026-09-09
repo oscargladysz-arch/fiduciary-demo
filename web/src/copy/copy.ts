@@ -66,8 +66,9 @@ const STATUS: Record<string, StatusCopy> = {
 export function status(raw: string | undefined | null): StatusCopy {
   const key = String(raw || "").trim().toLowerCase();
   if (STATUS[key]) return STATUS[key];
-  // a status may carry a qualifier after a space or a colon
-  const head = key.split(/[\s:(]/)[0];
+  // a status may carry a qualifier after a space, a comma, a colon or a
+  // bracket: "n/a, not publicly available: ..." is still not applicable
+  const head = key.split(/[\s:,(]/)[0];
   return STATUS[head] || STATUS.pending;
 }
 

@@ -90,7 +90,14 @@ export function CiteButton({ target, label = "Open the citation", compact }:
     <>
       {compact
         ? <Button variant="icon" icon="cite" label={name} onClick={() => setOpen(true)} aria-haspopup="dialog" />
-        : <Button variant="quiet" icon="cite" onClick={() => setOpen(true)} aria-label={name} aria-haspopup="dialog">Source</Button>}
+        : (
+          // the visible label names the row it opens, because a card can carry
+          // five of these and five buttons reading "Source" are five buttons a
+          // reader cannot tell apart
+          <Button variant="quiet" icon="cite" onClick={() => setOpen(true)} aria-label={name} aria-haspopup="dialog">
+            <span translate="no">{target.cell}</span>
+          </Button>
+        )}
       <Drawer open={open} onClose={() => setOpen(false)}
         title={`${target.cell}, ${target.fundName}`}>
         <Body target={target} />

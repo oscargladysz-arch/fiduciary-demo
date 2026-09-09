@@ -354,6 +354,9 @@ def cell_display(cell: dict, cid: str = "", fx: dict | None = None) -> dict:
     sentence = first_sentence(val)
     # a long plain line is cut at a word boundary and marked, never left
     # looking like a sentence that stops at an abbreviation
+    # the status word in front of a value is the chip's job, on the plain line
+    # as much as in the headline
+    sentence = _STATUS_LEAD.sub("", sentence).strip() or sentence
     plain = sentence if len(sentence) <= 180 else sentence[:177].rsplit(" ", 1)[0].rstrip(" ,;:") + "…"
     typed = typed_headline(cid, fx or {})
     if typed:

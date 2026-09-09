@@ -522,8 +522,23 @@ with sync_playwright() as pw:
                 first_tab = page.evaluate("() => document.activeElement && document.activeElement.className")
                 page.evaluate("() => document.activeElement && document.activeElement.blur()")
                 res = page.evaluate(AUDIT_JS)
-                label = f"{route} {theme} {width}px"
                 fails = res["fails"]
+                # the overlay rules above only run on an overlay that is open,
+                # and a route as it first paints has none: open the first one
+                # the route offers and audit it too
+                opened = page.evaluate("""() => {
+                  const b = [...document.querySelectorAll('button[aria-haspopup=dialog]')][0];
+                  if (!b) return false;
+                  b.click();
+                  return true;
+                }""")
+                if opened:
+                    page.wait_for_timeout(400)
+                    over = page.evaluate(AUDIT_JS)
+                    fails += [f"overlay {f}" for f in over["fails"]]
+                    page.keyboard.press("Escape")
+                    page.wait_for_timeout(200)
+                label = f"{route} {theme} {width}px"
                 by_rule: dict[str, int] = {}
                 for f in fails:
                     by_rule[f.split(":")[0]] = by_rule.get(f.split(":")[0], 0) + 1

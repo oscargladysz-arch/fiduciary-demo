@@ -45,6 +45,12 @@ const PROGRAM_STATUS: Record<string, string> = {
   active: "Accepting requests",
   suspended: "Suspended",
 };
+/* The dealing window the record names. A period this map does not carry is
+ * not printed under its own name, for the same reason a filed input is not. */
+const PERIOD: Record<string, string> = {
+  day: "day", week: "week", month: "month", quarter: "quarter",
+  semiannual: "half year", year: "year",
+};
 /* A verdict the record qualifies, where the copy layer maps only its head. */
 const QUALIFIER: Record<string, string> = { mechanical: "On the dealing mechanics" };
 /* The filed figures the outflow proxy is built from. A key with no entry here
@@ -254,13 +260,21 @@ export default function LiquidityView() {
   const pi = match.plan_inputs || {};
   const fo = match.filed_outflow || {};
   const drivers = sc.drivers || {};
-  const period = drivers.window?.period || drivers.binding_cap?.period || wf.cap_period || "window";
+  const namedPeriod = drivers.window?.period || drivers.binding_cap?.period || wf.cap_period || "";
+  const period = PERIOD[namedPeriod] || "window";
   const structural = reading(match.verdict);
   const scenario = reading(match.scenario_verdict);
   const missing = match.missing_facts_labels || [];
   const gateUnknown = (match.missing_facts || []).includes("gate_history");
   const sentence = touched ? recomputed(live, period) : datesInWords(drivers.sentence);
   const outflowLabel = sentenceCase(fo.label || "filed outflow rate");
+  /* A status the map does not carry is not printed under its own name. */
+  const programNamed = PROGRAM_STATUS[String(wf.program_status || "")] || "";
+  const programLine = programNamed
+    ? `${programNamed}${wf.program_status_as_of ? `, as of ${fmtDate(wf.program_status_as_of)}` : ""}`
+    : wf.exchange
+      ? "No repurchase program. Shares are sold on the exchange."
+      : "Not on record";
 
   const cells = (match.citations || []).filter((c) => /^\d+(\.\d+)?$/.test(c));
   const notes = (match.citations || []).filter((c) => !/^\d+(\.\d+)?$/.test(c));
@@ -312,11 +326,7 @@ export default function LiquidityView() {
               <dt>Early repurchase fee</dt>
               <dd>{wf.early_fee || "Not on record"}</dd>
               <dt>Repurchase program</dt>
-              <dd>
-                {wf.program_status
-                  ? `${PROGRAM_STATUS[wf.program_status] || sentenceCase(wf.program_status)}${wf.program_status_as_of ? `, as of ${fmtDate(wf.program_status_as_of)}` : ""}`
-                  : wf.exchange ? "No repurchase program. Shares are sold on the exchange." : "Not on record"}
-              </dd>
+              <dd>{programLine}</dd>
               <dt>Buyback limits used</dt>
               <dd>{gateUnknown ? "Not on record" : wf.gate_history ? "Used at least once" : "None identified"}</dd>
             </dl>
@@ -411,7 +421,9 @@ export default function LiquidityView() {
         </Card>
 
         <Card className="stack-4">
-          <CardHead title="What those positions produce" level={3} />
+          <CardHead title="What those positions produce" level={3}>
+            <Chip kind="illustrative">{SAY.illustrative}</Chip>
+          </CardHead>
           <div className="stack-2" aria-live="polite">
             <p className="t-12 t-3">
               {touched
@@ -470,7 +482,9 @@ export default function LiquidityView() {
               value={live.capPerWindowPct === null
                 ? <NoFigure reason={wf.caps_label || "No cap on record"} />
                 : fmtPct(live.capPerWindowPct, 1)}
-              source={`${live.windows ? withUnit(fmtInt(live.windows), "offers a year") : "Dealing on the exchange"}${wf.cap_base && wf.cap_base !== "not on record" ? `, on ${wf.cap_base}` : ""}`} />
+              source={`${live.windows
+                ? withUnit(fmtInt(live.windows), "offers a year")
+                : wf.exchange ? "Dealing on the exchange" : "The dealing cadence is not on record"}${wf.cap_base && wf.cap_base !== "not on record" ? `, on ${wf.cap_base}` : ""}`} />
             <Stat label="This position, of the fund’s yearly capacity"
               value={live.fundSharePct === null
                 ? <NoFigure reason={fundReason}
@@ -531,7 +545,7 @@ export default function LiquidityView() {
               {(sc.schedule_h_lines || []).map((line, i) => (
                 <p key={i} className="t-13 t-2 t-pretty">{datesInWords(line)}</p>
               ))}
-              {/* The record's own sentences, unedited. The document for this
+              {/* The record’s own sentences, unedited. The document for this
                   plan and this fund prints these words, and a committee
                   reading the document beside the screen has to be able to
                   match them line for line. Everything above is the same
@@ -544,10 +558,10 @@ export default function LiquidityView() {
                   {touched && (
                     <p className="t-13 t-3">
                       You have moved an input, so the figures above are yours. These sentences are the
-                      record's, at the filed inputs, and they are what the document for this plan carries.
+                      record’s, at the filed inputs, and they are what the document for this plan carries.
                     </p>
                   )}
-                  <ul className="field-list">
+                  <ul className="stack-2">
                     {(match.scenario_reasons || []).map((line, i) => (
                       <li key={i} className="t-13 t-2 t-pretty">{line}</li>
                     ))}

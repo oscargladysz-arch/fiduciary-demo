@@ -34,7 +34,12 @@ function CellRow({ record, cid, cell, plan }:
   const toast = useToast();
   const pinned = isPinned(pins, record.product_key, cid);
   const element = cell.element || cid;
-  const headline = cell.display?.headline || cell.value;
+  // a row that does not apply carries "n/a" as its headline, which tells a
+  // reader nothing the chip has not already said: the reason is the line
+  const notApplicable = st.kind === "na";
+  const headline = notApplicable
+    ? (cell.display?.plain || cell.value || "The record gives no reason.")
+    : (cell.display?.headline || cell.value);
   const body = cell.value || "";
   // the headline leads and the body carries the rest: a body that is only the
   // headline again is not shown twice
@@ -185,7 +190,7 @@ export default function RecordView() {
         )}
       </section>
 
-      <Card sunken>
+      <Card sunken className="stack-2">
         <CardHead title="How to read this record" level={2} />
         <Legend label="Tiers" items={TIERS.map((t, i) => ({
           label: t.label, kind: (["structured", "extracted", "verified"] as const)[i],

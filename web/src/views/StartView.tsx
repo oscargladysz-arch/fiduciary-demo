@@ -133,7 +133,7 @@ export default function StartView() {
         </Card>
       </div>
 
-      <Card sunken>
+      <Card sunken className="stack-2">
         <CardHead title="How to read the record" level={2} />
         <p className="t-14 t-2">
           Each row of the record carries the tier it sits in. A{" "}

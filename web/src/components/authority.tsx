@@ -1,4 +1,4 @@
-/* The authority panel: the rule this record maps to, in the rule's own words.
+/* The authority panel: the rule this record maps to, in the rule’s own words.
  *
  * It is reachable from every route, because the question it answers ("what
  * does the rule actually say") comes up on every route. It opens as a dialog
@@ -6,7 +6,7 @@
  * opens it, and closes on a route change rather than following the reader
  * around.
  *
- * The paragraphs are the Federal Register's text, unedited, fetched once and
+ * The paragraphs are the Federal Register’s text, unedited, fetched once and
  * carried with the hash of what was fetched. Nothing here is paraphrased: a
  * paraphrase of a rule is a claim about the rule. */
 import { useEffect, useState } from "react";
@@ -69,7 +69,7 @@ function Body() {
       )}
 
       <p className="t-13 t-3">
-        The words above are the Federal Register's, unedited. Where this record summarises a paragraph it
+        The words above are the Federal Register’s, unedited. Where this record summarises a paragraph it
         says so and links back to it.
       </p>
     </div>

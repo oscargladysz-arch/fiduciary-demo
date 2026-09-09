@@ -71,9 +71,12 @@ interface Diagnostics {
 const LEAST_MONTH_ENDS = 7;
 const MONTHS_A_YEAR = 12;
 
+/** The role the record gives a series it holds as a public comparison. */
+const COMPARISON_ROLE = "index_proxy";
+
 const ROLE_WORDS: Record<string, string> = {
   fund: "The fund’s own series",
-  index_proxy: "The comparison series",
+  [COMPARISON_ROLE]: "The comparison series",
 };
 
 const DESMOOTHING_FALLBACK = "Appraisal prices react late and move little, so reported volatility "
@@ -381,7 +384,7 @@ function GradeCard({ index, graded }: { index: IndexView; graded: Graded }) {
       <VerdictBanner kind={graded.eligible ? "aligned" : "misaligned"}
         label="What the rubric says of this comparison" definition={graded.verdict} />
       <div className="stack-2">
-        <p className="t-13 t-3">The four criteria, each with what it measures.</p>
+        <p className="t-13 t-3">Each criterion the rubric scores, and what it measures.</p>
         <dl className="field-list">
           {rubric.criteria.map((c) => (
             <Fragment key={c}>
@@ -389,7 +392,9 @@ function GradeCard({ index, graded }: { index: IndexView; graded: Graded }) {
                 {rubric.criterion_label[c] || plainWords(c)},{" "}
                 <span className="t-num">{fmtOf(graded.criteria[c], rubric.criterion_max[c])}</span>
               </dt>
-              <dd className="t-13">{rubric.criterion_definition[c] || ""}</dd>
+              <dd className="t-13">
+                {rubric.criterion_definition[c] || "The rubric carries no definition for this criterion."}
+              </dd>
             </Fragment>
           ))}
         </dl>
@@ -450,10 +455,12 @@ function ComparisonCard({ sources, profile, proxyId, proxyName, fundName }:
     .filter(Boolean).join(" ");
 
   // the two statistics, recomputed here over exactly the window drawn above,
-  // by the same arithmetic the engine uses (web/src/analytics/math.ts, whose
-  // parity with the engine is a test). A public market equivalent is only a
-  // public market equivalent against a public market series: against anything
-  // else the ratio is shown without that name.
+  // by the same arithmetic the record computes them with, and the parity of
+  // the two is a test. A public market equivalent is only a public market
+  // equivalent against a public market series: the record marks that series
+  // with the comparison role, and against anything else the ratio is shown
+  // without that name. A figure that does not come out finite is no figure,
+  // so it reads as not computable rather than as a blank.
   const flows: Flow[] = [[pair.fund[0][0], -1], [pair.fund[pair.fund.length - 1][0],
     pair.fund[pair.fund.length - 1][1] / pair.fund[0][1]]];
   const proxyLevels: Point[] = pair.proxy;
@@ -466,8 +473,9 @@ function ComparisonCard({ sources, profile, proxyId, proxyName, fundName }:
     ratio = null;
     edge = null;
   }
-  const proxyIsPublic = !isMarketPrice(sources[proxyId])
-    || (sources[proxyId] || {}).role !== undefined;
+  if (ratio !== null && !Number.isFinite(ratio)) ratio = null;
+  if (edge !== null && !Number.isFinite(edge)) edge = null;
+  const proxyIsPublic = sources[proxyId]?.role === COMPARISON_ROLE;
   const statName = proxyIsPublic ? "Public market equivalent" : "Growth against the comparison";
 
   return (
@@ -499,8 +507,7 @@ function ComparisonCard({ sources, profile, proxyId, proxyName, fundName }:
       </StatRow>
       <p className="t-13 t-3">
         Both figures are recomputed here from the returns on record and the levels held, over the window
-        drawn above. {SAY.reference} where the comparison is a public series shown for orientation:
-        the meaningful benchmark for this fund is on its benchmark panel.
+        drawn above. {SAY.reference}. {SAY.referenceNote} It is on the benchmark panel for this fund.
       </p>
       <SourceLines sources={sources} ids={[fundSeriesId, proxyId]}
         lead={fundSeriesId ? undefined
@@ -552,7 +559,7 @@ function AnalysisPanel({ index, sources, library, profile, graded, proxyId, fund
                   {" "}
                   <Link to={`/product/${fundKey}/lab`} replace
                     params={{ tab: "analysis", proxy: profile.default_proxy }}>
-                    Show that one instead
+                    Show the record’s own comparison instead
                   </Link>
                 </>
               )}
