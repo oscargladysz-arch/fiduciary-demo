@@ -8,7 +8,7 @@
 // The adapter is chosen at build time by TARK_ADAPTER (see vite.config.ts).
 
 import type {
-  AuthorityView, CensusView, CohortView, CohortsView, CoverageView, DocumentsView,
+  AuthorityView, CensusView, CohortView, CohortsView, CoverageView, DailyView, DocumentsView,
   EvidenceView, FactsView, FunnelView, IndexView, LabView, LiquidityView,
   Manifest, PlansView, RecordView, ScreenerView, SelectionView, SeriesView,
   VerificationView,
@@ -42,6 +42,8 @@ export interface TarkData {
   getCensus?(): Promise<CensusView>;
   getCensusShard?(n: number): Promise<Record<string, Record<string, unknown>>>;
   getCensusSearch?(): Promise<Record<string, string>>;
+  /** One held daily series by its id, for the chart that draws it. */
+  getDailySeries?(seriesId: string): Promise<DailyView>;
 }
 
 export class DataError extends Error {

@@ -35,7 +35,7 @@ from pathlib import Path
 
 from tark_anon import leaks
 from tark_data import load_products, plan_keys
-from tark_views import (SCHEMA, authority_view, census_view, cohorts_view, coverage_view,
+from tark_views import (SCHEMA, authority_view, census_view, cohorts_view, coverage_view, daily_view,
                         evidence_view, funnel_view, index_view, lab_view, plans_view,
                         product_view, screener_view, series_view, verification_view)
 
@@ -101,6 +101,13 @@ def write_chunks(site: Path, record_name=None, attachment: str = "", demo: dict 
     }
     for name, payload in globals_.items():
         files[name] = _write(out / name, payload)
+
+    # every held daily series as its own chunk: a chart asks for the one it
+    # draws, and no page carries eleven series it will not use
+    sources = d.get("series_sources") or {}
+    for name, points in (d.get("daily_series") or {}).items():
+        files[f"daily/{name}.json"] = _write(out / "daily" / f"{name}.json",
+                                             daily_view(name, points, sources.get(name)))
 
     # the universe: an index a filter reads, detail shards an entity opens,
     # and the text sidecar a name search needs

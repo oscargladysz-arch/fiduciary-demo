@@ -18,11 +18,12 @@ import { Disclosure } from "../components/overlay";
 import { Button, Card, CardHead, Chip, EmptyState, Legend, Link, Skeleton, Stat, StatRow, useToast }
   from "../components/primitives";
 import { Donut } from "../charts/charts";
+import { PremiumPanel, premiumOf } from "../components/premium";
 import { SAY, TIERS, status as statusCopy } from "../copy/copy";
 import { useAsync, useIndex } from "../data/hooks";
 import { data } from "../data/index";
 import { fmtInt, fmtOf } from "../format/format";
-import type { Cell, RecordView as RecordShape } from "../data/types";
+import type { Cell, RecordView as RecordShape, SeriesView } from "../data/types";
 
 const FACTOR_ORDER = ["1", "2", "3", "4", "5", "6"];
 
@@ -98,6 +99,9 @@ export default function RecordView() {
   const plan = r.params.get("plan") || "";
   const { value: index } = useIndex();
   const { value: record, error, loading } = useAsync<RecordShape>(() => data().getRecord(key), [key]);
+  // the premium exhibit rides on the fund's own series chunk, and only a fund
+  // whose shares trade at a price of their own has one
+  const { value: series } = useAsync<SeriesView>(() => data().getSeries(key), [key]);
   const open = r.params.get("factor") || "1";
 
   const byFactor = useMemo(() => {
@@ -164,6 +168,9 @@ export default function RecordView() {
           {factors[open]?.label || "Rows"}{" "}
           <span className="t-14 t-3">{fmtInt((byFactor[open] || []).length)} rows</span>
         </h2>
+        {(open === "1" || open === "4") && series && premiumOf(series) && (
+          <PremiumPanel series={series} fundName={record.fund_name} />
+        )}
         {(byFactor[open] || []).map(([cid, cell]) => (
           <CellRow key={cid} record={record} cid={cid} cell={cell} plan={plan} />
         ))}

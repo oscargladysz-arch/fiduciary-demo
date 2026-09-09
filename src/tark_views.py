@@ -20,6 +20,7 @@ commit.
 """
 from __future__ import annotations
 
+import functools
 import json
 from pathlib import Path
 
@@ -32,7 +33,8 @@ from tark_benchmark_common import (BY_DESCRIPTOR_SENTENCE, CRITERIA, CRITERION_D
                                    RUBRIC_MAX, STRATEGY_GATE_MIN, TIE_SENTENCE)
 from tark_display import (BASE_LABEL, CANDIDATE_SHORT, GLOSSARY, LANE_LABEL, SLOT_LABELS,
                           STRATEGY_LABEL, WRAPPER_LABEL, cell_display, display_copy,
-                          display_path_free, facts_by_cell, plan_demand_sentence)
+                          display_copy_deep, display_path_free, facts_by_cell,
+                          plan_demand_sentence)
 
 # the per-product views, in the order a reader meets them
 VIEW_NAMES = ("record", "selection", "liquidity", "cohort", "facts", "series", "documents")
@@ -47,6 +49,7 @@ SCHEMA = {
     "documents": "tark.documents.v1",
     "report": "tark.ingest_report.v1",
     "series": "tark.series.v1",
+    "daily": "tark.daily.v1",
     "plans": "tark.plans.v1",
     "funnel": "tark.funnel.v1",
     "coverage": "tark.coverage.v1",
@@ -282,8 +285,16 @@ def screener_view() -> dict:
 
 
 # ------------------------------------------------------- per product, series
+def daily_view(name: str, series, source: dict | None = None) -> dict:
+    """One held daily series, in the transport form the charts expand: the
+    first date, the day offsets from it and the values. It is its own chunk
+    because a series is large and only a chart asks for one."""
+    return {"schema": SCHEMA["daily"], "series_id": name, "source": source or {},
+            "points": series}
+
+
 def series_view(key: str, *, annual=None, monthly=None, quarterly=None,
-                daily=None, sources=None, supplement=None) -> dict:
+                daily=None, sources=None, supplement=None, filed_nav=None) -> dict:
     """Everything one product's charts draw, in one chunk the record and the
     lab fetch on demand. The caller passes the series it holds, because the
     static demo and a workspace hold different ones, and the shape is the
@@ -291,7 +302,10 @@ def series_view(key: str, *, annual=None, monthly=None, quarterly=None,
     return {"schema": SCHEMA["series"], "product_key": key,
             "annual": annual or [], "monthly": monthly or [],
             "quarterly": quarterly or [], "daily": daily or None,
-            "sources": sources or {}, "supplement": supplement or {}}
+            "sources": sources or {}, "supplement": supplement or {},
+            # the filed NAV table a premium exhibit compares a market price
+            # against, where the fund prints one
+            "filed_nav": filed_nav}
 
 
 # ----------------------------------------------------------- demo-global views
@@ -452,3 +466,26 @@ def census_view(doc: dict) -> dict:
     keep their own files, because 3,599 entities with their provenance do
     not belong on a first paint."""
     return {"schema": SCHEMA["census"], **doc}
+
+
+# ---------------------------------------------------------------- the copy rule
+# Every view leaves this module through the copy layer: a repository path
+# becomes its reader label, an internal key becomes its words, and the
+# punctuation and typographic rules apply. Two kinds of string are exempt,
+# because they are somebody else's words and editing them would make the
+# record wrong: a verbatim quote from a filing, and the rule's own paragraphs.
+_VERBATIM = ("quote", "paragraphs")
+
+
+def _through_copy(fn):
+    @functools.wraps(fn)
+    def wrapped(*args, **kwargs):
+        return display_copy_deep(fn(*args, **kwargs), _VERBATIM)
+    return wrapped
+
+
+for _name in ("record_view", "selection_view", "liquidity_view", "cohort_view", "facts_view",
+              "documents_view", "report_view", "index_view", "screener_view", "series_view",
+              "daily_view", "plans_view", "funnel_view", "coverage_view", "verification_view",
+              "authority_view", "evidence_view", "cohorts_view", "lab_view", "census_view"):
+    globals()[_name] = _through_copy(globals()[_name])

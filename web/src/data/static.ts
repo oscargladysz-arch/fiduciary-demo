@@ -5,7 +5,7 @@
 
 import { fetchJson, once, type TarkData } from "./adapter";
 import type {
-  AuthorityView, CensusView, CohortView, CohortsView, CoverageView, DocumentsView,
+  AuthorityView, CensusView, CohortView, CohortsView, CoverageView, DailyView, DocumentsView,
   EvidenceView, FactsView, FunnelView, IndexView, LabView, LiquidityView,
   Manifest, PlansView, RecordView, ScreenerView, SelectionView, SeriesView,
   VerificationView,
@@ -56,4 +56,5 @@ export class StaticAdapter implements TarkData {
   getCensusSearch(): Promise<Record<string, string>> {
     return this.get<Record<string, string>>("census/search.json");
   }
+  getDailySeries(id: string): Promise<DailyView> { return this.get<DailyView>(`daily/${id}.json`); }
 }

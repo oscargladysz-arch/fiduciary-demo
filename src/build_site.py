@@ -766,6 +766,7 @@ def main() -> None:
     }.items()}, separators=(",", ":"))
 
     census_payload, census_doc, census_shards, census_search = census_chunk()
+    daily_chunks = json.loads(series_payload)
     payload = json.dumps(bundle, separators=(",", ":"))
     lab_payload = json.dumps(swap_matrix(), separators=(",", ":"))
     evidence_payload = json.dumps(evidence_detail, separators=(",", ":"))
@@ -800,6 +801,10 @@ def main() -> None:
     # the same record as JSON chunks, in the shapes the workspace API serves
     # (R3-P1 data access): the rebuilt frontend reads these, the legacy views
     # read the bundle above, and both come from one build
+    # a fund that prints a quarterly NAV table beside its market price has one
+    # on file: the premium exhibit reads it, found by name rather than listed
+    filed_nav = {f.stem.replace("_nav_quarterly", ""): _path_free(json.loads(f.read_text()))
+                 for f in sorted((DATA / "analytics").glob("*_nav_quarterly.json"))}
     per_product_series = {}
     for k in products:
         d = bundle["daily_series"].get(k)
@@ -810,6 +815,7 @@ def main() -> None:
             "daily": d,
             "sources": bundle["series_sources"],
             "supplement": {n: s for n, s in bundle["supplement"].items() if n.startswith(k)},
+            "filed_nav": filed_nav.get(k),
         }
     chunks = write_chunks(
         SITE, record_name=record_name, attachment=bundle["attachment"] or "",
@@ -821,7 +827,7 @@ def main() -> None:
             "caveats": bundle["caveat_matrix"], "exclusions": exclusion_log(),
             "swap_matrix": swap_matrix(), "pme_profiles": bundle["pme_profiles"],
             "proxy_library": PROXY_LIBRARY, "series_sources": bundle["series_sources"],
-            "series": per_product_series,
+            "series": per_product_series, "daily_series": daily_chunks,
         })
 
     print(f"site/data.js written ({len(payload):,} bytes), census chunk "

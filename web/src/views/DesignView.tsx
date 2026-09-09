@@ -124,10 +124,10 @@ export default function DesignView() {
             <Stat label="KS-PME vs reference proxy" value={fmtRatio(1.0613)} source="Reference comparison, not the benchmark" large />
             <Stat label="Cells signed" value={fmtOf(0, 55)} source="Human verification: pending" />
           </StatRow>
-          <VerdictBanner kind="aligned" label="Aligned" definition="The plan's filed outflow rate fits inside the wrapper's dealing capacity with headroom." chip={<Chip kind="illustrative">Illustrative</Chip>} legendTo="/design" />
+          <VerdictBanner kind="aligned" label="Aligned" definition="The plan’s filed outflow rate fits inside the wrapper’s dealing capacity with headroom." chip={<Chip kind="illustrative">Illustrative</Chip>} legendTo="/design" />
           <VerdictBanner kind="conditional" label="Conditional" definition="Fits at the filed rate, thin under the stressed rate." />
           <VerdictBanner kind="weak" label="Conditional, weak" definition="Fits at the filed rate, exceeded under the stressed rate." />
-          <VerdictBanner kind="misaligned" label="Misaligned" definition="The wrapper cannot meet the plan's filed rate." />
+          <VerdictBanner kind="misaligned" label="Misaligned" definition="The wrapper cannot meet the plan’s filed rate." />
           <VerdictBanner kind="partial" label="Partial" definition="A fact the verdict needs is not printed in the filings." />
           <VerdictBanner kind="pending" label="Human verification: pending" definition="0 of 55 cells signed. Offered to design partners." />
           <VerdictBanner kind="info" label="Meaningful benchmark by descriptor" definition="No comparison until its series is held." />
@@ -177,7 +177,7 @@ export default function DesignView() {
             <Field label="Adviser statement" hint="Recorded as adviser input, never as a filing fact.">{(ids) => <Textarea ids={ids} name="statement" rows={4} />}</Field>
             <Checkbox label="Verified only" name="vonly" />
             <RadioGroup label="Density" name="density" value={radio} onChange={setRadio} options={[{ value: "a", label: "Comfortable" }, { value: "b", label: "Compact" }]} />
-            <Slider label="Allocation to the fund" value={slider} min={1} max={20} step={1} onChange={setSlider} format={(v) => fmtPct(v, 0)} hint="Moves the plan's dollar demand against the fund's dollar capacity." liveText={`Allocation ${fmtPct(slider, 0)}, demand ${fmtMoneyCompact(570_000_000 * slider / 100 * 0.1169)}`} />
+            <Slider label="Allocation to the fund" value={slider} min={1} max={20} step={1} onChange={setSlider} format={(v) => fmtPct(v, 0)} hint="Moves the plan’s dollar demand against the fund’s dollar capacity." liveText={`Allocation ${fmtPct(slider, 0)}, demand ${fmtMoneyCompact(570_000_000 * slider / 100 * 0.1169)}`} />
             <FileDownload name="plan_intake_sample.json" text={JSON.stringify({ sample: true, allocation_pct: slider }, null, 2)} description="A real download: the bytes are the text on screen." />
           </div>
         </div>
@@ -190,7 +190,7 @@ export default function DesignView() {
             <Button variant="secondary" onClick={() => setDrawer(true)}>Open a drawer</Button>
             <Button variant="secondary" onClick={() => setDialog(true)}>Open a dialog</Button>
             <Button variant="secondary" onClick={() => setPalette(true)}>Open the palette</Button>
-            <span>A defined term: <Term def="Kaplan-Schoar public market equivalent: the ratio of the fund's distributions and residual value to the value the same contributions would have reached in the public proxy.">KS-PME</Term></span>
+            <span>A defined term: <Term def="Kaplan-Schoar public market equivalent: the ratio of the fund’s distributions and residual value to the value the same contributions would have reached in the public proxy.">KS-PME</Term></span>
             <Tooltip content="Everything a tooltip says is reachable by keyboard and by tap."><span>Tooltip</span></Tooltip>
           </div>
           <Tabs label="Sample tabs" value={tab} onChange={setTab} tabs={[{ id: "one", label: "Analysis", panel: <p>The first panel.</p> }, { id: "two", label: "De-smoothing", panel: <p>The second panel.</p> }]} />

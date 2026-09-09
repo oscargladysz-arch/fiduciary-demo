@@ -159,6 +159,13 @@ chunks_src = BASE / "site" / "data"
 if chunks_src.exists():
     import shutil as _sh
     _sh.copytree(chunks_src, OUT / "data", dirs_exist_ok=True)
+# the generated documents sit beside the application too, so a download link on
+# the documents panel and in the packet resolves the same way at the site root
+# and under a preview subpath
+memos_src = BASE / "site" / "memos"
+if memos_src.exists():
+    import shutil as _sh2
+    _sh2.copytree(memos_src, OUT / "memos", dirs_exist_ok=True)
 sub_root = BASE / ".preview_root"
 if sub_root.exists():
     import shutil
@@ -211,6 +218,21 @@ AUDIT_JS = r"""
     const need = big ? 3 : 4.5;
     if (cr < need - 0.01) add('contrast', el.tagName + '.' + el.className + ' ' + cr.toFixed(2) + ' (' + cs.color + ' on rgb(' + bg.join(',') + ')) "' + n.textContent.trim().slice(0, 24) + '"');
   }
+  // typography, in the rendered text rather than in a string literal: a source
+  // string with an apostrophe in it ends the literal early, so a grep over the
+  // built JS cannot see the apostrophe it is looking for. A verbatim quote from
+  // a filing is exempt: it is the document's own text and is never edited.
+  const QUOTED = 'blockquote, .quote, .provenance, code, pre, [data-verbatim]';
+  for (const el of Array.from(document.body.querySelectorAll('*'))) {
+    if (el.closest(QUOTED) || el.children.length) continue;
+    const text = (el.textContent || '').trim();
+    if (!text || text.length < 4) continue;
+    if (/[A-Za-z]'[A-Za-z]/.test(text)) add('straight-apostrophe', text.slice(0, 60));
+    else if (/\s"[A-Za-z]/.test(text)) add('straight-quote', text.slice(0, 60));
+    else if (/[A-Za-z]\.\.\.(\s|$)/.test(text)) add('three-dot-ellipsis', text.slice(0, 60));
+    else if (/\u2014/.test(text)) add('em-dash', text.slice(0, 60));
+  }
+
   // interactive elements: focusable, named, hit targets, focus ring
   const inter = [...document.querySelectorAll('a[href], button, input, select, textarea, [role="button"], [tabindex]')].filter(visible);
   count('interactive', inter.length);

@@ -572,8 +572,41 @@ def punctuate(text: str) -> str:
         t = _DOUBLE_PERIOD.sub(".", t)
         t = _SPACED_HYPHEN.sub(", ", t)
         t = _PERIODS.sub("periods", t)
+        # typographic marks: an apostrophe between letters, a possessive after
+        # a plural, a clipped decade, and a pair of double quotes
+        t = _APOSTROPHE.sub("\u2019", t)
+        t = _CLIPPED.sub("\u2019", t)
+        t = _DQUOTES.sub("\u201c\\1\u201d", t)
         parts[i] = t
     return "".join(parts)
+
+
+def display_copy_deep(obj, skip=("quote",)):
+    """The copy rule over a whole view.
+
+    A string with whitespace in it is prose a reader will read, and it goes
+    through `display_copy` in full. A string without whitespace is an address,
+    not prose: a product key, a plan key, a cell id, a schema name, a file
+    name, an accession, a hash, a URL. Rewriting one of those would break the
+    thing that points at it, so an address is only screened for a repository
+    path, which becomes its reader label.
+
+    The values under a key named in `skip` are exempt entirely: a verbatim
+    quote from a filing and the rule's own paragraphs are somebody else's
+    words, and editing them would make the record wrong (rule 2).
+    """
+    if isinstance(obj, dict):
+        return {k: (v if k in skip else display_copy_deep(v, skip)) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [display_copy_deep(v, skip) for v in obj]
+    if not isinstance(obj, str):
+        return obj
+    return display_copy(obj) if any(c.isspace() for c in obj) else display_path_free(obj)
+
+
+_APOSTROPHE = re.compile(r"(?<=[A-Za-z])'(?=[A-Za-z])")
+_CLIPPED = re.compile(r"(?<=[\s(])'(?=\d)|(?<=[A-Za-z])'(?=[\s.,)])")
+_DQUOTES = re.compile(r'"([^"\n]{1,200})"')
 
 
 def display_copy(text) -> str:

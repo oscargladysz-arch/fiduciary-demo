@@ -180,6 +180,21 @@ export interface Manifest {
 /** A daily series in transport form: a base date, day offsets, values. */
 export interface CompactSeries { base: string; d: number[]; v: number[] }
 
+export interface DailyView {
+  schema: "tark.daily.v1";
+  series_id: string;
+  source: Partial<SeriesSource>;
+  points: CompactSeries;
+}
+
+/** Expand a transported series back to [date, value] pairs. */
+export function expandSeries(s: CompactSeries | null | undefined): [string, number][] {
+  if (!s || !s.base) return [];
+  const base = new Date(s.base + "T00:00:00Z").getTime();
+  const day = 24 * 60 * 60 * 1000;
+  return s.d.map((offset, i) => [new Date(base + offset * day).toISOString().slice(0, 10), s.v[i]]);
+}
+
 export interface SeriesSource {
   ticker: string; source: string; role: string;
   first: string; last: string; pulled?: string;
@@ -195,6 +210,8 @@ export interface SeriesView {
   daily: { series: string; ticker: string; column: string; price_series: boolean; label: string } | null;
   sources: Record<string, SeriesSource>;
   supplement: Record<string, unknown>;
+  /** the filed value-per-share table a fund prints beside its market price */
+  filed_nav: Record<string, unknown> | null;
 }
 
 export interface PlansView {
