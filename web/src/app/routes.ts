@@ -42,7 +42,7 @@ export const PANELS: RouteDef[] = [
   { id: "record", label: "Record", icon: "table", plan: true, view: lazy(() => import("../views/RecordView")) },
   { id: "benchmark", label: "Benchmark", icon: "chart", plan: true, view: lazy(() => import("../views/BenchmarkView")) },
   { id: "liquidity", label: "Liquidity", icon: "plan", plan: true, view: lazy(() => import("../views/LiquidityView")) },
-  { id: "cohort", label: "Cohort", icon: "compare" },
+  { id: "cohort", label: "Cohort", icon: "compare", view: lazy(() => import("../views/CohortView")) },
   { id: "lab", label: "Analysis lab", icon: "evaluate" },
   { id: "documents", label: "Documents", icon: "document", plan: true },
 ];

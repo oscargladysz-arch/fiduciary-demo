@@ -57,7 +57,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--routes", default="start,universe,funnel,screener,compare,roster,plans,"
                 "search,packet,coverage,verification,design,"
                 "product/hl_paf/record,product/dxyz/record,product/hl_paf/benchmark,"
-                "product/hl_paf/liquidity")
+                "product/hl_paf/liquidity,product/hl_paf/cohort")
 ap.add_argument("--out", default="site_next")
 ap.add_argument("--no-build", action="store_true")
 ap.add_argument("--port", type=int, default=8478)

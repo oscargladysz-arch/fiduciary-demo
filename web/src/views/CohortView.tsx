@@ -95,8 +95,16 @@ const INTERNAL: RegExp[] = [
   /\bR\d+(?:-P\d+)?\b/,
   /\b(?:engine|artifact|writer)\b/i,
 ];
-function hasInternal(s: string): boolean {
-  return INTERNAL.some((re) => re.test(s));
+/** The keys the record files each fund under. They are names for the record,
+ *  not for a reader, so a sentence carrying one is withheld. Matched in the
+ *  lower case the record files them in, which leaves a fund’s own market name
+ *  in capitals alone. */
+function keyPattern(index: IndexView): RegExp | null {
+  const keys = index.products.map((p) => p.key).filter((k) => /^[a-z0-9_]+$/.test(k));
+  return keys.length ? new RegExp(`\\b(?:${keys.join("|")})\\b`) : null;
+}
+function hasInternal(s: string, keys: RegExp | null): boolean {
+  return INTERNAL.some((re) => re.test(s)) || (keys ? keys.test(s) : false);
 }
 
 /* ------------------------------------------------------------- the words */
@@ -170,7 +178,7 @@ function cutCaveat(raw: string, names: string[]): Caveat | null {
       if (value) items.push({ name: hit.name, value: clean(value) });
     });
   }
-  return { label: label || "A note on this comparison", body: stop(clean(rest)), intro, items };
+  return { label: label || "A note on this comparison", body: stop(sentenceCase(clean(rest))), intro, items };
 }
 
 /* ---------------------------------------------------------- the composite */
@@ -200,7 +208,7 @@ export default function CohortView() {
   const { value: chunk, error, loading } = useAsync<CohortShape>(() => data().getCohort(key), [key]);
   // the roster of every cohort carries the log of what was not admitted: the
   // panel renders without it rather than failing with it
-  const { value: roster, error: rosterError } = useAsync<CohortsView>(() => askCohorts(), []);
+  const { value: roster, error: rosterError, loading: rosterLoading } = useAsync<CohortsView>(() => askCohorts(), []);
 
   const sort: SortState | null = r.params.get("sort")
     ? { id: r.params.get("sort")!, dir: r.params.get("dir") === "desc" ? "desc" : "asc" }
@@ -209,6 +217,8 @@ export default function CohortView() {
 
   const cohort = (chunk?.cohort || null) as Cohort | null;
   const cohortId = chunk?.cohort_id || "";
+
+  const keys = useMemo(() => (index ? keyPattern(index) : null), [index]);
 
   const memberKeys = useMemo<string[]>(() => {
     const ordered = roster?.members?.[cohortId] || index?.cohorts?.[cohortId]?.members || [];
@@ -235,6 +245,7 @@ export default function CohortView() {
         ? sentenceCase(clean(source))
         : stated ? stop(sentenceCase(clean(stated.reason)))
           : PERIOD_BASIS[String(composite.member_period_kind?.[k] || "")] || "Not on record";
+      const why = stop(clean(entry.membership_rationale));
       return {
         key: k,
         name,
@@ -242,32 +253,34 @@ export default function CohortView() {
           || product?.wrapper_label || "Not on record",
         subject: k === key,
         depth: DEPTH[String(entry.depth || "")] || "Not stated on the record",
-        periods: basis,
-        why: stop(clean(entry.membership_rationale)) || "No reason on record",
+        periods: hasInternal(basis, keys) ? "Stated on the record in shorthand of its own" : basis,
+        why: !why ? "No reason on record"
+          : hasInternal(why, keys) ? "The record states this in shorthand of its own rather than in words a reader can check."
+            : why,
       };
     });
-  }, [cohort, index, memberKeys, key]);
+  }, [cohort, index, memberKeys, key, keys]);
 
   const caveats = useMemo<{ shown: Caveat[]; withheld: number }>(() => {
     const names = rows.map((row) => row.name);
     const shown: Caveat[] = [];
     let withheld = 0;
     for (const raw of cohort?.caveats || []) {
-      if (hasInternal(raw)) { withheld += 1; continue; }
+      if (hasInternal(raw, keys)) { withheld += 1; continue; }
       const cut = cutCaveat(raw, names);
       if (!cut) { withheld += 1; continue; }
       const said = `${cut.label} ${cut.body} ${cut.intro} ${cut.items.map((i) => i.value).join(" ")}`;
-      if (hasInternal(said)) { withheld += 1; continue; }
+      if (hasInternal(said, keys)) { withheld += 1; continue; }
       shown.push(cut);
     }
     return { shown, withheld };
-  }, [cohort, rows]);
+  }, [cohort, rows, keys]);
 
   const excluded = useMemo(() => {
     const all = (roster?.exclusions || []).map((e) => ({ name: clean(e.name), reason: stop(sentenceCase(clean(e.reason))) }));
-    const shown = all.filter((e) => !hasInternal(`${e.name} ${e.reason}`));
+    const shown = all.filter((e) => !hasInternal(`${e.name} ${e.reason}`, keys));
     return { shown, withheld: all.length - shown.length };
-  }, [roster]);
+  }, [roster, keys]);
 
   if (error || indexError) return <EmptyState title={SAY.noRecord}>{error || indexError}</EmptyState>;
   if (loading || indexLoading || !chunk || !index) return <Skeleton lines={10} label={SAY.loadingRecord} />;
@@ -322,7 +335,7 @@ export default function CohortView() {
         <Table
           id="cohort-members-table"
           caption={`The funds in ${label}, the wrapper each one uses and why the record admitted it. ${SAY.verificationPending}`}
-          columns={memberColumns(index)}
+          columns={memberColumns()}
           rows={rows}
           rowKey={(row) => row.key}
           sort={sort}
@@ -469,7 +482,8 @@ export default function CohortView() {
         {rosterError && (
           <EmptyState title={SAY.noRecord}>{rosterError}</EmptyState>
         )}
-        {!rosterError && (
+        {!rosterError && rosterLoading && <Skeleton lines={4} label={SAY.loadingRecord} />}
+        {!rosterError && !rosterLoading && (
           <Table
             id="cohort-exclusions-table"
             caption="Every candidate considered for the cohorts on this record and not admitted, with the reason."
@@ -509,17 +523,12 @@ export default function CohortView() {
 }
 
 /* ------------------------------------------------------------- columns */
-function memberColumns(index: IndexView): Column<MemberRow>[] {
+function memberColumns(): Column<MemberRow>[] {
   return [
     {
       id: "name", header: "Fund", label: "Fund", fixed: true,
       sortValue: (row) => row.name,
-      cell: (row) => (
-        <span className="row-3">
-          <Link to={`/product/${row.key}/record`} translate="no">{row.name}</Link>
-          {row.subject && <Chip kind="accent">This fund</Chip>}
-        </span>
-      ),
+      cell: (row) => <Link to={`/product/${row.key}/record`} translate="no">{row.name}</Link>,
     },
     {
       id: "wrapper", header: "Wrapper", label: "Wrapper",
@@ -545,8 +554,6 @@ function memberColumns(index: IndexView): Column<MemberRow>[] {
       cell: (row) => <span className="t-13 t-2">{row.why}</span>,
     },
   ];
-  // the wrapper label is the record’s own, mapped in the index chunk
-  void index;
 }
 
 function periodColumns(index: IndexView, peerCount: number): Column<PeriodRow>[] {
