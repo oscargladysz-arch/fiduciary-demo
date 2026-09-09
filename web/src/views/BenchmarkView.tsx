@@ -566,7 +566,7 @@ export default function BenchmarkView() {
               Selection recorded {fmtDate(recordedAt)}, record {hashPrefix(recordHash)}
             </p>
           ) : (
-            <p className="t-13 t-3">The selection is not locked on this build.</p>
+            <p className="t-13 t-3">The selection is not locked: no decision date and no record fingerprint are on file for it.</p>
           )}
         </Card>
 

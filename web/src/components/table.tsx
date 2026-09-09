@@ -154,7 +154,9 @@ export function Table<Row>({ caption, columns, rows, rowKey, sort = null, onSort
   );
 }
 
-/** A gap cell: an honest dash with the reason reachable, never a blank. */
+/** A gap cell: what the record does not hold, and why, in words. A dash is
+ *  not an answer, and a reason a reader can only reach by hovering is not one
+ *  either. */
 export function Gap({ reason }: { reason?: string }) {
-  return <span className="tbl__gap" title={reason}>—<span className="sr-only">{reason ? ` ${reason}` : " not available"}</span></span>;
+  return <span className="tbl__gap">{reason ? `Not on record: ${reason}` : "Not on record"}</span>;
 }

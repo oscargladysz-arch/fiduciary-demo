@@ -121,6 +121,36 @@ function clean(s: string | null | undefined): string {
   const flat = String(s || "").replace(/\*\*|__/g, "").replace(/\s+,\s+/g, ", ").replace(/\s{2,}/g, " ").trim();
   return typographic(datesInWords(flat));
 }
+
+/* The record writes some of its notes to itself. Two substitutions carry
+ * those notes to a reader without changing what they say.
+ *
+ * The first names each fund the way a reader names it, in place of the key
+ * the record files it under, which is the mapping rule 9 of the copy layer
+ * asks for.
+ *
+ * The second protects the tier words. The record uses “verified” in these
+ * notes for a filing it located and read, which is not what verified means
+ * on this record: verified means a named person signed the row, and nobody
+ * has. The check keeps its meaning as “confirmed” so the signature word is
+ * left for the count of signed cells alone. The tier shorthand is spelled
+ * out for the same reason. */
+function readerWords(s: string, byKey: Record<string, string>): string {
+  let out = String(s || "");
+  for (const [k, name] of Object.entries(byKey)) {
+    out = out.replace(new RegExp(`\\b${k}\\b`, "g"), name);
+  }
+  return out
+    .replace(/\bVerified\b/g, "Confirmed")
+    .replace(/\bverified\b/g, "confirmed")
+    .replace(/\bunverified\b/g, "unconfirmed")
+    .replace(/\bverifiable\b/g, "confirmable")
+    .replace(/\bT([123])\b/g, "Tier $1");
+}
+/** One line of the record, ready to read. */
+function prose(s: string | null | undefined, byKey: Record<string, string>): string {
+  return clean(readerWords(String(s || ""), byKey));
+}
 /** A sentence ends in a stop. */
 function stop(s: string): string {
   return s && !/[.?!]$/.test(s) ? `${s}.` : s;
@@ -219,6 +249,11 @@ export default function CohortView() {
   const cohortId = chunk?.cohort_id || "";
 
   const keys = useMemo(() => (index ? keyPattern(index) : null), [index]);
+  const byKey = useMemo<Record<string, string>>(() => {
+    const out: Record<string, string> = {};
+    for (const p of index?.products || []) if (/^[a-z0-9_]+$/.test(p.key)) out[p.key] = p.fund_name;
+    return out;
+  }, [index]);
 
   const memberKeys = useMemo<string[]>(() => {
     const ordered = roster?.members?.[cohortId] || index?.cohorts?.[cohortId]?.members || [];
@@ -242,10 +277,10 @@ export default function CohortView() {
       const source = composite.member_source?.[k];
       const stated = left.find((e) => e.member === name);
       const basis = source
-        ? sentenceCase(clean(source))
-        : stated ? stop(sentenceCase(clean(stated.reason)))
+        ? sentenceCase(prose(source, byKey))
+        : stated ? stop(sentenceCase(prose(stated.reason, byKey)))
           : PERIOD_BASIS[String(composite.member_period_kind?.[k] || "")] || "Not on record";
-      const why = stop(clean(entry.membership_rationale));
+      const why = stop(prose(entry.membership_rationale, byKey));
       return {
         key: k,
         name,
@@ -259,34 +294,36 @@ export default function CohortView() {
             : why,
       };
     });
-  }, [cohort, index, memberKeys, key, keys]);
+  }, [cohort, index, memberKeys, key, keys, byKey]);
 
   const caveats = useMemo<{ shown: Caveat[]; withheld: number }>(() => {
     const names = rows.map((row) => row.name);
     const shown: Caveat[] = [];
     let withheld = 0;
     for (const raw of cohort?.caveats || []) {
-      if (hasInternal(raw, keys)) { withheld += 1; continue; }
-      const cut = cutCaveat(raw, names);
+      const cut = cutCaveat(readerWords(raw, byKey), names);
       if (!cut) { withheld += 1; continue; }
       const said = `${cut.label} ${cut.body} ${cut.intro} ${cut.items.map((i) => i.value).join(" ")}`;
       if (hasInternal(said, keys)) { withheld += 1; continue; }
       shown.push(cut);
     }
     return { shown, withheld };
-  }, [cohort, rows, keys]);
+  }, [cohort, rows, keys, byKey]);
 
   const excluded = useMemo(() => {
-    const all = (roster?.exclusions || []).map((e) => ({ name: clean(e.name), reason: stop(sentenceCase(clean(e.reason))) }));
+    const all = (roster?.exclusions || []).map((e) => ({
+      name: prose(e.name, byKey),
+      reason: stop(sentenceCase(prose(e.reason, byKey))),
+    }));
     const shown = all.filter((e) => !hasInternal(`${e.name} ${e.reason}`, keys));
     return { shown, withheld: all.length - shown.length };
-  }, [roster, keys]);
+  }, [roster, keys, byKey]);
 
   if (error || indexError) return <EmptyState title={SAY.noRecord}>{error || indexError}</EmptyState>;
   if (loading || indexLoading || !chunk || !index) return <Skeleton lines={10} label={SAY.loadingRecord} />;
 
   const subject = index.products.find((p) => p.key === key);
-  const label = clean(cohort?.label) || index.cohorts?.[cohortId]?.label || "";
+  const label = prose(cohort?.label, byKey) || index.cohorts?.[cohortId]?.label || "";
 
   if (!cohort || !label) {
     return (
@@ -303,8 +340,8 @@ export default function CohortView() {
   const charted = periods.filter((row) => typeof row.composite_return_pct === "number");
   const offChart = periods.length - charted.length;
   const refusal = composite.refused
-    ? stop(sentenceCase(clean(composite.reason)))
-    : composite.composite_refused_reason ? stop(sentenceCase(clean(composite.composite_refused_reason))) : "";
+    ? stop(sentenceCase(prose(composite.reason, byKey)))
+    : composite.composite_refused_reason ? stop(sentenceCase(prose(composite.composite_refused_reason, byKey))) : "";
   const left = composite.excluded_members || [];
 
   return (
@@ -451,8 +488,8 @@ export default function CohortView() {
             <dl className="field-list">
               {left.map((entry) => (
                 <Fragment key={entry.member}>
-                  <dt translate="no">{clean(entry.member)}</dt>
-                  <dd>{stop(sentenceCase(clean(entry.reason)))}</dd>
+                  <dt translate="no">{prose(entry.member, byKey)}</dt>
+                  <dd>{stop(sentenceCase(prose(entry.reason, byKey)))}</dd>
                 </Fragment>
               ))}
             </dl>
@@ -463,11 +500,11 @@ export default function CohortView() {
           <CardHead title="How this composite is formed" level={3} />
           <dl className="field-list">
             <dt>Weighting</dt>
-            <dd>{stop(sentenceCase(clean(composite.weighting))) || "Not on record"}</dd>
+            <dd>{stop(sentenceCase(prose(composite.weighting, byKey))) || "Not on record"}</dd>
             <dt>Periods</dt>
-            <dd>{stop(sentenceCase(clean(composite.granularity))) || "Not on record"}</dd>
+            <dd>{stop(sentenceCase(prose(composite.granularity, byKey))) || "Not on record"}</dd>
             {composite.composite_note && (
-              <><dt>What it covers</dt><dd>{stop(sentenceCase(clean(composite.composite_note)))}</dd></>
+              <><dt>What it covers</dt><dd>{stop(sentenceCase(prose(composite.composite_note, byKey)))}</dd></>
             )}
           </dl>
         </Card>
@@ -486,7 +523,7 @@ export default function CohortView() {
         {!rosterError && !rosterLoading && (
           <Table
             id="cohort-exclusions-table"
-            caption="Every candidate considered for the cohorts on this record and not admitted, with the reason."
+            caption="The candidates considered for the cohorts on this record and not admitted, with the reason the record gives."
             columns={EXCLUSION_COLUMNS}
             rows={excluded.shown}
             rowKey={(row) => row.name}
@@ -510,8 +547,12 @@ export default function CohortView() {
         </p>
         <p className="t-13 t-3">
           A peer comparison is never a public market equivalent. These peers are valued by appraisal and
-          cannot be bought as a public series, so a reading against them is relative to the group and says
-          nothing about a public market benchmark. {SAY.reference}. {SAY.referenceNote}
+          cannot be bought as a public series, so a reading against them is relative to this group and says
+          nothing about a public market. The benchmark the rule asks for is on the benchmark panel for this
+          fund.{" "}
+          <Link to={`/product/${key}/benchmark`} params={{ plan: r.params.get("plan") || undefined }}>
+            See the benchmark panel
+          </Link>
         </p>
         <p className="t-13 t-3">
           {SAY.verificationCount(index.coverage_totals.counts.verified, index.coverage_totals.counts.total)}{" "}
@@ -546,7 +587,7 @@ function memberColumns(): Column<MemberRow>[] {
       cell: (row) => <span className="t-13">{row.depth}</span>,
     },
     {
-      id: "periods", header: "Periods reported", label: "Periods reported",
+      id: "periods", header: "Returns on record", label: "Returns on record",
       cell: (row) => <span className="t-13 t-2">{row.periods}</span>,
     },
     {

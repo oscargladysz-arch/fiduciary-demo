@@ -106,7 +106,10 @@ export function FileDownload({ name, text, mime = "application/json", label = "D
     <div className="download">
       <div className="download__row">
         <Icon name="document" />
-        <span className="download__name" translate="no">{name}</span>
+        {/* the file name is what the reader will find on their computer: it is
+            shown in the provenance style, which is where a name a person types
+            or saves belongs, rather than as prose */}
+        <span className="download__name provenance" translate="no">{name}</span>
         <span className="download__meta">{fmtBytes(size)}</span>
         <span className="spacer" />
         <a className="btn btn--primary" href={url} download={name}><Icon name="download" />{label}</a>

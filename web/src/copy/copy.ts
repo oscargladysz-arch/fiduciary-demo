@@ -160,7 +160,7 @@ export const SAY = {
   referenceNote: "A public series shown for orientation. The meaningful benchmark is the one the rule asks for.",
   planDependent: "This panel depends on the plan.",
   anonymized: "Plan sponsors are anonymized on every surface.",
-  noRecord: "That part of the record is not on this build.",
+  noRecord: "That part of the record has not been published here.",
   emptyFilter: "No row matches what you have selected.",
   loadingRecord: "Loading the record",
 } as const;

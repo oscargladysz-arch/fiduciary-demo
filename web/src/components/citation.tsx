@@ -28,7 +28,7 @@ function Body({ target }: { target: CiteTarget }) {
   if (loading || !record) return <Skeleton lines={5} label={SAY.loadingRecord} />;
   const cell: Cell | undefined = record.cells[target.cell];
   if (!cell) {
-    return <EmptyState title={SAY.noRecord}>This build carries no row with that name for this fund.</EmptyState>;
+    return <EmptyState title={SAY.noRecord}>No row with that name has been published for this fund.</EmptyState>;
   }
   const st = statusCopy(cell.status);
   return (

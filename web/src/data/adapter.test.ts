@@ -92,7 +92,7 @@ describe("ApiAdapter", () => {
 
 describe("what a reader is told", () => {
   it("gives one plain sentence per failure, never a status code alone", () => {
-    expect(dataErrorSentence(new DataError("u", 404, "x"))).toMatch(/not on this build/);
+    expect(dataErrorSentence(new DataError("u", 404, "x"))).toMatch(/has not been published here/);
     expect(dataErrorSentence(new DataError("u", 403, "x"))).toMatch(/workspace you belong to/);
     expect(dataErrorSentence(new DataError("u", 500, "x"))).toMatch(/try again in a moment/i);
     expect(dataErrorSentence(new Error("boom"))).toMatch(/try again in a moment/i);

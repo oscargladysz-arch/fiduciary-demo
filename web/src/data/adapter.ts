@@ -56,7 +56,7 @@ export class DataError extends Error {
 /** One sentence a view may show. Never a status code on its own. */
 export function dataErrorSentence(e: unknown): string {
   if (e instanceof DataError) {
-    if (e.status === 404) return "That part of the record is not on this build.";
+    if (e.status === 404) return "That part of the record has not been published here.";
     if (e.status === 401 || e.status === 403) return "Sign in to a workspace you belong to.";
     return "The record could not be read just now. Try again in a moment.";
   }

@@ -43,8 +43,8 @@ export const PANELS: RouteDef[] = [
   { id: "benchmark", label: "Benchmark", icon: "chart", plan: true, view: lazy(() => import("../views/BenchmarkView")) },
   { id: "liquidity", label: "Liquidity", icon: "plan", plan: true, view: lazy(() => import("../views/LiquidityView")) },
   { id: "cohort", label: "Cohort", icon: "compare", view: lazy(() => import("../views/CohortView")) },
-  { id: "lab", label: "Analysis lab", icon: "evaluate" },
-  { id: "documents", label: "Documents", icon: "document", plan: true },
+  { id: "lab", label: "Analysis lab", icon: "evaluate", view: lazy(() => import("../views/LabView")) },
+  { id: "documents", label: "Documents", icon: "document", plan: true, view: lazy(() => import("../views/DocumentsView")) },
 ];
 
 export const GLOBAL_BY_ID = new Map(GLOBAL.map((r) => [r.id, r]));

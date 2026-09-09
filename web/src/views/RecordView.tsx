@@ -59,7 +59,7 @@ function CellRow({ record, cid, cell, plan }:
         </h3>
         <div className="row-3">
           <Chip kind={st.kind}>{st.label}</Chip>
-          {cell.display?.typed && <Chip kind="tier">Typed</Chip>}
+          {cell.display?.typed && <Chip kind="tier">From a structured fact</Chip>}
         </div>
       </div>
       <p className="t-14">{headline}</p>

@@ -237,7 +237,7 @@ export default function PacketView() {
                         <div className="download__meta">Written for {g.fundName} and {label}.</div>
                       </div>
                     ) : (
-                      <p className="t-13 t-3">The Investment Selection Record is not on this build.</p>
+                      <p className="t-13 t-3">No Investment Selection Record has been written for this fund and this plan.</p>
                     )}
                     {entry.doc && entry.doc.attachment ? (
                       <div className="download">
@@ -256,7 +256,7 @@ export default function PacketView() {
                         </div>
                       </div>
                     ) : (
-                      <p className="t-13 t-3">Attachment A is not on this build.</p>
+                      <p className="t-13 t-3">Attachment A is not attached here.</p>
                     )}
                   </>
                 )}

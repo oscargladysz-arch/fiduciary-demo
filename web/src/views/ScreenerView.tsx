@@ -120,7 +120,7 @@ export default function ScreenerView() {
         sub={preset === "fees"
           ? ("What each fund charges, on the basis the record holds. A fee is only comparable against the base it "
             + "is charged on, so the base is beside the rate.")
-          : ("Sixteen funds on the same typed facts. Every figure opens the filing it was read from, and a figure "
+          : ("Sixteen funds on the same facts, read the same way. Every figure opens the filing it came from, and a figure "
             + "the record does not hold says why.")}
         actions={preset === "fees"
           ? <Link to="/screener">Show every column</Link>
@@ -169,7 +169,7 @@ export default function ScreenerView() {
 
       <Table
         id="screener"
-        caption={`Sixteen evaluated funds on nineteen typed facts. ${SAY.verificationPending}`}
+        caption={`Sixteen evaluated funds on nineteen facts read the same way. ${SAY.verificationPending}`}
         columns={columns}
         rows={shown}
         rowKey={(row) => row.key}

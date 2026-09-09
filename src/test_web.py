@@ -57,7 +57,8 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--routes", default="start,universe,funnel,screener,compare,roster,plans,"
                 "search,packet,coverage,verification,design,"
                 "product/hl_paf/record,product/dxyz/record,product/hl_paf/benchmark,"
-                "product/hl_paf/liquidity,product/hl_paf/cohort")
+                "product/hl_paf/liquidity,product/hl_paf/cohort,product/hl_paf/lab,"
+                "product/hl_paf/documents")
 ap.add_argument("--out", default="site_next")
 ap.add_argument("--no-build", action="store_true")
 ap.add_argument("--port", type=int, default=8478)
@@ -345,7 +346,8 @@ AUDIT_JS = r"""
     if (!(el.textContent || '').trim()) add('empty-figure', 'a stat renders no value');
   }
   for (const cell of document.querySelectorAll('.tbl tbody td, .field-list dd')) {
-    if (!visible(cell) || cell.children.length) continue;
+    // a spacer row holds a list's scroll height and carries no figure
+    if (!visible(cell) || cell.children.length || cell.closest('[aria-hidden="true"]')) continue;
     if (!(cell.textContent || '').trim()) add('empty-figure', 'a table cell or a value renders nothing');
   }
 
@@ -639,6 +641,40 @@ with sync_playwright() as pw:
     check("plan intake: the file carries the reader's figures and nothing about how it was made",
           intake.get("produced") and not _bad_intake, f"tokens found: {_bad_intake}")
     pv.close()
+
+    # the forbidden-string sweep over the rebuilt routes. The surfaces gate
+    # sweeps the old application's rendered views; this is the same scanner
+    # over the same token list, run against the routes that replace them, so
+    # neither frontend can ship a developer string while both exist.
+    import test_surfaces as ts
+    sweep_states = [(f"/{r}", "") for r in ROUTES if not r.startswith("product/")]
+    sweep_products = sorted(json.loads((BASE / "site" / "data" / "index.json").read_text())["products"],
+                            key=lambda p: p["key"])
+    for panel in ("record", "benchmark", "liquidity", "cohort", "lab", "documents"):
+        for prod in sweep_products:
+            sweep_states.append((f"/product/{prod['key']}/{panel}", "plan=plan_tech_media"))
+    for plan in ("plan_manufacturer_union", "plan_restaurant_hourly", "plan_consulting_alumni"):
+        for panel in ("record", "liquidity", "documents"):
+            sweep_states.append((f"/product/hl_paf/{panel}", f"plan={plan}"))
+        sweep_states.append(("/plans", f"plan={plan}"))
+    sw = browser.new_page(viewport={"width": 1440, "height": 1200})
+    sw_errors: list[str] = []
+    sw.on("pageerror", lambda e: sw_errors.append(str(e)))
+    for path, query in sweep_states:
+        sw.goto(f"{ROOT}#{path}{'?' + query if query else ''}", wait_until="networkidle")
+        sw.wait_for_timeout(120)
+        # every disclosure open: hidden text is text a reader can reach
+        sw.evaluate("() => document.querySelectorAll('details').forEach((d) => { d.open = true; })")
+        prose, code = ts.surface_texts(sw.content())
+        where = f"route {path} {query}".strip()
+        ts.scan(prose, "views", where)
+        ts.scan(code, "views", where, prose=False)
+    sw.close()
+    _view_hits = ts.HITS["views"]
+    check(f"surfaces: no developer string, path, key, ticket or developer word in "
+          f"{len(sweep_states)} rendered states of the rebuilt routes",
+          not _view_hits and not sw_errors,
+          f"{len(_view_hits)} hits e.g. {_view_hits[:2]}, errors {sw_errors[:1]}")
 
     # the landing route on the connection the brief names: 9 Mbps, 70 ms. The
     # budget is about what a reader waits for, so it is measured on a cold

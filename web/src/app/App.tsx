@@ -3,7 +3,7 @@
  * The route table (app/routes.ts) is the one list. The switch renders the
  * view a route names, the sidebar renders the same ids in four groups, and
  * the palette offers the same routes plus every product and plan. A route
- * whose view is not rebuilt yet says so rather than pretending. */
+ * whose view does not exist says so rather than blanking. */
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { navigate, routePanel, routeProduct, useRoute } from "./router";
 import { GLOBAL, GLOBAL_BY_ID, NAV_GROUPS, PANELS, PANEL_BY_ID } from "./routes";
@@ -26,17 +26,6 @@ const GROUPS: NavGroup[] = NAV_GROUPS.map((g) => ({
   }),
 }));
 
-function NotRebuilt({ label }: { label: string }) {
-  return (
-    <div className="stack-4">
-      <h1>{label}</h1>
-      <EmptyState title="This view is not rebuilt yet">
-        The rebuilt frontend lands view by view. The current site carries this view until it does.
-      </EmptyState>
-    </div>
-  );
-}
-
 function RouteSwitch({ index }: { index: IndexView | null }) {
   const r = useRoute();
   const panel = routePanel(r);
@@ -50,11 +39,20 @@ function RouteSwitch({ index }: { index: IndexView | null }) {
   }, [title, productKey, def]);
 
   if (productKey && index && !product) {
-    return <EmptyState title={SAY.noRecord}>This build does not carry a fund with that name.</EmptyState>;
+    return <EmptyState title={SAY.noRecord}>No fund with that name has been published here.</EmptyState>;
   }
+  // every route in the table has a view: a path that names none is a path
+  // this application does not answer, and it says so rather than blanking
   const body = def?.view
     ? <Suspense fallback={<Skeleton lines={6} label={SAY.loadingRecord} />}><def.view /></Suspense>
-    : <NotRebuilt label={def?.label || routeTitle(r.segments[0])} />;
+    : (
+      <div className="stack-4">
+        <h1>{routeTitle(r.segments[0])}</h1>
+        <EmptyState title="There is no page at that address">
+          Check the address, or start from the beginning.
+        </EmptyState>
+      </div>
+    );
 
   if (!productKey) return body;
   if (!index || !product) return <Skeleton lines={6} label={SAY.loadingRecord} />;

@@ -664,14 +664,42 @@ def _plan_label(plan_key: str) -> str:
         return "a reference plan"
 
 
+# A local copy of a filing carries the form in its file name. The surface says
+# the form, which is what a reader recognises and what the rest of the record
+# already calls it, never the file.
+_FILING_FORMS = {
+    "486bpos": "486BPOS", "486apos": "486APOS", "ncsr": "N-CSR", "ncsrs": "N-CSRS",
+    "sctoi": "SC TO-I", "sctot": "SC TO-T", "424b3": "424B3", "424b5": "424B5",
+    "424b2": "424B2", "10k": "10-K", "10q": "10-Q", "8k": "8-K", "ncen": "N-CEN",
+    "nport": "N-PORT", "n2": "N-2", "n23c3a": "N-23C3A", "def14a": "DEF 14A",
+    "s1": "S-1", "s11": "S-11", "497": "497", "40417g": "40-17G", "nq": "N-Q",
+}
+_LOCAL_FILING = re.compile(r"(?<![\w/.-])[a-z][a-z0-9]*_([a-z0-9]+)\.(?:txt|htm|html|pdf)\b")
+# a published dataset a reader could go and look at, named for what it is
+_DATASETS = [
+    (re.compile(r"(?<![\w/.-])company_tickers\.json\b"), "the SEC company ticker file"),
+]
+
+
+def _filing_label(m: re.Match) -> str:
+    return _FILING_FORMS.get(m.group(1), "a filing on file")
+
+
 def display_path_free(text) -> str:
-    """The same text with every repository path replaced by a reader label."""
+    """The same text with every repository path and every local filing copy
+    replaced by a reader label. A URL is left exactly as written."""
     s = str(text or "")
-    if "data/" not in s and "stress_windows" not in s:
-        return s
-    for rx, rep in _PATH_LABELS:
-        s = rx.sub(rep, s)
-    return s
+    parts = re.split(r"(https?://\S+)", s)
+    for i in range(0, len(parts), 2):
+        seg = parts[i]
+        if "data/" in seg or "stress_windows" in seg:
+            for rx, rep in _PATH_LABELS:
+                seg = rx.sub(rep, seg)
+        seg = _LOCAL_FILING.sub(_filing_label, seg)
+        for rx, label in _DATASETS:
+            seg = rx.sub(label, seg)
+        parts[i] = seg
+    return "".join(parts)
 
 
 # The glossary: plain language first, the term of art in the parenthesis.

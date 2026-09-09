@@ -1,14 +1,21 @@
-/* From the universe to the record. The five steps between every registered
+/* From the universe to the record. The steps between every registered
  * wrapper on file and the cells a person has signed.
  *
- * Every count on this route comes from the funnel chunk. Two of the five
- * steps arrive without a count of their own, so each one falls back to a
- * figure the same chunk carries, says which figure it used, and wears the
- * computed chip: nothing here is guessed and nothing is hard-coded.
+ * Every count on this route comes from the funnel chunk. A step that arrives
+ * without a count of its own falls back to a figure the same chunk carries,
+ * says which figure it used, and wears the computed chip: nothing here is
+ * guessed and nothing is hard-coded, the number of steps included.
+ *
+ * Every string the chunk carries is either mapped to the words this page
+ * uses everywhere else or held back. A step label goes through the label map
+ * below, a step note and a method note through the same readability test,
+ * and a class count is dropped unless the copy layer names its class.
  *
  * The share between two steps is computed live from the two counts. Where
  * the unit changes and the second count is larger than the first, the row
- * says the unit changed rather than printing a share above one hundred.
+ * says the unit changed rather than printing a share above one hundred, and
+ * it names both units from the map rather than assuming which two steps it
+ * sits between.
  *
  * The cross-check is an agent pass. It is described in those words, it is
  * never called verification, and the count of signed cells sits beside it
@@ -42,27 +49,56 @@ interface CrossCheck {
   date?: string;
 }
 
-/** What each step counts, in the reader’s words. */
+/** What each step counts, in the reader’s words: the label beside the figure,
+ *  and the singular and plural the share sentence needs. A step the map does
+ *  not name counts cells of the record. */
 const UNIT: Record<string, string> = { dark: "Wrappers", evaluated: "Funds" };
+const UNIT_ONE: Record<string, string> = { dark: "wrapper", evaluated: "fund" };
+const UNIT_MANY: Record<string, string> = { dark: "wrappers", evaluated: "funds" };
+
+/** The name of each step, in the words the rest of this page uses. The record
+ *  files a step under a key and carries a label of its own, and that label is
+ *  the record’s vocabulary rather than the reader’s: the map turns the key
+ *  into the page’s words, and the record’s label stands in only for a step
+ *  the map does not know, and only while it reads as something a person can
+ *  check. */
+const STEP_LABEL: Record<string, string> = {
+  dark: "Registered wrappers on file",
+  evaluated: "Funds evaluated in full",
+  resolved: "Cells resolved",
+  evidenced: "Cells with a filing behind them",
+  verified: "Cells signed by a person",
+};
 
 /** A figure the record does not carry says so rather than printing nothing. */
 function figure(v: number | undefined | null): string {
   return typeof v === "number" ? fmtInt(v) : "Not on record";
 }
 
-/* A method note that would print an internal name is held back rather than
- * rewritten: a folder, a file name, a name joined by an underscore, a ticket,
- * a system endpoint or a code value. */
+/* A sentence from the chunk that would print an internal name is held back
+ * rather than rewritten: a folder, a file name, a name joined by an
+ * underscore, a ticket, a system endpoint, a code value, one of the words
+ * that belong to the people who build this rather than to a reader, or the
+ * name of a control this page does not have. */
 const INTERNAL: RegExp[] = [
   /[A-Za-z0-9]_[A-Za-z0-9]/,
-  /\.(json|py|csv|md|txt|ya?ml)\b/i,
+  /\.(json|py|csv|md|txt|ya?ml|js|html?)\b/i,
   /\b(data|docs|src|site|web)\//i,
-  /\bR\d+-P\d+\b/,
+  /\bR\d+-P\d+(-\d+)?\b/,
+  /\bP\d-\d+\b/,
   /\b(EFTS|browse-edgar)\b/i,
   /\b(null|None|True|False|NaN)\b/,
+  /\b(engine|artifacts?|typed|the writer|the build|this build|the site)\b/i,
+  /\bsliders?\b/i,
 ];
-function readable(note: string): boolean {
-  return note.trim().length > 0 && !INTERNAL.some((re) => re.test(note));
+function readable(note: string | undefined | null): boolean {
+  const s = String(note || "");
+  return s.trim().length > 0 && !INTERNAL.some((re) => re.test(s));
+}
+
+/** The step, named. */
+function stepLabel(step: FunnelStep): string {
+  return STEP_LABEL[step.id] || (readable(step.label) ? step.label : "A further step of the record");
 }
 
 interface Counted { step: FunnelStep; value: number | null; basis: string }
@@ -88,17 +124,19 @@ function counted(steps: FunnelStep[], totals: Totals): Counted[] {
 }
 
 /** The share between two steps, computed from the two counts beside it. */
-function Drop({ from, to }: { from: number | null; to: number | null }) {
-  if (from === null || to === null || from <= 0) {
+function Drop({ from, to }: { from: Counted; to: Counted }) {
+  const a = from.value;
+  const b = to.value;
+  if (a === null || b === null || a <= 0) {
     return (
       <p className="t-13 t-3">
         The share is not shown between these two steps, because one of them carries no count.
       </p>
     );
   }
-  const basis = `${fmtInt(to)} / ${fmtInt(from)}`;
-  if (to <= from) {
-    const carried = (to / from) * 100;
+  const basis = `${fmtInt(b)} / ${fmtInt(a)}`;
+  if (b <= a) {
+    const carried = (b / a) * 100;
     return (
       <div className="row-3">
         <Icon name="down" />
@@ -112,8 +150,11 @@ function Drop({ from, to }: { from: number | null; to: number | null }) {
     <div className="row-3">
       <Icon name="down" />
       <span className="t-13">The unit changes here</span>
-      <span className="t-num t-semibold t-20">{fmtNum(to / from, 1)}</span>
-      <span className="t-12 t-3">cells of the record for each fund, that is {basis}.</span>
+      <span className="t-num t-semibold t-20">{fmtNum(b / a, 1)}</span>
+      <span className="t-12 t-3">
+        {UNIT_MANY[to.step.id] || "cells of the record"} for each{" "}
+        {UNIT_ONE[from.step.id] || "cell of the record"}, that is {basis}.
+      </span>
     </div>
   );
 }
@@ -167,20 +208,23 @@ export default function FunnelView() {
       />
 
       <StatRow>
-        <Stat label={first ? first.step.label : "Registered wrappers on file"}
+        <Stat label={first ? stepLabel(first.step) : STEP_LABEL.dark}
           value={figure(first ? first.value : null)}
           source={asOf ? `As of ${asOf}` : "Every wrapper the universe enumerates"} />
-        <Stat label="Funds evaluated in full" value={figure(totals.products)}
+        <Stat label={STEP_LABEL.evaluated} value={figure(totals.products)}
           source="Each on the same six-factor record" />
-        <Stat label="Cells resolved" value={fmtOf(totals.resolved, totals.resolvable)}
+        <Stat label={STEP_LABEL.resolved}
+          value={typeof totals.resolved === "number" && typeof totals.resolvable === "number"
+            ? fmtOf(totals.resolved, totals.resolvable)
+            : figure(totals.resolved)}
           source="Structured, extracted, computed or answered not applicable" />
-        <Stat label="Cells signed by a person" value={figure(signed)}
+        <Stat label={STEP_LABEL.verified} value={figure(signed)}
           source={SAY.verificationPending} />
       </StatRow>
 
       <section className="stack-4" aria-labelledby="funnel-steps">
-        <h2 id="funnel-steps" className="t-20">The five steps</h2>
-        <p className="t-14 t-2">The first two steps count wrappers and funds. The three that follow
+        <h2 id="funnel-steps" className="t-20">The steps, in order</h2>
+        <p className="t-14 t-2">The steps at the top count wrappers and funds. The steps below them
           count cells of the record, so the unit changes once on the way down.</p>
         {rows.length === 0 ? (
           <EmptyState title="No step is on record here">
@@ -189,14 +233,14 @@ export default function FunnelView() {
         ) : rows.map((row, i) => (
           <Fragment key={row.step.id}>
             <Card>
-              <CardHead title={row.step.label} level={3}>
+              <CardHead title={stepLabel(row.step)} level={3}>
                 {row.basis && <Chip kind="computed">Computed</Chip>}
               </CardHead>
               <Stat large label={UNIT[row.step.id] || "Cells"} value={figure(row.value)} />
-              {row.step.note && <p className="t-14 t-2">{typographic(row.step.note)}</p>}
+              {readable(row.step.note) && <p className="t-14 t-2">{typographic(row.step.note)}</p>}
               {row.basis && <p className="t-12 t-3">{row.basis}</p>}
             </Card>
-            {i < rows.length - 1 && <Drop from={row.value} to={rows[i + 1].value} />}
+            {i < rows.length - 1 && <Drop from={row} to={rows[i + 1]} />}
           </Fragment>
         ))}
       </section>
@@ -205,7 +249,10 @@ export default function FunnelView() {
         <h2 id="funnel-classes" className="t-20">The wrappers on file, by class</h2>
         {classes.length === 0 ? (
           <EmptyState title="No class count is on record here">
-            The universe sorts every wrapper it enumerates into one class, and those counts fill this chart.
+            {unnamed > 0
+              ? `The universe sorts every wrapper it enumerates into one class, and this page has no reader `
+                + `name for any of the ${fmtInt(unnamed)} classes it counted.`
+              : "The universe sorts every wrapper it enumerates into one class, and those counts fill this chart."}
           </EmptyState>
         ) : (
           <Card>
@@ -258,7 +305,7 @@ export default function FunnelView() {
           </Card>
 
           <Card>
-            <CardHead title="Cells signed by a person" level={3}>
+            <CardHead title={STEP_LABEL.verified} level={3}>
               <Chip kind="pending">Pending</Chip>
             </CardHead>
             <Stat large label="Signed cells" value={figure(signed)} source={SAY.verificationPending} />
@@ -277,8 +324,12 @@ export default function FunnelView() {
         <h2 id="funnel-method" className="t-20">How the universe was counted</h2>
         <Card sunken>
           {notes.length === 0 ? (
-            <p className="t-14 t-2">No method note is on record here. The steps the universe was counted by
-              fill this list.</p>
+            <p className="t-14 t-2">
+              {held > 0
+                ? "Every method note on record here names internal systems and file names rather than "
+                  + "anything a reader can check, so none of them is shown."
+                : "No method note is on record here. The steps the universe was counted by fill this list."}
+            </p>
           ) : (
             <ul className="stack-2">
               {notes.map((note, i) => (
@@ -286,7 +337,7 @@ export default function FunnelView() {
               ))}
             </ul>
           )}
-          {held > 0 && (
+          {notes.length > 0 && held > 0 && (
             <p className="t-13 t-3">{fmtInt(held)} further notes are held back here, because they name
               internal systems and file names rather than anything a reader can check.</p>
           )}
