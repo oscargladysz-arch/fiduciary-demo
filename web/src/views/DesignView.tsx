@@ -168,7 +168,7 @@ export default function DesignView() {
         <div className="two-col">
           <div className="stack-4">
             <Field label="Plan name" hint="Shown under its anonymized label on every surface." required>{(ids) => <Input ids={ids} name="plan_name" autoComplete="organization" placeholder="Regional hospital 403(b) plan…" />}</Field>
-            <Field label="Net assets, end of year" hint="Dollars, from Form 5500 Schedule H.">{(ids) => <NumberInput ids={ids} name="net_assets" placeholder="570000000" />}</Field>
+            <Field label="Net assets, end of year" hint="Dollars, from Form 5500 Schedule H.">{(ids) => <NumberInput ids={ids} name="net_assets" placeholder="570000000…" />}</Field>
             <Field label="Plan year end">{(ids) => <DateInput ids={ids} name="plan_year_end" />}</Field>
             <Field label="Wrapper" error="Choose a wrapper class.">{(ids) => <Select ids={ids} name="wrapper" options={[{ value: "", label: "Choose…" }, { value: "interval", label: "Interval fund" }, { value: "tender", label: "Tender offer fund" }]} />}</Field>
             <Field label="Password">{(ids) => <PasswordInput ids={ids} name="password" />}</Field>

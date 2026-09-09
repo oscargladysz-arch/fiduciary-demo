@@ -25,7 +25,7 @@ export function Field({ label, hint, error, required, children, inline }: FieldP
 type Ids = { id: string; describedBy?: string; invalid: boolean };
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement> & { ids?: Ids; small?: boolean }>(function Input({ ids, small, className = "", ...rest }, ref) {
   return <input ref={ref} id={ids?.id} aria-describedby={ids?.describedBy} aria-invalid={ids?.invalid || undefined}
-    className={`input${small ? " input--sm" : ""} ${className}`.trim()} {...rest} />;
+    autoComplete="off" className={`input${small ? " input--sm" : ""} ${className}`.trim()} {...rest} />;
 });
 export const NumberInput = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement> & { ids?: Ids; small?: boolean; decimal?: boolean }>(function NumberInput({ ids, small, decimal, className = "", ...rest }, ref) {
   return <input ref={ref} id={ids?.id} aria-describedby={ids?.describedBy} aria-invalid={ids?.invalid || undefined} type="text"
@@ -33,7 +33,8 @@ export const NumberInput = forwardRef<HTMLInputElement, InputHTMLAttributes<HTML
     className={`input input--num${small ? " input--sm" : ""} ${className}`.trim()} {...rest} />;
 });
 export const DateInput = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement> & { ids?: Ids }>(function DateInput({ ids, className = "", ...rest }, ref) {
-  return <input ref={ref} id={ids?.id} aria-describedby={ids?.describedBy} aria-invalid={ids?.invalid || undefined} type="date" className={`input ${className}`.trim()} {...rest} />;
+  return <input ref={ref} id={ids?.id} aria-describedby={ids?.describedBy} aria-invalid={ids?.invalid || undefined} type="date"
+    autoComplete="off" className={`input ${className}`.trim()} {...rest} />;
 });
 export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement> & { ids?: Ids; small?: boolean; options: { value: string; label: string; disabled?: boolean }[] }>(function Select({ ids, small, options, className = "", ...rest }, ref) {
   return (
@@ -43,7 +44,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSel
   );
 });
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement> & { ids?: Ids }>(function Textarea({ ids, className = "", ...rest }, ref) {
-  return <textarea ref={ref} id={ids?.id} aria-describedby={ids?.describedBy} aria-invalid={ids?.invalid || undefined} className={`textarea ${className}`.trim()} {...rest} />;
+  return <textarea ref={ref} id={ids?.id} aria-describedby={ids?.describedBy} aria-invalid={ids?.invalid || undefined}
+    autoComplete="off" className={`textarea ${className}`.trim()} {...rest} />;
 });
 
 /* Checkbox and Radio share the hit target: the whole label is the control. */

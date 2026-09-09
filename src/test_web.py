@@ -147,6 +147,43 @@ check("performance (f): fonts are preloaded", 'rel="preload"' in html and 'as="f
 check("performance (f): route chunks are preloaded with modulepreload", "modulepreload" in html)
 check("performance (f): no synchronous data script", not re.search(r"<script src=\"[^\"]*data[^\"]*\.js\"", html))
 
+# ------------------------------------------------- the rule set, statically
+# What the audit cannot see from one rendered page: the stylesheet's own
+# promises, and the anti-patterns that are absent rather than present.
+faces = re.findall(r"@font-face\s*\{[^}]*\}", css_all)
+check("guidelines: every font face declares font-display: swap",
+      bool(faces) and all("font-display" in f and "swap" in f for f in faces),
+      f"{len(faces)} faces, {sum('swap' not in f for f in faces)} without swap")
+check("guidelines: the layout applies the safe-area insets",
+      "env(safe-area-inset" in css_all)
+check("guidelines: the tap highlight is set on purpose rather than left to the platform",
+      "-webkit-tap-highlight-color" in css_all)
+check("guidelines: the double-tap delay is removed on the controls",
+      "touch-action" in css_all and "manipulation" in css_all)
+_hover = [sel for sel in (".btn", ".link", ".navlink", ".tab")
+          if not re.search(re.escape(sel) + r"[^{]*:hover", css_all)]
+check("guidelines: every control has a hover state", not _hover, f"missing: {_hover}")
+# removing the default ring is correct only when :focus-visible draws one back
+_focus_none = bool(re.search(r":focus(?!-visible)[^{]*\{[^}]*outline\s*:\s*none", css_all))
+_focus_visible_ring = bool(re.search(r":focus-visible[^{]*\{[^}]*outline\s*:(?!\s*none)", css_all))
+check("guidelines: the focus ring is drawn on :focus-visible, and nothing removes it without drawing it back",
+      _focus_visible_ring and (not _focus_none or _focus_visible_ring),
+      f"outline:none on :focus {_focus_none}, ring on :focus-visible {_focus_visible_ring}")
+check("guidelines: paste is never blocked", "onPaste" not in app_js and "preventDefault" in app_js)
+check("guidelines: zoom is not disabled in the document",
+      not re.search(r"user-scalable\s*=\s*no|maximum-scale\s*=\s*1(?!\d)", html))
+check("guidelines: the theme reaches the browser chrome",
+      'name="theme-color"' in html and "color-scheme" in css_all)
+# a link to another host is a link a reader follows: what must not happen is
+# the page FETCHING from another host, which is a stylesheet url() or a
+# script or stylesheet tag in the document
+_ext = sorted(set(re.findall(r"url\(\s*[\"']?(https?://[a-z0-9.-]+)", css_all))
+              | set(re.findall(r"<(?:script|link)[^>]+(?:src|href)=\"(https?://[a-z0-9.-]+)", html)))
+check("guidelines: the page fetches nothing from another host",
+      not _ext, f"external hosts fetched: {_ext[:4]}")
+check("guidelines: no image is rendered without its dimensions",
+      not re.search(r"<img(?![^>]*\bwidth=)[^>]*>", html), "an img in the document has no width")
+
 # ---------------------------------------------------------------- serve two ways: root and a preview subpath
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self, *a):  # noqa: D401
@@ -292,6 +329,71 @@ AUDIT_JS = r"""
   }
   // aria-live regions exist
   if (!document.querySelector('[aria-live]')) add('aria-live', 'no live region on the page');
+
+  // ---- the rest of the pinned rule set -----------------------------------
+  // a native select paints itself in the platform's dark mode unless it is
+  // told what to paint: both the background and the colour must be explicit
+  for (const sel of document.querySelectorAll('select')) {
+    if (!visible(sel)) continue;
+    const cs = getComputedStyle(sel);
+    const bg = parse(cs.backgroundColor);
+    if (!bg || bg.a < 0.9) add('select-color', 'select without an explicit background');
+    if (!parse(cs.color)) add('select-color', 'select without an explicit colour');
+  }
+  // a scrollable overlay must not chain its scroll to the page behind it
+  for (const panel of document.querySelectorAll('[role="dialog"] > *, .drawer__panel, .sheet__panel, .palette')) {
+    if (!visible(panel)) continue;
+    const oy = getComputedStyle(panel).overscrollBehaviorY;
+    if (oy !== 'contain' && oy !== 'none') add('overscroll', (panel.className || panel.tagName) + ' is ' + oy);
+  }
+  // autofocus: at most one, and never on a narrow viewport where it opens the
+  // keyboard over the content a reader has not read yet
+  const autos = [...document.querySelectorAll('[autofocus]')].filter(visible);
+  if (autos.length > 1) add('autofocus', autos.length + ' elements claim the focus');
+  if (isMobile && autos.length) add('autofocus', 'autofocus on a narrow viewport');
+  // a control must be a control: nothing else may look clickable
+  for (const el of document.querySelectorAll('div, span, li, p, section, article')) {
+    if (!visible(el) || el.children.length) continue;
+    if (getComputedStyle(el).cursor !== 'pointer') continue;
+    if (el.closest('button, a[href], label, summary, [role="button"], [role="option"], [role="tab"]')) continue;
+    add('click-target', el.tagName + '.' + el.className + ' looks clickable and is not a control');
+  }
+  // form fields carry what a browser needs to fill them and a person needs to
+  // type into them
+  for (const el of document.querySelectorAll('input, textarea')) {
+    if (!visible(el) || el.matches('[type="checkbox"], [type="radio"], [type="range"], [type="hidden"]')) continue;
+    if (!el.getAttribute('autocomplete')) add('autocomplete', (el.name || el.id || el.type) + ' has no autocomplete');
+    if (el.matches('[type="number"]') || /^(numeric|decimal)$/.test(el.getAttribute('inputmode') || '')) {
+      if (!el.getAttribute('inputmode')) add('inputmode', (el.name || el.id) + ' is numeric with no inputmode');
+    }
+    const ph = el.getAttribute('placeholder');
+    if (ph && !/\u2026$/.test(ph)) add('placeholder', 'placeholder does not end with an ellipsis: ' + ph.slice(0, 30));
+    if (el.matches('[type="email"], [type="url"], [name*="code"], [name*="key"]') && el.spellcheck)
+      add('spellcheck', (el.name || el.id) + ' should not be spellchecked');
+  }
+  // an image without its dimensions moves the page when it loads
+  for (const img of document.querySelectorAll('img')) {
+    if (!img.getAttribute('width') || !img.getAttribute('height')) add('img-size', img.src.slice(-40));
+  }
+  // zoom is never disabled
+  const vp = document.querySelector('meta[name="viewport"]');
+  const vpc = vp ? vp.getAttribute('content') || '' : '';
+  if (/user-scalable\s*=\s*no|maximum-scale\s*=\s*1(\D|$)/.test(vpc)) add('viewport-zoom', vpc);
+  // the theme reaches the browser chrome and the native controls
+  if (!document.querySelector('meta[name="theme-color"]')) add('theme-color', 'no theme-color meta');
+  const rootScheme = getComputedStyle(document.documentElement).colorScheme;
+  if (!rootScheme || rootScheme === 'normal') add('color-scheme', 'the root sets no colour scheme');
+  // a long list is virtualized rather than put in the document whole
+  for (const body of document.querySelectorAll('tbody')) {
+    const rows = body.querySelectorAll('tr').length;
+    if (rows > 60) add('virtualize', rows + ' rows rendered in one table');
+  }
+  // a tap must not wait for a second tap that is not coming
+  for (const el of inter.slice(0, 40)) {
+    const ta = getComputedStyle(el).touchAction;
+    if (el.matches('.btn, .navlink, .tab, .link') && ta === 'auto')
+      add('touch-action', (el.className || el.tagName) + ' leaves the double-tap delay in place');
+  }
   // outline: none without a focus-visible style: test by focusing each control
   let ringMissing = 0;
   for (const el of inter.slice(0, 80)) {
