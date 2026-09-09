@@ -8,7 +8,10 @@
  *
  * One chip per cell: the tier the row sits in. The filing behind a figure
  * opens from the citation button beside it, never from a second chip. A cell
- * the record does not hold prints the reason the record gives.
+ * the record does not hold prints the reason the record gives, where that
+ * reason is written in reader words rather than in the collection step’s own
+ * shorthand: every string that arrives with the record goes through a label
+ * map, or through the guard below, before it reaches the page.
  */
 import { useId, useMemo, useState } from "react";
 import type { ReactNode } from "react";
@@ -23,7 +26,7 @@ import type { Column } from "../components/table";
 import { SAY, TIERS, status as statusCopy, verdict as verdictCopy } from "../copy/copy";
 import { useAsync, useIndex, useKeys } from "../data/hooks";
 import { data } from "../data/index";
-import { fmtInt, fmtMoneyCompact, fmtNum, fmtOf, fmtPct, truncate, withUnit } from "../format/format";
+import { fmtInt, fmtMoneyCompact, fmtNum, fmtOf, fmtPct, truncate, typographic, withUnit } from "../format/format";
 import type { IndexView, ScreenerView as ScreenerShape } from "../data/types";
 
 const MOST = 4;
@@ -62,6 +65,40 @@ const EXTRA_VERDICT: Record<string, string> = {
   "aligned-mechanical": "Aligned, exit is on an exchange",
   partial: "Partly on record",
 };
+/* The tax form is a closed vocabulary on the record, so it is named here
+ * rather than printed as the record files it. */
+const TAX_FORM: Record<string, string> = {
+  "1099": "Form 1099",
+  "1099-DIV": "Form 1099-DIV",
+  "1099-B": "Form 1099-B",
+  "K-1": "Schedule K-1",
+};
+
+/* Free text the record carries, as a reader can use it. A line written in
+ * the collection step’s own shorthand is held back rather than printed: a key
+ * joined by an underscore, a file name, a path, a ticket, a query written as
+ * a key and a value, a code value such as a bare True or False, one of the
+ * words that belong to the people who build this rather than to a reader, or
+ * the name of a control this page does not have. What survives is set in
+ * curly quotes, because the record writes some of its lines with the straight
+ * ones. */
+const INTERNAL: RegExp[] = [
+  /[a-z0-9]_[a-z0-9]/i,
+  /\.(json|csv|py|md|txt|tsv|js|html?|ya?ml)\b/i,
+  /\b(data|docs|src|site|web)\//i,
+  /\bR\d+-P\d+(-\d+)?\b/,
+  /\bP\d-\d+\b/,
+  /=/,
+  /\bnull\b/i,
+  /\b(None|True|False|NaN)\b/,
+  /\b(engine|artifacts?|typed|the writer|the build|this build|the site)\b/i,
+  /\bsliders?\b/i,
+];
+function readerText(raw: unknown, fallback: string): string {
+  const s = typeof raw === "string" ? raw.trim() : "";
+  if (!s) return fallback;
+  return INTERNAL.some((re) => re.test(s)) ? fallback : typographic(s);
+}
 
 function factOf(fund: Fund, name: string): Fact {
   return fund.facts[name] || {};
@@ -90,17 +127,18 @@ interface Incentive { present?: boolean; rate_pct?: number | null; hurdle_pct?: 
 function incentive(v: Incentive | null): string {
   if (!v) return "Not on record";
   if (!v.present) return "None";
-  const parts: string[] = [];
-  if (v.rate_pct !== null && v.rate_pct !== undefined) parts.push(fmtPct(v.rate_pct));
-  if (v.hurdle_pct !== null && v.hurdle_pct !== undefined) parts.push(`${fmtPct(v.hurdle_pct)} hurdle`);
-  return parts.length ? parts.join(", ") : "Charged, rate not disclosed";
+  /* the rate first, always: a hurdle printed on its own reads as the rate */
+  const rate = v.rate_pct !== null && v.rate_pct !== undefined ? fmtPct(v.rate_pct) : "Charged, rate not disclosed";
+  const hurdle = v.hurdle_pct !== null && v.hurdle_pct !== undefined ? `${fmtPct(v.hurdle_pct)} hurdle` : "";
+  return hurdle ? `${rate}, ${hurdle}` : rate;
 }
 interface Early { present?: boolean; rate_pct?: number | null; window?: string }
 function early(v: Early | null): string {
   if (!v) return "Not on record";
   if (!v.present) return "None";
   const rate = v.rate_pct !== null && v.rate_pct !== undefined ? fmtPct(v.rate_pct) : "Charged, rate not disclosed";
-  return v.window ? `${rate}, ${v.window}` : rate;
+  const held = readerText(v.window, "");
+  return held ? `${rate}, ${held}` : rate;
 }
 
 /* ------------------------------------------------------------- the rows */
@@ -133,7 +171,7 @@ function linesOf(index: IndexView): FactRow[] {
     {
       id: "ter", label: "Expense ratio", kind: "number", at: same("expense_ratio_pct"),
       show: (f) => fmtPct(f.value as number), keyOf: num,
-      basis: (f) => (typeof f.basis === "string" && f.basis ? f.basis : undefined),
+      basis: (f) => readerText(f.basis, "") || undefined,
     },
     {
       id: "early", label: "Early repurchase fee", kind: "category", at: same("early_repurchase"),
@@ -155,7 +193,8 @@ function linesOf(index: IndexView): FactRow[] {
     },
     {
       id: "cap", label: "Cap per window", kind: "number", at: same("repurchase_cap_pct"),
-      show: (f) => withUnit(fmtNum(f.value as number, 2), "%"), keyOf: num,
+      // a percentage, formatted the one way the fee rows above it are
+      show: (f) => fmtPct(f.value as number), keyOf: num,
     },
     {
       id: "gate", label: "Buyback limits used", kind: "category", at: same("gate_history"),
@@ -163,7 +202,7 @@ function linesOf(index: IndexView): FactRow[] {
     },
     {
       id: "tax", label: "Tax form", kind: "category", at: same("tax_form"),
-      show: (f) => String(f.value), keyOf: str,
+      show: (f) => text(TAX_FORM, f.value), keyOf: str,
     },
     {
       id: "big4", label: "Auditor among the four largest", kind: "category", at: same("big4"),
@@ -222,7 +261,7 @@ function Value({ fund, line }: { fund: Fund; line: FactRow }) {
   return (
     <div className="stack-2">
       <span className={missing ? "t-13 t-3" : line.kind === "number" ? "t-num" : "t-14"}>
-        {missing ? (f.reason || "Not on record") : line.show(f)}
+        {missing ? readerText(f.reason, "Not on record") : line.show(f)}
       </span>
       {basis && <span className="t-12 t-3">Basis: {basis}</span>}
       <span className="row-3">
@@ -261,9 +300,10 @@ export default function CompareView() {
   const asked = r.params.get("compare") || "";
 
   /* the address holds keys only, deduplicated, in roster order, and names the
-   * first two funds when it names none */
+   * first two funds when it names none. The previous frontend joined them with
+   * a comma, so a link written then still opens the comparison it named. */
   const chosen = useMemo(() => {
-    const want = new Set(asked.split(".").map((s) => s.trim()).filter((k) => keys.products.has(k)));
+    const want = new Set(asked.split(/[.,]/).map((s) => s.trim()).filter((k) => keys.products.has(k)));
     const inOrder = order.filter((k) => want.has(k)).slice(0, MOST);
     if (inOrder.length) return inOrder;
     return asked ? [] : order.slice(0, LEAST);
@@ -281,7 +321,10 @@ export default function CompareView() {
     return out;
   }, [lines, sel]);
 
-  const columns = useMemo<Column<FactRow>[]>(() => [
+  /* The two tables carry the same funds, so the name is a link once, on the
+   * table that holds every row. A second link with the same words and the same
+   * destination is a second thing to read and nothing to choose between. */
+  const makeColumns = (linked: boolean): Column<FactRow>[] => [
     {
       id: "line", header: "Row of the record", label: "Row of the record", fixed: true,
       cell: (line) => (
@@ -293,11 +336,17 @@ export default function CompareView() {
     },
     ...sel.map((fund) => ({
       id: fund.key,
-      header: <Link to={`/product/${fund.key}/record`} translate="no">{fund.name}</Link>,
+      header: linked
+        ? <Link to={`/product/${fund.key}/record`} translate="no">{fund.name}</Link>
+        : <span translate="no">{fund.name}</span>,
       label: fund.name,
       cell: (line: FactRow) => <Value fund={fund} line={line} />,
     })),
-  ], [sel, marked]);
+  ];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const columns = useMemo<Column<FactRow>[]>(() => makeColumns(true), [sel, marked]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const feeColumns = useMemo<Column<FactRow>[]>(() => makeColumns(false), [sel, marked]);
 
   const apply = (next: string[]) => {
     setRefusal("");
@@ -320,8 +369,33 @@ export default function CompareView() {
     apply(chosen.filter((k) => k !== fund.key));
   };
 
-  if (error || iErr) return <EmptyState title={SAY.noRecord}>{error || iErr}</EmptyState>;
-  if (loading || iLoading || !screener || !index) return <Skeleton lines={10} label={SAY.loadingRecord} />;
+  /* the route wears its name in every state, so the loading and the error
+   * pages are this page rather than a heading-less panel */
+  const header = (
+    <PageHeader
+      title="Compare"
+      sub={"Two to four funds on the same rows of the record. Every figure opens the filing it was read from, "
+        + "and a row the record does not hold says why."}
+      actions={<Link to="/screener">Open the screener</Link>}
+    />
+  );
+
+  if (error || iErr) {
+    return (
+      <div className="stack-5">
+        {header}
+        <EmptyState title={SAY.noRecord}>{error || iErr}</EmptyState>
+      </div>
+    );
+  }
+  if (loading || iLoading || !screener || !index) {
+    return (
+      <div className="stack-5">
+        {header}
+        <Skeleton lines={10} label={SAY.loadingRecord} />
+      </div>
+    );
+  }
 
   const signed = index.coverage_totals.counts.verified;
   const total = Number(index.coverage_totals.total);
@@ -331,7 +405,7 @@ export default function CompareView() {
   if (funds.length === 0) {
     return (
       <div className="stack-5">
-        <PageHeader title="Compare" />
+        {header}
         <EmptyState title="No fund is on the comparison yet">
           The roster carries no evaluated fund. A fund appears here once its record holds the rows
           this comparison reads.
@@ -342,12 +416,7 @@ export default function CompareView() {
 
   return (
     <div className="stack-5">
-      <PageHeader
-        title="Compare"
-        sub={"Two to four funds on the same rows of the record. Every figure opens the filing it was read from, "
-          + "and a row the record does not hold says why."}
-        actions={<Link to="/screener">Open the screener</Link>}
-      />
+      {header}
 
       <StatRow>
         <Stat label="Funds side by side" value={fmtInt(sel.length)} source={`Of ${fmtInt(funds.length)} evaluated`} />
@@ -420,7 +489,7 @@ export default function CompareView() {
                 const v = typeof f.value === "number" ? f.value : null;
                 return {
                   label: fund.name, value: v,
-                  note: v === null ? truncate(f.reason || "Not on record", 44) : undefined,
+                  note: v === null ? truncate(readerText(f.reason, "Not on record"), 44) : undefined,
                 };
               })}
               format={(v) => fmtPct(v)}
@@ -432,7 +501,7 @@ export default function CompareView() {
           <Table
             id="compare-fees"
             caption={`The fee rows for the funds you chose, each figure with the basis its fund states. ${SAY.verificationPending}`}
-            columns={columns}
+            columns={feeColumns}
             rows={feeLines}
             rowKey={(line) => line.id}
             empty={SAY.emptyFilter}
@@ -447,8 +516,9 @@ export default function CompareView() {
         }))} />
         <p className="t-13 t-3">
           Every cell carries the tier of the row behind it, and the button beside it opens the filing the
-          figure was read from. Where a public series stands beside a fund it is labeled {SAY.reference}.{" "}
-          {SAY.referenceNote} The meaningful benchmark for each fund sits on its own benchmark panel.{" "}
+          figure was read from. A row the record does not hold prints the reason the record gives instead
+          of a figure. The expense ratio carries the basis its own fund states, and those bases are not
+          the same, so the rows below the chart are the comparison rather than the bars.{" "}
           {SAY.verificationCount(signed, total)}
         </p>
       </Card>

@@ -576,6 +576,7 @@ def punctuate(text: str) -> str:
         # a plural, a clipped decade, and a pair of double quotes
         t = _APOSTROPHE.sub("\u2019", t)
         t = _CLIPPED.sub("\u2019", t)
+        t = _OPEN_SQ.sub("\u2018", t)
         t = _DQUOTES.sub("\u201c\\1\u201d", t)
         parts[i] = t
     return "".join(parts)
@@ -605,7 +606,12 @@ def display_copy_deep(obj, skip=("quote",)):
 
 
 _APOSTROPHE = re.compile(r"(?<=[A-Za-z])'(?=[A-Za-z])")
-_CLIPPED = re.compile(r"(?<=[\s(])'(?=\d)|(?<=[A-Za-z])'(?=[\s.,)])")
+# An opening quote takes the left mark and a closing quote after a word takes
+# the right one. A clipped year is deliberately left alone: it is written the
+# same way in the wrapper labels the selection record hashes, and curling it
+# here would change four record fingerprints for a typographic nicety.
+_CLIPPED = re.compile(r"(?<=[A-Za-z])'(?=[\s.,;:)\]]|$)")
+_OPEN_SQ = re.compile(r"(?<=[\s(\[])'(?=[A-Za-z])")
 _DQUOTES = re.compile(r'"([^"\n]{1,200})"')
 
 

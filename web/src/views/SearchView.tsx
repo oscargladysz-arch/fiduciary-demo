@@ -1,9 +1,12 @@
 /* Evidence search: every cited row of the record, searched on the value and
  * on the sentence quoted out of the filing.
  *
- * The box takes focus once, when the route mounts, and never again: a
- * re-render caused by a keystroke, a filter or a sort must not steal the
- * caret back, which is what the previous frontend did.
+ * The box never takes focus on arrival: the skip link is the first Tab stop
+ * on every route, and a control that claims the caret on a narrow viewport
+ * opens the keyboard over text the reader has not read yet. It takes focus
+ * only when Clear sends it there, and a re-render caused by a keystroke, a
+ * filter or a sort never steals the caret back, which is what the previous
+ * frontend did.
  *
  * What a reader types stays out of the link (R3-P1-3): free text never
  * enters the URL. The fund and the tier are keys, so they do serialize, and
@@ -15,9 +18,14 @@
  * text in React and rendering <mark> around the run, never by assembling
  * markup out of a string.
  *
+ * The sentence quoted out of the filing is the document’s own text and is
+ * never edited, so it is marked verbatim: it carries the straight quotes,
+ * the apostrophes and the punctuation the filing printed, and the typography
+ * rules that hold over this frontend’s own prose do not reach it.
+ *
  * Tier language is the record’s own and does not blur: extracted is a quote
  * a reader can open, and nothing here is signed by a person. */
-import {useMemo, useRef, useState} from "react";
+import { useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { setParams, useRoute } from "../app/router";
 import { CiteButton } from "../components/citation";
@@ -38,6 +46,8 @@ const MAX_EXCERPT = 220;
 /** where one sentence of a value ends */
 const BREAK = /[.!?\n]/;
 const NONE = "";  // the empty option of a filter, meaning every value
+/** the one sentence under the H1, said the same way in every state */
+const SUB = "Search reaches the value and the quoted sentence of every row of the record that names a filing behind it.";
 
 /* The tier of a row, in the record’s own vocabulary. The record qualifies a
  * status after a comma ("not applicable, no market price exists"), so the
@@ -129,12 +139,11 @@ export default function SearchView() {
   const { value: evidence, error, loading } = useAsync<EvidenceView>(() => askEvidence(), []);
 
   const [query, setQuery] = useState("");
-  const box = useRef<HTMLInputElement>(null);
-  // once, on mount. A keystroke, a filter or a sort re-renders this view and
-  // must leave the caret exactly where the reader put it.
   // the search box does not take focus on arrival: the skip link is the
   // first Tab stop on every route, and a reader who lands here has not read
-  // the page yet. It takes focus only when a control here sends it there.
+  // the page yet. It takes focus only when Clear sends it there, and a
+  // keystroke, a filter or a sort leaves the caret where the reader put it.
+  const box = useRef<HTMLInputElement>(null);
 
   const hits = useMemo<Hit[]>(() => (evidence?.rows || []).map((row) => {
     const [factor, within] = row.cell.split(".");
@@ -169,9 +178,13 @@ export default function SearchView() {
     return h.value.includes(needle) || h.quote.includes(needle);
   }), [hits, fund, tier, needle]);
 
-  const sort: SortState | null = r.params.get("sort")
-    ? { id: r.params.get("sort")!, dir: r.params.get("dir") === "desc" ? "desc" : "asc" }
-    : null;
+  // one object per URL state rather than one per render: the table sorts
+  // eight hundred rows off this identity, and a keystroke must not re-sort
+  const sortId = r.params.get("sort");
+  const sortDir = r.params.get("dir");
+  const sort = useMemo<SortState | null>(
+    () => (sortId ? { id: sortId, dir: sortDir === "desc" ? "desc" : "asc" } : null),
+    [sortId, sortDir]);
 
   const columns = useMemo<Column<Hit>[]>(() => [
     {
@@ -184,12 +197,19 @@ export default function SearchView() {
     {
       id: "cell", header: "Row of the record", label: "Row of the record",
       sortValue: (h) => h.order,
-      cell: (h) => (
-        <Link to={`/product/${h.row.product_key}/record`} params={{ factor: h.row.cell.split(".")[0] }}>
-          <span className="t-eyebrow" translate="no">{h.row.cell}</span>{" "}
-          {index?.cells[h.row.cell]?.label || h.row.element}
-        </Link>
-      ),
+      // the same row of the record appears once per fund, so the visible text
+      // repeats while the destination does not: the fund is added to the name,
+      // after the visible text rather than in place of it
+      cell: (h) => {
+        const rowLabel = index?.cells[h.row.cell]?.label || h.row.element;
+        return (
+          <Link to={`/product/${h.row.product_key}/record`} params={{ factor: h.row.cell.split(".")[0] }}
+            aria-label={`${h.row.cell} ${rowLabel}, ${h.row.fund_name}`}>
+            <span className="t-eyebrow" translate="no">{h.row.cell}</span>{" "}
+            {rowLabel}
+          </Link>
+        );
+      },
     },
     {
       id: "value", header: "What the row says", label: "What the row says",
@@ -199,7 +219,7 @@ export default function SearchView() {
           <div className="stack-2">
             <span className="t-13"><Marked text={excerpt(h.row.value, needle)} needle={needle} /></span>
             {inQuote && (
-              <span className="t-12 t-3">
+              <span className="t-12 t-3" data-verbatim="true">
                 {"“"}<Marked text={excerpt(h.row.quote, needle)} needle={needle} />{"”"}
               </span>
             )}
@@ -223,7 +243,16 @@ export default function SearchView() {
     },
   ], [index, needle]);
 
-  if (error) return <EmptyState title={SAY.noRecord}>{error}</EmptyState>;
+  // the error state is a state of this route, not a page of its own: it keeps
+  // the H1 the route is named by, so the heading order holds here too
+  if (error) {
+    return (
+      <div className="stack-5">
+        <PageHeader title={routeTitle("search")} sub={SUB} />
+        <EmptyState title={SAY.noRecord}>{error}</EmptyState>
+      </div>
+    );
+  }
 
   const verified = Number(index?.coverage_totals.counts.verified ?? 0);
   const cellsOnRecord = Number(index?.coverage_totals.total ?? 0);
@@ -279,7 +308,7 @@ export default function SearchView() {
     <div className="stack-5">
       <PageHeader
         title={routeTitle("search")}
-        sub={"Search reaches the value and the quoted sentence of every row of the record that names a filing behind it."}
+        sub={SUB}
         actions={<Link to="/coverage">Coverage and provenance</Link>}
       />
 
@@ -288,7 +317,10 @@ export default function SearchView() {
           <Stat label="Rows with a filing behind them" value={fmtInt(hits.length)}
             source="One per cell that carries a document, a section or a quoted sentence" />
           <Stat label="Funds" value={fmtInt(funds.length)} source="Every fund evaluated in the record" />
-          <Stat label="Signed by a person" value={fmtInt(verified)} source={SAY.verificationPending} />
+          {/* the count of signed cells is the index chunk's own figure: where
+              the index is not on hand there is no figure to show, and a zero
+              typed in its place would read as one */}
+          {index && <Stat label="Signed by a person" value={fmtInt(verified)} source={SAY.verificationPending} />}
         </StatRow>
       )}
 
@@ -314,14 +346,18 @@ export default function SearchView() {
           </Field>
         </div>
 
-        <p className="t-13 t-3" aria-live="polite">
-          {loading
-            ? `${SAY.loadingRecord}${ELLIPSIS}`
-            : `Showing ${fmtOf(shown.length, hits.length)} rows.`}
+        {/* the count is the live region and nothing else is: a control inside
+            one is read out again every time the count changes */}
+        <div className="row">
+          <p className="t-13 t-3" aria-live="polite">
+            {loading
+              ? `${SAY.loadingRecord}${ELLIPSIS}`
+              : `Showing ${fmtOf(shown.length, hits.length)} rows.`}
+          </p>
           {!loading && narrowed && (
-            <>{" "}<Button variant="quiet" onClick={clear}>Clear the search and the filters</Button></>
+            <Button variant="quiet" onClick={clear}>Clear the search and the filters</Button>
           )}
-        </p>
+        </div>
       </Card>
 
       <section className="stack-4">

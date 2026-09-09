@@ -151,17 +151,27 @@ function accession(ref: string): string {
 
 /** A sentence a reader can use, or nothing. A line written in the collection
  *  step’s own shorthand is held back: a key joined by an underscore, a file
- *  name, a path, a query written as a key and a value, or one of the tool
- *  names the collection step used. */
+ *  name, a path, a query written as a key and a value, a ticket, a code
+ *  value, one of the words that belong to the people who build this rather
+ *  than to a reader, the name of a control this page does not have, or one of
+ *  the tool names the collection step used. */
 const OPERATOR_WORDS = ["efts", "browse-edgar", "checkpoint", "oracle", "company tickers",
   "full-text search", "year-split", "month-split", "companyconcept", "us-gaap"];
+const INTERNAL: RegExp[] = [
+  /[a-z0-9]_[a-z0-9]/i,
+  /\.(json|csv|py|md|txt|tsv|js|html?|ya?ml)\b/i,
+  /\b(data|docs|src|site|web)\//i,
+  /\bR\d+-P\d+(-\d+)?\b/,
+  /\bP\d-\d+\b/,
+  /=/,
+  /\bnull\b/i,
+  /\b(None|True|False|NaN)\b/,
+  /\b(engine|artifacts?|typed|the writer|the build|this build|the site)\b/i,
+  /\bsliders?\b/i,
+];
 function readerSafe(s: string): boolean {
   if (!s.trim()) return false;
-  if (/[a-z0-9]_[a-z0-9]/i.test(s)) return false;
-  if (/\.(json|csv|py|md|txt|tsv)\b/i.test(s)) return false;
-  if (/\b(data|docs|src)\//.test(s)) return false;
-  if (/=/.test(s)) return false;
-  if (/\bnull\b/i.test(s)) return false;
+  if (INTERNAL.some((re) => re.test(s))) return false;
   const low = s.toLowerCase();
   return !OPERATOR_WORDS.some((w) => low.includes(w));
 }
@@ -181,9 +191,11 @@ function readerReason(raw: string): string {
   return "The record gives a reason for this in the collection step’s own shorthand rather than in reader words.";
 }
 
-/** A name hint, as words rather than as the token the record files it under. */
+/** A name hint, as words rather than as the token the record files it under.
+ *  Every separator the record joins a hint with becomes a space, so no key
+ *  joined by an underscore can reach the page through this. */
 function hintWords(h: string): string {
-  const s = h.replace(/\?/g, " ").replace(/-/g, " ").replace(/\s+/g, " ").trim();
+  const s = h.replace(/[?_-]+/g, " ").replace(/\s+/g, " ").trim();
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : "";
 }
 
@@ -367,7 +379,7 @@ function EntityDetail({ census, row }: { census: CensusView; row: Row }) {
       {evidence.length > 0
         ? (
           <ul className="stack-2">
-            {evidence.map((e) => <li key={e} className="t-13 t-2">{typographic(e)}</li>)}
+            {evidence.map((e, i) => <li key={i} className="t-13 t-2">{typographic(e)}</li>)}
           </ul>
         )
         : <p className="t-13 t-3">No line of evidence for this entity is written in reader words.</p>}
@@ -445,7 +457,11 @@ function makeColumns(open: (cik: string) => void): Column<Row>[] {
       id: "name", header: CENSUS_FIELD.nm, label: CENSUS_FIELD.nm, fixed: true,
       sortValue: (row) => row.name,
       cell: (row) => (
+        // a registered name runs to fifty characters, and the button style is
+        // one line: it is told to wrap here so a narrow viewport never has to
+        // scroll sideways to read one
         <Button variant="quiet" translate="no" aria-haspopup="dialog"
+          style={{ whiteSpace: "normal", justifyContent: "flex-start", textAlign: "left" }}
           aria-label={`Open what the record holds for ${row.name}`} onClick={() => open(row.cik)}>
           {row.name}
         </Button>
@@ -486,7 +502,10 @@ function makeColumns(open: (cik: string) => void): Column<Row>[] {
       id: "evaluated", header: CENSUS_FIELD.evaluated, label: CENSUS_FIELD.evaluated,
       sortValue: (row) => (row.productKey ? 1 : 0),
       cell: (row) => (row.productKey
-        ? <Link to={`/product/${row.productKey}/record`}>Open the record</Link>
+        ? (
+          <Link to={`/product/${row.productKey}/record`}
+            aria-label={`Open the six-factor record for ${row.name}`}>Open the record</Link>
+        )
         : <span className="t-13 t-3">Not evaluated</span>),
     },
   ];
@@ -502,7 +521,7 @@ export default function UniverseView() {
 
   const needle = who.trim().toLowerCase();
   const wantSearch = needle.length >= 2;
-  const { value: searchIndex, loading: searching } =
+  const { value: searchIndex, loading: searching, error: searchError } =
     useAsync<Record<string, string>>(() => (wantSearch ? askSearch() : Promise.resolve({})), [wantSearch]);
 
   const rows = useMemo<Row[]>(() => {
@@ -554,8 +573,11 @@ export default function UniverseView() {
       if (min !== null && row.assets < min) return false;
       if (max !== null && (row.assets === 0 || row.assets > max)) return false;
       if (nameNeedle && !row.name.toLowerCase().includes(nameNeedle)) return false;
-      if (wantSearch) {
-        const hay = searchIndex ? searchIndex[row.cik] || "" : "";
+      // while the auditor and adviser index is still being read, and if it
+      // cannot be read at all, no row is dropped for it: the sentence under
+      // the filters says which of the two it is
+      if (wantSearch && searchIndex) {
+        const hay = searchIndex[row.cik] || "";
         if (!hay.includes(needle)) return false;
       }
       return true;
@@ -580,15 +602,23 @@ export default function UniverseView() {
 
   const open = p.get("c_cik") || "";
   const openRow = open ? rows.find((row) => row.cik === open) || null : null;
-  const counts = index?.coverage_totals.counts || {};
+  const counts = index?.coverage_totals?.counts || {};
   const evaluated = rows.filter((row) => row.flags & FLAG.evaluated).length;
   const structured = rows.filter((row) => row.flags & FLAG.structured).length;
   const filtered = fClass || fListed || fInterval || fWindows || fEval || rawMin || rawMax || name || who;
 
+  // the two figures the chunk carries whole. A count or a date the record
+  // does not hold says so rather than leaving a figure blank on the page
+  const total = numOr(census.total);
+  const asOf = fmtDate(census.as_of);
+
   const notes = (census.method_notes || []).filter(readerSafe);
   const notesHeld = (census.method_notes || []).length - notes.length;
   const dark = census.dark_universe || {};
-  const darkWhat = text(dark.what);
+  // the record's own sentence about the funds outside this universe, held
+  // back on the same test as every other sentence the record supplies
+  const darkRaw = text(dark.what);
+  const darkWhat = readerSafe(darkRaw) ? darkRaw : "";
   const darkWindow = text(dark.window).split("..");
   const newNotices = numOr(dark.formd_new_notices);
   const amendments = numOr(dark.formd_amendments);
@@ -609,13 +639,15 @@ export default function UniverseView() {
       />
 
       <StatRow>
-        <Stat label="Entities on file" value={fmtInt(census.total)}
-          source={`As the record stood on ${fmtDate(census.as_of)}`} />
-        <Stat label={CENSUS_FIELD.structured} value={fmtOf(structured, census.total)}
+        <Stat label="Entities on file" value={total === null ? fmtInt(rows.length) : fmtInt(total)}
+          source={asOf ? `As the record stood on ${asOf}` : "As the record stands"} />
+        <Stat label={CENSUS_FIELD.structured}
+          value={total === null ? fmtInt(structured) : fmtOf(structured, total)}
           source="The rest carry filing behavior and dates only" />
         <Stat label={CENSUS_FIELD.evaluated} value={fmtInt(evaluated)}
           source="Each one on the six-factor record" />
-        <Stat label="Rows signed by a person" value={fmtInt(counts.verified || 0)}
+        <Stat label="Cells signed by a person"
+          value={index ? fmtInt(counts.verified || 0) : "Not on record here"}
           source={SAY.verificationPending} />
       </StatRow>
 
@@ -626,8 +658,10 @@ export default function UniverseView() {
         }))} />
         <p className="t-13 t-3">
           Nothing on this page is read out of prose and nothing on it is signed by a person. Where a filing tags
-          no figure, the row says so and the entity detail gives the reason the record holds. Across the evaluated
-          record, {SAY.verificationCount(counts.verified || 0, counts.total || 0)}{" "}
+          no figure, the row says so and the entity detail gives the reason the record holds.{" "}
+          {index
+            ? `Across the evaluated record, ${SAY.verificationCount(counts.verified || 0, counts.total || 0)}`
+            : "The count of cells a person has signed is not on record here."}{" "}
           <Link to="/verification">See the verification queue</Link>
         </p>
       </Card>
@@ -692,7 +726,10 @@ export default function UniverseView() {
             {`Showing ${fmtOf(shown.length, rows.length)} entities.`}
             {shown.length > CAP && ` The table holds the first ${fmtInt(CAP)} of them in this order.`}
             {wantSearch && searching && ` Reading the auditor and adviser list${ELLIPSIS}`}
-            {wantSearch && !searching && " The auditor and adviser text is on the entities whose annual census filing names one."}
+            {wantSearch && !searching && searchError
+              && ` ${searchError} The auditor and adviser words are not narrowing this list.`}
+            {wantSearch && !searching && !searchError
+              && " The auditor and adviser text is on the entities whose annual census filing names one."}
           </p>
         </Card>
       </section>
@@ -709,7 +746,7 @@ export default function UniverseView() {
           : (
             <Table
               id="universe"
-              caption={`Registered wrappers on file as the record stood on ${fmtDate(census.as_of)}. `
+              caption={`Registered wrappers on file${asOf ? ` as the record stood on ${asOf}` : ""}. `
                 + `The name opens what the record holds for that entity. ${SAY.verificationPending}`}
               columns={columns}
               rows={capped}
@@ -736,7 +773,7 @@ export default function UniverseView() {
                 </Fragment>
               ))}
               <dt>Every class</dt>
-              <dd className="t-num">{fmtInt(census.total)}</dd>
+              <dd className="t-num">{total === null ? fmtInt(rows.length) : fmtInt(total)}</dd>
             </dl>
           </Card>
 
@@ -759,7 +796,7 @@ export default function UniverseView() {
           {notes.length > 0
             ? (
               <ul className="stack-2">
-                {notes.map((noteText) => <li key={noteText} className="t-13 t-2">{typographic(noteText)}</li>)}
+                {notes.map((noteText, i) => <li key={i} className="t-13 t-2">{typographic(noteText)}</li>)}
               </ul>
             )
             : <p className="t-13 t-3">No note about how this universe was put together is in reader words.</p>}
