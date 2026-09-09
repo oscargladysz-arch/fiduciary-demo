@@ -455,6 +455,48 @@ with sync_playwright() as pw:
                 check(f"axe-core (b) {label}: zero serious or critical findings ({len(axe)} total)", not serious,
                       "; ".join(f"{v['id']} ({v['impact']}, {v['nodes']}) {v['targets'][:1]}" for v in serious[:4]))
             ctx.close()
+    # the packet's own states: a page with nothing pinned is audited above, and
+    # what a reader actually does with it is checked here. The old view printed
+    # "2.1 undefined" for a pin, allowed the same row twice, and removed without
+    # an undo.
+    pk = browser.new_page(viewport={"width": 1440, "height": 900})
+    pk.goto(f"{ROOT}#/start", wait_until="networkidle")
+    pk.evaluate("""() => localStorage.setItem('tark.pins', JSON.stringify([
+      {productKey: 'hl_paf', fundName: 'Hamilton Lane Private Assets Fund', cell: '2.1',
+       element: 'Management fee rate and base'},
+      {productKey: 'bcred', fundName: 'Blackstone Private Credit Fund', cell: '3.1',
+       element: 'Repurchase cadence and cap'}]))""")
+    pk.goto(f"{ROOT}#/packet", wait_until="networkidle")
+    pk.wait_for_timeout(500)
+    pk_text = pk.evaluate("() => document.getElementById('main').innerText")
+    check("packet: a pinned row shows the element name of the row, not the cell id alone",
+          "Management fee rate and base" in pk_text and "Repurchase cadence and cap" in pk_text
+          and "undefined" not in pk_text, pk_text[:160])
+    moves = pk.evaluate("""() => [...document.querySelectorAll('button')]
+      .map((b) => b.getAttribute('aria-label') || b.textContent.trim())
+      .filter((n) => /move (up|down)/i.test(n))""")
+    check("packet: reorder is a pair of named buttons per row, each saying which row it moves",
+          len(moves) >= 2 and all(any(ch.isdigit() for ch in m) for m in moves), str(moves[:3]))
+    removed = pk.evaluate("""async () => {
+      const btn = [...document.querySelectorAll('button')].find((b) =>
+        /remove/i.test(b.getAttribute('aria-label') || b.textContent));
+      if (!btn) return {found: false};
+      btn.click();
+      await new Promise((r) => setTimeout(r, 400));
+      const toast = document.querySelector('.toast');
+      const undo = toast && [...toast.querySelectorAll('button')].find((b) => /undo/i.test(b.textContent));
+      const afterRemove = JSON.parse(localStorage.getItem('tark.pins') || '[]').length;
+      if (undo) undo.click();
+      await new Promise((r) => setTimeout(r, 300));
+      return {found: true, hadUndo: !!undo, afterRemove,
+              afterUndo: JSON.parse(localStorage.getItem('tark.pins') || '[]').length};
+    }""")
+    check("packet: removing a row offers an undo and the undo puts it back",
+          removed.get("found") and removed.get("hadUndo") and removed.get("afterRemove") == 1
+          and removed.get("afterUndo") == 2, str(removed))
+    pk.evaluate("() => localStorage.removeItem('tark.pins')")
+    pk.close()
+
     # Back restores the previous route and scroll, a filter change preserves focus and scroll: on the design route
     page = browser.new_page(viewport={"width": 1440, "height": 900})
     page.goto(f"{ROOT}#/design", wait_until="networkidle")
