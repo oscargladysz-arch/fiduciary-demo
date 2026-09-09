@@ -2729,3 +2729,59 @@ compressed, and it is fetched only by the route that searches.
 Reverse by: the view functions added to `src/tark_views.py`, the writer
 block in `src/site_chunks.py`, and the `demo` argument at the one call in
 `src/build_site.py`.
+
+### 8.39 R3-P1: how the views were built (default, reversible)
+Fourteen views were written in parallel, one agent per view, each writing
+exactly one file against the design system, the copy layer, the formatting
+layer and the data adapter, and each followed by an adversarial pass over
+its own file against the pinned guidelines. The route table, the stylesheet
+and every shared component stayed in one pair of hands, so no two views
+could disagree about a class name or a control's behavior, and every view
+was integrated one at a time through the gate rather than all at once.
+What that produced: eleven of the fourteen passed the guideline audit and
+axe-core on the first run. The defects the gate found were, with one
+exception, in shared components rather than in views (a sort button a pixel
+under the tap target, a table that virtualized in one layout only, an
+inline popover button squeezed by its line box, a date field and a text
+area offering a password manager a plan's net assets), and fixing them in
+the component fixed them for every view at once.
+Reverse by: nothing to reverse. This is how the work was done, recorded
+because the next phase may want the same shape.
+
+### 8.40 R3-P1: what the gate learned to see (default, reversible)
+The audit asserted about half of the pinned rule set. Closing the rest
+found real defects on routes that were already passing, and three rules
+were added that the brief did not ask for because the phase showed they
+were needed:
+- A route that renders nothing passes every structural rule. The audit now
+  asserts each route renders the record: four hundred characters and ten
+  figures in the content column, and never the sentence that says a view is
+  not rebuilt.
+- A figure that renders blank passes too. A view reading a key the data does
+  not carry rendered an empty stat, and that is how the record's totals were
+  found to nest their counts where a product's coverage carries them flat.
+  The audit now fails on any stat, table cell or value that renders empty,
+  and the two shapes agree.
+- A numeral written into the markup of a view is a number nobody can trace.
+  The allowlist scan reads strings, the reconciliation reads the record, and
+  neither looks at a view's source. The gate now scans every component and
+  view for a numeral in rendered markup. The design route is exempt: the
+  type scale and the contrast ratios it documents are its own numbers.
+Two rules were also corrected after firing on correct copy: a label names
+the figure beside it and claims nothing on its own, and a defined term
+carries its definition with it. Neither exemption weakens the rule on a
+sentence.
+Reverse by: the rules in `src/test_web.py`, each one line of the audit.
+
+### 8.41 R3-P1-10: the liquidity panel carries the record's sentences unedited (default, reversible)
+The panel rebuilds every figure from one live state, which is what the
+phase asked for, and that means its sentences are its own words rather than
+the record's. The document for a plan and a fund prints the record's
+sentences, and a committee reading the document beside the screen has to be
+able to match them line for line. The record's sentences are therefore
+carried unedited under the explanation, and when a reader has moved an input
+the block says so and says the sentences are the record's at the filed
+inputs. Three gates hold it: the sentences are on the page unedited, the
+control moves and says its own value, and moving an input recomputes the
+live area and leaves no sentence in it stating the filed inputs.
+Reverse by: the block at the end of the explanation disclosure.
