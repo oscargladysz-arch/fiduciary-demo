@@ -148,6 +148,27 @@ check("performance (f): fonts are preloaded", 'rel="preload"' in html and 'as="f
 check("performance (f): route chunks are preloaded with modulepreload", "modulepreload" in html)
 check("performance (f): no synchronous data script", not re.search(r"<script src=\"[^\"]*data[^\"]*\.js\"", html))
 
+# --------------------------------------------- no figure is typed into a view
+# Rule 2 and rule 3 on the frontend: every number on a surface comes from the
+# data layer or is recomputed live from it. A numeral written into the markup
+# of a view is a number somebody typed, and no gate downstream can tell it
+# from a real one. The design route is exempt: it documents the type scale and
+# the contrast ratios, which are the design system's own numbers.
+_JSX_NUMBER = re.compile(r">([^<>{}\n]*?(?<![\w.$#-])\d[\d,]*\.?\d*[^<>{}\n]*?)<")
+_typed_numbers = []
+for _f in sorted((BASE / "web" / "src").rglob("*.tsx")):
+    if _f.name == "DesignView.tsx":
+        continue
+    for _i, _line in enumerate(_f.read_text().splitlines(), 1):
+        for _m in _JSX_NUMBER.finditer(_line):
+            _frag = _m.group(1)
+            # an expression, not prose: a comparison, a ternary, a prop
+            if any(ch in _frag for ch in "?&|=:") or len(re.findall(r"[A-Za-z]{2,}", _frag)) < 2:
+                continue
+            _typed_numbers.append(f"{_f.name}:{_i} {_frag.strip()[:60]}")
+check("integrity: no view writes a figure into its own markup, every number comes from the record",
+      not _typed_numbers, f"{len(_typed_numbers)}: " + "; ".join(_typed_numbers[:4]))
+
 # ------------------------------------------------- the rule set, statically
 # What the audit cannot see from one rendered page: the stylesheet's own
 # promises, and the anti-patterns that are absent rather than present.
