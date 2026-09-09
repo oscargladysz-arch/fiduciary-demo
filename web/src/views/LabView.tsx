@@ -27,6 +27,8 @@ import { Tabs } from "../components/overlay";
 import { Card, CardHead, Chip, EmptyState, Link, Skeleton, Stat, StatRow, Term, VerdictBanner }
   from "../components/primitives";
 import { SAY } from "../copy/copy";
+import { directAlpha, ksPme } from "../analytics/math";
+import type { Flow } from "../analytics/math";
 import { useAsync, useIndex } from "../data/hooks";
 import { data } from "../data/index";
 import { expandSeries } from "../data/types";
@@ -447,6 +449,27 @@ function ComparisonCard({ sources, profile, proxyId, proxyName, fundName }:
   const footer = [pair.note, marketPriceFund ? profile.price_series_warning || "" : ""]
     .filter(Boolean).join(" ");
 
+  // the two statistics, recomputed here over exactly the window drawn above,
+  // by the same arithmetic the engine uses (web/src/analytics/math.ts, whose
+  // parity with the engine is a test). A public market equivalent is only a
+  // public market equivalent against a public market series: against anything
+  // else the ratio is shown without that name.
+  const flows: Flow[] = [[pair.fund[0][0], -1], [pair.fund[pair.fund.length - 1][0],
+    pair.fund[pair.fund.length - 1][1] / pair.fund[0][1]]];
+  const proxyLevels: Point[] = pair.proxy;
+  let ratio: number | null = null;
+  let edge: number | null = null;
+  try {
+    ratio = ksPme(flows, proxyLevels);
+    edge = directAlpha(flows, proxyLevels);
+  } catch {
+    ratio = null;
+    edge = null;
+  }
+  const proxyIsPublic = !isMarketPrice(sources[proxyId])
+    || (sources[proxyId] || {}).role !== undefined;
+  const statName = proxyIsPublic ? "Public market equivalent" : "Growth against the comparison";
+
   return (
     <Card className="stack-4">
       <div className="card__head">
@@ -467,6 +490,18 @@ function ComparisonCard({ sources, profile, proxyId, proxyName, fundName }:
         ]}
         yFormat={(v) => fmtNum(v, 2)}
         footer={footer || undefined} />
+      <StatRow>
+        <Stat label={statName} value={ratio === null ? "Not computable here" : fmtRatio(ratio)}
+          source={`Recomputed over ${fmtDate(pair.fund[0][0])} to ${fmtDate(pair.fund[pair.fund.length - 1][0])}`} />
+        <Stat label="Yearly edge over the comparison"
+          value={edge === null ? "Not computable here" : `${fmtPct(edge * 100)} a year`}
+          source="The annualized excess rate over the same window" />
+      </StatRow>
+      <p className="t-13 t-3">
+        Both figures are recomputed here from the returns on record and the levels held, over the window
+        drawn above. {SAY.reference} where the comparison is a public series shown for orientation:
+        the meaningful benchmark for this fund is on its benchmark panel.
+      </p>
       <SourceLines sources={sources} ids={[fundSeriesId, proxyId]}
         lead={fundSeriesId ? undefined
           : "The fund line is drawn from the fiscal-year returns on record rather than from a held series."} />

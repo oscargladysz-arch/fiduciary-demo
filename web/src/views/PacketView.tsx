@@ -121,7 +121,7 @@ export default function PacketView() {
 
   const label = planLabel(index, plan);
   const signed = index.coverage_totals.counts.verified ?? 0;
-  const cells = Number(index.coverage_totals.total ?? 0);
+  const cells = index.coverage_totals.counts.total ?? 0;
   const docByKey = new Map((docs || []).map((d) => [d.key, d]));
 
   return (
@@ -174,7 +174,9 @@ export default function PacketView() {
             <div className="stack-4" role="list">
               {g.items.map((it, j) => {
                 const name = (it.pin.element || "").trim();
-                const what = `${it.pin.cell}, ${name || "name not on record"}, ${g.fundName}`;
+                // a fund the record cannot name is left out of the button's name
+                // rather than ending it with a comma and nothing after it
+                const what = [it.pin.cell, name || "name not on record", g.fundName].filter(Boolean).join(", ");
                 return (
                   <div key={`${it.pin.productKey}:${it.pin.cell}`} className="stack-2" role="listitem">
                     <div className="row-3">
@@ -216,6 +218,9 @@ export default function PacketView() {
           {docsLoading && <Skeleton lines={4} label={SAY.loadingRecord} />}
           {!docsLoading && groups.map((g) => {
             const entry = docByKey.get(g.key);
+            // a fund the record cannot name leaves the plan to stand alone,
+            // so no name on a download reads as an empty word
+            const forWhom = g.fundName ? `${g.fundName} and ${label}` : label;
             return (
               <Card key={g.key} as="article" className="stack-2">
                 <CardHead title={<span translate="no">{g.fundName || SAY.noRecord}</span>} level={3} />
@@ -229,12 +234,15 @@ export default function PacketView() {
                           <Icon name="document" />
                           <span className="download__name">Investment Selection Record</span>
                           <span className="spacer" />
-                          <Link href={memoHref(entry.doc.record)} download
-                            aria-label={`Download the Investment Selection Record for ${g.fundName} and ${label}`}>
-                            Download<Icon name="download" size="sm" />
+                          {/* a download is a primary action, not a word inside a
+                              sentence: it gets a control's hit target rather
+                              than a line box's */}
+                          <Link href={memoHref(entry.doc.record)} download className="btn btn--secondary"
+                            aria-label={`Download the Investment Selection Record for ${forWhom}`}>
+                            <Icon name="download" size="sm" />Download
                           </Link>
                         </div>
-                        <div className="download__meta">Written for {g.fundName} and {label}.</div>
+                        <div className="download__meta">Written for {forWhom}.</div>
                       </div>
                     ) : (
                       <p className="t-13 t-3">No Investment Selection Record has been written for this fund and this plan.</p>
@@ -245,9 +253,9 @@ export default function PacketView() {
                           <Icon name="document" />
                           <span className="download__name">Attachment A, the text of the rule</span>
                           <span className="spacer" />
-                          <Link href={memoHref(entry.doc.attachment)} download
-                            aria-label={`Download Attachment A, the text of the rule, beside the record for ${g.fundName}`}>
-                            Download<Icon name="download" size="sm" />
+                          <Link href={memoHref(entry.doc.attachment)} download className="btn btn--secondary"
+                            aria-label={`Download Attachment A, the text of the rule, beside the record for ${forWhom}`}>
+                            <Icon name="download" size="sm" />Download
                           </Link>
                         </div>
                         <div className="download__meta">
