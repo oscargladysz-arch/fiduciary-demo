@@ -103,6 +103,10 @@ export default function RecordView() {
   // whose shares trade at a price of their own has one
   const { value: series } = useAsync<SeriesView>(() => data().getSeries(key), [key]);
   const open = r.params.get("factor") || "1";
+  // the premium exhibit used to be a route of its own. A link that names it
+  // opens the factor it now lives under and scrolls to it, rather than
+  // landing on a page that is gone.
+  const wantsPremium = r.params.get("panel") === "price-vs-nav";
 
   const byFactor = useMemo(() => {
     const out: Record<string, [string, Cell][]> = {};
@@ -169,7 +173,9 @@ export default function RecordView() {
           <span className="t-14 t-3">{fmtInt((byFactor[open] || []).length)} rows</span>
         </h2>
         {(open === "1" || open === "4") && series && premiumOf(series) && (
-          <PremiumPanel series={series} fundName={record.fund_name} />
+          <div id="price-vs-nav" ref={(el) => { if (el && wantsPremium) el.scrollIntoView({ block: "start" }); }}>
+            <PremiumPanel series={series} fundName={record.fund_name} />
+          </div>
         )}
         {(byFactor[open] || []).map(([cid, cell]) => (
           <CellRow key={cid} record={record} cid={cid} cell={cell} plan={plan} />

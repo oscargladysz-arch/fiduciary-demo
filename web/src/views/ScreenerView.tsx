@@ -29,6 +29,8 @@ interface Fact { value?: unknown; status?: string; source_cell?: string; note?: 
 interface Row { key: string; name: string; facts: Record<string, Fact>; cited: Set<string> }
 
 const NONE = "";  // the empty option of a filter, meaning "every value"
+/** The fee preset: what a reader comparing cost looks at, and nothing else. */
+const FEE_COLUMNS = ["name", "wrapper", "fee", "base", "incentive", "ter", "early", "aum"];
 
 function fact(row: Row, name: string): Fact {
   return row.facts[name] || {};
@@ -72,8 +74,12 @@ export default function ScreenerView() {
   const sort: SortState | null = r.params.get("sort")
     ? { id: r.params.get("sort")!, dir: r.params.get("dir") === "desc" ? "desc" : "asc" }
     : null;
-  const visible = r.params.get("cols") ? r.params.get("cols")!.split(".") : null;
-
+  // the fee matrix is a preset of this route rather than a view of its own
+  // (R3-P1-2): it selects the fee columns and says what it is showing
+  const preset = r.params.get("preset") || "";
+  const visible = r.params.get("cols")
+    ? r.params.get("cols")!.split(".")
+    : preset === "fees" ? FEE_COLUMNS : null;
   const fWrapper = r.params.get("f_wrapper") || NONE;
   const fTax = r.params.get("f_tax") || NONE;
   const fBase = r.params.get("f_base") || NONE;
@@ -110,10 +116,15 @@ export default function ScreenerView() {
   return (
     <div className="stack-5">
       <PageHeader
-        title="Screener"
-        sub={"Sixteen funds on the same typed facts. Every figure opens the filing it was read from, and a figure "
-          + "the record does not hold says why."}
-        actions={<Link to="/compare">Compare a shortlist</Link>}
+        title={preset === "fees" ? "Fees" : "Screener"}
+        sub={preset === "fees"
+          ? ("What each fund charges, on the basis the record holds. A fee is only comparable against the base it "
+            + "is charged on, so the base is beside the rate.")
+          : ("Sixteen funds on the same typed facts. Every figure opens the filing it was read from, and a figure "
+            + "the record does not hold says why.")}
+        actions={preset === "fees"
+          ? <Link to="/screener">Show every column</Link>
+          : <Link to="/screener" params={{ preset: "fees" }}>Show fees only</Link>}
       />
 
       <StatRow>

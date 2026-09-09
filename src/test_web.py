@@ -695,6 +695,45 @@ with sync_playwright() as pw:
           and at_root.get("manifest_schema") == "tark.chunks.v1" and at_root.get("index") == "tark.index.v1"
           and at_sub["base"].endswith("/previews/999/data/"),
           f"root {str(at_root)[:400]}, preview {str(at_sub)[:200]}")
+    # every legacy URL, one per entry in the old route registry, each carrying a
+    # plan and a product, plus the bare root. A reader with a link in an email
+    # or a slide from the old site lands on the route that replaced it, in
+    # place, with no extra history entry to walk back through.
+    legacy_views = re.findall(r'^\s*\["([a-z]+)",', (BASE / "site" / "js" / "main.js").read_text(), re.M)
+    _redirects, _bad_redirect, _not_rebuilt = {}, [], []
+    for _v in legacy_views:
+        p3.goto(f"{ROOT}#view={_v}&plan=plan_tech_media&product=hl_paf", wait_until="networkidle")
+        p3.wait_for_timeout(150)
+        _got = p3.evaluate("() => [location.hash, document.getElementById('main').innerText || '']")
+        _redirects[_v] = _got[0]
+        _rebuilt = "not rebuilt yet" not in _got[1]
+        if not _got[0].startswith("#/") or "view=" in _got[0] or (_rebuilt and len(_got[1]) < 200):
+            _bad_redirect.append(f"{_v} -> {_got[0]} ({len(_got[1])} chars)")
+        if not _rebuilt:
+            _not_rebuilt.append(_v)
+    p3.goto(ROOT, wait_until="networkidle")
+    p3.wait_for_timeout(150)
+    _root_hash = p3.evaluate("() => location.hash")
+    check(f"routing: every one of the {len(legacy_views)} legacy view URLs redirects to a rebuilt route that renders",
+          len(legacy_views) == 18 and not _bad_redirect,
+          f"{len(legacy_views)} views, bad: {_bad_redirect[:4]}")
+    check("routing: the bare root opens the start route", _root_hash in ("", "#/start", "#"), _root_hash)
+    # the exit condition of the rebuild: every legacy view lands on a route that
+    # is actually rebuilt. Until it does, the gate says which are left rather
+    # than counting an honest placeholder as a working route.
+    check(f"R3-P1 exit: every legacy view lands on a rebuilt route ({len(legacy_views) - len(_not_rebuilt)} "
+          f"of {len(legacy_views)})", not _not_rebuilt, f"still on a placeholder: {_not_rebuilt}")
+    # a redirect replaces the entry rather than pushing one, so Back leaves the
+    # site rather than returning to a URL that no longer exists
+    p3.goto(f"{ROOT}#/screener", wait_until="networkidle")
+    p3.wait_for_timeout(150)
+    p3.evaluate("() => { location.hash = '#view=liquidity&product=hl_paf&plan=plan_tech_media'; }")
+    p3.wait_for_timeout(400)
+    p3.go_back()
+    p3.wait_for_timeout(300)
+    check("routing: a legacy URL is rewritten in place, so Back returns to the route before it",
+          p3.evaluate("() => location.hash") == "#/screener", p3.evaluate("() => location.hash"))
+
     # legacy URL redirects
     p3.goto(f"{ROOT}#view=evaluation&plan=plan_tech_media&product=hl_paf", wait_until="networkidle")
     p3.wait_for_timeout(200)
