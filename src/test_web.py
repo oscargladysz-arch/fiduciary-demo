@@ -306,6 +306,17 @@ AUDIT_JS = r"""
   count('headings', hs.length);
   if (hs.filter((h) => h === 1).length !== 1) add('h1', 'expected one h1, found ' + hs.filter((h) => h === 1).length);
   for (let i = 1; i < hs.length; i++) if (hs[i] > hs[i - 1] + 1) add('heading-order', 'h' + hs[i - 1] + ' then h' + hs[i]);
+  // the route actually renders the record. A view that fails to read its data
+  // and falls back to an empty state passes every structural rule above, so
+  // the audit would call a blank page compliant.
+  const main = document.getElementById('main');
+  const mainText = main ? (main.innerText || '').trim() : '';
+  count('mainChars', mainText.length);
+  count('mainDigits', (mainText.match(/\d/g) || []).length);
+  if (mainText.length < 400) add('thin-route', 'the route renders ' + mainText.length + ' characters');
+  if ((mainText.match(/\d/g) || []).length < 10) add('thin-route', 'the route renders no figures');
+  if (/not rebuilt yet/i.test(mainText)) add('thin-route', 'the route still says it is not rebuilt');
+
   // skip link
   const skip = document.querySelector('a.skiplink, a[href="#main"]');
   if (!skip) add('skip-link', 'missing'); else if (!document.getElementById('main')) add('skip-link', 'target missing');
