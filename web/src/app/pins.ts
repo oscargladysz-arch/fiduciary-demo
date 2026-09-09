@@ -3,7 +3,7 @@
  * A pin is (fund, cell). It is kept in this browser only, which the packet
  * says out loud, because nothing here is stored on a server. A duplicate pin
  * is refused rather than added twice, removing one offers an undo, and every
- * pin carries the row's element name so a list of pins reads as a list of
+ * pin carries the row’s element name so a list of pins reads as a list of
  * findings rather than a list of numbers. */
 import { useCallback, useEffect, useState } from "react";
 

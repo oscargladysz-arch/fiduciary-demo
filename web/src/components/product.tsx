@@ -1,10 +1,10 @@
 /* The product header (R3-P1-2): the one thing every panel under a fund
- * shares. The fund's name, its wrapper, what the record holds on it, the
+ * shares. The fund’s name, its wrapper, what the record holds on it, the
  * panel tabs as links, and the plan selector only on the panels whose figures
  * change with the plan, with the sentence that says so.
  *
  * A global route never renders this, and never carries a product in its
- * links, which is what kept the old site's Screener filters out of a
+ * links, which is what kept the old site’s Screener filters out of a
  * Liquidity link. */
 import { navigate, useRoute } from "../app/router";
 import { PANELS } from "../app/routes";

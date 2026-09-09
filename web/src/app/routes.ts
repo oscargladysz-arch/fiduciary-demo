@@ -6,7 +6,7 @@
  * the gate all read the same list and cannot disagree about what exists.
  *
  * A view is a lazy chunk. Adding one here is what puts it on the route, in
- * the navigation and in the gate's walk. */
+ * the navigation and in the gate’s walk. */
 import { lazy } from "react";
 import type { LazyExoticComponent } from "react";
 import type { IconName } from "../components/primitives";
@@ -40,8 +40,8 @@ export const GLOBAL: RouteDef[] = [
 
 export const PANELS: RouteDef[] = [
   { id: "record", label: "Record", icon: "table", plan: true, view: lazy(() => import("../views/RecordView")) },
-  { id: "benchmark", label: "Benchmark", icon: "chart", plan: true },
-  { id: "liquidity", label: "Liquidity", icon: "plan", plan: true },
+  { id: "benchmark", label: "Benchmark", icon: "chart", plan: true, view: lazy(() => import("../views/BenchmarkView")) },
+  { id: "liquidity", label: "Liquidity", icon: "plan", plan: true, view: lazy(() => import("../views/LiquidityView")) },
   { id: "cohort", label: "Cohort", icon: "compare" },
   { id: "lab", label: "Analysis lab", icon: "evaluate" },
   { id: "documents", label: "Documents", icon: "document", plan: true },

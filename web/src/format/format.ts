@@ -1,5 +1,5 @@
 /* The formatting layer. Every number and date on every surface passes
- * through here (R3-P1-8). Intl with the viewer's locale, non-breaking
+ * through here (R3-P1-8). Intl with the viewer’s locale, non-breaking
  * spaces between a number and its unit, curly quotes, the ellipsis
  * character. The formatting gate greps the built JS for toFixed( and for
  * toLocaleString( without options. */
@@ -10,7 +10,7 @@ export const THIN = " ";
 export const MINUS = "−";
 
 let cachedLocales: string[] | null = null;
-/* the viewer's languages, each validated: a headless browser can report a
+/* the viewer’s languages, each validated: a headless browser can report a
  * tag such as en-US@posix that Intl refuses */
 function locales(): string[] {
   if (cachedLocales) return cachedLocales;

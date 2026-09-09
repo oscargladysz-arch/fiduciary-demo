@@ -23,7 +23,7 @@ function remembered(): string | null {
   try { return localStorage.getItem(REMEMBER); } catch { return null; }
 }
 
-/** The plan a route is showing: the URL's, else the one this browser used
+/** The plan a route is showing: the URL’s, else the one this browser used
  *  last, else the first the index lists. A key the build does not have is
  *  ignored rather than trusted. */
 export function usePlan(index: IndexView | null): [string, (k: string) => void] {

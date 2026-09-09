@@ -56,7 +56,8 @@ def check(name: str, cond: bool, extra: str = "") -> None:
 ap = argparse.ArgumentParser()
 ap.add_argument("--routes", default="start,universe,funnel,screener,compare,roster,plans,"
                 "search,packet,coverage,verification,design,"
-                "product/hl_paf/record,product/dxyz/record")
+                "product/hl_paf/record,product/dxyz/record,product/hl_paf/benchmark,"
+                "product/hl_paf/liquidity")
 ap.add_argument("--out", default="site_next")
 ap.add_argument("--no-build", action="store_true")
 ap.add_argument("--port", type=int, default=8478)
@@ -328,6 +329,19 @@ AUDIT_JS = r"""
   count('headings', hs.length);
   if (hs.filter((h) => h === 1).length !== 1) add('h1', 'expected one h1, found ' + hs.filter((h) => h === 1).length);
   for (let i = 1; i < hs.length; i++) if (hs[i] > hs[i - 1] + 1) add('heading-order', 'h' + hs[i - 1] + ' then h' + hs[i]);
+  // an empty figure. A view that reads a key the data does not carry renders a
+  // blank where a number belongs, and every structural rule above still
+  // passes. A stat, a table cell and a definition value must all say
+  // something, even when what they say is that the record has nothing.
+  for (const el of document.querySelectorAll('.stat__value, .hero-number')) {
+    if (!visible(el)) continue;
+    if (!(el.textContent || '').trim()) add('empty-figure', 'a stat renders no value');
+  }
+  for (const cell of document.querySelectorAll('.tbl tbody td, .field-list dd')) {
+    if (!visible(cell) || cell.children.length) continue;
+    if (!(cell.textContent || '').trim()) add('empty-figure', 'a table cell or a value renders nothing');
+  }
+
   // the route actually renders the record. A view that fails to read its data
   // and falls back to an empty state passes every structural rule above, so
   // the audit would call a blank page compliant.
@@ -519,6 +533,64 @@ with sync_playwright() as pw:
                 check(f"axe-core (b) {label}: zero serious or critical findings ({len(axe)} total)", not serious,
                       "; ".join(f"{v['id']} ({v['impact']}, {v['nodes']}) {v['targets'][:1]}" for v in serious[:4]))
             ctx.close()
+    # the liquidity panel's one live state. This is the defect the phase was
+    # written to fix: the sentences above the model were the record's static
+    # text while the block below recomputed, so moving a slider made the page
+    # say five per cent in one place and ten in another.
+    lq = browser.new_page(viewport={"width": 1440, "height": 1600})
+    lq.goto(f"{ROOT}#/product/hl_paf/liquidity?plan=plan_tech_media", wait_until="networkidle")
+    lq.reload(wait_until="networkidle")
+    lq.wait_for_timeout(700)
+    _match = json.loads((BASE / "site" / "data" / "product" / "hl_paf" / "liquidity"
+                         / "plan_tech_media.json").read_text())["match"]
+    # the record's own sentences are carried unedited, so a committee reading
+    # the document for this plan can match it to the screen line for line
+    lq.evaluate("() => document.querySelectorAll('details').forEach((d) => { d.open = true; })")
+    lq.wait_for_timeout(300)
+    _whole = lq.evaluate("() => document.getElementById('main').innerText")
+    _missing = [s[:60] for s in _match.get("scenario_reasons", [])
+                if s.strip() and s.strip() not in _whole]
+    check("liquidity: the record's own sentences are on the page unedited, so the screen and the "
+          "document for this plan say the same words",
+          not _missing, f"{len(_missing)} of {len(_match.get('scenario_reasons', []))} missing, "
+                        f"e.g. {_missing[:2]}")
+    # the live area is everything outside a disclosure: it must never state the
+    # filed inputs once a reader has moved one
+    _live_before = lq.evaluate("""() => {
+      const c = document.getElementById('main').cloneNode(true);
+      c.querySelectorAll('details').forEach((d) => d.remove());
+      return c.innerText;
+    }""")
+    _demand_before = sorted(set(re.findall(r"\$[\d.,]+[MBK]?", _live_before)))
+    moved = lq.evaluate("""async () => {
+      const s = document.getElementById('lq-alloc');
+      if (!s) return {found: false};
+      const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+      const from = s.value;
+      set.call(s, String(Number(s.value) * 2));
+      s.dispatchEvent(new Event('input', {bubbles: true}));
+      await new Promise((r) => setTimeout(r, 500));
+      const c = document.getElementById('main').cloneNode(true);
+      c.querySelectorAll('details').forEach((d) => d.remove());
+      return {found: true, from, to: s.value,
+              shown: (s.closest('.slider') || document.body).innerText,
+              valuetext: s.getAttribute('aria-valuetext'),
+              text: c.innerText};
+    }""")
+    check("liquidity: the allocation control moves and says its own value",
+          moved.get("found") and moved.get("to") != moved.get("from")
+          and moved.get("to") in (moved.get("shown") or "")
+          and moved.get("valuetext"), str({k: moved.get(k) for k in ("from", "to", "valuetext")}))
+    _after = moved.get("text") or ""
+    # the defect this phase exists to fix: a sentence stating the filed inputs
+    # sitting in the live area while the block beside it recomputed
+    _stale = [s[:60] for s in _match.get("scenario_reasons", []) if s.strip() and s.strip() in _after]
+    _changed = sorted(set(re.findall(r"\$[\d.,]+[MBK]?", _after))) != _demand_before
+    check("liquidity: moving an input recomputes the live area and leaves no sentence in it "
+          "stating the filed inputs",
+          _changed and not _stale, f"stale sentences: {_stale[:2]}, figures changed: {_changed}")
+    lq.close()
+
     # the plan intake: what a reader fills in becomes a file, and that file must
     # carry their figures and nothing about how it was made. The producer wrote
     # a note naming the tool into an earlier version, which the surfaces gate

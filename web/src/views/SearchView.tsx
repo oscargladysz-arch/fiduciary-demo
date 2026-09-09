@@ -15,7 +15,7 @@
  * text in React and rendering <mark> around the run, never by assembling
  * markup out of a string.
  *
- * Tier language is the record's own and does not blur: extracted is a quote
+ * Tier language is the record’s own and does not blur: extracted is a quote
  * a reader can open, and nothing here is signed by a person. */
 import {useMemo, useRef, useState} from "react";
 import type { ReactNode } from "react";
@@ -39,7 +39,7 @@ const MAX_EXCERPT = 220;
 const BREAK = /[.!?\n]/;
 const NONE = "";  // the empty option of a filter, meaning every value
 
-/* The tier of a row, in the record's own vocabulary. The record qualifies a
+/* The tier of a row, in the record’s own vocabulary. The record qualifies a
  * status after a comma ("not applicable, no market price exists"), so the
  * head of the status is what the tier reads from, and the qualifier stays on
  * the row itself. The token on the left is what rides in the URL. */

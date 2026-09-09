@@ -63,7 +63,7 @@ describe("StaticAdapter", () => {
 
 describe("ApiAdapter", () => {
   const base = "/api";
-  it("reads the reference routes with the reader's token, and a plan as a query", async () => {
+  it("reads the reference routes with the reader’s token, and a plan as a query", async () => {
     const seen: string[] = [];
     const answers = {
       "/api/reference/index.json": { schema: "tark.index.v1" },

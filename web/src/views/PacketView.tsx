@@ -2,13 +2,13 @@
  * written for a fund and a plan.
  *
  * A pin is (fund, row). It lives in this browser only, which the page says out
- * loud, because nothing here is kept on a server. Every pin prints the row's
+ * loud, because nothing here is kept on a server. Every pin prints the row’s
  * element name beside its number, and a pin that carries no name says so
  * rather than printing an empty word: the old site printed the fund, the row
  * number and nothing after it.
  *
  * Reordering is two buttons rather than a drag, so a keyboard alone can do it,
- * and each button's name says which row it moves. Removing a row offers an
+ * and each button’s name says which row it moves. Removing a row offers an
  * undo that puts the row back where it stood. Clearing the packet is the one
  * action with no undo, so it asks first. */
 import { useCallback, useMemo, useState } from "react";
@@ -24,7 +24,7 @@ import { data, dataErrorSentence } from "../data/index";
 import { fmtInt } from "../format/format";
 import type { DocumentsView, IndexView } from "../data/types";
 
-/** A pin with the place it holds in the reader's own order. */
+/** A pin with the place it holds in the reader’s own order. */
 interface Item { pin: Pin; at: number }
 interface Group { key: string; fundName: string; items: Item[] }
 /** The documents chunk for one fund, or the reason it could not be read. */
@@ -32,13 +32,13 @@ interface DocEntry { key: string; doc: DocumentsView | null; error: string | nul
 
 const NO_NAME = "The name of this row is not on record.";
 
-/** A document beside the built site, addressed from the document's own base,
+/** A document beside the built site, addressed from the document’s own base,
  *  so the same page serves the site root and a preview under a subpath. */
 function memoHref(name: string): string {
   return new URL("memos/" + name, document.baseURI).toString();
 }
 
-/** The fund's name as the record holds it, else the name the pin carried. */
+/** The fund’s name as the record holds it, else the name the pin carried. */
 function fundNameOf(index: IndexView | null, pin: Pin): string {
   const known = (index?.products || []).find((p) => p.key === pin.productKey);
   return known?.fund_name || pin.fundName || "";

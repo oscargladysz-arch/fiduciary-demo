@@ -1,7 +1,7 @@
-// The workspace's adapter: the same shapes from the API, with the reader's
-// own session token on every request, so the database's policies decide what
+// The workspace’s adapter: the same shapes from the API, with the reader’s
+// own session token on every request, so the database’s policies decide what
 // comes back. The sixteen reference products are read-only and come from the
-// reference routes. A partner's own record is addressed by its record id.
+// reference routes. A partner’s own record is addressed by its record id.
 
 import { fetchJson, once, type TarkData } from "./adapter";
 import type {
@@ -31,7 +31,7 @@ export class ApiAdapter implements TarkData {
     return this.hold(path, () => this.ask<T>(path)) as Promise<T>;
   }
 
-  /** A workspace record's view when this adapter was given a record id,
+  /** A workspace record’s view when this adapter was given a record id,
    *  the read-only reference otherwise. */
   private view(name: ViewName, productKey: string, plan?: string): string {
     if (this.recordId) return `/records/${this.recordId}/${name}.json`;

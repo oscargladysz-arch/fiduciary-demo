@@ -25,7 +25,7 @@ export function useAsync<T>(make: () => Promise<T>, deps: unknown[]): Asked<T> {
       (value) => { if (seq.current === mine) set({ value, error: null, loading: false }); },
       (e) => { if (seq.current === mine) set({ value: null, error: dataErrorSentence(e), loading: false }); },
     );
-    // the caller's deps are the identity of the request
+    // the caller’s deps are the identity of the request
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
   return state;

@@ -1,14 +1,14 @@
-/* The premium exhibit (R3-P1-2). Where a fund's shares trade at a price of
- * their own, the gap between that price and the fund's own NAV is a fact
- * about the fund, so it belongs inside that fund's record, under the factors
+/* The premium exhibit (R3-P1-2). Where a fund’s shares trade at a price of
+ * their own, the gap between that price and the fund’s own NAV is a fact
+ * about the fund, so it belongs inside that fund’s record, under the factors
  * it speaks to, rather than as an item in the navigation named after one
- * fund which every other fund's header then ignored.
+ * fund which every other fund’s header then ignored.
  *
  * Every figure here comes from the record: the filed quarterly NAV table the
  * fund prints, the held market-price series, and the premium the record
  * computed against the most recent filed NAV. Nothing is computed from a live
  * NAV, because a live NAV is not observable between filings, and the note
- * says so in the fund's own terms. */
+ * says so in the fund’s own terms. */
 import { Card, CardHead, Chip, Stat, StatRow } from "./primitives";
 import { LineChart } from "../charts/charts";
 import { Table } from "./table";

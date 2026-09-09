@@ -2,13 +2,13 @@
  * print goes through here, and every reader-facing sentence about the record
  * lives here rather than inside a view.
  *
- * Most of the mapping is the record's own and arrives in the index chunk
+ * Most of the mapping is the record’s own and arrives in the index chunk
  * (wrapper, base, strategy, lane, candidate, slot, cell, factor and rubric
- * names, and the glossary). What is added below is the frontend's own
+ * names, and the glossary). What is added below is the frontend’s own
  * vocabulary: the seven statuses, the four verdicts, the tiers, the job
- * states and the universe's classes. Nothing else may map a name.
+ * states and the universe’s classes. Nothing else may map a name.
  *
- * Tier language never blurs. Structured is the filing's own tagged number,
+ * Tier language never blurs. Structured is the filing’s own tagged number,
  * extracted is a quote a person can open, human-verified is a signature. An
  * agent pass is not verification and never says so.
  */
@@ -17,7 +17,7 @@ import type { ChipKind } from "../components/primitives";
 export interface Term { label: string; definition: string }
 
 /* ------------------------------------------------------------- statuses */
-/* The status a cell carries, as a reader meets it. `kind` picks the chip's
+/* The status a cell carries, as a reader meets it. `kind` picks the chip’s
  * pair, `tier` says which tier the row sits in, `label` is the only string
  * that reaches the DOM. */
 export interface StatusCopy extends Term { kind: ChipKind; tier: "T1" | "T2" | "T3" | null }
@@ -25,7 +25,7 @@ export interface StatusCopy extends Term { kind: ChipKind; tier: "T1" | "T2" | "
 const STATUS: Record<string, StatusCopy> = {
   structured: {
     label: "Structured", tier: "T1", kind: "structured",
-    definition: "Read from the filing's own tagged data, not from prose.",
+    definition: "Read from the filing’s own tagged data, not from prose.",
   },
   "extracted-unverified": {
     label: "Extracted", tier: "T2", kind: "extracted",
@@ -76,7 +76,7 @@ export const STATUS_ORDER = ["structured", "extracted-unverified", "verified", "
 
 /** The tier legend, said once per route that shows tiers. */
 export const TIERS: Term[] = [
-  { label: "Tier 1", definition: "Structured. The filing's own tagged number." },
+  { label: "Tier 1", definition: "Structured. The filing’s own tagged number." },
   { label: "Tier 2", definition: "Extracted and cited. A document, a section and a quote you can open." },
   { label: "Tier 3", definition: "Human-verified. A named person has signed the row." },
 ];
@@ -86,7 +86,7 @@ export interface VerdictCopy extends Term { kind: ChipKind }
 const VERDICT: Record<string, VerdictCopy> = {
   aligned: {
     label: "Aligned", kind: "aligned",
-    definition: "The fund's dealing terms meet the plan's stated need without a condition.",
+    definition: "The fund’s dealing terms meet the plan’s stated need without a condition.",
   },
   conditional: {
     label: "Conditional", kind: "conditional",
@@ -98,7 +98,7 @@ const VERDICT: Record<string, VerdictCopy> = {
   },
   misaligned: {
     label: "Misaligned", kind: "misaligned",
-    definition: "The dealing terms do not meet the plan's stated need.",
+    definition: "The dealing terms do not meet the plan’s stated need.",
   },
 };
 export function verdict(raw: string | undefined | null): VerdictCopy {
@@ -118,7 +118,7 @@ export const CENSUS_CLASS: Record<string, string> = {
   nontraded_34act_other: "Non-traded registrant, other",
 };
 
-/** The universe's row fields, named for a reader rather than by position. */
+/** The universe’s row fields, named for a reader rather than by position. */
 export const CENSUS_FIELD: Record<string, string> = {
   nm: "Name",
   cls: "Class",
@@ -135,7 +135,7 @@ export const CENSUS_FIELD: Record<string, string> = {
 };
 
 /* --------------------------------------------------------- job states */
-/* The workspace's job states. A queue position is a fact, never a guess at
+/* The workspace’s job states. A queue position is a fact, never a guess at
  * a finish time. */
 export const JOB_STATE: Record<string, string> = {
   queued: "Waiting to start",
@@ -185,7 +185,7 @@ export const ROUTE_TITLE: Record<string, string> = {
 };
 
 /** Title Case for a heading or a button, sentence case for body copy. This
- *  returns the route's own title and never a path segment. */
+ *  returns the route’s own title and never a path segment. */
 export function routeTitle(head: string): string {
   return ROUTE_TITLE[head] || ROUTE_TITLE.start;
 }

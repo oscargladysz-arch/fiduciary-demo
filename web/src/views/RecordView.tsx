@@ -99,7 +99,7 @@ export default function RecordView() {
   const plan = r.params.get("plan") || "";
   const { value: index } = useIndex();
   const { value: record, error, loading } = useAsync<RecordShape>(() => data().getRecord(key), [key]);
-  // the premium exhibit rides on the fund's own series chunk, and only a fund
+  // the premium exhibit rides on the fund’s own series chunk, and only a fund
   // whose shares trade at a price of their own has one
   const { value: series } = useAsync<SeriesView>(() => data().getSeries(key), [key]);
   const open = r.params.get("factor") || "1";

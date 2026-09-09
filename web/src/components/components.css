@@ -274,6 +274,9 @@ h2, h3 { scroll-margin-top: calc(var(--topbar-h) + var(--s-3)); }
 .progress__time { color: var(--text-3); font-size: var(--fs-12); line-height: var(--lh-12); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .tip { position: relative; display: inline-flex; }
 .tip__btn { display: inline-flex; align-items: center; justify-content: center; width: var(--hit-min); height: var(--hit-min); min-height: 0;
+  /* an inline control inside a paragraph is squeezed by the line box unless
+     it refuses to shrink: the tap target is the rule, not the line */
+  min-width: var(--hit-min); flex: none;
   border-radius: var(--r-pill); border: var(--bw) solid var(--line-strong); background: var(--panel); color: var(--text-2);
   font-size: var(--fs-12); line-height: var(--lh-12); padding: 0; margin-left: var(--s-1); vertical-align: middle; }
 .tip__btn:hover { border-color: var(--accent-nontext); color: var(--accent); }

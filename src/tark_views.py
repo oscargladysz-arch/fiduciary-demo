@@ -64,6 +64,25 @@ SCHEMA = {
 PENDING = "pending"          # what every surface says about human verification
 
 
+def totals() -> dict:
+    """The record's totals in the same shape one product's coverage carries.
+
+    `coverage_totals` nests the per-kind counts and puts the derived figures
+    beside them, so a surface reaching for `counts.resolved` found nothing and
+    rendered an empty figure. The derived figures are added to `counts` here,
+    computed from the counts themselves, so the two shapes agree and a view
+    cannot read a key that is not there."""
+    raw = coverage_totals()
+    c = dict(raw.get("counts") or {})
+    c["evidenced"] = c.get("structured", 0) + c.get("extracted", 0) + c.get("verified", 0)
+    c["soft"] = c.get("partial", 0) + c.get("fetched", 0)
+    c["resolved"] = raw.get("resolved", 0)
+    c["resolvable"] = raw.get("resolvable", 0)
+    c["total"] = raw.get("total", 0)
+    c["products"] = raw.get("products", 0)
+    return {**raw, "counts": c}
+
+
 def _read(path: Path):
     return json.loads(path.read_text()) if path.exists() else None
 
@@ -261,7 +280,7 @@ def index_view() -> dict:
                    "criterion_max": dict(CRITERION_MAX),
                    "criterion_definition": dict(CRITERION_DEFINITION),
                    "tie_sentence": TIE_SENTENCE, "by_descriptor_sentence": BY_DESCRIPTOR_SENTENCE},
-        "coverage_totals": coverage_totals(),
+        "coverage_totals": totals(),
         "rule": {"citation": RULE_CITATION, "paragraphs": RULE.get("paragraphs", ""),
                  "title": RULE.get("title", "")},
         "human_verification": PENDING,
@@ -323,8 +342,8 @@ def plans_view(plans: dict, order: list) -> dict:
 def funnel_view(census: dict, crosscheck: dict, verification: dict) -> dict:
     """The dark universe down to the signed record, one step per row, each
     number live from the layer under it."""
-    totals = coverage_totals()
-    counts = totals["counts"]
+    all_totals = totals()
+    counts = all_totals["counts"]
     steps = [
         {"id": "dark", "label": "Registered wrappers on file",
          "value": census.get("total"), "note": census.get("dark_universe", {}).get("sentence", "")},
@@ -341,7 +360,7 @@ def funnel_view(census: dict, crosscheck: dict, verification: dict) -> dict:
             "counts_by_class": census.get("counts_by_class", {}),
             "method_notes": census.get("method_notes", []),
             "as_of": census.get("as_of", ""),
-            "totals": totals, "crosscheck": crosscheck,
+            "totals": all_totals, "crosscheck": crosscheck,
             "verified_by_product": verification.get("verified", {}),
             "human_verification": PENDING}
 
@@ -355,7 +374,7 @@ def coverage_view(crosscheck: dict) -> dict:
         per[key] = {"fund_name": load_product(key)["fund_name"],
                     "coverage": coverage_summary(key),
                     "factors": factor_rollup(key)}
-    return {"schema": SCHEMA["coverage"], "totals": coverage_totals(),
+    return {"schema": SCHEMA["coverage"], "totals": totals(),
             "products": per, "crosscheck": crosscheck,
             "human_verification": PENDING}
 
@@ -374,7 +393,7 @@ def verification_view(queue: dict) -> dict:
                      "source": display_path_free(cell.get("source", "")),
                      "section": display_copy(cell.get("section", "")),
                      "verified_by": cell.get("verified_by", "")})
-    counts = coverage_totals()["counts"]
+    counts = totals()["counts"]
     return {"schema": SCHEMA["verification"], "rows": rows,
             "tiers": queue.get("tiers", {}),
             "verified": queue.get("verified", {}), "verifiable": queue.get("verifiable", {}),

@@ -11,7 +11,7 @@ import { Disclosure } from "./overlay";
 export interface Column<Row> {
   id: string;
   header: ReactNode;
-  /** the plain-text header for the card layout's data-label and the column picker */
+  /** the plain-text header for the card layout’s data-label and the column picker */
   label: string;
   cell: (row: Row) => ReactNode;
   /** a value to sort on, null sorts last */

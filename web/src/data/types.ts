@@ -27,7 +27,7 @@ export interface Cell {
   extracted_by?: string;
   verified_by?: string;
   display: CellDisplay;
-  /** the ledger's accession, said in words where it points at a set */
+  /** the ledger’s accession, said in words where it points at a set */
   accession?: string;
   /** the filings that accession resolves to, from the manifest */
   edgar?: EdgarLink[];

@@ -1,7 +1,7 @@
 // One interface between the views and wherever the record comes from.
 //
 // The public demo reads JSON chunks the site build wrote (StaticAdapter).
-// A partner's workspace reads the same shapes from the API (ApiAdapter).
+// A partner’s workspace reads the same shapes from the API (ApiAdapter).
 // A view never knows which one it has: it asks for a record and receives
 // the shape src/tark_views.py builds, whichever server answered.
 //

@@ -8,7 +8,7 @@
  * every filing the accession resolves to. Every link comes from the manifest
  * through the record chunk, never assembled here (rule 15).
  *
- * The text arrives with the product's own record chunk, so a page of sixteen
+ * The text arrives with the product’s own record chunk, so a page of sixteen
  * products does not carry sixteen records until a reader opens one. */
 import { useState } from "react";
 import { Drawer } from "./overlay";

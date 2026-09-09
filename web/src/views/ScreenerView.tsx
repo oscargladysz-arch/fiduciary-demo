@@ -10,7 +10,7 @@
  * Filter, sort and column state serialize into the URL and replace the
  * history entry rather than pushing one, so Back leaves the Screener rather
  * than walking its filters, and they are scoped to this route: no other
- * route's link carries them. */
+ * route’s link carries them. */
 import { useMemo } from "react";
 import { setParams, useRoute } from "../app/router";
 import { CiteButton } from "../components/citation";
@@ -37,7 +37,7 @@ function fact(row: Row, name: string): Fact {
 }
 
 /** A figure with the row it came from beside it. A missing value prints the
- *  record's own reason. */
+ *  record’s own reason. */
 function Figure({ row, name, render }: { row: Row; name: string; render?: (v: never) => string }) {
   const f = fact(row, name);
   const cell = f.source_cell || "";

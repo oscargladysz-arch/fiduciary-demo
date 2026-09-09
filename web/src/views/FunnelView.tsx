@@ -42,7 +42,7 @@ interface CrossCheck {
   date?: string;
 }
 
-/** What each step counts, in the reader's words. */
+/** What each step counts, in the reader’s words. */
 const UNIT: Record<string, string> = { dark: "Wrappers", evaluated: "Funds" };
 
 /** A figure the record does not carry says so rather than printing nothing. */
